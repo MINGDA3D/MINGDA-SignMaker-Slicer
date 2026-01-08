@@ -263,99 +263,84 @@ draw_rounded_rect(right_x + 8, content_y + 8, SIDEBAR_RIGHT_W - 16, content_h - 
 # 面板标题
 draw_text(right_x + 24, content_y + 24, "参数设置", font_h1, C["text_primary"])
 
-# 快速设置卡片
-card_y = content_y + 60
-draw_rounded_rect(right_x + 16, card_y, SIDEBAR_RIGHT_W - 32, 80, 10, fill=C["bg_card"])
+# ============================================
+# 预设模板区域 - 简约下拉选择器
+# ============================================
+preset_y = content_y + 50
 
-# 快速参数
+# 预设模板标题栏
+draw_rounded_rect(right_x + 16, preset_y, SIDEBAR_RIGHT_W - 32, 36, 8, fill=C["bg_card"])
+draw_text(right_x + 28, preset_y + 10, "▼", font_small, C["accent_primary"])
+draw_text(right_x + 48, preset_y + 10, "预设模板", font_h2, C["text_primary"])
+
+# 简洁下拉选择器
+preset_select_y = preset_y + 44
+draw_rounded_rect(right_x + 16, preset_select_y, SIDEBAR_RIGHT_W - 32, 36, 8, fill=C["bg_elevated"], outline=C["border_default"])
+draw_text(right_x + 28, preset_select_y + 10, "30cm勾边字", font_body, C["text_primary"])
+draw_text(right_x + SIDEBAR_RIGHT_W - 52, preset_select_y + 10, "▼", font_small, C["text_muted"])
+
+# 常用模板快捷标签
+tag_y = preset_select_y + 44
+draw_text(right_x + 20, tag_y, "常用", font_small, C["text_muted"])
+
+preset_tags = ["勾边字", "包边字", "连襟字", "围边字"]
+tag_x = right_x + 16
+tag_row_y = tag_y + 20
+for i, tag in enumerate(preset_tags):
+    tag_w = 72
+    if i == 0:  # 选中状态
+        draw_rounded_rect(tag_x, tag_row_y, tag_w, 28, 6, fill=C["accent_primary"])
+        draw_text(tag_x + 14, tag_row_y + 6, tag, font_small, (255, 255, 255))
+    else:
+        draw_rounded_rect(tag_x, tag_row_y, tag_w, 28, 6, fill=C["bg_card"])
+        draw_text(tag_x + 14, tag_row_y + 6, tag, font_small, C["text_secondary"])
+    tag_x += tag_w + 6
+
+# 快速设置卡片
+card_y = tag_row_y + 44
+draw_rounded_rect(right_x + 16, card_y, SIDEBAR_RIGHT_W - 32, 70, 10, fill=C["bg_card"])
+
+# 快速参数 - 紧凑布局
 quick_params = [
     ("字壳高度", "30", "mm"),
     ("壁厚", "1.2", "mm"),
     ("层高", "0.3", "mm"),
 ]
-qp_x = right_x + 28
+qp_x = right_x + 24
 for label, value, unit in quick_params:
-    draw_text(qp_x, card_y + 12, label, font_small, C["text_muted"])
-    draw_rounded_rect(qp_x, card_y + 30, 70, 32, 6, fill=C["bg_elevated"])
-    draw_text(qp_x + 10, card_y + 38, value, font_mono, C["text_primary"])
-    draw_text(qp_x + 50, card_y + 40, unit, font_small, C["text_muted"])
+    draw_text(qp_x, card_y + 10, label, font_small, C["text_muted"])
+    draw_rounded_rect(qp_x, card_y + 26, 65, 28, 6, fill=C["bg_elevated"])
+    draw_text(qp_x + 8, card_y + 32, value, font_mono, C["text_primary"])
+    draw_text(qp_x + 42, card_y + 34, unit, font_small, C["text_muted"])
     qp_x += 100
 
-# 可折叠参数组
+# 可折叠参数组 - 全部折叠只显示标题
 sections = [
-    ("字壳工艺", True, [
-        ("字边类型", "直边", "select"),
-        ("斜边宽度", "5", "mm"),
-        ("底板厚度", "10", "mm"),
-    ]),
+    ("字壳工艺", False, []),
+    ("壁厚设置", False, []),
     ("换色层设置", False, []),
     ("台阶/V槽", False, []),
     ("防翘裙边", False, []),
     ("连襟字", False, []),
+    ("包边勾边", False, []),
     ("面板打印", False, []),
+    ("面板花纹", False, []),
+    ("底孔设置", False, []),
+    ("生成底板/面板 DXF", False, []),
+    ("机器参数", False, []),
 ]
 
-section_y = card_y + 100
+section_y = card_y + 82
 for section_name, expanded, params in sections:
     # 分组标题
-    draw_rounded_rect(right_x + 16, section_y, SIDEBAR_RIGHT_W - 32, 40, 8, fill=C["bg_card"])
+    draw_rounded_rect(right_x + 16, section_y, SIDEBAR_RIGHT_W - 32, 36, 8, fill=C["bg_card"])
 
     # 展开/收起指示器
     indicator = "▼" if expanded else "▶"
-    draw_text(right_x + 28, section_y + 12, indicator, font_small, C["accent_primary"] if expanded else C["text_muted"])
-    draw_text(right_x + 48, section_y + 12, section_name, font_h2, C["text_primary"])
+    draw_text(right_x + 28, section_y + 10, indicator, font_small, C["accent_primary"] if expanded else C["text_muted"])
+    draw_text(right_x + 48, section_y + 10, section_name, font_h2, C["text_primary"])
 
-    section_y += 48
-
-    if expanded and params:
-        draw_rounded_rect(right_x + 16, section_y, SIDEBAR_RIGHT_W - 32, len(params) * 44 + 16, 8, fill=C["bg_elevated"])
-
-        param_y = section_y + 12
-        for label, value, unit in params:
-            draw_text(right_x + 28, param_y + 6, label, font_body, C["text_secondary"])
-
-            if unit == "select":
-                # 下拉选择
-                draw_rounded_rect(right_x + 150, param_y, 130, 28, 6, fill=C["bg_card"], outline=C["border_default"])
-                draw_text(right_x + 162, param_y + 6, value, font_body, C["text_primary"])
-                draw_text(right_x + 260, param_y + 6, "▼", font_small, C["text_muted"])
-            else:
-                # 数值输入
-                draw_rounded_rect(right_x + 150, param_y, 90, 28, 6, fill=C["bg_card"], outline=C["border_default"])
-                draw_text(right_x + 162, param_y + 6, value, font_mono, C["text_primary"])
-                draw_text(right_x + 250, param_y + 8, unit, font_small, C["text_muted"])
-
-            param_y += 40
-
-        section_y += len(params) * 44 + 24
-
-    section_y += 8
-
-# ============================================
-# 底部操作栏
-# ============================================
-footer_y = HEIGHT - FOOTER_H - 60
-
-# 输出统计卡片
-draw_rounded_rect(right_x + 16, footer_y, SIDEBAR_RIGHT_W - 32, 50, 8, fill=C["bg_card"])
-draw_text(right_x + 28, footer_y + 8, "预计打印时间", font_small, C["text_muted"])
-draw_text(right_x + 28, footer_y + 26, "2h 15min", font_h2, C["accent_secondary"])
-draw_text(right_x + 150, footer_y + 8, "耗材用量", font_small, C["text_muted"])
-draw_text(right_x + 150, footer_y + 26, "125.8m", font_h2, C["accent_secondary"])
-
-# 主操作按钮
-btn_y = footer_y + 60
-draw_gradient_rect(right_x + 16, btn_y, SIDEBAR_RIGHT_W - 32, 44)
-draw_rounded_rect(right_x + 16, btn_y, SIDEBAR_RIGHT_W - 32, 44, 10, outline=None)
-draw_text(right_x + 100, btn_y + 12, "生成 G-Code", font_h2, (255,255,255))
-
-# 次要按钮
-btn2_y = btn_y + 54
-draw_rounded_rect(right_x + 16, btn2_y, 150, 38, 8, fill=C["bg_card"], outline=C["border_default"])
-draw_text(right_x + 50, btn2_y + 10, "预览切片", font_body, C["text_secondary"])
-
-draw_rounded_rect(right_x + 176, btn2_y, 150, 38, 8, fill=C["bg_card"], outline=C["border_default"])
-draw_text(right_x + 215, btn2_y + 10, "导出文件", font_body, C["text_secondary"])
+    section_y += 42
 
 # ============================================
 # 底部状态栏
