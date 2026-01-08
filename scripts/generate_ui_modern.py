@@ -236,9 +236,20 @@ for tool in edit_tools_4:
     draw_text(etx, canvas_toolbar_y + 12, tool, font_body, C["text_secondary"])
     etx += tw
 
-# 视图切换 (右侧)
-view_x = canvas_x + canvas_w - 180
-draw_rounded_rect(view_x, canvas_toolbar_y + 6, 100, 28, 6, fill=C["bg_elevated"])
+# 分隔线
+draw.line([(etx + 4, canvas_toolbar_y + 10), (etx + 4, canvas_toolbar_y + 30)], fill=C["border_default"])
+etx += 16
+
+# 编辑工具组5 - 起始点设置
+draw_text(etx, canvas_toolbar_y + 12, "起始点", font_body, C["text_secondary"])
+etx += 60
+
+# 编辑工具组6 - 打印顺序编辑
+draw_text(etx, canvas_toolbar_y + 12, "打印顺序", font_body, C["text_secondary"])
+etx += 70
+
+# 视图切换 (最右侧)
+view_x = canvas_x + canvas_w - 120  # 工具栏右边距
 draw_text(view_x + 15, canvas_toolbar_y + 12, "2D", font_body, C["accent_primary"])
 draw.line([(view_x + 50, canvas_toolbar_y + 12), (view_x + 50, canvas_toolbar_y + 28)], fill=C["border_default"])
 draw_text(view_x + 65, canvas_toolbar_y + 12, "3D", font_body, C["text_muted"])
@@ -289,7 +300,8 @@ draw_text(zoom_x + 95, info_y + 10, "+", font_h2, C["text_muted"])
 # 右侧属性面板 - 现代卡片式设计
 # ============================================
 right_x = WIDTH - SIDEBAR_RIGHT_W
-draw_rounded_rect(right_x + 8, content_y + 8, SIDEBAR_RIGHT_W - 16, content_h - 16, 12, fill=C["bg_secondary"])
+# 面板高度减小，给底部按钮留出空间
+draw_rounded_rect(right_x + 8, content_y + 8, SIDEBAR_RIGHT_W - 16, content_h - 80, 12, fill=C["bg_secondary"])
 
 # 面板标题
 draw_text(right_x + 24, content_y + 24, "参数设置", font_h1, C["text_primary"])
@@ -348,20 +360,16 @@ for label, value, unit in quick_params:
 # 可折叠参数组 - 全部折叠只显示标题
 sections = [
     ("字壳工艺", False, []),
-    ("壁厚设置", False, []),
     ("换色层设置", False, []),
     ("台阶/V槽", False, []),
     ("防翘裙边", False, []),
     ("连襟字", False, []),
     ("包边勾边", False, []),
-    ("面板打印", False, []),
-    ("面板花纹", False, []),
-    ("底孔设置", False, []),
-    ("生成底板/面板 DXF", False, []),
+    ("面板设置", False, []),
+    ("底板设置", False, []),
     ("速度设置", False, []),
-    ("起始点设置", False, []),
-    ("机器参数", False, []),
-    ("上传到打印机", False, []),
+    ("填充", False, []),
+    ("机器设置", False, []),
 ]
 
 section_y = card_y + 82
@@ -375,6 +383,21 @@ for section_name, expanded, params in sections:
     draw_text(right_x + 48, section_y + 10, section_name, font_h2, C["text_primary"])
 
     section_y += 42
+
+# 右侧面板底部按钮区域（面板外）
+btn_area_y = content_y + content_h - 60
+
+# 切片按钮 - 渐变主按钮
+slice_btn_w = 150
+draw_gradient_rect(right_x + 16, btn_area_y, slice_btn_w, 44)
+draw_rounded_rect(right_x + 16, btn_area_y, slice_btn_w, 44, 10, outline=None)
+draw_text(right_x + 16 + (slice_btn_w - 26) // 2, btn_area_y + 12, "切片", font_h2, (255,255,255))
+
+# 上传按钮
+upload_btn_w = 150
+upload_btn_x = right_x + 16 + slice_btn_w + 8
+draw_rounded_rect(upload_btn_x, btn_area_y, upload_btn_w, 44, 10, fill=C["bg_card"], outline=C["border_default"])
+draw_text(upload_btn_x + (upload_btn_w - 26) // 2, btn_area_y + 12, "上传", font_h2, C["text_secondary"])
 
 # ============================================
 # 底部状态栏
