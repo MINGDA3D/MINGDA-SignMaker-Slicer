@@ -114,16 +114,16 @@ draw_gradient_rect(16, 12, 4, 24)
 draw_text(28, 14, "SignMaker", font_h1, C["text_primary"])
 draw_text(110, 16, "Slicer", font_h2, C["accent_secondary"])
 
-# 中央标签页 - 文件/项目切换
-tabs_x = WIDTH // 2 - 150
-tab_items = [("项目", True), ("切片", False), ("预览", False)]
-for i, (name, active) in enumerate(tab_items):
-    tx = tabs_x + i * 100
+# 中央导航标签页 - 参考UI_Home样式
+nav_items = [("首页", False), ("项目", True), ("预览", False)]
+nav_start_x = (WIDTH - 240) // 2
+for i, (name, active) in enumerate(nav_items):
+    nx = nav_start_x + i * 80
     if active:
-        draw_rounded_rect(tx, 8, 90, 32, 8, fill=C["bg_card"])
-        draw_text(tx + 30, 14, name, font_h2, C["text_primary"])
+        draw_gradient_rect(nx, 8, 64, 32, 14)
+        draw_text(nx + 20, 14, name, font_h2, (255, 255, 255))
     else:
-        draw_text(tx + 30, 14, name, font_h2, C["text_muted"])
+        draw_text(nx + 20, 14, name, font_h2, C["text_muted"])
 
 # 右侧工具按钮
 right_tools = ["⚙", "?", "☰"]
@@ -358,7 +358,10 @@ sections = [
     ("面板花纹", False, []),
     ("底孔设置", False, []),
     ("生成底板/面板 DXF", False, []),
+    ("速度设置", False, []),
+    ("起始点设置", False, []),
     ("机器参数", False, []),
+    ("上传到打印机", False, []),
 ]
 
 section_y = card_y + 82

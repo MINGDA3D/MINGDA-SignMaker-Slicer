@@ -73,16 +73,22 @@ def create_base_layout(draw, active_tab="project"):
     draw.text((28, 14), "SignMaker", font=font_h1, fill=C["text_primary"])
     draw.text((110, 16), "Slicer", font=font_h2, fill=C["accent_secondary"])
 
-    # 标签页
-    tabs = [("项目", "project"), ("切片", "slice"), ("预览", "preview")]
-    tabs_x = WIDTH // 2 - 150
-    for i, (name, key) in enumerate(tabs):
-        tx = tabs_x + i * 100
+    # 中央导航标签页 - 参考UI_Home样式
+    nav_items = [("首页", None), ("项目", "project"), ("预览", "preview")]
+    nav_start_x = (WIDTH - 240) // 2
+    for i, (name, key) in enumerate(nav_items):
+        nx = nav_start_x + i * 80
         if key == active_tab:
-            draw.rounded_rectangle([tx, 8, tx + 90, 40], radius=8, fill=C["bg_card"])
-            draw.text((tx + 30, 14), name, font=font_h2, fill=C["text_primary"])
+            # 渐变填充按钮
+            for px in range(64):
+                ratio = px / 64
+                r = int(C["accent_primary"][0] + (C["accent_secondary"][0] - C["accent_primary"][0]) * ratio)
+                g = int(C["accent_primary"][1] + (C["accent_secondary"][1] - C["accent_primary"][1]) * ratio)
+                b = int(C["accent_primary"][2] + (C["accent_secondary"][2] - C["accent_primary"][2]) * ratio)
+                draw.line([(nx + px, 8), (nx + px, 40)], fill=(r, g, b))
+            draw.text((nx + 20, 14), name, font=font_h2, fill=(255, 255, 255))
         else:
-            draw.text((tx + 30, 14), name, font=font_h2, fill=C["text_muted"])
+            draw.text((nx + 20, 14), name, font=font_h2, fill=C["text_muted"])
 
     # 右侧按钮
     right_tools = ["⚙", "?", "☰"]
@@ -565,22 +571,10 @@ if __name__ == "__main__":
     output_dir = os.path.join(os.path.dirname(__file__), "..", "docs")
     os.makedirs(output_dir, exist_ok=True)
 
-    # 切片模式
-    slice_img = generate_slice_mode()
-    slice_path = os.path.join(output_dir, "UI_Slice_Mode.png")
-    slice_img.save(slice_path, "PNG", quality=95)
-    print(f"Saved: {slice_path}")
-
-    root_slice = os.path.join(os.path.dirname(__file__), "..", "UI_Slice_Mode.png")
-    slice_img.save(root_slice, "PNG", quality=95)
-
     # 预览模式
     preview_img = generate_preview_mode()
     preview_path = os.path.join(output_dir, "UI_Preview_Mode.png")
     preview_img.save(preview_path, "PNG", quality=95)
     print(f"Saved: {preview_path}")
-
-    root_preview = os.path.join(os.path.dirname(__file__), "..", "UI_Preview_Mode.png")
-    preview_img.save(root_preview, "PNG", quality=95)
 
     print("Done!")

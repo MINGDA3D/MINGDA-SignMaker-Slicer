@@ -149,8 +149,8 @@ draw_text(logo_x + 14, 17, "SignMaker", font_h2, C["text_primary"])
 draw_text(logo_x + 110, 19, "Slicer", font_h3, C["accent_cyan"])
 
 # 中央导航
-nav_items = [("首页", True), ("项目", False), ("切片", False), ("设置", False)]
-nav_start_x = (WIDTH - 320) // 2
+nav_items = [("首页", True), ("项目", False), ("预览", False)]
+nav_start_x = (WIDTH - 240) // 2
 
 for i, (name, active) in enumerate(nav_items):
     nx = nav_start_x + i * 80

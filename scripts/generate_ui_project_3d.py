@@ -90,16 +90,16 @@ draw_gradient_rect(16, 12, 4, 24)
 draw_text(28, 14, "SignMaker", font_h1, C["text_primary"])
 draw_text(110, 16, "Slicer", font_h2, C["accent_secondary"])
 
-# 标签页
-tabs = [("项目", True), ("切片", False), ("预览", False)]
-tabs_x = WIDTH // 2 - 150
-for i, (name, active) in enumerate(tabs):
-    tx = tabs_x + i * 100
+# 中央导航标签页 - 参考UI_Home样式
+nav_items = [("首页", False), ("项目", True), ("预览", False)]
+nav_start_x = (WIDTH - 240) // 2
+for i, (name, active) in enumerate(nav_items):
+    nx = nav_start_x + i * 80
     if active:
-        draw_rounded_rect(tx, 8, 90, 32, 8, fill=C["bg_card"])
-        draw_text(tx + 30, 14, name, font_h2, C["text_primary"])
+        draw_gradient_rect(nx, 8, 64, 32)
+        draw_text(nx + 20, 14, name, font_h2, (255, 255, 255))
     else:
-        draw_text(tx + 30, 14, name, font_h2, C["text_muted"])
+        draw_text(nx + 20, 14, name, font_h2, C["text_muted"])
 
 # 右侧按钮
 right_tools = ["⚙", "?", "☰"]
@@ -160,23 +160,54 @@ canvas_h = content_h
 
 draw_rounded_rect(canvas_x + 8, canvas_y + 8, canvas_w - 16, canvas_h - 16, 12, fill=C["bg_primary"])
 
-# 顶部工具栏
+# 顶部画布工具栏
 canvas_toolbar_y = canvas_y + 16
 draw_rounded_rect(canvas_x + 20, canvas_toolbar_y, canvas_w - 40, 40, 8, fill=C["bg_card"])
 
-# 编辑工具
-edit_tools = ["选择", "移动", "旋转", "镜像", "缩放"]
-etx = canvas_x + 32
-for tool in edit_tools:
-    active = tool == "选择"
+# 编辑工具组1 - 变换操作 (移动/旋转/缩放)
+edit_tools_1 = [("移动", True), ("旋转", False), ("缩放", False)]
+etx = canvas_x + 28
+for tool, active in edit_tools_1:
     if active:
-        draw_rounded_rect(etx, canvas_toolbar_y + 6, 50, 28, 6, fill=C["accent_primary"])
-        draw_text(etx + 10, canvas_toolbar_y + 12, tool, font_body, (255,255,255))
+        draw_rounded_rect(etx, canvas_toolbar_y + 6, 46, 28, 6, fill=C["accent_primary"])
+        draw_text(etx + 8, canvas_toolbar_y + 12, tool, font_body, (255,255,255))
     else:
-        draw_text(etx + 10, canvas_toolbar_y + 12, tool, font_body, C["text_secondary"])
-    etx += 60
+        draw_text(etx + 8, canvas_toolbar_y + 12, tool, font_body, C["text_secondary"])
+    etx += 50
 
-# 2D/3D切换 - 3D激活状态
+# 分隔线
+draw.line([(etx + 4, canvas_toolbar_y + 10), (etx + 4, canvas_toolbar_y + 30)], fill=C["border_default"])
+etx += 16
+
+# 编辑工具组2 - 镜像操作
+edit_tools_2 = ["水平镜像", "垂直镜像"]
+for tool in edit_tools_2:
+    tw = len(tool) * 11 + 12
+    draw_text(etx, canvas_toolbar_y + 12, tool, font_body, C["text_secondary"])
+    etx += tw
+
+# 分隔线
+draw.line([(etx + 4, canvas_toolbar_y + 10), (etx + 4, canvas_toolbar_y + 30)], fill=C["border_default"])
+etx += 16
+
+# 编辑工具组3 - 组合操作
+edit_tools_3 = ["组合", "打散"]
+for tool in edit_tools_3:
+    draw_text(etx, canvas_toolbar_y + 12, tool, font_body, C["text_secondary"])
+    etx += 50
+
+# 分隔线
+draw.line([(etx + 4, canvas_toolbar_y + 10), (etx + 4, canvas_toolbar_y + 30)], fill=C["border_default"])
+etx += 16
+
+# 编辑工具组4 - 排版操作
+edit_tools_4 = ["页面中心", "自动排版"]
+for tool in edit_tools_4:
+    tw = len(tool) * 11 + 12
+    draw_text(etx, canvas_toolbar_y + 12, tool, font_body, C["text_secondary"])
+    etx += tw
+
+# 视图切换 (右侧) - 3D激活状态
 view_x = canvas_x + canvas_w - 180
 draw_rounded_rect(view_x, canvas_toolbar_y + 6, 100, 28, 6, fill=C["bg_elevated"])
 draw_text(view_x + 15, canvas_toolbar_y + 12, "2D", font_body, C["text_muted"])
@@ -364,97 +395,95 @@ draw_rounded_rect(zoom_x + 35, info_y + 8, 50, 20, 4, fill=C["bg_card"])
 draw_text(zoom_x + 95, info_y + 10, "+", font_h2, C["text_muted"])
 
 # ============================================
-# 右侧参数面板
+# 右侧属性面板 - 现代卡片式设计
 # ============================================
 right_x = WIDTH - SIDEBAR_RIGHT_W
 draw_rounded_rect(right_x + 8, content_y + 8, SIDEBAR_RIGHT_W - 16, content_h - 16, 12, fill=C["bg_secondary"])
 
+# 面板标题
 draw_text(right_x + 24, content_y + 24, "参数设置", font_h1, C["text_primary"])
 
-# 快速设置卡片
-card_y = content_y + 60
-draw_rounded_rect(right_x + 16, card_y, SIDEBAR_RIGHT_W - 32, 80, 10, fill=C["bg_card"])
+# ============================================
+# 预设模板区域 - 简约下拉选择器
+# ============================================
+preset_y = content_y + 50
 
+# 预设模板标题栏
+draw_rounded_rect(right_x + 16, preset_y, SIDEBAR_RIGHT_W - 32, 36, 8, fill=C["bg_card"])
+draw_text(right_x + 28, preset_y + 10, "▼", font_small, C["accent_primary"])
+draw_text(right_x + 48, preset_y + 10, "预设模板", font_h2, C["text_primary"])
+
+# 简洁下拉选择器
+preset_select_y = preset_y + 44
+draw_rounded_rect(right_x + 16, preset_select_y, SIDEBAR_RIGHT_W - 32, 36, 8, fill=C["bg_elevated"], outline=C["border_default"])
+draw_text(right_x + 28, preset_select_y + 10, "30cm勾边字", font_body, C["text_primary"])
+draw_text(right_x + SIDEBAR_RIGHT_W - 52, preset_select_y + 10, "▼", font_small, C["text_muted"])
+
+# 常用模板快捷标签
+tag_y = preset_select_y + 44
+draw_text(right_x + 20, tag_y, "常用", font_small, C["text_muted"])
+
+preset_tags = ["勾边字", "包边字", "连襟字", "围边字"]
+tag_x = right_x + 16
+tag_row_y = tag_y + 20
+for i, tag in enumerate(preset_tags):
+    tag_w = 72
+    if i == 0:  # 选中状态
+        draw_rounded_rect(tag_x, tag_row_y, tag_w, 28, 6, fill=C["accent_primary"])
+        draw_text(tag_x + 14, tag_row_y + 6, tag, font_small, (255, 255, 255))
+    else:
+        draw_rounded_rect(tag_x, tag_row_y, tag_w, 28, 6, fill=C["bg_card"])
+        draw_text(tag_x + 14, tag_row_y + 6, tag, font_small, C["text_secondary"])
+    tag_x += tag_w + 6
+
+# 快速设置卡片
+card_y = tag_row_y + 44
+draw_rounded_rect(right_x + 16, card_y, SIDEBAR_RIGHT_W - 32, 70, 10, fill=C["bg_card"])
+
+# 快速参数 - 紧凑布局
 quick_params = [
     ("字壳高度", "30", "mm"),
     ("壁厚", "1.2", "mm"),
     ("层高", "0.3", "mm"),
 ]
-qp_x = right_x + 28
+qp_x = right_x + 24
 for label, value, unit in quick_params:
-    draw_text(qp_x, card_y + 12, label, font_small, C["text_muted"])
-    draw_rounded_rect(qp_x, card_y + 30, 70, 32, 6, fill=C["bg_elevated"])
-    draw_text(qp_x + 10, card_y + 38, value, font_mono, C["text_primary"])
-    draw_text(qp_x + 50, card_y + 40, unit, font_small, C["text_muted"])
+    draw_text(qp_x, card_y + 10, label, font_small, C["text_muted"])
+    draw_rounded_rect(qp_x, card_y + 26, 65, 28, 6, fill=C["bg_elevated"])
+    draw_text(qp_x + 8, card_y + 32, value, font_mono, C["text_primary"])
+    draw_text(qp_x + 42, card_y + 34, unit, font_small, C["text_muted"])
     qp_x += 100
 
-# 参数分组
+# 可折叠参数组 - 全部折叠只显示标题
 sections = [
-    ("字壳工艺", True, [
-        ("字边类型", "斜边", "select"),
-        ("斜边宽度", "5", "mm"),
-        ("底板厚度", "10", "mm"),
-    ]),
+    ("字壳工艺", False, []),
+    ("壁厚设置", False, []),
     ("换色层设置", False, []),
     ("台阶/V槽", False, []),
     ("防翘裙边", False, []),
     ("连襟字", False, []),
+    ("包边勾边", False, []),
     ("面板打印", False, []),
+    ("面板花纹", False, []),
+    ("底孔设置", False, []),
+    ("生成底板/面板 DXF", False, []),
+    ("速度设置", False, []),
+    ("起始点设置", False, []),
+    ("机器参数", False, []),
+    ("上传到打印机", False, []),
 ]
 
-section_y = card_y + 100
+section_y = card_y + 82
 for section_name, expanded, params in sections:
-    draw_rounded_rect(right_x + 16, section_y, SIDEBAR_RIGHT_W - 32, 40, 8, fill=C["bg_card"])
+    # 分组标题
+    draw_rounded_rect(right_x + 16, section_y, SIDEBAR_RIGHT_W - 32, 36, 8, fill=C["bg_card"])
 
+    # 展开/收起指示器
     indicator = "▼" if expanded else "▶"
-    draw_text(right_x + 28, section_y + 12, indicator, font_small, C["accent_primary"] if expanded else C["text_muted"])
-    draw_text(right_x + 48, section_y + 12, section_name, font_h2, C["text_primary"])
+    draw_text(right_x + 28, section_y + 10, indicator, font_small, C["accent_primary"] if expanded else C["text_muted"])
+    draw_text(right_x + 48, section_y + 10, section_name, font_h2, C["text_primary"])
 
-    section_y += 48
-
-    if expanded and params:
-        draw_rounded_rect(right_x + 16, section_y, SIDEBAR_RIGHT_W - 32, len(params) * 44 + 16, 8, fill=C["bg_elevated"])
-
-        param_y = section_y + 12
-        for label, value, unit in params:
-            draw_text(right_x + 28, param_y + 6, label, font_body, C["text_secondary"])
-
-            if unit == "select":
-                draw_rounded_rect(right_x + 150, param_y, 130, 28, 6, fill=C["bg_card"], outline=C["border_default"])
-                draw_text(right_x + 162, param_y + 6, value, font_body, C["text_primary"])
-                draw_text(right_x + 260, param_y + 6, "▼", font_small, C["text_muted"])
-            else:
-                draw_rounded_rect(right_x + 150, param_y, 90, 28, 6, fill=C["bg_card"], outline=C["border_default"])
-                draw_text(right_x + 162, param_y + 6, value, font_mono, C["text_primary"])
-                draw_text(right_x + 250, param_y + 8, unit, font_small, C["text_muted"])
-
-            param_y += 40
-
-        section_y += len(params) * 44 + 24
-
-    section_y += 8
-
-# 输出统计
-footer_y = HEIGHT - FOOTER_H - 60
-draw_rounded_rect(right_x + 16, footer_y, SIDEBAR_RIGHT_W - 32, 50, 8, fill=C["bg_card"])
-draw_text(right_x + 28, footer_y + 8, "预计打印时间", font_small, C["text_muted"])
-draw_text(right_x + 28, footer_y + 26, "2h 15min", font_h2, C["accent_secondary"])
-draw_text(right_x + 150, footer_y + 8, "耗材用量", font_small, C["text_muted"])
-draw_text(right_x + 150, footer_y + 26, "125.8m", font_h2, C["accent_secondary"])
-
-# 主按钮
-btn_y = footer_y + 60
-draw_gradient_rect(right_x + 16, btn_y, SIDEBAR_RIGHT_W - 32, 44)
-draw_rounded_rect(right_x + 16, btn_y, SIDEBAR_RIGHT_W - 32, 44, 10, outline=None)
-draw_text(right_x + 100, btn_y + 12, "生成 G-Code", font_h2, (255,255,255))
-
-# 次要按钮
-btn2_y = btn_y + 54
-draw_rounded_rect(right_x + 16, btn2_y, 150, 38, 8, fill=C["bg_card"], outline=C["border_default"])
-draw_text(right_x + 50, btn2_y + 10, "预览切片", font_body, C["text_secondary"])
-
-draw_rounded_rect(right_x + 176, btn2_y, 150, 38, 8, fill=C["bg_card"], outline=C["border_default"])
-draw_text(right_x + 215, btn2_y + 10, "导出文件", font_body, C["text_secondary"])
+    section_y += 42
 
 # ============================================
 # 底部状态栏
