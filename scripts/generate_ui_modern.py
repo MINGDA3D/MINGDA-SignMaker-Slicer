@@ -193,17 +193,48 @@ draw_rounded_rect(canvas_x + 8, canvas_y + 8, canvas_w - 16, canvas_h - 16, 12, 
 canvas_toolbar_y = canvas_y + 16
 draw_rounded_rect(canvas_x + 20, canvas_toolbar_y, canvas_w - 40, 40, 8, fill=C["bg_card"])
 
-# 编辑工具
-edit_tools = ["选择", "移动", "旋转", "镜像", "缩放"]
-etx = canvas_x + 32
-for tool in edit_tools:
-    active = tool == "选择"
+# 编辑工具组1 - 变换操作 (移动/旋转/缩放)
+edit_tools_1 = [("移动", True), ("旋转", False), ("缩放", False)]
+etx = canvas_x + 28
+for tool, active in edit_tools_1:
     if active:
-        draw_rounded_rect(etx, canvas_toolbar_y + 6, 50, 28, 6, fill=C["accent_primary"])
-        draw_text(etx + 10, canvas_toolbar_y + 12, tool, font_body, (255,255,255))
+        draw_rounded_rect(etx, canvas_toolbar_y + 6, 46, 28, 6, fill=C["accent_primary"])
+        draw_text(etx + 8, canvas_toolbar_y + 12, tool, font_body, (255,255,255))
     else:
-        draw_text(etx + 10, canvas_toolbar_y + 12, tool, font_body, C["text_secondary"])
-    etx += 60
+        draw_text(etx + 8, canvas_toolbar_y + 12, tool, font_body, C["text_secondary"])
+    etx += 50
+
+# 分隔线
+draw.line([(etx + 4, canvas_toolbar_y + 10), (etx + 4, canvas_toolbar_y + 30)], fill=C["border_default"])
+etx += 16
+
+# 编辑工具组2 - 镜像操作
+edit_tools_2 = ["水平镜像", "垂直镜像"]
+for tool in edit_tools_2:
+    tw = len(tool) * 11 + 12
+    draw_text(etx, canvas_toolbar_y + 12, tool, font_body, C["text_secondary"])
+    etx += tw
+
+# 分隔线
+draw.line([(etx + 4, canvas_toolbar_y + 10), (etx + 4, canvas_toolbar_y + 30)], fill=C["border_default"])
+etx += 16
+
+# 编辑工具组3 - 组合操作
+edit_tools_3 = ["组合", "打散"]
+for tool in edit_tools_3:
+    draw_text(etx, canvas_toolbar_y + 12, tool, font_body, C["text_secondary"])
+    etx += 50
+
+# 分隔线
+draw.line([(etx + 4, canvas_toolbar_y + 10), (etx + 4, canvas_toolbar_y + 30)], fill=C["border_default"])
+etx += 16
+
+# 编辑工具组4 - 排版操作
+edit_tools_4 = ["页面中心", "自动排版"]
+for tool in edit_tools_4:
+    tw = len(tool) * 11 + 12
+    draw_text(etx, canvas_toolbar_y + 12, tool, font_body, C["text_secondary"])
+    etx += tw
 
 # 视图切换 (右侧)
 view_x = canvas_x + canvas_w - 180
