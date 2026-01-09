@@ -171,23 +171,10 @@ def generate_preview_mode():
     toolbar_y = canvas_y + 16
     draw_rounded_rect(canvas_x + 20, toolbar_y, canvas_w - 40, 44, 8, fill=C["bg_card"])
 
-    # 视图切换按钮组
-    view_buttons = [("正视", False), ("俯视", False), ("侧视", False), ("3D", True)]
-    vx = canvas_x + 32
-    for name, active in view_buttons:
-        btn_w = 50
-        if active:
-            draw_rounded_rect(vx, toolbar_y + 8, btn_w, 28, 6, fill=C["accent_primary"])
-            draw_text(vx + 12, toolbar_y + 14, name, font_body, (255, 255, 255))
-        else:
-            draw_rounded_rect(vx, toolbar_y + 8, btn_w, 28, 6, fill=C["bg_elevated"])
-            draw_text(vx + 12, toolbar_y + 14, name, font_body, C["text_secondary"])
-        vx += btn_w + 8
-
-    # 显示选项
+    # 显示选项（路径类型过滤）
     display_options = [("外壁", True, C["path_outer"]), ("内壁", True, C["path_inner"]),
                        ("填充", False, C["path_fill"]), ("空走", False, C["path_travel"])]
-    ox = vx + 20
+    ox = canvas_x + 32
     for name, enabled, color in display_options:
         # 复选框
         box_x = ox
@@ -201,13 +188,53 @@ def generate_preview_mode():
         draw_text(box_x + 18, box_y, name, font_body, C["text_primary"] if enabled else C["text_muted"])
         ox += 65
 
-    # 右侧操作提示
-    draw_text(canvas_x + canvas_w - 180, toolbar_y + 14, "拖拽旋转 | 滚轮缩放", font_small, C["text_muted"])
-
     # 3D画布内容区
     inner_canvas_y = toolbar_y + 52
     inner_canvas_h = canvas_h - 150  # 给底部进度条留空间
     draw_rounded_rect(canvas_x + 20, inner_canvas_y, canvas_w - 40, inner_canvas_h, 8, fill=C["bg_base"])
+
+    # ---- 左上角坐标系 ----
+    axis_box_x = canvas_x + 28
+    axis_box_y = inner_canvas_y + 8
+    draw_rounded_rect(axis_box_x, axis_box_y, 60, 60, 6, fill=C["bg_card"])
+
+    # 坐标轴原点（在盒子左侧中间位置）
+    axis_origin_x = axis_box_x + 18
+    axis_origin_y = axis_box_y + 40
+    axis_len = 25
+
+    # Z轴 (蓝色, 向上 - 垂直)
+    draw.line([(axis_origin_x, axis_origin_y), (axis_origin_x, axis_origin_y - 30)], fill=(0, 100, 255), width=2)
+    draw_text(axis_origin_x - 4, axis_origin_y - 42, "Z", font_small, (0, 100, 255))
+
+    # Y轴 (绿色, 向右上)
+    draw.line([(axis_origin_x, axis_origin_y), (axis_origin_x + 22, axis_origin_y - 14)], fill=(0, 180, 0), width=2)
+    draw_text(axis_origin_x + 26, axis_origin_y - 22, "Y", font_small, (0, 180, 0))
+
+    # X轴 (红色, 向右下)
+    draw.line([(axis_origin_x, axis_origin_y), (axis_origin_x + 25, axis_origin_y + 12)], fill=(220, 0, 0), width=2)
+    draw_text(axis_origin_x + 28, axis_origin_y + 8, "X", font_small, (220, 0, 0))
+
+    # ---- 左下角观察方位按钮 ----
+    view_btn_y = inner_canvas_y + inner_canvas_h - 48
+    view_btn_x = canvas_x + 28
+    view_buttons = [("正", False), ("俯", False), ("侧", False), ("透", True)]
+    for name, active in view_buttons:
+        btn_w = 32
+        if active:
+            draw_rounded_rect(view_btn_x, view_btn_y, btn_w, 32, 6, fill=C["accent_primary"])
+            draw_text(view_btn_x + 10, view_btn_y + 8, name, font_body, (255, 255, 255))
+        else:
+            draw_rounded_rect(view_btn_x, view_btn_y, btn_w, 32, 6, fill=C["bg_card"])
+            draw_text(view_btn_x + 10, view_btn_y + 8, name, font_body, C["text_secondary"])
+        view_btn_x += btn_w + 6
+
+    # ---- 右上角操作提示 ----
+    hint_text = "拖拽旋转 | 滚轮缩放"
+    hint_x = canvas_x + canvas_w - 180
+    hint_y = inner_canvas_y + 16
+    draw_rounded_rect(hint_x, hint_y, 150, 24, 6, fill=C["bg_card"])
+    draw_text(hint_x + 12, hint_y + 5, hint_text, font_small, C["text_muted"])
 
     # 3D网格地面 (透视效果)
     grid_center_x = canvas_x + canvas_w // 2
