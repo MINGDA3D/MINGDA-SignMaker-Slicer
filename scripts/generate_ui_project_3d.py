@@ -329,135 +329,25 @@ for i in range(grid_lines_x):
     draw.line([(bottom_x, grid_center_y), (top_x, top_y)], fill=grid_color, width=1)
 
 # ============================================
-# 绘制3D字壳模型 - "发"字
+# 绘制3D字壳模型 - "发"字 (简单3D效果)
 # ============================================
 cx = grid_center_x
-cy = inner_canvas_y + inner_canvas_h // 2 - 20
+cy = inner_canvas_y + inner_canvas_h // 2 - 30
 
-# 字壳3D效果 - 多层堆叠
-shell_width = 140
-shell_height = 180
-shell_depth = 80  # 3D深度
+char_font = ImageFont.truetype("msyh.ttc", 120) if os.path.exists("C:\\Windows\\Fonts\\msyh.ttc") else font_large
 
-# 从底层到顶层绘制
-layers = 8
-for layer in range(layers):
-    # 计算每层的偏移和颜色
-    layer_offset = layer * (shell_depth // layers)
-    layer_ratio = layer / (layers - 1)
+# 简单3D效果 - 向右下的立体阴影
+shadow_color = C["layer_base"]
+for i in range(8, 0, -1):
+    draw_text(cx - 60 + i, cy - 60 + i, "发", char_font, shadow_color)
 
-    # 颜色渐变: 底部深蓝 -> 顶部青色
-    r = int(C["layer_base"][0] + (C["layer_top"][0] - C["layer_base"][0]) * layer_ratio)
-    g = int(C["layer_base"][1] + (C["layer_top"][1] - C["layer_base"][1]) * layer_ratio)
-    b = int(C["layer_base"][2] + (C["layer_top"][2] - C["layer_base"][2]) * layer_ratio)
-    layer_color = (r, g, b)
+# 顶层 - 青色描边
+stroke_color = C["accent_primary"]
+for offset in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+    draw_text(cx - 60 + offset[0], cy - 60 + offset[1], "发", char_font, stroke_color)
 
-    # 外边框颜色
-    border_color = C["accent_primary"] if layer == layers - 1 else tuple(int(c * 0.7) for c in layer_color)
-
-    # 3D透视偏移
-    x_offset = -layer_offset // 3
-    y_offset = -layer_offset
-
-    # 绘制层
-    left = cx - shell_width // 2 + x_offset
-    top = cy - shell_height // 2 + y_offset
-    right = cx + shell_width // 2 + x_offset
-    bottom = cy + shell_height // 2 + y_offset
-
-    # 绘制圆角矩形层
-    draw_rounded_rect(left, top, shell_width, shell_height, 8, fill=layer_color, outline=border_color)
-
-# 绘制斜边效果 (左侧面)
-left_face = [
-    (cx - shell_width // 2, cy + shell_height // 2),  # 底部左前
-    (cx - shell_width // 2 - shell_depth // 3, cy + shell_height // 2 - shell_depth),  # 底部左后
-    (cx - shell_width // 2 - shell_depth // 3, cy - shell_height // 2 - shell_depth),  # 顶部左后
-    (cx - shell_width // 2, cy - shell_height // 2),  # 顶部左前
-]
-draw.polygon(left_face, fill=C["layer_mid"], outline=C["accent_primary"])
-
-# 绘制斜边效果 (底部面)
-bottom_face = [
-    (cx - shell_width // 2, cy + shell_height // 2),  # 底部左前
-    (cx + shell_width // 2, cy + shell_height // 2),  # 底部右前
-    (cx + shell_width // 2 - shell_depth // 3, cy + shell_height // 2 - shell_depth),  # 底部右后
-    (cx - shell_width // 2 - shell_depth // 3, cy + shell_height // 2 - shell_depth),  # 底部左后
-]
-draw.polygon(bottom_face, fill=C["layer_base"], outline=C["accent_primary"])
-
-# 顶面高亮
-top_face_color = C["layer_top"]
-draw_rounded_rect(cx - shell_width // 2 - shell_depth // 3,
-                  cy - shell_height // 2 - shell_depth,
-                  shell_width, shell_height, 8,
-                  fill=top_face_color, outline=C["accent_secondary"])
-
-# 在顶面绘制"发"字轮廓
-draw_text(cx - 35 - shell_depth // 3, cy - 45 - shell_depth, "发",
-          ImageFont.truetype("msyh.ttc", 60) if os.path.exists("C:\\Windows\\Fonts\\msyh.ttc") else font_large,
-          C["bg_base"])
-
-# 台阶标注
-# 底部台阶
-step_y1 = cy + shell_height // 2 - 15
-draw.line([(cx + shell_width // 2 + 20, step_y1), (cx + shell_width // 2 + 80, step_y1)],
-          fill=C["warning"], width=2)
-draw.line([(cx + shell_width // 2 + 20, step_y1 - 5), (cx + shell_width // 2 + 20, step_y1 + 5)],
-          fill=C["warning"], width=2)
-draw_text(cx + shell_width // 2 + 90, step_y1 - 8, "底板台阶 5mm", font_small, C["warning"])
-
-# 顶部台阶
-step_y2 = cy - shell_height // 2 - shell_depth + 15
-draw.line([(cx + shell_width // 2 - shell_depth // 3 + 20, step_y2),
-           (cx + shell_width // 2 - shell_depth // 3 + 80, step_y2)],
-          fill=C["warning"], width=2)
-draw.line([(cx + shell_width // 2 - shell_depth // 3 + 20, step_y2 - 5),
-           (cx + shell_width // 2 - shell_depth // 3 + 20, step_y2 + 5)],
-          fill=C["warning"], width=2)
-draw_text(cx + shell_width // 2 - shell_depth // 3 + 90, step_y2 - 8, "面板台阶 27mm", font_small, C["warning"])
-
-# 尺寸标注 - 高度
-dim_x = cx - shell_width // 2 - shell_depth // 3 - 50
-draw.line([(dim_x, cy + shell_height // 2), (dim_x, cy - shell_height // 2 - shell_depth)],
-          fill=C["text_muted"], width=1)
-draw.line([(dim_x - 5, cy + shell_height // 2), (dim_x + 5, cy + shell_height // 2)],
-          fill=C["text_muted"], width=1)
-draw.line([(dim_x - 5, cy - shell_height // 2 - shell_depth), (dim_x + 5, cy - shell_height // 2 - shell_depth)],
-          fill=C["text_muted"], width=1)
-draw_text(dim_x - 45, cy - 10, "30mm", font_small, C["text_muted"])
-
-# 3D视图控制提示
-draw_rounded_rect(canvas_x + canvas_w - 200, inner_canvas_y + 10,
-                  170, 30, 6, fill=C["bg_card"])
-draw_text(canvas_x + canvas_w - 190, inner_canvas_y + 16, "🖱 拖拽旋转 | 滚轮缩放", font_small, C["text_muted"])
-
-# 视图快捷按钮
-view_btns = ["正", "俯", "侧", "透"]
-vbx = canvas_x + 30
-vby = inner_canvas_y + inner_canvas_h - 50
-for i, btn in enumerate(view_btns):
-    active = btn == "透"
-    if active:
-        draw_rounded_rect(vbx, vby, 36, 36, 6, fill=C["accent_primary"])
-        draw_text(vbx + 12, vby + 10, btn, font_body, (255,255,255))
-    else:
-        draw_rounded_rect(vbx, vby, 36, 36, 6, fill=C["bg_card"])
-        draw_text(vbx + 12, vby + 10, btn, font_body, C["text_secondary"])
-    vbx += 44
-
-# 坐标轴指示器
-axis_x = canvas_x + 40
-axis_y = inner_canvas_y + 60
-# X轴 (红)
-draw.line([(axis_x, axis_y), (axis_x + 30, axis_y)], fill=(239, 68, 68), width=2)
-draw_text(axis_x + 32, axis_y - 6, "X", font_small, (239, 68, 68))
-# Y轴 (绿)
-draw.line([(axis_x, axis_y), (axis_x, axis_y - 30)], fill=(34, 197, 94), width=2)
-draw_text(axis_x - 4, axis_y - 45, "Y", font_small, (34, 197, 94))
-# Z轴 (蓝)
-draw.line([(axis_x, axis_y), (axis_x - 20, axis_y + 15)], fill=(59, 130, 246), width=2)
-draw_text(axis_x - 35, axis_y + 12, "Z", font_small, (59, 130, 246))
+# 顶层填充
+draw_text(cx - 60, cy - 60, "发", char_font, C["layer_top"])
 
 # 底部信息栏
 info_y = inner_canvas_y + inner_canvas_h + 8
