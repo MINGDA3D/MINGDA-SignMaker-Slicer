@@ -510,7 +510,7 @@ for section_name, expanded, params in sections:
 # 右侧面板底部按钮区域（面板外）
 btn_area_y = content_y + content_h - 60
 
-# 切片按钮 - 蓝色圆角主按钮，文字居中，宽度与参数设置栏一致
+# 切片按钮 - 蓝色圆角主按钮，右侧带下拉箭头
 slice_btn_w = SIDEBAR_RIGHT_W - 32
 slice_btn_h = 44
 slice_btn_x = right_x + 16
@@ -519,7 +519,7 @@ slice_btn_y = btn_area_y
 # 蓝色圆角背景
 draw_rounded_rect(slice_btn_x, slice_btn_y, slice_btn_w, slice_btn_h, 10, fill=C["accent_primary"], outline=None)
 
-# 文字居中（切片按钮用16号字体，最大兼容性）
+# 文字居中（切片按钮用16号字体，留出箭头空间）
 text = "切片"
 try:
     font_btn_16 = ImageFont.truetype("msyh.ttc", 16)
@@ -528,9 +528,20 @@ except:
 bbox = draw.textbbox((0, 0), text, font=font_btn_16)
 font_w = bbox[2] - bbox[0]
 font_h = bbox[3] - bbox[1]
-text_x = slice_btn_x + (slice_btn_w - font_w) // 2  # 文字完全居中
+text_x = slice_btn_x + (slice_btn_w - font_w - 24) // 2  # 留出箭头空间
 text_y = slice_btn_y + (slice_btn_h - font_h) // 2 - bbox[1]
 draw_text(text_x, text_y, text, font_btn_16, (255,255,255))
+
+# 右侧下拉箭头（三角形）
+arrow_w, arrow_h = 16, 8
+arrow_x = slice_btn_x + slice_btn_w - 24
+arrow_y = slice_btn_y + (slice_btn_h - arrow_h) // 2
+arrow_points = [
+    (arrow_x, arrow_y),
+    (arrow_x + arrow_w, arrow_y),
+    (arrow_x + arrow_w // 2, arrow_y + arrow_h)
+]
+draw.polygon(arrow_points, fill=(255, 255, 255))
 
 # ============================================
 # 底部状态栏
