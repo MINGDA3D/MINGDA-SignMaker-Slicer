@@ -345,13 +345,17 @@ for i in range(31):  # 0到30，共31条线
 # 机器边界框
 draw_rounded_rect(machine_x, machine_y, machine_w, machine_h, 4, outline=C["border_default"])
 
-# 绘制字形
+# 绘制字形 - 线框图效果
 char_x = canvas_x + canvas_w // 2 - 60
 char_y = inner_canvas_y + inner_canvas_h // 2 - 80
-draw_text(char_x, char_y, "发", font_large, C["path_outer"])
 
-# 路径高亮
-draw.ellipse([char_x - 8, char_y - 8, char_x + 8, char_y + 8], fill=C["success"], outline=C["bg_base"])
+# 用描边方式绘制"发"字轮廓
+stroke_color = C["path_outer"]
+# 先绘制描边（偏移多次模拟线框效果）
+for offset in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+    draw_text(char_x + offset[0], char_y + offset[1], "发", font_large, stroke_color)
+# 用背景色填充内部，形成线框效果
+draw_text(char_x, char_y, "发", font_large, C["bg_base"])
 
 # 底部信息栏
 info_y = inner_canvas_y + inner_canvas_h + 8
