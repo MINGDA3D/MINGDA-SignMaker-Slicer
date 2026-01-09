@@ -521,16 +521,16 @@ draw_rounded_rect(slice_btn_x, slice_btn_y, slice_btn_w, slice_btn_h, 10, fill=C
 # 文字居中（切片按钮用28号字体，精确上下居中）
 text = "切片"
 try:
-    font_btn_28 = ImageFont.truetype("msyh.ttc", 28)
+    font_btn_16 = ImageFont.truetype("msyh.ttc", 16)
 except:
-    font_btn_28 = font_h1  # 备用字体
-bbox = draw.textbbox((0, 0), text, font=font_btn_28)
+    font_btn_16 = font_h1  # 备用字体
+bbox = draw.textbbox((0, 0), text, font=font_btn_16)
 font_w = bbox[2] - bbox[0]
 font_h = bbox[3] - bbox[1]
 # 精确居中：用bbox的高度与按钮高度对齐
 text_x = slice_btn_x + (slice_btn_w - font_w - 24) // 2  # 留出箭头空间
 text_y = slice_btn_y + (slice_btn_h - font_h) // 2 - bbox[1]
-draw_text(text_x, text_y, text, font_btn_28, (255,255,255))
+draw_text(text_x, text_y, text, font_btn_16, (255,255,255))
 
 # 右侧下拉箭头（三角形）
 arrow_w, arrow_h = 16, 8
