@@ -315,21 +315,35 @@ draw_text(view_x + 52, canvas_toolbar_y + 16, "3D", font_body, C["text_muted"])
 inner_canvas_y = canvas_toolbar_y + 56
 inner_canvas_h = canvas_h - 120
 
-# 网格背景
+# 画布背景
 draw_rounded_rect(canvas_x + 20, inner_canvas_y, canvas_w - 40, inner_canvas_h, 8, fill=C["bg_base"])
 
-# 网格线
-grid_color = (20, 28, 38)
-for gx in range(canvas_x + 20, canvas_x + canvas_w - 20, 30):
-    draw.line([(gx, inner_canvas_y), (gx, inner_canvas_y + inner_canvas_h)], fill=grid_color)
-for gy in range(inner_canvas_y, inner_canvas_y + inner_canvas_h, 30):
-    draw.line([(canvas_x + 20, gy), (canvas_x + canvas_w - 20, gy)], fill=grid_color)
+# 机器边界 - 800x1200mm 比例
+# 计算画布中心
+canvas_center_x = canvas_x + 20 + (canvas_w - 40) // 2
+canvas_center_y = inner_canvas_y + inner_canvas_h // 2
+# 按比例缩放 (800:1200 = 2:3)
+machine_scale = min((canvas_w - 80) / 800, (inner_canvas_h - 40) / 1200)
+machine_w = int(800 * machine_scale)
+machine_h = int(1200 * machine_scale)
+machine_x = canvas_center_x - machine_w // 2
+machine_y = canvas_center_y - machine_h // 2
 
-# 机器边界
-margin = 40
-draw_rounded_rect(canvas_x + 20 + margin, inner_canvas_y + margin,
-                  canvas_w - 40 - margin*2, inner_canvas_h - margin*2, 4,
-                  outline=C["border_default"])
+# 网格线 - 只在机器边界内绘制，每格40mm
+grid_color = (20, 28, 38)
+# 垂直网格线 (20格: 800/40=20)
+grid_step_x = machine_w / 20  # 精确步长，避免取整误差
+for i in range(21):  # 0到20，共21条线
+    gx = machine_x + int(i * grid_step_x)
+    draw.line([(gx, machine_y), (gx, machine_y + machine_h)], fill=grid_color)
+# 水平网格线 (30格: 1200/40=30)
+grid_step_y = machine_h / 30  # 精确步长，避免取整误差
+for i in range(31):  # 0到30，共31条线
+    gy = machine_y + int(i * grid_step_y)
+    draw.line([(machine_x, gy), (machine_x + machine_w, gy)], fill=grid_color)
+
+# 机器边界框
+draw_rounded_rect(machine_x, machine_y, machine_w, machine_h, 4, outline=C["border_default"])
 
 # 绘制字形
 char_x = canvas_x + canvas_w // 2 - 60

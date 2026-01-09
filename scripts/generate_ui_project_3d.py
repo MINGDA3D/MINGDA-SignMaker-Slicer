@@ -290,32 +290,43 @@ inner_canvas_h = canvas_h - 120
 
 draw_rounded_rect(canvas_x + 20, inner_canvas_y, canvas_w - 40, inner_canvas_h, 8, fill=C["bg_base"])
 
-# 3D网格地面 (透视效果)
+# 3D网格地面 (透视效果) - 机器尺寸800×1200mm，每格40mm
 grid_center_x = canvas_x + canvas_w // 2
-grid_center_y = inner_canvas_y + inner_canvas_h - 100
+grid_center_y = inner_canvas_y + inner_canvas_h - 80
 
 # 绘制透视网格
 grid_color = C["grid_3d"]
-vanish_y = inner_canvas_y + 50  # 消失点
+vanish_y = inner_canvas_y + 30  # 消失点
 
-# 横向网格线 (透视)
-for i in range(12):
-    y_pos = grid_center_y - i * 18
-    # 随着距离变远，线条逐渐收窄
-    shrink = 1 - (i * 0.05)
-    half_width = int(350 * shrink)
+# 网格参数：800×1200mm，40mm一格
+# X方向(宽度): 800/40 = 20格，21条线
+# Y方向(深度): 1200/40 = 30格，用透视效果只显示部分
+grid_base_width = 360  # 底部宽度（对应800mm）
+grid_depth_lines = 16  # 深度方向显示的线数
+
+# 横向网格线 (透视) - Y方向深度
+grid_step_y = (grid_center_y - vanish_y - 60) / grid_depth_lines
+for i in range(grid_depth_lines + 1):
+    y_pos = int(grid_center_y - i * grid_step_y)
+    # 随着距离变远，线条逐渐收窄（透视效果）
+    shrink = 1 - (i / grid_depth_lines) * 0.6
+    half_width = int(grid_base_width * shrink)
     if y_pos > vanish_y:
-        alpha = max(0.2, 1 - i * 0.08)
+        alpha = max(0.3, 1 - i * 0.05)
         line_color = tuple(int(c * alpha) for c in grid_color)
         draw.line([(grid_center_x - half_width, y_pos),
                    (grid_center_x + half_width, y_pos)], fill=line_color, width=1)
 
-# 纵向网格线 (透视 - 向消失点汇聚)
-for i in range(-7, 8):
-    bottom_x = grid_center_x + i * 50
-    # 计算顶部位置 (向消失点汇聚)
-    top_x = grid_center_x + int(i * 15)
-    draw.line([(bottom_x, grid_center_y), (top_x, vanish_y + 100)], fill=grid_color, width=1)
+# 纵向网格线 (透视 - 向消失点汇聚) - X方向20格
+grid_lines_x = 21  # 800/40=20格，21条线
+for i in range(grid_lines_x):
+    # 底部位置：均匀分布
+    ratio = (i / (grid_lines_x - 1)) - 0.5  # -0.5 到 0.5
+    bottom_x = grid_center_x + int(ratio * 2 * grid_base_width)
+    # 顶部位置：向消失点汇聚
+    top_x = grid_center_x + int(ratio * 2 * grid_base_width * 0.4)
+    top_y = int(grid_center_y - grid_depth_lines * grid_step_y)
+    draw.line([(bottom_x, grid_center_y), (top_x, top_y)], fill=grid_color, width=1)
 
 # ============================================
 # 绘制3D字壳模型 - "发"字
