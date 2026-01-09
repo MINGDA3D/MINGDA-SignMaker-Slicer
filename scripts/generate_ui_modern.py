@@ -319,31 +319,64 @@ inner_canvas_h = canvas_h - 120
 draw_rounded_rect(canvas_x + 20, inner_canvas_y, canvas_w - 40, inner_canvas_h, 8, fill=C["bg_base"])
 
 # 机器边界 - 800x1200mm 比例
-# 计算画布中心
-canvas_center_x = canvas_x + 20 + (canvas_w - 40) // 2
-canvas_center_y = inner_canvas_y + inner_canvas_h // 2
+# 计算画布中心，留出刻度尺空间
+ruler_margin = 25  # 刻度尺宽度
+canvas_center_x = canvas_x + 20 + ruler_margin + (canvas_w - 40 - ruler_margin) // 2
+canvas_center_y = inner_canvas_y + (inner_canvas_h - ruler_margin) // 2
 # 按比例缩放 (800:1200 = 2:3)
-machine_scale = min((canvas_w - 80) / 800, (inner_canvas_h - 40) / 1200)
+machine_scale = min((canvas_w - 80 - ruler_margin) / 800, (inner_canvas_h - 40 - ruler_margin) / 1200)
 machine_w = int(800 * machine_scale)
 machine_h = int(1200 * machine_scale)
 machine_x = canvas_center_x - machine_w // 2
 machine_y = canvas_center_y - machine_h // 2
 
-# 网格线 - 只在机器边界内绘制，每格40mm
+# 网格线 - 只在机器边界内绘制，每格20mm
 grid_color = (20, 28, 38)
-# 垂直网格线 (20格: 800/40=20)
-grid_step_x = machine_w / 20  # 精确步长，避免取整误差
-for i in range(21):  # 0到20，共21条线
+# 垂直网格线 (40格: 800/20=40)
+grid_step_x = machine_w / 40  # 精确步长，避免取整误差
+for i in range(41):  # 0到40，共41条线
     gx = machine_x + int(i * grid_step_x)
     draw.line([(gx, machine_y), (gx, machine_y + machine_h)], fill=grid_color)
-# 水平网格线 (30格: 1200/40=30)
-grid_step_y = machine_h / 30  # 精确步长，避免取整误差
-for i in range(31):  # 0到30，共31条线
+# 水平网格线 (60格: 1200/20=60)
+grid_step_y = machine_h / 60  # 精确步长，避免取整误差
+for i in range(61):  # 0到60，共61条线
     gy = machine_y + int(i * grid_step_y)
     draw.line([(machine_x, gy), (machine_x + machine_w, gy)], fill=grid_color)
 
 # 机器边界框
 draw_rounded_rect(machine_x, machine_y, machine_w, machine_h, 4, outline=C["border_default"])
+
+# 刻度尺 - 左侧Y轴 (从底部0到顶部1200mm)
+ruler_color = C["text_muted"]
+ruler_bg_color = (15, 20, 28)
+# 左侧刻度尺背景
+draw.rectangle([machine_x - ruler_margin, machine_y, machine_x - 2, machine_y + machine_h], fill=ruler_bg_color)
+# Y轴刻度 (每100mm一个大刻度，每20mm一个小刻度)
+for mm in range(0, 1201, 20):
+    y_pos = machine_y + machine_h - int(mm * machine_scale)
+    if mm % 100 == 0:
+        # 大刻度
+        draw.line([(machine_x - 12, y_pos), (machine_x - 2, y_pos)], fill=ruler_color, width=1)
+        if mm % 200 == 0:  # 每200mm显示数字
+            draw_text(machine_x - ruler_margin + 2, y_pos - 5, str(mm), font_small, ruler_color)
+    else:
+        # 小刻度
+        draw.line([(machine_x - 6, y_pos), (machine_x - 2, y_pos)], fill=ruler_color, width=1)
+
+# 底部刻度尺 - X轴 (从左边0到右边800mm)
+# 底部刻度尺背景
+draw.rectangle([machine_x, machine_y + machine_h + 2, machine_x + machine_w, machine_y + machine_h + ruler_margin], fill=ruler_bg_color)
+# X轴刻度 (每100mm一个大刻度，每20mm一个小刻度)
+for mm in range(0, 801, 20):
+    x_pos = machine_x + int(mm * machine_scale)
+    if mm % 100 == 0:
+        # 大刻度
+        draw.line([(x_pos, machine_y + machine_h + 2), (x_pos, machine_y + machine_h + 12)], fill=ruler_color, width=1)
+        if mm % 200 == 0:  # 每200mm显示数字
+            draw_text(x_pos - 8, machine_y + machine_h + 13, str(mm), font_small, ruler_color)
+    else:
+        # 小刻度
+        draw.line([(x_pos, machine_y + machine_h + 2), (x_pos, machine_y + machine_h + 6)], fill=ruler_color, width=1)
 
 # 绘制字形 - 线框图效果
 char_x = canvas_x + canvas_w // 2 - 60
