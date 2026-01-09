@@ -121,10 +121,18 @@ content_h = HEIGHT - HEADER_H - FOOTER_H
 # ============================================
 draw_rounded_rect(0, 0, WIDTH, HEADER_H, 0, fill=C["bg_primary"])
 
-# Logo + 品牌
-draw_gradient_rect(16, 12, 4, 24)
-draw_text(28, 14, "SignMaker", font_h1, C["text_primary"])
-draw_text(110, 16, "Slicer", font_h2, C["accent_secondary"])
+# 左上角Logo
+logo_path = os.path.join(os.path.dirname(__file__), "..", "docs", "images", "MINGDA_logo.png")
+logo = load_icon(logo_path, 32)
+if logo:
+    img.paste(logo, (16, 8), logo)
+    draw_text(56, 14, "SignMaker", font_h1, C["text_primary"])
+    draw_text(138, 16, "Slicer", font_h2, C["accent_secondary"])
+else:
+    # 没有logo时显示原样式
+    draw_gradient_rect(16, 12, 4, 24)
+    draw_text(28, 14, "SignMaker", font_h1, C["text_primary"])
+    draw_text(110, 16, "Slicer", font_h2, C["accent_secondary"])
 
 # 中央导航标签页 - 参考UI_Home样式
 nav_items = [("首页", False), ("项目", True), ("预览", False)]
