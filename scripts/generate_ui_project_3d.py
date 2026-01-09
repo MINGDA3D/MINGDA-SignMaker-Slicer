@@ -148,6 +148,9 @@ for icon, tip in file_tools:
 # 图形列表标题
 draw_text(20, toolbar_y + 50, "图形列表", font_h2, C["text_primary"])
 
+# 图标目录
+icons_dir = os.path.join(os.path.dirname(__file__), "..", "docs", "images")
+
 # 图形项目
 shapes = [
     ("发光字-发", True, C["extruder_1"]),
@@ -163,7 +166,11 @@ for name, selected, color in shapes:
 
     draw_rounded_rect(24, shape_y + 12, 4, 20, 2, fill=color)
     draw_text(36, shape_y + 14, name, font_body, C["text_primary"] if selected else C["text_secondary"])
-    draw_text(SIDEBAR_LEFT_W - 50, shape_y + 14, "👁", font_small, C["text_muted"])
+    # 删除图标
+    delete_icon_path = os.path.join(icons_dir, "delete.png")
+    delete_icon = load_icon(delete_icon_path, 16)
+    if delete_icon:
+        img.paste(delete_icon, (SIDEBAR_LEFT_W - 44, shape_y + 14), delete_icon)
     shape_y += 52
 
 # 添加按钮
@@ -446,7 +453,7 @@ info_y = inner_canvas_y + inner_canvas_h + 8
 draw_rounded_rect(canvas_x + 20, info_y, canvas_w - 40, 36, 8, fill=C["bg_card"])
 draw_text(canvas_x + 36, info_y + 10, "尺寸: 120 × 150 × 30 mm", font_small, C["text_muted"])
 draw_text(canvas_x + 220, info_y + 10, "缩放: 100%", font_small, C["text_muted"])
-draw_text(canvas_x + 340, info_y + 10, "视角: 透视", font_mono, C["accent_secondary"])
+draw_text(canvas_x + 340, info_y + 10, "坐标: X 125.5  Y 89.2  Z 15.0", font_small, C["text_muted"])
 
 # 缩放控制
 zoom_x = canvas_x + canvas_w - 160
@@ -470,39 +477,44 @@ draw_text(right_x + 24, content_y + 24, "参数设置", font_h1, C["text_primary
 # ============================================
 preset_y = content_y + 50
 
-# 预设模板标题栏
-draw_rounded_rect(right_x + 16, preset_y, SIDEBAR_RIGHT_W - 32, 36, 8, fill=C["bg_card"])
-draw_text(right_x + 28, preset_y + 10, "▼", font_small, C["accent_primary"])
+# 预设模板容器背景（包含标题和内容）
+preset_content_h = 200  # 包含标题、下拉选择器、常用标签、快速参数
+draw_rounded_rect(right_x + 16, preset_y, SIDEBAR_RIGHT_W - 32, preset_content_h, 8, fill=C["bg_card"])
+
+# 预设模板标题栏 - 用polygon绘制向下三角形
+tri_x = right_x + 28
+tri_y = preset_y + 14
+draw.polygon([(tri_x, tri_y), (tri_x + 10, tri_y), (tri_x + 5, tri_y + 6)], fill=C["accent_primary"])
 draw_text(right_x + 48, preset_y + 10, "预设模板", font_h2, C["text_primary"])
 
 # 简洁下拉选择器
-preset_select_y = preset_y + 44
-draw_rounded_rect(right_x + 16, preset_select_y, SIDEBAR_RIGHT_W - 32, 36, 8, fill=C["bg_elevated"], outline=C["border_default"])
-draw_text(right_x + 28, preset_select_y + 10, "30cm勾边字", font_body, C["text_primary"])
-draw_text(right_x + SIDEBAR_RIGHT_W - 52, preset_select_y + 10, "▼", font_small, C["text_muted"])
+preset_select_y = preset_y + 40
+draw_rounded_rect(right_x + 24, preset_select_y, SIDEBAR_RIGHT_W - 48, 36, 8, fill=C["bg_elevated"], outline=C["border_default"])
+draw_text(right_x + 36, preset_select_y + 10, "30cm勾边字", font_body, C["text_primary"])
+# 下拉三角形
+dropdown_tri_x = right_x + SIDEBAR_RIGHT_W - 56
+dropdown_tri_y = preset_select_y + 14
+draw.polygon([(dropdown_tri_x, dropdown_tri_y), (dropdown_tri_x + 10, dropdown_tri_y), (dropdown_tri_x + 5, dropdown_tri_y + 6)], fill=C["text_muted"])
 
 # 常用模板快捷标签
 tag_y = preset_select_y + 44
-draw_text(right_x + 20, tag_y, "常用", font_small, C["text_muted"])
+draw_text(right_x + 28, tag_y, "常用", font_small, C["text_muted"])
 
 preset_tags = ["勾边字", "包边字", "连襟字", "围边字"]
-tag_x = right_x + 16
+tag_x = right_x + 24
 tag_row_y = tag_y + 20
 for i, tag in enumerate(preset_tags):
-    tag_w = 72
+    tag_w = 68
     if i == 0:  # 选中状态
         draw_rounded_rect(tag_x, tag_row_y, tag_w, 28, 6, fill=C["accent_primary"])
-        draw_text(tag_x + 14, tag_row_y + 6, tag, font_small, (255, 255, 255))
+        draw_text(tag_x + 12, tag_row_y + 6, tag, font_small, (255, 255, 255))
     else:
-        draw_rounded_rect(tag_x, tag_row_y, tag_w, 28, 6, fill=C["bg_card"])
-        draw_text(tag_x + 14, tag_row_y + 6, tag, font_small, C["text_secondary"])
+        draw_rounded_rect(tag_x, tag_row_y, tag_w, 28, 6, fill=C["bg_elevated"])
+        draw_text(tag_x + 12, tag_row_y + 6, tag, font_small, C["text_secondary"])
     tag_x += tag_w + 6
 
-# 快速设置卡片
-card_y = tag_row_y + 44
-draw_rounded_rect(right_x + 16, card_y, SIDEBAR_RIGHT_W - 32, 70, 10, fill=C["bg_card"])
-
 # 快速参数 - 紧凑布局
+card_y = tag_row_y + 36
 quick_params = [
     ("字壳高度", "30", "mm"),
     ("壁厚", "1.2", "mm"),
@@ -510,10 +522,10 @@ quick_params = [
 ]
 qp_x = right_x + 24
 for label, value, unit in quick_params:
-    draw_text(qp_x, card_y + 10, label, font_small, C["text_muted"])
-    draw_rounded_rect(qp_x, card_y + 26, 65, 28, 6, fill=C["bg_elevated"])
-    draw_text(qp_x + 8, card_y + 32, value, font_mono, C["text_primary"])
-    draw_text(qp_x + 42, card_y + 34, unit, font_small, C["text_muted"])
+    draw_text(qp_x, card_y + 6, label, font_small, C["text_muted"])
+    draw_rounded_rect(qp_x, card_y + 22, 65, 28, 6, fill=C["bg_elevated"])
+    draw_text(qp_x + 8, card_y + 28, value, font_mono, C["text_primary"])
+    draw_text(qp_x + 42, card_y + 30, unit, font_small, C["text_muted"])
     qp_x += 100
 
 # 可折叠参数组 - 全部折叠只显示标题
@@ -531,14 +543,22 @@ sections = [
     ("机器设置", False, []),
 ]
 
-section_y = card_y + 82
+section_y = preset_y + preset_content_h + 8
 for section_name, expanded, params in sections:
     # 分组标题
     draw_rounded_rect(right_x + 16, section_y, SIDEBAR_RIGHT_W - 32, 36, 8, fill=C["bg_card"])
 
-    # 展开/收起指示器
-    indicator = "▼" if expanded else "▶"
-    draw_text(right_x + 28, section_y + 10, indicator, font_small, C["accent_primary"] if expanded else C["text_muted"])
+    # 展开/收起指示器 - 用polygon绘制三角形
+    tri_x = right_x + 28
+    tri_y = section_y + 14
+    tri_color = C["accent_primary"] if expanded else C["text_muted"]
+    if expanded:
+        # 向下三角形
+        draw.polygon([(tri_x, tri_y), (tri_x + 10, tri_y), (tri_x + 5, tri_y + 6)], fill=tri_color)
+    else:
+        # 向右三角形
+        draw.polygon([(tri_x, tri_y), (tri_x + 6, tri_y + 5), (tri_x, tri_y + 10)], fill=tri_color)
+    
     draw_text(right_x + 48, section_y + 10, section_name, font_h2, C["text_primary"])
 
     section_y += 42
