@@ -171,9 +171,11 @@ def generate_preview_mode():
     toolbar_y = canvas_y + 16
     draw_rounded_rect(canvas_x + 20, toolbar_y, canvas_w - 40, 44, 8, fill=C["bg_card"])
 
-    # 显示选项（路径类型过滤）
+    # 显示选项（路径类型过滤）- 颜色与切片统计保持一致
     display_options = [("外壁", True, C["path_outer"]), ("内壁", True, C["path_inner"]),
-                       ("填充", False, C["path_fill"]), ("空走", False, C["path_travel"])]
+                       ("填充", False, C["path_fill"]), ("空走", False, C["path_travel"]),
+                       ("裙边", True, C["warning"]), ("卡槽", True, C["extruder_2"]),
+                       ("底面", True, C["info"]), ("顶面", True, C["error"])]
     ox = canvas_x + 32
     for name, enabled, color in display_options:
         # 复选框
@@ -181,7 +183,9 @@ def generate_preview_mode():
         box_y = toolbar_y + 14
         if enabled:
             draw.rounded_rectangle([box_x, box_y, box_x + 14, box_y + 14], radius=3, fill=color)
-            draw_text(box_x + 3, box_y - 1, "✓", font_small, (255, 255, 255))
+            # 用线条画勾选符号
+            draw.line([(box_x + 3, box_y + 7), (box_x + 6, box_y + 10)], fill=(255, 255, 255), width=2)
+            draw.line([(box_x + 6, box_y + 10), (box_x + 11, box_y + 4)], fill=(255, 255, 255), width=2)
         else:
             draw.rounded_rectangle([box_x, box_y, box_x + 14, box_y + 14], radius=3,
                                    fill=C["bg_elevated"], outline=C["border_default"])
@@ -398,12 +402,12 @@ def generate_preview_mode():
     draw_text(right_x + 190, header_y, "长度", font_small, C["text_muted"])
     draw_text(right_x + 250, header_y, "占比", font_small, C["text_muted"])
 
-    # 路径类型数据
+    # 路径类型数据 - 颜色与工具栏保持一致
     path_types = [
         ("外壁", C["path_outer"], "1h36m", "31.45m", "68.3%"),
         ("内壁", C["path_inner"], "15m32s", "5.22m", "11.1%"),
         ("填充", C["path_fill"], "6m38s", "1.94m", "4.7%"),
-        ("顶面", C["warning"], "8m29s", "1.12m", "6.1%"),
+        ("顶面", C["error"], "8m29s", "1.12m", "6.1%"),
         ("空走", C["path_travel"], "13m38s", "-", "9.7%"),
     ]
 
