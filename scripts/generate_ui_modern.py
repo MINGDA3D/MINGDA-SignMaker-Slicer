@@ -338,7 +338,7 @@ info_y = inner_canvas_y + inner_canvas_h + 8
 draw_rounded_rect(canvas_x + 20, info_y, canvas_w - 40, 36, 8, fill=C["bg_card"])
 draw_text(canvas_x + 36, info_y + 10, "尺寸: 120 × 150 mm", font_small, C["text_muted"])
 draw_text(canvas_x + 200, info_y + 10, "缩放: 100%", font_small, C["text_muted"])
-draw_text(canvas_x + 320, info_y + 10, "鼠标: X 125.5  Y 89.2", font_mono, C["text_muted"])
+draw_text(canvas_x + 320, info_y + 10, "坐标: X 125.5  Y 89.2", font_small, C["text_muted"])
 
 # 缩放控制 (右侧)
 zoom_x = canvas_x + canvas_w - 160
@@ -458,7 +458,7 @@ draw_rounded_rect(0, HEIGHT - FOOTER_H, WIDTH, FOOTER_H, 0, fill=C["bg_primary"]
 # 状态信息
 draw_text(20, HEIGHT - FOOTER_H + 10, "● 就绪", font_body, C["success"])
 draw_text(100, HEIGHT - FOOTER_H + 10, "图形: 3个", font_small, C["text_muted"])
-draw_text(200, HEIGHT - FOOTER_H + 10, "机器: ZC-800 (800×800mm)", font_small, C["text_muted"])
+draw_text(200, HEIGHT - FOOTER_H + 10, "机器: AD-F4 (800×1200mm)", font_small, C["text_muted"])
 
 # 版本
 draw_text(WIDTH - 150, HEIGHT - FOOTER_H + 10, "SignMaker Slicer v1.0", font_small, C["text_muted"])
