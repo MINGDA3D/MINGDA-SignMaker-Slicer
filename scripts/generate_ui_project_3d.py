@@ -467,17 +467,38 @@ for section_name, expanded, params in sections:
 # 右侧面板底部按钮区域（面板外）
 btn_area_y = content_y + content_h - 60
 
-# 切片按钮 - 渐变主按钮
-slice_btn_w = 150
-draw_gradient_rect(right_x + 16, btn_area_y, slice_btn_w, 44)
-draw_rounded_rect(right_x + 16, btn_area_y, slice_btn_w, 44, 10, outline=None)
-draw_text(right_x + 16 + (slice_btn_w - 26) // 2, btn_area_y + 12, "切片", font_h2, (255,255,255))
+# 切片按钮 - 蓝色圆角主按钮，右侧带下拉箭头，宽度与参数设置栏一致
+slice_btn_w = SIDEBAR_RIGHT_W - 32
+slice_btn_h = 44
+slice_btn_x = right_x + 16
+slice_btn_y = btn_area_y
 
-# 上传按钮
-upload_btn_w = 150
-upload_btn_x = right_x + 16 + slice_btn_w + 8
-draw_rounded_rect(upload_btn_x, btn_area_y, upload_btn_w, 44, 10, fill=C["bg_card"], outline=C["border_default"])
-draw_text(upload_btn_x + (upload_btn_w - 26) // 2, btn_area_y + 12, "上传", font_h2, C["text_secondary"])
+# 蓝色圆角背景
+draw_rounded_rect(slice_btn_x, slice_btn_y, slice_btn_w, slice_btn_h, 10, fill=C["accent_primary"], outline=None)
+
+# 文字居中（切片按钮用28号字体，精确上下居中）
+text = "切片"
+try:
+    font_btn_28 = ImageFont.truetype("msyh.ttc", 28)
+except:
+    font_btn_28 = font_h1  # 备用字体
+bbox = draw.textbbox((0, 0), text, font=font_btn_28)
+font_w = bbox[2] - bbox[0]
+font_h = bbox[3] - bbox[1]
+text_x = slice_btn_x + (slice_btn_w - font_w - 24) // 2  # 留出箭头空间
+text_y = slice_btn_y + (slice_btn_h - font_h) // 2 - bbox[1]
+draw_text(text_x, text_y, text, font_btn_28, (255,255,255))
+
+# 右侧下拉箭头（三角形）
+arrow_w, arrow_h = 16, 8
+arrow_x = slice_btn_x + slice_btn_w - 24
+arrow_y = slice_btn_y + (slice_btn_h - arrow_h) // 2
+arrow_points = [
+    (arrow_x, arrow_y),
+    (arrow_x + arrow_w, arrow_y),
+    (arrow_x + arrow_w//2, arrow_y + arrow_h)
+]
+draw.polygon(arrow_points, fill=(255,255,255))
 
 # ============================================
 # 底部状态栏
