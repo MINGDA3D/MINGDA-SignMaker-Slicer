@@ -477,16 +477,38 @@ def generate_preview_mode():
     # ============================================
     btn_area_y = content_y + content_h - 60
 
-    # 发送到打印机按钮
+    # 发送到打印机按钮 - 蓝色圆角主按钮，右侧带下拉箭头
     btn_w = SIDEBAR_RIGHT_W - 32
-    draw_gradient_rect(right_x + 16, btn_area_y, btn_w, 44)
-    draw.rounded_rectangle([right_x + 16, btn_area_y, right_x + 16 + btn_w, btn_area_y + 44],
-                           radius=10, outline=None)
+    btn_h = 44
+    btn_x = right_x + 16
+    btn_y = btn_area_y
 
+    # 蓝色圆角背景
+    draw_rounded_rect(btn_x, btn_y, btn_w, btn_h, 10, fill=C["accent_primary"], outline=None)
+
+    # 文字居中（用16号字体，留出箭头空间）
     btn_text = "发送到打印机"
-    bbox = draw.textbbox((0, 0), btn_text, font=font_h2)
-    text_w = bbox[2] - bbox[0]
-    draw_text(right_x + 16 + (btn_w - text_w) // 2, btn_area_y + 14, btn_text, font_h2, (255, 255, 255))
+    try:
+        font_btn_16 = ImageFont.truetype("msyh.ttc", 16)
+    except:
+        font_btn_16 = font_h2
+    bbox = draw.textbbox((0, 0), btn_text, font=font_btn_16)
+    font_w = bbox[2] - bbox[0]
+    font_h = bbox[3] - bbox[1]
+    text_x = btn_x + (btn_w - font_w - 24) // 2  # 留出箭头空间
+    text_y = btn_y + (btn_h - font_h) // 2 - bbox[1]
+    draw_text(text_x, text_y, btn_text, font_btn_16, (255, 255, 255))
+
+    # 右侧下拉箭头（三角形）
+    arrow_w, arrow_h = 16, 8
+    arrow_x = btn_x + btn_w - 24
+    arrow_y = btn_y + (btn_h - arrow_h) // 2
+    arrow_points = [
+        (arrow_x, arrow_y),
+        (arrow_x + arrow_w, arrow_y),
+        (arrow_x + arrow_w // 2, arrow_y + arrow_h)
+    ]
+    draw.polygon(arrow_points, fill=(255, 255, 255))
 
     # ============================================
     # 底部状态栏
