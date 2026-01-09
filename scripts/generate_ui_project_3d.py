@@ -182,7 +182,7 @@ draw_rounded_rect(canvas_x + 8, canvas_y + 8, canvas_w - 16, canvas_h - 16, 12, 
 
 # 顶部画布工具栏
 canvas_toolbar_y = canvas_y + 16
-draw_rounded_rect(canvas_x + 20, canvas_toolbar_y, canvas_w - 40, 40, 8, fill=C["bg_card"])
+draw_rounded_rect(canvas_x + 20, canvas_toolbar_y, canvas_w - 40, 48, 8, fill=C["bg_card"])
 
 # 图标目录
 icons_dir = os.path.join(os.path.dirname(__file__), "..", "docs", "images")
@@ -195,7 +195,7 @@ toolbar_icons = [
 ]
 
 etx = canvas_x + 28
-icon_size = 20
+icon_size = 32
 
 # 编辑工具组1 - 变换操作 (移动/旋转/缩放)
 for icon_file, active in toolbar_icons:
@@ -203,19 +203,19 @@ for icon_file, active in toolbar_icons:
     icon = load_icon(icon_path, icon_size)
     
     if active:
-        draw_rounded_rect(etx, canvas_toolbar_y + 6, 32, 28, 6, fill=C["accent_primary"])
+        draw_rounded_rect(etx, canvas_toolbar_y + 8, 40, 32, 6, fill=C["accent_primary"])
     
     if icon:
         # 粘贴图标到画布
-        icon_x = etx + 6
-        icon_y = canvas_toolbar_y + 10
+        icon_x = etx + 4
+        icon_y = canvas_toolbar_y + 8
         img.paste(icon, (icon_x, icon_y), icon)
     
-    etx += 38
+    etx += 48
 
 # 分隔线
-draw.line([(etx + 4, canvas_toolbar_y + 10), (etx + 4, canvas_toolbar_y + 30)], fill=C["border_default"])
-etx += 16
+draw.line([(etx + 4, canvas_toolbar_y + 10), (etx + 4, canvas_toolbar_y + 38)], fill=C["border_default"])
+etx += 20
 
 # 编辑工具组2 - 镜像操作
 mirror_icons = [("mirror_x.png", "水平"), ("mirror_y.png", "垂直")]
@@ -223,12 +223,12 @@ for icon_file, label in mirror_icons:
     icon_path = os.path.join(icons_dir, icon_file)
     icon = load_icon(icon_path, icon_size)
     if icon:
-        img.paste(icon, (etx + 4, canvas_toolbar_y + 10), icon)
-    etx += 36
+        img.paste(icon, (etx + 4, canvas_toolbar_y + 8), icon)
+    etx += 44
 
 # 分隔线
-draw.line([(etx + 4, canvas_toolbar_y + 10), (etx + 4, canvas_toolbar_y + 30)], fill=C["border_default"])
-etx += 16
+draw.line([(etx + 4, canvas_toolbar_y + 10), (etx + 4, canvas_toolbar_y + 38)], fill=C["border_default"])
+etx += 20
 
 # 编辑工具组3 - 组合操作
 group_icons = [("组合.png", "组合"), ("split_objects_dark.png", "打散")]
@@ -236,12 +236,12 @@ for icon_file, label in group_icons:
     icon_path = os.path.join(icons_dir, icon_file)
     icon = load_icon(icon_path, icon_size)
     if icon:
-        img.paste(icon, (etx + 4, canvas_toolbar_y + 10), icon)
-    etx += 36
+        img.paste(icon, (etx + 4, canvas_toolbar_y + 8), icon)
+    etx += 44
 
 # 分隔线
-draw.line([(etx + 4, canvas_toolbar_y + 10), (etx + 4, canvas_toolbar_y + 30)], fill=C["border_default"])
-etx += 16
+draw.line([(etx + 4, canvas_toolbar_y + 10), (etx + 4, canvas_toolbar_y + 38)], fill=C["border_default"])
+etx += 20
 
 # 编辑工具组4 - 排版操作
 layout_icons = [("画面中心.png", "页面中心"), ("arrange.png", "自动排版")]
@@ -249,33 +249,33 @@ for icon_file, label in layout_icons:
     icon_path = os.path.join(icons_dir, icon_file)
     icon = load_icon(icon_path, icon_size)
     if icon:
-        img.paste(icon, (etx + 4, canvas_toolbar_y + 10), icon)
-    etx += 36
+        img.paste(icon, (etx + 4, canvas_toolbar_y + 8), icon)
+    etx += 44
 
 # 分隔线
-draw.line([(etx + 4, canvas_toolbar_y + 10), (etx + 4, canvas_toolbar_y + 30)], fill=C["border_default"])
-etx += 16
+draw.line([(etx + 4, canvas_toolbar_y + 10), (etx + 4, canvas_toolbar_y + 38)], fill=C["border_default"])
+etx += 20
 
 # 编辑工具组5 - 起始点设置
 icon_path = os.path.join(icons_dir, "起始点.png")
 icon = load_icon(icon_path, icon_size)
 if icon:
-    img.paste(icon, (etx + 4, canvas_toolbar_y + 10), icon)
-etx += 36
+    img.paste(icon, (etx + 4, canvas_toolbar_y + 8), icon)
+etx += 44
 
 # 编辑工具组6 - 打印顺序编辑
 icon_path = os.path.join(icons_dir, "顺序.png")
 icon = load_icon(icon_path, icon_size)
 if icon:
-    img.paste(icon, (etx + 4, canvas_toolbar_y + 10), icon)
-etx += 36
+    img.paste(icon, (etx + 4, canvas_toolbar_y + 8), icon)
+etx += 44
 
 # 视图切换 (最右侧) - 3D激活状态
-view_x = canvas_x + canvas_w - 100  # 工具栏右边距
-draw_text(view_x + 15, canvas_toolbar_y + 12, "2D", font_body, C["text_muted"])
-draw.line([(view_x + 50, canvas_toolbar_y + 12), (view_x + 50, canvas_toolbar_y + 28)], fill=C["border_default"])
+view_x = canvas_x + canvas_w - 110  # 工具栏右边距
+draw_text(view_x + 12, canvas_toolbar_y + 16, "2D", font_body, C["text_muted"])
+draw.line([(view_x + 40, canvas_toolbar_y + 12), (view_x + 40, canvas_toolbar_y + 36)], fill=C["border_default"])
 # 3D激活
-draw_text(view_x + 65, canvas_toolbar_y + 12, "3D", font_body, C["accent_primary"])
+draw_text(view_x + 52, canvas_toolbar_y + 16, "3D", font_body, C["accent_primary"])
 
 # 3D画布内容区
 inner_canvas_y = canvas_toolbar_y + 56
