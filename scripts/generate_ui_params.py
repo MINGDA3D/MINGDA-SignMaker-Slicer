@@ -375,15 +375,38 @@ def generate_part1():
     # ============================================
     renderer.draw_section_header("台阶/V槽", expanded=True, has_checkbox=True, checked=True)
 
-    renderer.draw_text(m + 8, renderer.y + 2, "台阶数量 (最多7个)", font_small, C["text_muted"])
+    renderer.draw_text(m + 8, renderer.y + 2, "台阶数量", font_small, C["text_muted"])
     renderer.y += 18
 
-    # 表头
-    renderer.draw_text(m + 8, renderer.y, "序号", font_small, C["text_muted"])
-    renderer.draw_text(m + 50, renderer.y, "位置", font_small, C["text_muted"])
-    renderer.draw_text(m + 125, renderer.y, "高度", font_small, C["text_muted"])
-    renderer.draw_text(m + 200, renderer.y, "宽度", font_small, C["text_muted"])
-    renderer.draw_text(m + 275, renderer.y, "启用", font_small, C["text_muted"])
+    # 台阶布局 - 均匀分布
+    row_start = m + 8
+    row_end = m + renderer.content_w - 8
+    total_w = row_end - row_start
+
+    # 列位置计算 - 序号和启用之间三等分
+    col_seq = row_start  # 序号
+    seq_w = 35  # 序号列宽度
+    col_enable = row_end - 18  # 启用 - 与换色层复选框对齐
+
+    # 中间区域三等分
+    middle_start = row_start + seq_w
+    middle_end = col_enable - 20  # 留出启用列空间
+    middle_w = middle_end - middle_start
+    third_w = middle_w // 3
+
+    col_pos = middle_start  # 位置
+    col_height = middle_start + third_w  # 高度
+    col_width = middle_start + third_w * 2  # 宽度
+
+    input_w = third_w - 10  # 输入框宽度，留出间距
+
+    # 表头 - 文字与输入框居中对齐
+    renderer.draw_text(int(col_seq), renderer.y, "序号", font_small, C["text_muted"])
+    # 位置、高度、宽度居中于输入框
+    renderer.draw_text(int(col_pos) + input_w // 2 - 10, renderer.y, "位置", font_small, C["text_muted"])
+    renderer.draw_text(int(col_height) + input_w // 2 - 10, renderer.y, "高度", font_small, C["text_muted"])
+    renderer.draw_text(int(col_width) + input_w // 2 - 10, renderer.y, "宽度", font_small, C["text_muted"])
+    renderer.draw_text(int(col_enable) - 2, renderer.y, "启用", font_small, C["text_muted"])
     renderer.y += 16
 
     steps = [
@@ -393,11 +416,11 @@ def generate_part1():
     ]
 
     for step_num, pos, height, width, enabled in steps:
-        renderer.draw_text(m + 12, renderer.y + 4, step_num, font_small, C["text_primary"] if enabled else C["text_muted"])
-        renderer.draw_input(m + 40, renderer.y, 50, 20, pos)
-        renderer.draw_input(m + 115, renderer.y, 50, 20, height)
-        renderer.draw_input(m + 190, renderer.y, 50, 20, width)
-        renderer.draw_checkbox(m + 280, renderer.y + 3, enabled, 14)
+        renderer.draw_text(int(col_seq) + 4, renderer.y + 4, step_num, font_small, C["text_primary"] if enabled else C["text_muted"])
+        renderer.draw_input(int(col_pos), renderer.y, input_w, 20, pos)
+        renderer.draw_input(int(col_height), renderer.y, input_w, 20, height)
+        renderer.draw_input(int(col_width), renderer.y, input_w, 20, width)
+        renderer.draw_checkbox(int(col_enable), renderer.y + 3, enabled, 14)
         renderer.y += 24
 
     renderer.y += 4
