@@ -176,11 +176,13 @@ class ParamsRenderer:
         x = self.margin + 8
         label_w = 90  # 标签区域宽度
         self.draw_text(x, self.y + 4, label, font_label, C["text_secondary"])
-        input_x = self.margin + label_w + 16
-        # 输入框延伸到右边界，留出单位空间
+        # 输入框固定宽度，靠中线对齐
         if input_w is None:
-            unit_space = 30 if unit else 8
-            input_w = self.content_w - label_w - 24 - unit_space
+            input_w = 80  # 固定较短宽度
+        # 中线位置：面板宽度的一半
+        center_x = self.margin + self.content_w // 2
+        # 输入框左边缘对齐到中线
+        input_x = center_x
         self.draw_input(input_x, self.y, input_w, 22, value, unit)
         self.y += 26
 
