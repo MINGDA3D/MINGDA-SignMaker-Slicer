@@ -340,49 +340,89 @@ hint_y = inner_canvas_y + 16
 draw_rounded_rect(hint_x, hint_y, 150, 24, 6, fill=C["bg_card"])
 draw_text(hint_x + 12, hint_y + 5, hint_text, font_small, C["text_muted"])
 
-# 3D网格地面 (透视效果) - 机器尺寸800×1200mm，每格40mm
-grid_center_x = canvas_x + canvas_w // 2
-grid_center_y = inner_canvas_y + inner_canvas_h - 80
+# 3D网格平台 - 简单透视效果
+# 参考效果图：前宽后窄的透视长方体
 
-# 绘制透视网格
+# 画布中心
+canvas_center_x = canvas_x + canvas_w // 2
+canvas_center_y = inner_canvas_y + inner_canvas_h // 2
+
+# 平台尺寸参数（像素）
+platform_front_width = 600   # 前边宽度
+platform_back_width = 440    # 后边宽度（透视收缩）
+platform_depth = 380         # 前后深度（Y方向像素）
+platform_height = 45         # 高度（Z方向）
+
+# 顶面位置
+top_front_y = canvas_center_y + 180  # 前边Y（靠近底部）
+top_back_y = top_front_y - platform_depth  # 后边Y（靠近顶部）
+
+# 边框颜色
+border_color_top = (220, 80, 100)  # 红色 - 顶面和垂直边框
+border_color_bottom = C["accent_secondary"]  # 青色 - 底面边框
 grid_color = C["grid_3d"]
-vanish_y = inner_canvas_y + 30  # 消失点
 
-# 网格参数：800×1200mm，40mm一格
-# X方向(宽度): 800/40 = 20格，21条线
-# Y方向(深度): 1200/40 = 30格，用透视效果只显示部分
-grid_base_width = 360  # 底部宽度（对应800mm）
-grid_depth_lines = 16  # 深度方向显示的线数
+# ---- 顶面四个角（整数坐标）----
+tf_fl_x = canvas_center_x - platform_front_width // 2  # 前左X
+tf_fr_x = canvas_center_x + platform_front_width // 2  # 前右X
+tf_bl_x = canvas_center_x - platform_back_width // 2   # 后左X
+tf_br_x = canvas_center_x + platform_back_width // 2   # 后右X
 
-# 横向网格线 (透视) - Y方向深度
-grid_step_y = (grid_center_y - vanish_y - 60) / grid_depth_lines
-for i in range(grid_depth_lines + 1):
-    y_pos = int(grid_center_y - i * grid_step_y)
-    # 随着距离变远，线条逐渐收窄（透视效果）
-    shrink = 1 - (i / grid_depth_lines) * 0.6
-    half_width = int(grid_base_width * shrink)
-    if y_pos > vanish_y:
-        alpha = max(0.3, 1 - i * 0.05)
-        line_color = tuple(int(c * alpha) for c in grid_color)
-        draw.line([(grid_center_x - half_width, y_pos),
-                   (grid_center_x + half_width, y_pos)], fill=line_color, width=1)
+# ---- 底面四个角 (在顶面下方，Y坐标一致偏移) ----
+bf_front_y = top_front_y + platform_height
+bf_back_y = top_back_y + platform_height  # 修正：底面后边偏移量和前边一致
 
-# 纵向网格线 (透视 - 向消失点汇聚) - X方向20格
-grid_lines_x = 21  # 800/40=20格，21条线
-for i in range(grid_lines_x):
-    # 底部位置：均匀分布
-    ratio = (i / (grid_lines_x - 1)) - 0.5  # -0.5 到 0.5
-    bottom_x = grid_center_x + int(ratio * 2 * grid_base_width)
-    # 顶部位置：向消失点汇聚
-    top_x = grid_center_x + int(ratio * 2 * grid_base_width * 0.4)
-    top_y = int(grid_center_y - grid_depth_lines * grid_step_y)
-    draw.line([(bottom_x, grid_center_y), (top_x, top_y)], fill=grid_color, width=1)
+# ---- 绘制底面边框 ----
+draw.line([(tf_fl_x, bf_front_y), (tf_fr_x, bf_front_y)], fill=border_color_bottom, width=2)
+draw.line([(tf_fr_x, bf_front_y), (tf_br_x, bf_back_y)], fill=border_color_bottom, width=2)
+draw.line([(tf_br_x, bf_back_y), (tf_bl_x, bf_back_y)], fill=border_color_bottom, width=2)
+draw.line([(tf_bl_x, bf_back_y), (tf_fl_x, bf_front_y)], fill=border_color_bottom, width=2)
+
+# ---- 绘制四条垂直边线 ----
+draw.line([(tf_fl_x, top_front_y), (tf_fl_x, bf_front_y)], fill=border_color_top, width=2)
+draw.line([(tf_fr_x, top_front_y), (tf_fr_x, bf_front_y)], fill=border_color_top, width=2)
+draw.line([(tf_bl_x, top_back_y), (tf_bl_x, bf_back_y)], fill=border_color_top, width=2)
+draw.line([(tf_br_x, top_back_y), (tf_br_x, bf_back_y)], fill=border_color_top, width=2)
+
+# ---- 绘制底面网格（严格在青色边框内）----
+# 机器尺寸 800x1200mm，格子20mm一格
+# X方向: 800/20 = 40格
+# Y方向: 1200/20 = 60格
+grid_x_count = 40
+grid_y_count = 60
+
+# 只绘制内部网格线（不包括边框线）
+# 横向网格线 (从前到后) - 绘制在底面
+for i in range(1, grid_y_count):  # 不包括第一条和最后一条（边框会覆盖）
+    t = i / grid_y_count
+    # 当前行的Y坐标（从前边到后边线性插值）- 使用底面Y坐标
+    y = bf_front_y + int((bf_back_y - bf_front_y) * t)
+    # 当前行的左右X坐标（沿左右边线插值）
+    left_x = tf_fl_x + int((tf_bl_x - tf_fl_x) * t)
+    right_x = tf_fr_x + int((tf_br_x - tf_fr_x) * t)
+    draw.line([(left_x, y), (right_x, y)], fill=grid_color, width=1)
+
+# 纵向网格线 (从左到右) - 绘制在底面
+for i in range(1, grid_x_count):  # 不包括第一条和最后一条（边框会覆盖）
+    t = i / grid_x_count
+    # 前边的X坐标
+    front_x = tf_fl_x + int((tf_fr_x - tf_fl_x) * t)
+    # 后边的X坐标
+    back_x = tf_bl_x + int((tf_br_x - tf_bl_x) * t)
+    draw.line([(front_x, bf_front_y), (back_x, bf_back_y)], fill=grid_color, width=1)
+
+# ---- 顶面边框 (最后绘制，覆盖网格边缘) ----
+draw.line([(tf_fl_x, top_front_y), (tf_fr_x, top_front_y)], fill=border_color_top, width=2)
+draw.line([(tf_fr_x, top_front_y), (tf_br_x, top_back_y)], fill=border_color_top, width=2)
+draw.line([(tf_br_x, top_back_y), (tf_bl_x, top_back_y)], fill=border_color_top, width=2)
+draw.line([(tf_bl_x, top_back_y), (tf_fl_x, top_front_y)], fill=border_color_top, width=2)
 
 # ============================================
 # 绘制3D字壳模型 - "发"字 (简单3D效果)
 # ============================================
-cx = grid_center_x
-cy = inner_canvas_y + inner_canvas_h // 2 - 30
+# 文字在画布中央偏上
+cx = canvas_center_x
+cy = canvas_center_y - 20
 
 char_font = ImageFont.truetype("msyh.ttc", 120) if os.path.exists("C:\\Windows\\Fonts\\msyh.ttc") else font_large
 
