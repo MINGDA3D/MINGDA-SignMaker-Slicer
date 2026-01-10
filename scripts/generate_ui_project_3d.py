@@ -464,20 +464,35 @@ for i, tag in enumerate(preset_tags):
         draw_text(tag_x + 12, tag_row_y + 6, tag, font_small, C["text_secondary"])
     tag_x += tag_w + 6
 
-# 快速参数 - 紧凑布局
+# 快速参数 - 均分宽度布局
 card_y = tag_row_y + 36
 quick_params = [
     ("字壳高度", "30", "mm"),
     ("壁厚", "1.2", "mm"),
     ("层高", "0.3", "mm"),
 ]
+# 计算均分宽度: 卡片内可用宽度 = SIDEBAR_RIGHT_W - 32(卡片边距) - 16(内边距)
+available_width = SIDEBAR_RIGHT_W - 48
+param_gap = 8  # 参数之间的间距
+param_count = len(quick_params)
+param_width = (available_width - param_gap * (param_count - 1)) // param_count
+input_box_width = param_width - 4  # 输入框宽度略小于参数区域
+
 qp_x = right_x + 24
 for label, value, unit in quick_params:
-    draw_text(qp_x, card_y + 6, label, font_small, C["text_muted"])
-    draw_rounded_rect(qp_x, card_y + 22, 65, 28, 6, fill=C["bg_elevated"])
-    draw_text(qp_x + 8, card_y + 28, value, font_mono, C["text_primary"])
-    draw_text(qp_x + 42, card_y + 30, unit, font_small, C["text_muted"])
-    qp_x += 100
+    # 计算标签文字宽度，使其居中对齐输入框
+    label_bbox = draw.textbbox((0, 0), label, font=font_small)
+    label_width = label_bbox[2] - label_bbox[0]
+    label_x = qp_x + (input_box_width - label_width) // 2
+    draw_text(label_x, card_y + 6, label, font_small, C["text_muted"])
+    draw_rounded_rect(qp_x, card_y + 22, input_box_width, 28, 6, fill=C["bg_elevated"])
+    # 数值和单位也居中
+    value_unit = value + " " + unit
+    value_bbox = draw.textbbox((0, 0), value_unit, font=font_mono)
+    value_width = value_bbox[2] - value_bbox[0]
+    value_x = qp_x + (input_box_width - value_width) // 2
+    draw_text(value_x, card_y + 28, value_unit, font_mono, C["text_primary"])
+    qp_x += param_width + param_gap
 
 # 可折叠参数组 - 全部折叠只显示标题
 sections = [
