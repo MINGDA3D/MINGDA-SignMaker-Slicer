@@ -171,32 +171,61 @@ def generate_part1():
     renderer.draw_dropdown(m + 8, renderer.y, renderer.content_w - 16, 28, "30cm勾边字")
     renderer.y += 36
 
-    # 常用标签
+    # 常用标签 - 等分宽度
     renderer.draw_text(m + 8, renderer.y, "常用", font_small, C["text_muted"])
     renderer.y += 18
 
     tags = ["勾边字", "包边字", "连襟字", "围边字"]
+    # 计算等分宽度
+    available_width = renderer.content_w - 16  # 两边各留8px边距
+    tag_gap = 6  # 标签之间的间距
+    tag_count = len(tags)
+    tag_w = (available_width - tag_gap * (tag_count - 1)) // tag_count
+
     tag_x = m + 8
     for i, tag in enumerate(tags):
-        tag_w = 58
         if i == 0:
             renderer.draw_rounded_rect(tag_x, renderer.y, tag_w, 24, 4, fill=C["accent_primary"])
-            renderer.draw_text(tag_x + 10, renderer.y + 5, tag, font_small, (255, 255, 255))
+            # 文字居中
+            bbox = renderer.draw.textbbox((0, 0), tag, font=font_small)
+            text_w = bbox[2] - bbox[0]
+            text_x = tag_x + (tag_w - text_w) // 2
+            renderer.draw_text(text_x, renderer.y + 5, tag, font_small, (255, 255, 255))
         else:
             renderer.draw_rounded_rect(tag_x, renderer.y, tag_w, 24, 4, fill=C["bg_elevated"])
-            renderer.draw_text(tag_x + 10, renderer.y + 5, tag, font_small, C["text_secondary"])
-        tag_x += tag_w + 6
+            bbox = renderer.draw.textbbox((0, 0), tag, font=font_small)
+            text_w = bbox[2] - bbox[0]
+            text_x = tag_x + (tag_w - text_w) // 2
+            renderer.draw_text(text_x, renderer.y + 5, tag, font_small, C["text_secondary"])
+        tag_x += tag_w + tag_gap
     renderer.y += 32
 
-    # 快速参数
-    qp_x = m + 8
+    # 快速参数 - 等分宽度
     quick_params = [("字壳高度", "30", "mm"), ("壁厚", "1.2", "mm"), ("层高", "0.3", "mm")]
+    param_count = len(quick_params)
+    param_gap = 8
+    param_w = (available_width - param_gap * (param_count - 1)) // param_count
+    input_w = param_w - 4  # 输入框宽度略小
+
+    qp_x = m + 8
     for label, value, unit in quick_params:
-        renderer.draw_text(qp_x, renderer.y, label, font_small, C["text_muted"])
-        renderer.draw_rounded_rect(qp_x, renderer.y + 14, 60, 24, 4, fill=C["bg_elevated"])
-        renderer.draw_text(qp_x + 8, renderer.y + 20, value, font_value, C["text_primary"])
-        renderer.draw_text(qp_x + 40, renderer.y + 21, unit, font_small, C["text_muted"])
-        qp_x += 80
+        # 标签居中
+        bbox = renderer.draw.textbbox((0, 0), label, font=font_small)
+        label_w = bbox[2] - bbox[0]
+        label_x = qp_x + (input_w - label_w) // 2
+        renderer.draw_text(label_x, renderer.y, label, font_small, C["text_muted"])
+
+        # 输入框
+        renderer.draw_rounded_rect(qp_x, renderer.y + 14, input_w, 24, 4, fill=C["bg_elevated"])
+
+        # 数值和单位居中
+        value_unit = value + " " + unit
+        bbox = renderer.draw.textbbox((0, 0), value_unit, font=font_value)
+        value_w = bbox[2] - bbox[0]
+        value_x = qp_x + (input_w - value_w) // 2
+        renderer.draw_text(value_x, renderer.y + 20, value_unit, font_value, C["text_primary"])
+
+        qp_x += param_w + param_gap
 
     renderer.y += 50
     renderer.add_space()
