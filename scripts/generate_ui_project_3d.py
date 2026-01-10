@@ -270,7 +270,14 @@ if icon:
     img.paste(icon, (etx + 4, canvas_toolbar_y + 8), icon)
 etx += 44
 
-# 编辑工具组6 - 打印顺序编辑
+# 编辑工具组6 - 底孔
+icon_path = os.path.join(icons_dir, "bottom_hole.png")
+icon = load_icon(icon_path, icon_size)
+if icon:
+    img.paste(icon, (etx + 4, canvas_toolbar_y + 8), icon)
+etx += 44
+
+# 编辑工具组7 - 打印顺序编辑
 icon_path = os.path.join(icons_dir, "顺序.png")
 icon = load_icon(icon_path, icon_size)
 if icon:
@@ -549,7 +556,7 @@ draw.polygon(arrow_points, fill=(255, 255, 255))
 draw_rounded_rect(0, HEIGHT - FOOTER_H, WIDTH, FOOTER_H, 0, fill=C["bg_primary"])
 draw_text(20, HEIGHT - FOOTER_H + 10, "● 就绪", font_body, C["success"])
 draw_text(100, HEIGHT - FOOTER_H + 10, "图形: 3个", font_small, C["text_muted"])
-draw_text(200, HEIGHT - FOOTER_H + 10, "机器: AD-F4 (800×1200mm)", font_small, C["text_muted"])
+draw_text(200, HEIGHT - FOOTER_H + 10, "机器: AD-F4 (800×1200x100mm)", font_small, C["text_muted"])
 draw_text(WIDTH - 150, HEIGHT - FOOTER_H + 10, "SignMaker Slicer v1.0", font_small, C["text_muted"])
 
 # ============================================
