@@ -106,16 +106,49 @@ class ParamsRenderer:
         text_y = y + (h - 10) // 2
         self.draw_text(text_x, text_y, text, font_small, (255, 255, 255) if primary or color else C["text_secondary"])
 
-    def draw_radio_group(self, x, y, options, selected=0, btn_w=55, btn_h=22):
+    def draw_radio_group(self, x, y, options, selected=0, btn_w=None, btn_h=22, total_w=None):
         gap = 4
+        # 如果没有指定按钮宽度，则根据总宽度等分
+        if btn_w is None and total_w is not None:
+            btn_w = (total_w - gap * (len(options) - 1)) // len(options)
+        elif btn_w is None:
+            btn_w = 55  # 默认宽度
+
         for i, opt in enumerate(options):
             bx = x + i * (btn_w + gap)
             if i == selected:
                 self.draw_rounded_rect(bx, y, btn_w, btn_h, 4, fill=C["accent_primary"])
-                self.draw_text(bx + 8, y + 4, opt, font_small, (255, 255, 255))
+                # 文字居中
+                bbox = self.draw.textbbox((0, 0), opt, font=font_small)
+                text_w = bbox[2] - bbox[0]
+                text_x = bx + (btn_w - text_w) // 2
+                self.draw_text(text_x, y + 4, opt, font_small, (255, 255, 255))
             else:
                 self.draw_rounded_rect(bx, y, btn_w, btn_h, 4, fill=C["bg_elevated"])
-                self.draw_text(bx + 8, y + 4, opt, font_small, C["text_muted"])
+                bbox = self.draw.textbbox((0, 0), opt, font=font_small)
+                text_w = bbox[2] - bbox[0]
+                text_x = bx + (btn_w - text_w) // 2
+                self.draw_text(text_x, y + 4, opt, font_small, C["text_muted"])
+
+    def draw_radio_row(self, label, options, selected=0):
+        """绘制带标签的单选按钮行"""
+        x = self.margin + 8
+        label_w = 90
+        self.draw_text(x, self.y + 4, label, font_label, C["text_secondary"])
+        radio_x = self.margin + label_w + 16
+        radio_w = self.content_w - label_w - 24
+        self.draw_radio_group(radio_x, self.y, options, selected, total_w=radio_w)
+        self.y += 28
+
+    def draw_dropdown_row(self, label, value):
+        """绘制带标签的下拉框行"""
+        x = self.margin + 8
+        label_w = 90
+        self.draw_text(x, self.y + 4, label, font_label, C["text_secondary"])
+        dropdown_x = self.margin + label_w + 16
+        dropdown_w = self.content_w - label_w - 24
+        self.draw_dropdown(dropdown_x, self.y, dropdown_w, 22, value)
+        self.y += 28
 
     def draw_section_header(self, title, expanded=True, has_checkbox=False, checked=False):
         x = self.margin
@@ -139,10 +172,15 @@ class ParamsRenderer:
         self.draw_text(text_x, self.y + 7, title, font_section, C["text_primary"])
         self.y += 32
 
-    def draw_param_row(self, label, value, unit="", input_w=55):
+    def draw_param_row(self, label, value, unit="", input_w=None):
         x = self.margin + 8
+        label_w = 90  # 标签区域宽度
         self.draw_text(x, self.y + 4, label, font_label, C["text_secondary"])
-        input_x = self.margin + 130
+        input_x = self.margin + label_w + 16
+        # 输入框延伸到右边界，留出单位空间
+        if input_w is None:
+            unit_space = 30 if unit else 8
+            input_w = self.content_w - label_w - 24 - unit_space
         self.draw_input(input_x, self.y, input_w, 22, value, unit)
         self.y += 26
 
@@ -236,14 +274,10 @@ def generate_part1():
     renderer.draw_section_header("字壳工艺", expanded=True)
 
     # 打印模式
-    renderer.draw_text(m + 8, renderer.y + 4, "打印模式", font_label, C["text_secondary"])
-    renderer.draw_radio_group(m + 100, renderer.y, ["镜像打印", "正常打印"], selected=1)
-    renderer.y += 28
+    renderer.draw_radio_row("打印模式", ["镜像打印", "正常打印"], selected=1)
 
     # 字边类型
-    renderer.draw_text(m + 8, renderer.y + 4, "字边类型", font_label, C["text_secondary"])
-    renderer.draw_radio_group(m + 100, renderer.y, ["直边", "斜边", "异形边"], selected=1, btn_w=50)
-    renderer.y += 30
+    renderer.draw_radio_row("字边类型", ["直边", "斜边", "异形边"], selected=1)
 
     params_1 = [
         ("字壳高度", "30", "mm"),
@@ -352,9 +386,7 @@ def generate_part1():
     # ============================================
     renderer.draw_section_header("防翘裙边", expanded=True, has_checkbox=True, checked=True)
 
-    renderer.draw_text(m + 8, renderer.y + 4, "防翘位置", font_label, C["text_secondary"])
-    renderer.draw_radio_group(m + 100, renderer.y, ["外防翘", "内防翘"], selected=0)
-    renderer.y += 28
+    renderer.draw_radio_row("防翘位置", ["外防翘", "内防翘"], selected=0)
 
     params_5 = [
         ("压线宽度", "0.5", "mm"),
@@ -374,9 +406,7 @@ def generate_part1():
     # ============================================
     renderer.draw_section_header("连襟字", expanded=True, has_checkbox=True, checked=False)
 
-    renderer.draw_text(m + 8, renderer.y + 4, "连襟类型", font_label, C["text_secondary"])
-    renderer.draw_radio_group(m + 100, renderer.y, ["三角形", "菱形"], selected=0)
-    renderer.y += 28
+    renderer.draw_radio_row("连襟类型", ["三角形", "菱形"], selected=0)
 
     params_6 = [
         ("连襟宽度", "15", "mm"),
@@ -394,15 +424,16 @@ def generate_part1():
     # ============================================
     renderer.draw_section_header("包边勾边", expanded=True)
 
+    # 勾边/包边有效 - 使用全宽布局
+    check_row_w = renderer.content_w - 16
+    half_w = check_row_w // 2
     renderer.draw_text(m + 8, renderer.y + 2, "勾边有效", font_label, C["text_secondary"])
     renderer.draw_checkbox(m + 80, renderer.y, True, 14)
-    renderer.draw_text(m + 150, renderer.y + 2, "包边有效", font_label, C["text_secondary"])
-    renderer.draw_checkbox(m + 220, renderer.y, False, 14)
+    renderer.draw_text(m + 8 + half_w, renderer.y + 2, "包边有效", font_label, C["text_secondary"])
+    renderer.draw_checkbox(m + 80 + half_w, renderer.y, False, 14)
     renderer.y += 24
 
-    renderer.draw_text(m + 8, renderer.y + 4, "位置", font_label, C["text_secondary"])
-    renderer.draw_radio_group(m + 100, renderer.y, ["内部", "外部"], selected=0)
-    renderer.y += 28
+    renderer.draw_radio_row("位置", ["内部", "外部"], selected=0)
 
     params_7 = [
         ("勾边高度", "1.2", "mm"),
@@ -434,11 +465,8 @@ def generate_part2():
     # ============================================
     renderer.draw_section_header("面板设置", expanded=True, has_checkbox=True, checked=True)
 
-    renderer.draw_text(m + 8, renderer.y + 4, "填充类型", font_label, C["text_secondary"])
-    renderer.draw_button(m + 100, renderer.y, 50, 22, "面板", primary=True)
-    renderer.draw_button(m + 155, renderer.y, 50, 22, "网格")
-    renderer.draw_button(m + 210, renderer.y, 50, 22, "底板")
-    renderer.y += 30
+    # 填充类型 - 使用等分按钮
+    renderer.draw_radio_row("填充类型", ["面板", "网格", "底板"], selected=0)
 
     params_panel = [
         ("填充间距", "8", "mm"),
@@ -452,23 +480,22 @@ def generate_part2():
     for label, value, unit in params_panel:
         renderer.draw_param_row(label, value, unit)
 
-    renderer.draw_text(m + 8, renderer.y + 4, "填充模式", font_label, C["text_secondary"])
-    renderer.draw_dropdown(m + 100, renderer.y, 100, 22, "自动连接")
-    renderer.y += 28
+    renderer.draw_dropdown_row("填充模式", "自动连接")
 
-    renderer.draw_text(m + 8, renderer.y + 4, "指定挤出机", font_label, C["text_secondary"])
-    renderer.draw_radio_group(m + 100, renderer.y, ["无", "2号", "3号"], selected=0, btn_w=45)
-    renderer.y += 30
+    renderer.draw_radio_row("指定挤出机", ["无", "2号", "3号"], selected=0)
 
+    # 复选框行 - 等分布局
+    check_row_w = renderer.content_w - 16
+    half_w = check_row_w // 2
     renderer.draw_checkbox(m + 8, renderer.y + 2, True, 14)
     renderer.draw_text(m + 28, renderer.y + 2, "连襟不参与", font_small, C["text_secondary"])
-    renderer.draw_checkbox(m + 130, renderer.y + 2, True, 14)
-    renderer.draw_text(m + 150, renderer.y + 2, "面板不参与", font_small, C["text_secondary"])
+    renderer.draw_checkbox(m + 8 + half_w, renderer.y + 2, True, 14)
+    renderer.draw_text(m + 28 + half_w, renderer.y + 2, "面板不参与", font_small, C["text_secondary"])
     renderer.y += 28
 
     # 花纹设置
     renderer.draw_text(m + 8, renderer.y + 2, "面板花纹", font_label, C["text_secondary"])
-    renderer.draw_checkbox(m + 100, renderer.y, False, 14)
+    renderer.draw_checkbox(renderer.margin + 106, renderer.y, False, 14)
     renderer.y += 24
 
     params_pattern = [
@@ -495,27 +522,21 @@ def generate_part2():
     for label, value, unit in params_base:
         renderer.draw_param_row(label, value, unit)
 
-    renderer.draw_text(m + 8, renderer.y + 4, "填充模式", font_label, C["text_secondary"])
-    renderer.draw_dropdown(m + 100, renderer.y, 100, 22, "自动连接")
-    renderer.y += 28
+    renderer.draw_dropdown_row("填充模式", "自动连接")
 
     # 生成底板DXF
     renderer.draw_checkbox(m + 8, renderer.y + 2, True, 14)
     renderer.draw_text(m + 28, renderer.y + 2, "生成底板 DXF", font_label, C["text_secondary"])
     renderer.y += 24
 
-    renderer.draw_text(m + 8, renderer.y + 4, "对齐补偿", font_label, C["text_secondary"])
-    renderer.draw_input(m + 100, renderer.y, 55, 22, "-0.4", "mm")
-    renderer.y += 28
+    renderer.draw_param_row("对齐补偿", "-0.4", "mm")
 
     # 生成面板DXF
     renderer.draw_checkbox(m + 8, renderer.y + 2, True, 14)
     renderer.draw_text(m + 28, renderer.y + 2, "生成面板 DXF", font_label, C["text_secondary"])
     renderer.y += 24
 
-    renderer.draw_text(m + 8, renderer.y + 4, "对齐补偿", font_label, C["text_secondary"])
-    renderer.draw_input(m + 100, renderer.y, 55, 22, "0", "mm")
-    renderer.y += 28
+    renderer.draw_param_row("对齐补偿", "0", "mm")
 
     renderer.add_space()
 
@@ -550,9 +571,7 @@ def generate_part2():
     for label, value, unit in params_fill:
         renderer.draw_param_row(label, value, unit)
 
-    renderer.draw_text(m + 8, renderer.y + 4, "填充图案", font_label, C["text_secondary"])
-    renderer.draw_dropdown(m + 100, renderer.y, 100, 22, "线性")
-    renderer.y += 28
+    renderer.draw_dropdown_row("填充图案", "线性")
 
     renderer.draw_checkbox(m + 8, renderer.y + 2, True, 14)
     renderer.draw_text(m + 28, renderer.y + 2, "生成内填充", font_small, C["text_secondary"])
@@ -566,9 +585,7 @@ def generate_part2():
     renderer.draw_section_header("机器设置", expanded=True)
 
     # 机器类型
-    renderer.draw_text(m + 8, renderer.y + 4, "机台类型", font_label, C["text_secondary"])
-    renderer.draw_dropdown(m + 100, renderer.y, 140, 22, "AD-F4 (800×1200mm)")
-    renderer.y += 30
+    renderer.draw_dropdown_row("机台类型", "AD-F4 (800×1200mm)")
 
     params_machine = [
         ("喷头1温度", "220", "°C"),
@@ -584,18 +601,21 @@ def generate_part2():
 
     renderer.y += 4
 
-    # 其他选项
+    # 其他选项 - 等分布局
+    check_row_w = renderer.content_w - 16
+    half_w = check_row_w // 2
     renderer.draw_checkbox(m + 8, renderer.y + 2, False, 14)
     renderer.draw_text(m + 28, renderer.y + 2, "头尾交替打印", font_small, C["text_secondary"])
-    renderer.y += 22
-
-    renderer.draw_checkbox(m + 8, renderer.y + 2, False, 14)
-    renderer.draw_text(m + 28, renderer.y + 2, "结束完成不回抽", font_small, C["text_secondary"])
+    renderer.draw_checkbox(m + 8 + half_w, renderer.y + 2, False, 14)
+    renderer.draw_text(m + 28 + half_w, renderer.y + 2, "结束完成不回抽", font_small, C["text_secondary"])
     renderer.y += 28
 
-    # 模板操作
-    renderer.draw_button(m + 8, renderer.y, 90, 24, "保存模板")
-    renderer.draw_button(m + 105, renderer.y, 90, 24, "读取模板")
+    # 模板操作 - 等分按钮
+    btn_gap = 8
+    btn_count = 2
+    btn_w = (renderer.content_w - 16 - btn_gap * (btn_count - 1)) // btn_count
+    renderer.draw_button(m + 8, renderer.y, btn_w, 24, "保存模板")
+    renderer.draw_button(m + 8 + btn_w + btn_gap, renderer.y, btn_w, 24, "读取模板")
     renderer.y += 36
 
     renderer.add_space()
@@ -603,10 +623,12 @@ def generate_part2():
     # ============================================
     # 底部操作按钮
     # ============================================
-    btn_w = (renderer.content_w - 16) // 3
+    btn_gap = 8
+    btn_count = 3
+    btn_w = (renderer.content_w - btn_gap * (btn_count - 1)) // btn_count
     renderer.draw_button(m, renderer.y, btn_w, 36, "计算路径", primary=True)
-    renderer.draw_button(m + btn_w + 8, renderer.y, btn_w, 36, "预览字边")
-    renderer.draw_button(m + btn_w * 2 + 16, renderer.y, btn_w, 36, "文件输出", primary=True)
+    renderer.draw_button(m + btn_w + btn_gap, renderer.y, btn_w, 36, "预览字边")
+    renderer.draw_button(m + (btn_w + btn_gap) * 2, renderer.y, btn_w, 36, "文件输出", primary=True)
     renderer.y += 48
 
     img = renderer.crop_to_content()
