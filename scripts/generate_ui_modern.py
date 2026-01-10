@@ -299,7 +299,14 @@ if icon:
     img.paste(icon, (etx + 4, canvas_toolbar_y + 8), icon)
 etx += 44
 
-# 编辑工具组6 - 打印顺序编辑
+# 编辑工具组6 - 底孔
+icon_path = os.path.join(icons_dir, "bottom_hole.png")
+icon = load_icon(icon_path, icon_size)
+if icon:
+    img.paste(icon, (etx + 4, canvas_toolbar_y + 8), icon)
+etx += 44
+
+# 编辑工具组7 - 打印顺序编辑
 icon_path = os.path.join(icons_dir, "顺序.png")
 icon = load_icon(icon_path, icon_size)
 if icon:
@@ -456,20 +463,35 @@ for i, tag in enumerate(preset_tags):
         draw_text(tag_x + 12, tag_row_y + 6, tag, font_small, C["text_secondary"])
     tag_x += tag_w + 6
 
-# 快速参数 - 紧凑布局
+# 快速参数 - 均分宽度布局
 card_y = tag_row_y + 36
 quick_params = [
     ("字壳高度", "30", "mm"),
     ("壁厚", "1.2", "mm"),
     ("层高", "0.3", "mm"),
 ]
+# 计算均分宽度: 卡片内可用宽度 = SIDEBAR_RIGHT_W - 32(卡片边距) - 16(内边距)
+available_width = SIDEBAR_RIGHT_W - 48
+param_gap = 8  # 参数之间的间距
+param_count = len(quick_params)
+param_width = (available_width - param_gap * (param_count - 1)) // param_count
+input_box_width = param_width - 4  # 输入框宽度略小于参数区域
+
 qp_x = right_x + 24
 for label, value, unit in quick_params:
-    draw_text(qp_x, card_y + 6, label, font_small, C["text_muted"])
-    draw_rounded_rect(qp_x, card_y + 22, 65, 28, 6, fill=C["bg_elevated"])
-    draw_text(qp_x + 8, card_y + 28, value, font_mono, C["text_primary"])
-    draw_text(qp_x + 42, card_y + 30, unit, font_small, C["text_muted"])
-    qp_x += 100
+    # 计算标签文字宽度，使其居中对齐输入框
+    label_bbox = draw.textbbox((0, 0), label, font=font_small)
+    label_width = label_bbox[2] - label_bbox[0]
+    label_x = qp_x + (input_box_width - label_width) // 2
+    draw_text(label_x, card_y + 6, label, font_small, C["text_muted"])
+    draw_rounded_rect(qp_x, card_y + 22, input_box_width, 28, 6, fill=C["bg_elevated"])
+    # 数值和单位也居中
+    value_unit = value + " " + unit
+    value_bbox = draw.textbbox((0, 0), value_unit, font=font_mono)
+    value_width = value_bbox[2] - value_bbox[0]
+    value_x = qp_x + (input_box_width - value_width) // 2
+    draw_text(value_x, card_y + 28, value_unit, font_mono, C["text_primary"])
+    qp_x += param_width + param_gap
 
 # 可折叠参数组 - 全部折叠只显示标题
 sections = [
@@ -551,7 +573,7 @@ draw_rounded_rect(0, HEIGHT - FOOTER_H, WIDTH, FOOTER_H, 0, fill=C["bg_primary"]
 # 状态信息
 draw_text(20, HEIGHT - FOOTER_H + 10, "● 就绪", font_body, C["success"])
 draw_text(100, HEIGHT - FOOTER_H + 10, "图形: 3个", font_small, C["text_muted"])
-draw_text(200, HEIGHT - FOOTER_H + 10, "机器: AD-F4 (800×1200mm)", font_small, C["text_muted"])
+draw_text(200, HEIGHT - FOOTER_H + 10, "机器: AD-F4 (800×1200x100mm)", font_small, C["text_muted"])
 
 # 版本
 draw_text(WIDTH - 150, HEIGHT - FOOTER_H + 10, "SignMaker Slicer v1.0", font_small, C["text_muted"])
@@ -570,9 +592,12 @@ root_path = os.path.join(os.path.dirname(__file__), "..", "UI_Modern.png")
 img.save(root_path, "PNG", quality=95)
 print(f"Saved: {root_path}")
 
-print("\n设计理念:")
-print("1. 深蓝科技风配色 - 区别于INC-S的灰白色调")
-print("2. 卡片式布局 - 现代感更强")
-print("3. 圆角设计 - 更友好的视觉体验")
-print("4. 可折叠参数组 - 减少视觉负担")
-print("5. 渐变主按钮 - 突出核心操作")
+try:
+    print("\n设计理念:")
+    print("1. 深蓝科技风配色 - 区别于INC-S的灰白色调")
+    print("2. 卡片式布局 - 现代感更强")
+    print("3. 圆角设计 - 更友好的视觉体验")
+    print("4. 可折叠参数组 - 减少视觉负担")
+    print("5. 渐变主按钮 - 突出核心操作")
+except UnicodeEncodeError:
+    print("\nDone!")
