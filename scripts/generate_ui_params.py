@@ -1,7 +1,7 @@
 """
 SignMaker Slicer - 参数设置界面
-完整版 - 包含所有12个参数分组
-分为两张图片：Part1 (1-6) 和 Part2 (7-12)
+根据实际UI界面和INC-S文档生成
+分为两张图片：Part1 (预设+1-6) 和 Part2 (7-11+机器设置)
 """
 
 from PIL import Image, ImageDraw, ImageFont
@@ -146,13 +146,6 @@ class ParamsRenderer:
         self.draw_input(input_x, self.y, input_w, 22, value, unit)
         self.y += 26
 
-    def draw_param_row_wide(self, label, value, unit="", input_w=80, label_w=100):
-        x = self.margin + 8
-        self.draw_text(x, self.y + 4, label, font_label, C["text_secondary"])
-        input_x = self.margin + label_w
-        self.draw_input(input_x, self.y, input_w, 22, value, unit)
-        self.y += 26
-
     def add_space(self, h=8):
         self.y += h
 
@@ -161,31 +154,57 @@ class ParamsRenderer:
 
 
 def generate_part1():
-    """生成参数设置 Part 1 (分组 1-6)"""
-    renderer = ParamsRenderer(WIDTH, 2400)
+    """生成参数设置 Part 1 (预设模板 + 分组 1-6)"""
+    renderer = ParamsRenderer(WIDTH, 2800)
     m = renderer.margin
 
     # 页面标题
-    renderer.draw_text(m, renderer.y, "参数设置 - 完整版 (所有功能)", font_title, C["text_primary"])
+    renderer.draw_text(m, renderer.y, "参数设置", font_title, C["text_primary"])
     renderer.y += 28
+
+    # ============================================
+    # 预设模板区域
+    # ============================================
+    renderer.draw_section_header("预设模板", expanded=True)
+
+    # 下拉选择器
+    renderer.draw_dropdown(m + 8, renderer.y, renderer.content_w - 16, 28, "30cm勾边字")
+    renderer.y += 36
+
+    # 常用标签
+    renderer.draw_text(m + 8, renderer.y, "常用", font_small, C["text_muted"])
+    renderer.y += 18
+
+    tags = ["勾边字", "包边字", "连襟字", "围边字"]
+    tag_x = m + 8
+    for i, tag in enumerate(tags):
+        tag_w = 58
+        if i == 0:
+            renderer.draw_rounded_rect(tag_x, renderer.y, tag_w, 24, 4, fill=C["accent_primary"])
+            renderer.draw_text(tag_x + 10, renderer.y + 5, tag, font_small, (255, 255, 255))
+        else:
+            renderer.draw_rounded_rect(tag_x, renderer.y, tag_w, 24, 4, fill=C["bg_elevated"])
+            renderer.draw_text(tag_x + 10, renderer.y + 5, tag, font_small, C["text_secondary"])
+        tag_x += tag_w + 6
+    renderer.y += 32
+
+    # 快速参数
+    qp_x = m + 8
+    quick_params = [("字壳高度", "30", "mm"), ("壁厚", "1.2", "mm"), ("层高", "0.3", "mm")]
+    for label, value, unit in quick_params:
+        renderer.draw_text(qp_x, renderer.y, label, font_small, C["text_muted"])
+        renderer.draw_rounded_rect(qp_x, renderer.y + 14, 60, 24, 4, fill=C["bg_elevated"])
+        renderer.draw_text(qp_x + 8, renderer.y + 20, value, font_value, C["text_primary"])
+        renderer.draw_text(qp_x + 40, renderer.y + 21, unit, font_small, C["text_muted"])
+        qp_x += 80
+
+    renderer.y += 50
+    renderer.add_space()
 
     # ============================================
     # 1. 字壳工艺
     # ============================================
-    renderer.draw_section_header("▼ 1. 字壳工艺", expanded=True)
-
-    # 异形边选择
-    renderer.draw_text(m + 8, renderer.y + 4, "异形边选择", font_label, C["text_secondary"])
-    btn_x = m + 100
-    renderer.draw_button(btn_x, renderer.y, 45, 22, "添加")
-    renderer.draw_button(btn_x + 50, renderer.y, 45, 22, "选中")
-    renderer.draw_button(btn_x + 100, renderer.y, 45, 22, "删除")
-    renderer.y += 28
-
-    # 字边预设
-    renderer.draw_text(m + 8, renderer.y + 4, "字边预设", font_label, C["text_secondary"])
-    renderer.draw_dropdown(m + 100, renderer.y, 140, 22, "斜边")
-    renderer.y += 28
+    renderer.draw_section_header("字壳工艺", expanded=True)
 
     # 打印模式
     renderer.draw_text(m + 8, renderer.y + 4, "打印模式", font_label, C["text_secondary"])
@@ -197,13 +216,18 @@ def generate_part1():
     renderer.draw_radio_group(m + 100, renderer.y, ["直边", "斜边", "异形边"], selected=1, btn_w=50)
     renderer.y += 30
 
-    # 参数列表
     params_1 = [
-        ("字壳高度", "30", "mm"), ("斜边宽度", "5", "mm"), ("面板厚度", "3", "mm"),
-        ("底板厚度", "10", "mm"), ("层高", "0.3", "mm"), ("预打边线偏移", "20", "mm"),
-        ("预打边线次数", "1", "次"), ("雕刻刀刃宽", "3", "mm"), ("壁厚", "1.2", "mm"),
-        ("壁厚补偿", "0", "mm"), ("走线次数", "1", "次"), ("走线高度", "0", "mm"),
-        ("走线偏移", "0.8", "mm"), ("字芯高度", "0", "mm"), ("字芯斜边宽度", "0", "mm"),
+        ("字壳高度", "30", "mm"),
+        ("斜边宽度", "5", "mm"),
+        ("面板厚度", "3", "mm"),
+        ("底板厚度", "10", "mm"),
+        ("层高", "0.3", "mm"),
+        ("壁厚", "1.2", "mm"),
+        ("壁厚补偿", "0", "mm"),
+        ("走线次数", "1", "次"),
+        ("走线偏移", "0.8", "mm"),
+        ("预打边线偏移", "20", "mm"),
+        ("预打边线次数", "1", "次"),
     ]
     for label, value, unit in params_1:
         renderer.draw_param_row(label, value, unit)
@@ -211,38 +235,19 @@ def generate_part1():
     renderer.add_space()
 
     # ============================================
-    # 2. 放样设置
+    # 2. 换色层设置
     # ============================================
-    renderer.draw_section_header("▼ 2. 放样设置", expanded=True)
-
-    params_2 = [
-        ("整体外扩", "0", "mm"), ("整体内缩", "0", "mm"), ("孔内扩", "0", "mm"),
-        ("孔外缩", "0", "mm"), ("勾边外扩", "1.2", "mm"), ("勾边内缩", "0", "mm"),
-        ("包边外扩", "0", "mm"), ("包边内缩", "1.2", "mm"), ("字芯外扩", "0", "mm"),
-        ("字芯内缩", "0", "mm"),
-    ]
-    for label, value, unit in params_2:
-        renderer.draw_param_row(label, value, unit)
-
-    renderer.add_space()
-
-    # ============================================
-    # 3. 换色层设置
-    # ============================================
-    renderer.draw_section_header("▼ 3. 换色层设置", expanded=True, has_checkbox=True, checked=True)
+    renderer.draw_section_header("换色层设置", expanded=True, has_checkbox=True, checked=True)
 
     renderer.draw_text(m + 8, renderer.y + 2, "换色层数 (最多7层)", font_small, C["text_muted"])
     renderer.y += 18
 
-    # 换色层表格
     color_layers = [
         ("1", "10", "1", True, C["extruder_1"]),
         ("2", "5", "2", True, C["extruder_2"]),
         ("3", "5", "3", True, C["extruder_3"]),
         ("4", "10", "1", True, C["extruder_1"]),
         ("5", "0", "1", False, C["extruder_1"]),
-        ("6", "0", "1", False, C["extruder_1"]),
-        ("7", "0", "1", False, C["extruder_1"]),
     ]
 
     for layer_num, height, ext, enabled, color in color_layers:
@@ -256,7 +261,6 @@ def generate_part1():
         renderer.draw_checkbox(x + 235, renderer.y + 3, enabled, 14)
         renderer.y += 24
 
-    # 添加换色层按钮
     renderer.draw_button(m + 8, renderer.y, 100, 24, "+ 添加换色层")
     renderer.y += 32
 
@@ -265,19 +269,19 @@ def generate_part1():
     renderer.draw_checkbox(m + 160, renderer.y, False, 14)
     renderer.y += 24
 
-    params_3_extra = [
-        ("双层吐丝宽度", "1.2", "mm"), ("双层走线偏移", "0.8", "mm"),
-        ("双层走线次数", "1", "次"), ("双层走线速度", "40", "mm/s"),
+    params_ext = [
+        ("双层吐丝宽度", "1.2", "mm"),
+        ("双层走线偏移", "0.8", "mm"),
     ]
-    for label, value, unit in params_3_extra:
+    for label, value, unit in params_ext:
         renderer.draw_param_row(label, value, unit)
 
     renderer.add_space()
 
     # ============================================
-    # 4. 台阶V槽
+    # 3. 台阶/V槽
     # ============================================
-    renderer.draw_section_header("▼ 4. 台阶V槽", expanded=True, has_checkbox=True, checked=True)
+    renderer.draw_section_header("台阶/V槽", expanded=True, has_checkbox=True, checked=True)
 
     renderer.draw_text(m + 8, renderer.y + 2, "台阶数量 (最多7个)", font_small, C["text_muted"])
     renderer.y += 18
@@ -294,7 +298,6 @@ def generate_part1():
         ("1", "4", "1.2", "1.2", True),
         ("2", "27", "1.2", "1.2", True),
         ("3", "0", "0", "0", False),
-        ("4", "0", "0", "0", False),
     ]
 
     for step_num, pos, height, width, enabled in steps:
@@ -306,30 +309,30 @@ def generate_part1():
         renderer.y += 24
 
     renderer.y += 4
-    renderer.draw_text(m + 8, renderer.y, "台阶打印参数", font_small, C["text_muted"])
-    renderer.y += 18
-
-    params_4 = [
-        ("台阶速度", "30", "mm/s"), ("喷头水平偏移", "0", "mm"),
-        ("喷头吐丝宽度", "1.2", "mm"), ("台阶厚度", "0.3", "mm"),
+    params_step = [
+        ("台阶速度", "30", "mm/s"),
+        ("台阶厚度", "0.3", "mm"),
     ]
-    for label, value, unit in params_4:
+    for label, value, unit in params_step:
         renderer.draw_param_row(label, value, unit)
 
     renderer.add_space()
 
     # ============================================
-    # 5. 防翘裙边
+    # 4. 防翘裙边
     # ============================================
-    renderer.draw_section_header("▼ 5. 防翘裙边", expanded=True, has_checkbox=True, checked=True)
+    renderer.draw_section_header("防翘裙边", expanded=True, has_checkbox=True, checked=True)
 
     renderer.draw_text(m + 8, renderer.y + 4, "防翘位置", font_label, C["text_secondary"])
     renderer.draw_radio_group(m + 100, renderer.y, ["外防翘", "内防翘"], selected=0)
     renderer.y += 28
 
     params_5 = [
-        ("压线宽度", "0.5", "mm"), ("吐丝宽度", "1.2", "mm"), ("防翘速度", "30", "mm/s"),
-        ("防翘高度", "0.3", "mm"), ("防翘长度", "10", "mm"), ("防翘宽度", "5", "mm"),
+        ("压线宽度", "0.5", "mm"),
+        ("吐丝宽度", "1.2", "mm"),
+        ("防翘速度", "30", "mm/s"),
+        ("防翘高度", "0.3", "mm"),
+        ("防翘长度", "10", "mm"),
         ("V型开口宽度", "3", "mm"),
     ]
     for label, value, unit in params_5:
@@ -338,44 +341,29 @@ def generate_part1():
     renderer.add_space()
 
     # ============================================
-    # 6. 连襟字
+    # 5. 连襟字
     # ============================================
-    renderer.draw_section_header("▼ 6. 连襟字", expanded=True, has_checkbox=True, checked=False)
+    renderer.draw_section_header("连襟字", expanded=True, has_checkbox=True, checked=False)
 
     renderer.draw_text(m + 8, renderer.y + 4, "连襟类型", font_label, C["text_secondary"])
     renderer.draw_radio_group(m + 100, renderer.y, ["三角形", "菱形"], selected=0)
     renderer.y += 28
 
     params_6 = [
-        ("连襟宽度", "15", "mm"), ("连襟高度", "5", "mm"), ("连襟底座高度", "5", "mm"),
-        ("连襟支撑偏移", "2.5", "mm"), ("整板排序行距", "0", "mm"),
+        ("连襟宽度", "15", "mm"),
+        ("连襟高度", "5", "mm"),
+        ("连襟底座高度", "5", "mm"),
+        ("连襟支撑偏移", "2.5", "mm"),
     ]
     for label, value, unit in params_6:
         renderer.draw_param_row(label, value, unit)
 
-    renderer.draw_text(m + 8, renderer.y, "说明: 连襟高度 + 连襟底座高度 = 连襟总高度", font_small, C["text_muted"])
-    renderer.y += 20
-
-    renderer.add_space(16)
-
-    # 裁剪并保存
-    img = renderer.crop_to_content()
-    return img
-
-
-def generate_part2():
-    """生成参数设置 Part 2 (分组 7-12)"""
-    renderer = ParamsRenderer(WIDTH, 2400)
-    m = renderer.margin
-
-    # 页面标题
-    renderer.draw_text(m, renderer.y, "参数设置 - 完整版 (续)", font_title, C["text_primary"])
-    renderer.y += 28
+    renderer.add_space()
 
     # ============================================
-    # 7. 包边勾边字
+    # 6. 包边勾边
     # ============================================
-    renderer.draw_section_header("▼ 7. 包边勾边字", expanded=True)
+    renderer.draw_section_header("包边勾边", expanded=True)
 
     renderer.draw_text(m + 8, renderer.y + 2, "勾边有效", font_label, C["text_secondary"])
     renderer.draw_checkbox(m + 80, renderer.y, True, 14)
@@ -388,136 +376,101 @@ def generate_part2():
     renderer.y += 28
 
     params_7 = [
-        ("包边高度", "1.2", "mm"), ("勾边高度", "1.2", "mm"), ("勾包边宽度", "3", "mm"),
-        ("勾包边速度", "30", "mm/s"), ("包边压线偏移", "0", "mm"), ("勾边压线偏移", "0", "mm"),
+        ("勾边高度", "1.2", "mm"),
+        ("包边高度", "1.2", "mm"),
+        ("勾包边宽度", "3", "mm"),
+        ("勾包边速度", "30", "mm/s"),
         ("吐丝宽度", "1.2", "mm"),
     ]
     for label, value, unit in params_7:
         renderer.draw_param_row(label, value, unit)
 
-    renderer.add_space()
+    renderer.add_space(16)
+
+    img = renderer.crop_to_content()
+    return img
+
+
+def generate_part2():
+    """生成参数设置 Part 2 (分组 7-11)"""
+    renderer = ParamsRenderer(WIDTH, 2400)
+    m = renderer.margin
+
+    # 页面标题
+    renderer.draw_text(m, renderer.y, "参数设置 (续)", font_title, C["text_primary"])
+    renderer.y += 28
 
     # ============================================
-    # 8. 面板打印
+    # 7. 面板设置
     # ============================================
-    renderer.draw_section_header("▼ 8. 面板打印", expanded=True)
+    renderer.draw_section_header("面板设置", expanded=True, has_checkbox=True, checked=True)
 
-    # 填充类型
     renderer.draw_text(m + 8, renderer.y + 4, "填充类型", font_label, C["text_secondary"])
     renderer.draw_button(m + 100, renderer.y, 50, 22, "面板", primary=True)
     renderer.draw_button(m + 155, renderer.y, 50, 22, "网格")
     renderer.draw_button(m + 210, renderer.y, 50, 22, "底板")
     renderer.y += 30
 
-    renderer.draw_text(m + 8, renderer.y, "填充参数设置", font_small, C["text_muted"])
-    renderer.y += 18
-
-    params_8_fill = [
-        ("填充间距(正面)", "8", "mm"), ("填充间距2(背面)", "0.9", "mm"),
-        ("边界距离", "1.4", "mm"), ("角度", "45", "度"),
+    params_panel = [
+        ("填充间距", "8", "mm"),
+        ("填充间距2", "0.9", "mm"),
+        ("边界距离", "1.4", "mm"),
+        ("角度", "45", "度"),
+        ("填充高度", "0.6", "mm"),
+        ("填充速度", "40", "mm/s"),
+        ("吐丝宽度", "1.2", "mm"),
     ]
-    for label, value, unit in params_8_fill:
-        renderer.draw_param_row(label, value, unit)
-
-    renderer.draw_checkbox(m + 8, renderer.y + 2, True, 14)
-    renderer.draw_text(m + 28, renderer.y + 2, "连襟不参与", font_small, C["text_secondary"])
-    renderer.draw_checkbox(m + 130, renderer.y + 2, True, 14)
-    renderer.draw_text(m + 150, renderer.y + 2, "面板不参与", font_small, C["text_secondary"])
-    renderer.y += 24
-
-    # 1类填充
-    renderer.draw_text(m + 8, renderer.y, "1类填充 (正面)", font_small, C["accent_secondary"])
-    renderer.y += 18
-
-    params_8_1 = [
-        ("填充高度", "0.6", "mm"), ("吐丝宽度", "1.2", "mm"),
-        ("填充速度", "40", "mm/s"), ("压线宽度", "0.8", "mm"),
-    ]
-    for label, value, unit in params_8_1:
+    for label, value, unit in params_panel:
         renderer.draw_param_row(label, value, unit)
 
     renderer.draw_text(m + 8, renderer.y + 4, "填充模式", font_label, C["text_secondary"])
     renderer.draw_dropdown(m + 100, renderer.y, 100, 22, "自动连接")
-    renderer.y += 26
+    renderer.y += 28
 
     renderer.draw_text(m + 8, renderer.y + 4, "指定挤出机", font_label, C["text_secondary"])
     renderer.draw_radio_group(m + 100, renderer.y, ["无", "2号", "3号"], selected=0, btn_w=45)
     renderer.y += 30
 
-    # 2类填充
-    renderer.draw_text(m + 8, renderer.y, "2类填充 (背面)", font_small, C["accent_secondary"])
-    renderer.y += 18
+    renderer.draw_checkbox(m + 8, renderer.y + 2, True, 14)
+    renderer.draw_text(m + 28, renderer.y + 2, "连襟不参与", font_small, C["text_secondary"])
+    renderer.draw_checkbox(m + 130, renderer.y + 2, True, 14)
+    renderer.draw_text(m + 150, renderer.y + 2, "面板不参与", font_small, C["text_secondary"])
+    renderer.y += 28
 
-    params_8_2 = [("填充高度", "1.5", "mm"), ("填充速度", "60", "mm/s")]
-    for label, value, unit in params_8_2:
-        renderer.draw_param_row(label, value, unit)
-
-    renderer.draw_text(m + 8, renderer.y + 4, "指定挤出机", font_label, C["text_secondary"])
-    renderer.draw_radio_group(m + 100, renderer.y, ["无", "2号", "3号"], selected=0, btn_w=45)
-    renderer.y += 32
-
-    # 花纹打印
-    renderer.draw_text(m + 8, renderer.y + 2, "面板花纹打印", font_label, C["text_secondary"])
-    renderer.draw_checkbox(m + 120, renderer.y, False, 14)
+    # 花纹设置
+    renderer.draw_text(m + 8, renderer.y + 2, "面板花纹", font_label, C["text_secondary"])
+    renderer.draw_checkbox(m + 100, renderer.y, False, 14)
     renderer.y += 24
 
-    renderer.draw_text(m + 8, renderer.y + 4, "花纹类型", font_label, C["text_secondary"])
-    renderer.draw_radio_group(m + 100, renderer.y, ["直边", "斜边"], selected=0)
-    renderer.y += 28
-
-    params_8_pattern = [
-        ("打印高度", "0.2", "mm"), ("斜边宽度", "1.2", "mm"), ("底座厚度", "0.6", "mm"),
-        ("打印速度", "40", "mm/s"), ("吐丝宽度", "1.2", "mm"),
+    params_pattern = [
+        ("花纹高度", "0.2", "mm"),
+        ("花纹速度", "40", "mm/s"),
     ]
-    for label, value, unit in params_8_pattern:
+    for label, value, unit in params_pattern:
         renderer.draw_param_row(label, value, unit)
 
     renderer.add_space()
 
     # ============================================
-    # 9. 路径顺序
+    # 8. 底板设置
     # ============================================
-    renderer.draw_section_header("▼ 9. 路径顺序", expanded=True)
+    renderer.draw_section_header("底板设置", expanded=True, has_checkbox=True, checked=False)
 
-    renderer.draw_text(m + 8, renderer.y + 4, "打印顺序", font_label, C["text_secondary"])
-    renderer.draw_dropdown(m + 100, renderer.y, 140, 22, "外轮廓优先")
-    renderer.y += 28
-
-    renderer.draw_text(m + 8, renderer.y + 2, "路径优化", font_label, C["text_secondary"])
-    renderer.draw_checkbox(m + 100, renderer.y, True, 14)
-    renderer.draw_text(m + 120, renderer.y + 2, "启用路径优化", font_small, C["text_secondary"])
-    renderer.y += 26
-
-    renderer.add_space()
-
-    # ============================================
-    # 10. 填充
-    # ============================================
-    renderer.draw_section_header("▼ 10. 填充", expanded=True)
-
-    params_10 = [("填充密度", "20", "%"), ("填充角度", "45", "度")]
-    for label, value, unit in params_10:
+    params_base = [
+        ("填充间距", "0.95", "mm"),
+        ("边界距离", "1.4", "mm"),
+        ("角度", "45", "度"),
+        ("填充高度", "1.5", "mm"),
+        ("填充速度", "50", "mm/s"),
+    ]
+    for label, value, unit in params_base:
         renderer.draw_param_row(label, value, unit)
 
-    renderer.draw_text(m + 8, renderer.y + 4, "填充图案", font_label, C["text_secondary"])
-    renderer.draw_dropdown(m + 100, renderer.y, 100, 22, "线性")
+    renderer.draw_text(m + 8, renderer.y + 4, "填充模式", font_label, C["text_secondary"])
+    renderer.draw_dropdown(m + 100, renderer.y, 100, 22, "自动连接")
     renderer.y += 28
 
-    renderer.draw_checkbox(m + 8, renderer.y + 2, True, 14)
-    renderer.draw_text(m + 28, renderer.y + 2, "生成内填充", font_small, C["text_secondary"])
-    renderer.y += 22
-
-    renderer.draw_checkbox(m + 8, renderer.y + 2, False, 14)
-    renderer.draw_text(m + 28, renderer.y + 2, "稀疏填充模式", font_small, C["text_secondary"])
-    renderer.y += 26
-
-    renderer.add_space()
-
-    # ============================================
-    # 11. 文件读取/保存 DXF
-    # ============================================
-    renderer.draw_section_header("▼ 11. 文件读取/保存 DXF", expanded=True)
-
+    # 生成底板DXF
     renderer.draw_checkbox(m + 8, renderer.y + 2, True, 14)
     renderer.draw_text(m + 28, renderer.y + 2, "生成底板 DXF", font_label, C["text_secondary"])
     renderer.y += 24
@@ -526,9 +479,7 @@ def generate_part2():
     renderer.draw_input(m + 100, renderer.y, 55, 22, "-0.4", "mm")
     renderer.y += 28
 
-    renderer.draw_button(m + 8, renderer.y, 100, 24, "另存为...")
-    renderer.y += 32
-
+    # 生成面板DXF
     renderer.draw_checkbox(m + 8, renderer.y + 2, True, 14)
     renderer.draw_text(m + 28, renderer.y + 2, "生成面板 DXF", font_label, C["text_secondary"])
     renderer.y += 24
@@ -537,34 +488,74 @@ def generate_part2():
     renderer.draw_input(m + 100, renderer.y, 55, 22, "0", "mm")
     renderer.y += 28
 
-    renderer.draw_button(m + 8, renderer.y, 100, 24, "另存为...")
-    renderer.y += 36
+    renderer.add_space()
+
+    # ============================================
+    # 9. 速度设置
+    # ============================================
+    renderer.draw_section_header("速度设置", expanded=True)
+
+    params_speed = [
+        ("打印速度", "40", "mm/s"),
+        ("首层打印速度", "30", "mm/s"),
+        ("空程速度", "300", "mm/s"),
+        ("换色速度", "30", "mm/s"),
+        ("台阶速度", "30", "mm/s"),
+        ("勾包边速度", "30", "mm/s"),
+        ("防翘速度", "30", "mm/s"),
+    ]
+    for label, value, unit in params_speed:
+        renderer.draw_param_row(label, value, unit)
 
     renderer.add_space()
 
     # ============================================
-    # 12. 文件输出
+    # 10. 填充
     # ============================================
-    renderer.draw_section_header("▼ 12. 文件输出", expanded=True)
+    renderer.draw_section_header("填充", expanded=True)
 
-    # 文件名
-    renderer.draw_text(m + 8, renderer.y + 4, "文件名", font_label, C["text_secondary"])
-    renderer.draw_rounded_rect(m + 80, renderer.y, 160, 22, 4, fill=C["bg_input"], outline=C["border_default"])
-    renderer.draw_text(m + 88, renderer.y + 4, "output.gcode", font_value, C["text_primary"])
-    renderer.draw_button(m + 250, renderer.y, 65, 22, "另存为")
-    renderer.y += 28
-
-    params_12 = [
-        ("打印速度", "40", "mm/s"), ("首层打印速度", "30", "mm/s"), ("空程速度", "300", "mm/s"),
-        ("喷头1温度", "220", "°C"), ("喷头2温度", "220", "°C"), ("喷头3温度", "220", "°C"),
+    params_fill = [
+        ("填充密度", "20", "%"),
+        ("填充角度", "45", "度"),
     ]
-    for label, value, unit in params_12:
+    for label, value, unit in params_fill:
         renderer.draw_param_row(label, value, unit)
 
+    renderer.draw_text(m + 8, renderer.y + 4, "填充图案", font_label, C["text_secondary"])
+    renderer.draw_dropdown(m + 100, renderer.y, 100, 22, "线性")
+    renderer.y += 28
+
+    renderer.draw_checkbox(m + 8, renderer.y + 2, True, 14)
+    renderer.draw_text(m + 28, renderer.y + 2, "生成内填充", font_small, C["text_secondary"])
+    renderer.y += 26
+
+    renderer.add_space()
+
+    # ============================================
+    # 11. 机器设置
+    # ============================================
+    renderer.draw_section_header("机器设置", expanded=True)
+
+    # 机器类型
     renderer.draw_text(m + 8, renderer.y + 4, "机台类型", font_label, C["text_secondary"])
-    renderer.draw_dropdown(m + 100, renderer.y, 100, 22, "ZC-80")
+    renderer.draw_dropdown(m + 100, renderer.y, 140, 22, "AD-F4 (800×1200mm)")
     renderer.y += 30
 
+    params_machine = [
+        ("喷头1温度", "220", "°C"),
+        ("喷头2温度", "220", "°C"),
+        ("喷头3温度", "220", "°C"),
+        ("材料直径", "1.75", "mm"),
+        ("抬头回抽", "3", "mm"),
+        ("换料回抽", "30", "mm"),
+        ("换料补偿", "20", "mm"),
+    ]
+    for label, value, unit in params_machine:
+        renderer.draw_param_row(label, value, unit)
+
+    renderer.y += 4
+
+    # 其他选项
     renderer.draw_checkbox(m + 8, renderer.y + 2, False, 14)
     renderer.draw_text(m + 28, renderer.y + 2, "头尾交替打印", font_small, C["text_secondary"])
     renderer.y += 22
@@ -573,6 +564,7 @@ def generate_part2():
     renderer.draw_text(m + 28, renderer.y + 2, "结束完成不回抽", font_small, C["text_secondary"])
     renderer.y += 28
 
+    # 模板操作
     renderer.draw_button(m + 8, renderer.y, 90, 24, "保存模板")
     renderer.draw_button(m + 105, renderer.y, 90, 24, "读取模板")
     renderer.y += 36
@@ -588,7 +580,6 @@ def generate_part2():
     renderer.draw_button(m + btn_w * 2 + 16, renderer.y, btn_w, 36, "文件输出", primary=True)
     renderer.y += 48
 
-    # 裁剪并保存
     img = renderer.crop_to_content()
     return img
 
@@ -618,8 +609,8 @@ def main():
     print(f"Saved: {root_path2}")
 
     print("\nParams UI generated successfully!")
-    print(f"  - UI_Params_Part1.png (Sections 1-6)")
-    print(f"  - UI_Params_Part2.png (Sections 7-12)")
+    print("  - UI_Params_Part1.png (Preset + Sections 1-6)")
+    print("  - UI_Params_Part2.png (Sections 7-11)")
 
 
 if __name__ == "__main__":
