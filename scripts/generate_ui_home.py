@@ -284,6 +284,9 @@ if tab_selected == 0:
         ("吸塑字-连锁店招.dxf", "2025-12-05 16:38:02", C["accent_indigo"]),
     ]
 
+    # 预览图显示的字符 - "洋明达发光字切片软件"
+    preview_chars = ["洋", "明", "达", "发", "光", "字", "切", "片", "软", "件"]
+
     # 2行5列布局 - 正方形卡片
     cols = 5
     rows = 2
@@ -295,6 +298,12 @@ if tab_selected == 0:
     # 预览图区域参数（正方形预览图）
     preview_size = 180
     preview_margin = (card_size - preview_size) // 2
+
+    # 加载大号字体用于预览图中的字符
+    try:
+        font_preview = ImageFont.truetype("msyh.ttc", 72)
+    except:
+        font_preview = font_display
 
     for i, (name, time, accent) in enumerate(projects):
         row = i // cols
@@ -308,66 +317,20 @@ if tab_selected == 0:
         preview_y = cy + 10
         draw_rounded_rect(preview_x, preview_y, preview_size, preview_size, 10, fill=(45, 50, 60))
 
-        # 预览图中的线框图样式
+        # 预览图中心
         icon_cx = preview_x + preview_size // 2
         icon_cy = preview_y + preview_size // 2
 
+        # 获取当前预览字符
+        char = preview_chars[i] if i < len(preview_chars) else "字"
+
         # 线框颜色
-        wire_color = (120, 130, 150)
-        wire_highlight = (160, 170, 190)
+        wire_color = (120, 135, 160)
 
-        # 绘制3D线框图 - 统一简洁风格
-        # 底部平面（斜视角）
-        base_pts = [
-            (icon_cx - 50, icon_cy + 20),
-            (icon_cx + 50, icon_cy + 20),
-            (icon_cx + 35, icon_cy + 45),
-            (icon_cx - 35, icon_cy + 45)
-        ]
-        draw.polygon(base_pts, outline=wire_color, width=1)
-
-        # 根据类型绘制不同的3D字形线框
-        if "连襟" in name:
-            # 两个连接的字形
-            # 左边字
-            draw.polygon([(icon_cx-45, icon_cy-30), (icon_cx-15, icon_cy-30),
-                          (icon_cx-15, icon_cy+15), (icon_cx-45, icon_cy+15)], outline=wire_highlight, width=1)
-            draw.line([(icon_cx-45, icon_cy-30), (icon_cx-55, icon_cy-15)], fill=wire_color, width=1)
-            draw.line([(icon_cx-45, icon_cy+15), (icon_cx-55, icon_cy+30)], fill=wire_color, width=1)
-            # 右边字
-            draw.polygon([(icon_cx+15, icon_cy-30), (icon_cx+45, icon_cy-30),
-                          (icon_cx+45, icon_cy+15), (icon_cx+15, icon_cy+15)], outline=wire_highlight, width=1)
-            draw.line([(icon_cx+45, icon_cy-30), (icon_cx+55, icon_cy-15)], fill=wire_color, width=1)
-            draw.line([(icon_cx+45, icon_cy+15), (icon_cx+55, icon_cy+30)], fill=wire_color, width=1)
-        elif "包边" in name or "勾边" in name:
-            # 带边框的字形 - 双层轮廓
-            draw.polygon([(icon_cx-40, icon_cy-35), (icon_cx+40, icon_cy-35),
-                          (icon_cx+40, icon_cy+10), (icon_cx-40, icon_cy+10)], outline=wire_color, width=1)
-            draw.polygon([(icon_cx-30, icon_cy-25), (icon_cx+30, icon_cy-25),
-                          (icon_cx+30, icon_cy), (icon_cx-30, icon_cy)], outline=wire_highlight, width=1)
-            # 3D深度线
-            draw.line([(icon_cx-40, icon_cy+10), (icon_cx-50, icon_cy+25)], fill=wire_color, width=1)
-            draw.line([(icon_cx+40, icon_cy+10), (icon_cx+50, icon_cy+25)], fill=wire_color, width=1)
-        elif "双面" in name or "背打光" in name:
-            # 发光字 - 简洁轮廓 + 光晕线
-            draw.polygon([(icon_cx-35, icon_cy-30), (icon_cx+35, icon_cy-30),
-                          (icon_cx+35, icon_cy+5), (icon_cx-35, icon_cy+5)], outline=wire_highlight, width=1)
-            # 光晕效果线
-            draw.arc([icon_cx-50, icon_cy-45, icon_cx+50, icon_cy+20], 200, 340, fill=(100, 120, 160), width=1)
-            draw.arc([icon_cx-55, icon_cy-50, icon_cx+55, icon_cy+25], 210, 330, fill=(80, 100, 140), width=1)
-        else:
-            # 默认：标准3D字形线框
-            # 顶面
-            top_pts = [(icon_cx-35, icon_cy-35), (icon_cx+35, icon_cy-35),
-                       (icon_cx+25, icon_cy-20), (icon_cx-25, icon_cy-20)]
-            draw.polygon(top_pts, outline=wire_highlight, width=1)
-            # 正面
-            front_pts = [(icon_cx-25, icon_cy-20), (icon_cx+25, icon_cy-20),
-                         (icon_cx+25, icon_cy+15), (icon_cx-25, icon_cy+15)]
-            draw.polygon(front_pts, outline=wire_color, width=1)
-            # 侧面连接线
-            draw.line([(icon_cx+35, icon_cy-35), (icon_cx+25, icon_cy-20)], fill=wire_color, width=1)
-            draw.line([(icon_cx-35, icon_cy-35), (icon_cx-25, icon_cy-20)], fill=wire_color, width=1)
+        # 绘制字符轮廓（只有描边，没有填充）- 使用 anchor 居中
+        bg_color = (45, 50, 60)
+        draw.text((icon_cx, icon_cy), char, font=font_preview, fill=bg_color,
+                  stroke_width=2, stroke_fill=wire_color, anchor="mm")
 
         # 文件名 - 在预览图下方，与预览图左对齐
         text_y = preview_y + preview_size + 8
