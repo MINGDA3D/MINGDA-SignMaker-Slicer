@@ -143,10 +143,11 @@ class ParamsRenderer:
     def draw_dropdown_row(self, label, value):
         """绘制带标签的下拉框行"""
         x = self.margin + 8
-        label_w = 90
         self.draw_text(x, self.y + 4, label, font_label, C["text_secondary"])
-        dropdown_x = self.margin + label_w + 16
-        dropdown_w = self.content_w - label_w - 24
+        # 下拉框对齐输入框，宽度一致
+        dropdown_w = 120  # 与输入框宽度一致
+        center_x = self.margin + self.content_w // 2
+        dropdown_x = center_x
         self.draw_dropdown(dropdown_x, self.y, dropdown_w, 22, value)
         self.y += 28
 
@@ -178,7 +179,7 @@ class ParamsRenderer:
         self.draw_text(x, self.y + 4, label, font_label, C["text_secondary"])
         # 输入框固定宽度，靠中线对齐
         if input_w is None:
-            input_w = 80  # 固定较短宽度
+            input_w = 120  # 固定宽度（原80增大1.5倍）
         # 中线位置：面板宽度的一半
         center_x = self.margin + self.content_w // 2
         # 输入框左边缘对齐到中线
@@ -304,7 +305,7 @@ def generate_part1():
     # ============================================
     renderer.draw_section_header("换色层设置", expanded=True, has_checkbox=True, checked=True)
 
-    renderer.draw_text(m + 8, renderer.y + 2, "换色层数 (最多7层)", font_small, C["text_muted"])
+    renderer.draw_text(m + 8, renderer.y + 2, "换色层数", font_small, C["text_muted"])
     renderer.y += 18
 
     color_layers = [
@@ -315,18 +316,44 @@ def generate_part1():
         ("5", "0", "1", False, C["extruder_1"]),
     ]
 
+    # 换色层布局优化 - 均匀分布
+    row_start = m + 8
+    row_end = m + renderer.content_w - 8
+    total_w = row_end - row_start  # 可用总宽度
+    center_x = m + renderer.content_w // 2  # 中线位置
+
+    # 布局分配
+    col1_x = row_start  # 层号
+    col2_x = row_start + 50  # 高度输入框
+    col3_x = center_x  # 挤出机标签从中线开始
+    col4_x = center_x + 60  # 挤出机下拉框
+    col5_x = row_end - 18  # 复选框靠右
+
     for layer_num, height, ext, enabled, color in color_layers:
-        x = m + 8
+        # 色条指示器
         if enabled:
-            renderer.draw_rounded_rect(x, renderer.y + 2, 4, 18, 2, fill=color)
-        renderer.draw_text(x + 10, renderer.y + 4, f"层{layer_num}", font_small, C["text_primary"] if enabled else C["text_muted"])
-        renderer.draw_input(x + 50, renderer.y, 45, 20, height, "mm")
-        renderer.draw_text(x + 130, renderer.y + 4, "挤出机", font_small, C["text_muted"])
-        renderer.draw_dropdown(x + 175, renderer.y, 45, 20, ext)
-        renderer.draw_checkbox(x + 235, renderer.y + 3, enabled, 14)
+            renderer.draw_rounded_rect(col1_x, renderer.y + 2, 4, 18, 2, fill=color)
+
+        # 层号标签
+        renderer.draw_text(col1_x + 10, renderer.y + 4, f"层{layer_num}", font_small, C["text_primary"] if enabled else C["text_muted"])
+
+        # 高度输入框
+        renderer.draw_input(int(col2_x), renderer.y, 80, 20, height, "mm")
+
+        # 挤出机标签 - 从中线开始
+        renderer.draw_text(int(col3_x), renderer.y + 4, "挤出机", font_small, C["text_muted"])
+
+        # 挤出机下拉框
+        renderer.draw_dropdown(int(col4_x), renderer.y, 70, 20, ext)
+
+        # 启用复选框
+        renderer.draw_checkbox(int(col5_x), renderer.y + 3, enabled, 14)
         renderer.y += 24
 
-    renderer.draw_button(m + 8, renderer.y, 100, 24, "+ 添加换色层")
+    # 添加换色层按钮 - 居中对齐
+    btn_w = 120
+    btn_x = m + (renderer.content_w - btn_w) // 2
+    renderer.draw_button(btn_x, renderer.y, btn_w, 24, "+ 添加换色层")
     renderer.y += 32
 
     # 启用喷头2
@@ -484,7 +511,7 @@ def generate_part2():
 
     renderer.draw_dropdown_row("填充模式", "自动连接")
 
-    renderer.draw_radio_row("指定挤出机", ["无", "2号", "3号"], selected=0)
+    renderer.draw_dropdown_row("指定挤出机", "无")
 
     # 复选框行 - 等分布局
     check_row_w = renderer.content_w - 16
