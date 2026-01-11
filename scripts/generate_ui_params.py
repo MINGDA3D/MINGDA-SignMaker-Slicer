@@ -106,39 +106,96 @@ class ParamsRenderer:
         text_y = y + (h - 10) // 2
         self.draw_text(text_x, text_y, text, font_small, (255, 255, 255) if primary or color else C["text_secondary"])
 
-    def draw_radio_group(self, x, y, options, selected=0, btn_w=None, btn_h=22, total_w=None):
-        gap = 4
-        # 如果没有指定按钮宽度，则根据总宽度等分
-        if btn_w is None and total_w is not None:
-            btn_w = (total_w - gap * (len(options) - 1)) // len(options)
-        elif btn_w is None:
-            btn_w = 55  # 默认宽度
+    def draw_radio_group(self, x, y, options, selected=0, btn_w=None, btn_h=26, total_w=None):
+        """
+        现代分段控制器 - iOS风格
+        外层容器 + 选中项高亮背景
+        """
+        gap = 2
+        padding = 3
 
+        # 计算按钮宽度
+        if btn_w is None and total_w is not None:
+            inner_w = total_w - padding * 2
+            btn_w = (inner_w - gap * (len(options) - 1)) // len(options)
+        elif btn_w is None:
+            btn_w = 60
+
+        container_w = btn_w * len(options) + gap * (len(options) - 1) + padding * 2
+        container_h = btn_h + padding * 2
+
+        # 外层容器 - 深色背景
+        self.draw_rounded_rect(x, y, container_w, container_h, 6,
+                               fill=C["bg_input"], outline=C["border_subtle"])
+
+        btn_y = y + padding
         for i, opt in enumerate(options):
-            bx = x + i * (btn_w + gap)
+            bx = x + padding + i * (btn_w + gap)
+
             if i == selected:
-                self.draw_rounded_rect(bx, y, btn_w, btn_h, 4, fill=C["accent_primary"])
-                # 文字居中
+                # 选中状态 - 高亮背景
+                self.draw_rounded_rect(bx, btn_y, btn_w, btn_h, 4, fill=C["accent_primary"])
+                # 文字
                 bbox = self.draw.textbbox((0, 0), opt, font=font_small)
                 text_w = bbox[2] - bbox[0]
                 text_x = bx + (btn_w - text_w) // 2
-                self.draw_text(text_x, y + 4, opt, font_small, (255, 255, 255))
+                self.draw_text(text_x, btn_y + (btn_h - 10) // 2, opt, font_small, (255, 255, 255))
             else:
-                self.draw_rounded_rect(bx, y, btn_w, btn_h, 4, fill=C["bg_elevated"])
+                # 未选中 - 透明背景
                 bbox = self.draw.textbbox((0, 0), opt, font=font_small)
                 text_w = bbox[2] - bbox[0]
                 text_x = bx + (btn_w - text_w) // 2
-                self.draw_text(text_x, y + 4, opt, font_small, C["text_muted"])
+                self.draw_text(text_x, btn_y + (btn_h - 10) // 2, opt, font_small, C["text_muted"])
 
     def draw_radio_row(self, label, options, selected=0):
-        """绘制带标签的单选按钮行"""
+        """绘制带标签的单选按钮行 - 使用紧凑型单选"""
         x = self.margin + 8
         label_w = 90
-        self.draw_text(x, self.y + 4, label, font_label, C["text_secondary"])
+        self.draw_text(x, self.y + 2, label, font_label, C["text_secondary"])
         radio_x = self.margin + label_w + 16
         radio_w = self.content_w - label_w - 24
-        self.draw_radio_group(radio_x, self.y, options, selected, total_w=radio_w)
-        self.y += 28
+        self.draw_radio_buttons(radio_x, self.y, options, selected, total_w=radio_w)
+        self.y += 24
+
+    def draw_radio_buttons(self, x, y, options, selected=0, total_w=None):
+        """
+        紧凑型单选按钮 - 无边框
+        ● 选中  ○ 未选中
+        """
+        gap = 6
+        radio_size = 12
+
+        if total_w is not None:
+            item_w = (total_w - gap * (len(options) - 1)) // len(options)
+        else:
+            item_w = 80
+
+        for i, opt in enumerate(options):
+            ix = x + i * (item_w + gap)
+
+            # 圆圈位置
+            circle_x = ix + 4
+            circle_y = y + 2
+
+            if i == selected:
+                # 选中 - 实心圆
+                self.draw.ellipse([circle_x, circle_y, circle_x + radio_size, circle_y + radio_size],
+                                 fill=C["accent_primary"])
+                # 内部小白点
+                inner_margin = 3
+                self.draw.ellipse([circle_x + inner_margin, circle_y + inner_margin,
+                                  circle_x + radio_size - inner_margin, circle_y + radio_size - inner_margin],
+                                 fill=(255, 255, 255))
+                text_color = C["text_primary"]
+            else:
+                # 未选中 - 空心圆
+                self.draw.ellipse([circle_x, circle_y, circle_x + radio_size, circle_y + radio_size],
+                                 outline=C["border_default"], width=1)
+                text_color = C["text_muted"]
+
+            # 文字
+            text_x = circle_x + radio_size + 6
+            self.draw_text(text_x, y + 1, opt, font_label, text_color)
 
     def draw_dropdown_row(self, label, value):
         """绘制带标签的下拉框行"""
@@ -212,34 +269,14 @@ def generate_part1():
     renderer.draw_dropdown(m + 8, renderer.y, renderer.content_w - 16, 28, "30cm勾边字")
     renderer.y += 36
 
-    # 常用标签 - 等分宽度
+    # 常用标签 - 紧凑型单选按钮
     renderer.draw_text(m + 8, renderer.y, "常用", font_small, C["text_muted"])
-    renderer.y += 18
+    renderer.y += 16
 
     tags = ["勾边字", "包边字", "连襟字", "围边字"]
-    # 计算等分宽度
-    available_width = renderer.content_w - 16  # 两边各留8px边距
-    tag_gap = 6  # 标签之间的间距
-    tag_count = len(tags)
-    tag_w = (available_width - tag_gap * (tag_count - 1)) // tag_count
-
-    tag_x = m + 8
-    for i, tag in enumerate(tags):
-        if i == 0:
-            renderer.draw_rounded_rect(tag_x, renderer.y, tag_w, 24, 4, fill=C["accent_primary"])
-            # 文字居中
-            bbox = renderer.draw.textbbox((0, 0), tag, font=font_small)
-            text_w = bbox[2] - bbox[0]
-            text_x = tag_x + (tag_w - text_w) // 2
-            renderer.draw_text(text_x, renderer.y + 5, tag, font_small, (255, 255, 255))
-        else:
-            renderer.draw_rounded_rect(tag_x, renderer.y, tag_w, 24, 4, fill=C["bg_elevated"])
-            bbox = renderer.draw.textbbox((0, 0), tag, font=font_small)
-            text_w = bbox[2] - bbox[0]
-            text_x = tag_x + (tag_w - text_w) // 2
-            renderer.draw_text(text_x, renderer.y + 5, tag, font_small, C["text_secondary"])
-        tag_x += tag_w + tag_gap
-    renderer.y += 32
+    available_width = renderer.content_w - 16
+    renderer.draw_radio_buttons(m + 8, renderer.y, tags, selected=0, total_w=available_width)
+    renderer.y += 24
 
     # 快速参数 - 等分宽度
     quick_params = [("字壳高度", "30", "mm"), ("壁厚", "1.2", "mm"), ("层高", "0.3", "mm")]
