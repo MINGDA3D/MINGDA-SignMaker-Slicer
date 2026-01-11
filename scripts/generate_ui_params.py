@@ -273,7 +273,7 @@ def generate_part1():
     renderer.draw_text(m + 8, renderer.y, "常用", font_small, C["text_muted"])
     renderer.y += 16
 
-    tags = ["勾边字", "包边字", "连襟字", "围边字"]
+    tags = ["勾边字", "包边字", "连襟字", "无边字"]
     available_width = renderer.content_w - 16
     renderer.draw_radio_buttons(m + 8, renderer.y, tags, selected=0, total_w=available_width)
     renderer.y += 24

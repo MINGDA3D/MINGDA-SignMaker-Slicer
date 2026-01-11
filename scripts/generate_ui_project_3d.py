@@ -491,7 +491,7 @@ draw.polygon([(dropdown_tri_x, dropdown_tri_y), (dropdown_tri_x + 10, dropdown_t
 tag_y = preset_select_y + 44
 draw_text(right_x + 28, tag_y, "常用", font_small, C["text_muted"])
 
-preset_tags = ["勾边字", "包边字", "连襟字", "围边字"]
+preset_tags = ["勾边字", "包边字", "连襟字", "无边字"]
 tag_x = right_x + 24
 tag_row_y = tag_y + 18
 radio_size = 12
