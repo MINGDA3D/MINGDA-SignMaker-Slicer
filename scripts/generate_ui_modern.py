@@ -446,22 +446,43 @@ dropdown_tri_x = right_x + SIDEBAR_RIGHT_W - 56
 dropdown_tri_y = preset_select_y + 14
 draw.polygon([(dropdown_tri_x, dropdown_tri_y), (dropdown_tri_x + 10, dropdown_tri_y), (dropdown_tri_x + 5, dropdown_tri_y + 6)], fill=C["text_muted"])
 
-# 常用模板快捷标签
+# 常用模板快捷标签 - 紧凑型单选按钮
 tag_y = preset_select_y + 44
 draw_text(right_x + 28, tag_y, "常用", font_small, C["text_muted"])
 
 preset_tags = ["勾边字", "包边字", "连襟字", "无边字"]
 tag_x = right_x + 24
-tag_row_y = tag_y + 20
+tag_row_y = tag_y + 18
+radio_size = 12
+tag_gap = 6
+# 计算每个选项的宽度
+available_tag_w = SIDEBAR_RIGHT_W - 48
+tag_item_w = (available_tag_w - tag_gap * (len(preset_tags) - 1)) // len(preset_tags)
+
 for i, tag in enumerate(preset_tags):
-    tag_w = 68
+    # 圆圈位置
+    circle_x = tag_x + 4
+    circle_y = tag_row_y + 4
+
     if i == 0:  # 选中状态
-        draw_rounded_rect(tag_x, tag_row_y, tag_w, 28, 6, fill=C["accent_primary"])
-        draw_text(tag_x + 12, tag_row_y + 6, tag, font_small, (255, 255, 255))
+        # 实心圆
+        draw.ellipse([circle_x, circle_y, circle_x + radio_size, circle_y + radio_size],
+                    fill=C["accent_primary"])
+        # 内部小白点
+        inner_margin = 3
+        draw.ellipse([circle_x + inner_margin, circle_y + inner_margin,
+                     circle_x + radio_size - inner_margin, circle_y + radio_size - inner_margin],
+                    fill=(255, 255, 255))
+        text_color = C["text_primary"]
     else:
-        draw_rounded_rect(tag_x, tag_row_y, tag_w, 28, 6, fill=C["bg_elevated"])
-        draw_text(tag_x + 12, tag_row_y + 6, tag, font_small, C["text_secondary"])
-    tag_x += tag_w + 6
+        # 空心圆
+        draw.ellipse([circle_x, circle_y, circle_x + radio_size, circle_y + radio_size],
+                    outline=C["border_default"], width=1)
+        text_color = C["text_muted"]
+
+    # 文字
+    draw_text(circle_x + radio_size + 6, tag_row_y + 2, tag, font_body, text_color)
+    tag_x += tag_item_w + tag_gap
 
 # 快速参数 - 均分宽度布局
 card_y = tag_row_y + 36
