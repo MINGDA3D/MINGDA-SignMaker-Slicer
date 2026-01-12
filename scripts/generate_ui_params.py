@@ -709,17 +709,6 @@ def generate_part2():
 
     renderer.add_space()
 
-    # ============================================
-    # 底部操作按钮
-    # ============================================
-    btn_gap = 8
-    btn_count = 3
-    btn_w = (renderer.content_w - btn_gap * (btn_count - 1)) // btn_count
-    renderer.draw_button(m, renderer.y, btn_w, 36, "计算路径", primary=True)
-    renderer.draw_button(m + btn_w + btn_gap, renderer.y, btn_w, 36, "预览字边")
-    renderer.draw_button(m + (btn_w + btn_gap) * 2, renderer.y, btn_w, 36, "文件输出", primary=True)
-    renderer.y += 48
-
     img = renderer.crop_to_content()
     return img
 
