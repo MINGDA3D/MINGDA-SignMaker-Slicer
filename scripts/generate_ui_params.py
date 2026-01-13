@@ -319,20 +319,77 @@ def generate_part1():
     # 字边类型
     renderer.draw_radio_row("字边类型", ["直边", "斜边", "异形边"], selected=1)
 
-    params_1 = [
+    # 基本参数
+    params_basic = [
         ("字壳高度", "30", "mm"),
-        ("斜边宽度", "5", "mm"),
-        ("面板厚度", "3", "mm"),
-        ("底板厚度", "10", "mm"),
         ("层高", "0.3", "mm"),
         ("壁厚", "1.2", "mm"),
         ("壁厚补偿", "0", "mm"),
+    ]
+    for label, value, unit in params_basic:
+        renderer.draw_param_row(label, value, unit)
+
+    # 顶部(Top)参数 - 新增（借鉴SASM3D）
+    renderer.draw_text(m + 8, renderer.y + 2, "顶部参数 (Top)", font_small, C["accent_secondary"])
+    renderer.y += 18
+    params_top = [
+        ("台阶高度", "3.0", "mm"),
+        ("台阶宽度", "0.4", "mm"),
+    ]
+    for label, value, unit in params_top:
+        renderer.draw_param_row(label, value, unit)
+
+    # 斜边参数
+    renderer.draw_text(m + 8, renderer.y + 2, "斜边参数", font_small, C["accent_secondary"])
+    renderer.y += 18
+    params_bevel = [
+        ("斜边宽度", "5", "mm"),
+        ("斜边角度", "75", "°"),
+        ("面板厚度", "3", "mm"),
+        ("底板厚度", "10", "mm"),
+    ]
+    for label, value, unit in params_bevel:
+        renderer.draw_param_row(label, value, unit)
+
+    # 底部(Bottom)参数 - 新增（借鉴SASM3D）
+    renderer.draw_text(m + 8, renderer.y + 2, "底部参数 (Bottom)", font_small, C["accent_secondary"])
+    renderer.y += 18
+    params_bottom = [
+        ("底边高度", "2.0", "mm"),
+        ("凹槽高度", "2.0", "mm"),
+    ]
+    for label, value, unit in params_bottom:
+        renderer.draw_param_row(label, value, unit)
+
+    # 多层壁厚参数
+    renderer.draw_text(m + 8, renderer.y + 2, "多层壁厚", font_small, C["accent_secondary"])
+    renderer.y += 18
+    params_wall = [
         ("走线次数", "1", "次"),
+        ("走线高度", "0", "mm"),
         ("走线偏移", "0.8", "mm"),
+    ]
+    for label, value, unit in params_wall:
+        renderer.draw_param_row(label, value, unit)
+
+    # 字芯参数
+    renderer.draw_text(m + 8, renderer.y + 2, "字芯参数", font_small, C["accent_secondary"])
+    renderer.y += 18
+    params_core = [
+        ("字芯高度", "0", "mm"),
+        ("字芯斜边宽度", "0", "mm"),
+    ]
+    for label, value, unit in params_core:
+        renderer.draw_param_row(label, value, unit)
+
+    # 预打边线参数
+    renderer.draw_text(m + 8, renderer.y + 2, "预打边线 (Skirt)", font_small, C["accent_secondary"])
+    renderer.y += 18
+    params_skirt = [
         ("预打边线偏移", "20", "mm"),
         ("预打边线次数", "1", "次"),
     ]
-    for label, value, unit in params_1:
+    for label, value, unit in params_skirt:
         renderer.draw_param_row(label, value, unit)
 
     renderer.add_space()
@@ -649,7 +706,71 @@ def generate_part2():
     renderer.add_space()
 
     # ============================================
-    # 10. 填充
+    # 10. 排版设置（新增）
+    # ============================================
+    renderer.draw_section_header("排版设置", expanded=True, has_checkbox=True, checked=True)
+
+    # 排版模式
+    renderer.draw_radio_row("排版模式", ["整版打印", "单个打印"], selected=1)
+
+    # 边界设置
+    renderer.draw_text(m + 8, renderer.y + 2, "边界设置", font_small, C["accent_secondary"])
+    renderer.y += 18
+    params_layout_border = [
+        ("横轴边界距离", "10", "mm"),
+        ("纵轴边界距离", "10", "mm"),
+    ]
+    for label, value, unit in params_layout_border:
+        renderer.draw_param_row(label, value, unit)
+
+    # 间隙设置
+    renderer.draw_text(m + 8, renderer.y + 2, "图形间隙", font_small, C["accent_secondary"])
+    renderer.y += 18
+    params_layout_gap = [
+        ("X图形间隙", "15", "mm"),
+        ("Y图形间隙", "15", "mm"),
+    ]
+    for label, value, unit in params_layout_gap:
+        renderer.draw_param_row(label, value, unit)
+
+    renderer.add_space()
+
+    # ============================================
+    # 11. 输出设置（新增）
+    # ============================================
+    renderer.draw_section_header("输出设置", expanded=True)
+
+    # 文件名
+    renderer.draw_param_row("文件名", "output", "")
+
+    # 导出选项
+    renderer.draw_text(m + 8, renderer.y + 2, "导出格式", font_small, C["accent_secondary"])
+    renderer.y += 18
+
+    # G-code导出
+    renderer.draw_checkbox(m + 8, renderer.y + 2, True, 14)
+    renderer.draw_text(m + 28, renderer.y + 2, "导出G-code (.gcode)", font_small, C["text_primary"])
+    renderer.y += 22
+
+    # STL导出（新增，借鉴SASM3D）
+    renderer.draw_checkbox(m + 8, renderer.y + 2, False, 14)
+    renderer.draw_text(m + 28, renderer.y + 2, "导出STL (.stl)", font_small, C["text_secondary"])
+    renderer.y += 22
+
+    # PLT导出（新增）
+    renderer.draw_checkbox(m + 8, renderer.y + 2, False, 14)
+    renderer.draw_text(m + 28, renderer.y + 2, "导出PLT (.plt)", font_small, C["text_secondary"])
+    renderer.y += 22
+
+    # DXF导出
+    renderer.draw_checkbox(m + 8, renderer.y + 2, False, 14)
+    renderer.draw_text(m + 28, renderer.y + 2, "导出DXF (.dxf)", font_small, C["text_secondary"])
+    renderer.y += 26
+
+    renderer.add_space()
+
+    # ============================================
+    # 12. 填充
     # ============================================
     renderer.draw_section_header("填充", expanded=True)
 
@@ -669,14 +790,17 @@ def generate_part2():
     renderer.add_space()
 
     # ============================================
-    # 11. 机器设置
+    # 13. 机器设置
     # ============================================
     renderer.draw_section_header("机器设置", expanded=True)
 
     # 机器类型
     renderer.draw_dropdown_row("机台类型", "AD-F4 (800×1200mm)")
 
-    params_machine = [
+    # 基础参数
+    renderer.draw_text(m + 8, renderer.y + 2, "基础参数", font_small, C["accent_secondary"])
+    renderer.y += 18
+    params_machine_basic = [
         ("喷头1温度", "220", "°C"),
         ("喷头2温度", "220", "°C"),
         ("喷头3温度", "220", "°C"),
@@ -685,7 +809,53 @@ def generate_part2():
         ("换料回抽", "30", "mm"),
         ("换料补偿", "20", "mm"),
     ]
-    for label, value, unit in params_machine:
+    for label, value, unit in params_machine_basic:
+        renderer.draw_param_row(label, value, unit)
+
+    # 空走参数（新增）
+    renderer.draw_text(m + 8, renderer.y + 2, "空走参数", font_small, C["accent_secondary"])
+    renderer.y += 18
+    params_travel = [
+        ("空走抬头高度1", "1", "mm"),
+        ("空走抬头高度2", "3", "mm"),
+        ("空走最长距离", "100", "mm"),
+    ]
+    for label, value, unit in params_travel:
+        renderer.draw_param_row(label, value, unit)
+
+    # 喷头参数（新增）
+    renderer.draw_text(m + 8, renderer.y + 2, "喷头参数", font_small, C["accent_secondary"])
+    renderer.y += 18
+    params_nozzle = [
+        ("结束喷头位置", "50", "mm"),
+        ("清洗喷头", "10", "mm"),
+        ("提前关胶距离", "0.5", "mm"),
+    ]
+    for label, value, unit in params_nozzle:
+        renderer.draw_param_row(label, value, unit)
+
+    # 速度参数（新增）
+    renderer.draw_text(m + 8, renderer.y + 2, "速度参数", font_small, C["accent_secondary"])
+    renderer.y += 18
+    params_speed_machine = [
+        ("Z轴抬落速度", "60", "mm/s"),
+        ("抬头挤出速度", "30", "mm/s"),
+        ("抬头回抽速度", "50", "mm/s"),
+        ("换色速度", "30", "mm/s"),
+        ("换色回抽速度", "50", "mm/s"),
+    ]
+    for label, value, unit in params_speed_machine:
+        renderer.draw_param_row(label, value, unit)
+
+    # 缺料补偿（新增）
+    renderer.draw_text(m + 8, renderer.y + 2, "缺料补偿", font_small, C["accent_secondary"])
+    renderer.y += 18
+    params_shortage = [
+        ("近距离缺料补偿", "0.4", "mm"),
+        ("远距离缺料补偿", "0.4", "mm"),
+        ("远近距离分界线", "100", "mm"),
+    ]
+    for label, value, unit in params_shortage:
         renderer.draw_param_row(label, value, unit)
 
     renderer.y += 4

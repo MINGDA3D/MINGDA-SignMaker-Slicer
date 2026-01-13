@@ -162,17 +162,21 @@ draw_rounded_rect(8, content_y + 8, SIDEBAR_LEFT_W - 16, content_h - 16, 12, fil
 
 # 文件操作工具栏
 toolbar_y = content_y + 16
-draw_rounded_rect(16, toolbar_y, SIDEBAR_LEFT_W - 32, 36, 8, fill=C["bg_card"])
+draw_rounded_rect(16, toolbar_y, SIDEBAR_LEFT_W - 32, 72, 8, fill=C["bg_card"])
 
-file_tools = [("📂", "打开"), ("💾", "保存"), ("📥", "导入"), ("📤", "导出")]
+# 第一行 - 基础文件操作
+file_tools_row1 = [("📂", "打开"), ("💾", "保存"), ("📥", "导入"), ("📤", "导出")]
 ftx = 24
-for icon, tip in file_tools:
+for icon, tip in file_tools_row1:
     draw_rounded_rect(ftx, toolbar_y + 4, 44, 28, 6, fill=C["bg_elevated"])
     draw_text(ftx + 14, toolbar_y + 10, icon, font_icon, C["text_secondary"])
     ftx += 52
 
+# 第二行 - 格式支持（新增）
+draw_text(24, toolbar_y + 38, "支持: DXF  SVG  STL  PLT", font_small, C["text_muted"])
+
 # 图形列表标题
-draw_text(20, toolbar_y + 50, "图形列表", font_h2, C["text_primary"])
+draw_text(20, toolbar_y + 82, "图形列表", font_h2, C["text_primary"])
 
 # 图标目录
 icons_dir = os.path.join(os.path.dirname(__file__), "..", "docs", "images")
@@ -183,7 +187,7 @@ shapes = [
     ("发光字-光", False, C["extruder_2"]),
     ("发光字-字", False, C["extruder_1"]),
 ]
-shape_y = toolbar_y + 80
+shape_y = toolbar_y + 112
 for name, selected, color in shapes:
     if selected:
         draw_rounded_rect(16, shape_y, SIDEBAR_LEFT_W - 32, 44, 8, fill=C["bg_hover"], outline=C["border_focus"])
@@ -233,6 +237,23 @@ toolbar_icons = [
 etx = canvas_x + 28
 icon_size = 32
 
+# 编辑工具组0 - 撤销/重做（新增）
+undo_redo_icons = [("撤销.png", "撤销"), ("重做.png", "重做")]
+for icon_file, label in undo_redo_icons:
+    icon_path = os.path.join(icons_dir, icon_file)
+    icon = load_icon(icon_path, icon_size)
+    if icon:
+        img.paste(icon, (etx + 4, canvas_toolbar_y + 8), icon)
+    else:
+        # 如果图标不存在，绘制文字标识
+        draw_rounded_rect(etx, canvas_toolbar_y + 8, 40, 32, 6, fill=C["bg_elevated"])
+        draw_text(etx + 8, canvas_toolbar_y + 16, label[:2], font_small, C["text_muted"])
+    etx += 44
+
+# 分隔线
+draw.line([(etx + 4, canvas_toolbar_y + 10), (etx + 4, canvas_toolbar_y + 38)], fill=C["border_default"])
+etx += 20
+
 # 编辑工具组1 - 变换操作 (移动/旋转/缩放)
 for icon_file, active in toolbar_icons:
     icon_path = os.path.join(icons_dir, icon_file)
@@ -273,6 +294,23 @@ for icon_file, label in group_icons:
     icon = load_icon(icon_path, icon_size)
     if icon:
         img.paste(icon, (etx + 4, canvas_toolbar_y + 8), icon)
+    etx += 44
+
+# 分隔线
+draw.line([(etx + 4, canvas_toolbar_y + 10), (etx + 4, canvas_toolbar_y + 38)], fill=C["border_default"])
+etx += 20
+
+# 编辑工具组3.5 - 布尔运算（新增，借鉴SASM3D）
+boolean_icons = [("交集.png", "交集"), ("差集.png", "差集")]
+for icon_file, label in boolean_icons:
+    icon_path = os.path.join(icons_dir, icon_file)
+    icon = load_icon(icon_path, icon_size)
+    if icon:
+        img.paste(icon, (etx + 4, canvas_toolbar_y + 8), icon)
+    else:
+        # 如果图标不存在，绘制文字标识
+        draw_rounded_rect(etx, canvas_toolbar_y + 8, 40, 32, 6, fill=C["bg_elevated"])
+        draw_text(etx + 8, canvas_toolbar_y + 16, label[:2], font_small, C["text_muted"])
     etx += 44
 
 # 分隔线
@@ -524,9 +562,11 @@ sections = [
     ("包边勾边", False, []),
     ("面板设置", False, []),
     ("底板设置", False, []),
+    ("排版设置", False, []),  # 新增
     ("速度设置", False, []),
     ("填充", False, []),
     ("机器设置", False, []),
+    ("输出设置", False, []),  # 新增
 ]
 
 section_y = preset_y + preset_content_h + 8
