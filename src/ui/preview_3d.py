@@ -229,39 +229,45 @@ class Preview3DWidget(QOpenGLWidget):
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
 
-        # 计算观察距离 - 基于模型大小
-        if self.layers:
-            view_distance = self.model_size * 2.5 / self.zoom
+        # 计算观察距离
+        if self.layers and self.model_size > 0:
+            view_distance = self.model_size * 3.0 / self.zoom
+            cx, cy, cz = self.model_center
         else:
-            view_distance = max(self.bed_width, self.bed_depth) * 1.5 / self.zoom
+            view_distance = 300.0 / self.zoom
+            cx, cy, cz = 0, 0, 0
 
-        # 设置相机位置 - 观察模型中心
-        cx, cy, cz = self.model_center
+        # 设置相机位置（使用简化的视角计算）
+        import math
+        # 将角度转换为弧度
+        pitch = math.radians(self.rotation_x)
+        yaw = math.radians(self.rotation_z)
+
+        # 计算相机位置（球坐标系）
+        cam_x = cx + view_distance * math.cos(pitch) * math.sin(yaw)
+        cam_y = cy - view_distance * math.cos(pitch) * math.cos(yaw)
+        cam_z = cz + view_distance * math.sin(pitch)
+
         gluLookAt(
-            cx, cy - view_distance, cz + view_distance * 0.5,  # 相机位置
-            cx, cy, cz,                                         # 观察点（模型中心）
-            0, 0, 1                                             # 上方向
+            cam_x, cam_y, cam_z,  # 相机位置
+            cx, cy, cz,           # 观察点（模型中心）
+            0, 0, 1               # 上方向
         )
 
         # 应用平移
         glTranslatef(self.pan_x, self.pan_y, 0)
 
-        # 应用旋转（绕模型中心）
-        cx, cy, cz = self.model_center
-        glTranslatef(cx, cy, cz)
-        glRotatef(self.rotation_x, 1, 0, 0)
-        glRotatef(self.rotation_z, 0, 0, 1)
-        glTranslatef(-cx, -cy, -cz)
+        # 绘制场景 - 在模型中心位置绘制辅助元素
+        cx, cy, cz = self.model_center if self.layers else (0, 0, 0)
 
-        # 绘制场景
         if self.show_platform:
-            self._draw_platform()
+            self._draw_platform_at(cx, cy)
 
         if self.show_grid:
-            self._draw_grid()
+            self._draw_grid_at(cx, cy)
 
         if self.show_axes:
-            self._draw_axes()
+            self._draw_axes_at(cx, cy, cz)
 
         # 绘制切片层
         self._draw_layers()
@@ -279,12 +285,16 @@ class Preview3DWidget(QOpenGLWidget):
         aspect = width / height
         fov = 45.0
         near = 1.0
-        far = 5000.0
+        far = 50000.0  # 增大远裁剪面以适应大坐标
 
         gluPerspective(fov, aspect, near, far)
 
     def _draw_platform(self):
-        """绘制打印平台"""
+        """绘制打印平台（在原点）"""
+        self._draw_platform_at(0, 0)
+
+    def _draw_platform_at(self, cx: float, cy: float):
+        """绘制打印平台（在指定中心）"""
         hw = self.bed_width / 2
         hd = self.bed_depth / 2
 
@@ -292,71 +302,79 @@ class Preview3DWidget(QOpenGLWidget):
         glColor4f(0.3, 0.4, 0.5, 1.0)
         glLineWidth(2.0)
         glBegin(GL_LINE_LOOP)
-        glVertex3f(-hw, -hd, 0)
-        glVertex3f(hw, -hd, 0)
-        glVertex3f(hw, hd, 0)
-        glVertex3f(-hw, hd, 0)
+        glVertex3f(cx - hw, cy - hd, 0)
+        glVertex3f(cx + hw, cy - hd, 0)
+        glVertex3f(cx + hw, cy + hd, 0)
+        glVertex3f(cx - hw, cy + hd, 0)
         glEnd()
 
         # 平台表面（半透明）
         glColor4f(0.15, 0.2, 0.25, 0.3)
         glBegin(GL_QUADS)
-        glVertex3f(-hw, -hd, 0)
-        glVertex3f(hw, -hd, 0)
-        glVertex3f(hw, hd, 0)
-        glVertex3f(-hw, hd, 0)
+        glVertex3f(cx - hw, cy - hd, 0)
+        glVertex3f(cx + hw, cy - hd, 0)
+        glVertex3f(cx + hw, cy + hd, 0)
+        glVertex3f(cx - hw, cy + hd, 0)
         glEnd()
 
         glLineWidth(self.line_width)
 
     def _draw_grid(self):
-        """绘制网格"""
+        """绘制网格（在原点）"""
+        self._draw_grid_at(0, 0)
+
+    def _draw_grid_at(self, cx: float, cy: float):
+        """绘制网格（在指定中心）"""
         hw = self.bed_width / 2
         hd = self.bed_depth / 2
-        grid_spacing = 20.0  # 20mm 网格
+        grid_spacing = 50.0  # 50mm 网格（适合大模型）
 
         glColor4f(0.2, 0.25, 0.3, 0.5)
         glLineWidth(1.0)
         glBegin(GL_LINES)
 
         # X方向线
-        y = -hd
-        while y <= hd:
-            glVertex3f(-hw, y, 0)
-            glVertex3f(hw, y, 0)
+        y = cy - hd
+        while y <= cy + hd:
+            glVertex3f(cx - hw, y, 0)
+            glVertex3f(cx + hw, y, 0)
             y += grid_spacing
 
         # Y方向线
-        x = -hw
-        while x <= hw:
-            glVertex3f(x, -hd, 0)
-            glVertex3f(x, hd, 0)
+        x = cx - hw
+        while x <= cx + hw:
+            glVertex3f(x, cy - hd, 0)
+            glVertex3f(x, cy + hd, 0)
             x += grid_spacing
 
         glEnd()
         glLineWidth(self.line_width)
 
     def _draw_axes(self):
-        """绘制坐标轴"""
-        axis_length = 50.0
+        """绘制坐标轴（在原点）"""
+        self._draw_axes_at(0, 0, 0)
 
-        glLineWidth(2.0)
+    def _draw_axes_at(self, cx: float, cy: float, cz: float):
+        """绘制坐标轴（在指定位置）"""
+        axis_length = max(100.0, self.model_size * 0.3) if self.layers else 50.0
+
+        glLineWidth(3.0)
         glBegin(GL_LINES)
 
         # X轴 - 红色
-        glColor4f(1.0, 0.2, 0.2, 1.0)
-        glVertex3f(0, 0, 0)
-        glVertex3f(axis_length, 0, 0)
+        glColor4f(1.0, 0.3, 0.3, 1.0)
+        glVertex3f(cx, cy, cz)
+        glVertex3f(cx + axis_length, cy, cz)
 
         # Y轴 - 绿色
-        glColor4f(0.2, 1.0, 0.2, 1.0)
-        glVertex3f(0, 0, 0)
-        glVertex3f(0, axis_length, 0)
+        glColor4f(0.3, 1.0, 0.3, 1.0)
+        glVertex3f(cx, cy, cz)
+        glVertex3f(cx, cy + axis_length, cz)
 
         # Z轴 - 蓝色
-        glColor4f(0.2, 0.2, 1.0, 1.0)
-        glVertex3f(0, 0, 0)
-        glVertex3f(0, 0, axis_length)
+        glColor4f(0.3, 0.3, 1.0, 1.0)
+        glVertex3f(cx, cy, cz)
+        glVertex3f(cx, cy, cz + axis_length)
 
         glEnd()
         glLineWidth(self.line_width)
@@ -364,6 +382,8 @@ class Preview3DWidget(QOpenGLWidget):
     def _draw_layers(self):
         """绘制切片层"""
         if not self.layers:
+            # 没有切片数据时绘制测试立方体
+            self._draw_test_cube()
             return
 
         # 确定要绘制的层范围
@@ -401,6 +421,41 @@ class Preview3DWidget(QOpenGLWidget):
                     glVertex3f(point.x, point.y, z)
 
                 glEnd()
+
+    def _draw_test_cube(self):
+        """绘制测试立方体（当没有切片数据时）"""
+        size = 50.0
+
+        glColor4f(0.5, 0.8, 0.5, 1.0)
+        glLineWidth(2.0)
+
+        # 底面
+        glBegin(GL_LINE_LOOP)
+        glVertex3f(-size, -size, 0)
+        glVertex3f(size, -size, 0)
+        glVertex3f(size, size, 0)
+        glVertex3f(-size, size, 0)
+        glEnd()
+
+        # 顶面
+        glBegin(GL_LINE_LOOP)
+        glVertex3f(-size, -size, size)
+        glVertex3f(size, -size, size)
+        glVertex3f(size, size, size)
+        glVertex3f(-size, size, size)
+        glEnd()
+
+        # 竖边
+        glBegin(GL_LINES)
+        glVertex3f(-size, -size, 0)
+        glVertex3f(-size, -size, size)
+        glVertex3f(size, -size, 0)
+        glVertex3f(size, -size, size)
+        glVertex3f(size, size, 0)
+        glVertex3f(size, size, size)
+        glVertex3f(-size, size, 0)
+        glVertex3f(-size, size, size)
+        glEnd()
 
     def _get_path_color(self, path: LayerPath, alpha_mult: float = 1.0) -> Tuple[float, float, float, float]:
         """获取路径颜色"""
