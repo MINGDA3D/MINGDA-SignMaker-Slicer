@@ -80,6 +80,10 @@ class Preview3DWidget(QOpenGLWidget):
         self.bed_depth: float = 400.0
         self.bed_height: float = 500.0
 
+        # 模型边界信息
+        self.model_center: Tuple[float, float, float] = (0, 0, 0)
+        self.model_size: float = 100.0
+
         # 鼠标交互
         self._last_pos: QPoint = QPoint()
         self._mouse_button: Qt.MouseButton = Qt.MouseButton.NoButton
@@ -88,7 +92,7 @@ class Preview3DWidget(QOpenGLWidget):
         self.show_grid: bool = True
         self.show_axes: bool = True
         self.show_platform: bool = True
-        self.line_width: float = 1.5
+        self.line_width: float = 2.0  # 增加线宽便于查看
 
         # 设置焦点策略以接收键盘事件
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
@@ -100,7 +104,43 @@ class Preview3DWidget(QOpenGLWidget):
         """设置切片层数据"""
         self.layers = layers
         self.current_layer = len(layers) - 1 if layers else 0
+        # 计算模型边界框用于居中显示
+        self._calculate_bounds()
         self.update()
+
+    def _calculate_bounds(self):
+        """计算模型边界框"""
+        if not self.layers:
+            self.model_center = (0, 0, 0)
+            self.model_size = 100
+            return
+
+        min_x, min_y, min_z = float('inf'), float('inf'), float('inf')
+        max_x, max_y, max_z = float('-inf'), float('-inf'), float('-inf')
+
+        for layer in self.layers:
+            z = layer.z_height
+            min_z = min(min_z, z)
+            max_z = max(max_z, z + layer.layer_height)
+
+            for path in layer.paths:
+                for point in path.points:
+                    min_x = min(min_x, point.x)
+                    max_x = max(max_x, point.x)
+                    min_y = min(min_y, point.y)
+                    max_y = max(max_y, point.y)
+
+        if min_x == float('inf'):
+            self.model_center = (0, 0, 0)
+            self.model_size = 100
+            return
+
+        self.model_center = (
+            (min_x + max_x) / 2,
+            (min_y + max_y) / 2,
+            (min_z + max_z) / 2
+        )
+        self.model_size = max(max_x - min_x, max_y - min_y, max_z - min_z, 1)
 
     def set_current_layer(self, layer_index: int):
         """设置当前显示层"""
@@ -189,22 +229,29 @@ class Preview3DWidget(QOpenGLWidget):
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
 
-        # 计算观察距离
-        view_distance = max(self.bed_width, self.bed_depth) * 1.5 / self.zoom
+        # 计算观察距离 - 基于模型大小
+        if self.layers:
+            view_distance = self.model_size * 2.5 / self.zoom
+        else:
+            view_distance = max(self.bed_width, self.bed_depth) * 1.5 / self.zoom
 
-        # 设置相机位置
+        # 设置相机位置 - 观察模型中心
+        cx, cy, cz = self.model_center
         gluLookAt(
-            0, -view_distance, view_distance * 0.5,  # 相机位置
-            0, 0, 0,                                  # 观察点
-            0, 0, 1                                   # 上方向
+            cx, cy - view_distance, cz + view_distance * 0.5,  # 相机位置
+            cx, cy, cz,                                         # 观察点（模型中心）
+            0, 0, 1                                             # 上方向
         )
 
         # 应用平移
         glTranslatef(self.pan_x, self.pan_y, 0)
 
-        # 应用旋转
+        # 应用旋转（绕模型中心）
+        cx, cy, cz = self.model_center
+        glTranslatef(cx, cy, cz)
         glRotatef(self.rotation_x, 1, 0, 0)
         glRotatef(self.rotation_z, 0, 0, 1)
+        glTranslatef(-cx, -cy, -cz)
 
         # 绘制场景
         if self.show_platform:
