@@ -19,7 +19,7 @@ from PySide6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
     QSplitter, QMenuBar, QMenu, QToolBar, QStatusBar, QLabel,
     QPushButton, QFrame, QScrollArea, QDockWidget, QFileDialog,
-    QMessageBox, QSizePolicy, QDoubleSpinBox, QSpinBox
+    QMessageBox, QSizePolicy, QDoubleSpinBox, QSpinBox, QStackedWidget
 )
 from PySide6.QtCore import Qt, Signal, QSize
 from PySide6.QtGui import QAction, QIcon, QKeySequence
@@ -28,6 +28,7 @@ from .theme import get_stylesheet, COLORS, LAYOUT
 from .canvas_2d import Canvas2D
 from .param_panel import ParamPanel
 from .project_panel import ProjectPanel
+from .preview_3d import Preview3D
 
 from src.core import (
     DXFParser, SliceEngine, GCodeWriter,
@@ -382,9 +383,22 @@ class MainWindow(QMainWindow):
         self.project_panel.setMaximumWidth(300)
         main_splitter.addWidget(self.project_panel)
 
-        # === 中央画布 ===
+        # === 中央视图区域（2D/3D切换）===
+        self.view_stack = QStackedWidget()
+
+        # 2D画布
         self.canvas = Canvas2D()
-        main_splitter.addWidget(self.canvas)
+        self.view_stack.addWidget(self.canvas)
+
+        # 3D预览
+        self.preview_3d = Preview3D()
+        self.view_stack.addWidget(self.preview_3d)
+
+        # 默认显示2D视图
+        self.view_stack.setCurrentIndex(0)
+        self.current_view = "2d"
+
+        main_splitter.addWidget(self.view_stack)
 
         # === 右侧参数面板 ===
         self.param_panel = ParamPanel()
@@ -531,6 +545,16 @@ class MainWindow(QMainWindow):
             # 执行切片
             self.slice_result = self.slice_engine.slice(self.contours, params)
 
+            # 更新3D预览
+            if self.slice_result and self.slice_result.layers:
+                self.preview_3d.set_layers(self.slice_result.layers)
+                machine = params.machine
+                self.preview_3d.set_bed_size(
+                    machine.bed_width,
+                    machine.bed_depth,
+                    machine.bed_height
+                )
+
             # 更新状态
             msg = (
                 f"切片完成: {self.slice_result.total_layers} 层, "
@@ -559,9 +583,21 @@ class MainWindow(QMainWindow):
     def _switch_view(self, view_type: str):
         """切换2D/3D视图"""
         if view_type == "2d":
-            self.canvas.set_view_mode("2d")
+            self.view_stack.setCurrentIndex(0)
+            self.current_view = "2d"
         else:
-            self.canvas.set_view_mode("3d")
+            self.view_stack.setCurrentIndex(1)
+            self.current_view = "3d"
+            # 如果有切片结果，更新3D预览
+            if self.slice_result and self.slice_result.layers:
+                self.preview_3d.set_layers(self.slice_result.layers)
+                # 更新打印平台尺寸
+                machine = self.slice_params.machine
+                self.preview_3d.set_bed_size(
+                    machine.bed_width,
+                    machine.bed_depth,
+                    machine.bed_height
+                )
         self._update_status(f"切换到{view_type.upper()}视图")
 
     def _on_zoom_fit(self):

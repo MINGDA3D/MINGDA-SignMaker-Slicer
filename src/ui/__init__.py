@@ -9,6 +9,7 @@ from .main_window import MainWindow, main
 from .canvas_2d import Canvas2D
 from .param_panel import ParamPanel
 from .project_panel import ProjectPanel
+from .preview_3d import Preview3D, Preview3DWidget
 
 __all__ = [
     # 主题
@@ -18,4 +19,5 @@ __all__ = [
     # 窗口和组件
     'MainWindow', 'main',
     'Canvas2D', 'ParamPanel', 'ProjectPanel',
+    'Preview3D', 'Preview3DWidget',
 ]
