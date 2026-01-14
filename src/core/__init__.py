@@ -21,6 +21,11 @@ from .dxf_parser import DXFParser
 from .path_offset import PathOffset, EndType
 from .slice_engine import SliceEngine
 from .gcode_writer import GCodeWriter, write_gcode
+from .bevel_generator import BevelGenerator
+from .step_generator import StepGenerator
+from .fill_generator import FillGenerator
+from .skirt_generator import SkirtGenerator
+from .connected_generator import ConnectedGenerator
 
 __all__ = [
     # 基础几何类型
@@ -40,4 +45,7 @@ __all__ = [
     # 核心类
     'DXFParser', 'PathOffset', 'EndType', 'SliceEngine',
     'GCodeWriter', 'write_gcode',
+    # 生成器
+    'BevelGenerator', 'StepGenerator', 'FillGenerator',
+    'SkirtGenerator', 'ConnectedGenerator',
 ]

@@ -1,0 +1,14 @@
+{
+    "name": "标准斜边字",
+    "description": "适用于40cm以下的斜边发光字",
+    "shell": {
+        "height": 30.0,
+        "edge_type": "BEVELED",
+        "wall_thickness": 1.2,
+        "layer_height": 0.3,
+        "wall_count": 1,
+        "bevel_width": 5.0,
+        "baseplate_thickness": 10.0,
+        "panel_thickness": 3.0
+    }
+}
