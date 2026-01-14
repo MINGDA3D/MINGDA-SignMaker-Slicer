@@ -4,7 +4,7 @@ SignMaker Slicer - 2D画布组件
 用于显示和编辑2D轮廓的画布组件，支持：
 - 轮廓渲染
 - 平移和缩放
-- 选择和变换
+- 选择和变换（移动、旋转、缩放）
 - 网格背景
 """
 
@@ -12,7 +12,7 @@ from __future__ import annotations
 from typing import List, Optional, Tuple
 import math
 
-from PySide6.QtWidgets import QWidget, QVBoxLayout
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QApplication
 from PySide6.QtCore import Qt, Signal, QPointF, QRectF
 from PySide6.QtGui import (
     QPainter, QPen, QBrush, QColor, QPainterPath,
@@ -30,6 +30,7 @@ class Canvas2D(QWidget):
     contour_selected = Signal(int)  # 轮廓选中信号
     mouse_moved = Signal(float, float)  # 鼠标移动信号
     zoom_changed = Signal(float)  # 缩放变化信号
+    contours_modified = Signal()  # 轮廓被修改信号
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -45,10 +46,14 @@ class Canvas2D(QWidget):
         self.slice_result = None
 
         # 交互状态
-        self.current_tool = "select"  # 当前工具
-        self.is_panning = False  # 是否正在平移
+        self.current_tool = "select"  # 当前工具: select, move, rotate, scale
+        self.is_panning = False  # 是否正在平移视图
+        self.is_transforming = False  # 是否正在变换轮廓
         self.pan_start = QPointF()  # 平移起始点
+        self.transform_start = QPointF()  # 变换起始点（世界坐标）
         self.last_mouse_pos = QPointF()
+        self.transform_center = QPointF()  # 变换中心点
+        self.initial_angle = 0.0  # 初始角度（用于旋转）
 
         # 样式
         self.bg_color = QColor(COLORS.bg_primary)
@@ -57,6 +62,7 @@ class Canvas2D(QWidget):
         self.hole_color = QColor(COLORS.accent_warning)
         self.selected_color = QColor(COLORS.accent_primary)
         self.start_point_color = QColor(COLORS.accent_success)
+        self.transform_handle_color = QColor(COLORS.accent_primary)
 
         # 设置
         self.setMinimumSize(400, 300)
@@ -77,6 +83,7 @@ class Canvas2D(QWidget):
     def set_tool(self, tool: str):
         """设置当前工具"""
         self.current_tool = tool
+        self._set_tool_cursor()
 
     def fit_view(self):
         """适应视图"""
@@ -121,8 +128,126 @@ class Canvas2D(QWidget):
 
     def mirror_selected(self, axis: str):
         """镜像选中的轮廓"""
-        # TODO: 实现镜像功能
-        pass
+        if not self.selected_indices:
+            return
+
+        center = self._get_selection_center()
+
+        for idx in self.selected_indices:
+            contour = self.contours[idx]
+            self._mirror_path(contour.outer, center, axis)
+            for hole in contour.holes:
+                self._mirror_path(hole, center, axis)
+
+        self.contours_modified.emit()
+        self.update()
+
+    def _mirror_path(self, path: Path, center: QPointF, axis: str):
+        """镜像路径"""
+        new_points = []
+        for p in path.points:
+            if axis == "x":
+                new_x = 2 * center.x() - p.x
+                new_points.append(Point(new_x, p.y))
+            else:  # y
+                new_y = 2 * center.y() - p.y
+                new_points.append(Point(p.x, new_y))
+        path.points = new_points
+
+    def move_selected(self, dx: float, dy: float):
+        """移动选中的轮廓"""
+        if not self.selected_indices:
+            return
+
+        for idx in self.selected_indices:
+            contour = self.contours[idx]
+            self._translate_path(contour.outer, dx, dy)
+            for hole in contour.holes:
+                self._translate_path(hole, dx, dy)
+
+        self.contours_modified.emit()
+        self.update()
+
+    def _translate_path(self, path: Path, dx: float, dy: float):
+        """平移路径"""
+        path.points = [Point(p.x + dx, p.y + dy) for p in path.points]
+
+    def rotate_selected(self, angle_degrees: float):
+        """旋转选中的轮廓（绕选择中心）"""
+        if not self.selected_indices:
+            return
+
+        center = self._get_selection_center()
+        angle_rad = math.radians(angle_degrees)
+
+        for idx in self.selected_indices:
+            contour = self.contours[idx]
+            self._rotate_path(contour.outer, center, angle_rad)
+            for hole in contour.holes:
+                self._rotate_path(hole, center, angle_rad)
+
+        self.contours_modified.emit()
+        self.update()
+
+    def _rotate_path(self, path: Path, center: QPointF, angle_rad: float):
+        """旋转路径"""
+        cos_a = math.cos(angle_rad)
+        sin_a = math.sin(angle_rad)
+        cx, cy = center.x(), center.y()
+
+        new_points = []
+        for p in path.points:
+            dx = p.x - cx
+            dy = p.y - cy
+            new_x = cx + dx * cos_a - dy * sin_a
+            new_y = cy + dx * sin_a + dy * cos_a
+            new_points.append(Point(new_x, new_y))
+        path.points = new_points
+
+    def scale_selected(self, scale_factor: float):
+        """缩放选中的轮廓（绕选择中心）"""
+        if not self.selected_indices or scale_factor <= 0:
+            return
+
+        center = self._get_selection_center()
+
+        for idx in self.selected_indices:
+            contour = self.contours[idx]
+            self._scale_path(contour.outer, center, scale_factor)
+            for hole in contour.holes:
+                self._scale_path(hole, center, scale_factor)
+
+        self.contours_modified.emit()
+        self.update()
+
+    def _scale_path(self, path: Path, center: QPointF, factor: float):
+        """缩放路径"""
+        cx, cy = center.x(), center.y()
+        new_points = []
+        for p in path.points:
+            new_x = cx + (p.x - cx) * factor
+            new_y = cy + (p.y - cy) * factor
+            new_points.append(Point(new_x, new_y))
+        path.points = new_points
+
+    def _get_selection_center(self) -> QPointF:
+        """获取选中轮廓的中心点"""
+        if not self.selected_indices:
+            return QPointF(0, 0)
+
+        min_x = float('inf')
+        min_y = float('inf')
+        max_x = float('-inf')
+        max_y = float('-inf')
+
+        for idx in self.selected_indices:
+            bounds = self.contours[idx].outer.bounds
+            min_x = min(min_x, bounds[0])
+            min_y = min(min_y, bounds[1])
+            max_x = max(max_x, bounds[2])
+            max_y = max(max_y, bounds[3])
+
+        return QPointF((min_x + max_x) / 2, (min_y + max_y) / 2)
 
     def boolean_intersection(self):
         """布尔交集"""
@@ -166,6 +291,9 @@ class Canvas2D(QWidget):
 
         # 绘制轮廓
         self._draw_contours(painter)
+
+        # 绘制选中状态（边界框和控制手柄）
+        self._draw_selection_overlay(painter)
 
         painter.restore()
 
@@ -293,6 +421,91 @@ class Canvas2D(QWidget):
             radius, radius
         )
 
+    def _draw_selection_overlay(self, painter: QPainter):
+        """绘制选中状态覆盖层（边界框和控制手柄）"""
+        if not self.selected_indices:
+            return
+
+        # 计算选中轮廓的总边界框
+        min_x = float('inf')
+        min_y = float('inf')
+        max_x = float('-inf')
+        max_y = float('-inf')
+
+        for idx in self.selected_indices:
+            if idx < len(self.contours):
+                bounds = self.contours[idx].outer.bounds
+                min_x = min(min_x, bounds[0])
+                min_y = min(min_y, bounds[1])
+                max_x = max(max_x, bounds[2])
+                max_y = max(max_y, bounds[3])
+
+        if min_x == float('inf'):
+            return
+
+        # 边界框边距
+        margin = 5 / self.view_scale
+
+        box_min_x = min_x - margin
+        box_min_y = min_y - margin
+        box_max_x = max_x + margin
+        box_max_y = max_y + margin
+        box_width = box_max_x - box_min_x
+        box_height = box_max_y - box_min_y
+
+        # 绘制虚线边界框
+        pen = QPen(self.selected_color)
+        pen.setWidthF(1.5 / self.view_scale)
+        pen.setStyle(Qt.PenStyle.DashLine)
+        painter.setPen(pen)
+        painter.setBrush(Qt.BrushStyle.NoBrush)
+        painter.drawRect(QRectF(box_min_x, box_min_y, box_width, box_height))
+
+        # 绘制控制手柄
+        handle_size = 8 / self.view_scale
+        handle_half = handle_size / 2
+
+        # 手柄位置：四角 + 四边中点 + 中心
+        handles = [
+            (box_min_x, box_min_y),  # 左下
+            (box_max_x, box_min_y),  # 右下
+            (box_max_x, box_max_y),  # 右上
+            (box_min_x, box_max_y),  # 左上
+            ((box_min_x + box_max_x) / 2, box_min_y),  # 下中
+            ((box_min_x + box_max_x) / 2, box_max_y),  # 上中
+            (box_min_x, (box_min_y + box_max_y) / 2),  # 左中
+            (box_max_x, (box_min_y + box_max_y) / 2),  # 右中
+        ]
+
+        # 绘制手柄（白色填充+蓝色边框）
+        pen = QPen(self.selected_color)
+        pen.setWidthF(1.5 / self.view_scale)
+        painter.setPen(pen)
+        painter.setBrush(QBrush(QColor(255, 255, 255)))
+
+        for hx, hy in handles:
+            painter.drawRect(QRectF(hx - handle_half, hy - handle_half, handle_size, handle_size))
+
+        # 绘制中心点（旋转中心）
+        center_x = (box_min_x + box_max_x) / 2
+        center_y = (box_min_y + box_max_y) / 2
+        center_radius = 5 / self.view_scale
+
+        painter.setPen(pen)
+        painter.setBrush(Qt.BrushStyle.NoBrush)
+        painter.drawEllipse(QPointF(center_x, center_y), center_radius, center_radius)
+
+        # 十字线
+        cross_size = 3 / self.view_scale
+        painter.drawLine(
+            QPointF(center_x - cross_size, center_y),
+            QPointF(center_x + cross_size, center_y)
+        )
+        painter.drawLine(
+            QPointF(center_x, center_y - cross_size),
+            QPointF(center_x, center_y + cross_size)
+        )
+
     def _draw_ui_overlay(self, painter: QPainter):
         """绘制UI覆盖层"""
         # 绘制比例尺
@@ -358,19 +571,44 @@ class Canvas2D(QWidget):
     def mousePressEvent(self, event: QMouseEvent):
         """鼠标按下"""
         self.last_mouse_pos = event.position()
+        world_pos = self._screen_to_world(event.position())
 
         if event.button() == Qt.MouseButton.MiddleButton:
-            # 中键平移
+            # 中键平移视图
             self.is_panning = True
             self.pan_start = event.position()
             self.setCursor(Qt.CursorShape.ClosedHandCursor)
         elif event.button() == Qt.MouseButton.LeftButton:
             if self.current_tool == "select":
                 self._handle_selection(event.position())
+            elif self.current_tool in ("move", "rotate", "scale"):
+                # 检查是否点击在已选中的轮廓上
+                clicked_on_selected = False
+                for idx in self.selected_indices:
+                    if idx < len(self.contours):
+                        if self._point_in_contour(world_pos, self.contours[idx]):
+                            clicked_on_selected = True
+                            break
+
+                if clicked_on_selected:
+                    # 开始变换操作
+                    self.is_transforming = True
+                    self.transform_start = world_pos
+                    self.transform_center = self._get_selection_center()
+                    if self.current_tool == "rotate":
+                        # 记录初始角度
+                        dx = world_pos.x() - self.transform_center.x()
+                        dy = world_pos.y() - self.transform_center.y()
+                        self.initial_angle = math.atan2(dy, dx)
+                    self._set_tool_cursor()
+                else:
+                    # 点击了其他位置，尝试选择新轮廓
+                    self._handle_selection(event.position())
 
     def mouseMoveEvent(self, event: QMouseEvent):
         """鼠标移动"""
         pos = event.position()
+        world_pos = self._screen_to_world(pos)
 
         if self.is_panning:
             # 平移视图
@@ -378,9 +616,36 @@ class Canvas2D(QWidget):
             self.view_offset += delta
             self.pan_start = pos
             self.update()
+        elif self.is_transforming and self.selected_indices:
+            # 执行变换
+            if self.current_tool == "move":
+                dx = world_pos.x() - self.transform_start.x()
+                dy = world_pos.y() - self.transform_start.y()
+                self.move_selected(dx, dy)
+                self.transform_start = world_pos
+            elif self.current_tool == "rotate":
+                dx = world_pos.x() - self.transform_center.x()
+                dy = world_pos.y() - self.transform_center.y()
+                current_angle = math.atan2(dy, dx)
+                angle_diff = math.degrees(current_angle - self.initial_angle)
+                self.rotate_selected(angle_diff)
+                self.initial_angle = current_angle
+            elif self.current_tool == "scale":
+                # 基于与中心点的距离变化计算缩放
+                old_dist = math.sqrt(
+                    (self.transform_start.x() - self.transform_center.x()) ** 2 +
+                    (self.transform_start.y() - self.transform_center.y()) ** 2
+                )
+                new_dist = math.sqrt(
+                    (world_pos.x() - self.transform_center.x()) ** 2 +
+                    (world_pos.y() - self.transform_center.y()) ** 2
+                )
+                if old_dist > 0.001:
+                    scale_factor = new_dist / old_dist
+                    self.scale_selected(scale_factor)
+                    self.transform_start = world_pos
         else:
             # 更新坐标显示
-            world_pos = self._screen_to_world(pos)
             self.mouse_moved.emit(world_pos.x(), world_pos.y())
 
         self.last_mouse_pos = pos
@@ -390,6 +655,20 @@ class Canvas2D(QWidget):
         if event.button() == Qt.MouseButton.MiddleButton:
             self.is_panning = False
             self.setCursor(Qt.CursorShape.ArrowCursor)
+        elif event.button() == Qt.MouseButton.LeftButton:
+            if self.is_transforming:
+                self.is_transforming = False
+                self._set_tool_cursor()
+
+    def _set_tool_cursor(self):
+        """根据当前工具设置光标"""
+        cursors = {
+            "select": Qt.CursorShape.ArrowCursor,
+            "move": Qt.CursorShape.SizeAllCursor,
+            "rotate": Qt.CursorShape.CrossCursor,
+            "scale": Qt.CursorShape.SizeFDiagCursor,
+        }
+        self.setCursor(cursors.get(self.current_tool, Qt.CursorShape.ArrowCursor))
 
     def keyPressEvent(self, event: QKeyEvent):
         """键盘事件"""
@@ -409,21 +688,31 @@ class Canvas2D(QWidget):
         """处理选择"""
         world_pos = self._screen_to_world(pos)
 
+        # 找到所有包含点击位置的轮廓
+        candidates = []
         for i, contour in enumerate(self.contours):
             if self._point_in_contour(world_pos, contour):
-                if Qt.KeyboardModifier.ControlModifier in QApplication.keyboardModifiers():
-                    # Ctrl+点击：切换选择
-                    if i in self.selected_indices:
-                        self.selected_indices.remove(i)
-                    else:
-                        self.selected_indices.append(i)
-                else:
-                    # 普通点击：单选
-                    self.selected_indices = [i]
+                # 记录轮廓索引和面积
+                candidates.append((i, contour.outer.area))
 
-                self.contour_selected.emit(i)
-                self.update()
-                return
+        if candidates:
+            # 选择面积最小的轮廓（最内层的）
+            candidates.sort(key=lambda x: x[1])
+            selected_idx = candidates[0][0]
+
+            if Qt.KeyboardModifier.ControlModifier in QApplication.keyboardModifiers():
+                # Ctrl+点击：切换选择
+                if selected_idx in self.selected_indices:
+                    self.selected_indices.remove(selected_idx)
+                else:
+                    self.selected_indices.append(selected_idx)
+            else:
+                # 普通点击：单选
+                self.selected_indices = [selected_idx]
+
+            self.contour_selected.emit(selected_idx)
+            self.update()
+            return
 
         # 点击空白区域：取消选择
         if Qt.KeyboardModifier.ControlModifier not in QApplication.keyboardModifiers():
@@ -448,7 +737,3 @@ class Canvas2D(QWidget):
         x = world_pos.x() * self.view_scale + self.view_offset.x()
         y = -world_pos.y() * self.view_scale + self.view_offset.y()  # Y轴翻转
         return QPointF(x, y)
-
-
-# 需要导入QApplication
-from PySide6.QtWidgets import QApplication

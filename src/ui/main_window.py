@@ -253,6 +253,12 @@ class MainWindow(QMainWindow):
         slice_btn.clicked.connect(self._on_slice)
         toolbar.addWidget(slice_btn)
 
+        # 导出G-code按钮
+        export_btn = QPushButton("导出G-code")
+        export_btn.setProperty("primary", True)
+        export_btn.clicked.connect(self._on_export_gcode)
+        toolbar.addWidget(export_btn)
+
     def _create_action(self, text: str, callback, shortcut: str = None) -> QAction:
         """创建Action"""
         action = QAction(text, self)
@@ -422,15 +428,25 @@ class MainWindow(QMainWindow):
             self.slice_result = self.slice_engine.slice(self.contours, params)
 
             # 更新状态
-            self._update_status(
+            msg = (
                 f"切片完成: {self.slice_result.total_layers} 层, "
                 f"预计时间: {self.slice_result.estimated_time / 60:.1f} 分钟"
             )
+            self._update_status(msg)
 
             self.slice_completed.emit(self.slice_result)
 
-            # 可以切换到3D预览
-            # self._switch_view("3d")
+            # 弹窗提示切片成功，询问是否导出
+            reply = QMessageBox.question(
+                self,
+                "切片完成",
+                f"{msg}\n\n是否立即导出G-code?",
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                QMessageBox.StandardButton.Yes
+            )
+
+            if reply == QMessageBox.StandardButton.Yes:
+                self._on_export_gcode()
 
         except Exception as e:
             QMessageBox.critical(self, "切片失败", f"切片过程中发生错误:\n{e}")
