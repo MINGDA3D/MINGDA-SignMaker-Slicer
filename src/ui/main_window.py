@@ -19,7 +19,7 @@ from PySide6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
     QSplitter, QMenuBar, QMenu, QToolBar, QStatusBar, QLabel,
     QPushButton, QFrame, QScrollArea, QDockWidget, QFileDialog,
-    QMessageBox, QSizePolicy
+    QMessageBox, QSizePolicy, QDoubleSpinBox, QSpinBox
 )
 from PySide6.QtCore import Qt, Signal, QSize
 from PySide6.QtGui import QAction, QIcon, QKeySequence
@@ -59,6 +59,7 @@ class MainWindow(QMainWindow):
         self._init_window()
         self._init_menubar()
         self._init_toolbar()
+        self._init_transform_panel()  # 变换参数面板
         self._init_central_widget()
         self._init_statusbar()
 
@@ -215,10 +216,16 @@ class MainWindow(QMainWindow):
 
         toolbar.addSeparator()
 
-        # 变换操作
-        toolbar.addAction(self._create_action("移动", lambda: self._set_tool("move")))
-        toolbar.addAction(self._create_action("旋转", lambda: self._set_tool("rotate")))
-        toolbar.addAction(self._create_action("缩放", lambda: self._set_tool("scale")))
+        # 变换操作 - 点击切换工具并显示输入框
+        self.move_action = self._create_action("移动", self._on_move_tool)
+        self.rotate_action = self._create_action("旋转", self._on_rotate_tool)
+        self.scale_action = self._create_action("缩放", self._on_scale_tool)
+        self.move_action.setCheckable(True)
+        self.rotate_action.setCheckable(True)
+        self.scale_action.setCheckable(True)
+        toolbar.addAction(self.move_action)
+        toolbar.addAction(self.rotate_action)
+        toolbar.addAction(self.scale_action)
         toolbar.addAction(self._create_action("镜像X", lambda: self._on_mirror("x")))
         toolbar.addAction(self._create_action("镜像Y", lambda: self._on_mirror("y")))
 
@@ -266,6 +273,103 @@ class MainWindow(QMainWindow):
             action.setShortcut(QKeySequence(shortcut))
         action.triggered.connect(callback)
         return action
+
+    def _init_transform_panel(self):
+        """初始化变换参数面板（显示在工具栏下方）"""
+        # 创建浮动面板
+        self.transform_panel = QFrame(self)
+        self.transform_panel.setObjectName("transformPanel")
+        self.transform_panel.setFrameStyle(QFrame.Shape.StyledPanel | QFrame.Shadow.Raised)
+        self.transform_panel.setStyleSheet("""
+            #transformPanel {
+                background-color: #1C2128;
+                border: 1px solid #444C56;
+                border-radius: 4px;
+                padding: 8px;
+            }
+            QLabel {
+                color: #8B949E;
+                font-size: 12px;
+            }
+            QDoubleSpinBox {
+                background-color: #0D1117;
+                border: 1px solid #30363D;
+                border-radius: 3px;
+                color: #C9D1D9;
+                padding: 4px 8px;
+                min-width: 70px;
+            }
+            QDoubleSpinBox:focus {
+                border-color: #58A6FF;
+            }
+        """)
+        self.transform_panel.setVisible(False)
+
+        # 面板布局
+        panel_layout = QVBoxLayout(self.transform_panel)
+        panel_layout.setContentsMargins(12, 8, 12, 8)
+        panel_layout.setSpacing(8)
+
+        # 标题行（可折叠）
+        title_layout = QHBoxLayout()
+        self.transform_title = QLabel("▼ World coordinates")
+        self.transform_title.setStyleSheet("color: #58A6FF; font-weight: bold;")
+        title_layout.addWidget(self.transform_title)
+
+        # X Y Z 标签
+        for label_text in ["X", "Y", "Z"]:
+            lbl = QLabel(label_text)
+            lbl.setStyleSheet("color: #58A6FF; font-weight: bold; min-width: 70px;")
+            lbl.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            title_layout.addWidget(lbl)
+
+        title_layout.addWidget(QLabel(""))  # 占位
+        panel_layout.addLayout(title_layout)
+
+        # Position 行
+        pos_layout = QHBoxLayout()
+        self.transform_row_label = QLabel("Position")
+        self.transform_row_label.setMinimumWidth(120)
+        pos_layout.addWidget(self.transform_row_label)
+
+        # X坐标
+        self.transform_x = QDoubleSpinBox()
+        self.transform_x.setRange(-10000, 10000)
+        self.transform_x.setValue(0)
+        self.transform_x.setDecimals(2)
+        self.transform_x.setButtonSymbols(QDoubleSpinBox.ButtonSymbols.NoButtons)
+        pos_layout.addWidget(self.transform_x)
+
+        # Y坐标
+        self.transform_y = QDoubleSpinBox()
+        self.transform_y.setRange(-10000, 10000)
+        self.transform_y.setValue(0)
+        self.transform_y.setDecimals(2)
+        self.transform_y.setButtonSymbols(QDoubleSpinBox.ButtonSymbols.NoButtons)
+        pos_layout.addWidget(self.transform_y)
+
+        # Z坐标
+        self.transform_z = QDoubleSpinBox()
+        self.transform_z.setRange(-10000, 10000)
+        self.transform_z.setValue(0)
+        self.transform_z.setDecimals(2)
+        self.transform_z.setButtonSymbols(QDoubleSpinBox.ButtonSymbols.NoButtons)
+        pos_layout.addWidget(self.transform_z)
+
+        # 单位标签
+        unit_label = QLabel("mm")
+        unit_label.setMinimumWidth(30)
+        pos_layout.addWidget(unit_label)
+
+        panel_layout.addLayout(pos_layout)
+
+        # 当前变换模式
+        self.current_transform_mode = None
+
+        # 连接信号 - 当值改变时实时应用
+        self.transform_x.valueChanged.connect(self._on_transform_value_changed)
+        self.transform_y.valueChanged.connect(self._on_transform_value_changed)
+        self.transform_z.valueChanged.connect(self._on_transform_value_changed)
 
     def _init_central_widget(self):
         """初始化中央区域"""
@@ -469,9 +573,132 @@ class MainWindow(QMainWindow):
         self.canvas.set_tool(tool)
         self._update_status(f"工具: {tool}")
 
+    def _on_move_tool(self):
+        """激活移动工具"""
+        self._activate_transform_tool("move")
+
+    def _on_rotate_tool(self):
+        """激活旋转工具"""
+        self._activate_transform_tool("rotate")
+
+    def _on_scale_tool(self):
+        """激活缩放工具"""
+        self._activate_transform_tool("scale")
+
+    def _activate_transform_tool(self, mode: str):
+        """激活变换工具并显示面板"""
+        # 更新按钮状态
+        self.move_action.setChecked(mode == "move")
+        self.rotate_action.setChecked(mode == "rotate")
+        self.scale_action.setChecked(mode == "scale")
+
+        # 设置画布工具
+        self.canvas.set_tool(mode)
+        self.current_transform_mode = mode
+
+        # 配置面板显示
+        if mode == "move":
+            self.transform_title.setText("▼ World coordinates")
+            self.transform_row_label.setText("Position")
+        elif mode == "rotate":
+            self.transform_title.setText("▼ Rotation")
+            self.transform_row_label.setText("Angle (°)")
+        elif mode == "scale":
+            self.transform_title.setText("▼ Scale")
+            self.transform_row_label.setText("Scale (%)")
+
+        # 更新面板中的值（显示选中轮廓的当前位置）
+        self._update_transform_panel_values()
+
+        # 显示面板并定位
+        self._show_transform_panel()
+        self._update_status(f"工具: {mode}")
+
+    def _show_transform_panel(self):
+        """显示变换面板并定位到工具栏下方"""
+        # 获取移动按钮的位置
+        toolbar = self.findChild(QToolBar, "主工具栏")
+        if toolbar:
+            # 定位到工具栏下方左侧
+            toolbar_rect = toolbar.geometry()
+            panel_x = toolbar_rect.left() + 10
+            panel_y = toolbar_rect.bottom() + 5
+        else:
+            panel_x = 200
+            panel_y = 80
+
+        self.transform_panel.move(panel_x, panel_y)
+        self.transform_panel.adjustSize()
+        self.transform_panel.setVisible(True)
+        self.transform_panel.raise_()
+
+    def _update_transform_panel_values(self):
+        """更新面板中显示的值"""
+        if not self.canvas.selected_indices:
+            self.transform_x.setValue(0)
+            self.transform_y.setValue(0)
+            self.transform_z.setValue(0)
+            return
+
+        # 获取选中轮廓的中心位置
+        center = self.canvas._get_selection_center()
+
+        # 阻止信号触发
+        self.transform_x.blockSignals(True)
+        self.transform_y.blockSignals(True)
+        self.transform_z.blockSignals(True)
+
+        if self.current_transform_mode == "move":
+            self.transform_x.setValue(center.x())
+            self.transform_y.setValue(center.y())
+            self.transform_z.setValue(0)  # Z坐标暂时为0
+        elif self.current_transform_mode == "rotate":
+            self.transform_x.setValue(0)
+            self.transform_y.setValue(0)
+            self.transform_z.setValue(0)
+        elif self.current_transform_mode == "scale":
+            self.transform_x.setValue(100)
+            self.transform_y.setValue(100)
+            self.transform_z.setValue(100)
+
+        self.transform_x.blockSignals(False)
+        self.transform_y.blockSignals(False)
+        self.transform_z.blockSignals(False)
+
+    def _on_transform_value_changed(self):
+        """当面板中的值改变时"""
+        if not self.canvas.selected_indices:
+            return
+
+        mode = self.current_transform_mode
+        if mode == "move":
+            # 计算当前中心和目标位置的差值
+            center = self.canvas._get_selection_center()
+            target_x = self.transform_x.value()
+            target_y = self.transform_y.value()
+            dx = target_x - center.x()
+            dy = target_y - center.y()
+            if abs(dx) > 0.001 or abs(dy) > 0.001:
+                self.canvas.move_selected(dx, dy)
+                self._update_status(f"移动到: X={target_x:.2f}, Y={target_y:.2f}")
+
+    def _close_transform_panel(self):
+        """关闭变换面板"""
+        self.transform_panel.setVisible(False)
+        self.current_transform_mode = None
+        self.move_action.setChecked(False)
+        self.rotate_action.setChecked(False)
+        self.scale_action.setChecked(False)
+        self.canvas.set_tool("select")
+        self._update_status("就绪")
+
     def _on_mirror(self, axis: str):
         """镜像"""
+        if not self.canvas.selected_indices:
+            QMessageBox.information(self, "提示", "请先选中轮廓")
+            return
         self.canvas.mirror_selected(axis)
+        self._update_status(f"镜像 {axis.upper()} 完成")
 
     def _on_intersection(self):
         """交集"""

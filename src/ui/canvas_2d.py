@@ -51,9 +51,10 @@ class Canvas2D(QWidget):
         self.is_transforming = False  # 是否正在变换轮廓
         self.pan_start = QPointF()  # 平移起始点
         self.transform_start = QPointF()  # 变换起始点（世界坐标）
+        self.transform_start_screen = QPointF()  # 变换起始点（屏幕坐标）
         self.last_mouse_pos = QPointF()
         self.transform_center = QPointF()  # 变换中心点
-        self.initial_angle = 0.0  # 初始角度（用于旋转）
+        self.accumulated_rotation = 0.0  # 累计旋转角度（用于Shift吸附）
 
         # 样式
         self.bg_color = QColor(COLORS.bg_primary)
@@ -594,12 +595,9 @@ class Canvas2D(QWidget):
                     # 开始变换操作
                     self.is_transforming = True
                     self.transform_start = world_pos
+                    self.transform_start_screen = event.position()  # 保存屏幕坐标
                     self.transform_center = self._get_selection_center()
-                    if self.current_tool == "rotate":
-                        # 记录初始角度
-                        dx = world_pos.x() - self.transform_center.x()
-                        dy = world_pos.y() - self.transform_center.y()
-                        self.initial_angle = math.atan2(dy, dx)
+                    self.accumulated_rotation = 0.0  # 累计旋转角度
                     self._set_tool_cursor()
                 else:
                     # 点击了其他位置，尝试选择新轮廓
@@ -624,26 +622,30 @@ class Canvas2D(QWidget):
                 self.move_selected(dx, dy)
                 self.transform_start = world_pos
             elif self.current_tool == "rotate":
-                dx = world_pos.x() - self.transform_center.x()
-                dy = world_pos.y() - self.transform_center.y()
-                current_angle = math.atan2(dy, dx)
-                angle_diff = math.degrees(current_angle - self.initial_angle)
-                self.rotate_selected(angle_diff)
-                self.initial_angle = current_angle
+                # 使用水平拖动控制旋转：每100像素 = 45度
+                dx_screen = pos.x() - self.last_mouse_pos.x()
+                angle_delta = dx_screen * 0.5  # 每像素0.5度
+
+                # Shift键：吸附到15度增量
+                if Qt.KeyboardModifier.ShiftModifier in QApplication.keyboardModifiers():
+                    self.accumulated_rotation += angle_delta
+                    # 当累计超过15度时执行旋转
+                    if abs(self.accumulated_rotation) >= 15:
+                        snap_angle = 15 * (self.accumulated_rotation // 15)
+                        self.rotate_selected(snap_angle)
+                        self.accumulated_rotation -= snap_angle
+                else:
+                    self.rotate_selected(angle_delta)
             elif self.current_tool == "scale":
-                # 基于与中心点的距离变化计算缩放
-                old_dist = math.sqrt(
-                    (self.transform_start.x() - self.transform_center.x()) ** 2 +
-                    (self.transform_start.y() - self.transform_center.y()) ** 2
-                )
-                new_dist = math.sqrt(
-                    (world_pos.x() - self.transform_center.x()) ** 2 +
-                    (world_pos.y() - self.transform_center.y()) ** 2
-                )
-                if old_dist > 0.001:
-                    scale_factor = new_dist / old_dist
-                    self.scale_selected(scale_factor)
-                    self.transform_start = world_pos
+                # 使用水平拖动控制缩放：向右放大，向左缩小
+                dx_screen = pos.x() - self.last_mouse_pos.x()
+                scale_factor = 1.0 + dx_screen * 0.005  # 每像素0.5%
+
+                # 限制缩放范围
+                scale_factor = max(0.9, min(1.1, scale_factor))
+
+                # Shift键：等比例缩放（保持比例）
+                self.scale_selected(scale_factor)
         else:
             # 更新坐标显示
             self.mouse_moved.emit(world_pos.x(), world_pos.y())
