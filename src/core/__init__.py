@@ -14,7 +14,7 @@ from .types import (
     LayoutParams, SpeedParams, GCodeParams, MachineParams,
     FillConfig, LayerConfig,
     # 结果类型
-    SliceResult, ProjectData
+    SliceResult, ProjectData, ProjectMeta, Project
 )
 
 from .dxf_parser import DXFParser
@@ -41,7 +41,7 @@ __all__ = [
     'LayoutParams', 'SpeedParams', 'GCodeParams', 'MachineParams',
     'FillConfig', 'LayerConfig',
     # 结果类型
-    'SliceResult', 'ProjectData',
+    'SliceResult', 'ProjectData', 'ProjectMeta', 'Project',
     # 核心类
     'DXFParser', 'PathOffset', 'EndType', 'SliceEngine',
     'GCodeWriter', 'write_gcode',

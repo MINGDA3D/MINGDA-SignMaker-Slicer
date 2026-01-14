@@ -484,3 +484,23 @@ class ProjectData:
     params: SliceParams = field(default_factory=SliceParams)
     file_path: str = ""
     name: str = ""
+
+
+@dataclass
+class ProjectMeta:
+    """项目元数据"""
+    name: str = ""
+    created_at: str = ""
+    modified_at: str = ""
+    version: str = "1.0"
+    author: str = ""
+    description: str = ""
+
+
+@dataclass
+class Project:
+    """项目（包含元数据和数据）"""
+    meta: ProjectMeta = field(default_factory=ProjectMeta)
+    contours: List[Contour] = field(default_factory=list)
+    params: SliceParams = field(default_factory=SliceParams)
+    gcode_params: GCodeParams = field(default_factory=GCodeParams)
