@@ -76,6 +76,7 @@ class ParamPanel(QWidget):
         content_layout.addWidget(self._create_color_group())
         content_layout.addWidget(self._create_step_group())
         content_layout.addWidget(self._create_skirt_group())
+        content_layout.addWidget(self._create_edge_wrap_group())
         content_layout.addWidget(self._create_speed_group())
 
         content_layout.addStretch()
@@ -304,6 +305,86 @@ class ParamPanel(QWidget):
 
         return group
 
+    def _create_edge_wrap_group(self) -> QGroupBox:
+        """创建包边/勾边参数组"""
+        group = QGroupBox("包边勾边")
+        layout = QVBoxLayout(group)
+        layout.setSpacing(8)
+
+        # 包边设置
+        self.wrap_enabled = QCheckBox("启用包边")
+        self.wrap_enabled.stateChanged.connect(self._on_param_changed)
+        layout.addWidget(self.wrap_enabled)
+
+        wrap_form = QFormLayout()
+        wrap_form.setSpacing(8)
+
+        self.wrap_width = QDoubleSpinBox()
+        self.wrap_width.setRange(0.5, 10)
+        self.wrap_width.setValue(2.0)
+        self.wrap_width.setSingleStep(0.1)
+        self.wrap_width.setSuffix(" mm")
+        self.wrap_width.setEnabled(False)
+        wrap_form.addRow("包边宽度:", self.wrap_width)
+
+        self.wrap_height = QDoubleSpinBox()
+        self.wrap_height.setRange(0.5, 20)
+        self.wrap_height.setValue(3.0)
+        self.wrap_height.setSingleStep(0.5)
+        self.wrap_height.setSuffix(" mm")
+        self.wrap_height.setEnabled(False)
+        wrap_form.addRow("包边高度:", self.wrap_height)
+
+        layout.addLayout(wrap_form)
+
+        self.wrap_enabled.stateChanged.connect(
+            lambda: self.wrap_width.setEnabled(self.wrap_enabled.isChecked())
+        )
+        self.wrap_enabled.stateChanged.connect(
+            lambda: self.wrap_height.setEnabled(self.wrap_enabled.isChecked())
+        )
+
+        # 分隔线
+        line = QFrame()
+        line.setFrameShape(QFrame.Shape.HLine)
+        line.setStyleSheet(f"background-color: {COLORS.border_default};")
+        layout.addWidget(line)
+
+        # 勾边设置
+        self.outline_enabled = QCheckBox("启用勾边")
+        self.outline_enabled.stateChanged.connect(self._on_param_changed)
+        layout.addWidget(self.outline_enabled)
+
+        outline_form = QFormLayout()
+        outline_form.setSpacing(8)
+
+        self.outline_width = QDoubleSpinBox()
+        self.outline_width.setRange(0.3, 5)
+        self.outline_width.setValue(1.0)
+        self.outline_width.setSingleStep(0.1)
+        self.outline_width.setSuffix(" mm")
+        self.outline_width.setEnabled(False)
+        outline_form.addRow("勾边宽度:", self.outline_width)
+
+        self.outline_offset = QDoubleSpinBox()
+        self.outline_offset.setRange(-5, 5)
+        self.outline_offset.setValue(0.0)
+        self.outline_offset.setSingleStep(0.1)
+        self.outline_offset.setSuffix(" mm")
+        self.outline_offset.setEnabled(False)
+        outline_form.addRow("勾边偏移:", self.outline_offset)
+
+        layout.addLayout(outline_form)
+
+        self.outline_enabled.stateChanged.connect(
+            lambda: self.outline_width.setEnabled(self.outline_enabled.isChecked())
+        )
+        self.outline_enabled.stateChanged.connect(
+            lambda: self.outline_offset.setEnabled(self.outline_enabled.isChecked())
+        )
+
+        return group
+
     def _create_speed_group(self) -> QGroupBox:
         """创建速度参数组"""
         group = QGroupBox("速度设置")
@@ -380,6 +461,14 @@ class ParamPanel(QWidget):
         self._params.skirt.width = self.skirt_width.value()
         self._params.skirt.offset = self.skirt_offset.value()
 
+        # 包边勾边参数
+        self._params.edge_wrap.wrap_enabled = self.wrap_enabled.isChecked()
+        self._params.edge_wrap.wrap_width = self.wrap_width.value()
+        self._params.edge_wrap.wrap_height = self.wrap_height.value()
+        self._params.edge_wrap.outline_enabled = self.outline_enabled.isChecked()
+        self._params.edge_wrap.outline_width = self.outline_width.value()
+        self._params.edge_wrap.outline_offset = self.outline_offset.value()
+
         # 速度参数
         self._params.speed.print_speed = self.print_speed.value()
         self._params.speed.travel_speed = self.travel_speed.value()
@@ -417,3 +506,11 @@ class ParamPanel(QWidget):
         self.print_speed.setValue(int(params.speed.print_speed))
         self.travel_speed.setValue(int(params.speed.travel_speed))
         self.first_layer_speed.setValue(int(params.speed.first_layer_speed))
+
+        # 包边勾边参数
+        self.wrap_enabled.setChecked(params.edge_wrap.wrap_enabled)
+        self.wrap_width.setValue(params.edge_wrap.wrap_width)
+        self.wrap_height.setValue(params.edge_wrap.wrap_height)
+        self.outline_enabled.setChecked(params.edge_wrap.outline_enabled)
+        self.outline_width.setValue(params.edge_wrap.outline_width)
+        self.outline_offset.setValue(params.edge_wrap.outline_offset)
