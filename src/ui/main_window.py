@@ -34,6 +34,7 @@ from src.core import (
     DXFParser, SliceEngine, GCodeWriter,
     Contour, SliceParams, SliceResult
 )
+from src.core.stl_writer import STLWriter
 from src.business.undo_manager import (
     UndoManager, Command, MoveCommand, RotateCommand, ScaleCommand,
     MirrorCommand, DeleteCommand, AddContoursCommand, ReplaceContoursCommand,
@@ -127,6 +128,12 @@ class MainWindow(QMainWindow):
         export_gcode_action.setShortcut(QKeySequence("Ctrl+E"))
         export_gcode_action.triggered.connect(self._on_export_gcode)
         file_menu.addAction(export_gcode_action)
+
+        # 导出STL
+        export_stl_action = QAction("导出STL...", self)
+        export_stl_action.setShortcut(QKeySequence("Ctrl+Shift+E"))
+        export_stl_action.triggered.connect(self._on_export_stl)
+        file_menu.addAction(export_stl_action)
 
         file_menu.addSeparator()
 
@@ -628,6 +635,28 @@ class MainWindow(QMainWindow):
                 QMessageBox.information(self, "导出成功", f"G-code已保存到:\n{file_path}")
             except Exception as e:
                 QMessageBox.critical(self, "导出失败", f"无法导出G-code:\n{e}")
+
+    def _on_export_stl(self):
+        """导出STL"""
+        if not self.slice_result:
+            QMessageBox.information(self, "提示", "请先进行切片")
+            return
+
+        file_path, _ = QFileDialog.getSaveFileName(
+            self,
+            "导出STL",
+            "",
+            "STL文件 (*.stl);;所有文件 (*)"
+        )
+
+        if file_path:
+            try:
+                writer = STLWriter()
+                writer.write(self.slice_result, file_path)
+                self._update_status(f"STL已导出: {Path(file_path).name}")
+                QMessageBox.information(self, "导出成功", f"STL已保存到:\n{file_path}")
+            except Exception as e:
+                QMessageBox.critical(self, "导出失败", f"无法导出STL:\n{e}")
 
     def _on_undo(self):
         """撤销"""
