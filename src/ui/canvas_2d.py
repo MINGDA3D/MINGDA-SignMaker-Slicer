@@ -32,6 +32,11 @@ class Canvas2D(QWidget):
     zoom_changed = Signal(float)  # 缩放变化信号
     contours_modified = Signal()  # 轮廓被修改信号
 
+    # 撤销/重做相关信号
+    transform_started = Signal(str, list)  # 变换开始（操作类型, 索引列表）
+    transform_ended = Signal(str, list)    # 变换结束（操作类型, 索引列表）
+    delete_requested = Signal(list)        # 请求删除（索引列表）
+
     def __init__(self, parent=None):
         super().__init__(parent)
 
@@ -55,6 +60,12 @@ class Canvas2D(QWidget):
         self.last_mouse_pos = QPointF()
         self.transform_center = QPointF()  # 变换中心点
         self.accumulated_rotation = 0.0  # 累计旋转角度（用于Shift吸附）
+
+        # 变换追踪（用于撤销/重做）
+        self._transform_total_dx = 0.0
+        self._transform_total_dy = 0.0
+        self._transform_total_angle = 0.0
+        self._transform_total_scale = 1.0
 
         # 样式
         self.bg_color = QColor(COLORS.bg_primary)
@@ -598,6 +609,13 @@ class Canvas2D(QWidget):
                     self.transform_start_screen = event.position()  # 保存屏幕坐标
                     self.transform_center = self._get_selection_center()
                     self.accumulated_rotation = 0.0  # 累计旋转角度
+                    # 重置变换追踪
+                    self._transform_total_dx = 0.0
+                    self._transform_total_dy = 0.0
+                    self._transform_total_angle = 0.0
+                    self._transform_total_scale = 1.0
+                    # 发出变换开始信号
+                    self.transform_started.emit(self.current_tool, list(self.selected_indices))
                     self._set_tool_cursor()
                 else:
                     # 点击了其他位置，尝试选择新轮廓
@@ -620,6 +638,8 @@ class Canvas2D(QWidget):
                 dx = world_pos.x() - self.transform_start.x()
                 dy = world_pos.y() - self.transform_start.y()
                 self.move_selected(dx, dy)
+                self._transform_total_dx += dx
+                self._transform_total_dy += dy
                 self.transform_start = world_pos
             elif self.current_tool == "rotate":
                 # 使用水平拖动控制旋转：每100像素 = 45度
@@ -633,9 +653,11 @@ class Canvas2D(QWidget):
                     if abs(self.accumulated_rotation) >= 15:
                         snap_angle = 15 * (self.accumulated_rotation // 15)
                         self.rotate_selected(snap_angle)
+                        self._transform_total_angle += snap_angle
                         self.accumulated_rotation -= snap_angle
                 else:
                     self.rotate_selected(angle_delta)
+                    self._transform_total_angle += angle_delta
             elif self.current_tool == "scale":
                 # 使用水平拖动控制缩放：向右放大，向左缩小
                 dx_screen = pos.x() - self.last_mouse_pos.x()
@@ -646,6 +668,7 @@ class Canvas2D(QWidget):
 
                 # Shift键：等比例缩放（保持比例）
                 self.scale_selected(scale_factor)
+                self._transform_total_scale *= scale_factor
         else:
             # 更新坐标显示
             self.mouse_moved.emit(world_pos.x(), world_pos.y())
@@ -660,7 +683,19 @@ class Canvas2D(QWidget):
         elif event.button() == Qt.MouseButton.LeftButton:
             if self.is_transforming:
                 self.is_transforming = False
+                # 发出变换结束信号，携带变换信息
+                self.transform_ended.emit(self.current_tool, list(self.selected_indices))
                 self._set_tool_cursor()
+
+    def get_transform_delta(self) -> dict:
+        """获取累计的变换量（供撤销/重做使用）"""
+        return {
+            'dx': self._transform_total_dx,
+            'dy': self._transform_total_dy,
+            'angle': self._transform_total_angle,
+            'scale': self._transform_total_scale,
+            'center': (self.transform_center.x(), self.transform_center.y())
+        }
 
     def _set_tool_cursor(self):
         """根据当前工具设置光标"""
@@ -676,7 +711,8 @@ class Canvas2D(QWidget):
         """键盘事件"""
         if event.key() == Qt.Key.Key_Delete:
             # 删除选中
-            pass
+            if self.selected_indices:
+                self.delete_requested.emit(list(self.selected_indices))
         elif event.key() == Qt.Key.Key_Escape:
             # 取消选择
             self.selected_indices = []

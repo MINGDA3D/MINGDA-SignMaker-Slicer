@@ -246,6 +246,7 @@ The theme is defined in `src/ui/theme.py`:
 - [x] 2D canvas preview (src/ui/canvas_2d.py)
 - [x] Parameter panel (src/ui/param_panel.py)
 - [x] Project panel (src/ui/project_panel.py)
+- [x] Undo/Redo system (src/business/undo_manager.py) - 21 tests passing
 
 ### In Progress
 - [ ] 3D preview widget
@@ -256,6 +257,7 @@ The theme is defined in `src/ui/theme.py`:
 - [ ] Step/V-groove generation
 - [ ] Connected letters (连襟字)
 - [ ] Panel/baseplate infill patterns
+- [ ] Project save/load (.smp format)
 
 ## Commands Reference
 

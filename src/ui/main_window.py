@@ -34,6 +34,11 @@ from src.core import (
     DXFParser, SliceEngine, GCodeWriter,
     Contour, SliceParams, SliceResult
 )
+from src.business.undo_manager import (
+    UndoManager, Command, MoveCommand, RotateCommand, ScaleCommand,
+    MirrorCommand, DeleteCommand, AddContoursCommand, ReplaceContoursCommand,
+    TransformCommand
+)
 
 
 class MainWindow(QMainWindow):
@@ -55,6 +60,10 @@ class MainWindow(QMainWindow):
         # 核心组件
         self.dxf_parser = DXFParser()
         self.slice_engine = SliceEngine()
+
+        # 撤销/重做管理器
+        self.undo_manager = UndoManager(max_undo_levels=100)
+        self._pending_transform: Optional[TransformCommand] = None
 
         # 初始化UI
         self._init_window()
@@ -411,6 +420,9 @@ class MainWindow(QMainWindow):
 
         self.setCentralWidget(main_splitter)
 
+        # 连接画布信号到撤销/重做系统
+        self._connect_undo_signals()
+
     def _init_statusbar(self):
         """初始化状态栏"""
         statusbar = QStatusBar()
@@ -428,12 +440,101 @@ class MainWindow(QMainWindow):
         self.zoom_label = QLabel("100%")
         statusbar.addPermanentWidget(self.zoom_label)
 
+    def _connect_undo_signals(self):
+        """连接撤销/重做相关信号"""
+        # 画布变换信号
+        self.canvas.transform_started.connect(self._on_transform_started)
+        self.canvas.transform_ended.connect(self._on_transform_ended)
+        self.canvas.delete_requested.connect(self._on_delete_requested)
+
+        # 撤销管理器信号
+        self.undo_manager.can_undo_changed.connect(self._update_undo_actions)
+        self.undo_manager.can_redo_changed.connect(self._update_undo_actions)
+        self.undo_manager.command_executed.connect(
+            lambda desc: self._update_status(f"执行: {desc}")
+        )
+        self.undo_manager.command_undone.connect(
+            lambda desc: self._update_status(f"撤销: {desc}")
+        )
+        self.undo_manager.command_redone.connect(
+            lambda desc: self._update_status(f"重做: {desc}")
+        )
+
+    def _update_undo_actions(self):
+        """更新撤销/重做菜单项的状态"""
+        # 这里可以更新菜单项的启用/禁用状态和文本
+        pass
+
+    def _on_transform_started(self, tool: str, indices: list):
+        """变换开始时保存状态"""
+        if indices:
+            self._pending_transform = TransformCommand(
+                self.contours, indices, f"{tool}"
+            )
+
+    def _on_transform_ended(self, tool: str, indices: list):
+        """变换结束时创建命令"""
+        if self._pending_transform and indices:
+            # 获取变换增量
+            delta = self.canvas.get_transform_delta()
+
+            # 根据工具类型创建适当的命令
+            if tool == "move" and (abs(delta['dx']) > 0.001 or abs(delta['dy']) > 0.001):
+                # 撤销刚才的移动，然后创建一个可撤销的命令
+                # 先反向移动回去
+                for idx in indices:
+                    if 0 <= idx < len(self.contours):
+                        contour = self.contours[idx]
+                        for p in contour.outer.points:
+                            p.x -= delta['dx']
+                            p.y -= delta['dy']
+                        for hole in contour.holes:
+                            for p in hole.points:
+                                p.x -= delta['dx']
+                                p.y -= delta['dy']
+
+                # 创建命令并执行
+                cmd = MoveCommand(self.contours, indices, delta['dx'], delta['dy'])
+                self.undo_manager.push(cmd)
+                self.canvas.update()
+
+            elif tool == "rotate" and abs(delta['angle']) > 0.001:
+                # 捕获变换后的状态
+                self._pending_transform.description = f"旋转 {delta['angle']:.1f}°"
+                self._pending_transform.capture_after()
+                self.undo_manager.push(self._pending_transform, execute=False)
+
+            elif tool == "scale" and abs(delta['scale'] - 1.0) > 0.001:
+                # 捕获变换后的状态
+                self._pending_transform.description = f"缩放 {delta['scale']*100:.0f}%"
+                self._pending_transform.capture_after()
+                self.undo_manager.push(self._pending_transform, execute=False)
+
+        self._pending_transform = None
+
+    def _on_delete_requested(self, indices: list):
+        """处理删除请求"""
+        if not indices:
+            return
+
+        # 创建删除命令
+        cmd = DeleteCommand(self.contours, indices)
+        self.undo_manager.push(cmd)
+
+        # 清除选择
+        self.canvas.selected_indices = []
+        self.canvas.update()
+        self.project_panel.update_contours(self.contours)
+
     # =========================================================================
     # 事件处理
     # =========================================================================
 
     def _on_new_project(self):
         """新建项目"""
+        # 清空撤销历史
+        self.undo_manager.clear()
+
         self.contours = []
         self.slice_result = None
         self.current_file = None
@@ -458,10 +559,17 @@ class MainWindow(QMainWindow):
         try:
             path = Path(file_path)
             if path.suffix.lower() == '.dxf':
-                self.contours = self.dxf_parser.parse(file_path)
+                new_contours = self.dxf_parser.parse(file_path)
             else:
                 QMessageBox.warning(self, "不支持的格式", f"暂不支持 {path.suffix} 格式")
                 return
+
+            # 创建替换轮廓命令（可撤销）
+            cmd = ReplaceContoursCommand(
+                self.contours, new_contours,
+                f"加载 {path.name}"
+            )
+            self.undo_manager.push(cmd)
 
             self.current_file = file_path
             self.canvas.set_contours(self.contours)
@@ -523,11 +631,21 @@ class MainWindow(QMainWindow):
 
     def _on_undo(self):
         """撤销"""
-        self._update_status("撤销")
+        if self.undo_manager.can_undo:
+            self.undo_manager.undo()
+            self.canvas.update()
+            self.project_panel.update_contours(self.contours)
+        else:
+            self._update_status("没有可撤销的操作")
 
     def _on_redo(self):
         """重做"""
-        self._update_status("重做")
+        if self.undo_manager.can_redo:
+            self.undo_manager.redo()
+            self.canvas.update()
+            self.project_panel.update_contours(self.contours)
+        else:
+            self._update_status("没有可重做的操作")
 
     def _on_slice(self):
         """执行切片"""
@@ -733,7 +851,20 @@ class MainWindow(QMainWindow):
         if not self.canvas.selected_indices:
             QMessageBox.information(self, "提示", "请先选中轮廓")
             return
-        self.canvas.mirror_selected(axis)
+
+        # 获取选择中心
+        center = self.canvas._get_selection_center()
+
+        # 创建镜像命令
+        cmd = MirrorCommand(
+            self.contours,
+            self.canvas.selected_indices,
+            center.x(), center.y(),
+            axis
+        )
+        self.undo_manager.push(cmd)
+
+        self.canvas.update()
         self._update_status(f"镜像 {axis.upper()} 完成")
 
     def _on_intersection(self):
