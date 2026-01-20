@@ -651,8 +651,14 @@ class MainWindow(QMainWindow):
 
         if file_path:
             try:
-                writer = STLWriter()
-                writer.write(self.slice_result, file_path)
+                # 获取当前参数
+                params = self.param_panel.get_params()
+                writer = STLWriter(wall_thickness=params.shell.wall_thickness)
+                # 传递轮廓和参数用于生成包边
+                writer.write(
+                    self.slice_result, file_path,
+                    contours=self.contours, params=params
+                )
                 self._update_status(f"STL已导出: {Path(file_path).name}")
                 QMessageBox.information(self, "导出成功", f"STL已保存到:\n{file_path}")
             except Exception as e:
