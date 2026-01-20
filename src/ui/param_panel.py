@@ -15,12 +15,12 @@ from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QScrollArea,
     QLabel, QLineEdit, QSpinBox, QDoubleSpinBox,
     QComboBox, QCheckBox, QGroupBox, QFrame,
-    QPushButton, QTabWidget, QFormLayout
+    QPushButton, QTabWidget, QFormLayout, QRadioButton, QButtonGroup
 )
 from PySide6.QtCore import Qt, Signal
 
 from src.core.types import (
-    SliceParams, ShellParams, EdgeType, ExtruderType
+    SliceParams, ShellParams, EdgeType, ExtruderType, EdgeDirection
 )
 from .theme import COLORS, LAYOUT
 
@@ -319,6 +319,22 @@ class ParamPanel(QWidget):
         wrap_form = QFormLayout()
         wrap_form.setSpacing(8)
 
+        # 包边方向单选按钮
+        wrap_dir_layout = QHBoxLayout()
+        self.wrap_dir_inner = QRadioButton("内部")
+        self.wrap_dir_outer = QRadioButton("外部")
+        self.wrap_dir_inner.setChecked(True)  # 默认内部
+        self.wrap_dir_inner.setEnabled(False)
+        self.wrap_dir_outer.setEnabled(False)
+        self.wrap_dir_group = QButtonGroup(self)
+        self.wrap_dir_group.addButton(self.wrap_dir_inner, 0)
+        self.wrap_dir_group.addButton(self.wrap_dir_outer, 1)
+        self.wrap_dir_group.buttonClicked.connect(self._on_param_changed)
+        wrap_dir_layout.addWidget(self.wrap_dir_inner)
+        wrap_dir_layout.addWidget(self.wrap_dir_outer)
+        wrap_dir_layout.addStretch()
+        wrap_form.addRow("包边方向:", wrap_dir_layout)
+
         self.wrap_width = QDoubleSpinBox()
         self.wrap_width.setRange(0.5, 10)
         self.wrap_width.setValue(2.0)
@@ -343,6 +359,12 @@ class ParamPanel(QWidget):
         self.wrap_enabled.stateChanged.connect(
             lambda: self.wrap_height.setEnabled(self.wrap_enabled.isChecked())
         )
+        self.wrap_enabled.stateChanged.connect(
+            lambda: self.wrap_dir_inner.setEnabled(self.wrap_enabled.isChecked())
+        )
+        self.wrap_enabled.stateChanged.connect(
+            lambda: self.wrap_dir_outer.setEnabled(self.wrap_enabled.isChecked())
+        )
 
         # 分隔线
         line = QFrame()
@@ -358,6 +380,22 @@ class ParamPanel(QWidget):
         outline_form = QFormLayout()
         outline_form.setSpacing(8)
 
+        # 勾边方向单选按钮
+        outline_dir_layout = QHBoxLayout()
+        self.outline_dir_inner = QRadioButton("内部")
+        self.outline_dir_outer = QRadioButton("外部")
+        self.outline_dir_inner.setChecked(True)  # 默认内部
+        self.outline_dir_inner.setEnabled(False)
+        self.outline_dir_outer.setEnabled(False)
+        self.outline_dir_group = QButtonGroup(self)
+        self.outline_dir_group.addButton(self.outline_dir_inner, 0)
+        self.outline_dir_group.addButton(self.outline_dir_outer, 1)
+        self.outline_dir_group.buttonClicked.connect(self._on_param_changed)
+        outline_dir_layout.addWidget(self.outline_dir_inner)
+        outline_dir_layout.addWidget(self.outline_dir_outer)
+        outline_dir_layout.addStretch()
+        outline_form.addRow("勾边方向:", outline_dir_layout)
+
         self.outline_width = QDoubleSpinBox()
         self.outline_width.setRange(0.3, 5)
         self.outline_width.setValue(1.0)
@@ -365,6 +403,14 @@ class ParamPanel(QWidget):
         self.outline_width.setSuffix(" mm")
         self.outline_width.setEnabled(False)
         outline_form.addRow("勾边宽度:", self.outline_width)
+
+        self.outline_height = QDoubleSpinBox()
+        self.outline_height.setRange(0.3, 10)
+        self.outline_height.setValue(1.0)
+        self.outline_height.setSingleStep(0.1)
+        self.outline_height.setSuffix(" mm")
+        self.outline_height.setEnabled(False)
+        outline_form.addRow("勾边高度:", self.outline_height)
 
         self.outline_offset = QDoubleSpinBox()
         self.outline_offset.setRange(-5, 5)
@@ -380,7 +426,16 @@ class ParamPanel(QWidget):
             lambda: self.outline_width.setEnabled(self.outline_enabled.isChecked())
         )
         self.outline_enabled.stateChanged.connect(
+            lambda: self.outline_height.setEnabled(self.outline_enabled.isChecked())
+        )
+        self.outline_enabled.stateChanged.connect(
             lambda: self.outline_offset.setEnabled(self.outline_enabled.isChecked())
+        )
+        self.outline_enabled.stateChanged.connect(
+            lambda: self.outline_dir_inner.setEnabled(self.outline_enabled.isChecked())
+        )
+        self.outline_enabled.stateChanged.connect(
+            lambda: self.outline_dir_outer.setEnabled(self.outline_enabled.isChecked())
         )
 
         return group
@@ -465,9 +520,18 @@ class ParamPanel(QWidget):
         self._params.edge_wrap.wrap_enabled = self.wrap_enabled.isChecked()
         self._params.edge_wrap.wrap_width = self.wrap_width.value()
         self._params.edge_wrap.wrap_height = self.wrap_height.value()
+        self._params.edge_wrap.wrap_direction = (
+            EdgeDirection.INNER if self.wrap_dir_inner.isChecked()
+            else EdgeDirection.OUTER
+        )
         self._params.edge_wrap.outline_enabled = self.outline_enabled.isChecked()
         self._params.edge_wrap.outline_width = self.outline_width.value()
+        self._params.edge_wrap.outline_height = self.outline_height.value()
         self._params.edge_wrap.outline_offset = self.outline_offset.value()
+        self._params.edge_wrap.outline_direction = (
+            EdgeDirection.INNER if self.outline_dir_inner.isChecked()
+            else EdgeDirection.OUTER
+        )
 
         # 速度参数
         self._params.speed.print_speed = self.print_speed.value()
@@ -511,6 +575,15 @@ class ParamPanel(QWidget):
         self.wrap_enabled.setChecked(params.edge_wrap.wrap_enabled)
         self.wrap_width.setValue(params.edge_wrap.wrap_width)
         self.wrap_height.setValue(params.edge_wrap.wrap_height)
+        if params.edge_wrap.wrap_direction == EdgeDirection.INNER:
+            self.wrap_dir_inner.setChecked(True)
+        else:
+            self.wrap_dir_outer.setChecked(True)
         self.outline_enabled.setChecked(params.edge_wrap.outline_enabled)
         self.outline_width.setValue(params.edge_wrap.outline_width)
+        self.outline_height.setValue(params.edge_wrap.outline_height)
         self.outline_offset.setValue(params.edge_wrap.outline_offset)
+        if params.edge_wrap.outline_direction == EdgeDirection.INNER:
+            self.outline_dir_inner.setChecked(True)
+        else:
+            self.outline_dir_outer.setChecked(True)

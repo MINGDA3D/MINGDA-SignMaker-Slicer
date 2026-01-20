@@ -311,6 +311,12 @@ class SkirtParams:
     type: str = "rectangle"           # 类型: rectangle, rounded, custom
 
 
+class EdgeDirection(Enum):
+    """包边/勾边方向"""
+    INNER = auto()    # 内部（向内延伸）
+    OUTER = auto()    # 外部（向外延伸）
+
+
 @dataclass
 class ConnectedParams:
     """连襟字参数"""
@@ -325,10 +331,13 @@ class EdgeWrapParams:
     wrap_enabled: bool = False        # 包边开启
     wrap_width: float = 2.0           # 包边宽度
     wrap_height: float = 3.0          # 包边高度
+    wrap_direction: EdgeDirection = EdgeDirection.INNER  # 包边方向
 
     outline_enabled: bool = False     # 勾边开启
     outline_width: float = 1.0        # 勾边宽度
+    outline_height: float = 1.0       # 勾边高度（厚度）
     outline_offset: float = 0.0       # 勾边偏移
+    outline_direction: EdgeDirection = EdgeDirection.INNER  # 勾边方向
 
 
 @dataclass
