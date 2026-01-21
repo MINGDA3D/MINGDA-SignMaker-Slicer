@@ -23,6 +23,7 @@ from .types import (
     SliceResult
 )
 from .path_offset import PathOffset, JoinType
+from .step_generator import StepGenerator
 
 
 @dataclass
@@ -36,10 +37,7 @@ class SliceEngine:
 
     def __init__(self):
         self.path_offset = PathOffset()
-        # 子生成器可以后续添加
-        # self.bevel_generator = BevelGenerator(self.path_offset)
-        # self.step_generator = StepGenerator(self.path_offset)
-        # self.fill_generator = FillGenerator(self.path_offset)
+        self.step_generator = StepGenerator(self.path_offset)
 
     def slice(self, contours: List[Contour], params: SliceParams) -> SliceResult:
         """
@@ -156,18 +154,12 @@ class SliceEngine:
     def _build_step_layer_map(self, params: SliceParams,
                                layer_height: float) -> Dict[float, StepConfig]:
         """构建台阶层高度-配置映射"""
-        mapping = {}
-
-        if not params.step.enabled:
-            return mapping
-
-        for step in params.step.steps:
-            if step.enabled:
-                # 对齐到层高
-                aligned_z = round(step.position / layer_height) * layer_height
-                mapping[aligned_z] = step
-
-        return mapping
+        # 使用台阶生成器来构建映射
+        return self.step_generator.get_step_layers(
+            params.step,
+            params.shell.height,
+            layer_height
+        )
 
     def _get_extruder_at_height(self, z: float,
                                  color_layers: Dict) -> ExtruderType:
@@ -186,8 +178,10 @@ class SliceEngine:
         处理顺序：
         1. 应用边缘轮廓（斜边收缩）
         2. 生成壁路径
-        3. 生成台阶（如需要）
-        4. 生成防翘裙边（如需要）
+        3. 生成自定义台阶（如需要）
+        4. 生成面板台阶（顶部台阶）
+        5. 生成底板台阶（底部台阶）
+        6. 生成防翘裙边（如需要）
         """
         layer = Layer(
             z_height=info.z_height,
@@ -209,7 +203,45 @@ class SliceEngine:
             )
             layer.paths.extend(wall_paths)
 
-            # 3. 生成防翘裙边（仅首层）
+            # 3. 生成自定义台阶（如需要）
+            if info.is_step_layer and info.step_config:
+                step_paths = self.step_generator.generate_step_for_layer(
+                    modified_contour,
+                    info.z_height,
+                    info.layer_height,
+                    info.step_config,
+                    params.step,
+                    params.shell.wall_thickness,
+                    info.extruder
+                )
+                layer.paths.extend(step_paths)
+
+            # 4. 生成面板台阶（顶部台阶）
+            if params.step.panel_step_enabled:
+                panel_step_paths = self.step_generator.generate_panel_step_for_layer(
+                    modified_contour,
+                    info.z_height,
+                    info.layer_height,
+                    params.shell.height,
+                    params.step,
+                    params.shell.wall_thickness,
+                    info.extruder
+                )
+                layer.paths.extend(panel_step_paths)
+
+            # 5. 生成底板台阶（底部台阶）
+            if params.step.baseplate_step_enabled:
+                baseplate_step_paths = self.step_generator.generate_baseplate_step_for_layer(
+                    modified_contour,
+                    info.z_height,
+                    info.layer_height,
+                    params.step,
+                    params.shell.wall_thickness,
+                    info.extruder
+                )
+                layer.paths.extend(baseplate_step_paths)
+
+            # 6. 生成防翘裙边（仅首层）
             if info.has_skirt:
                 skirt_paths = self._generate_skirt_paths(
                     modified_contour, params

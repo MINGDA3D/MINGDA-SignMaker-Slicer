@@ -212,59 +212,98 @@ class ParamPanel(QWidget):
         layout = QVBoxLayout(group)
         layout.setSpacing(8)
 
-        # 顶部台阶
-        self.top_step_enabled = QCheckBox("启用顶部台阶")
-        self.top_step_enabled.stateChanged.connect(self._on_param_changed)
-        layout.addWidget(self.top_step_enabled)
+        # ===== 面板台阶（顶部）=====
+        self.panel_step_enabled = QCheckBox("启用面板台阶（顶部）")
+        self.panel_step_enabled.stateChanged.connect(self._on_param_changed)
+        layout.addWidget(self.panel_step_enabled)
 
         form1 = QFormLayout()
-        self.top_step_height = QDoubleSpinBox()
-        self.top_step_height.setRange(0, 20)
-        self.top_step_height.setValue(2)
-        self.top_step_height.setSuffix(" mm")
-        self.top_step_height.setEnabled(False)
-        form1.addRow("台阶高度:", self.top_step_height)
+        self.panel_step_height = QDoubleSpinBox()
+        self.panel_step_height.setRange(0.3, 30)
+        self.panel_step_height.setValue(3)
+        self.panel_step_height.setSuffix(" mm")
+        self.panel_step_height.setEnabled(False)
+        self.panel_step_height.valueChanged.connect(self._on_param_changed)
+        form1.addRow("台阶高度:", self.panel_step_height)
 
-        self.top_step_width = QDoubleSpinBox()
-        self.top_step_width.setRange(0, 20)
-        self.top_step_width.setValue(3)
-        self.top_step_width.setSuffix(" mm")
-        self.top_step_width.setEnabled(False)
-        form1.addRow("台阶宽度:", self.top_step_width)
+        self.panel_step_width = QDoubleSpinBox()
+        self.panel_step_width.setRange(0.5, 20)
+        self.panel_step_width.setValue(3)
+        self.panel_step_width.setSuffix(" mm")
+        self.panel_step_width.setEnabled(False)
+        self.panel_step_width.valueChanged.connect(self._on_param_changed)
+        form1.addRow("台阶宽度:", self.panel_step_width)
+
+        self.panel_step_v_groove = QCheckBox("V型槽")
+        self.panel_step_v_groove.setEnabled(False)
+        self.panel_step_v_groove.stateChanged.connect(self._on_param_changed)
+        form1.addRow("", self.panel_step_v_groove)
+
         layout.addLayout(form1)
 
-        self.top_step_enabled.stateChanged.connect(
-            lambda: self.top_step_height.setEnabled(self.top_step_enabled.isChecked())
-        )
-        self.top_step_enabled.stateChanged.connect(
-            lambda: self.top_step_width.setEnabled(self.top_step_enabled.isChecked())
+        self.panel_step_enabled.stateChanged.connect(
+            lambda: self._toggle_panel_step_controls(self.panel_step_enabled.isChecked())
         )
 
         # 分隔线
-        line = QFrame()
-        line.setFrameShape(QFrame.Shape.HLine)
-        line.setStyleSheet(f"background-color: {COLORS.border_default};")
-        layout.addWidget(line)
+        line1 = QFrame()
+        line1.setFrameShape(QFrame.Shape.HLine)
+        line1.setStyleSheet(f"background-color: {COLORS.border_default};")
+        layout.addWidget(line1)
 
-        # 底部凹槽
-        self.bottom_groove_enabled = QCheckBox("启用底部凹槽")
-        self.bottom_groove_enabled.stateChanged.connect(self._on_param_changed)
-        layout.addWidget(self.bottom_groove_enabled)
+        # ===== 底板台阶（底部）=====
+        self.baseplate_step_enabled = QCheckBox("启用底板台阶（底部）")
+        self.baseplate_step_enabled.stateChanged.connect(self._on_param_changed)
+        layout.addWidget(self.baseplate_step_enabled)
 
         form2 = QFormLayout()
-        self.bottom_groove_height = QDoubleSpinBox()
-        self.bottom_groove_height.setRange(0, 20)
-        self.bottom_groove_height.setValue(2)
-        self.bottom_groove_height.setSuffix(" mm")
-        self.bottom_groove_height.setEnabled(False)
-        form2.addRow("凹槽高度:", self.bottom_groove_height)
+        self.baseplate_step_height = QDoubleSpinBox()
+        self.baseplate_step_height.setRange(0.3, 30)
+        self.baseplate_step_height.setValue(3)
+        self.baseplate_step_height.setSuffix(" mm")
+        self.baseplate_step_height.setEnabled(False)
+        self.baseplate_step_height.valueChanged.connect(self._on_param_changed)
+        form2.addRow("台阶高度:", self.baseplate_step_height)
+
+        self.baseplate_step_width = QDoubleSpinBox()
+        self.baseplate_step_width.setRange(0.5, 20)
+        self.baseplate_step_width.setValue(3)
+        self.baseplate_step_width.setSuffix(" mm")
+        self.baseplate_step_width.setEnabled(False)
+        self.baseplate_step_width.valueChanged.connect(self._on_param_changed)
+        form2.addRow("台阶宽度:", self.baseplate_step_width)
+
+        self.baseplate_step_v_groove = QCheckBox("V型槽")
+        self.baseplate_step_v_groove.setEnabled(False)
+        self.baseplate_step_v_groove.stateChanged.connect(self._on_param_changed)
+        form2.addRow("", self.baseplate_step_v_groove)
+
         layout.addLayout(form2)
 
-        self.bottom_groove_enabled.stateChanged.connect(
-            lambda: self.bottom_groove_height.setEnabled(self.bottom_groove_enabled.isChecked())
+        self.baseplate_step_enabled.stateChanged.connect(
+            lambda: self._toggle_baseplate_step_controls(self.baseplate_step_enabled.isChecked())
         )
 
+        # 兼容旧变量（避免其他代码报错）
+        self.top_step_enabled = self.panel_step_enabled
+        self.top_step_height = self.panel_step_height
+        self.top_step_width = self.panel_step_width
+        self.bottom_groove_enabled = self.baseplate_step_enabled
+        self.bottom_groove_height = self.baseplate_step_height
+
         return group
+
+    def _toggle_panel_step_controls(self, enabled: bool):
+        """切换面板台阶控件的启用状态"""
+        self.panel_step_height.setEnabled(enabled)
+        self.panel_step_width.setEnabled(enabled)
+        self.panel_step_v_groove.setEnabled(enabled)
+
+    def _toggle_baseplate_step_controls(self, enabled: bool):
+        """切换底板台阶控件的启用状态"""
+        self.baseplate_step_height.setEnabled(enabled)
+        self.baseplate_step_width.setEnabled(enabled)
+        self.baseplate_step_v_groove.setEnabled(enabled)
 
     def _create_skirt_group(self) -> QGroupBox:
         """创建防翘裙边参数组"""
@@ -505,11 +544,32 @@ class ParamPanel(QWidget):
         self._params.color.enabled = self.color_enabled.isChecked()
 
         # 台阶参数
-        self._params.step.top_step_enabled = self.top_step_enabled.isChecked()
-        self._params.step.top_step_height = self.top_step_height.value()
-        self._params.step.top_step_width = self.top_step_width.value()
-        self._params.step.bottom_groove_enabled = self.bottom_groove_enabled.isChecked()
-        self._params.step.bottom_groove_height = self.bottom_groove_height.value()
+        # 面板台阶（顶部）
+        self._params.step.panel_step_enabled = self.panel_step_enabled.isChecked()
+        self._params.step.panel_step_height = self.panel_step_height.value()
+        self._params.step.panel_step_width = self.panel_step_width.value()
+        self._params.step.panel_step_is_v_groove = self.panel_step_v_groove.isChecked()
+
+        # 底板台阶（底部）
+        self._params.step.baseplate_step_enabled = self.baseplate_step_enabled.isChecked()
+        self._params.step.baseplate_step_height = self.baseplate_step_height.value()
+        self._params.step.baseplate_step_width = self.baseplate_step_width.value()
+        self._params.step.baseplate_step_is_v_groove = self.baseplate_step_v_groove.isChecked()
+
+        # 兼容旧参数
+        self._params.step.top_step_enabled = self.panel_step_enabled.isChecked()
+        self._params.step.top_step_height = self.panel_step_height.value()
+        self._params.step.top_step_width = self.panel_step_width.value()
+        self._params.step.bottom_groove_enabled = self.baseplate_step_enabled.isChecked()
+        self._params.step.bottom_groove_height = self.baseplate_step_height.value()
+        self._params.step.bottom_groove_depth = self.baseplate_step_width.value()
+
+        # 启用台阶总开关
+        self._params.step.enabled = (
+            self._params.step.panel_step_enabled or
+            self._params.step.baseplate_step_enabled or
+            len(self._params.step.steps) > 0
+        )
 
         # 裙边参数
         self._params.skirt.enabled = self.skirt_enabled.isChecked()

@@ -288,17 +288,43 @@ class StepConfig:
 
 @dataclass
 class StepParams:
-    """台阶/V槽参数"""
+    """台阶/V槽参数
+
+    支持三种台阶类型：
+    1. 面板台阶 (panel_step) - 在字壳顶部，用于安装亚克力面板
+    2. 底板台阶 (baseplate_step) - 在字壳底部，用于安装底板
+    3. 自定义台阶 (steps) - 用户可在任意位置添加的台阶
+    """
     enabled: bool = False
+
+    # 面板台阶（顶部）- 用于安装面板
+    panel_step_enabled: bool = False
+    panel_step_height: float = 3.0      # 面板厚度/台阶高度 (mm)
+    panel_step_width: float = 3.0       # 台阶向内延伸宽度 (mm)
+    panel_step_is_v_groove: bool = False  # 是否为V槽
+
+    # 底板台阶（底部）- 用于安装底板
+    baseplate_step_enabled: bool = False
+    baseplate_step_height: float = 3.0  # 底板厚度/台阶高度 (mm)
+    baseplate_step_width: float = 3.0   # 台阶向内延伸宽度 (mm)
+    baseplate_step_is_v_groove: bool = False  # 是否为V槽
+
+    # 自定义台阶列表
     steps: List[StepConfig] = field(default_factory=list)
-    # 顶部台阶
+
+    # 兼容旧参数（将逐步弃用）
     top_step_enabled: bool = False
     top_step_height: float = 2.0
     top_step_width: float = 3.0
-    # 底部凹槽
     bottom_groove_enabled: bool = False
     bottom_groove_height: float = 2.0
     bottom_groove_depth: float = 3.0
+
+    # 打印参数
+    step_thickness: float = 0.3        # 台阶层高（用于V槽分层）
+    extrusion_width: float = 1.2       # 台阶吐丝宽度
+    print_speed: float = 30.0          # 台阶打印速度 (mm/s)
+    horizontal_offset: float = 0.0     # 喷头水平偏移
 
 
 @dataclass
