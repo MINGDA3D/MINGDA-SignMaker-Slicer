@@ -11,7 +11,7 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Signal
 
-from src.core.types import ShellParams, EdgeType
+from src.core.types import ShellParams, EdgeType, BevelDirection
 
 
 class ShellPanel(QWidget):
@@ -78,6 +78,11 @@ class ShellPanel(QWidget):
         self.bevel_group = QGroupBox("斜边参数")
         bevel_layout = QFormLayout(self.bevel_group)
 
+        # 斜边方向选择
+        self.bevel_direction_combo = QComboBox()
+        self.bevel_direction_combo.addItems(["上小下大", "上大下小"])
+        bevel_layout.addRow("斜边方向:", self.bevel_direction_combo)
+
         self.bevel_width_spin = QDoubleSpinBox()
         self.bevel_width_spin.setRange(1, 50)
         self.bevel_width_spin.setValue(5.0)
@@ -137,6 +142,7 @@ class ShellPanel(QWidget):
 
     def _connect_signals(self):
         self.edge_type_combo.currentIndexChanged.connect(self._on_edge_type_changed)
+        self.bevel_direction_combo.currentIndexChanged.connect(self._emit_params)
         self.height_spin.valueChanged.connect(self._emit_params)
         self.layer_height_spin.valueChanged.connect(self._emit_params)
         self.wall_thickness_spin.valueChanged.connect(self._emit_params)
@@ -150,7 +156,8 @@ class ShellPanel(QWidget):
         self.mirror_check.toggled.connect(self._emit_params)
 
     def _on_edge_type_changed(self, index):
-        self.bevel_group.setVisible(index == 1)  # 斜边
+        # 斜边(index=1)时显示斜边参数
+        self.bevel_group.setVisible(index == 1)
         self._emit_params()
 
     def _emit_params(self):
@@ -164,10 +171,14 @@ class ShellPanel(QWidget):
         self._params.panel_thickness = self.panel_spin.value()
         self._params.safety_line_offset = self.safety_offset_spin.value()
         self._params.safety_line_count = self.safety_count_spin.value()
-        self._params.is_mirrored = self.mirror_check.isChecked()
 
+        # 边缘类型
         edge_types = [EdgeType.STRAIGHT, EdgeType.BEVELED, EdgeType.CUSTOM]
         self._params.edge_type = edge_types[self.edge_type_combo.currentIndex()]
+
+        # 斜边方向
+        bevel_directions = [BevelDirection.TOP_SMALL, BevelDirection.TOP_LARGE]
+        self._params.bevel_direction = bevel_directions[self.bevel_direction_combo.currentIndex()]
 
         self.params_changed.emit(self._params)
 
@@ -189,11 +200,17 @@ class ShellPanel(QWidget):
         self.panel_spin.setValue(self._params.panel_thickness)
         self.safety_offset_spin.setValue(self._params.safety_line_offset)
         self.safety_count_spin.setValue(self._params.safety_line_count)
-        self.mirror_check.setChecked(self._params.is_mirrored)
 
+        # 边缘类型
         if self._params.edge_type == EdgeType.STRAIGHT:
             self.edge_type_combo.setCurrentIndex(0)
         elif self._params.edge_type == EdgeType.BEVELED:
             self.edge_type_combo.setCurrentIndex(1)
         else:
             self.edge_type_combo.setCurrentIndex(2)
+
+        # 斜边方向
+        if self._params.bevel_direction == BevelDirection.TOP_SMALL:
+            self.bevel_direction_combo.setCurrentIndex(0)
+        else:
+            self.bevel_direction_combo.setCurrentIndex(1)

@@ -49,6 +49,12 @@ class EdgeType(Enum):
     CUSTOM = auto()     # 异形边（自定义轮廓）
 
 
+class BevelDirection(Enum):
+    """斜边方向"""
+    TOP_SMALL = auto()  # 上小下大（底部大，顶部小）
+    TOP_LARGE = auto()  # 上大下小（底部小，顶部大）
+
+
 class ExtruderType(Enum):
     """挤出机类型"""
     EXTRUDER_1 = 1
@@ -248,11 +254,12 @@ class ShellParams:
     edge_type: EdgeType = EdgeType.STRAIGHT
 
     # 斜边参数
-    bevel_width: float = 5.0          # 斜边宽度 (mm)
-    bevel_angle: float = 75.0         # 斜边角度 (度)
+    bevel_width: float = 5.0          # 斜边宽度 (mm) - 水平方向的收缩/扩展量
+    bevel_direction: BevelDirection = BevelDirection.TOP_SMALL  # 斜边方向
 
-    # 底板参数
-    baseplate_thickness: float = 10.0  # 底板厚度 (mm)
+    # 底板和面板厚度
+    baseplate_thickness: float = 10.0  # 底板厚度 (mm) - 底部直边区域高度
+    panel_thickness: float = 3.0       # 面板厚度 (mm) - 顶部直边区域高度
 
     # 异形边轮廓
     edge_profile: Optional[EdgeProfile] = None

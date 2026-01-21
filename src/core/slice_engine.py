@@ -18,7 +18,7 @@ from dataclasses import dataclass, field
 
 from .types import (
     Point, Path, Contour, Layer, LayerPath, LayerInfo,
-    PathType, PathRole, EdgeType, ExtruderType,
+    PathType, PathRole, EdgeType, ExtruderType, BevelDirection,
     SliceParams, ShellParams, StepConfig,
     SliceResult
 )
@@ -287,30 +287,71 @@ class SliceEngine:
         """
         斜边处理
 
-        斜边结构：
-        ┌─────────┐ ← 面板位置（最内收缩）
-        │ ╲     ╱ │
-        │  ╲   ╱  │ ← 斜边区域（线性收缩）
-        │   ╲ ╱   │
-        │    │    │ ← 底板区域（不收缩）
-        └────┴────┘
+        斜边结构（包含底板区域、斜边区域、面板区域三部分）：
 
-        收缩方向：从外向内
+        总高度 = 底板厚度 + 斜边高度 + 面板厚度
+        斜边高度 = 总高度 - 底板厚度 - 面板厚度
+
+        上小下大 (TOP_SMALL)：底部大，顶部小
+        ┌───────┐  ← 面板区域（最小，收缩 bevel_width）
+        │╲     ╱│
+        │ ╲   ╱ │  ← 斜边区域（线性收缩）
+        │  ╲ ╱  │
+        │   │   │  ← 底板区域（最大，不收缩）
+        └───┴───┘
+
+        上大下小 (TOP_LARGE)：底部小，顶部大
+        ┌───┬───┐  ← 面板区域（最大，不收缩）
+        │  ╱ ╲  │
+        │ ╱   ╲ │  ← 斜边区域（线性扩展）
+        │╱     ╲│
+        │───────│  ← 底板区域（最小，收缩 bevel_width）
+        └───────┘
         """
-        baseplate_top = params.baseplate_thickness
-        bevel_end = baseplate_top + params.bevel_width
-        max_offset = params.bevel_width  # 最大内缩距离
+        total_height = params.height
+        baseplate_thickness = params.baseplate_thickness
+        panel_thickness = params.panel_thickness
+        bevel_width = params.bevel_width
 
-        if z < baseplate_top:
-            # 底板区域：不收缩
-            offset = 0
-        elif z < bevel_end:
-            # 斜边区域：线性收缩
-            progress = (z - baseplate_top) / params.bevel_width
-            offset = -progress * max_offset
+        # 计算区域边界
+        baseplate_top = baseplate_thickness  # 底板区域顶部
+        panel_bottom = total_height - panel_thickness  # 面板区域底部
+
+        # 斜边区域就是中间部分
+        # 注意：如果底板+面板厚度超过总高度，则没有斜边区域
+
+        if params.bevel_direction == BevelDirection.TOP_SMALL:
+            # 上小下大：底部不收缩，向上逐渐收缩
+            if z < baseplate_top:
+                # 底板区域：不收缩
+                offset = 0
+            elif z < panel_bottom:
+                # 斜边区域：线性收缩
+                bevel_height = panel_bottom - baseplate_top
+                if bevel_height > 0:
+                    progress = (z - baseplate_top) / bevel_height
+                    offset = -progress * bevel_width
+                else:
+                    offset = 0
+            else:
+                # 面板区域：最大收缩
+                offset = -bevel_width
         else:
-            # 面板区域：保持最大收缩
-            offset = -max_offset
+            # 上大下小：底部收缩，向上逐渐扩展
+            if z < baseplate_top:
+                # 底板区域：最大收缩
+                offset = -bevel_width
+            elif z < panel_bottom:
+                # 斜边区域：从最大收缩线性恢复
+                bevel_height = panel_bottom - baseplate_top
+                if bevel_height > 0:
+                    progress = (z - baseplate_top) / bevel_height
+                    offset = -bevel_width * (1 - progress)
+                else:
+                    offset = 0
+            else:
+                # 面板区域：不收缩
+                offset = 0
 
         if abs(offset) < 0.001:
             return contour

@@ -97,114 +97,94 @@ class STLWriter:
         """
         构建空心字壳网格
 
-        算法：
+        算法（支持斜边变化轮廓）：
         1. 收集所有层的WALL路径
-        2. 计算整体高度范围
-        3. 对每个路径生成外轮廓和内轮廓
-        4. 使用Shapely创建带孔多边形
-        5. 使用trimesh挤出成3D网格
+        2. 对每一层生成外轮廓和内轮廓
+        3. 逐层挤出生成3D网格
+        4. 合并所有层的网格
         """
         if not layers:
             return None
 
-        # 收集所有层的壁路径信息
-        all_wall_paths = []
-        z_min = float('inf')
-        z_max = float('-inf')
+        # 收集所有层信息
         wall_thickness = self.wall_thickness
+        meshes = []
 
         for layer in layers:
             wall_paths = [p for p in layer.paths if p.role == PathRole.WALL]
-            if wall_paths:
-                z_bottom = layer.z_height
-                z_top = layer.z_height + layer.layer_height
-                z_min = min(z_min, z_bottom)
-                z_max = max(z_max, z_top)
-
-                # 获取壁厚
-                if wall_paths[0].line_width > 0:
-                    wall_thickness = wall_paths[0].line_width
-
-                for path in wall_paths:
-                    all_wall_paths.append(path)
-
-        if not all_wall_paths or z_min >= z_max:
-            return None
-
-        # 使用第一层的路径来生成轮廓（假设所有层��状相同）
-        # 对于变化的轮廓，需要更复杂的处理
-        first_layer_paths = [p for p in layers[0].paths if p.role == PathRole.WALL]
-        if not first_layer_paths:
-            return None
-
-        half_wall = wall_thickness / 2
-        height = z_max - z_min
-
-        # 收集所有外轮廓和内轮廓
-        meshes = []
-
-        for path in first_layer_paths:
-            # 将路径转换为Path对象用于偏移
-            core_path = CorePath(points=path.points)
-
-            # 向外偏移得到外轮廓
-            outer_results = self.path_offset.offset(core_path, half_wall)
-            # 向内偏移得到内轮廓
-            inner_results = self.path_offset.offset(core_path, -half_wall)
-
-            if not outer_results:
+            if not wall_paths:
                 continue
 
-            outer_points = outer_results[0].points
+            z_bottom = layer.z_height
+            layer_height = layer.layer_height
 
-            # 转换为坐标列表
-            outer_coords = [(p.x, p.y) for p in outer_points]
+            # 获取壁厚
+            if wall_paths[0].line_width > 0:
+                wall_thickness = wall_paths[0].line_width
 
-            # 确保多边形闭合
-            if outer_coords[0] != outer_coords[-1]:
-                outer_coords.append(outer_coords[0])
+            half_wall = wall_thickness / 2
 
-            try:
-                if inner_results:
-                    # 有内轮廓，创建带孔的多边形（空心）
-                    inner_points = inner_results[0].points
-                    inner_coords = [(p.x, p.y) for p in inner_points]
+            for path in wall_paths:
+                # 将路径转换为Path对象用于偏移
+                core_path = CorePath(points=path.points)
 
-                    # 确保内轮廓闭合
-                    if inner_coords[0] != inner_coords[-1]:
-                        inner_coords.append(inner_coords[0])
+                # 向外偏移得到外轮廓
+                outer_results = self.path_offset.offset(core_path, half_wall)
+                # 向内偏移得到内轮廓
+                inner_results = self.path_offset.offset(core_path, -half_wall)
 
-                    # 创建带孔的Shapely多边形
-                    # 外轮廓作为边界，内轮廓作为孔
-                    polygon = ShapelyPolygon(outer_coords, [inner_coords])
-                else:
-                    # 没有内轮廓，创建实心多边形
-                    polygon = ShapelyPolygon(outer_coords)
-
-                # 验证并修复多边形
-                if not polygon.is_valid:
-                    polygon = make_valid(polygon)
-
-                # 跳过空的或无效的多边形
-                if polygon.is_empty or polygon.area < 1e-6:
+                if not outer_results:
                     continue
 
-                # 处理MultiPolygon情况（make_valid可能返回MultiPolygon）
-                if polygon.geom_type == 'MultiPolygon':
-                    for geom in polygon.geoms:
-                        if geom.area > 1e-6:
-                            mesh = self._extrude_polygon(geom, height, z_min)
-                            if mesh is not None:
-                                meshes.append(mesh)
-                elif polygon.geom_type == 'Polygon':
-                    mesh = self._extrude_polygon(polygon, height, z_min)
-                    if mesh is not None:
-                        meshes.append(mesh)
+                outer_points = outer_results[0].points
 
-            except Exception as e:
-                # 跳过无法处理的路径
-                print(f"警告：无法处理路径: {e}")
-                continue
+                # 转换为坐标列表
+                outer_coords = [(p.x, p.y) for p in outer_points]
+
+                # 确保多边形闭合
+                if outer_coords[0] != outer_coords[-1]:
+                    outer_coords.append(outer_coords[0])
+
+                try:
+                    if inner_results:
+                        # 有内轮廓，创建带孔的多边形（空心）
+                        inner_points = inner_results[0].points
+                        inner_coords = [(p.x, p.y) for p in inner_points]
+
+                        # 确保内轮廓闭合
+                        if inner_coords[0] != inner_coords[-1]:
+                            inner_coords.append(inner_coords[0])
+
+                        # 创建带孔的Shapely多边形
+                        polygon = ShapelyPolygon(outer_coords, [inner_coords])
+                    else:
+                        # 没有内轮廓，创建实心多边形
+                        polygon = ShapelyPolygon(outer_coords)
+
+                    # 验证并修复多边形
+                    if not polygon.is_valid:
+                        polygon = make_valid(polygon)
+
+                    # 跳过空的或无效的多边形
+                    if polygon.is_empty or polygon.area < 1e-6:
+                        continue
+
+                    # 处理MultiPolygon情况
+                    if polygon.geom_type == 'MultiPolygon':
+                        for geom in polygon.geoms:
+                            if geom.area > 1e-6:
+                                mesh = self._extrude_polygon(geom, layer_height, z_bottom)
+                                if mesh is not None:
+                                    meshes.append(mesh)
+                    elif polygon.geom_type == 'Polygon':
+                        mesh = self._extrude_polygon(polygon, layer_height, z_bottom)
+                        if mesh is not None:
+                            meshes.append(mesh)
+
+                except Exception as e:
+                    # 跳过无法处理的路径
+                    print(f"警告：无法处理路径: {e}")
+                    continue
 
         if not meshes:
             return None

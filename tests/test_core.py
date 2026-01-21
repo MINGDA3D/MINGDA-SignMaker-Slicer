@@ -17,7 +17,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from src.core.types import (
     Point, Point3D, Path, Contour,
-    PathType, PathRole, EdgeType, ExtruderType,
+    PathType, PathRole, EdgeType, ExtruderType, BevelDirection,
     SliceParams, ShellParams, StepParams, StepConfig
 )
 from src.core.path_offset import PathOffset, JoinType
@@ -233,6 +233,23 @@ class TestSliceEngine:
         result = engine.slice([simple_contour], params)
 
         assert result.total_layers > 0
+
+    def test_slice_with_inverse_beveled_edge(self, engine, simple_contour):
+        """测试反向斜边切片（上大下小）"""
+        params = SliceParams()
+        params.shell.height = 30
+        params.shell.layer_height = 0.3
+        params.shell.edge_type = EdgeType.BEVELED
+        params.shell.bevel_direction = BevelDirection.TOP_LARGE
+        params.shell.bevel_width = 5
+        params.shell.baseplate_thickness = 10
+        params.shell.panel_thickness = 3
+
+        result = engine.slice([simple_contour], params)
+
+        assert result.total_layers > 0
+        # 验证反向斜边生成了正确的层数
+        assert result.total_layers == 100  # 30 / 0.3
 
     def test_slice_with_safety_lines(self, engine, simple_contour):
         """测试带安全线切片"""

@@ -20,7 +20,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt, Signal
 
 from src.core.types import (
-    SliceParams, ShellParams, EdgeType, ExtruderType, EdgeDirection
+    SliceParams, ShellParams, EdgeType, ExtruderType, EdgeDirection, BevelDirection
 )
 from .theme import COLORS, LAYOUT
 
@@ -138,6 +138,14 @@ class ParamPanel(QWidget):
         self.edge_type_combo.currentIndexChanged.connect(self._on_edge_type_changed)
         layout.addRow("边缘类型:", self.edge_type_combo)
 
+        # 斜边方向
+        self.bevel_direction_combo = QComboBox()
+        self.bevel_direction_combo.addItem("上小下大", BevelDirection.TOP_SMALL)
+        self.bevel_direction_combo.addItem("上大下小", BevelDirection.TOP_LARGE)
+        self.bevel_direction_combo.setEnabled(False)
+        self.bevel_direction_combo.currentIndexChanged.connect(self._on_param_changed)
+        layout.addRow("斜边方向:", self.bevel_direction_combo)
+
         # 斜边宽度
         self.bevel_width_spin = QDoubleSpinBox()
         self.bevel_width_spin.setRange(0, 50)
@@ -147,15 +155,6 @@ class ParamPanel(QWidget):
         self.bevel_width_spin.valueChanged.connect(self._on_param_changed)
         layout.addRow("斜边宽度:", self.bevel_width_spin)
 
-        # 斜边角度
-        self.bevel_angle_spin = QDoubleSpinBox()
-        self.bevel_angle_spin.setRange(30, 90)
-        self.bevel_angle_spin.setValue(75)
-        self.bevel_angle_spin.setSuffix("°")
-        self.bevel_angle_spin.setEnabled(False)
-        self.bevel_angle_spin.valueChanged.connect(self._on_param_changed)
-        layout.addRow("斜边角度:", self.bevel_angle_spin)
-
         # 底板厚度
         self.baseplate_spin = QDoubleSpinBox()
         self.baseplate_spin.setRange(0, 50)
@@ -163,6 +162,15 @@ class ParamPanel(QWidget):
         self.baseplate_spin.setSuffix(" mm")
         self.baseplate_spin.valueChanged.connect(self._on_param_changed)
         layout.addRow("底板厚度:", self.baseplate_spin)
+
+        # 面板厚度
+        self.panel_thickness_spin = QDoubleSpinBox()
+        self.panel_thickness_spin.setRange(0, 20)
+        self.panel_thickness_spin.setValue(3)
+        self.panel_thickness_spin.setSuffix(" mm")
+        self.panel_thickness_spin.setEnabled(False)
+        self.panel_thickness_spin.valueChanged.connect(self._on_param_changed)
+        layout.addRow("面板厚度:", self.panel_thickness_spin)
 
         return group
 
@@ -516,8 +524,9 @@ class ParamPanel(QWidget):
         edge_type = self.edge_type_combo.currentData()
         is_beveled = edge_type == EdgeType.BEVELED
 
+        self.bevel_direction_combo.setEnabled(is_beveled)
         self.bevel_width_spin.setEnabled(is_beveled)
-        self.bevel_angle_spin.setEnabled(is_beveled)
+        self.panel_thickness_spin.setEnabled(is_beveled)
 
         self._on_param_changed()
 
@@ -536,9 +545,10 @@ class ParamPanel(QWidget):
 
         # 边缘参数
         self._params.shell.edge_type = self.edge_type_combo.currentData()
+        self._params.shell.bevel_direction = self.bevel_direction_combo.currentData()
         self._params.shell.bevel_width = self.bevel_width_spin.value()
-        self._params.shell.bevel_angle = self.bevel_angle_spin.value()
         self._params.shell.baseplate_thickness = self.baseplate_spin.value()
+        self._params.shell.panel_thickness = self.panel_thickness_spin.value()
 
         # 换色层参数
         self._params.color.enabled = self.color_enabled.isChecked()
@@ -622,9 +632,12 @@ class ParamPanel(QWidget):
         edge_index = self.edge_type_combo.findData(params.shell.edge_type)
         if edge_index >= 0:
             self.edge_type_combo.setCurrentIndex(edge_index)
+        bevel_dir_index = self.bevel_direction_combo.findData(params.shell.bevel_direction)
+        if bevel_dir_index >= 0:
+            self.bevel_direction_combo.setCurrentIndex(bevel_dir_index)
         self.bevel_width_spin.setValue(params.shell.bevel_width)
-        self.bevel_angle_spin.setValue(params.shell.bevel_angle)
         self.baseplate_spin.setValue(params.shell.baseplate_thickness)
+        self.panel_thickness_spin.setValue(params.shell.panel_thickness)
 
         # 速度参数
         self.print_speed.setValue(int(params.speed.print_speed))
