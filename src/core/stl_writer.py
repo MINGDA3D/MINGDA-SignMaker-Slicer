@@ -567,9 +567,9 @@ class STLWriter:
         try:
             meshes = []
 
-            # 分层数量 - 每层0.2mm，斜坡更平滑
+            # 分层数量 - 每层0.05mm，斜坡更光滑
             height_diff = abs(z_top - z_bottom)
-            num_slices = max(4, min(50, int(height_diff / 0.2) + 1))
+            num_slices = max(4, min(200, int(height_diff / 0.05) + 1))
             slice_height = height_diff / num_slices
 
             # ====== 关键：内边缘固定在壁的位置 ======
