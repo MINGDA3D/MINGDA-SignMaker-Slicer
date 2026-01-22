@@ -332,25 +332,48 @@ class ParamPanel(QWidget):
         self.skirt_width.setValue(5)
         self.skirt_width.setSuffix(" mm")
         self.skirt_width.setEnabled(False)
+        self.skirt_width.valueChanged.connect(self._on_param_changed)
         form.addRow("裙边宽度:", self.skirt_width)
+
+        self.skirt_height = QDoubleSpinBox()
+        self.skirt_height.setRange(0.5, 10)
+        self.skirt_height.setValue(2)
+        self.skirt_height.setSingleStep(0.5)
+        self.skirt_height.setSuffix(" mm")
+        self.skirt_height.setEnabled(False)
+        self.skirt_height.valueChanged.connect(self._on_param_changed)
+        form.addRow("裙边高度:", self.skirt_height)
+
+        self.skirt_interval = QDoubleSpinBox()
+        self.skirt_interval.setRange(5, 50)
+        self.skirt_interval.setValue(10)
+        self.skirt_interval.setSuffix(" mm")
+        self.skirt_interval.setEnabled(False)
+        self.skirt_interval.valueChanged.connect(self._on_param_changed)
+        form.addRow("梯形间距:", self.skirt_interval)
 
         self.skirt_offset = QDoubleSpinBox()
         self.skirt_offset.setRange(0, 20)
-        self.skirt_offset.setValue(3)
+        self.skirt_offset.setValue(0)
         self.skirt_offset.setSuffix(" mm")
         self.skirt_offset.setEnabled(False)
+        self.skirt_offset.valueChanged.connect(self._on_param_changed)
         form.addRow("裙边距离:", self.skirt_offset)
 
         layout.addLayout(form)
 
         self.skirt_enabled.stateChanged.connect(
-            lambda: self.skirt_width.setEnabled(self.skirt_enabled.isChecked())
-        )
-        self.skirt_enabled.stateChanged.connect(
-            lambda: self.skirt_offset.setEnabled(self.skirt_enabled.isChecked())
+            lambda: self._toggle_skirt_controls(self.skirt_enabled.isChecked())
         )
 
         return group
+
+    def _toggle_skirt_controls(self, enabled: bool):
+        """切换裙边控件的启用状态"""
+        self.skirt_width.setEnabled(enabled)
+        self.skirt_height.setEnabled(enabled)
+        self.skirt_interval.setEnabled(enabled)
+        self.skirt_offset.setEnabled(enabled)
 
     def _create_edge_wrap_group(self) -> QGroupBox:
         """创建包边/勾边参数组"""
@@ -584,6 +607,8 @@ class ParamPanel(QWidget):
         # 裙边参数
         self._params.skirt.enabled = self.skirt_enabled.isChecked()
         self._params.skirt.width = self.skirt_width.value()
+        self._params.skirt.height = self.skirt_height.value()
+        self._params.skirt.interval = self.skirt_interval.value()
         self._params.skirt.offset = self.skirt_offset.value()
 
         # 包边勾边参数
@@ -643,6 +668,13 @@ class ParamPanel(QWidget):
         self.print_speed.setValue(int(params.speed.print_speed))
         self.travel_speed.setValue(int(params.speed.travel_speed))
         self.first_layer_speed.setValue(int(params.speed.first_layer_speed))
+
+        # 裙边参数
+        self.skirt_enabled.setChecked(params.skirt.enabled)
+        self.skirt_width.setValue(params.skirt.width)
+        self.skirt_height.setValue(params.skirt.height)
+        self.skirt_interval.setValue(params.skirt.interval)
+        self.skirt_offset.setValue(params.skirt.offset)
 
         # 包边勾边参数
         self.wrap_enabled.setChecked(params.edge_wrap.wrap_enabled)
