@@ -336,12 +336,30 @@ class StepParams:
 
 @dataclass
 class SkirtParams:
-    """防翘裙边参数"""
+    """防翘裙边参数
+
+    裙边结构（截面图）：
+      字壳 ════════════════════════════════════════════
+           ╲          ╱╲          ╱╲          ╱
+            ╲        ╱  ╲        ╱  ╲        ╱
+             ╲      ╱    ╲      ╱    ╲      ╱
+              ╲    ╱      ╲    ╱      ╲    ╱
+               ────        ────        ────
+
+    相邻梯形共享斜边，形成连续的波浪形防翘结构。
+    """
     enabled: bool = False
-    width: float = 5.0                # 裙边宽度 (mm)
-    height: float = 0.6               # 裙边高度 (层数 * 层高)
-    offset: float = 3.0               # 距离轮廓的偏移
-    type: str = "rectangle"           # 类型: rectangle, rounded, custom
+    width: float = 5.0                # 裙边宽度 (mm) - 梯形底部宽度
+    height: float = 2.0               # 裙边高度 (mm) - 用于STL导出
+    offset: float = 0.0               # 距离轮廓的偏移 (mm) - 通常为0，贴着字壳
+    interval: float = 10.0            # 梯形间距 (mm) - 相邻梯形顶边的中心距离
+    is_outer: bool = True             # 是否外部裙边（True=外部，False=内部孔）
+
+    # 以下参数用于G-code生成
+    extrusion_width: float = 1.2      # 吐丝宽度
+    length: float = 10.0              # 旧参数，保持兼容
+    v_opening: float = 5.0            # 旧参数，保持兼容
+    line_width: float = 1.2           # 旧参数，保持兼容
 
 
 class EdgeDirection(Enum):

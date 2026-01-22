@@ -31,6 +31,7 @@ from .types import (
 )
 from .path_offset import PathOffset
 from .types import Path as CorePath
+from .skirt_generator import SkirtGenerator, TrapezoidSkirt
 
 
 class STLWriter:
@@ -45,6 +46,7 @@ class STLWriter:
         """
         self.wall_thickness = wall_thickness
         self.path_offset = PathOffset()
+        self.skirt_generator = SkirtGenerator()
 
     def write(self, result: SliceResult, output_path: str,
               binary: bool = True, contours: Optional[List[Contour]] = None,
@@ -86,6 +88,12 @@ class STLWriter:
             )
             if outline_mesh is not None:
                 combined_mesh = trimesh.util.concatenate([combined_mesh, outline_mesh])
+
+        # 如果启用了防翘裙边，添加裙边网格
+        if contours and params and params.skirt.enabled:
+            skirt_mesh = self._build_skirt_mesh(contours, params)
+            if skirt_mesh is not None:
+                combined_mesh = trimesh.util.concatenate([combined_mesh, skirt_mesh])
 
         # 写入文件
         if binary:
@@ -1052,6 +1060,209 @@ class STLWriter:
         except Exception as e:
             print(f"警告：创建台阶网格失败: {e}")
             return None
+
+    def _build_skirt_mesh(self, contours: List[Contour],
+                           params: SliceParams) -> Optional[trimesh.Trimesh]:
+        """
+        构建防翘裙边网格
+
+        裙边结构（截面图）：
+          字壳 ════════════════════════════════════════════
+               ╲          ╱╲          ╱╲          ╱
+                ╲        ╱  ╲        ╱  ╲        ╱
+                 ╲      ╱    ╲      ╱    ╲      ╱
+                  ╲    ╱      ╲    ╱      ╲    ╱
+                   ────        ────        ────
+
+        每个梯形是一个3D楔形体：
+        - 顶面：贴着字壳底部（z=0到z=skirt_height）
+        - 底面：向外延伸的底边
+        - 侧面：连接顶边和底边的斜面
+
+        相邻梯形共享斜边，形成连续的波浪形结构。
+
+        Args:
+            contours: 轮廓列表
+            params: 切片参数
+
+        Returns:
+            裙边网格
+        """
+        if not contours:
+            return None
+
+        skirt_params = params.skirt
+        skirt_height = skirt_params.height
+        meshes = []
+
+        for contour in contours:
+            try:
+                # 生成梯形数据
+                trapezoids = self.skirt_generator.generate_skirt_3d(
+                    contour, skirt_params
+                )
+
+                for trap in trapezoids:
+                    # 为每个梯形创建3D网格
+                    trap_mesh = self._create_trapezoid_mesh(trap, skirt_height)
+                    if trap_mesh is not None:
+                        meshes.append(trap_mesh)
+
+                # 处理内孔
+                if not skirt_params.is_outer:
+                    for hole in contour.holes:
+                        # 内孔裙边需要单独处理
+                        hole_contour = Contour(outer=hole, holes=[])
+                        hole_trapezoids = self.skirt_generator.generate_skirt_3d(
+                            hole_contour,
+                            skirt_params
+                        )
+                        for trap in hole_trapezoids:
+                            trap_mesh = self._create_trapezoid_mesh(trap, skirt_height)
+                            if trap_mesh is not None:
+                                meshes.append(trap_mesh)
+
+            except Exception as e:
+                print(f"Warning: Failed to process contour skirt: {e}")
+                continue
+
+        if not meshes:
+            return None
+
+        if len(meshes) == 1:
+            return meshes[0]
+        else:
+            return trimesh.util.concatenate(meshes)
+
+    def _create_trapezoid_mesh(self, trap: TrapezoidSkirt,
+                                height: float,
+                                wall_thickness: float = 0.8) -> Optional[trimesh.Trimesh]:
+        """
+        为单个梯形创建3D网格（空心轮廓）
+
+        梯形裙边应该只有轮廓线条，不是实心填充。
+        创建4条边（顶边、底边、左斜边、右斜边）的薄壁结构。
+
+        Args:
+            trap: 梯形数据
+            height: 裙边高度
+            wall_thickness: 壁厚
+
+        Returns:
+            梯形轮廓网格
+        """
+        try:
+            meshes = []
+
+            # 梯形的4条边
+            edges = [
+                # 顶边（贴着字壳）
+                (trap.top_left, trap.top_right),
+                # 右斜边
+                (trap.top_right, trap.bottom_right),
+                # 底边
+                (trap.bottom_right, trap.bottom_left),
+                # 左斜边
+                (trap.bottom_left, trap.top_left),
+            ]
+
+            for p1, p2 in edges:
+                # 为每条边创建一个薄壁矩形
+                edge_mesh = self._create_wall_segment(
+                    p1.x, p1.y, p2.x, p2.y,
+                    0, height, wall_thickness
+                )
+                if edge_mesh is not None:
+                    meshes.append(edge_mesh)
+
+            if not meshes:
+                return None
+
+            if len(meshes) == 1:
+                return meshes[0]
+            else:
+                return trimesh.util.concatenate(meshes)
+
+        except Exception as e:
+            print(f"Warning: Failed to create trapezoid mesh: {e}")
+            return None
+
+    def _create_wall_segment(self, x1: float, y1: float, x2: float, y2: float,
+                              z_bottom: float, z_top: float,
+                              thickness: float) -> Optional[trimesh.Trimesh]:
+        """
+        创建一段墙壁（薄壁矩形）
+
+        Args:
+            x1, y1: 起点
+            x2, y2: 终点
+            z_bottom: 底部Z坐标
+            z_top: 顶部Z坐标
+            thickness: 壁厚
+
+        Returns:
+            墙壁网格
+        """
+        import math
+
+        # 计算边的方向
+        dx = x2 - x1
+        dy = y2 - y1
+        length = math.sqrt(dx * dx + dy * dy)
+
+        if length < 0.001:
+            return None
+
+        # 归一化方向
+        dx /= length
+        dy /= length
+
+        # 法线方向（垂直于边）
+        nx = -dy
+        ny = dx
+
+        # 半壁厚
+        half_t = thickness / 2
+
+        # 8个顶点（内外两侧，上下两层）
+        vertices = np.array([
+            # 外侧底层
+            [x1 + nx * half_t, y1 + ny * half_t, z_bottom],  # 0
+            [x2 + nx * half_t, y2 + ny * half_t, z_bottom],  # 1
+            # 外侧顶层
+            [x1 + nx * half_t, y1 + ny * half_t, z_top],     # 2
+            [x2 + nx * half_t, y2 + ny * half_t, z_top],     # 3
+            # 内侧底层
+            [x1 - nx * half_t, y1 - ny * half_t, z_bottom],  # 4
+            [x2 - nx * half_t, y2 - ny * half_t, z_bottom],  # 5
+            # 内侧顶层
+            [x1 - nx * half_t, y1 - ny * half_t, z_top],     # 6
+            [x2 - nx * half_t, y2 - ny * half_t, z_top],     # 7
+        ])
+
+        # 12个三角面
+        faces = np.array([
+            # 外侧面
+            [0, 1, 3],
+            [0, 3, 2],
+            # 内侧面
+            [4, 6, 7],
+            [4, 7, 5],
+            # 顶面
+            [2, 3, 7],
+            [2, 7, 6],
+            # 底面
+            [0, 4, 5],
+            [0, 5, 1],
+            # 左端面
+            [0, 2, 6],
+            [0, 6, 4],
+            # 右端面
+            [1, 5, 7],
+            [1, 7, 3],
+        ])
+
+        return trimesh.Trimesh(vertices=vertices, faces=faces)
 
 
 def write_stl(result: SliceResult, output_path: str,
