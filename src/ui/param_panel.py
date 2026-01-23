@@ -336,9 +336,9 @@ class ParamPanel(QWidget):
         form.addRow("裙边宽度:", self.skirt_width)
 
         self.skirt_height = QDoubleSpinBox()
-        self.skirt_height.setRange(0.5, 10)
-        self.skirt_height.setValue(2)
-        self.skirt_height.setSingleStep(0.5)
+        self.skirt_height.setRange(0.2, 10)
+        self.skirt_height.setValue(0.3)
+        self.skirt_height.setSingleStep(0.1)
         self.skirt_height.setSuffix(" mm")
         self.skirt_height.setEnabled(False)
         self.skirt_height.valueChanged.connect(self._on_param_changed)

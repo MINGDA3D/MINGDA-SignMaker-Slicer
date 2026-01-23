@@ -350,7 +350,7 @@ class SkirtParams:
     """
     enabled: bool = False
     width: float = 5.0                # 裙边宽度 (mm) - 梯形底部宽度
-    height: float = 2.0               # 裙边高度 (mm) - 用于STL导出
+    height: float = 0.3               # 裙边高度 (mm) - 用于STL导出，最小0.2
     offset: float = 0.0               # 距离轮廓的偏移 (mm) - 通常为0，贴着字壳
     interval: float = 10.0            # 梯形间距 (mm) - 相邻梯形顶边的中心距离
     is_outer: bool = True             # 是否外部裙边（True=外部，False=内部孔）
