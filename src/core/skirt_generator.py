@@ -90,16 +90,12 @@ class SkirtGenerator:
         if not params.enabled:
             return trapezoids
 
-        if params.is_outer:
-            trapezoids = self._generate_trapezoids_along_path(
-                contour.outer, params, is_outer=True
-            )
-        else:
-            for hole in contour.holes:
-                hole_trapezoids = self._generate_trapezoids_along_path(
-                    hole, params, is_outer=False
-                )
-                trapezoids.extend(hole_trapezoids)
+        # 始终处理 contour.outer，方向由 is_outer 参数决定
+        # is_outer=True: 裙边向外延伸（用于外轮廓）
+        # is_outer=False: 裙边向内延伸（用于内孔）
+        trapezoids = self._generate_trapezoids_along_path(
+            contour.outer, params, is_outer=params.is_outer
+        )
 
         return trapezoids
 
