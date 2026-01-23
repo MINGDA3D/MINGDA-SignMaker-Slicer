@@ -1097,7 +1097,7 @@ class STLWriter:
 
         for contour in contours:
             try:
-                # 生成梯形数据
+                # 外轮廓：裙边向外延伸
                 trapezoids = self.skirt_generator.generate_skirt_3d(
                     contour, skirt_params
                 )
@@ -1108,19 +1108,23 @@ class STLWriter:
                     if trap_mesh is not None:
                         meshes.append(trap_mesh)
 
-                # 处理内孔
-                if not skirt_params.is_outer:
-                    for hole in contour.holes:
-                        # 内孔裙边需要单独处理
-                        hole_contour = Contour(outer=hole, holes=[])
-                        hole_trapezoids = self.skirt_generator.generate_skirt_3d(
-                            hole_contour,
-                            skirt_params
-                        )
-                        for trap in hole_trapezoids:
-                            trap_mesh = self._create_trapezoid_mesh(trap, skirt_height)
-                            if trap_mesh is not None:
-                                meshes.append(trap_mesh)
+                # 处理内孔：裙边向孔内延伸（方向相反）
+                for hole in contour.holes:
+                    # 创建内孔的裙边参数（方向相反）
+                    from copy import copy
+                    hole_skirt_params = copy(skirt_params)
+                    hole_skirt_params.is_outer = False  # 内孔方向相反
+
+                    # 内孔作为临时contour的外轮廓
+                    hole_contour = Contour(outer=hole, holes=[])
+                    hole_trapezoids = self.skirt_generator.generate_skirt_3d(
+                        hole_contour,
+                        hole_skirt_params
+                    )
+                    for trap in hole_trapezoids:
+                        trap_mesh = self._create_trapezoid_mesh(trap, skirt_height)
+                        if trap_mesh is not None:
+                            meshes.append(trap_mesh)
 
             except Exception as e:
                 print(f"Warning: Failed to process contour skirt: {e}")
