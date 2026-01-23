@@ -228,15 +228,19 @@ class SkirtGenerator:
 
             # 计算法线方向
             # 外部裙边：法线朝外（从路径向外延伸）
-            # 内部裙边（孔）：法线朝内（向孔内延伸）
+            # 内部裙边（孔）：法线朝内（向孔中心延伸）
+            # 注意：内孔路径方向可能与外轮廓相同（都是逆时针），
+            # 所以需要反转法线方向让裙边向孔内延伸
             if is_outer:
-                # 外轮廓：使用左手法则，法线朝外
+                # 外轮廓：法线朝外
                 normal_left = self._get_outward_normal(dir_left)
                 normal_right = self._get_outward_normal(dir_right)
             else:
-                # 内孔：法线朝内（向孔中心）
-                normal_left = self._get_inward_normal(dir_left)
-                normal_right = self._get_inward_normal(dir_right)
+                # 内孔：法线朝外的反方向（向孔中心）
+                out_left = self._get_outward_normal(dir_left)
+                out_right = self._get_outward_normal(dir_right)
+                normal_left = (-out_left[0], -out_left[1])
+                normal_right = (-out_right[0], -out_right[1])
 
             # 计算梯形顶边（贴着字壳，考虑offset）
             top_left = Point(
@@ -360,10 +364,11 @@ class SkirtGenerator:
         """
         获取朝外的法线（假设路径是逆时针方向）
 
-        对于逆时针路径，右手法则：法线 = (-dy, dx) 朝外
+        对于逆时针路径，朝外的法线 = (dy, -dx)
+        例如：方向(1,0)向右 -> 法线(0,-1)向下（朝外）
         """
         dx, dy = direction
-        return (-dy, dx)
+        return (dy, -dx)
 
     def _get_inward_normal(self, direction: Tuple[float, float]) -> Tuple[float, float]:
         """
@@ -372,7 +377,7 @@ class SkirtGenerator:
         与朝外相反
         """
         dx, dy = direction
-        return (dy, -dx)
+        return (-dy, dx)
 
     def _distribute_along_path(self, path: Path,
                                interval: float) -> List[Tuple[Point, Tuple[float, float]]]:
