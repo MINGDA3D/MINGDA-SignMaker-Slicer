@@ -157,6 +157,22 @@ class SkirtGenerator:
 
         return paths
 
+    def _calculate_signed_area(self, points: List[Point]) -> float:
+        """
+        计算路径的有向面积
+
+        返回值:
+            > 0: 逆时针 (CCW)
+            < 0: 顺时针 (CW)
+        """
+        area = 0.0
+        n = len(points)
+        for i in range(n):
+            j = (i + 1) % n
+            area += points[i].x * points[j].y
+            area -= points[j].x * points[i].y
+        return area / 2.0
+
     def _generate_trapezoids_along_path(self, path: Path,
                                          params: SkirtParams,
                                          is_outer: bool) -> List[TrapezoidSkirt]:
@@ -171,7 +187,7 @@ class SkirtGenerator:
         Args:
             path: 轮廓路径
             params: 裙边参数
-            is_outer: 是否外部轮廓
+            is_outer: 是否外部轮廓（语义上的，裙边应该向哪个方向延伸）
 
         Returns:
             梯形列表
@@ -182,6 +198,10 @@ class SkirtGenerator:
 
         if n < 2:
             return trapezoids
+
+        # 检测路径的实际绕向
+        signed_area = self._calculate_signed_area(points)
+        is_ccw = signed_area > 0  # 有向面积 > 0 表示逆时针
 
         # 计算路径总长度和每段的累积长度
         segment_lengths = []
@@ -227,14 +247,27 @@ class SkirtGenerator:
                 continue
 
             # 计算法线方向
-            # 外部裙边：法线朝外（从字壳向外延伸）
-            # 内部裙边（孔）：法线朝内（向孔中心延伸）
-            if is_outer:
-                # 外轮廓：使用反向法线让裙边朝外
-                normal_left = self._get_inward_normal(dir_left)
-                normal_right = self._get_inward_normal(dir_right)
+            # 根据路径的实际绕向和语义方向（is_outer）来确定法线
+            #
+            # 语义方向：
+            # - is_outer=True: 外轮廓，裙边应该向外延伸
+            # - is_outer=False: 内孔，裙边应该向孔内延伸
+            #
+            # 绕向影响：
+            # - CCW路径：outward法线 = (dy, -dx)
+            # - CW路径：outward法线 = (-dy, dx)（与CCW相反）
+            #
+            # 组合逻辑：
+            # - CCW + is_outer → 使用 outward 法线
+            # - CCW + !is_outer → 使用 inward 法线
+            # - CW + is_outer → 使用 inward 法线（因为CW翻转了方向）
+            # - CW + !is_outer → 使用 outward 法线
+            #
+            # 简化：如果 is_ccw == is_outer，使用 outward；否则使用 inward
+            if is_ccw == is_outer:
+                normal_left = self._get_outward_normal(dir_left)
+                normal_right = self._get_outward_normal(dir_right)
             else:
-                # 内孔：使用相同法线让裙边朝孔内
                 normal_left = self._get_inward_normal(dir_left)
                 normal_right = self._get_inward_normal(dir_right)
 
