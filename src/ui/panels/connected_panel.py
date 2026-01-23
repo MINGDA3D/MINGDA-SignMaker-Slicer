@@ -37,6 +37,10 @@ class ConnectedPanel(QWidget):
         self.type_combo.addItems(["三角形连襟", "菱形连襟"])
         type_layout.addRow("类型:", self.type_combo)
 
+        self.auto_detect_check = QCheckBox("自动检测连接点")
+        self.auto_detect_check.setChecked(True)
+        type_layout.addRow(self.auto_detect_check)
+
         layout.addWidget(type_group)
 
         # 参数组
@@ -67,24 +71,34 @@ class ConnectedPanel(QWidget):
         self.support_offset_spin.setSuffix(" mm")
         param_layout.addRow("支撑偏移:", self.support_offset_spin)
 
+        self.max_gap_spin = QDoubleSpinBox()
+        self.max_gap_spin.setRange(5, 200)
+        self.max_gap_spin.setValue(50.0)
+        self.max_gap_spin.setSuffix(" mm")
+        param_layout.addRow("最大连接间距:", self.max_gap_spin)
+
         layout.addWidget(param_group)
         layout.addStretch()
 
     def _connect_signals(self):
         self.enabled_check.toggled.connect(self._emit_params)
         self.type_combo.currentIndexChanged.connect(self._emit_params)
+        self.auto_detect_check.toggled.connect(self._emit_params)
         self.width_spin.valueChanged.connect(self._emit_params)
         self.height_spin.valueChanged.connect(self._emit_params)
         self.base_height_spin.valueChanged.connect(self._emit_params)
         self.support_offset_spin.valueChanged.connect(self._emit_params)
+        self.max_gap_spin.valueChanged.connect(self._emit_params)
 
     def _emit_params(self):
         self._params.enabled = self.enabled_check.isChecked()
         self._params.type = "triangle" if self.type_combo.currentIndex() == 0 else "diamond"
+        self._params.auto_detect = self.auto_detect_check.isChecked()
         self._params.width = self.width_spin.value()
         self._params.height = self.height_spin.value()
         self._params.base_height = self.base_height_spin.value()
         self._params.support_offset = self.support_offset_spin.value()
+        self._params.max_gap = self.max_gap_spin.value()
         self.params_changed.emit(self._params)
 
     def get_params(self) -> ConnectedParams:
@@ -97,7 +111,9 @@ class ConnectedPanel(QWidget):
     def _update_ui(self):
         self.enabled_check.setChecked(self._params.enabled)
         self.type_combo.setCurrentIndex(0 if self._params.type == "triangle" else 1)
+        self.auto_detect_check.setChecked(self._params.auto_detect)
         self.width_spin.setValue(self._params.width)
         self.height_spin.setValue(self._params.height)
         self.base_height_spin.setValue(self._params.base_height)
         self.support_offset_spin.setValue(self._params.support_offset)
+        self.max_gap_spin.setValue(self._params.max_gap)

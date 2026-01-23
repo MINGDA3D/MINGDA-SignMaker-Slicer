@@ -27,11 +27,13 @@ from shapely.validation import make_valid
 
 from .types import (
     Point, Layer, LayerPath, PathRole, Contour,
-    SliceResult, SliceParams, EdgeWrapParams, EdgeDirection
+    SliceResult, SliceParams, EdgeWrapParams, EdgeDirection,
+    ConnectedParams
 )
 from .path_offset import PathOffset
 from .types import Path as CorePath
 from .skirt_generator import SkirtGenerator, TrapezoidSkirt
+from .connected_generator import ConnectedGenerator, ConnectionBridge
 
 
 class STLWriter:
@@ -47,6 +49,7 @@ class STLWriter:
         self.wall_thickness = wall_thickness
         self.path_offset = PathOffset()
         self.skirt_generator = SkirtGenerator()
+        self.connected_generator = ConnectedGenerator()
 
     def write(self, result: SliceResult, output_path: str,
               binary: bool = True, contours: Optional[List[Contour]] = None,
@@ -94,6 +97,12 @@ class STLWriter:
             skirt_mesh = self._build_skirt_mesh(contours, params)
             if skirt_mesh is not None:
                 combined_mesh = trimesh.util.concatenate([combined_mesh, skirt_mesh])
+
+        # 如果启用了连襟字，添加连襟网格
+        if contours and params and params.connected.enabled:
+            connected_mesh = self._build_connected_mesh(contours, params)
+            if connected_mesh is not None:
+                combined_mesh = trimesh.util.concatenate([combined_mesh, connected_mesh])
 
         # 写入文件
         if binary:
@@ -1384,6 +1393,222 @@ class STLWriter:
         ])
 
         return trimesh.Trimesh(vertices=vertices, faces=faces)
+
+    def _build_connected_mesh(self, contours: List[Contour],
+                               params: SliceParams) -> Optional[trimesh.Trimesh]:
+        """
+        构建连襟网格
+
+        连襟是连接相邻字形的桥梁结构。根据连襟类型（三角形/菱形），
+        生成不同形状的3D连接桥。
+
+        结构说明（三角形连襟侧视图）：
+            字壳A ════════════════════════════════ 字壳B
+                  ╲                            ╱
+                   ╲        连襟斜边         ╱
+                    ╲                      ╱
+                     ╲                    ╱
+                      ════════════════════  ← 底座（直边）
+
+        Args:
+            contours: 轮廓列表
+            params: 切片参数
+
+        Returns:
+            连襟网格
+        """
+        if not contours or len(contours) < 2:
+            return None
+
+        connected_params = params.connected
+        if not connected_params.enabled:
+            return None
+
+        # 检测连接桥
+        bridges = self.connected_generator.find_connection_bridges(
+            contours, connected_params
+        )
+
+        if not bridges:
+            return None
+
+        meshes = []
+
+        for bridge in bridges:
+            bridge_mesh = self._create_bridge_mesh(bridge, connected_params)
+            if bridge_mesh is not None:
+                meshes.append(bridge_mesh)
+
+        if not meshes:
+            return None
+
+        if len(meshes) == 1:
+            return meshes[0]
+        else:
+            return trimesh.util.concatenate(meshes)
+
+    def _create_bridge_mesh(self, bridge: ConnectionBridge,
+                             params: ConnectedParams) -> Optional[trimesh.Trimesh]:
+        """
+        为单个连接桥创建3D网格
+
+        根据连襟类型生成不同形状：
+        - 三角形：底部宽，顶部收窄为线
+        - 菱形：中间窄，两端宽
+
+        Args:
+            bridge: 连接桥数据
+            params: 连襟参数
+
+        Returns:
+            连接桥网格
+        """
+        import math
+
+        if not bridge.corners or len(bridge.corners) < 4:
+            return None
+
+        try:
+            # 获取连襟尺寸参数
+            base_height = params.base_height  # 底座高度
+            bevel_height = params.height       # 斜边高度
+            total_height = self.connected_generator.get_total_height(params)
+
+            # 连接桥的两个端点
+            point_a = bridge.point_a
+            point_b = bridge.point_b
+
+            # 计算连接方向
+            dx = point_b.x - point_a.x
+            dy = point_b.y - point_a.y
+            length = math.sqrt(dx * dx + dy * dy)
+
+            if length < 0.001:
+                return None
+
+            # 归一化方向
+            dx /= length
+            dy /= length
+
+            # 垂直方向（法线）
+            nx = -dy
+            ny = dx
+
+            meshes = []
+
+            # 分层生成网格
+            layer_height = 0.3  # 每层高度
+            num_layers = max(1, int(total_height / layer_height))
+
+            for i in range(num_layers):
+                z_bottom = i * layer_height
+                z_top = min((i + 1) * layer_height, total_height)
+
+                # 计算当前层的宽度
+                width_bottom = self.connected_generator._calculate_width_at_z(
+                    z_bottom, params
+                )
+                width_top = self.connected_generator._calculate_width_at_z(
+                    z_top, params
+                )
+
+                # 跳过宽度太小的层
+                if width_bottom < 0.1 and width_top < 0.1:
+                    continue
+
+                # 生成这一层的网格
+                layer_mesh = self._create_bridge_layer(
+                    point_a, point_b,
+                    nx, ny, length,
+                    width_bottom, width_top,
+                    z_bottom, z_top
+                )
+
+                if layer_mesh is not None:
+                    meshes.append(layer_mesh)
+
+            if not meshes:
+                return None
+
+            if len(meshes) == 1:
+                return meshes[0]
+            else:
+                return trimesh.util.concatenate(meshes)
+
+        except Exception as e:
+            print(f"警告：创建连接桥网格失败: {e}")
+            return None
+
+    def _create_bridge_layer(self, point_a: Point, point_b: Point,
+                              nx: float, ny: float, length: float,
+                              width_bottom: float, width_top: float,
+                              z_bottom: float, z_top: float) -> Optional[trimesh.Trimesh]:
+        """
+        创建连接桥的单层网格
+
+        这是一个梯形截面的3D体，宽度从底部到顶部可以变化。
+
+        Args:
+            point_a, point_b: 连接桥两端点
+            nx, ny: 垂直于连接方向的法线
+            length: 连接距离
+            width_bottom: 底层宽度
+            width_top: 顶层宽度
+            z_bottom, z_top: Z坐标范围
+
+        Returns:
+            层网格
+        """
+        try:
+            half_w_bottom = width_bottom / 2
+            half_w_top = width_top / 2
+
+            # 8个顶点：底层4个 + 顶层4个
+            vertices = [
+                # 底层 - A侧
+                [point_a.x + nx * half_w_bottom, point_a.y + ny * half_w_bottom, z_bottom],  # 0
+                [point_a.x - nx * half_w_bottom, point_a.y - ny * half_w_bottom, z_bottom],  # 1
+                # 底层 - B侧
+                [point_b.x - nx * half_w_bottom, point_b.y - ny * half_w_bottom, z_bottom],  # 2
+                [point_b.x + nx * half_w_bottom, point_b.y + ny * half_w_bottom, z_bottom],  # 3
+                # 顶层 - A侧
+                [point_a.x + nx * half_w_top, point_a.y + ny * half_w_top, z_top],  # 4
+                [point_a.x - nx * half_w_top, point_a.y - ny * half_w_top, z_top],  # 5
+                # 顶层 - B侧
+                [point_b.x - nx * half_w_top, point_b.y - ny * half_w_top, z_top],  # 6
+                [point_b.x + nx * half_w_top, point_b.y + ny * half_w_top, z_top],  # 7
+            ]
+
+            # 12个三角面
+            faces = [
+                # 底面 (0-1-2, 0-2-3)
+                [0, 2, 1],
+                [0, 3, 2],
+                # 顶面 (4-5-6, 4-6-7)
+                [4, 5, 6],
+                [4, 6, 7],
+                # 前面 - 左侧 (0-4-7, 0-7-3)
+                [0, 4, 7],
+                [0, 7, 3],
+                # 后面 - 右侧 (1-2-6, 1-6-5)
+                [1, 2, 6],
+                [1, 6, 5],
+                # A端面 (0-1-5, 0-5-4)
+                [0, 1, 5],
+                [0, 5, 4],
+                # B端面 (3-7-6, 3-6-2)
+                [3, 7, 6],
+                [3, 6, 2],
+            ]
+
+            vertices = np.array(vertices)
+            faces = np.array(faces)
+
+            return trimesh.Trimesh(vertices=vertices, faces=faces)
+
+        except Exception as e:
+            print(f"警告：创建连接桥层失败: {e}")
+            return None
 
 
 def write_stl(result: SliceResult, output_path: str,

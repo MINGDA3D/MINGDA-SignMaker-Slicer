@@ -20,7 +20,8 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt, Signal
 
 from src.core.types import (
-    SliceParams, ShellParams, EdgeType, ExtruderType, EdgeDirection, BevelDirection
+    SliceParams, ShellParams, EdgeType, ExtruderType, EdgeDirection, BevelDirection,
+    ConnectedParams
 )
 from .theme import COLORS, LAYOUT
 
@@ -76,6 +77,7 @@ class ParamPanel(QWidget):
         content_layout.addWidget(self._create_color_group())
         content_layout.addWidget(self._create_step_group())
         content_layout.addWidget(self._create_skirt_group())
+        content_layout.addWidget(self._create_connected_group())
         content_layout.addWidget(self._create_edge_wrap_group())
         content_layout.addWidget(self._create_speed_group())
 
@@ -375,6 +377,98 @@ class ParamPanel(QWidget):
         self.skirt_interval.setEnabled(enabled)
         self.skirt_offset.setEnabled(enabled)
 
+    def _create_connected_group(self) -> QGroupBox:
+        """创建连襟字参数组"""
+        group = QGroupBox("连襟字")
+        layout = QVBoxLayout(group)
+        layout.setSpacing(8)
+
+        # 启用开关
+        self.connected_enabled = QCheckBox("启用连襟字")
+        self.connected_enabled.stateChanged.connect(self._on_param_changed)
+        layout.addWidget(self.connected_enabled)
+
+        form = QFormLayout()
+        form.setSpacing(8)
+
+        # 连襟类型
+        self.connected_type = QComboBox()
+        self.connected_type.addItem("三角形连襟", "triangle")
+        self.connected_type.addItem("菱形连襟", "diamond")
+        self.connected_type.setEnabled(False)
+        self.connected_type.currentIndexChanged.connect(self._on_param_changed)
+        form.addRow("连襟类型:", self.connected_type)
+
+        # 自动检测
+        self.connected_auto_detect = QCheckBox("自动检测连接点")
+        self.connected_auto_detect.setChecked(True)
+        self.connected_auto_detect.setEnabled(False)
+        self.connected_auto_detect.stateChanged.connect(self._on_param_changed)
+        form.addRow("", self.connected_auto_detect)
+
+        # 连襟宽度
+        self.connected_width = QDoubleSpinBox()
+        self.connected_width.setRange(5, 50)
+        self.connected_width.setValue(15)
+        self.connected_width.setSuffix(" mm")
+        self.connected_width.setEnabled(False)
+        self.connected_width.valueChanged.connect(self._on_param_changed)
+        form.addRow("连襟宽度:", self.connected_width)
+
+        # 斜边高度
+        self.connected_height = QDoubleSpinBox()
+        self.connected_height.setRange(1, 20)
+        self.connected_height.setValue(5)
+        self.connected_height.setSuffix(" mm")
+        self.connected_height.setEnabled(False)
+        self.connected_height.valueChanged.connect(self._on_param_changed)
+        form.addRow("斜边高度:", self.connected_height)
+
+        # 底座高度
+        self.connected_base_height = QDoubleSpinBox()
+        self.connected_base_height.setRange(1, 20)
+        self.connected_base_height.setValue(5)
+        self.connected_base_height.setSuffix(" mm")
+        self.connected_base_height.setEnabled(False)
+        self.connected_base_height.valueChanged.connect(self._on_param_changed)
+        form.addRow("底座高度:", self.connected_base_height)
+
+        # 支撑偏移
+        self.connected_support_offset = QDoubleSpinBox()
+        self.connected_support_offset.setRange(0, 10)
+        self.connected_support_offset.setValue(2.5)
+        self.connected_support_offset.setSuffix(" mm")
+        self.connected_support_offset.setEnabled(False)
+        self.connected_support_offset.valueChanged.connect(self._on_param_changed)
+        form.addRow("支撑偏移:", self.connected_support_offset)
+
+        # 最大连接间距
+        self.connected_max_gap = QDoubleSpinBox()
+        self.connected_max_gap.setRange(5, 200)
+        self.connected_max_gap.setValue(50)
+        self.connected_max_gap.setSuffix(" mm")
+        self.connected_max_gap.setEnabled(False)
+        self.connected_max_gap.valueChanged.connect(self._on_param_changed)
+        form.addRow("最大间距:", self.connected_max_gap)
+
+        layout.addLayout(form)
+
+        self.connected_enabled.stateChanged.connect(
+            lambda: self._toggle_connected_controls(self.connected_enabled.isChecked())
+        )
+
+        return group
+
+    def _toggle_connected_controls(self, enabled: bool):
+        """切换连襟字控件的启用状态"""
+        self.connected_type.setEnabled(enabled)
+        self.connected_auto_detect.setEnabled(enabled)
+        self.connected_width.setEnabled(enabled)
+        self.connected_height.setEnabled(enabled)
+        self.connected_base_height.setEnabled(enabled)
+        self.connected_support_offset.setEnabled(enabled)
+        self.connected_max_gap.setEnabled(enabled)
+
     def _create_edge_wrap_group(self) -> QGroupBox:
         """创建包边/勾边参数组"""
         group = QGroupBox("包边勾边")
@@ -611,6 +705,16 @@ class ParamPanel(QWidget):
         self._params.skirt.interval = self.skirt_interval.value()
         self._params.skirt.offset = self.skirt_offset.value()
 
+        # 连襟字参数
+        self._params.connected.enabled = self.connected_enabled.isChecked()
+        self._params.connected.type = self.connected_type.currentData()
+        self._params.connected.auto_detect = self.connected_auto_detect.isChecked()
+        self._params.connected.width = self.connected_width.value()
+        self._params.connected.height = self.connected_height.value()
+        self._params.connected.base_height = self.connected_base_height.value()
+        self._params.connected.support_offset = self.connected_support_offset.value()
+        self._params.connected.max_gap = self.connected_max_gap.value()
+
         # 包边勾边参数
         self._params.edge_wrap.wrap_enabled = self.wrap_enabled.isChecked()
         self._params.edge_wrap.wrap_width = self.wrap_width.value()
@@ -647,6 +751,29 @@ class ParamPanel(QWidget):
         """设置参数"""
         self._params = params
 
+        # 阻止各控件信号，防止设置值时触发 _on_param_changed
+        widgets = [
+            self.height_spin, self.layer_height_spin, self.wall_thickness_spin,
+            self.wall_count_spin, self.edge_type_combo, self.bevel_direction_combo,
+            self.bevel_width_spin, self.baseplate_spin, self.panel_thickness_spin,
+            self.print_speed, self.travel_speed, self.first_layer_speed,
+            self.skirt_enabled, self.skirt_width, self.skirt_height,
+            self.skirt_interval, self.skirt_offset,
+            self.connected_enabled, self.connected_type, self.connected_auto_detect,
+            self.connected_width, self.connected_height, self.connected_base_height,
+            self.connected_support_offset, self.connected_max_gap,
+            self.wrap_enabled, self.wrap_width, self.wrap_height,
+            self.wrap_dir_inner, self.wrap_dir_outer,
+            self.outline_enabled, self.outline_width, self.outline_height,
+            self.outline_offset, self.outline_dir_inner, self.outline_dir_outer,
+            self.color_enabled, self.color1_height, self.color2_height,
+            self.panel_step_enabled, self.panel_step_height, self.panel_step_width,
+            self.panel_step_v_groove, self.baseplate_step_enabled,
+            self.baseplate_step_height, self.baseplate_step_width, self.baseplate_step_v_groove
+        ]
+        for w in widgets:
+            w.blockSignals(True)
+
         # 更新UI
         self.height_spin.setValue(params.shell.height)
         self.layer_height_spin.setValue(params.shell.layer_height)
@@ -670,11 +797,23 @@ class ParamPanel(QWidget):
         self.first_layer_speed.setValue(int(params.speed.first_layer_speed))
 
         # 裙边参数
-        self.skirt_enabled.setChecked(params.skirt.enabled)
         self.skirt_width.setValue(params.skirt.width)
         self.skirt_height.setValue(params.skirt.height)
         self.skirt_interval.setValue(params.skirt.interval)
         self.skirt_offset.setValue(params.skirt.offset)
+        self.skirt_enabled.setChecked(params.skirt.enabled)
+
+        # 连襟字参数
+        connected_type_index = self.connected_type.findData(params.connected.type)
+        if connected_type_index >= 0:
+            self.connected_type.setCurrentIndex(connected_type_index)
+        self.connected_auto_detect.setChecked(params.connected.auto_detect)
+        self.connected_width.setValue(params.connected.width)
+        self.connected_height.setValue(params.connected.height)
+        self.connected_base_height.setValue(params.connected.base_height)
+        self.connected_support_offset.setValue(params.connected.support_offset)
+        self.connected_max_gap.setValue(params.connected.max_gap)
+        self.connected_enabled.setChecked(params.connected.enabled)
 
         # 包边勾边参数
         self.wrap_enabled.setChecked(params.edge_wrap.wrap_enabled)
@@ -692,3 +831,11 @@ class ParamPanel(QWidget):
             self.outline_dir_inner.setChecked(True)
         else:
             self.outline_dir_outer.setChecked(True)
+
+        # 恢复信号
+        for w in widgets:
+            w.blockSignals(False)
+
+        # 手动更新控件的启用状态
+        self._toggle_skirt_controls(params.skirt.enabled)
+        self._toggle_connected_controls(params.connected.enabled)

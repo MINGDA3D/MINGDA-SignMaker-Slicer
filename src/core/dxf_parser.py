@@ -628,14 +628,90 @@ class DXFParser:
 
     def _path_contains_path(self, outer: Path, inner: Path) -> bool:
         """
-        判断outer路径是否包含inner路径
+        判断outer路径是否完全包含inner路径
 
-        使用inner的第一个点进行点-多边形测试
+        要求inner路径的所有点都在outer路径内部，
+        这样才能确定inner是outer的真正内孔，
+        而不是两个独立的相邻路径。
         """
-        if not inner.points:
+        if not inner.points or not outer.points:
             return False
-        test_point = inner.points[0]
-        return self._point_in_polygon(test_point, outer)
+
+        # 1. 快速检查：边界框是否包含
+        inner_bounds = inner.bounds
+        outer_bounds = outer.bounds
+        if (inner_bounds[0] < outer_bounds[0] or
+            inner_bounds[1] < outer_bounds[1] or
+            inner_bounds[2] > outer_bounds[2] or
+            inner_bounds[3] > outer_bounds[3]):
+            return False
+
+        # 2. 检查内部路径的中心点是否在外部路径内
+        # 这是关键检查：如果中心点不在内部，那么这不是真正的包含关系
+        inner_center = inner.centroid
+        if not self._point_in_polygon(inner_center, outer):
+            return False
+
+        # 3. 检查路径是否相交（两个独立形状通常会相交）
+        if self._paths_intersect(outer, inner):
+            return False
+
+        # 4. 检查所有点是否都在outer内部
+        # 为了容错边界情况，要求至少90%的点在内部
+        inside_count = 0
+        total_points = len(inner.points)
+
+        for point in inner.points:
+            if self._point_in_polygon(point, outer):
+                inside_count += 1
+
+        # 要求至少90%的点在内部才认为是包含关系
+        return inside_count >= total_points * 0.9
+
+    def _paths_intersect(self, path1: Path, path2: Path) -> bool:
+        """
+        检查两条路径是否相交
+
+        如果两条路径的边有交点，则返回True
+        """
+        n1 = len(path1.points)
+        n2 = len(path2.points)
+
+        if n1 < 2 or n2 < 2:
+            return False
+
+        # 检查path1的每条边是否与path2的任意边相交
+        for i in range(n1):
+            p1 = path1.points[i]
+            p2 = path1.points[(i + 1) % n1]
+
+            for j in range(n2):
+                p3 = path2.points[j]
+                p4 = path2.points[(j + 1) % n2]
+
+                if self._segments_intersect(p1, p2, p3, p4):
+                    return True
+
+        return False
+
+    def _segments_intersect(self, p1: Point, p2: Point, p3: Point, p4: Point) -> bool:
+        """
+        检查两条线段是否相交（不包括端点重合的情况）
+        """
+        def cross(o: Point, a: Point, b: Point) -> float:
+            return (a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x)
+
+        d1 = cross(p3, p4, p1)
+        d2 = cross(p3, p4, p2)
+        d3 = cross(p1, p2, p3)
+        d4 = cross(p1, p2, p4)
+
+        # 检查是否跨立（符号相反）
+        if ((d1 > 0 and d2 < 0) or (d1 < 0 and d2 > 0)) and \
+           ((d3 > 0 and d4 < 0) or (d3 < 0 and d4 > 0)):
+            return True
+
+        return False
 
     def _point_in_polygon(self, point: Point, polygon: Path) -> bool:
         """

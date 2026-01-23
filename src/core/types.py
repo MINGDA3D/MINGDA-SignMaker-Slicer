@@ -154,6 +154,46 @@ class Path:
         return abs(area) / 2
 
     @property
+    def centroid(self) -> Point:
+        """计算路径的几何中心（质心）"""
+        if not self.points:
+            return Point(0, 0)
+        n = len(self.points)
+        if n == 1:
+            return self.points[0]
+        if n == 2:
+            return Point(
+                (self.points[0].x + self.points[1].x) / 2,
+                (self.points[0].y + self.points[1].y) / 2
+            )
+
+        # 使用多边形质心公式
+        cx, cy = 0.0, 0.0
+        signed_area = 0.0
+
+        for i in range(n):
+            j = (i + 1) % n
+            x0, y0 = self.points[i].x, self.points[i].y
+            x1, y1 = self.points[j].x, self.points[j].y
+            cross = x0 * y1 - x1 * y0
+            signed_area += cross
+            cx += (x0 + x1) * cross
+            cy += (y0 + y1) * cross
+
+        if abs(signed_area) < 1e-10:
+            # 退化情况：使用边界框中心
+            bounds = self.bounds
+            return Point(
+                (bounds[0] + bounds[2]) / 2,
+                (bounds[1] + bounds[3]) / 2
+            )
+
+        signed_area /= 2
+        cx /= (6 * signed_area)
+        cy /= (6 * signed_area)
+        return Point(cx, cy)
+
+    @property
     def length(self) -> float:
         """计算路径长度"""
         import math
@@ -368,12 +408,38 @@ class EdgeDirection(Enum):
     OUTER = auto()    # 外部（向外延伸）
 
 
+class ConnectedType(Enum):
+    """连襟类型"""
+    TRIANGLE = auto()   # 三角形连襟
+    DIAMOND = auto()    # 菱形连襟
+
+
 @dataclass
 class ConnectedParams:
-    """连襟字参数"""
+    """连襟字参数
+
+    连襟是连接相邻字形的桥梁结构，用于将多个离散轮廓连接成一体。
+
+    结构说明（三角形连襟侧视图）：
+        字壳A ════════════════════════════════ 字壳B
+              ╲                            ╱
+               ╲        连襟斜边         ╱
+                ╲                      ╱
+                 ╲                    ╱
+                  ════════════════════  ← 底座（直边）
+    """
     enabled: bool = False
-    bridge_width: float = 10.0        # 连接桥宽度
-    bridge_height: float = 5.0        # 连接桥高度
+    type: str = "triangle"              # 连襟类型: "triangle" 或 "diamond"
+    width: float = 15.0                 # 连襟宽度 (mm) - 连接桥的宽度
+    height: float = 5.0                 # 斜边高度 (mm) - 顶部斜边的高度
+    base_height: float = 5.0            # 底座高度 (mm) - 底部直边的高度
+    support_offset: float = 2.5         # 支撑偏移 (mm) - 与字壳边缘的距离
+    max_gap: float = 50.0               # 最大连接间距 (mm) - 超过此距离不连接
+    auto_detect: bool = True            # 自动检测连接点
+
+    # 保留旧字段用于兼容
+    bridge_width: float = 10.0          # 旧参数，同width
+    bridge_height: float = 5.0          # 旧参数，同height
 
 
 @dataclass
