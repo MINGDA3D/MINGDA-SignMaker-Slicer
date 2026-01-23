@@ -234,11 +234,9 @@ class SkirtGenerator:
                 normal_left = self._get_inward_normal(dir_left)
                 normal_right = self._get_inward_normal(dir_right)
             else:
-                # 内孔：使用反向法线让裙边朝孔内
-                out_left = self._get_outward_normal(dir_left)
-                out_right = self._get_outward_normal(dir_right)
-                normal_left = (-out_left[0], -out_left[1])
-                normal_right = (-out_right[0], -out_right[1])
+                # 内孔：使用相同法线让裙边朝孔内
+                normal_left = self._get_inward_normal(dir_left)
+                normal_right = self._get_inward_normal(dir_right)
 
             # 计算梯形顶边（贴着字壳，考虑offset）
             top_left = Point(
