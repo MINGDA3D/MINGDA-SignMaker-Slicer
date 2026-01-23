@@ -1143,6 +1143,8 @@ class STLWriter:
         梯形裙边只有3条边：左斜边、底边、右斜边。
         不包含顶边（贴着字壳的边），这样打印后更容易从字壳剥离。
 
+        使用连续路径创建，确保转角处平滑连接无缺口。
+
         结构：
           字壳 ════════════════════════════════════════════
                ╲          ╱╲          ╱╲          ╱
@@ -1160,38 +1162,147 @@ class STLWriter:
             梯形轮廓网格
         """
         try:
-            meshes = []
-
-            # 梯形的3条边（不包含顶边）
-            edges = [
-                # 右斜边
-                (trap.top_right, trap.bottom_right),
-                # 底边
-                (trap.bottom_right, trap.bottom_left),
-                # 左斜边
-                (trap.bottom_left, trap.top_left),
+            # 创建连续的3条边路径（不闭合）
+            # 顺序：top_right -> bottom_right -> bottom_left -> top_left
+            path_points = [
+                (trap.top_right.x, trap.top_right.y),
+                (trap.bottom_right.x, trap.bottom_right.y),
+                (trap.bottom_left.x, trap.bottom_left.y),
+                (trap.top_left.x, trap.top_left.y),
             ]
 
-            for p1, p2 in edges:
-                # 为每条边创建一个薄壁矩形
-                edge_mesh = self._create_wall_segment(
-                    p1.x, p1.y, p2.x, p2.y,
-                    0, height, wall_thickness
-                )
-                if edge_mesh is not None:
-                    meshes.append(edge_mesh)
-
-            if not meshes:
-                return None
-
-            if len(meshes) == 1:
-                return meshes[0]
-            else:
-                return trimesh.util.concatenate(meshes)
+            return self._create_continuous_wall(path_points, 0, height, wall_thickness)
 
         except Exception as e:
             print(f"Warning: Failed to create trapezoid mesh: {e}")
             return None
+
+    def _create_continuous_wall(self, path_points: list,
+                                 z_bottom: float, z_top: float,
+                                 thickness: float) -> Optional[trimesh.Trimesh]:
+        """
+        沿路径创建连续的薄壁结构，转角处平滑连接
+
+        Args:
+            path_points: 路径点列表 [(x, y), ...]
+            z_bottom: 底部Z坐标
+            z_top: 顶部Z坐标
+            thickness: 壁厚
+
+        Returns:
+            连续墙壁网格
+        """
+        import math
+
+        n = len(path_points)
+        if n < 2:
+            return None
+
+        half_t = thickness / 2
+        vertices = []
+        faces = []
+
+        # 计算每个点的平均法线（用于平滑转角）
+        normals = []
+        for i in range(n):
+            # 计算当前点的法线
+            if i == 0:
+                # 第一个点：只用下一段的法线
+                dx = path_points[1][0] - path_points[0][0]
+                dy = path_points[1][1] - path_points[0][1]
+                length = math.sqrt(dx * dx + dy * dy)
+                if length > 0.001:
+                    nx, ny = -dy / length, dx / length
+                else:
+                    nx, ny = 0, 1
+            elif i == n - 1:
+                # 最后一个点：只用上一段的法线
+                dx = path_points[n-1][0] - path_points[n-2][0]
+                dy = path_points[n-1][1] - path_points[n-2][1]
+                length = math.sqrt(dx * dx + dy * dy)
+                if length > 0.001:
+                    nx, ny = -dy / length, dx / length
+                else:
+                    nx, ny = 0, 1
+            else:
+                # 中间点：使用相邻两段的平均法线
+                # 前一段
+                dx1 = path_points[i][0] - path_points[i-1][0]
+                dy1 = path_points[i][1] - path_points[i-1][1]
+                len1 = math.sqrt(dx1 * dx1 + dy1 * dy1)
+                if len1 > 0.001:
+                    nx1, ny1 = -dy1 / len1, dx1 / len1
+                else:
+                    nx1, ny1 = 0, 1
+
+                # 后一段
+                dx2 = path_points[i+1][0] - path_points[i][0]
+                dy2 = path_points[i+1][1] - path_points[i][1]
+                len2 = math.sqrt(dx2 * dx2 + dy2 * dy2)
+                if len2 > 0.001:
+                    nx2, ny2 = -dy2 / len2, dx2 / len2
+                else:
+                    nx2, ny2 = 0, 1
+
+                # 平均法线
+                nx = (nx1 + nx2) / 2
+                ny = (ny1 + ny2) / 2
+                avg_len = math.sqrt(nx * nx + ny * ny)
+                if avg_len > 0.001:
+                    nx /= avg_len
+                    ny /= avg_len
+
+            normals.append((nx, ny))
+
+        # 为每个点生成4个顶点（内外两侧，上下两层）
+        for i in range(n):
+            x, y = path_points[i]
+            nx, ny = normals[i]
+
+            # 外侧底层
+            vertices.append([x + nx * half_t, y + ny * half_t, z_bottom])
+            # 外侧顶层
+            vertices.append([x + nx * half_t, y + ny * half_t, z_top])
+            # 内侧底层
+            vertices.append([x - nx * half_t, y - ny * half_t, z_bottom])
+            # 内侧顶层
+            vertices.append([x - nx * half_t, y - ny * half_t, z_top])
+
+        # 生成面（连接相邻点）
+        for i in range(n - 1):
+            base = i * 4
+            next_base = (i + 1) * 4
+
+            # 外侧面
+            faces.append([base + 0, next_base + 0, next_base + 1])
+            faces.append([base + 0, next_base + 1, base + 1])
+
+            # 内侧面
+            faces.append([base + 2, base + 3, next_base + 3])
+            faces.append([base + 2, next_base + 3, next_base + 2])
+
+            # 顶面
+            faces.append([base + 1, next_base + 1, next_base + 3])
+            faces.append([base + 1, next_base + 3, base + 3])
+
+            # 底面
+            faces.append([base + 0, base + 2, next_base + 2])
+            faces.append([base + 0, next_base + 2, next_base + 0])
+
+        # 添加两端的封口面
+        # 起始端
+        faces.append([0, 1, 3])
+        faces.append([0, 3, 2])
+
+        # 结束端
+        end_base = (n - 1) * 4
+        faces.append([end_base + 0, end_base + 2, end_base + 3])
+        faces.append([end_base + 0, end_base + 3, end_base + 1])
+
+        vertices = np.array(vertices)
+        faces = np.array(faces)
+
+        return trimesh.Trimesh(vertices=vertices, faces=faces)
 
     def _create_wall_segment(self, x1: float, y1: float, x2: float, y2: float,
                               z_bottom: float, z_top: float,
