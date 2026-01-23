@@ -227,20 +227,18 @@ class SkirtGenerator:
                 continue
 
             # 计算法线方向
-            # 外部裙边：法线朝外（从路径向外延伸）
+            # 外部裙边：法线朝外（从字壳向外延伸）
             # 内部裙边（孔）：法线朝内（向孔中心延伸）
-            # 注意：内孔路径方向可能与外轮廓相同（都是逆时针），
-            # 所以需要反转法线方向让裙边向孔内延伸
+            # 注意：根据实际测试，外轮廓使用 _get_inward_normal 才能朝外
+            #      内孔使用 _get_outward_normal 才能朝孔内
             if is_outer:
-                # 外轮廓：法线朝外
+                # 外轮廓：需要反向才能朝外
+                normal_left = self._get_inward_normal(dir_left)
+                normal_right = self._get_inward_normal(dir_right)
+            else:
+                # 内孔：需要反向才能朝孔内
                 normal_left = self._get_outward_normal(dir_left)
                 normal_right = self._get_outward_normal(dir_right)
-            else:
-                # 内孔：法线朝外的反方向（向孔中心）
-                out_left = self._get_outward_normal(dir_left)
-                out_right = self._get_outward_normal(dir_right)
-                normal_left = (-out_left[0], -out_left[1])
-                normal_right = (-out_right[0], -out_right[1])
 
             # 计算梯形顶边（贴着字壳，考虑offset）
             top_left = Point(
