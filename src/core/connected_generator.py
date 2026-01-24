@@ -80,29 +80,43 @@ class ConnectedGenerator:
         使用最小生成树算法查找连接桥
 
         算法（Kruskal MST）：
-        1. 计算所有轮廓对之间的最近距离
-        2. 按距离排序
-        3. 使用并查集，依次添加边直到所有轮廓连通
-        4. 结果是N-1条边（连接桥），确保所有轮廓形成一个连通整体
+        1. 收集所有需要连接的路径（外轮廓 + 内孔）
+        2. 计算所有路径对之间的最近距离
+        3. 按距离排序
+        4. 使用并查集，依次添加边直到所有路径连通
+        5. 结果是N-1条边（连接桥），确保所有路径形成一个连通整体
 
         Args:
             contours: 轮廓列表
             params: 连襟参数
 
         Returns:
-            连接桥列表（正好N-1个，确保所有轮廓连通）
+            连接桥列表（正好N-1个，确保所有路径连通）
         """
-        n = len(contours)
+        # 收集所有需要连接的路径（外轮廓 + 内孔都作为独立路径）
+        all_paths: List[Path] = []
+        for contour in contours:
+            if contour.outer and contour.outer.points:
+                all_paths.append(contour.outer)
+            # 内孔也作为独立路径参与连接
+            if contour.holes:
+                for hole in contour.holes:
+                    if hole.points:
+                        all_paths.append(hole)
+
+        n = len(all_paths)
 
         if n < 2:
             return []
 
-        # 计算所有轮廓对之间的最近点和距离
+        # 计算所有路径对之间的最近点和距离
         edges = []  # (distance, i, j, point_a, point_b)
 
         for i in range(n):
             for j in range(i + 1, n):
-                result = self._find_closest_points(contours[i], contours[j])
+                result = self._find_closest_points_between_paths(
+                    all_paths[i], all_paths[j]
+                )
                 if result is not None:
                     dist, point_a, point_b = result
                     edges.append((dist, i, j, point_a, point_b))
@@ -130,11 +144,45 @@ class ConnectedGenerator:
                 )
                 bridges.append(bridge)
 
-                # 已经有N-1条边，所有轮廓已连通
+                # 已经有N-1条边，所有路径已连通
                 if len(bridges) >= n - 1:
                     break
 
         return bridges
+
+    def _find_closest_points_between_paths(self, path_a: Path,
+                                            path_b: Path) -> Optional[Tuple[float, Point, Point]]:
+        """
+        查找两个路径之间的最近点对
+
+        Args:
+            path_a: 第一个路径
+            path_b: 第二个路径
+
+        Returns:
+            (距离, 点A, 点B) 或 None
+        """
+        points_a = path_a.points
+        points_b = path_b.points
+
+        if not points_a or not points_b:
+            return None
+
+        min_dist = float('inf')
+        best_pair = None
+
+        # 暴力搜索最近点对
+        for pa in points_a:
+            for pb in points_b:
+                dist = math.sqrt((pa.x - pb.x) ** 2 + (pa.y - pb.y) ** 2)
+                if dist < min_dist:
+                    min_dist = dist
+                    best_pair = (pa, pb)
+
+        if best_pair is None:
+            return None
+
+        return (min_dist, best_pair[0], best_pair[1])
 
     def _find_closest_points(self, contour_a: Contour,
                               contour_b: Contour) -> Optional[Tuple[float, Point, Point]]:
