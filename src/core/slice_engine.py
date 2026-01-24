@@ -357,7 +357,9 @@ class SliceEngine:
             return contour
 
         # 应用偏移
-        return self.path_offset.offset_contour(contour, offset)
+        # 注意：对于斜边字，外轮廓和内孔需要同方向偏移（让整个字形缩放）
+        # 而不是使用 offset_contour（它会让内孔反方向偏移以保持壁厚）
+        return self._offset_contour_same_direction(contour, offset)
 
     def _apply_custom_edge(self, contour: Contour, z: float,
                             params: ShellParams) -> Optional[Contour]:
@@ -381,7 +383,8 @@ class SliceEngine:
         if abs(offset) < 0.001:
             return contour
 
-        return self.path_offset.offset_contour(contour, offset)
+        # 应用偏移（异形边也需要同方向偏移，让整个字形缩放）
+        return self._offset_contour_same_direction(contour, offset)
 
     def _interpolate_profile(self, profile, normalized_z: float) -> float:
         """在异形边轮廓中插值"""
@@ -403,6 +406,42 @@ class SliceEngine:
         if normalized_z < points[0].x:
             return points[0].y
         return points[-1].y
+
+    def _offset_contour_same_direction(self, contour: Contour,
+                                        distance: float) -> Optional[Contour]:
+        """
+        对整个轮廓进行同方向偏移
+
+        与 offset_contour 不同，这里外轮廓和内孔使用相同方向的偏移，
+        用于实现斜边字的整体缩放效果。
+
+        Args:
+            contour: 输入轮廓
+            distance: 偏移距离（正=外扩，负=内缩）
+
+        Returns:
+            偏移后的轮廓，如果消失则返回None
+        """
+        # 偏移外轮廓
+        outer_results = self.path_offset.offset(contour.outer, distance, JoinType.MITER)
+        if not outer_results:
+            return None
+
+        new_outer = outer_results[0]
+
+        # 偏移内孔（同方向偏移）
+        new_holes = []
+        for hole in contour.holes:
+            hole_results = self.path_offset.offset(hole, distance, JoinType.MITER)
+            new_holes.extend(hole_results)
+
+        return Contour(
+            outer=new_outer,
+            holes=new_holes,
+            connected_frames=contour.connected_frames,
+            patterns=contour.patterns,
+            name=contour.name
+        )
 
     def _generate_wall_paths(self, contour: Contour,
                               info: LayerInfo,
