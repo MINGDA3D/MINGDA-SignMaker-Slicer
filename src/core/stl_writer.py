@@ -1417,7 +1417,14 @@ class STLWriter:
         Returns:
             连襟网格
         """
-        if not contours or len(contours) < 2:
+        if not contours:
+            return None
+
+        # 计算总路径数（外轮廓 + 内孔）
+        total_paths = sum(
+            1 + len(c.holes or []) for c in contours
+        )
+        if total_paths < 2:
             return None
 
         connected_params = params.connected
