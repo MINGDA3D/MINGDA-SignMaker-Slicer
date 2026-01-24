@@ -28,7 +28,7 @@ from shapely.validation import make_valid
 from .types import (
     Point, Layer, LayerPath, PathRole, Contour,
     SliceResult, SliceParams, EdgeWrapParams, EdgeDirection,
-    ConnectedParams
+    ConnectedParams, EdgeType, BevelDirection
 )
 from .path_offset import PathOffset
 from .types import Path as CorePath
@@ -1431,9 +1431,13 @@ class STLWriter:
         if not connected_params.enabled:
             return None
 
+        # 对于斜边字，需要使用底部层的实际轮廓来计算连接桥
+        # 连襟从z=0开始，需要考虑斜边在底部的偏移
+        contours_for_bridge = self._get_contours_at_z(contours, 0, params)
+
         # 检测连接桥
         bridges = self.connected_generator.find_connection_bridges(
-            contours, connected_params
+            contours_for_bridge, connected_params
         )
 
         if not bridges:
@@ -1453,6 +1457,124 @@ class STLWriter:
             return meshes[0]
         else:
             return trimesh.util.concatenate(meshes)
+
+    def _get_contours_at_z(self, contours: List[Contour], z: float,
+                           params: SliceParams) -> List[Contour]:
+        """
+        获取指定高度的轮廓（考虑斜边偏移）
+
+        对于斜边字，不同高度的轮廓大小不同。这个方法返回应用了
+        斜边偏移后的轮廓。
+
+        Args:
+            contours: 原始轮廓列表
+            z: 目标高度
+            params: 切片参数
+
+        Returns:
+            偏移后的轮廓列表
+        """
+        shell = params.shell
+
+        # 直边不需要偏移
+        if shell.edge_type == EdgeType.STRAIGHT:
+            return contours
+
+        # 计算该高度的偏移量
+        offset = self._calculate_bevel_offset_at_z(z, shell)
+
+        if abs(offset) < 0.001:
+            return contours
+
+        # 应用偏移到所有轮廓
+        result = []
+        for contour in contours:
+            offset_contour = self._offset_contour_same_direction(contour, offset)
+            if offset_contour is not None:
+                result.append(offset_contour)
+
+        return result if result else contours
+
+    def _calculate_bevel_offset_at_z(self, z: float, shell) -> float:
+        """
+        计算斜边在指定高度的偏移量
+
+        Args:
+            z: 高度
+            shell: 字壳参数
+
+        Returns:
+            偏移量（负值表示向内收缩）
+        """
+        if shell.edge_type != EdgeType.BEVELED:
+            return 0
+
+        total_height = shell.height
+        baseplate_thickness = shell.baseplate_thickness
+        panel_thickness = shell.panel_thickness
+        bevel_width = shell.bevel_width
+
+        # 计算区域边界
+        baseplate_top = baseplate_thickness
+        panel_bottom = total_height - panel_thickness
+
+        if shell.bevel_direction == BevelDirection.TOP_SMALL:
+            # 上小下大：底部不收缩，向上逐渐收缩
+            if z < baseplate_top:
+                return 0
+            elif z < panel_bottom:
+                bevel_height = panel_bottom - baseplate_top
+                if bevel_height > 0:
+                    progress = (z - baseplate_top) / bevel_height
+                    return -progress * bevel_width
+                return 0
+            else:
+                return -bevel_width
+        else:
+            # 上大下小：底部收缩，向上逐渐扩展
+            if z < baseplate_top:
+                return -bevel_width
+            elif z < panel_bottom:
+                bevel_height = panel_bottom - baseplate_top
+                if bevel_height > 0:
+                    progress = (z - baseplate_top) / bevel_height
+                    return -bevel_width * (1 - progress)
+                return 0
+            else:
+                return 0
+
+    def _offset_contour_same_direction(self, contour: Contour,
+                                        distance: float) -> Optional[Contour]:
+        """
+        对整个轮廓进行同方向偏移（外轮廓和内孔同向）
+
+        Args:
+            contour: 输入轮廓
+            distance: 偏移距离
+
+        Returns:
+            偏移后的轮廓
+        """
+        from .types import JoinType
+
+        outer_results = self.path_offset.offset(contour.outer, distance, JoinType.MITER)
+        if not outer_results:
+            return None
+
+        new_outer = outer_results[0]
+
+        new_holes = []
+        for hole in contour.holes:
+            hole_results = self.path_offset.offset(hole, distance, JoinType.MITER)
+            new_holes.extend(hole_results)
+
+        return Contour(
+            outer=new_outer,
+            holes=new_holes,
+            connected_frames=contour.connected_frames,
+            patterns=contour.patterns,
+            name=contour.name
+        )
 
     def _create_bridge_mesh(self, bridge: ConnectionBridge,
                              params: ConnectedParams) -> Optional[trimesh.Trimesh]:
