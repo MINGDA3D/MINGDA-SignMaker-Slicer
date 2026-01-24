@@ -434,7 +434,6 @@ class ConnectedParams:
     height: float = 5.0                 # 斜边高度 (mm) - 顶部斜边的高度
     base_height: float = 5.0            # 底座高度 (mm) - 底部直边的高度
     support_offset: float = 2.5         # 支撑偏移 (mm) - 与字壳边缘的距离
-    max_gap: float = 50.0               # 最大连接间距 (mm) - 超过此距离不连接
     auto_detect: bool = True            # 自动检测连接点
 
     # 保留旧字段用于兼容

@@ -44,7 +44,6 @@ class TestConnectedGenerator:
 
         params = ConnectedParams(
             enabled=True,
-            max_gap=50.0,
             width=15.0
         )
 
@@ -55,8 +54,8 @@ class TestConnectedGenerator:
         assert bridges[0].contour_a_index == 0
         assert bridges[0].contour_b_index == 1
 
-    def test_find_connection_bridges_too_far(self):
-        """测试间距超过max_gap时不连接"""
+    def test_find_connection_bridges_far_apart(self):
+        """测试距离较远的轮廓也能连接"""
         contour1 = Contour(
             outer=Path(points=[
                 Point(0, 0), Point(10, 0), Point(10, 10), Point(0, 10)
@@ -69,13 +68,14 @@ class TestConnectedGenerator:
         )
 
         params = ConnectedParams(
-            enabled=True,
-            max_gap=50.0
+            enabled=True
         )
 
         bridges = self.generator.find_connection_bridges([contour1, contour2], params)
 
-        assert len(bridges) == 0
+        # 即使距离较远，也应该生成连接桥以确保所有轮廓连通
+        assert len(bridges) == 1
+        assert bridges[0].distance == 90.0  # 两个轮廓间距90mm
 
     def test_calculate_bridge_corners(self):
         """测试连接桥角点计算"""
@@ -182,8 +182,7 @@ class TestConnectedSTLExport:
                 type="triangle",
                 width=15.0,
                 height=5.0,
-                base_height=5.0,
-                max_gap=50.0
+                base_height=5.0
             )
         )
 
@@ -232,8 +231,7 @@ class TestConnectedSTLExport:
                 type="triangle",
                 width=15.0,
                 height=5.0,
-                base_height=5.0,
-                max_gap=50.0
+                base_height=5.0
             )
         )
 

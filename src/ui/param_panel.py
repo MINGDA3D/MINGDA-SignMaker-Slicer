@@ -442,15 +442,6 @@ class ParamPanel(QWidget):
         self.connected_support_offset.valueChanged.connect(self._on_param_changed)
         form.addRow("支撑偏移:", self.connected_support_offset)
 
-        # 最大连接间距
-        self.connected_max_gap = QDoubleSpinBox()
-        self.connected_max_gap.setRange(5, 200)
-        self.connected_max_gap.setValue(50)
-        self.connected_max_gap.setSuffix(" mm")
-        self.connected_max_gap.setEnabled(False)
-        self.connected_max_gap.valueChanged.connect(self._on_param_changed)
-        form.addRow("最大间距:", self.connected_max_gap)
-
         layout.addLayout(form)
 
         self.connected_enabled.stateChanged.connect(
@@ -467,7 +458,6 @@ class ParamPanel(QWidget):
         self.connected_height.setEnabled(enabled)
         self.connected_base_height.setEnabled(enabled)
         self.connected_support_offset.setEnabled(enabled)
-        self.connected_max_gap.setEnabled(enabled)
 
     def _create_edge_wrap_group(self) -> QGroupBox:
         """创建包边/勾边参数组"""
@@ -713,7 +703,6 @@ class ParamPanel(QWidget):
         self._params.connected.height = self.connected_height.value()
         self._params.connected.base_height = self.connected_base_height.value()
         self._params.connected.support_offset = self.connected_support_offset.value()
-        self._params.connected.max_gap = self.connected_max_gap.value()
 
         # 包边勾边参数
         self._params.edge_wrap.wrap_enabled = self.wrap_enabled.isChecked()
@@ -761,7 +750,7 @@ class ParamPanel(QWidget):
             self.skirt_interval, self.skirt_offset,
             self.connected_enabled, self.connected_type, self.connected_auto_detect,
             self.connected_width, self.connected_height, self.connected_base_height,
-            self.connected_support_offset, self.connected_max_gap,
+            self.connected_support_offset,
             self.wrap_enabled, self.wrap_width, self.wrap_height,
             self.wrap_dir_inner, self.wrap_dir_outer,
             self.outline_enabled, self.outline_width, self.outline_height,
@@ -812,7 +801,6 @@ class ParamPanel(QWidget):
         self.connected_height.setValue(params.connected.height)
         self.connected_base_height.setValue(params.connected.base_height)
         self.connected_support_offset.setValue(params.connected.support_offset)
-        self.connected_max_gap.setValue(params.connected.max_gap)
         self.connected_enabled.setChecked(params.connected.enabled)
 
         # 包边勾边参数

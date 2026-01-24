@@ -105,9 +105,7 @@ class ConnectedGenerator:
                 result = self._find_closest_points(contours[i], contours[j])
                 if result is not None:
                     dist, point_a, point_b = result
-                    # 只添加距离在max_gap范围内的边
-                    if dist <= params.max_gap:
-                        edges.append((dist, i, j, point_a, point_b))
+                    edges.append((dist, i, j, point_a, point_b))
 
         # 按距离排序
         edges.sort(key=lambda x: x[0])

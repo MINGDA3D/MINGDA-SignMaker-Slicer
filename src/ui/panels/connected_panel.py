@@ -71,12 +71,6 @@ class ConnectedPanel(QWidget):
         self.support_offset_spin.setSuffix(" mm")
         param_layout.addRow("支撑偏移:", self.support_offset_spin)
 
-        self.max_gap_spin = QDoubleSpinBox()
-        self.max_gap_spin.setRange(5, 200)
-        self.max_gap_spin.setValue(50.0)
-        self.max_gap_spin.setSuffix(" mm")
-        param_layout.addRow("最大连接间距:", self.max_gap_spin)
-
         layout.addWidget(param_group)
         layout.addStretch()
 
@@ -88,7 +82,6 @@ class ConnectedPanel(QWidget):
         self.height_spin.valueChanged.connect(self._emit_params)
         self.base_height_spin.valueChanged.connect(self._emit_params)
         self.support_offset_spin.valueChanged.connect(self._emit_params)
-        self.max_gap_spin.valueChanged.connect(self._emit_params)
 
     def _emit_params(self):
         self._params.enabled = self.enabled_check.isChecked()
@@ -98,7 +91,6 @@ class ConnectedPanel(QWidget):
         self._params.height = self.height_spin.value()
         self._params.base_height = self.base_height_spin.value()
         self._params.support_offset = self.support_offset_spin.value()
-        self._params.max_gap = self.max_gap_spin.value()
         self.params_changed.emit(self._params)
 
     def get_params(self) -> ConnectedParams:
@@ -116,4 +108,3 @@ class ConnectedPanel(QWidget):
         self.height_spin.setValue(self._params.height)
         self.base_height_spin.setValue(self._params.base_height)
         self.support_offset_spin.setValue(self._params.support_offset)
-        self.max_gap_spin.setValue(self._params.max_gap)
