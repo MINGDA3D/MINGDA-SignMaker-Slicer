@@ -408,7 +408,7 @@ class ParamPanel(QWidget):
 
         # 连襟宽度
         self.connected_width = QDoubleSpinBox()
-        self.connected_width.setRange(5, 50)
+        self.connected_width.setRange(1, 50)
         self.connected_width.setValue(15)
         self.connected_width.setSuffix(" mm")
         self.connected_width.setEnabled(False)

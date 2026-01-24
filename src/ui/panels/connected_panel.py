@@ -48,7 +48,7 @@ class ConnectedPanel(QWidget):
         param_layout = QFormLayout(param_group)
 
         self.width_spin = QDoubleSpinBox()
-        self.width_spin.setRange(5, 50)
+        self.width_spin.setRange(1, 50)
         self.width_spin.setValue(15.0)
         self.width_spin.setSuffix(" mm")
         param_layout.addRow("连襟宽度:", self.width_spin)
