@@ -119,7 +119,42 @@ class SVGParser:
                 )
                 paths.append(path)
 
+        # SVG坐标系Y轴向下，需要翻转为Y轴向上（与DXF/CAD坐标系一致）
+        # 使用实际边界框进行翻转，保持坐标为正值
+        self._flip_y_axis(paths)
+
         return paths
+
+    def _flip_y_axis(self, paths: List[Path]) -> None:
+        """
+        翻转所有路径的Y轴坐标
+
+        SVG坐标系：原点在左上角，Y轴向下
+        CAD坐标系：原点在左下角，Y轴向上
+
+        变换公式：y_new = max_y - y_old + min_y
+        这相当于绕Y轴中心线镜像翻转
+        """
+        if not paths:
+            return
+
+        # 找出所有点的Y坐标范围
+        all_y = []
+        for path in paths:
+            for point in path.points:
+                all_y.append(point.y)
+
+        if not all_y:
+            return
+
+        min_y = min(all_y)
+        max_y = max(all_y)
+
+        # 对每个点进行Y轴翻转: y_new = max_y + min_y - y_old
+        for path in paths:
+            for i, point in enumerate(path.points):
+                new_y = max_y + min_y - point.y
+                path.points[i] = Point(point.x, new_y)
 
     def _split_subpaths(self, svg_path: SVGPath) -> List[SVGPath]:
         """
