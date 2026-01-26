@@ -18,6 +18,7 @@ from .types import (
 )
 
 from .dxf_parser import DXFParser
+from .svg_parser import SVGParser
 from .path_offset import PathOffset, EndType
 from .slice_engine import SliceEngine
 from .gcode_writer import GCodeWriter, write_gcode
@@ -43,7 +44,7 @@ __all__ = [
     # 结果类型
     'SliceResult', 'ProjectData', 'ProjectMeta', 'Project',
     # 核心类
-    'DXFParser', 'PathOffset', 'EndType', 'SliceEngine',
+    'DXFParser', 'SVGParser', 'PathOffset', 'EndType', 'SliceEngine',
     'GCodeWriter', 'write_gcode',
     # 生成器
     'BevelGenerator', 'StepGenerator', 'FillGenerator',

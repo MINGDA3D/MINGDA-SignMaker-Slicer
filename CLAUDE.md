@@ -159,6 +159,7 @@ The theme is defined in `src/ui/theme.py`:
 
 ### Core Engines
 - `DXFParser`: Parse DXF files, extract contours with color info
+- `SVGParser`: Parse SVG files using svgpathtools library
 - `SliceEngine`: Main slicing engine, orchestrates all operations
 - `PathOffset`: Path inward/outward offset using pyclipper
 - `BevelGenerator`: Generate beveled edge layers
@@ -238,6 +239,7 @@ The theme is defined in `src/ui/theme.py`:
 - [x] Architecture design documents
 - [x] Core data types (src/core/types.py)
 - [x] DXF parsing (src/core/dxf_parser.py)
+- [x] SVG parsing (src/core/svg_parser.py) - using svgpathtools library
 - [x] Path offset algorithms (src/core/path_offset.py)
 - [x] Slice engine - straight/beveled edge (src/core/slice_engine.py)
 - [x] G-code generation (src/core/gcode_writer.py)

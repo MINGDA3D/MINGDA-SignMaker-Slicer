@@ -31,7 +31,7 @@ from .project_panel import ProjectPanel
 from .preview_3d import Preview3D
 
 from src.core import (
-    DXFParser, SliceEngine, GCodeWriter,
+    DXFParser, SVGParser, SliceEngine, GCodeWriter,
     Contour, SliceParams, SliceResult
 )
 from src.core.stl_writer import STLWriter
@@ -60,6 +60,7 @@ class MainWindow(QMainWindow):
 
         # 核心组件
         self.dxf_parser = DXFParser()
+        self.svg_parser = SVGParser()
         self.slice_engine = SliceEngine()
 
         # 撤销/重做管理器
@@ -565,8 +566,11 @@ class MainWindow(QMainWindow):
         """加载文件"""
         try:
             path = Path(file_path)
-            if path.suffix.lower() == '.dxf':
+            suffix = path.suffix.lower()
+            if suffix == '.dxf':
                 new_contours = self.dxf_parser.parse(file_path)
+            elif suffix == '.svg':
+                new_contours = self.svg_parser.parse(file_path)
             else:
                 QMessageBox.warning(self, "不支持的格式", f"暂不支持 {path.suffix} 格式")
                 return
