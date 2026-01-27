@@ -112,10 +112,11 @@ class Canvas2D(QWidget):
         platform_screen_width = self.platform_width * self.view_scale
         platform_screen_height = self.platform_height * self.view_scale
 
-        self.view_offset = QPointF(
-            self.RULER_WIDTH + (canvas_width - platform_screen_width) / 2 + margin,
-            self.height() - self.RULER_WIDTH - (canvas_height - platform_screen_height) / 2 - margin
-        )
+        # 计算平台左边缘和底边缘的屏幕位置
+        platform_left = self.RULER_WIDTH + margin + (canvas_width - platform_screen_width) / 2
+        platform_bottom = self.height() - self.RULER_WIDTH - margin - (canvas_height - platform_screen_height) / 2
+
+        self.view_offset = QPointF(platform_left, platform_bottom)
 
     def resizeEvent(self, event):
         """窗口大小改变时重新初始化视图"""
@@ -447,7 +448,7 @@ class Canvas2D(QWidget):
         painter.drawRect(platform_rect)
 
     def _draw_rulers(self, painter: QPainter):
-        """绘制标尺"""
+        """绘制标尺（紧贴平台边缘）"""
         ruler_width = self.RULER_WIDTH
 
         # 计算平台在屏幕上的位置
@@ -459,16 +460,22 @@ class Canvas2D(QWidget):
         platform_right = top_right.x()
         platform_top = top_right.y()
 
-        # 绘制左侧标尺背景
-        left_ruler_rect = QRectF(0, 0, ruler_width, self.height())
+        # 标尺位置紧贴平台
+        left_ruler_x = platform_left - ruler_width  # 左侧标尺在平台左边
+        bottom_ruler_y = platform_bottom  # 底部标尺在平台下边
+
+        # 绘制左侧标尺背景（紧贴平台左边缘）
+        left_ruler_rect = QRectF(left_ruler_x, platform_top,
+                                  ruler_width, platform_bottom - platform_top)
         painter.fillRect(left_ruler_rect, self.ruler_bg_color)
 
-        # 绘制底部标尺背景
-        bottom_ruler_rect = QRectF(0, self.height() - ruler_width, self.width(), ruler_width)
+        # 绘制底部标尺背景（紧贴平台下边缘）
+        bottom_ruler_rect = QRectF(platform_left, bottom_ruler_y,
+                                    platform_right - platform_left, ruler_width)
         painter.fillRect(bottom_ruler_rect, self.ruler_bg_color)
 
         # 绘制左下角方块
-        corner_rect = QRectF(0, self.height() - ruler_width, ruler_width, ruler_width)
+        corner_rect = QRectF(left_ruler_x, bottom_ruler_y, ruler_width, ruler_width)
         painter.fillRect(corner_rect, self.ruler_bg_color)
 
         # 设置画笔和字体
@@ -489,20 +496,22 @@ class Canvas2D(QWidget):
             x_world = i * tick_spacing
             x_screen = platform_left + x_world * self.view_scale
 
-            if ruler_width <= x_screen <= self.width():
-                tick_y = self.height() - ruler_width
+            if platform_left <= x_screen <= platform_right:
+                tick_y = bottom_ruler_y
 
                 if x_world % major_tick_spacing == 0:
                     # 大刻度
+                    painter.setPen(pen)
                     painter.drawLine(int(x_screen), int(tick_y),
                                      int(x_screen), int(tick_y + 10))
                     # 绘制数字
                     painter.setPen(self.ruler_text_color)
                     text = str(int(x_world))
-                    painter.drawText(int(x_screen - 15), int(tick_y + 22), text)
-                    painter.setPen(pen)
+                    text_width = len(text) * 6
+                    painter.drawText(int(x_screen - text_width / 2), int(tick_y + 22), text)
                 else:
                     # 小刻度
+                    painter.setPen(pen)
                     painter.drawLine(int(x_screen), int(tick_y),
                                      int(x_screen), int(tick_y + 5))
 
@@ -511,32 +520,33 @@ class Canvas2D(QWidget):
             y_world = i * tick_spacing
             y_screen = platform_bottom - y_world * self.view_scale
 
-            if 0 <= y_screen <= self.height() - ruler_width:
-                tick_x = ruler_width
+            if platform_top <= y_screen <= platform_bottom:
+                tick_x = platform_left
 
                 if y_world % major_tick_spacing == 0:
                     # 大刻度
+                    painter.setPen(pen)
                     painter.drawLine(int(tick_x - 10), int(y_screen),
                                      int(tick_x), int(y_screen))
                     # 绘制数字
                     painter.setPen(self.ruler_text_color)
                     text = str(int(y_world))
-                    painter.save()
-                    painter.translate(12, y_screen + 4)
-                    painter.drawText(0, 0, text)
-                    painter.restore()
-                    painter.setPen(pen)
+                    painter.drawText(int(left_ruler_x + 2), int(y_screen + 4), text)
                 else:
                     # 小刻度
+                    painter.setPen(pen)
                     painter.drawLine(int(tick_x - 5), int(y_screen),
                                      int(tick_x), int(y_screen))
 
         # 绘制标尺边框线
         pen.setColor(self.platform_border_color)
         painter.setPen(pen)
-        painter.drawLine(ruler_width, 0, ruler_width, self.height() - ruler_width)
-        painter.drawLine(ruler_width, self.height() - ruler_width,
-                         self.width(), self.height() - ruler_width)
+        # 左侧标尺右边界
+        painter.drawLine(int(platform_left), int(platform_top),
+                         int(platform_left), int(platform_bottom + ruler_width))
+        # 底部标尺上边界
+        painter.drawLine(int(left_ruler_x), int(platform_bottom),
+                         int(platform_right), int(platform_bottom))
 
     def _draw_contours(self, painter: QPainter):
         """绘制轮廓"""
