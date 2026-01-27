@@ -94,9 +94,17 @@ class SVGParser:
             if not svg_path:
                 continue
 
+            # 应用transform属性
+            transform_str = attrs.get('transform', '')
+            if transform_str:
+                svg_path = self._apply_transform(svg_path, transform_str)
+
             # 获取颜色（所有子路径共享）
             color = self._get_path_color(attrs)
             path_type = self._determine_path_type(color)
+
+            # 检查是否有fill属性（用于判断开放路径是否应视为闭合）
+            has_fill = self._has_fill(attrs)
 
             # 分割子路径（检测不连续点）
             subpaths = self._split_subpaths(svg_path)
@@ -109,7 +117,8 @@ class SVGParser:
                     continue
 
                 # 检查路径是否闭合
-                is_closed = self._is_path_closed(subpath, points)
+                # 根据SVG规范：fill操作会将开放路径视为闭合处理
+                is_closed = self._is_path_closed(subpath, points, has_fill)
 
                 path = Path(
                     points=points,
@@ -266,8 +275,14 @@ class SVGParser:
             # 其他类型，使用默认采样
             return max(10, int(length / 2))
 
-    def _is_path_closed(self, svg_path: SVGPath, points: List[Point]) -> bool:
-        """判断路径是否闭合"""
+    def _is_path_closed(self, svg_path: SVGPath, points: List[Point],
+                         has_fill: bool = False) -> bool:
+        """
+        判断路径是否闭合
+
+        根据SVG规范，fill操作会将开放路径视为闭合处理。
+        因此当路径有fill属性时，即使路径没有显式闭合，也应视为闭合。
+        """
         if not points or len(points) < 2:
             return False
 
@@ -284,7 +299,48 @@ class SVGParser:
         distance = math.sqrt((first.x - last.x)**2 + (first.y - last.y)**2)
 
         # 如果首尾点距离小于1mm，认为闭合
-        return distance < 1.0
+        if distance < 1.0:
+            return True
+
+        # 根据SVG规范：如果有fill属性，开放路径应视为闭合
+        # 这对于3D打印字壳来说是正确的行为
+        if has_fill:
+            return True
+
+        return False
+
+    def _has_fill(self, attrs: dict) -> bool:
+        """
+        检查路径是否有fill属性
+
+        返回True如果路径有有效的fill颜色（不是'none'）
+        """
+        # 直接检查fill属性
+        fill = attrs.get('fill')
+        if fill and fill.lower() != 'none':
+            return True
+
+        # 检查style中的fill
+        style = attrs.get('style', '')
+        if style:
+            fill_match = re.search(r'fill\s*:\s*([^;]+)', style)
+            if fill_match:
+                fill_value = fill_match.group(1).strip().lower()
+                if fill_value and fill_value != 'none':
+                    return True
+
+        # 检查class属性引用的样式（通过颜色判断）
+        # 如果路径有颜色且不是纯描边，也认为有fill
+        css_class = attrs.get('class', '')
+        if css_class:
+            # 如果有class，默认认为可能有fill（保守处理）
+            # 除非明确指定了stroke且没有fill
+            stroke = attrs.get('stroke')
+            if not stroke and not fill:
+                # 有class但没有显式的stroke或fill，假设有fill
+                return True
+
+        return False
 
     def _get_path_color(self, attrs: dict) -> Tuple[int, int, int]:
         """获取路径的RGB颜色"""
@@ -548,3 +604,140 @@ class SVGParser:
             j = i
 
         return inside
+
+    def _apply_transform(self, svg_path: SVGPath, transform_str: str) -> SVGPath:
+        """
+        应用SVG transform属性到路径
+
+        支持的变换类型：
+        - translate(tx, ty) 或 translate(tx)
+        - rotate(angle) 或 rotate(angle, cx, cy)
+        - scale(sx, sy) 或 scale(s)
+        - matrix(a, b, c, d, e, f)
+
+        SVG transform的顺序是从右到左应用
+        """
+        if not transform_str:
+            return svg_path
+
+        # 解析所有变换（按顺序）
+        transforms = self._parse_transform_string(transform_str)
+
+        # SVG transform从右到左应用，所以我们反转列表
+        for transform_type, params in reversed(transforms):
+            svg_path = self._apply_single_transform(svg_path, transform_type, params)
+
+        return svg_path
+
+    def _parse_transform_string(self, transform_str: str) -> List[Tuple[str, List[float]]]:
+        """
+        解析SVG transform字符串
+
+        Returns:
+            变换列表 [(type, [params]), ...]
+        """
+        transforms = []
+
+        # 匹配 transform_name(params) 格式
+        pattern = r'(\w+)\s*\(([^)]*)\)'
+        matches = re.findall(pattern, transform_str)
+
+        for transform_type, params_str in matches:
+            # 解析参数（可能用逗号或空格分隔）
+            params_str = params_str.replace(',', ' ')
+            params = [float(p) for p in params_str.split() if p]
+            transforms.append((transform_type.lower(), params))
+
+        return transforms
+
+    def _apply_single_transform(self, svg_path: SVGPath,
+                                transform_type: str,
+                                params: List[float]) -> SVGPath:
+        """应用单个变换到路径"""
+        if transform_type == 'translate':
+            tx = params[0] if len(params) > 0 else 0
+            ty = params[1] if len(params) > 1 else 0
+            return svg_path.translated(complex(tx, ty))
+
+        elif transform_type == 'rotate':
+            angle = params[0] if len(params) > 0 else 0
+            if len(params) >= 3:
+                # rotate(angle, cx, cy) - 绕指定点旋转
+                cx, cy = params[1], params[2]
+                return svg_path.rotated(angle, origin=complex(cx, cy))
+            else:
+                # rotate(angle) - 绕原点旋转
+                return svg_path.rotated(angle, origin=0j)
+
+        elif transform_type == 'scale':
+            sx = params[0] if len(params) > 0 else 1
+            sy = params[1] if len(params) > 1 else sx
+            return svg_path.scaled(complex(sx, sy))
+
+        elif transform_type == 'matrix':
+            # matrix(a, b, c, d, e, f) - 仿射变换矩阵
+            # [x']   [a c e] [x]
+            # [y'] = [b d f] [y]
+            # [1 ]   [0 0 1] [1]
+            if len(params) >= 6:
+                a, b, c, d, e, f = params[:6]
+                # svgpathtools没有直接的matrix变换，需要逐段变换
+                from svgpathtools import Path as SVGPathClass
+                new_segments = []
+                for seg in svg_path:
+                    new_seg = self._transform_segment_matrix(seg, a, b, c, d, e, f)
+                    new_segments.append(new_seg)
+                return SVGPathClass(*new_segments)
+            return svg_path
+
+        else:
+            # 不支持的变换类型，返回原路径
+            return svg_path
+
+    def _transform_segment_matrix(self, segment, a: float, b: float, c: float,
+                                   d: float, e: float, f: float):
+        """使用矩阵变换路径段"""
+        def transform_point(p: complex) -> complex:
+            x, y = p.real, p.imag
+            new_x = a * x + c * y + e
+            new_y = b * x + d * y + f
+            return complex(new_x, new_y)
+
+        segment_type = type(segment).__name__
+
+        if segment_type == 'Line':
+            from svgpathtools import Line
+            return Line(transform_point(segment.start), transform_point(segment.end))
+
+        elif segment_type == 'CubicBezier':
+            from svgpathtools import CubicBezier
+            return CubicBezier(
+                transform_point(segment.start),
+                transform_point(segment.control1),
+                transform_point(segment.control2),
+                transform_point(segment.end)
+            )
+
+        elif segment_type == 'QuadraticBezier':
+            from svgpathtools import QuadraticBezier
+            return QuadraticBezier(
+                transform_point(segment.start),
+                transform_point(segment.control),
+                transform_point(segment.end)
+            )
+
+        elif segment_type == 'Arc':
+            # Arc变换比较复杂，这里简化处理：转换为多段线
+            from svgpathtools import Line
+            # 采样Arc上的点
+            num_samples = 20
+            points = [transform_point(segment.point(t / (num_samples - 1)))
+                      for t in range(num_samples)]
+            # 返回一系列Line段
+            lines = [Line(points[i], points[i + 1])
+                     for i in range(len(points) - 1)]
+            return lines[0] if len(lines) == 1 else lines
+
+        else:
+            # 其他类型，尝试通用处理
+            return segment
