@@ -30,16 +30,33 @@ class SVGParser:
         (0, 0, 255): PathType.PATTERN,       # 蓝色 → 面板花纹
     }
 
-    def __init__(self, resolution: int = 100, chord_error: float = 0.1):
+    # SVG单位到毫米的转换因子（基于96 DPI标准）
+    # 参考: https://www.w3.org/TR/css-values-3/#absolute-lengths
+    UNIT_TO_MM: Dict[str, float] = {
+        'px': 25.4 / 96.0,    # 1px = 0.2646mm (@96dpi)
+        'pt': 25.4 / 72.0,    # 1pt = 0.3528mm (72pt/inch)
+        'pc': 25.4 / 6.0,     # 1pc = 4.2333mm (6pc/inch)
+        'in': 25.4,           # 1in = 25.4mm
+        'cm': 10.0,           # 1cm = 10mm
+        'mm': 1.0,            # 1mm = 1mm
+        '': 25.4 / 96.0,      # 无单位默认按像素处理
+    }
+
+    def __init__(self, resolution: int = 100, chord_error: float = 0.1,
+                 default_dpi: float = 96.0):
         """
         初始化解析器
 
         Args:
             resolution: 曲线离散化分辨率（每条曲线的采样点数）
             chord_error: 弦长误差阈值 (mm)，越小越平滑
+            default_dpi: 默认DPI（用于解释无单位的SVG坐标），默认96
         """
         self.resolution = resolution
         self.chord_error = chord_error
+        self.default_dpi = default_dpi
+        # 当前解析时使用的缩放因子（SVG用户单位到毫米）
+        self._scale_factor = 25.4 / default_dpi
 
     def parse(self, file_path: str) -> List[Contour]:
         """
@@ -54,6 +71,9 @@ class SVGParser:
         # 使用svgpathtools解析SVG
         paths, attributes, svg_attributes = svg2paths2(file_path)
 
+        # 计算单位转换的缩放因子
+        self._scale_factor = self._calculate_scale_factor(svg_attributes)
+
         # 提取所有路径
         parsed_paths = self._extract_all_paths(paths, attributes)
 
@@ -61,6 +81,100 @@ class SVGParser:
         contours = self._classify_and_group_paths(parsed_paths)
 
         return contours
+
+    def _calculate_scale_factor(self, svg_attributes: dict) -> float:
+        """
+        计算SVG坐标到毫米的缩放因子
+
+        解析SVG的width、height和viewBox属性来确定正确的缩放因子。
+
+        优先级：
+        1. 如果width/height有真实单位（mm, cm, in等），使用它们
+        2. 如果只有viewBox，按默认DPI转换（假设无单位=像素）
+
+        Args:
+            svg_attributes: SVG根元素的属性字典
+
+        Returns:
+            缩放因子（乘以此值将SVG坐标转换为毫米）
+        """
+        if not svg_attributes:
+            return 25.4 / self.default_dpi
+
+        # 获取viewBox
+        viewbox_str = svg_attributes.get('viewBox', '')
+        vb_width, vb_height = None, None
+        if viewbox_str:
+            vb_parts = viewbox_str.replace(',', ' ').split()
+            if len(vb_parts) >= 4:
+                try:
+                    vb_width = float(vb_parts[2])
+                    vb_height = float(vb_parts[3])
+                except ValueError:
+                    pass
+
+        # 获取width和height属性
+        width_str = svg_attributes.get('width', '')
+        height_str = svg_attributes.get('height', '')
+
+        # 解析带单位的尺寸
+        real_width, width_unit = self._parse_length_with_unit(width_str)
+        real_height, height_unit = self._parse_length_with_unit(height_str)
+
+        # 情况1：width/height有真实单位，且有viewBox
+        if real_width and width_unit in self.UNIT_TO_MM and vb_width:
+            # 将width转换为毫米
+            width_mm = real_width * self.UNIT_TO_MM[width_unit]
+            # 缩放因子 = 真实毫米 / viewBox单位
+            scale = width_mm / vb_width
+            return scale
+
+        # 情况2：width/height有真实单位，无viewBox
+        if real_width and width_unit in self.UNIT_TO_MM and width_unit != '':
+            # 直接使用单位转换（假设SVG坐标与width/height同单位）
+            return self.UNIT_TO_MM[width_unit]
+
+        # 情况3：只有数值的width/height（无单位），有viewBox
+        if real_width and vb_width:
+            # 无单位的width被视为像素，viewBox单位也是像素
+            # 缩放因子 = (width像素 / viewBox单位) * (mm/像素)
+            scale = (real_width / vb_width) * (25.4 / self.default_dpi)
+            return scale
+
+        # 情况4：只有viewBox，无width/height
+        if vb_width:
+            # viewBox单位视为像素
+            return 25.4 / self.default_dpi
+
+        # 默认：按96 DPI转换
+        return 25.4 / self.default_dpi
+
+    def _parse_length_with_unit(self, length_str: str) -> Tuple[Optional[float], str]:
+        """
+        解析带单位的长度字符串
+
+        Args:
+            length_str: 如 "100mm", "50px", "3.5in", "200" 等
+
+        Returns:
+            (数值, 单位) 元组，如 (100.0, 'mm')
+        """
+        if not length_str:
+            return None, ''
+
+        length_str = length_str.strip()
+
+        # 匹配数值和单位
+        match = re.match(r'^([+-]?(?:\d+\.?\d*|\.\d+))([a-zA-Z%]*)$', length_str)
+        if match:
+            try:
+                value = float(match.group(1))
+                unit = match.group(2).lower()
+                return value, unit
+            except ValueError:
+                pass
+
+        return None, ''
 
     def parse_from_string(self, svg_content: str) -> List[Contour]:
         """
@@ -229,6 +343,10 @@ class SVGParser:
                     point = segment.point(t)
                     # svgpathtools返回复数，实部是x，虚部是y
                     x, y = point.real, point.imag
+
+                    # 应用单位转换缩放因子（SVG用户单位 -> 毫米）
+                    x *= self._scale_factor
+                    y *= self._scale_factor
 
                     # 避免添加重复点
                     if not points or (abs(points[-1].x - x) > 1e-6 or

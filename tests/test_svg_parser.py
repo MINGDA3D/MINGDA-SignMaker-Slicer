@@ -27,9 +27,10 @@ class TestSVGParser:
         return SVGParser()
 
     def test_parse_rect(self, parser):
-        """测试矩形解析"""
+        """测试矩形解析（带毫米单位）"""
+        # 使用mm单位的SVG，viewBox与真实尺寸一致
         svg_content = '''<?xml version="1.0" encoding="UTF-8"?>
-        <svg xmlns="http://www.w3.org/2000/svg">
+        <svg xmlns="http://www.w3.org/2000/svg" width="120mm" height="80mm" viewBox="0 0 120 80">
             <rect x="10" y="20" width="100" height="50" fill="black"/>
         </svg>'''
 
@@ -40,18 +41,19 @@ class TestSVGParser:
         assert len(contours[0].outer.points) >= 4
         # 检查矩形角点存在
         points = contours[0].outer.points
-        # 验证矩形的边界
+        # 验证矩形的边界（现在是毫米单位）
         xs = [p.x for p in points]
         ys = [p.y for p in points]
         assert min(xs) == pytest.approx(10, abs=0.1)
         assert max(xs) == pytest.approx(110, abs=0.1)
+        # 矩形原始坐标 y=20 到 y=70, Y翻转后仍为 20 到 70
         assert min(ys) == pytest.approx(20, abs=0.1)
         assert max(ys) == pytest.approx(70, abs=0.1)
 
     def test_parse_circle(self, parser):
-        """测试圆形解析"""
+        """测试圆形解析（带毫米单位）"""
         svg_content = '''<?xml version="1.0" encoding="UTF-8"?>
-        <svg xmlns="http://www.w3.org/2000/svg">
+        <svg xmlns="http://www.w3.org/2000/svg" width="100mm" height="100mm" viewBox="0 0 100 100">
             <circle cx="50" cy="50" r="30" fill="red"/>
         </svg>'''
 
@@ -60,19 +62,19 @@ class TestSVGParser:
         assert len(contours) == 1
         # 圆形应该有多个点（曲线离散化）
         assert len(contours[0].outer.points) >= 8
-        # 验证圆的边界
+        # 验证圆的边界（毫米单位）
         points = contours[0].outer.points
         xs = [p.x for p in points]
         ys = [p.y for p in points]
         assert min(xs) == pytest.approx(20, abs=1)  # cx - r
         assert max(xs) == pytest.approx(80, abs=1)  # cx + r
-        assert min(ys) == pytest.approx(20, abs=1)  # cy - r
-        assert max(ys) == pytest.approx(80, abs=1)  # cy + r
+        assert min(ys) == pytest.approx(20, abs=1)  # cy - r (Y翻转后)
+        assert max(ys) == pytest.approx(80, abs=1)  # cy + r (Y翻转后)
 
     def test_parse_polygon(self, parser):
-        """测试多边形解析"""
+        """测试多边形解析（带毫米单位）"""
         svg_content = '''<?xml version="1.0" encoding="UTF-8"?>
-        <svg xmlns="http://www.w3.org/2000/svg">
+        <svg xmlns="http://www.w3.org/2000/svg" width="100mm" height="100mm" viewBox="0 0 100 100">
             <polygon points="50,10 90,90 10,90" fill="black"/>
         </svg>'''
 
@@ -81,12 +83,13 @@ class TestSVGParser:
         assert len(contours) == 1
         # 三角形有3个顶点，闭合路径可能包含额外的闭合点
         assert len(contours[0].outer.points) >= 3
-        # 验证三角形的顶点
+        # 验证三角形的顶点（毫米单位）
         points = contours[0].outer.points
         xs = [p.x for p in points]
         ys = [p.y for p in points]
         assert min(xs) == pytest.approx(10, abs=0.1)
         assert max(xs) == pytest.approx(90, abs=0.1)
+        # Y翻转后: min_y = 100 + 0 - 90 = 10, max_y = 100 + 0 - 10 = 90
         assert min(ys) == pytest.approx(10, abs=0.1)
         assert max(ys) == pytest.approx(90, abs=0.1)
 
@@ -225,6 +228,96 @@ class TestSVGParserWithRealSVG:
 
         # 线条只有2个点，不满足闭合路径要求，不会生成轮廓
         assert len(contours) == 0
+
+
+class TestSVGParserUnitConversion:
+    """SVG单位转换测试"""
+
+    @pytest.fixture
+    def parser(self):
+        """创建解析器实例"""
+        return SVGParser()
+
+    def test_scale_factor_with_mm_units(self, parser):
+        """测试带毫米单位的SVG缩放因子"""
+        # width=100mm, viewBox宽度=1000 -> scale = 0.1
+        svg_attrs = {'width': '100mm', 'height': '50mm', 'viewBox': '0 0 1000 500'}
+        scale = parser._calculate_scale_factor(svg_attrs)
+        assert scale == pytest.approx(0.1, abs=0.001)
+
+    def test_scale_factor_with_inch_units(self, parser):
+        """测试带英寸单位的SVG缩放因子"""
+        # width=4in = 101.6mm, viewBox宽度=400 -> scale = 0.254
+        svg_attrs = {'width': '4in', 'height': '2in', 'viewBox': '0 0 400 200'}
+        scale = parser._calculate_scale_factor(svg_attrs)
+        expected = (4 * 25.4) / 400  # 0.254
+        assert scale == pytest.approx(expected, abs=0.001)
+
+    def test_scale_factor_without_units(self, parser):
+        """测试无单位SVG的缩放因子（按96 DPI）"""
+        # 无单位，按像素处理 -> scale = 25.4/96 ≈ 0.2646
+        svg_attrs = {'viewBox': '0 0 500 300'}
+        scale = parser._calculate_scale_factor(svg_attrs)
+        expected = 25.4 / 96
+        assert scale == pytest.approx(expected, abs=0.001)
+
+    def test_parse_length_with_unit(self, parser):
+        """测试长度解析"""
+        test_cases = [
+            ('100mm', 100.0, 'mm'),
+            ('50px', 50.0, 'px'),
+            ('3.5in', 3.5, 'in'),
+            ('200', 200.0, ''),
+            ('10cm', 10.0, 'cm'),
+            ('12pt', 12.0, 'pt'),
+        ]
+        for length_str, expected_val, expected_unit in test_cases:
+            val, unit = parser._parse_length_with_unit(length_str)
+            assert val == pytest.approx(expected_val, abs=0.001), f"Failed for {length_str}"
+            assert unit == expected_unit, f"Failed for {length_str}"
+
+    def test_actual_dimensions_with_mm_svg(self, parser):
+        """测试实际尺寸：100mm宽的SVG应解析为100mm"""
+        svg_content = '''<?xml version="1.0" encoding="UTF-8"?>
+        <svg xmlns="http://www.w3.org/2000/svg" width="100mm" height="50mm" viewBox="0 0 1000 500">
+            <rect x="0" y="0" width="1000" height="500" fill="black"/>
+        </svg>'''
+
+        contours = parser.parse_from_string(svg_content)
+
+        assert len(contours) == 1
+        points = contours[0].outer.points
+        xs = [p.x for p in points]
+        ys = [p.y for p in points]
+        width = max(xs) - min(xs)
+        height = max(ys) - min(ys)
+
+        # 1000 viewBox units * 0.1 scale = 100mm
+        assert width == pytest.approx(100, abs=1)
+        # 500 viewBox units * 0.1 scale = 50mm
+        assert height == pytest.approx(50, abs=1)
+
+    def test_actual_dimensions_without_units(self, parser):
+        """测试无单位SVG：500px宽应转换为约132mm"""
+        svg_content = '''<?xml version="1.0" encoding="UTF-8"?>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 300">
+            <rect x="0" y="0" width="500" height="300" fill="black"/>
+        </svg>'''
+
+        contours = parser.parse_from_string(svg_content)
+
+        assert len(contours) == 1
+        points = contours[0].outer.points
+        xs = [p.x for p in points]
+        ys = [p.y for p in points]
+        width = max(xs) - min(xs)
+        height = max(ys) - min(ys)
+
+        # 500px * (25.4/96) ≈ 132.29mm
+        expected_width = 500 * 25.4 / 96
+        expected_height = 300 * 25.4 / 96
+        assert width == pytest.approx(expected_width, abs=1)
+        assert height == pytest.approx(expected_height, abs=1)
 
 
 if __name__ == '__main__':
