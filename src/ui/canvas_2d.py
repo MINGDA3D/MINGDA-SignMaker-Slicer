@@ -139,11 +139,60 @@ class Canvas2D(QWidget):
         self._init_view()
         self.update()
 
-    def set_contours(self, contours: List[Contour]):
-        """设置轮廓数据"""
+    def set_contours(self, contours: List[Contour], center_on_platform: bool = True):
+        """设置轮廓数据
+
+        Args:
+            contours: 轮廓列表
+            center_on_platform: 是否将轮廓居中到平台中心
+        """
+        if center_on_platform and contours:
+            self._center_contours_on_platform(contours)
         self.contours = contours
         self.selected_indices = []
         self.update()
+
+    def _center_contours_on_platform(self, contours: List[Contour]):
+        """将轮廓居中到平台中心"""
+        # 计算所有轮廓的边界框
+        min_x = float('inf')
+        min_y = float('inf')
+        max_x = float('-inf')
+        max_y = float('-inf')
+
+        for contour in contours:
+            bounds = contour.outer.bounds
+            min_x = min(min_x, bounds[0])
+            min_y = min(min_y, bounds[1])
+            max_x = max(max_x, bounds[2])
+            max_y = max(max_y, bounds[3])
+
+        if min_x == float('inf'):
+            return
+
+        # 计算轮廓中心
+        contours_center_x = (min_x + max_x) / 2
+        contours_center_y = (min_y + max_y) / 2
+
+        # 计算平台中心
+        platform_center_x = self.platform_width / 2
+        platform_center_y = self.platform_height / 2
+
+        # 计算偏移量
+        offset_x = platform_center_x - contours_center_x
+        offset_y = platform_center_y - contours_center_y
+
+        # 移动所有轮廓
+        for contour in contours:
+            self._offset_path(contour.outer, offset_x, offset_y)
+            for hole in contour.holes:
+                self._offset_path(hole, offset_x, offset_y)
+
+    def _offset_path(self, path, offset_x: float, offset_y: float):
+        """将路径偏移指定距离"""
+        for point in path.points:
+            point.x += offset_x
+            point.y += offset_y
 
     def set_view_mode(self, mode: str):
         """设置视图模式 (2d/3d)"""
