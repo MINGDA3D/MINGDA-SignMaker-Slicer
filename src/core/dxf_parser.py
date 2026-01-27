@@ -94,6 +94,7 @@ class DXFParser:
     DEFAULT_CHORD_ERROR = 0.05  # 默认弦长误差 (mm)，越小越平滑
     MIN_SEGMENTS_PER_ARC = 8    # 每个圆弧最少分段数
     MAX_SEGMENTS_PER_ARC = 360  # 每个圆弧最多分段数
+    CLOSURE_TOLERANCE = 0.01   # 首尾点闭合检测容差 (mm)
 
     def __init__(self, arc_resolution: int = 128, spline_resolution: int = 100,
                  chord_error: float = 0.05):
@@ -322,11 +323,14 @@ class DXFParser:
         color = self._get_entity_color(entity)
         path_type = self._determine_path_type(color)
 
+        # 检测实际闭合状态（考虑首尾点重合的情况）
+        is_closed = self._is_path_closed(points, entity.is_closed)
+
         return Path(
             points=points,
             path_type=path_type,
             color=color,
-            is_closed=entity.is_closed
+            is_closed=is_closed
         )
 
     def _parse_line(self, entity) -> Optional[Path]:
@@ -519,6 +523,32 @@ class DXFParser:
             color=color,
             is_closed=is_closed
         )
+
+    def _is_path_closed(self, points: List[Point], entity_closed: bool) -> bool:
+        """
+        检测路径是否闭合
+
+        如果实体标记为闭合，直接返回True。
+        否则检查首尾点是否重合（距离小于容差）。
+
+        Args:
+            points: 路径点列表
+            entity_closed: 实体的闭合标记
+
+        Returns:
+            是否闭合
+        """
+        if entity_closed:
+            return True
+
+        if len(points) < 3:
+            return False
+
+        # 检查首尾点是否重合
+        first = points[0]
+        last = points[-1]
+        dist_sq = (first.x - last.x) ** 2 + (first.y - last.y) ** 2
+        return dist_sq < self.CLOSURE_TOLERANCE ** 2
 
     def _get_entity_color(self, entity) -> Tuple[int, int, int]:
         """获取实体的RGB颜色"""
