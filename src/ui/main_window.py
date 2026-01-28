@@ -19,16 +19,18 @@ from PySide6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
     QSplitter, QMenuBar, QMenu, QToolBar, QStatusBar, QLabel,
     QPushButton, QFrame, QScrollArea, QDockWidget, QFileDialog,
-    QMessageBox, QSizePolicy, QDoubleSpinBox, QSpinBox, QStackedWidget
+    QMessageBox, QSizePolicy, QDoubleSpinBox, QSpinBox, QStackedWidget,
+    QGraphicsDropShadowEffect
 )
-from PySide6.QtCore import Qt, Signal, QSize
-from PySide6.QtGui import QAction, QIcon, QKeySequence
+from PySide6.QtCore import Qt, Signal, QSize, QPoint
+from PySide6.QtGui import QAction, QIcon, QKeySequence, QPixmap, QFont, QColor
 
 from .theme import get_stylesheet, COLORS, LAYOUT
 from .canvas_2d import Canvas2D
 from .param_panel import ParamPanel
 from .project_panel import ProjectPanel
 from .preview_3d import Preview3D
+from .title_bar import TitleBar
 
 from src.core import (
     DXFParser, SVGParser, SliceEngine, GCodeWriter,
@@ -69,11 +71,14 @@ class MainWindow(QMainWindow):
 
         # 初始化UI
         self._init_window()
-        self._init_menubar()
+        self._init_title_bar()  # 自定义标题栏
         self._init_toolbar()
         self._init_transform_panel()  # 变换参数面板
         self._init_central_widget()
         self._init_statusbar()
+
+        # 隐藏默认菜单栏
+        self.menuBar().setVisible(False)
 
         # 应用样式
         self.setStyleSheet(get_stylesheet())
@@ -88,6 +93,39 @@ class MainWindow(QMainWindow):
         icon_path = Path(__file__).parent.parent.parent / "docs" / "images" / "MINGDA_logo.png"
         if icon_path.exists():
             self.setWindowIcon(QIcon(str(icon_path)))
+
+    def _init_title_bar(self):
+        """初始化自定义标题栏"""
+        self.title_bar = TitleBar(self)
+
+        # 创建标题栏工具栏（用于放置自定义标题栏）
+        title_toolbar = QToolBar("标题栏")
+        title_toolbar.setObjectName("titleToolbar")
+        title_toolbar.setMovable(False)
+        title_toolbar.setFloatable(False)
+        title_toolbar.setStyleSheet("""
+            QToolBar#titleToolbar {
+                background-color: #0D1117;
+                border: none;
+                border-bottom: 1px solid #21262D;
+                spacing: 0;
+                padding: 0;
+            }
+        """)
+        title_toolbar.addWidget(self.title_bar)
+        self.addToolBar(Qt.ToolBarArea.TopToolBarArea, title_toolbar)
+
+        # 强制工具栏换行，让主工具栏显示在标题栏下方
+        self.addToolBarBreak(Qt.ToolBarArea.TopToolBarArea)
+
+        # 连接标题栏信号
+        self.title_bar.nav_changed.connect(self._on_nav_changed)
+        self.title_bar.menu_action.connect(self._on_menu_action)
+        self.title_bar.open_clicked.connect(self._on_open_file)
+        self.title_bar.save_clicked.connect(self._on_save_project)
+        self.title_bar.export_clicked.connect(self._on_export_gcode)
+        self.title_bar.undo_clicked.connect(self._on_undo)
+        self.title_bar.redo_clicked.connect(self._on_redo)
 
     def _init_menubar(self):
         """初始化菜单栏"""
@@ -217,24 +255,45 @@ class MainWindow(QMainWindow):
     def _init_toolbar(self):
         """初始化工具栏"""
         toolbar = QToolBar("主工具栏")
+        toolbar.setObjectName("mainToolbar")
         toolbar.setMovable(False)
-        toolbar.setIconSize(QSize(24, 24))
+        toolbar.setIconSize(QSize(20, 20))
+        toolbar.setStyleSheet("""
+            QToolBar#mainToolbar {
+                background-color: #161B22;
+                border: none;
+                border-bottom: 1px solid #21262D;
+                spacing: 4px;
+                padding: 4px 12px;
+            }
+            QToolBar#mainToolbar QToolButton {
+                background-color: transparent;
+                color: #8B949E;
+                border: none;
+                border-radius: 4px;
+                padding: 6px 12px;
+                font-size: 13px;
+            }
+            QToolBar#mainToolbar QToolButton:hover {
+                background-color: #21262D;
+                color: #C9D1D9;
+            }
+            QToolBar#mainToolbar QToolButton:checked {
+                background-color: #1F6FEB;
+                color: #FFFFFF;
+            }
+            QToolBar#mainToolbar QToolButton:pressed {
+                background-color: #30363D;
+            }
+            QToolBar#mainToolbar::separator {
+                background-color: #30363D;
+                width: 1px;
+                margin: 4px 8px;
+            }
+        """)
         self.addToolBar(toolbar)
 
-        # 文件操作
-        toolbar.addAction(self._create_action("新建", self._on_new_project, "Ctrl+N"))
-        toolbar.addAction(self._create_action("打开", self._on_open_file, "Ctrl+O"))
-        toolbar.addAction(self._create_action("保存", self._on_save_project, "Ctrl+S"))
-
-        toolbar.addSeparator()
-
-        # 编辑操作
-        toolbar.addAction(self._create_action("撤销", self._on_undo, "Ctrl+Z"))
-        toolbar.addAction(self._create_action("重做", self._on_redo, "Ctrl+Y"))
-
-        toolbar.addSeparator()
-
-        # 变换操作 - 点击切换工具并显示输入框
+        # === 变换操作 ===
         self.move_action = self._create_action("移动", self._on_move_tool)
         self.rotate_action = self._create_action("旋转", self._on_rotate_tool)
         self.scale_action = self._create_action("缩放", self._on_scale_tool)
@@ -244,45 +303,53 @@ class MainWindow(QMainWindow):
         toolbar.addAction(self.move_action)
         toolbar.addAction(self.rotate_action)
         toolbar.addAction(self.scale_action)
+
+        toolbar.addSeparator()
+
+        # === 镜像操作 ===
         toolbar.addAction(self._create_action("镜像X", lambda: self._on_mirror("x")))
         toolbar.addAction(self._create_action("镜像Y", lambda: self._on_mirror("y")))
 
         toolbar.addSeparator()
 
-        # 布尔操作
+        # === 布尔操作 ===
         toolbar.addAction(self._create_action("交集", self._on_intersection))
         toolbar.addAction(self._create_action("差集", self._on_difference))
 
         toolbar.addSeparator()
 
-        # 组合操作
+        # === 组合操作 ===
         toolbar.addAction(self._create_action("组合", self._on_group))
         toolbar.addAction(self._create_action("打散", self._on_ungroup))
 
-        toolbar.addSeparator()
-
-        # 视图
-        self.view_2d_btn = self._create_action("2D", lambda: self._switch_view("2d"))
-        self.view_3d_btn = self._create_action("3D", lambda: self._switch_view("3d"))
-        toolbar.addAction(self.view_2d_btn)
-        toolbar.addAction(self.view_3d_btn)
-
-        # 弹性空间
+        # === 弹性空间 ===
         spacer = QWidget()
         spacer.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
         toolbar.addWidget(spacer)
 
-        # 切片按钮
-        slice_btn = QPushButton("开始切片")
-        slice_btn.setProperty("primary", True)
+        # === 切片按钮 ===
+        slice_btn = QPushButton("切片")
+        slice_btn.setObjectName("primaryButton")
+        slice_btn.setCursor(Qt.CursorShape.PointingHandCursor)
+        slice_btn.setStyleSheet("""
+            QPushButton#primaryButton {
+                background-color: #238636;
+                color: #FFFFFF;
+                border: none;
+                border-radius: 6px;
+                padding: 8px 24px;
+                font-size: 13px;
+                font-weight: 500;
+            }
+            QPushButton#primaryButton:hover {
+                background-color: #2EA043;
+            }
+            QPushButton#primaryButton:pressed {
+                background-color: #238636;
+            }
+        """)
         slice_btn.clicked.connect(self._on_slice)
         toolbar.addWidget(slice_btn)
-
-        # 导出G-code按钮
-        export_btn = QPushButton("导出G-code")
-        export_btn.setProperty("primary", True)
-        export_btn.clicked.connect(self._on_export_gcode)
-        toolbar.addWidget(export_btn)
 
     def _create_action(self, text: str, callback, shortcut: str = None) -> QAction:
         """创建Action"""
@@ -537,6 +604,49 @@ class MainWindow(QMainWindow):
     # =========================================================================
     # 事件处理
     # =========================================================================
+
+    def _on_nav_changed(self, nav: str):
+        """处理标题栏导航切换"""
+        if nav == "home":
+            # TODO: 显示首页/欢迎页
+            self._update_status("首页")
+        elif nav == "project":
+            # 显示项目编辑视图（2D）
+            self.view_stack.setCurrentIndex(0)
+            self.current_view = "2d"
+            self._update_status("项目编辑")
+        elif nav == "preview":
+            # 显示3D预览
+            self.view_stack.setCurrentIndex(1)
+            self.current_view = "3d"
+            # 如果有切片结果，更新3D预览
+            if self.slice_result and self.slice_result.layers:
+                self.preview_3d.set_layers(self.slice_result.layers)
+                machine = self.slice_params.machine
+                self.preview_3d.set_bed_size(
+                    machine.bed_width,
+                    machine.bed_depth,
+                    machine.bed_height
+                )
+            self._update_status("3D预览")
+
+    def _on_menu_action(self, action: str):
+        """处理标题栏菜单动作"""
+        actions = {
+            "new": self._on_new_project,
+            "open": self._on_open_file,
+            "save": self._on_save_project,
+            "export_gcode": self._on_export_gcode,
+            "export_stl": self._on_export_stl,
+            "about": self._on_about,
+            "quit": self.close,
+        }
+        if action in actions:
+            actions[action]()
+        elif action == "settings":
+            self._update_status("设置功能开发中...")
+        elif action == "help":
+            self._update_status("帮助功能开发中...")
 
     def _on_new_project(self):
         """新建项目"""
