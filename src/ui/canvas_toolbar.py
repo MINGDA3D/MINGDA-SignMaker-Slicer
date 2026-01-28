@@ -2,7 +2,7 @@
 SignMaker Slicer - 画布工具栏
 
 嵌入在画布区域顶部的工具栏，包含：
-- 左侧：撤销/重做、变换工具、镜像、布尔操作、组合操作、视图切换
+- 左侧：变换工具、镜像、布尔操作、组合操作
 - 右侧：参数设置下拉菜单
 """
 
@@ -18,8 +18,6 @@ class CanvasToolbar(QWidget):
     """画布工具栏"""
 
     # 信号
-    undo_clicked = Signal()
-    redo_clicked = Signal()
     move_clicked = Signal()
     rotate_clicked = Signal()
     scale_clicked = Signal()
@@ -29,14 +27,11 @@ class CanvasToolbar(QWidget):
     difference_clicked = Signal()
     group_clicked = Signal()
     ungroup_clicked = Signal()
-    view_changed = Signal(str)  # "2d" or "3d"
     slice_clicked = Signal()
-    param_toggle_clicked = Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
         self.current_tool = None
-        self.current_view = "2d"
         self._init_ui()
         self._apply_styles()
 
@@ -51,19 +46,11 @@ class CanvasToolbar(QWidget):
     def _init_ui(self):
         """初始化UI"""
         layout = QHBoxLayout(self)
-        layout.setContentsMargins(8, 4, 8, 4)
-        layout.setSpacing(2)
+        layout.setContentsMargins(12, 6, 12, 6)
+        layout.setSpacing(8)
 
-        # ========== 撤销/重做 ==========
-        self.btn_undo = self._create_icon_button("撤销.png", "撤销")
-        self.btn_undo.clicked.connect(self.undo_clicked.emit)
-        layout.addWidget(self.btn_undo)
-
-        self.btn_redo = self._create_icon_button("重做.png", "重做")
-        self.btn_redo.clicked.connect(self.redo_clicked.emit)
-        layout.addWidget(self.btn_redo)
-
-        layout.addWidget(self._create_separator())
+        # ========== 左侧弹性空间（居中用）==========
+        layout.addStretch(1)
 
         # ========== 变换工具 ==========
         self.btn_move = self._create_icon_button("move.png", "移动")
@@ -129,38 +116,19 @@ class CanvasToolbar(QWidget):
         self.btn_center = self._create_icon_button("画面中心.png", "居中")
         layout.addWidget(self.btn_center)
 
-        layout.addWidget(self._create_separator())
-
-        # ========== 2D/3D 视图切换 ==========
-        self.btn_2d = self._create_text_button("2D")
-        self.btn_2d.setCheckable(True)
-        self.btn_2d.setChecked(True)
-        self.btn_2d.clicked.connect(lambda: self._on_view_changed("2d"))
-        layout.addWidget(self.btn_2d)
-
-        self.btn_3d = self._create_text_button("3D")
-        self.btn_3d.setCheckable(True)
-        self.btn_3d.clicked.connect(lambda: self._on_view_changed("3d"))
-        layout.addWidget(self.btn_3d)
-
-        # ========== 弹性空间 ==========
+        # ========== 右侧弹性空间（居中用）==========
         layout.addStretch(1)
 
-        # ========== 参数设置 ==========
-        self.btn_params = QPushButton("▼ 参数设置")
-        self.btn_params.setObjectName("paramButton")
-        self.btn_params.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.btn_params.clicked.connect(self.param_toggle_clicked.emit)
-        layout.addWidget(self.btn_params)
-
-        self.setFixedHeight(36)
+        self.setFixedHeight(52)
 
     def _create_icon_button(self, icon_name: str, tooltip: str) -> QPushButton:
         """创建图标按钮"""
+        from PySide6.QtCore import QSize
         btn = QPushButton()
         btn.setObjectName("iconButton")
         btn.setToolTip(tooltip)
         btn.setCursor(Qt.CursorShape.PointingHandCursor)
+        btn.setIconSize(QSize(36, 36))
 
         icon_path = self._get_icon_path(icon_name)
         if icon_path:
@@ -200,11 +168,11 @@ class CanvasToolbar(QWidget):
                 background-color: transparent;
                 border: none;
                 border-radius: 4px;
-                min-width: 28px;
-                max-width: 28px;
-                min-height: 28px;
-                max-height: 28px;
-                padding: 4px;
+                min-width: 40px;
+                max-width: 40px;
+                min-height: 40px;
+                max-height: 40px;
+                padding: 2px;
             }
             QPushButton#iconButton:hover {
                 background-color: #21262D;
@@ -235,24 +203,10 @@ class CanvasToolbar(QWidget):
                 color: #FFFFFF;
             }
 
-            /* 参数按钮 */
-            QPushButton#paramButton {
-                background-color: transparent;
-                color: #58A6FF;
-                border: 1px solid #30363D;
-                border-radius: 4px;
-                padding: 4px 12px;
-                font-size: 12px;
-            }
-            QPushButton#paramButton:hover {
-                background-color: #21262D;
-                border-color: #58A6FF;
-            }
-
             /* 分隔符 */
             QFrame#separator {
                 background-color: #30363D;
-                margin: 6px 4px;
+                margin: 8px 8px;
             }
         """)
 
@@ -277,19 +231,6 @@ class CanvasToolbar(QWidget):
         self.btn_move.setChecked(tool == "move")
         self.btn_rotate.setChecked(tool == "rotate")
         self.btn_scale.setChecked(tool == "scale")
-
-    def _on_view_changed(self, view: str):
-        """视图切换"""
-        self.current_view = view
-        self.btn_2d.setChecked(view == "2d")
-        self.btn_3d.setChecked(view == "3d")
-        self.view_changed.emit(view)
-
-    def set_view(self, view: str):
-        """设置当前视图"""
-        self.current_view = view
-        self.btn_2d.setChecked(view == "2d")
-        self.btn_3d.setChecked(view == "3d")
 
     def clear_tool(self):
         """清除工具选择"""

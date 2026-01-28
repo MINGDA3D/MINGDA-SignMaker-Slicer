@@ -415,8 +415,6 @@ class MainWindow(QMainWindow):
 
     def _connect_canvas_toolbar_signals(self):
         """连接画布工具栏信号"""
-        self.canvas_toolbar.undo_clicked.connect(self._on_undo)
-        self.canvas_toolbar.redo_clicked.connect(self._on_redo)
         self.canvas_toolbar.move_clicked.connect(self._on_move_tool)
         self.canvas_toolbar.rotate_clicked.connect(self._on_rotate_tool)
         self.canvas_toolbar.scale_clicked.connect(self._on_scale_tool)
@@ -426,8 +424,6 @@ class MainWindow(QMainWindow):
         self.canvas_toolbar.difference_clicked.connect(self._on_difference)
         self.canvas_toolbar.group_clicked.connect(self._on_group)
         self.canvas_toolbar.ungroup_clicked.connect(self._on_ungroup)
-        self.canvas_toolbar.view_changed.connect(self._switch_view)
-        self.canvas_toolbar.param_toggle_clicked.connect(self._toggle_param_panel)
 
     def _init_statusbar(self):
         """初始化状态栏"""
