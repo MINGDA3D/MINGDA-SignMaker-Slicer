@@ -31,6 +31,7 @@ from .param_panel import ParamPanel
 from .project_panel import ProjectPanel
 from .preview_3d import Preview3D
 from .title_bar import TitleBar
+from .canvas_toolbar import CanvasToolbar
 
 from src.core import (
     DXFParser, SVGParser, SliceEngine, GCodeWriter,
@@ -72,7 +73,6 @@ class MainWindow(QMainWindow):
         # 初始化UI
         self._init_window()
         self._init_title_bar()  # 自定义标题栏
-        self._init_toolbar()
         self._init_transform_panel()  # 变换参数面板
         self._init_central_widget()
         self._init_statusbar()
@@ -252,105 +252,6 @@ class MainWindow(QMainWindow):
         about_action.triggered.connect(self._on_about)
         help_menu.addAction(about_action)
 
-    def _init_toolbar(self):
-        """初始化工具栏"""
-        toolbar = QToolBar("主工具栏")
-        toolbar.setObjectName("mainToolbar")
-        toolbar.setMovable(False)
-        toolbar.setIconSize(QSize(20, 20))
-        toolbar.setStyleSheet("""
-            QToolBar#mainToolbar {
-                background-color: #161B22;
-                border: none;
-                border-bottom: 1px solid #21262D;
-                spacing: 4px;
-                padding: 4px 12px;
-            }
-            QToolBar#mainToolbar QToolButton {
-                background-color: transparent;
-                color: #8B949E;
-                border: none;
-                border-radius: 4px;
-                padding: 6px 12px;
-                font-size: 13px;
-            }
-            QToolBar#mainToolbar QToolButton:hover {
-                background-color: #21262D;
-                color: #C9D1D9;
-            }
-            QToolBar#mainToolbar QToolButton:checked {
-                background-color: #1F6FEB;
-                color: #FFFFFF;
-            }
-            QToolBar#mainToolbar QToolButton:pressed {
-                background-color: #30363D;
-            }
-            QToolBar#mainToolbar::separator {
-                background-color: #30363D;
-                width: 1px;
-                margin: 4px 8px;
-            }
-        """)
-        self.addToolBar(toolbar)
-
-        # === 变换操作 ===
-        self.move_action = self._create_action("移动", self._on_move_tool)
-        self.rotate_action = self._create_action("旋转", self._on_rotate_tool)
-        self.scale_action = self._create_action("缩放", self._on_scale_tool)
-        self.move_action.setCheckable(True)
-        self.rotate_action.setCheckable(True)
-        self.scale_action.setCheckable(True)
-        toolbar.addAction(self.move_action)
-        toolbar.addAction(self.rotate_action)
-        toolbar.addAction(self.scale_action)
-
-        toolbar.addSeparator()
-
-        # === 镜像操作 ===
-        toolbar.addAction(self._create_action("镜像X", lambda: self._on_mirror("x")))
-        toolbar.addAction(self._create_action("镜像Y", lambda: self._on_mirror("y")))
-
-        toolbar.addSeparator()
-
-        # === 布尔操作 ===
-        toolbar.addAction(self._create_action("交集", self._on_intersection))
-        toolbar.addAction(self._create_action("差集", self._on_difference))
-
-        toolbar.addSeparator()
-
-        # === 组合操作 ===
-        toolbar.addAction(self._create_action("组合", self._on_group))
-        toolbar.addAction(self._create_action("打散", self._on_ungroup))
-
-        # === 弹性空间 ===
-        spacer = QWidget()
-        spacer.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
-        toolbar.addWidget(spacer)
-
-        # === 切片按钮 ===
-        slice_btn = QPushButton("切片")
-        slice_btn.setObjectName("primaryButton")
-        slice_btn.setCursor(Qt.CursorShape.PointingHandCursor)
-        slice_btn.setStyleSheet("""
-            QPushButton#primaryButton {
-                background-color: #238636;
-                color: #FFFFFF;
-                border: none;
-                border-radius: 6px;
-                padding: 8px 24px;
-                font-size: 13px;
-                font-weight: 500;
-            }
-            QPushButton#primaryButton:hover {
-                background-color: #2EA043;
-            }
-            QPushButton#primaryButton:pressed {
-                background-color: #238636;
-            }
-        """)
-        slice_btn.clicked.connect(self._on_slice)
-        toolbar.addWidget(slice_btn)
-
     def _create_action(self, text: str, callback, shortcut: str = None) -> QAction:
         """创建Action"""
         action = QAction(text, self)
@@ -467,7 +368,17 @@ class MainWindow(QMainWindow):
         self.project_panel.setMaximumWidth(300)
         main_splitter.addWidget(self.project_panel)
 
-        # === 中央视图区域（2D/3D切换）===
+        # === 中央视图区域（工具栏 + 2D/3D视图）===
+        center_container = QWidget()
+        center_layout = QVBoxLayout(center_container)
+        center_layout.setContentsMargins(0, 0, 0, 0)
+        center_layout.setSpacing(0)
+
+        # 嵌入式工具栏
+        self.canvas_toolbar = CanvasToolbar()
+        center_layout.addWidget(self.canvas_toolbar)
+
+        # 视图堆栈（2D/3D切换）
         self.view_stack = QStackedWidget()
 
         # 2D画布
@@ -482,7 +393,8 @@ class MainWindow(QMainWindow):
         self.view_stack.setCurrentIndex(0)
         self.current_view = "2d"
 
-        main_splitter.addWidget(self.view_stack)
+        center_layout.addWidget(self.view_stack)
+        main_splitter.addWidget(center_container)
 
         # === 右侧参数面板 ===
         self.param_panel = ParamPanel()
@@ -495,8 +407,27 @@ class MainWindow(QMainWindow):
 
         self.setCentralWidget(main_splitter)
 
+        # 连接画布工具栏信号
+        self._connect_canvas_toolbar_signals()
+
         # 连接画布信号到撤销/重做系统
         self._connect_undo_signals()
+
+    def _connect_canvas_toolbar_signals(self):
+        """连接画布工具栏信号"""
+        self.canvas_toolbar.undo_clicked.connect(self._on_undo)
+        self.canvas_toolbar.redo_clicked.connect(self._on_redo)
+        self.canvas_toolbar.move_clicked.connect(self._on_move_tool)
+        self.canvas_toolbar.rotate_clicked.connect(self._on_rotate_tool)
+        self.canvas_toolbar.scale_clicked.connect(self._on_scale_tool)
+        self.canvas_toolbar.mirror_x_clicked.connect(lambda: self._on_mirror("x"))
+        self.canvas_toolbar.mirror_y_clicked.connect(lambda: self._on_mirror("y"))
+        self.canvas_toolbar.intersection_clicked.connect(self._on_intersection)
+        self.canvas_toolbar.difference_clicked.connect(self._on_difference)
+        self.canvas_toolbar.group_clicked.connect(self._on_group)
+        self.canvas_toolbar.ungroup_clicked.connect(self._on_ungroup)
+        self.canvas_toolbar.view_changed.connect(self._switch_view)
+        self.canvas_toolbar.param_toggle_clicked.connect(self._toggle_param_panel)
 
     def _init_statusbar(self):
         """初始化状态栏"""
@@ -890,10 +821,8 @@ class MainWindow(QMainWindow):
 
     def _activate_transform_tool(self, mode: str):
         """激活变换工具并显示面板"""
-        # 更新按钮状态
-        self.move_action.setChecked(mode == "move")
-        self.rotate_action.setChecked(mode == "rotate")
-        self.scale_action.setChecked(mode == "scale")
+        # 更新工具栏按钮状态
+        self.canvas_toolbar._set_tool_checked(mode)
 
         # 设置画布工具
         self.canvas.set_tool(mode)
@@ -919,13 +848,13 @@ class MainWindow(QMainWindow):
 
     def _show_transform_panel(self):
         """显示变换面板并定位到工具栏下方"""
-        # 获取移动按钮的位置
-        toolbar = self.findChild(QToolBar, "主工具栏")
-        if toolbar:
-            # 定位到工具栏下方左侧
-            toolbar_rect = toolbar.geometry()
-            panel_x = toolbar_rect.left() + 10
-            panel_y = toolbar_rect.bottom() + 5
+        # 获取画布工具栏的位置
+        if hasattr(self, 'canvas_toolbar'):
+            toolbar_rect = self.canvas_toolbar.geometry()
+            # 转换为主窗口坐标
+            pos = self.canvas_toolbar.mapTo(self, self.canvas_toolbar.rect().bottomLeft())
+            panel_x = pos.x() + 10
+            panel_y = pos.y() + 5
         else:
             panel_x = 200
             panel_y = 80
@@ -989,11 +918,16 @@ class MainWindow(QMainWindow):
         """关闭变换面板"""
         self.transform_panel.setVisible(False)
         self.current_transform_mode = None
-        self.move_action.setChecked(False)
-        self.rotate_action.setChecked(False)
-        self.scale_action.setChecked(False)
+        self.canvas_toolbar.clear_tool()
         self.canvas.set_tool("select")
         self._update_status("就绪")
+
+    def _toggle_param_panel(self):
+        """切换参数面板显示/隐藏"""
+        if self.param_panel.isVisible():
+            self.param_panel.hide()
+        else:
+            self.param_panel.show()
 
     def _on_mirror(self, axis: str):
         """镜像"""
