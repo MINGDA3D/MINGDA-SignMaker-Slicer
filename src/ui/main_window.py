@@ -366,6 +366,8 @@ class MainWindow(QMainWindow):
         self.project_panel = ProjectPanel()
         self.project_panel.setMinimumWidth(180)
         self.project_panel.setMaximumWidth(300)
+        self.project_panel.import_clicked.connect(self._on_open_file)
+        self.project_panel.contour_deleted.connect(self._on_contour_deleted)
         main_splitter.addWidget(self.project_panel)
 
         # === 中央视图区域（工具栏 + 2D/3D视图）===
@@ -527,6 +529,10 @@ class MainWindow(QMainWindow):
         self.canvas.selected_indices = []
         self.canvas.update()
         self.project_panel.update_contours(self.contours)
+
+    def _on_contour_deleted(self, index: int):
+        """处理项目面板的删除请求"""
+        self._on_delete_requested([index])
 
     # =========================================================================
     # 事件处理
