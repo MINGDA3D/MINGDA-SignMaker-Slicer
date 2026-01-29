@@ -4,9 +4,9 @@ SignMaker Slicer - 主窗口
 应用程序的主窗口，包含：
 - 菜单栏
 - 工具栏
-- 左侧项目面板
+- 左侧参数面板
 - 中央画布（2D/3D预览）
-- 右侧参数面板
+- 右侧图形列表面板
 - 状态栏
 """
 
@@ -126,6 +126,8 @@ class MainWindow(QMainWindow):
         self.title_bar.export_clicked.connect(self._on_export_gcode)
         self.title_bar.undo_clicked.connect(self._on_undo)
         self.title_bar.redo_clicked.connect(self._on_redo)
+        self.title_bar.slice_clicked.connect(self._on_slice)
+        self.title_bar.export_gcode_clicked.connect(self._on_export_gcode)
 
     def _init_menubar(self):
         """初始化菜单栏"""
@@ -362,13 +364,11 @@ class MainWindow(QMainWindow):
         # 主分割器
         main_splitter = QSplitter(Qt.Orientation.Horizontal)
 
-        # === 左侧项目面板 ===
-        self.project_panel = ProjectPanel()
-        self.project_panel.setMinimumWidth(180)
-        self.project_panel.setMaximumWidth(300)
-        self.project_panel.import_clicked.connect(self._on_open_file)
-        self.project_panel.contour_deleted.connect(self._on_contour_deleted)
-        main_splitter.addWidget(self.project_panel)
+        # === 左侧参数面板 ===
+        self.param_panel = ParamPanel()
+        self.param_panel.setMinimumWidth(280)
+        self.param_panel.setMaximumWidth(400)
+        main_splitter.addWidget(self.param_panel)
 
         # === 中央视图区域（工具栏 + 2D/3D视图）===
         center_container = QWidget()
@@ -398,14 +398,16 @@ class MainWindow(QMainWindow):
         center_layout.addWidget(self.view_stack)
         main_splitter.addWidget(center_container)
 
-        # === 右侧参数面板 ===
-        self.param_panel = ParamPanel()
-        self.param_panel.setMinimumWidth(280)
-        self.param_panel.setMaximumWidth(400)
-        main_splitter.addWidget(self.param_panel)
+        # === 右侧图形列表面板 ===
+        self.project_panel = ProjectPanel()
+        self.project_panel.setMinimumWidth(180)
+        self.project_panel.setMaximumWidth(300)
+        self.project_panel.import_clicked.connect(self._on_open_file)
+        self.project_panel.contour_deleted.connect(self._on_contour_deleted)
+        main_splitter.addWidget(self.project_panel)
 
         # 设置分割比例
-        main_splitter.setSizes([200, 900, 320])
+        main_splitter.setSizes([320, 900, 200])
 
         self.setCentralWidget(main_splitter)
 

@@ -2,15 +2,17 @@
 SignMaker Slicer - 导航栏
 
 导航栏设计：
+- 最左侧：菜单按钮
 - 左侧：文件操作（打开、保存、导出）+ 编辑操作（撤销、重做）
 - 中间：导航按钮（首页、项目、预览）
-- 右侧：功能按钮（设置、帮助、菜单）
 """
 
 from PySide6.QtWidgets import (
     QWidget, QHBoxLayout, QPushButton, QMenu, QFrame
 )
-from PySide6.QtCore import Qt, Signal
+from PySide6.QtCore import Qt, Signal, QSize
+from PySide6.QtGui import QIcon
+from pathlib import Path
 
 
 class TitleBar(QWidget):
@@ -26,39 +28,68 @@ class TitleBar(QWidget):
     export_clicked = Signal()
     undo_clicked = Signal()
     redo_clicked = Signal()
+    slice_clicked = Signal()
+    export_gcode_clicked = Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
         self.current_nav = "project"
+        self._icon_dir = Path(__file__).parent.parent.parent / "resources" / "icons"
         self._init_ui()
         self._apply_styles()
 
     def _init_ui(self):
         """初始化UI"""
         layout = QHBoxLayout(self)
-        layout.setContentsMargins(12, 0, 12, 0)
-        layout.setSpacing(0)
+        layout.setContentsMargins(4, 0, 12, 0)
+        layout.setSpacing(8)
+        layout.setAlignment(Qt.AlignmentFlag.AlignVCenter)
+
+        icon_size = QSize(24, 24)
+
+        # ========== 最左侧：菜单按钮 ==========
+        self.btn_menu = QPushButton()
+        self.btn_menu.setIcon(QIcon(str(self._icon_dir / "topbar_dropdown.svg")))
+        self.btn_menu.setIconSize(icon_size)
+        self.btn_menu.setObjectName("iconButton")
+        self.btn_menu.setToolTip("菜单")
+        self.btn_menu.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.btn_menu.clicked.connect(self._show_menu)
+        layout.addWidget(self.btn_menu)
+
+        # 分隔符
+        layout.addWidget(self._create_separator())
 
         # ========== 左侧：文件操作 ==========
         file_container = QWidget()
         file_layout = QHBoxLayout(file_container)
         file_layout.setContentsMargins(0, 0, 0, 0)
-        file_layout.setSpacing(2)
+        file_layout.setSpacing(8)
+        file_layout.setAlignment(Qt.AlignmentFlag.AlignVCenter)
 
-        self.btn_open = QPushButton("打开")
-        self.btn_open.setObjectName("toolButton")
+        self.btn_open = QPushButton()
+        self.btn_open.setIcon(QIcon(str(self._icon_dir / "topbar_open.svg")))
+        self.btn_open.setIconSize(icon_size)
+        self.btn_open.setObjectName("iconButton")
+        self.btn_open.setToolTip("打开")
         self.btn_open.setCursor(Qt.CursorShape.PointingHandCursor)
         self.btn_open.clicked.connect(self.open_clicked.emit)
         file_layout.addWidget(self.btn_open)
 
-        self.btn_save = QPushButton("保存")
-        self.btn_save.setObjectName("toolButton")
+        self.btn_save = QPushButton()
+        self.btn_save.setIcon(QIcon(str(self._icon_dir / "topbar_save.svg")))
+        self.btn_save.setIconSize(icon_size)
+        self.btn_save.setObjectName("iconButton")
+        self.btn_save.setToolTip("保存")
         self.btn_save.setCursor(Qt.CursorShape.PointingHandCursor)
         self.btn_save.clicked.connect(self.save_clicked.emit)
         file_layout.addWidget(self.btn_save)
 
-        self.btn_export = QPushButton("导出")
-        self.btn_export.setObjectName("toolButton")
+        self.btn_export = QPushButton()
+        self.btn_export.setIcon(QIcon(str(self._icon_dir / "topbar_publish.svg")))
+        self.btn_export.setIconSize(icon_size)
+        self.btn_export.setObjectName("iconButton")
+        self.btn_export.setToolTip("导出")
         self.btn_export.setCursor(Qt.CursorShape.PointingHandCursor)
         self.btn_export.clicked.connect(self.export_clicked.emit)
         file_layout.addWidget(self.btn_export)
@@ -72,16 +103,23 @@ class TitleBar(QWidget):
         edit_container = QWidget()
         edit_layout = QHBoxLayout(edit_container)
         edit_layout.setContentsMargins(0, 0, 0, 0)
-        edit_layout.setSpacing(2)
+        edit_layout.setSpacing(8)
+        edit_layout.setAlignment(Qt.AlignmentFlag.AlignVCenter)
 
-        self.btn_undo = QPushButton("撤销")
-        self.btn_undo.setObjectName("toolButton")
+        self.btn_undo = QPushButton()
+        self.btn_undo.setIcon(QIcon(str(self._icon_dir / "topbar_undo.svg")))
+        self.btn_undo.setIconSize(icon_size)
+        self.btn_undo.setObjectName("iconButton")
+        self.btn_undo.setToolTip("撤销")
         self.btn_undo.setCursor(Qt.CursorShape.PointingHandCursor)
         self.btn_undo.clicked.connect(self.undo_clicked.emit)
         edit_layout.addWidget(self.btn_undo)
 
-        self.btn_redo = QPushButton("重做")
-        self.btn_redo.setObjectName("toolButton")
+        self.btn_redo = QPushButton()
+        self.btn_redo.setIcon(QIcon(str(self._icon_dir / "topbar_redo.svg")))
+        self.btn_redo.setIconSize(icon_size)
+        self.btn_redo.setObjectName("iconButton")
+        self.btn_redo.setToolTip("重做")
         self.btn_redo.setCursor(Qt.CursorShape.PointingHandCursor)
         self.btn_redo.clicked.connect(self.redo_clicked.emit)
         edit_layout.addWidget(self.btn_redo)
@@ -94,7 +132,8 @@ class TitleBar(QWidget):
         nav_container = QWidget()
         nav_layout = QHBoxLayout(nav_container)
         nav_layout.setContentsMargins(0, 0, 0, 0)
-        nav_layout.setSpacing(2)
+        nav_layout.setSpacing(8)
+        nav_layout.setAlignment(Qt.AlignmentFlag.AlignVCenter)
 
         self.btn_home = QPushButton("首页")
         self.btn_home.setObjectName("navButton")
@@ -118,36 +157,28 @@ class TitleBar(QWidget):
 
         layout.addStretch(1)
 
-        # ========== 右侧：功能按钮 ==========
-        right_container = QWidget()
-        right_layout = QHBoxLayout(right_container)
-        right_layout.setContentsMargins(0, 0, 0, 0)
-        right_layout.setSpacing(4)
+        # ========== 右侧：切片和导出按钮 ==========
+        action_container = QWidget()
+        action_layout = QHBoxLayout(action_container)
+        action_layout.setContentsMargins(0, 0, 0, 0)
+        action_layout.setSpacing(8)
+        action_layout.setAlignment(Qt.AlignmentFlag.AlignVCenter)
 
-        self.btn_settings = QPushButton("⚙")
-        self.btn_settings.setObjectName("iconButton")
-        self.btn_settings.setToolTip("设置")
-        self.btn_settings.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.btn_settings.clicked.connect(lambda: self.menu_action.emit("settings"))
-        right_layout.addWidget(self.btn_settings)
+        self.btn_slice = QPushButton("切片")
+        self.btn_slice.setObjectName("actionButton")
+        self.btn_slice.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.btn_slice.clicked.connect(self.slice_clicked.emit)
+        action_layout.addWidget(self.btn_slice)
 
-        self.btn_help = QPushButton("?")
-        self.btn_help.setObjectName("iconButton")
-        self.btn_help.setToolTip("帮助")
-        self.btn_help.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.btn_help.clicked.connect(lambda: self.menu_action.emit("help"))
-        right_layout.addWidget(self.btn_help)
+        self.btn_export_gcode = QPushButton("导出Gcode")
+        self.btn_export_gcode.setObjectName("primaryButton")
+        self.btn_export_gcode.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.btn_export_gcode.clicked.connect(self.export_gcode_clicked.emit)
+        action_layout.addWidget(self.btn_export_gcode)
 
-        self.btn_menu = QPushButton("≡")
-        self.btn_menu.setObjectName("iconButton")
-        self.btn_menu.setToolTip("菜单")
-        self.btn_menu.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.btn_menu.clicked.connect(self._show_menu)
-        right_layout.addWidget(self.btn_menu)
+        layout.addWidget(action_container)
 
-        layout.addWidget(right_container)
-
-        self.setFixedHeight(36)
+        self.setFixedHeight(44)
 
     def _create_separator(self):
         """创建分隔符"""
@@ -163,23 +194,6 @@ class TitleBar(QWidget):
             TitleBar {
                 background-color: #0D1117;
                 border-bottom: 1px solid #21262D;
-            }
-
-            /* 工具按钮 */
-            QPushButton#toolButton {
-                background-color: transparent;
-                color: #8B949E;
-                border: none;
-                border-radius: 4px;
-                padding: 5px 12px;
-                font-size: 12px;
-            }
-            QPushButton#toolButton:hover {
-                background-color: #21262D;
-                color: #C9D1D9;
-            }
-            QPushButton#toolButton:pressed {
-                background-color: #30363D;
             }
 
             /* 导航按钮 - 普通状态 */
@@ -217,15 +231,50 @@ class TitleBar(QWidget):
                 color: #8B949E;
                 border: none;
                 border-radius: 4px;
-                min-width: 28px;
-                max-width: 28px;
-                min-height: 28px;
-                max-height: 28px;
-                font-size: 14px;
+                min-width: 36px;
+                max-width: 36px;
+                min-height: 36px;
+                max-height: 36px;
+                padding: 2px;
             }
             QPushButton#iconButton:hover {
                 background-color: #21262D;
                 color: #C9D1D9;
+            }
+
+            /* 操作按钮 */
+            QPushButton#actionButton {
+                background-color: #21262D;
+                color: #C9D1D9;
+                border: 1px solid #30363D;
+                border-radius: 4px;
+                padding: 6px 16px;
+                font-size: 12px;
+                font-weight: 500;
+            }
+            QPushButton#actionButton:hover {
+                background-color: #30363D;
+                border-color: #8B949E;
+            }
+            QPushButton#actionButton:pressed {
+                background-color: #161B22;
+            }
+
+            /* 主要按钮 */
+            QPushButton#primaryButton {
+                background-color: #238636;
+                color: #FFFFFF;
+                border: none;
+                border-radius: 4px;
+                padding: 6px 16px;
+                font-size: 12px;
+                font-weight: 500;
+            }
+            QPushButton#primaryButton:hover {
+                background-color: #2EA043;
+            }
+            QPushButton#primaryButton:pressed {
+                background-color: #196C2E;
             }
         """)
 
