@@ -118,23 +118,12 @@ class ShellPanel(QWidget):
         self._populate_preset_combo()
         custom_layout.addRow("预设模板:", self.preset_combo)
 
-        # 斜边宽度（异形边也使用）
-        self.custom_bevel_width_spin = QDoubleSpinBox()
-        self.custom_bevel_width_spin.setRange(0.5, 50)
-        self.custom_bevel_width_spin.setValue(5.0)
-        self.custom_bevel_width_spin.setSuffix(" mm")
-        custom_layout.addRow("边缘宽度:", self.custom_bevel_width_spin)
-
         # 按钮行
         btn_layout = QHBoxLayout()
 
         self.import_dxf_btn = QPushButton("导入DXF")
         self.import_dxf_btn.setToolTip("从DXF文件导入自定义异形边轮廓")
         btn_layout.addWidget(self.import_dxf_btn)
-
-        # self.edit_profile_btn = QPushButton("编辑轮廓")
-        # self.edit_profile_btn.setToolTip("打开轮廓编辑器自定义绘制")
-        # btn_layout.addWidget(self.edit_profile_btn)
 
         custom_layout.addRow(btn_layout)
 
@@ -199,7 +188,6 @@ class ShellPanel(QWidget):
 
         # 异形边信号
         self.preset_combo.currentIndexChanged.connect(self._on_preset_changed)
-        self.custom_bevel_width_spin.valueChanged.connect(self._on_custom_width_changed)
         self.import_dxf_btn.clicked.connect(self._on_import_dxf)
 
     def _on_edge_type_changed(self, index):
@@ -237,8 +225,9 @@ class ShellPanel(QWidget):
         # 异形边轮廓
         if self._params.edge_type == EdgeType.CUSTOM:
             self._params.edge_profile = self._current_profile
-            # 使用异形边的宽度
-            self._params.bevel_width = self.custom_bevel_width_spin.value()
+            # 使用模板中的原始宽度
+            if self._current_profile:
+                self._params.bevel_width = self._current_profile.original_width
         else:
             self._params.edge_profile = None
 
@@ -311,23 +300,12 @@ class ShellPanel(QWidget):
         if preset_name is None:
             return
 
-        # 加载预设
-        bevel_width = self.custom_bevel_width_spin.value()
-        profile = self._preset_manager.get_preset_profile(preset_name, bevel_width)
+        # 加载预设（使用模板原始宽度）
+        profile = self._preset_manager.get_preset_profile(preset_name)
 
         if profile:
             self._current_profile = profile
-            # 更新默认宽度
-            if profile.original_width > 0:
-                self.custom_bevel_width_spin.setValue(profile.original_width)
             self._update_profile_info()
-            self._emit_params()
-
-    def _on_custom_width_changed(self, value):
-        """自定义宽度变更"""
-        if self._current_profile:
-            # 更新轮廓的宽度
-            self._current_profile.original_width = value
             self._emit_params()
 
     def _on_import_dxf(self):
@@ -348,7 +326,6 @@ class ShellPanel(QWidget):
             profile = loader.load_from_dxf(file_path)
 
             self._current_profile = profile
-            self.custom_bevel_width_spin.setValue(profile.original_width)
             self._update_profile_info()
 
             # 在下拉框中添加自定义项
