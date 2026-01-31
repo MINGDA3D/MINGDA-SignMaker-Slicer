@@ -20,10 +20,11 @@ from .types import (
     Point, Path, Contour, Layer, LayerPath, LayerInfo,
     PathType, PathRole, EdgeType, ExtruderType, BevelDirection,
     SliceParams, ShellParams, StepConfig,
-    SliceResult
+    SliceResult, EdgeProfile, InterpolationType
 )
 from .path_offset import PathOffset, JoinType
 from .step_generator import StepGenerator
+from .edge_profile_generator import EdgeProfileGenerator
 
 
 @dataclass
@@ -38,6 +39,7 @@ class SliceEngine:
     def __init__(self):
         self.path_offset = PathOffset()
         self.step_generator = StepGenerator(self.path_offset)
+        self.edge_profile_generator = EdgeProfileGenerator()
 
     def slice(self, contours: List[Contour], params: SliceParams) -> SliceResult:
         """
@@ -366,28 +368,45 @@ class SliceEngine:
         """
         异形边处理
 
-        根据EdgeProfile定义的点序列进行插值
+        使用EdgeProfileGenerator根据EdgeProfile定义的轮廓进行高级插值，
+        支持线性、三次样条、贝塞尔曲线和B样条插值。
+
+        Args:
+            contour: 输入轮廓
+            z: 当前层高度
+            params: 字壳参数
+
+        Returns:
+            处理后的轮廓，如果消失则返回None
         """
         if not params.edge_profile:
             return contour
 
         profile = params.edge_profile
         total_height = params.height
+        bevel_width = params.bevel_width
 
         # 归一化高度
         normalized_z = z / total_height if total_height > 0 else 0
 
-        # 在profile中查找对应的偏移量
-        offset = self._interpolate_profile(profile, normalized_z)
+        # 使用新的EdgeProfile方法获取偏移量
+        if profile.control_points:
+            # 新格式：使用control_points
+            offset = profile.get_offset_at_height(normalized_z, bevel_width)
+        elif profile.points:
+            # 旧格式兼容：使用points列表
+            offset = self._interpolate_profile_legacy(profile, normalized_z)
+        else:
+            return contour
 
         if abs(offset) < 0.001:
             return contour
 
-        # 应用偏移（异形边也需要同方向偏移，让整个字形缩放）
+        # 应用偏移（异形边需要同方向偏移，让整个字形缩放）
         return self._offset_contour_same_direction(contour, offset)
 
-    def _interpolate_profile(self, profile, normalized_z: float) -> float:
-        """在异形边轮廓中插值"""
+    def _interpolate_profile_legacy(self, profile, normalized_z: float) -> float:
+        """在异形边轮廓中插值（旧格式兼容）"""
         points = profile.points
         if not points:
             return 0

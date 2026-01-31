@@ -49,6 +49,21 @@ class EdgeType(Enum):
     CUSTOM = auto()     # 异形边（自定义轮廓）
 
 
+class EdgeProfileType(Enum):
+    """异形边轮廓类型"""
+    PRESET = auto()     # 预设模板
+    CUSTOM = auto()     # 自定义轮廓
+    DXF = auto()        # 从DXF文件加载
+
+
+class InterpolationType(Enum):
+    """插值类型"""
+    LINEAR = "linear"       # 线性插值
+    CUBIC = "cubic"         # 三次样条插值
+    BEZIER = "bezier"       # 贝塞尔曲线插值
+    BSPLINE = "bspline"     # B样条插值（兼容INC-S）
+
+
 class BevelDirection(Enum):
     """斜边方向"""
     TOP_SMALL = auto()  # 上小下大（底部大，顶部小）
@@ -219,12 +234,154 @@ class Path:
 
 @dataclass
 class EdgeProfile:
-    """异形边轮廓定义"""
-    # points 是 [(normalized_height, offset), ...] 的列表
-    # normalized_height: 0.0 = 底部, 1.0 = 顶部
-    # offset: 负值表示内缩
+    """异形边轮廓定义
+
+    用于定义异形边的轮廓曲线。支持预设模板、自定义绘制和DXF导入三种方式。
+
+    坐标系说明：
+    - control_points 使用归一化坐标 [(nx, nz), ...]
+    - nx: 水平偏移比例，0.0 = 无偏移，1.0 = 最大偏移（bevel_width）
+    - nz: 高度比例，0.0 = 底部，1.0 = 顶部
+
+    示例：
+        # 简单斜边：底部无偏移，顶部最大偏移
+        control_points = [(0.0, 0.0), (1.0, 1.0)]
+
+        # 圆弧边：使用贝塞尔曲线
+        control_points = [(0.0, 0.0), (0.3, 0.5), (1.0, 1.0)]
+        interpolation = InterpolationType.BEZIER
+    """
+    # 轮廓类型
+    profile_type: EdgeProfileType = EdgeProfileType.PRESET
+
+    # 预设名称（当 profile_type == PRESET 时使用）
+    preset_name: str = ""
+
+    # 控制点列表（归一化坐标）
+    # 格式: [(nx, nz), ...] 其中 nx, nz ∈ [0, 1]
+    control_points: List[Tuple[float, float]] = field(default_factory=list)
+
+    # 插值方式
+    interpolation: InterpolationType = InterpolationType.LINEAR
+
+    # 采样参数
+    sample_points: int = 100  # 轮廓曲线采样点数
+
+    # 原始尺寸（从DXF加载时记录）
+    original_width: float = 0.0   # 原始宽度 (mm)
+    original_height: float = 0.0  # 原始高度 (mm)
+
+    # 来源信息
+    source_file: str = ""  # 来源文件路径（DXF导入时记录）
+    name: str = ""         # 轮廓名称
+    description: str = ""  # 轮廓描述
+
+    # 旧字段（保持兼容）
     points: List[Point] = field(default_factory=list)
-    name: str = ""
+
+    def get_offset_at_height(self, normalized_z: float, bevel_width: float) -> float:
+        """
+        获取给定高度处的偏移量
+
+        Args:
+            normalized_z: 归一化高度 (0.0-1.0)
+            bevel_width: 斜边宽度 (mm)
+
+        Returns:
+            偏移量 (mm)，负值表示内缩
+        """
+        if not self.control_points:
+            return 0.0
+
+        # 按Z坐标排序控制点
+        sorted_points = sorted(self.control_points, key=lambda p: p[1])
+
+        # 边界情况
+        if normalized_z <= sorted_points[0][1]:
+            return -sorted_points[0][0] * bevel_width
+        if normalized_z >= sorted_points[-1][1]:
+            return -sorted_points[-1][0] * bevel_width
+
+        # 线性插值查找
+        for i in range(len(sorted_points) - 1):
+            nx1, nz1 = sorted_points[i]
+            nx2, nz2 = sorted_points[i + 1]
+
+            if nz1 <= normalized_z <= nz2:
+                if nz2 == nz1:
+                    return -nx1 * bevel_width
+                t = (normalized_z - nz1) / (nz2 - nz1)
+                nx = nx1 + t * (nx2 - nx1)
+                return -nx * bevel_width
+
+        return 0.0
+
+    @classmethod
+    def from_preset(cls, preset_name: str) -> "EdgeProfile":
+        """从预设名称创建轮廓（需要配合 edge_presets 模块使用）"""
+        return cls(
+            profile_type=EdgeProfileType.PRESET,
+            preset_name=preset_name,
+            name=preset_name
+        )
+
+    @classmethod
+    def from_control_points(
+        cls,
+        control_points: List[Tuple[float, float]],
+        interpolation: InterpolationType = InterpolationType.LINEAR,
+        name: str = "自定义"
+    ) -> "EdgeProfile":
+        """从控制点创建自定义轮廓"""
+        return cls(
+            profile_type=EdgeProfileType.CUSTOM,
+            control_points=control_points,
+            interpolation=interpolation,
+            name=name
+        )
+
+    def to_dict(self) -> dict:
+        """序列化为字典（用于保存）"""
+        return {
+            "profile_type": self.profile_type.name,
+            "preset_name": self.preset_name,
+            "control_points": self.control_points,
+            "interpolation": self.interpolation.value,
+            "sample_points": self.sample_points,
+            "original_width": self.original_width,
+            "original_height": self.original_height,
+            "source_file": self.source_file,
+            "name": self.name,
+            "description": self.description
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "EdgeProfile":
+        """从字典反序列化"""
+        profile_type = EdgeProfileType[data.get("profile_type", "CUSTOM")]
+        interpolation_value = data.get("interpolation", "linear")
+
+        # 处理插值类型
+        if isinstance(interpolation_value, str):
+            try:
+                interpolation = InterpolationType(interpolation_value)
+            except ValueError:
+                interpolation = InterpolationType.LINEAR
+        else:
+            interpolation = InterpolationType.LINEAR
+
+        return cls(
+            profile_type=profile_type,
+            preset_name=data.get("preset_name", ""),
+            control_points=data.get("control_points", []),
+            interpolation=interpolation,
+            sample_points=data.get("sample_points", 100),
+            original_width=data.get("original_width", 0.0),
+            original_height=data.get("original_height", 0.0),
+            source_file=data.get("source_file", ""),
+            name=data.get("name", ""),
+            description=data.get("description", "")
+        )
 
 
 @dataclass

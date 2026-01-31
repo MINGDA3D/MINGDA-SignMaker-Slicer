@@ -2,16 +2,19 @@
 字壳工艺参数面板
 
 设置字壳高度、壁厚、边缘类型等核心参数。
+支持直边、斜边和异形边三种边缘类型。
 """
 
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QFormLayout,
     QGroupBox, QLabel, QDoubleSpinBox, QSpinBox,
-    QComboBox, QCheckBox
+    QComboBox, QCheckBox, QPushButton, QFileDialog,
+    QMessageBox
 )
 from PySide6.QtCore import Signal
 
-from src.core.types import ShellParams, EdgeType, BevelDirection
+from src.core.types import ShellParams, EdgeType, BevelDirection, EdgeProfile
+from src.core.edge_presets import EdgePresetManager, ProfileCategory
 
 
 class ShellPanel(QWidget):
@@ -22,6 +25,8 @@ class ShellPanel(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self._params = ShellParams()
+        self._preset_manager = EdgePresetManager()
+        self._current_profile = None
         self._setup_ui()
         self._connect_signals()
 
@@ -104,6 +109,43 @@ class ShellPanel(QWidget):
         layout.addWidget(self.bevel_group)
         self.bevel_group.setVisible(False)
 
+        # 异形边参数组
+        self.custom_edge_group = QGroupBox("异形边设置")
+        custom_layout = QFormLayout(self.custom_edge_group)
+
+        # 预设选择
+        self.preset_combo = QComboBox()
+        self._populate_preset_combo()
+        custom_layout.addRow("预设模板:", self.preset_combo)
+
+        # 斜边宽度（异形边也使用）
+        self.custom_bevel_width_spin = QDoubleSpinBox()
+        self.custom_bevel_width_spin.setRange(0.5, 50)
+        self.custom_bevel_width_spin.setValue(5.0)
+        self.custom_bevel_width_spin.setSuffix(" mm")
+        custom_layout.addRow("边缘宽度:", self.custom_bevel_width_spin)
+
+        # 按钮行
+        btn_layout = QHBoxLayout()
+
+        self.import_dxf_btn = QPushButton("导入DXF")
+        self.import_dxf_btn.setToolTip("从DXF文件导入自定义异形边轮廓")
+        btn_layout.addWidget(self.import_dxf_btn)
+
+        # self.edit_profile_btn = QPushButton("编辑轮廓")
+        # self.edit_profile_btn.setToolTip("打开轮廓编辑器自定义绘制")
+        # btn_layout.addWidget(self.edit_profile_btn)
+
+        custom_layout.addRow(btn_layout)
+
+        # 当前轮廓信息
+        self.profile_info_label = QLabel("未选择轮廓")
+        self.profile_info_label.setStyleSheet("color: #888;")
+        custom_layout.addRow("当前轮廓:", self.profile_info_label)
+
+        layout.addWidget(self.custom_edge_group)
+        self.custom_edge_group.setVisible(False)
+
         # 多层壁厚组
         wall_group = QGroupBox("多层壁厚")
         wall_layout = QFormLayout(wall_group)
@@ -155,9 +197,21 @@ class ShellPanel(QWidget):
         self.safety_count_spin.valueChanged.connect(self._emit_params)
         self.mirror_check.toggled.connect(self._emit_params)
 
+        # 异形边信号
+        self.preset_combo.currentIndexChanged.connect(self._on_preset_changed)
+        self.custom_bevel_width_spin.valueChanged.connect(self._on_custom_width_changed)
+        self.import_dxf_btn.clicked.connect(self._on_import_dxf)
+
     def _on_edge_type_changed(self, index):
         # 斜边(index=1)时显示斜边参数
         self.bevel_group.setVisible(index == 1)
+        # 异形边(index=2)时显示异形边参数
+        self.custom_edge_group.setVisible(index == 2)
+
+        # 如果切换到异形边且没有选择预设，自动加载默认预设
+        if index == 2 and self._current_profile is None:
+            self._on_preset_changed(self.preset_combo.currentIndex())
+
         self._emit_params()
 
     def _emit_params(self):
@@ -179,6 +233,14 @@ class ShellPanel(QWidget):
         # 斜边方向
         bevel_directions = [BevelDirection.TOP_SMALL, BevelDirection.TOP_LARGE]
         self._params.bevel_direction = bevel_directions[self.bevel_direction_combo.currentIndex()]
+
+        # 异形边轮廓
+        if self._params.edge_type == EdgeType.CUSTOM:
+            self._params.edge_profile = self._current_profile
+            # 使用异形边的宽度
+            self._params.bevel_width = self.custom_bevel_width_spin.value()
+        else:
+            self._params.edge_profile = None
 
         self.params_changed.emit(self._params)
 
@@ -214,3 +276,108 @@ class ShellPanel(QWidget):
             self.bevel_direction_combo.setCurrentIndex(0)
         else:
             self.bevel_direction_combo.setCurrentIndex(1)
+
+    def _populate_preset_combo(self):
+        """填充预设下拉框"""
+        self.preset_combo.clear()
+
+        # 按分类添加预设
+        for category in ProfileCategory:
+            presets = self._preset_manager.get_presets_by_category(category)
+            if presets:
+                # 添加分类标题（禁用项）
+                category_name = self._preset_manager._get_category_name(category)
+                self.preset_combo.addItem(f"── {category_name} ──", None)
+                # 禁用分类标题
+                index = self.preset_combo.count() - 1
+                self.preset_combo.model().item(index).setEnabled(False)
+
+                # 添加该分类下的预设
+                for preset in presets:
+                    self.preset_combo.addItem(
+                        f"  {preset['display_name']}",
+                        preset['name']
+                    )
+
+        # 默认选中第一个可用项
+        for i in range(self.preset_combo.count()):
+            if self.preset_combo.itemData(i) is not None:
+                self.preset_combo.setCurrentIndex(i)
+                break
+
+    def _on_preset_changed(self, index):
+        """预设选择变更"""
+        preset_name = self.preset_combo.itemData(index)
+        if preset_name is None:
+            return
+
+        # 加载预设
+        bevel_width = self.custom_bevel_width_spin.value()
+        profile = self._preset_manager.get_preset_profile(preset_name, bevel_width)
+
+        if profile:
+            self._current_profile = profile
+            # 更新默认宽度
+            if profile.original_width > 0:
+                self.custom_bevel_width_spin.setValue(profile.original_width)
+            self._update_profile_info()
+            self._emit_params()
+
+    def _on_custom_width_changed(self, value):
+        """自定义宽度变更"""
+        if self._current_profile:
+            # 更新轮廓的宽度
+            self._current_profile.original_width = value
+            self._emit_params()
+
+    def _on_import_dxf(self):
+        """导入DXF文件"""
+        file_path, _ = QFileDialog.getOpenFileName(
+            self,
+            "导入异形边DXF",
+            "",
+            "DXF文件 (*.dxf);;所有文件 (*.*)"
+        )
+
+        if not file_path:
+            return
+
+        try:
+            from src.core.edge_profile_loader import EdgeProfileDXFLoader
+            loader = EdgeProfileDXFLoader()
+            profile = loader.load_from_dxf(file_path)
+
+            self._current_profile = profile
+            self.custom_bevel_width_spin.setValue(profile.original_width)
+            self._update_profile_info()
+
+            # 在下拉框中添加自定义项
+            self.preset_combo.addItem(f"  自定义: {profile.name}", "__custom__")
+            self.preset_combo.setCurrentIndex(self.preset_combo.count() - 1)
+
+            self._emit_params()
+
+            QMessageBox.information(
+                self, "导入成功",
+                f"已导入异形边轮廓: {profile.name}\n"
+                f"尺寸: {profile.original_width:.1f} x {profile.original_height:.1f} mm\n"
+                f"控制点: {len(profile.control_points)} 个"
+            )
+
+        except Exception as e:
+            QMessageBox.warning(
+                self, "导入失败",
+                f"无法导入DXF文件:\n{str(e)}"
+            )
+
+    def _update_profile_info(self):
+        """更新轮廓信息显示"""
+        if self._current_profile:
+            info = f"{self._current_profile.name}"
+            if self._current_profile.control_points:
+                info += f" ({len(self._current_profile.control_points)}点)"
+            self.profile_info_label.setText(info)
+            self.profile_info_label.setStyleSheet("color: #58A6FF;")
+        else:
+            self.profile_info_label.setText("未选择轮廓")
+            self.profile_info_label.setStyleSheet("color: #888;")
