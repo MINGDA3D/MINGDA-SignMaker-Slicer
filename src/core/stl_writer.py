@@ -28,7 +28,7 @@ from shapely.validation import make_valid
 from .types import (
     Point, Layer, LayerPath, PathRole, Contour,
     SliceResult, SliceParams, EdgeWrapParams, EdgeDirection,
-    ConnectedParams, EdgeType, BevelDirection
+    ConnectedParams, EdgeType, BevelDirection, EdgeProfile
 )
 from .path_offset import PathOffset
 from .types import Path as CorePath
@@ -1461,10 +1461,10 @@ class STLWriter:
     def _get_contours_at_z(self, contours: List[Contour], z: float,
                            params: SliceParams) -> List[Contour]:
         """
-        获取指定高度的轮廓（考虑斜边偏移）
+        获取指定高度的轮廓（考虑斜边/异形边偏移）
 
-        对于斜边字，不同高度的轮廓大小不同。这个方法返回应用了
-        斜边偏移后的轮廓。
+        对于斜边字或异形边字，不同高度的轮廓大小不同。这个方法返回应用了
+        边缘偏移后的轮廓。
 
         Args:
             contours: 原始轮廓列表
@@ -1481,7 +1481,10 @@ class STLWriter:
             return contours
 
         # 计算该高度的偏移量
-        offset = self._calculate_bevel_offset_at_z(z, shell)
+        if shell.edge_type == EdgeType.CUSTOM:
+            offset = self._calculate_custom_edge_offset_at_z(z, shell)
+        else:
+            offset = self._calculate_bevel_offset_at_z(z, shell)
 
         if abs(offset) < 0.001:
             return contours
@@ -1542,6 +1545,38 @@ class STLWriter:
                 return 0
             else:
                 return 0
+
+    def _calculate_custom_edge_offset_at_z(self, z: float, shell) -> float:
+        """
+        计算异形边在指定高度的偏移量
+
+        使用EdgeProfile的控制点和插值算法计算偏移。
+
+        Args:
+            z: 高度
+            shell: 字壳参数
+
+        Returns:
+            偏移量（负值表示向内收缩）
+        """
+        if shell.edge_type != EdgeType.CUSTOM:
+            return 0
+
+        profile = shell.edge_profile
+        if not profile:
+            return 0
+
+        total_height = shell.height
+        bevel_width = shell.bevel_width
+
+        # 归一化高度
+        normalized_z = z / total_height if total_height > 0 else 0
+
+        # 使用EdgeProfile的方法获取偏移量
+        if profile.control_points:
+            return profile.get_offset_at_height(normalized_z, bevel_width)
+
+        return 0
 
     def _offset_contour_same_direction(self, contour: Contour,
                                         distance: float) -> Optional[Contour]:

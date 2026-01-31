@@ -423,6 +423,106 @@ class TestSliceEngineCustomEdge:
 
 
 # =============================================================================
+# STLWriter 异形边测试
+# =============================================================================
+
+class TestSTLWriterCustomEdge:
+    """STLWriter 异形边导出测试"""
+
+    def setup_method(self):
+        """每个测试前的设置"""
+        from src.core.stl_writer import STLWriter
+        self.writer = STLWriter()
+        # 创建测试轮廓（简单矩形）
+        outer = Path(points=[
+            Point(0, 0), Point(100, 0), Point(100, 50), Point(0, 50)
+        ])
+        self.test_contour = Contour(outer=outer, name="TestRect")
+
+    def test_custom_edge_offset_calculation(self):
+        """测试异形边偏移量计算"""
+        profile = EdgeProfile.from_control_points(
+            [(0.0, 0.0), (1.0, 1.0)],
+            InterpolationType.LINEAR
+        )
+        shell = ShellParams(
+            height=30.0,
+            bevel_width=5.0,
+            edge_type=EdgeType.CUSTOM,
+            edge_profile=profile
+        )
+
+        # 底部偏移应为0
+        offset = self.writer._calculate_custom_edge_offset_at_z(0.0, shell)
+        assert offset == pytest.approx(0.0, abs=0.01)
+
+        # 中间偏移应为-2.5
+        offset = self.writer._calculate_custom_edge_offset_at_z(15.0, shell)
+        assert offset == pytest.approx(-2.5, abs=0.01)
+
+        # 顶部偏移应为-5.0
+        offset = self.writer._calculate_custom_edge_offset_at_z(30.0, shell)
+        assert offset == pytest.approx(-5.0, abs=0.01)
+
+    def test_get_contours_with_custom_edge(self):
+        """测试获取异形边轮廓"""
+        profile = EdgeProfile.from_control_points(
+            [(0.0, 0.0), (1.0, 1.0)],
+            InterpolationType.LINEAR
+        )
+        shell = ShellParams(
+            height=30.0,
+            bevel_width=5.0,
+            edge_type=EdgeType.CUSTOM,
+            edge_profile=profile
+        )
+        params = SliceParams(shell=shell)
+
+        # 在z=15（中间）获取轮廓
+        result = self.writer._get_contours_at_z([self.test_contour], 15.0, params)
+
+        assert len(result) == 1
+        # 轮廓应该内缩2.5mm
+
+    def test_stl_export_with_custom_edge(self):
+        """测试异形边STL导出"""
+        import tempfile
+        import os
+
+        profile = EdgeProfile.from_control_points(
+            [(0.0, 0.0), (0.5, 0.5), (1.0, 1.0)],
+            InterpolationType.LINEAR
+        )
+        shell_params = ShellParams(
+            height=30.0,
+            layer_height=0.3,
+            wall_thickness=1.2,
+            edge_type=EdgeType.CUSTOM,
+            bevel_width=5.0,
+            edge_profile=profile
+        )
+        params = SliceParams(shell=shell_params)
+
+        # 先切片
+        from src.core.slice_engine import SliceEngine
+        engine = SliceEngine()
+        result = engine.slice([self.test_contour], params)
+
+        # 导出STL
+        with tempfile.NamedTemporaryFile(suffix='.stl', delete=False) as f:
+            output_path = f.name
+
+        try:
+            self.writer.write(result, output_path, contours=[self.test_contour], params=params)
+            # 验证文件存在且有内容
+            assert os.path.exists(output_path)
+            assert os.path.getsize(output_path) > 0
+        finally:
+            if os.path.exists(output_path):
+                os.unlink(output_path)
+
+
+# =============================================================================
 # 运行测试
 # =============================================================================
 
