@@ -392,7 +392,7 @@ class SliceEngine:
         # 使用新的EdgeProfile方法获取偏移量
         if profile.control_points:
             # 新格式：使用control_points
-            offset = profile.get_offset_at_height(normalized_z, bevel_width)
+            offset = profile.get_offset_at_height(normalized_z, bevel_width, total_height)
         elif profile.points:
             # 旧格式兼容：使用points列表
             offset = self._interpolate_profile_legacy(profile, normalized_z)

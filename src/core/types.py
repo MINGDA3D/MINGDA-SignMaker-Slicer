@@ -279,28 +279,40 @@ class EdgeProfile:
     # 旧字段（保持兼容）
     points: List[Point] = field(default_factory=list)
 
-    def get_offset_at_height(self, normalized_z: float, bevel_width: float) -> float:
+    def get_offset_at_height(self, normalized_z: float, bevel_width: float,
+                              shell_height: float = 0.0) -> float:
         """
         获取给定高度处的偏移量
 
         Args:
             normalized_z: 归一化高度 (0.0-1.0)
-            bevel_width: 斜边宽度 (mm)
+            bevel_width: 斜边宽度 (mm)，作为最大限制或独立缩放模式的宽度
+            shell_height: 字壳高度 (mm)，用于等比例缩放模式
 
         Returns:
-            偏移量 (mm)，负值表示内缩
+            偏移量 (mm)，正值表示向外凸出
         """
         if not self.control_points:
             return 0.0
+
+        # 计算实际使用的边缘宽度
+        # 如果有原始宽高比信息，优先使用等比例缩放
+        actual_edge_width = bevel_width
+        if self.original_width > 0 and self.original_height > 0 and shell_height > 0:
+            # 使用原始宽高比计算等比例缩放的边缘宽度
+            aspect_ratio = self.original_width / self.original_height
+            proportional_width = shell_height * aspect_ratio
+            # 使用等比例计算的宽度，但不超过用户设置的bevel_width
+            actual_edge_width = min(proportional_width, bevel_width) if bevel_width > 0 else proportional_width
 
         # 按Z坐标排序控制点
         sorted_points = sorted(self.control_points, key=lambda p: p[1])
 
         # 边界情况
         if normalized_z <= sorted_points[0][1]:
-            return -sorted_points[0][0] * bevel_width
+            return sorted_points[0][0] * actual_edge_width
         if normalized_z >= sorted_points[-1][1]:
-            return -sorted_points[-1][0] * bevel_width
+            return sorted_points[-1][0] * actual_edge_width
 
         # 线性插值查找
         for i in range(len(sorted_points) - 1):
@@ -309,10 +321,10 @@ class EdgeProfile:
 
             if nz1 <= normalized_z <= nz2:
                 if nz2 == nz1:
-                    return -nx1 * bevel_width
+                    return nx1 * actual_edge_width
                 t = (normalized_z - nz1) / (nz2 - nz1)
                 nx = nx1 + t * (nx2 - nx1)
-                return -nx * bevel_width
+                return nx * actual_edge_width
 
         return 0.0
 

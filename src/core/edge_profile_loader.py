@@ -82,13 +82,26 @@ class EdgeProfileDXFLoader:
             raise ValueError(f"No SPLINE or POLYLINE found in {dxf_path}")
 
         spline = splines[0]
-        control_points = list(spline.control_points)
 
-        if not control_points:
-            raise ValueError(f"SPLINE has no control points in {dxf_path}")
+        # 使用flattening获取真实的SPLINE曲线采样点（而不是控制点）
+        # 控制点只是B样条的控制参数，曲线并不通过控制点
+        try:
+            flattened_points = list(spline.flattening(0.05))  # 0.05mm精度
+            if flattened_points:
+                # 转换为3D元组格式
+                curve_points = [(p[0], p[1], 0) for p in flattened_points]
+            else:
+                # 回退到控制点
+                curve_points = list(spline.control_points)
+        except Exception:
+            # 如果flattening失败，回退到控制点
+            curve_points = list(spline.control_points)
 
-        # 归一化控制点
-        normalized, width, height = self._normalize_points(control_points)
+        if not curve_points:
+            raise ValueError(f"SPLINE has no points in {dxf_path}")
+
+        # 归一化曲线点
+        normalized, width, height = self._normalize_points(curve_points)
 
         # 提取文件名作为名称
         name = Path(dxf_path).stem
@@ -96,7 +109,7 @@ class EdgeProfileDXFLoader:
         return EdgeProfile(
             profile_type=EdgeProfileType.DXF,
             control_points=normalized,
-            interpolation=InterpolationType.BSPLINE,
+            interpolation=InterpolationType.LINEAR,  # 已经是采样曲线，使用线性插值
             sample_points=100,
             original_width=width,
             original_height=height,
@@ -175,6 +188,7 @@ class EdgeProfileDXFLoader:
         for x, y, _ in points:
             # X轴代表水平偏移（bevel_width方向）
             # Y轴代表高度（shell_height方向）
+            # nx=0表示基线（无偏移），nx=1表示最大偏移（波浪/锯齿凸出）
             nx = (x - x_min) / width
             nz = (y - y_min) / height
             normalized.append((nx, nz))

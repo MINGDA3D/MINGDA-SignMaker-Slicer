@@ -41,7 +41,7 @@ class EdgeProfileGenerator:
 
         Args:
             profile: 边缘轮廓定义
-            bevel_width: 边缘宽度（mm）
+            bevel_width: 边缘宽度（mm）- 作为最大限制
             shell_height: 字壳高度（mm）
 
         Returns:
@@ -53,9 +53,18 @@ class EdgeProfileGenerator:
             # 无控制点时返回简单直线
             return [(0.0, 0.0), (0.0, shell_height)]
 
+        # 计算实际使用的边缘宽度（保持原始宽高比）
+        actual_edge_width = bevel_width
+        if profile.original_width > 0 and profile.original_height > 0 and shell_height > 0:
+            # 使用原始宽高比计算等比例缩放的边缘宽度
+            aspect_ratio = profile.original_width / profile.original_height
+            proportional_width = shell_height * aspect_ratio
+            # 使用等比例计算的宽度，但不超过用户设置的bevel_width
+            actual_edge_width = min(proportional_width, bevel_width) if bevel_width > 0 else proportional_width
+
         # 1. 归一化控制点到实际尺寸
         scaled_points = [
-            (nx * bevel_width, nz * shell_height)
+            (nx * actual_edge_width, nz * shell_height)
             for nx, nz in profile.control_points
         ]
 
@@ -402,7 +411,7 @@ class EdgeProfileGenerator:
         normalized_z = z / shell_height if shell_height > 0 else 0
 
         # 使用EdgeProfile的方法
-        return profile.get_offset_at_height(normalized_z, bevel_width)
+        return profile.get_offset_at_height(normalized_z, bevel_width, shell_height)
 
     def generate_preview_points(
         self,

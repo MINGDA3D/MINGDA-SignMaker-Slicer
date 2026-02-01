@@ -1507,7 +1507,7 @@ class STLWriter:
             shell: 字壳参数
 
         Returns:
-            偏移量（负值表示向内收缩）
+            偏移量（正值表示向外凸出，负值表示向内收缩）
         """
         if shell.edge_type != EdgeType.BEVELED:
             return 0
@@ -1557,7 +1557,7 @@ class STLWriter:
             shell: 字壳参数
 
         Returns:
-            偏移量（负值表示向内收缩）
+            偏移量（正值表示向外凸出，负值表示向内收缩）
         """
         if shell.edge_type != EdgeType.CUSTOM:
             return 0
@@ -1574,7 +1574,7 @@ class STLWriter:
 
         # 使用EdgeProfile的方法获取偏移量
         if profile.control_points:
-            return profile.get_offset_at_height(normalized_z, bevel_width)
+            return profile.get_offset_at_height(normalized_z, bevel_width, total_height)
 
         return 0
 
