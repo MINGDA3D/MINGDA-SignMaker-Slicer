@@ -80,6 +80,7 @@ class ParamPanel(QWidget):
         # 添加参数分组
         content_layout.addWidget(self._create_shell_group())
         content_layout.addWidget(self._create_edge_group())
+        content_layout.addWidget(self._create_bottom_face_group())  # 底面封闭
         content_layout.addWidget(self._create_color_group())
         content_layout.addWidget(self._create_step_group())
         content_layout.addWidget(self._create_skirt_group())
@@ -228,6 +229,43 @@ class ParamPanel(QWidget):
         self.custom_edge_widget.setVisible(False)
 
         return group
+
+    def _create_bottom_face_group(self) -> QGroupBox:
+        """创建底面封闭参数组"""
+        group = QGroupBox("底面封闭")
+        layout = QVBoxLayout(group)
+        layout.setSpacing(8)
+
+        # 启用开关
+        self.bottom_face_enabled = QCheckBox("启用底面封闭")
+        self.bottom_face_enabled.stateChanged.connect(self._on_param_changed)
+        layout.addWidget(self.bottom_face_enabled)
+
+        form = QFormLayout()
+        form.setSpacing(8)
+
+        # 底面厚度
+        self.bottom_face_thickness = QDoubleSpinBox()
+        self.bottom_face_thickness.setRange(0.3, 10.0)
+        self.bottom_face_thickness.setValue(1.0)
+        self.bottom_face_thickness.setSingleStep(0.1)
+        self.bottom_face_thickness.setSuffix(" mm")
+        self.bottom_face_thickness.setEnabled(False)
+        self.bottom_face_thickness.valueChanged.connect(self._on_param_changed)
+        form.addRow("底面厚度:", self.bottom_face_thickness)
+
+        layout.addLayout(form)
+
+        # 启用/禁用控件联动
+        self.bottom_face_enabled.stateChanged.connect(
+            lambda: self.bottom_face_thickness.setEnabled(self.bottom_face_enabled.isChecked())
+        )
+
+        return group
+
+    def _toggle_bottom_face_controls(self, enabled: bool):
+        """切换底面封闭控件的启用状态"""
+        self.bottom_face_thickness.setEnabled(enabled)
 
     def _create_color_group(self) -> QGroupBox:
         """创建换色层参数组"""
@@ -799,6 +837,10 @@ class ParamPanel(QWidget):
         self._params.gcode.travel_speed = self.travel_speed.value()
         self._params.gcode.first_layer_speed = self.first_layer_speed.value()
 
+        # 底面封闭参数
+        self._params.bottom_face.enabled = self.bottom_face_enabled.isChecked()
+        self._params.bottom_face.thickness = self.bottom_face_thickness.value()
+
     def get_params(self) -> SliceParams:
         """获取当前参数"""
         self._update_params()
@@ -826,7 +868,9 @@ class ParamPanel(QWidget):
             self.color_enabled, self.color1_height, self.color2_height,
             self.panel_step_enabled, self.panel_step_height, self.panel_step_width,
             self.panel_step_v_groove, self.baseplate_step_enabled,
-            self.baseplate_step_height, self.baseplate_step_width, self.baseplate_step_v_groove
+            self.baseplate_step_height, self.baseplate_step_width, self.baseplate_step_v_groove,
+            # 底面封闭控件
+            self.bottom_face_enabled, self.bottom_face_thickness
         ]
         for w in widgets:
             w.blockSignals(True)
@@ -888,6 +932,10 @@ class ParamPanel(QWidget):
         else:
             self.outline_dir_outer.setChecked(True)
 
+        # 底面封闭参数
+        self.bottom_face_enabled.setChecked(params.bottom_face.enabled)
+        self.bottom_face_thickness.setValue(params.bottom_face.thickness)
+
         # 恢复信号
         for w in widgets:
             w.blockSignals(False)
@@ -895,6 +943,7 @@ class ParamPanel(QWidget):
         # 手动更新控件的启用状态
         self._toggle_skirt_controls(params.skirt.enabled)
         self._toggle_connected_controls(params.connected.enabled)
+        self._toggle_bottom_face_controls(params.bottom_face.enabled)
 
     # ===== 异形边相关方法 =====
 

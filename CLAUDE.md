@@ -196,6 +196,7 @@ The theme is defined in `src/ui/theme.py`:
 - [ ] Grid infill for resin pouring
 - [ ] Base plate infill
 - [ ] Panel pattern/decoration support
+- [x] Bottom face (底面封闭) - 已实现
 
 ### Phase 5: UI Implementation
 - [x] Main window layout (PySide6)

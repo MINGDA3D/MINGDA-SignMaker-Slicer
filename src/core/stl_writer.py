@@ -104,6 +104,12 @@ class STLWriter:
             if connected_mesh is not None:
                 combined_mesh = trimesh.util.concatenate([combined_mesh, connected_mesh])
 
+        # 如果启用了底面封闭，添加底面网格
+        if contours and params and params.bottom_face.enabled:
+            bottom_face_mesh = self._build_bottom_face_mesh(contours, params)
+            if bottom_face_mesh is not None:
+                combined_mesh = trimesh.util.concatenate([combined_mesh, bottom_face_mesh])
+
         # 写入文件
         if binary:
             combined_mesh.export(output_path, file_type='stl')
@@ -1773,6 +1779,175 @@ class STLWriter:
         except Exception as e:
             print(f"警告：创建连接桥层失败: {e}")
             return None
+
+    def _build_bottom_face_mesh(self, contours: List[Contour],
+                                 params: SliceParams) -> Optional[trimesh.Trimesh]:
+        """
+        构建底面封闭网格
+
+        底面封闭是一个实心平面，位于字壳底部 z=0 到 z=thickness。
+        使用轮廓的内缩版本（减去壁厚）生成实心底面，填满字壳内部空间。
+
+        Args:
+            contours: 轮廓列表
+            params: 切片参数
+
+        Returns:
+            底面网格，如果生成失败则返回None
+        """
+        if not contours:
+            return None
+
+        bottom_face = params.bottom_face
+        if not bottom_face.enabled or bottom_face.thickness <= 0:
+            return None
+
+        meshes = []
+        thickness = bottom_face.thickness
+
+        # 计算内缩距离（所有壁的总宽度）
+        wall_thickness = params.shell.wall_thickness
+        wall_count = params.shell.wall_count
+        inset_distance = wall_thickness * wall_count
+
+        for contour in contours:
+            try:
+                # 获取底部轮廓（考虑斜边等边缘类型）
+                bottom_contour = self._get_bottom_contour(contour, params)
+                if not bottom_contour:
+                    continue
+
+                # 内缩外轮廓
+                inset_outer = self.path_offset.offset(bottom_contour.outer, -inset_distance)
+                if not inset_outer:
+                    continue
+
+                for outer_path in inset_outer:
+                    outer_coords = [(p.x, p.y) for p in outer_path.points]
+                    if len(outer_coords) < 3:
+                        continue
+
+                    # 内缩内孔
+                    hole_coords_list = []
+                    for hole in bottom_contour.holes:
+                        # 内孔需要向外扩展（正偏移）以保持正确的孔形状
+                        inset_holes = self.path_offset.offset(hole, inset_distance)
+                        for inset_hole in inset_holes:
+                            hole_coords = [(p.x, p.y) for p in inset_hole.points]
+                            if len(hole_coords) >= 3:
+                                hole_coords_list.append(hole_coords)
+
+                    # 创建Shapely多边形
+                    try:
+                        if hole_coords_list:
+                            polygon = ShapelyPolygon(outer_coords, hole_coords_list)
+                        else:
+                            polygon = ShapelyPolygon(outer_coords)
+
+                        # 验证多边形
+                        if not polygon.is_valid:
+                            polygon = make_valid(polygon)
+
+                        if polygon.is_empty or polygon.area < 1e-6:
+                            continue
+
+                        # 处理MultiPolygon情况
+                        if polygon.geom_type == 'MultiPolygon':
+                            for geom in polygon.geoms:
+                                if geom.area >= 1e-6:
+                                    mesh = self._extrude_polygon(geom, thickness, z_offset=0)
+                                    if mesh is not None:
+                                        meshes.append(mesh)
+                        else:
+                            mesh = self._extrude_polygon(polygon, thickness, z_offset=0)
+                            if mesh is not None:
+                                meshes.append(mesh)
+
+                    except Exception as e:
+                        print(f"警告：创建底面多边形失败: {e}")
+                        continue
+
+            except Exception as e:
+                print(f"警告：处理轮廓底面失败: {e}")
+                continue
+
+        if not meshes:
+            return None
+
+        if len(meshes) == 1:
+            return meshes[0]
+        else:
+            return trimesh.util.concatenate(meshes)
+
+    def _get_bottom_contour(self, contour: Contour,
+                            params: SliceParams) -> Optional[Contour]:
+        """
+        获取底部轮廓
+
+        对于斜边和异形边，底部轮廓可能与原始轮廓不同。
+
+        Args:
+            contour: 原始轮廓
+            params: 切片参数
+
+        Returns:
+            底部轮廓
+        """
+        edge_type = params.shell.edge_type
+
+        if edge_type == EdgeType.STRAIGHT:
+            # 直边：直接使用原始轮廓
+            return contour
+
+        elif edge_type == EdgeType.BEVELED:
+            # 斜边：根据方向确定底部轮廓
+            bevel_direction = params.shell.bevel_direction
+            bevel_width = params.shell.bevel_width
+
+            if bevel_direction == BevelDirection.TOP_SMALL:
+                # 上小下大：底部是最大的，不需要偏移
+                return contour
+            else:
+                # 上大下小：底部是最小的，需要内缩
+                offset_outer = self.path_offset.offset(contour.outer, -bevel_width)
+                if not offset_outer:
+                    return None
+
+                offset_holes = []
+                for hole in contour.holes:
+                    offset_hole = self.path_offset.offset(hole, -bevel_width)
+                    offset_holes.extend(offset_hole)
+
+                return Contour(
+                    outer=offset_outer[0],
+                    holes=offset_holes,
+                    name=contour.name
+                )
+
+        elif edge_type == EdgeType.CUSTOM:
+            # 异形边：根据轮廓在z=0处的偏移量
+            profile = params.shell.edge_profile
+            if profile and profile.control_points:
+                offset = profile.get_offset_at_height(0, params.shell.bevel_width,
+                                                       params.shell.height)
+                if abs(offset) > 0.001:
+                    offset_outer = self.path_offset.offset(contour.outer, offset)
+                    if not offset_outer:
+                        return None
+
+                    offset_holes = []
+                    for hole in contour.holes:
+                        offset_hole = self.path_offset.offset(hole, offset)
+                        offset_holes.extend(offset_hole)
+
+                    return Contour(
+                        outer=offset_outer[0],
+                        holes=offset_holes,
+                        name=contour.name
+                    )
+            return contour
+
+        return contour
 
 
 def write_stl(result: SliceResult, output_path: str,

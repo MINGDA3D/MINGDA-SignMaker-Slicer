@@ -19,7 +19,7 @@ from dataclasses import dataclass, field
 from .types import (
     Point, Path, Contour, Layer, LayerPath, LayerInfo,
     PathType, PathRole, EdgeType, ExtruderType, BevelDirection,
-    SliceParams, ShellParams, StepConfig,
+    SliceParams, ShellParams, StepConfig, BottomFaceParams,
     SliceResult, EdgeProfile, InterpolationType
 )
 from .path_offset import PathOffset, JoinType
@@ -92,6 +92,7 @@ class SliceEngine:
         - 台阶位置
         - 防翘裙边位置
         - 包边/勾边位置
+        - 底面封闭位置
         """
         layer_height = params.shell.layer_height
         total_height = params.shell.height
@@ -102,6 +103,11 @@ class SliceEngine:
 
         # 构建台阶层映射
         step_layer_map = self._build_step_layer_map(params, layer_height)
+
+        # 底面层数（根据厚度自动计算）
+        bottom_face_layer_count = 0
+        if params.bottom_face.enabled:
+            bottom_face_layer_count = max(1, int(params.bottom_face.thickness / layer_height + 0.5))
 
         layer_infos = []
         for i in range(layer_count):
@@ -123,6 +129,9 @@ class SliceEngine:
             has_edge_wrap = is_last and (params.edge_wrap.wrap_enabled or
                                           params.edge_wrap.outline_enabled)
 
+            # 检查是否底面层
+            has_bottom_face = (i < bottom_face_layer_count) and params.bottom_face.enabled
+
             info = LayerInfo(
                 z_height=z,
                 layer_height=layer_height,
@@ -131,7 +140,8 @@ class SliceEngine:
                 is_step_layer=is_step,
                 step_config=step_config,
                 has_skirt=has_skirt,
-                has_edge_wrap=has_edge_wrap
+                has_edge_wrap=has_edge_wrap,
+                has_bottom_face=has_bottom_face
             )
             layer_infos.append(info)
 
@@ -180,10 +190,11 @@ class SliceEngine:
         处理顺序：
         1. 应用边缘轮廓（斜边收缩）
         2. 生成壁路径
-        3. 生成自定义台阶（如需要）
-        4. 生成面板台阶（顶部台阶）
-        5. 生成底板台阶（底部台阶）
-        6. 生成防翘裙边（如需要）
+        3. 生成底面填充（如需要）
+        4. 生成自定义台阶（如需要）
+        5. 生成面板台阶（顶部台阶）
+        6. 生成底板台阶（底部台阶）
+        7. 生成防翘裙边（如需要）
         """
         layer = Layer(
             z_height=info.z_height,
@@ -205,7 +216,14 @@ class SliceEngine:
             )
             layer.paths.extend(wall_paths)
 
-            # 3. 生成自定义台阶（如需要）
+            # 3. 生成底面填充（如需要）
+            if info.has_bottom_face:
+                bottom_face_paths = self._generate_bottom_face_paths(
+                    modified_contour, info, params
+                )
+                layer.paths.extend(bottom_face_paths)
+
+            # 4. 生成自定义台阶（如需要）
             if info.is_step_layer and info.step_config:
                 step_paths = self.step_generator.generate_step_for_layer(
                     modified_contour,
@@ -218,7 +236,7 @@ class SliceEngine:
                 )
                 layer.paths.extend(step_paths)
 
-            # 4. 生成面板台阶（顶部台阶）
+            # 5. 生成面板台阶（顶部台阶）
             if params.step.panel_step_enabled:
                 panel_step_paths = self.step_generator.generate_panel_step_for_layer(
                     modified_contour,
@@ -231,7 +249,7 @@ class SliceEngine:
                 )
                 layer.paths.extend(panel_step_paths)
 
-            # 5. 生成底板台阶（底部台阶）
+            # 6. 生成底板台阶（底部台阶）
             if params.step.baseplate_step_enabled:
                 baseplate_step_paths = self.step_generator.generate_baseplate_step_for_layer(
                     modified_contour,
@@ -243,7 +261,7 @@ class SliceEngine:
                 )
                 layer.paths.extend(baseplate_step_paths)
 
-            # 6. 生成防翘裙边（仅首层）
+            # 7. 生成防翘裙边（仅首层）
             if info.has_skirt:
                 skirt_paths = self._generate_skirt_paths(
                     modified_contour, params
@@ -543,6 +561,309 @@ class SliceEngine:
             paths.append(layer_path)
 
         return paths
+
+    def _generate_bottom_face_paths(self, contour: Contour,
+                                     info: LayerInfo,
+                                     params: SliceParams) -> List[LayerPath]:
+        """
+        生成底面填充路径
+
+        底面填充用于封闭字壳底部，生成密实填充层。
+        使用固定的填充参数：100%密度、45度角、交替方向。
+
+        Args:
+            contour: 当前层的轮廓
+            info: 层信息
+            params: 切片参数
+
+        Returns:
+            底面填充路径列表
+        """
+        paths = []
+        bottom_params = params.bottom_face
+
+        if not bottom_params.enabled:
+            return paths
+
+        # 固定填充参数
+        fill_line_width = params.shell.wall_thickness  # 使用壁厚作为填充线宽
+        fill_spacing = fill_line_width  # 100%密度：间距等于线宽
+
+        # 计算填充区域（内缩壁厚）
+        wall_thickness = params.shell.wall_thickness
+        wall_count = params.shell.wall_count
+        inset_distance = wall_thickness * wall_count
+
+        # 计算填充角度（每层交替90度）
+        layer_index = int(info.z_height / info.layer_height)
+        fill_angle = 45.0 + (layer_index * 90.0)
+
+        # 内缩轮廓
+        inset_contour = self.path_offset.offset_contour(contour, -inset_distance)
+        if not inset_contour:
+            return paths
+
+        # 生成填充线
+        fill_paths = self._generate_line_fill(
+            inset_contour,
+            fill_spacing,
+            fill_angle,
+            fill_line_width,
+            info.extruder
+        )
+
+        # 设置路径角色
+        for path in fill_paths:
+            path.role = PathRole.FILL_BOTTOM_FACE
+
+        paths.extend(fill_paths)
+
+        return paths
+
+    def _generate_line_fill(self, contour: Contour, spacing: float,
+                            angle: float, line_width: float,
+                            extruder: ExtruderType) -> List[LayerPath]:
+        """
+        生成线性填充
+
+        算法：
+        1. 获取边界框
+        2. 生成旋转后的扫描线
+        3. 与轮廓求交
+        4. 连接相邻线段（减少空走）
+
+        Args:
+            contour: 填充区域轮廓
+            spacing: 填充间距
+            angle: 填充角度（度）
+            line_width: 填充线宽
+            extruder: 挤出机类型
+
+        Returns:
+            填充路径列表
+        """
+        if spacing <= 0:
+            return []
+
+        # 获取边界框
+        min_x, min_y, max_x, max_y = contour.outer.bounds
+
+        # 扩展边界（确保覆盖旋转后的区域）
+        diagonal = math.sqrt((max_x - min_x) ** 2 + (max_y - min_y) ** 2)
+        center_x = (min_x + max_x) / 2
+        center_y = (min_y + max_y) / 2
+
+        # 旋转角度（弧度）
+        rad = math.radians(angle)
+        cos_a = math.cos(rad)
+        sin_a = math.sin(rad)
+
+        # 生成扫描线
+        scan_lines = []
+        y = center_y - diagonal / 2
+        while y < center_y + diagonal / 2:
+            # 旋转后的扫描线端点
+            x1 = center_x - diagonal
+            x2 = center_x + diagonal
+
+            # 旋转回原坐标系
+            start = Point(
+                center_x + (x1 - center_x) * cos_a - (y - center_y) * sin_a,
+                center_y + (x1 - center_x) * sin_a + (y - center_y) * cos_a
+            )
+            end = Point(
+                center_x + (x2 - center_x) * cos_a - (y - center_y) * sin_a,
+                center_y + (x2 - center_x) * sin_a + (y - center_y) * cos_a
+            )
+
+            scan_lines.append((start, end))
+            y += spacing
+
+        # 与轮廓求交
+        clipped_segments = self._clip_lines_to_contour(scan_lines, contour)
+
+        # 连接相邻线段
+        connected_paths = self._connect_fill_segments(clipped_segments)
+
+        # 创建LayerPath对象
+        paths = []
+        for segment_points in connected_paths:
+            if len(segment_points) >= 2:
+                path = LayerPath(
+                    points=segment_points,
+                    role=PathRole.FILL_BOTTOM_FACE,
+                    extruder=extruder,
+                    line_width=line_width,
+                    is_closed=False
+                )
+                paths.append(path)
+
+        return paths
+
+    def _clip_lines_to_contour(self, lines: List[tuple],
+                                contour: Contour) -> List[tuple]:
+        """
+        裁剪线段到轮廓内部
+
+        使用线段-多边形求交算法
+
+        Args:
+            lines: 扫描线列表 [(start, end), ...]
+            contour: 轮廓
+
+        Returns:
+            裁剪后的线段列表
+        """
+        clipped = []
+
+        for start, end in lines:
+            # 与外轮廓求交
+            intersections = self._line_polygon_intersections(
+                start, end, contour.outer
+            )
+
+            # 配对交点形成线段
+            if len(intersections) >= 2:
+                intersections.sort(
+                    key=lambda p: (p.x - start.x) ** 2 + (p.y - start.y) ** 2
+                )
+                for i in range(0, len(intersections) - 1, 2):
+                    seg_start = intersections[i]
+                    seg_end = intersections[i + 1]
+
+                    # 检查是否需要排除内孔区域
+                    if contour.holes:
+                        # 简化处理：如果线段中点在任意内孔内，则跳过
+                        mid_x = (seg_start.x + seg_end.x) / 2
+                        mid_y = (seg_start.y + seg_end.y) / 2
+                        in_hole = False
+                        for hole in contour.holes:
+                            if self._point_in_polygon(Point(mid_x, mid_y), hole):
+                                in_hole = True
+                                break
+                        if not in_hole:
+                            clipped.append((seg_start, seg_end))
+                    else:
+                        clipped.append((seg_start, seg_end))
+
+        return clipped
+
+    def _line_polygon_intersections(self, start: Point, end: Point,
+                                    polygon) -> List[Point]:
+        """计算线段与多边形的所有交点"""
+        intersections = []
+        n = len(polygon.points)
+
+        for i in range(n):
+            j = (i + 1) % n
+            p1 = polygon.points[i]
+            p2 = polygon.points[j]
+
+            intersection = self._line_line_intersection(start, end, p1, p2)
+            if intersection:
+                intersections.append(intersection)
+
+        return intersections
+
+    def _line_line_intersection(self, p1: Point, p2: Point,
+                                p3: Point, p4: Point):
+        """
+        计算两线段的交点
+
+        使用参数方程法
+        """
+        x1, y1 = p1.x, p1.y
+        x2, y2 = p2.x, p2.y
+        x3, y3 = p3.x, p3.y
+        x4, y4 = p4.x, p4.y
+
+        denom = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4)
+        if abs(denom) < 1e-10:
+            return None
+
+        t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / denom
+        u = -((x1 - x2) * (y1 - y3) - (y1 - y2) * (x1 - x3)) / denom
+
+        if 0 <= t <= 1 and 0 <= u <= 1:
+            x = x1 + t * (x2 - x1)
+            y = y1 + t * (y2 - y1)
+            return Point(x, y)
+
+        return None
+
+    def _point_in_polygon(self, point: Point, polygon) -> bool:
+        """
+        判断点是否在多边形内
+
+        使用射线法（Ray Casting）
+        """
+        n = len(polygon.points)
+        inside = False
+
+        p1x, p1y = polygon.points[0].x, polygon.points[0].y
+        for i in range(1, n + 1):
+            p2x, p2y = polygon.points[i % n].x, polygon.points[i % n].y
+            if point.y > min(p1y, p2y):
+                if point.y <= max(p1y, p2y):
+                    if point.x <= max(p1x, p2x):
+                        if p1y != p2y:
+                            xinters = (point.y - p1y) * (p2x - p1x) / (p2y - p1y) + p1x
+                        if p1x == p2x or point.x <= xinters:
+                            inside = not inside
+            p1x, p1y = p2x, p2y
+
+        return inside
+
+    def _connect_fill_segments(self, segments: List[tuple]) -> List[List[Point]]:
+        """
+        连接相邻线段减少空走
+
+        使用贪心算法：按Y坐标排序，交替方向连接
+
+        Args:
+            segments: 线段列表 [(start, end), ...]
+
+        Returns:
+            连接后的路径点列表
+        """
+        if not segments:
+            return []
+
+        # 按起点Y坐标排序
+        sorted_segments = sorted(segments, key=lambda s: s[0].y)
+
+        connected = []
+        current_path = []
+        reverse_next = False
+
+        for seg in sorted_segments:
+            start, end = seg
+            if reverse_next:
+                start, end = end, start
+
+            if current_path:
+                # 检查���否可以连接
+                last_point = current_path[-1]
+                distance = math.sqrt(
+                    (start.x - last_point.x) ** 2 +
+                    (start.y - last_point.y) ** 2
+                )
+
+                if distance > 5:  # 超过阈值，开始新路径
+                    if len(current_path) >= 2:
+                        connected.append(current_path)
+                    current_path = [start, end]
+                else:
+                    current_path.extend([start, end])
+            else:
+                current_path = [start, end]
+
+            reverse_next = not reverse_next
+
+        if len(current_path) >= 2:
+            connected.append(current_path)
+
+        return connected
 
     def _generate_safety_lines(self, contours: List[Contour],
                                 params: SliceParams) -> List[Layer]:

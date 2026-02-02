@@ -178,6 +178,7 @@ class GCodeWriter:
             PathRole.FILL_PANEL: 1.2,
             PathRole.FILL_GRID: 1.2,
             PathRole.FILL_BASEPLATE: 1.0,
+            PathRole.FILL_BOTTOM_FACE: 0.8,  # 底面填充速度稍慢以确保粘附
             PathRole.EDGE_WRAP: 0.6,
             PathRole.OUTLINE: 0.5,
             PathRole.CONNECTED: 0.8,

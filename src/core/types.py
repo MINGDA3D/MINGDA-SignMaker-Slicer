@@ -37,6 +37,7 @@ class PathRole(Enum):
     FILL_PANEL = auto()     # 面板填充
     FILL_GRID = auto()      # 网格填充
     FILL_BASEPLATE = auto() # 底板填充
+    FILL_BOTTOM_FACE = auto()  # 底面封闭填充
     EDGE_WRAP = auto()      # 包边
     OUTLINE = auto()        # 勾边
     CONNECTED = auto()      # 连襟
@@ -444,6 +445,7 @@ class LayerInfo:
     step_config: Optional[StepConfig] = None  # 台阶配置
     has_skirt: bool = False      # 是否有防翘裙边
     has_edge_wrap: bool = False  # 是否有包边/勾边
+    has_bottom_face: bool = False  # 是否有底面填充
 
 
 # =============================================================================
@@ -671,6 +673,17 @@ class GridParams:
 
 
 @dataclass
+class BottomFaceParams:
+    """底面封闭参数
+
+    底面封闭用于在字壳底部生成密实填充层，封闭字壳底部。
+    只需设置底面厚度，其他参数自动计算。
+    """
+    enabled: bool = False               # 是否启用底面封闭
+    thickness: float = 1.0              # 底面厚度 (mm)，层数自动根据层高计算
+
+
+@dataclass
 class LayoutParams:
     """排版设置参数"""
     auto_arrange: bool = True
@@ -750,6 +763,7 @@ class SliceParams:
     panel: PanelParams = field(default_factory=PanelParams)
     baseplate: BaseplateParams = field(default_factory=BaseplateParams)
     grid: GridParams = field(default_factory=GridParams)
+    bottom_face: BottomFaceParams = field(default_factory=BottomFaceParams)  # 底面封闭
     layout: LayoutParams = field(default_factory=LayoutParams)
     speed: SpeedParams = field(default_factory=SpeedParams)
     gcode: GCodeParams = field(default_factory=GCodeParams)
