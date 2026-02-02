@@ -45,6 +45,7 @@ class PresetInfo:
     category: ProfileCategory  # 分类
     source_file: str        # DXF源文件（相对路径）
     default_width: float    # 默认宽度 (mm)
+    preview_image: str = "" # 预览图路径（相对路径）
     interpolation: InterpolationType = InterpolationType.BSPLINE
     # 预加载的控制点（归一化）
     control_points: List[Tuple[float, float]] = field(default_factory=list)
@@ -60,6 +61,7 @@ PRESET_DEFINITIONS: Dict[str, PresetInfo] = {
         category=ProfileCategory.ZIGZAG,
         source_file="docs/真材INC-26/special_shape/异型边1.dxf",
         default_width=1.1,
+        preview_image="docs/真材INC-26/special_shape/异型边1.jpg",
     ),
     "zigzag_3": PresetInfo(
         name="zigzag_3",
@@ -68,6 +70,7 @@ PRESET_DEFINITIONS: Dict[str, PresetInfo] = {
         category=ProfileCategory.ZIGZAG,
         source_file="docs/真材INC-26/special_shape/异型边3.dxf",
         default_width=1.5,
+        preview_image="docs/真材INC-26/special_shape/异型边3.jpg",
     ),
     "zigzag_2": PresetInfo(
         name="zigzag_2",
@@ -76,6 +79,7 @@ PRESET_DEFINITIONS: Dict[str, PresetInfo] = {
         category=ProfileCategory.ZIGZAG,
         source_file="docs/真材INC-26/special_shape/异型边4.dxf",
         default_width=1.1,
+        preview_image="docs/真材INC-26/special_shape/异型边4.jpg",
     ),
     "zigzag_5": PresetInfo(
         name="zigzag_5",
@@ -84,6 +88,7 @@ PRESET_DEFINITIONS: Dict[str, PresetInfo] = {
         category=ProfileCategory.ZIGZAG,
         source_file="docs/真材INC-26/special_shape/异型边5.dxf",
         default_width=1.1,
+        preview_image="docs/真材INC-26/special_shape/异型边5.jpg",
     ),
 
     # === 波浪类 ===
@@ -94,6 +99,7 @@ PRESET_DEFINITIONS: Dict[str, PresetInfo] = {
         category=ProfileCategory.WAVE,
         source_file="docs/真材INC-26/special_shape/异型边2.dxf",
         default_width=2.1,
+        preview_image="docs/真材INC-26/special_shape/异型边2.jpg",
     ),
     "wave_3b": PresetInfo(
         name="wave_3b",
@@ -102,6 +108,7 @@ PRESET_DEFINITIONS: Dict[str, PresetInfo] = {
         category=ProfileCategory.WAVE,
         source_file="docs/真材INC-26/special_shape/异型边6.dxf",
         default_width=2.1,
+        preview_image="docs/真材INC-26/special_shape/异型边6.jpg",
     ),
     "wave_2": PresetInfo(
         name="wave_2",
@@ -110,6 +117,7 @@ PRESET_DEFINITIONS: Dict[str, PresetInfo] = {
         category=ProfileCategory.WAVE,
         source_file="docs/真材INC-26/special_shape/异型边7.dxf",
         default_width=1.6,
+        preview_image="docs/真材INC-26/special_shape/异型边7.jpg",
     ),
 
     # === 圆弧类 ===
@@ -120,6 +128,7 @@ PRESET_DEFINITIONS: Dict[str, PresetInfo] = {
         category=ProfileCategory.ARC,
         source_file="docs/真材INC-26/special_shape/异型边8.dxf",
         default_width=1.6,
+        preview_image="docs/真材INC-26/special_shape/异型边8.jpg",
     ),
     "arc_large": PresetInfo(
         name="arc_large",
@@ -128,6 +137,7 @@ PRESET_DEFINITIONS: Dict[str, PresetInfo] = {
         category=ProfileCategory.ARC,
         source_file="docs/真材INC-26/special_shape/异型边9.dxf",
         default_width=3.0,
+        preview_image="docs/真材INC-26/special_shape/异型边9.jpg",
     ),
     "arc_platform": PresetInfo(
         name="arc_platform",
@@ -136,6 +146,7 @@ PRESET_DEFINITIONS: Dict[str, PresetInfo] = {
         category=ProfileCategory.ARC,
         source_file="docs/真材INC-26/special_shape/异型边10.dxf",
         default_width=4.0,
+        preview_image="docs/真材INC-26/special_shape/异型边10.jpg",
     ),
     "arc_platform_b": PresetInfo(
         name="arc_platform_b",
@@ -144,6 +155,7 @@ PRESET_DEFINITIONS: Dict[str, PresetInfo] = {
         category=ProfileCategory.ARC,
         source_file="docs/真材INC-26/special_shape/异型边11.dxf",
         default_width=4.3,
+        preview_image="docs/真材INC-26/special_shape/异型边11.jpg",
     ),
 
     # === 台阶类 ===
@@ -154,6 +166,7 @@ PRESET_DEFINITIONS: Dict[str, PresetInfo] = {
         category=ProfileCategory.STEP,
         source_file="docs/真材INC-26/special_shape/异型边12.dxf",
         default_width=0.6,
+        preview_image="docs/真材INC-26/special_shape/异型边12.jpg",
     ),
     "step_double": PresetInfo(
         name="step_double",
@@ -162,6 +175,7 @@ PRESET_DEFINITIONS: Dict[str, PresetInfo] = {
         category=ProfileCategory.STEP,
         source_file="docs/真材INC-26/special_shape/异型边13.dxf",
         default_width=0.5,
+        preview_image="docs/真材INC-26/special_shape/异型边13.jpg",
     ),
 
     # === 组合类 ===
@@ -172,6 +186,7 @@ PRESET_DEFINITIONS: Dict[str, PresetInfo] = {
         category=ProfileCategory.MIXED,
         source_file="docs/真材INC-26/special_shape/异型边14.dxf",
         default_width=2.2,
+        preview_image="docs/真材INC-26/special_shape/异型边14.jpg",
     ),
     "mixed_complex": PresetInfo(
         name="mixed_complex",
@@ -180,6 +195,7 @@ PRESET_DEFINITIONS: Dict[str, PresetInfo] = {
         category=ProfileCategory.MIXED,
         source_file="docs/真材INC-26/special_shape/异型边15.dxf",
         default_width=2.4,
+        preview_image="docs/真材INC-26/special_shape/ASDFF15.jpg",
     ),
 
     # === 斜边类 ===
@@ -190,6 +206,7 @@ PRESET_DEFINITIONS: Dict[str, PresetInfo] = {
         category=ProfileCategory.BEVEL,
         source_file="",  # 无需DXF，直接生成
         default_width=5.0,
+        preview_image="",  # 无预览图，使用动态生成
         interpolation=InterpolationType.LINEAR,
         control_points=[(0.0, 0.0), (1.0, 1.0)],
     ),
@@ -200,6 +217,7 @@ PRESET_DEFINITIONS: Dict[str, PresetInfo] = {
         category=ProfileCategory.BEVEL,
         source_file="docs/真材INC-26/special_shape/边1.dxf",
         default_width=6.0,
+        preview_image="docs/真材INC-26/special_shape/边1.jpg",
     ),
     "bevel_steep": PresetInfo(
         name="bevel_steep",
@@ -208,6 +226,7 @@ PRESET_DEFINITIONS: Dict[str, PresetInfo] = {
         category=ProfileCategory.BEVEL,
         source_file="docs/真材INC-26/special_shape/ABCD.dxf",
         default_width=19.0,
+        preview_image="docs/真材INC-26/special_shape/ABCD.jpg",
     ),
 }
 
@@ -264,6 +283,11 @@ class EdgePresetManager:
         """
         result = []
         for name, info in PRESET_DEFINITIONS.items():
+            # 构建预览图完整路径
+            preview_path = ""
+            if info.preview_image:
+                preview_path = os.path.join(self.base_path, info.preview_image)
+
             result.append({
                 "name": name,
                 "display_name": info.display_name,
@@ -271,6 +295,7 @@ class EdgePresetManager:
                 "category_name": self._get_category_name(info.category),
                 "description": info.description,
                 "default_width": info.default_width,
+                "preview_image": preview_path,
             })
         return result
 

@@ -24,6 +24,7 @@ from src.core.types import (
     ConnectedParams, EdgeProfile
 )
 from src.core.edge_presets import EdgePresetManager, ProfileCategory
+from src.ui.widgets.edge_preset_selector import EdgePresetSelector
 from .theme import COLORS, LAYOUT
 
 
@@ -192,26 +193,36 @@ class ParamPanel(QWidget):
 
         # ===== 异形边参数容器 =====
         self.custom_edge_widget = QWidget()
-        custom_layout = QFormLayout(self.custom_edge_widget)
+        custom_layout = QVBoxLayout(self.custom_edge_widget)
         custom_layout.setContentsMargins(0, 8, 0, 0)
         custom_layout.setSpacing(8)
 
-        # 预设模板选择
-        self.preset_combo = QComboBox()
-        self._populate_preset_combo()
-        self.preset_combo.currentIndexChanged.connect(self._on_preset_changed)
-        custom_layout.addRow("预设模板:", self.preset_combo)
+        # 预设模板标签
+        preset_label = QLabel("预设模板:")
+        preset_label.setStyleSheet("color: #8B949E; font-size: 12px;")
+        custom_layout.addWidget(preset_label)
+
+        # 预设图片选择器
+        self.preset_selector = EdgePresetSelector()
+        self.preset_selector.setMinimumHeight(200)
+        self.preset_selector.preset_selected.connect(self._on_preset_changed)
+        custom_layout.addWidget(self.preset_selector)
 
         # 导入DXF按钮
+        btn_layout = QHBoxLayout()
         self.import_dxf_btn = QPushButton("导入DXF...")
         self.import_dxf_btn.setToolTip("从DXF文件导入自定义异形边轮廓")
         self.import_dxf_btn.clicked.connect(self._on_import_dxf)
-        custom_layout.addRow("", self.import_dxf_btn)
+        btn_layout.addWidget(self.import_dxf_btn)
+        btn_layout.addStretch()
+        custom_layout.addLayout(btn_layout)
 
         # 当前轮廓信息
+        info_layout = QFormLayout()
         self.profile_info_label = QLabel("未选择轮廓")
         self.profile_info_label.setStyleSheet("color: #888;")
-        custom_layout.addRow("当前轮廓:", self.profile_info_label)
+        info_layout.addRow("当前轮廓:", self.profile_info_label)
+        custom_layout.addLayout(info_layout)
 
         layout.addWidget(self.custom_edge_widget)
         self.custom_edge_widget.setVisible(False)
@@ -678,7 +689,9 @@ class ParamPanel(QWidget):
 
         # 如果切换到异形边且没有选择预设，自动加载默认预设
         if edge_type == EdgeType.CUSTOM and self._current_profile is None:
-            self._on_preset_changed(self.preset_combo.currentIndex())
+            preset_name = self.preset_selector.get_selected_preset()
+            if preset_name:
+                self._on_preset_changed(preset_name)
 
         self._on_param_changed()
 
@@ -885,38 +898,9 @@ class ParamPanel(QWidget):
 
     # ===== 异形边相关方法 =====
 
-    def _populate_preset_combo(self):
-        """填充预设下拉框"""
-        self.preset_combo.clear()
-
-        # 按分类添加预设
-        for category in ProfileCategory:
-            presets = self._preset_manager.get_presets_by_category(category)
-            if presets:
-                # 添加分类标题（禁用项）
-                category_name = self._preset_manager._get_category_name(category)
-                self.preset_combo.addItem(f"── {category_name} ──", None)
-                # 禁用分类标题
-                index = self.preset_combo.count() - 1
-                self.preset_combo.model().item(index).setEnabled(False)
-
-                # 添加该分类下的预设
-                for preset in presets:
-                    self.preset_combo.addItem(
-                        f"  {preset['display_name']}",
-                        preset['name']
-                    )
-
-        # 默认选中第一个可用项
-        for i in range(self.preset_combo.count()):
-            if self.preset_combo.itemData(i) is not None:
-                self.preset_combo.setCurrentIndex(i)
-                break
-
-    def _on_preset_changed(self, index: int):
+    def _on_preset_changed(self, preset_name: str):
         """预设选择变更"""
-        preset_name = self.preset_combo.itemData(index)
-        if preset_name is None:
+        if not preset_name:
             return
 
         # 加载预设（使用模板原始宽度）
@@ -948,11 +932,6 @@ class ParamPanel(QWidget):
 
             self._current_profile = profile
             self._update_profile_info()
-
-            # 在下拉框中添加自定义项
-            self.preset_combo.addItem(f"  自定义: {profile.name}", "__custom__")
-            self.preset_combo.setCurrentIndex(self.preset_combo.count() - 1)
-
             self._on_param_changed()
 
             QMessageBox.information(
