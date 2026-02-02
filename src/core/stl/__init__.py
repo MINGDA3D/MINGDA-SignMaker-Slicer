@@ -9,6 +9,7 @@ STL生成子模块
 - skirt_mesh: 裙边网格生成器
 - connected_mesh: 连襟网格生成器
 - bottom_face_mesh: 底面封闭网格生成器
+- top_face_mesh: 顶面封闭网格生成器
 """
 
 from .mesh_utils import MeshUtils
@@ -18,6 +19,7 @@ from .step_mesh import StepMeshBuilder
 from .skirt_mesh import SkirtMeshBuilder
 from .connected_mesh import ConnectedMeshBuilder
 from .bottom_face_mesh import BottomFaceMeshBuilder
+from .top_face_mesh import TopFaceMeshBuilder
 
 __all__ = [
     'MeshUtils',
@@ -27,4 +29,5 @@ __all__ = [
     'SkirtMeshBuilder',
     'ConnectedMeshBuilder',
     'BottomFaceMeshBuilder',
+    'TopFaceMeshBuilder',
 ]

@@ -24,6 +24,7 @@ STL生成算法（空心字壳）：
 - skirt_mesh: 裙边网格
 - connected_mesh: 连襟网格
 - bottom_face_mesh: 底面封闭网格
+- top_face_mesh: 顶面封闭网格
 """
 
 from __future__ import annotations
@@ -40,7 +41,8 @@ from .stl import (
     StepMeshBuilder,
     SkirtMeshBuilder,
     ConnectedMeshBuilder,
-    BottomFaceMeshBuilder
+    BottomFaceMeshBuilder,
+    TopFaceMeshBuilder
 )
 
 
@@ -64,6 +66,7 @@ class STLWriter:
         self.skirt_builder = SkirtMeshBuilder(self.path_offset)
         self.connected_builder = ConnectedMeshBuilder(self.path_offset)
         self.bottom_face_builder = BottomFaceMeshBuilder(self.path_offset)
+        self.top_face_builder = TopFaceMeshBuilder(self.path_offset)
 
     def write(self, result: SliceResult, output_path: str,
               binary: bool = True, contours: Optional[List[Contour]] = None,
@@ -125,6 +128,12 @@ class STLWriter:
                 bottom_face_mesh = self.bottom_face_builder.build(contours, params)
                 if bottom_face_mesh is not None:
                     meshes.append(bottom_face_mesh)
+
+            # 8. 构建顶面封闭网格
+            if params.top_face.enabled:
+                top_face_mesh = self.top_face_builder.build(contours, params)
+                if top_face_mesh is not None:
+                    meshes.append(top_face_mesh)
 
         # 合并所有网格
         combined_mesh = MeshUtils.merge_meshes(meshes)

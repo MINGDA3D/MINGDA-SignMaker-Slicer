@@ -109,6 +109,11 @@ class SliceEngine:
         if params.bottom_face.enabled:
             bottom_face_layer_count = max(1, int(params.bottom_face.thickness / layer_height + 0.5))
 
+        # 顶面层数（根据厚度自动计算）
+        top_face_layer_count = 0
+        if params.top_face.enabled:
+            top_face_layer_count = max(1, int(params.top_face.thickness / layer_height + 0.5))
+
         layer_infos = []
         for i in range(layer_count):
             z = i * layer_height
@@ -132,6 +137,9 @@ class SliceEngine:
             # 检查是否底面层
             has_bottom_face = (i < bottom_face_layer_count) and params.bottom_face.enabled
 
+            # 检查是否顶面层
+            has_top_face = (i >= layer_count - top_face_layer_count) and params.top_face.enabled
+
             info = LayerInfo(
                 z_height=z,
                 layer_height=layer_height,
@@ -141,7 +149,8 @@ class SliceEngine:
                 step_config=step_config,
                 has_skirt=has_skirt,
                 has_edge_wrap=has_edge_wrap,
-                has_bottom_face=has_bottom_face
+                has_bottom_face=has_bottom_face,
+                has_top_face=has_top_face
             )
             layer_infos.append(info)
 
@@ -222,6 +231,13 @@ class SliceEngine:
                     modified_contour, info, params
                 )
                 layer.paths.extend(bottom_face_paths)
+
+            # 3.5. 生成顶面填充（如需要）
+            if info.has_top_face:
+                top_face_paths = self._generate_top_face_paths(
+                    modified_contour, info, params
+                )
+                layer.paths.extend(top_face_paths)
 
             # 4. 生成自定义台阶（如需要）
             if info.is_step_layer and info.step_config:
@@ -615,6 +631,64 @@ class SliceEngine:
         # 设置路径角色
         for path in fill_paths:
             path.role = PathRole.FILL_BOTTOM_FACE
+
+        paths.extend(fill_paths)
+
+        return paths
+
+    def _generate_top_face_paths(self, contour: Contour,
+                                    info: LayerInfo,
+                                    params: SliceParams) -> List[LayerPath]:
+        """
+        生成顶面填充路径
+
+        顶面填充用于封闭字壳顶部，生成密实填充层。
+        使用固定的填充参数：100%密度、45度角、交替方向。
+
+        Args:
+            contour: 当前层的轮廓
+            info: 层信息
+            params: 切片参数
+
+        Returns:
+            顶面填充路径列表
+        """
+        paths = []
+        top_params = params.top_face
+
+        if not top_params.enabled:
+            return paths
+
+        # 固定填充参数
+        fill_line_width = params.shell.wall_thickness  # 使用壁厚作为填充线宽
+        fill_spacing = fill_line_width  # 100%密度：间距等于线宽
+
+        # 计算填充区域（内缩壁厚）
+        wall_thickness = params.shell.wall_thickness
+        wall_count = params.shell.wall_count
+        inset_distance = wall_thickness * wall_count
+
+        # 计算填充角度（每层交替90度）
+        layer_index = int(info.z_height / info.layer_height)
+        fill_angle = 45.0 + (layer_index * 90.0)
+
+        # 内缩轮廓
+        inset_contour = self.path_offset.offset_contour(contour, -inset_distance)
+        if not inset_contour:
+            return paths
+
+        # 生成填充线
+        fill_paths = self._generate_line_fill(
+            inset_contour,
+            fill_spacing,
+            fill_angle,
+            fill_line_width,
+            info.extruder
+        )
+
+        # 设置路径角色
+        for path in fill_paths:
+            path.role = PathRole.FILL_TOP_FACE
 
         paths.extend(fill_paths)
 
