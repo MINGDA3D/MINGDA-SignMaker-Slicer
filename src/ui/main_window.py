@@ -35,7 +35,8 @@ from .canvas_toolbar import CanvasToolbar
 
 from src.core import (
     DXFParser, SVGParser, SliceEngine, GCodeWriter,
-    Contour, SliceParams, SliceResult
+    Contour, SliceParams, SliceResult,
+    DXFWriter, export_baseplate_dxf, export_panel_dxf
 )
 from src.core.stl_writer import STLWriter
 from src.business.undo_manager import (
@@ -573,6 +574,8 @@ class MainWindow(QMainWindow):
             "save": self._on_save_project,
             "export_gcode": self._on_export_gcode,
             "export_stl": self._on_export_stl,
+            "export_baseplate": self._on_export_baseplate,
+            "export_panel": self._on_export_panel,
             "about": self._on_about,
             "quit": self.close,
         }
@@ -712,6 +715,74 @@ class MainWindow(QMainWindow):
                 QMessageBox.information(self, "导出成功", f"STL已保存到:\n{file_path}")
             except Exception as e:
                 QMessageBox.critical(self, "导出失败", f"无法导出STL:\n{e}")
+
+    def _on_export_baseplate(self):
+        """导出底板DXF"""
+        if not self.contours:
+            QMessageBox.information(self, "提示", "请先导入DXF文件")
+            return
+
+        file_path, _ = QFileDialog.getSaveFileName(
+            self,
+            "导出底板DXF",
+            "",
+            "DXF文件 (*.dxf);;所有文件 (*)"
+        )
+
+        if file_path:
+            try:
+                # 获取当前参数
+                params = self.param_panel.get_params()
+                # 默认对齐补偿 -0.4mm
+                alignment_compensation = -0.4
+                success = export_baseplate_dxf(
+                    self.contours, file_path, params, alignment_compensation
+                )
+                if success:
+                    self._update_status(f"底板DXF已导出: {Path(file_path).name}")
+                    QMessageBox.information(
+                        self, "导出成功",
+                        f"底板DXF已保存到:\n{file_path}\n\n"
+                        f"对齐补偿: {alignment_compensation}mm"
+                    )
+                else:
+                    QMessageBox.warning(self, "导出失败", "无法生成底板轮廓")
+            except Exception as e:
+                QMessageBox.critical(self, "导出失败", f"无法导出底板DXF:\n{e}")
+
+    def _on_export_panel(self):
+        """导出面板DXF"""
+        if not self.contours:
+            QMessageBox.information(self, "提示", "请先导入DXF文件")
+            return
+
+        file_path, _ = QFileDialog.getSaveFileName(
+            self,
+            "导出面板DXF",
+            "",
+            "DXF文件 (*.dxf);;所有文件 (*)"
+        )
+
+        if file_path:
+            try:
+                # 获取当前参数
+                params = self.param_panel.get_params()
+                # 默认对齐补偿 0mm
+                alignment_compensation = 0.0
+                success = export_panel_dxf(
+                    self.contours, file_path, params, alignment_compensation
+                )
+                if success:
+                    self._update_status(f"面板DXF已导出: {Path(file_path).name}")
+                    QMessageBox.information(
+                        self, "导出成功",
+                        f"面板DXF已保存到:\n{file_path}\n\n"
+                        f"对齐补偿: {alignment_compensation}mm"
+                    )
+                else:
+                    QMessageBox.warning(self, "导出失败", "无法生成面板轮廓")
+            except Exception as e:
+                QMessageBox.critical(self, "导出失败", f"无法导出面板DXF:\n{e}")
 
     def _on_undo(self):
         """撤销"""

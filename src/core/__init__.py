@@ -27,6 +27,7 @@ from .step_generator import StepGenerator
 from .fill_generator import FillGenerator
 from .skirt_generator import SkirtGenerator
 from .connected_generator import ConnectedGenerator
+from .dxf_writer import DXFWriter, export_baseplate_dxf, export_panel_dxf
 
 __all__ = [
     # 基础几何类型
@@ -49,4 +50,6 @@ __all__ = [
     # 生成器
     'BevelGenerator', 'StepGenerator', 'FillGenerator',
     'SkirtGenerator', 'ConnectedGenerator',
+    # DXF写入
+    'DXFWriter', 'export_baseplate_dxf', 'export_panel_dxf',
 ]

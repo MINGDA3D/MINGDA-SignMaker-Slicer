@@ -197,6 +197,8 @@ The theme is defined in `src/ui/theme.py`:
 - [ ] Base plate infill
 - [ ] Panel pattern/decoration support
 - [x] Bottom face (底面封闭) - 已实现
+- [x] Export baseplate DXF (导出底板) - 已实现
+- [x] Export panel DXF (导出面板) - 已实现
 
 ### Phase 5: UI Implementation
 - [x] Main window layout (PySide6)
@@ -244,7 +246,8 @@ The theme is defined in `src/ui/theme.py`:
 - [x] Path offset algorithms (src/core/path_offset.py)
 - [x] Slice engine - straight/beveled edge (src/core/slice_engine.py)
 - [x] G-code generation (src/core/gcode_writer.py)
-- [x] Unit tests (tests/test_core.py) - 28 tests passing
+- [x] DXF export for baseplate/panel (src/core/dxf_writer.py)
+- [x] Unit tests (tests/test_core.py) - 42 tests passing
 - [x] PySide6 main window (src/ui/main_window.py)
 - [x] 2D canvas preview (src/ui/canvas_2d.py)
 - [x] Parameter panel (src/ui/param_panel.py)
