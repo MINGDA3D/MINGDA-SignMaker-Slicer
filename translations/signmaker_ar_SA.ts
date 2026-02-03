@@ -874,4 +874,175 @@ Control points: {points}</source>
         <translation>طبقة واحدة</translation>
     </message>
 </context>
+<context>
+    <name>EdgePresets</name>
+    <message>
+        <source>Zigzag</source>
+        <translation>متعرج</translation>
+    </message>
+    <message>
+        <source>Wave</source>
+        <translation>موجة</translation>
+    </message>
+    <message>
+        <source>Arc</source>
+        <translation>قوس</translation>
+    </message>
+    <message>
+        <source>Step</source>
+        <translation>درجة</translation>
+    </message>
+    <message>
+        <source>Mixed</source>
+        <translation>مختلط</translation>
+    </message>
+    <message>
+        <source>Bevel</source>
+        <translation>شطبة</translation>
+    </message>
+    <message>
+        <source>4-Tooth Zigzag</source>
+        <translation>متعرج 4 أسنان</translation>
+    </message>
+    <message>
+        <source>4 sharp zigzag teeth, highly decorative</source>
+        <translation>4 أسنان متعرجة حادة، زخرفية للغاية</translation>
+    </message>
+    <message>
+        <source>3-Tooth Zigzag</source>
+        <translation>متعرج 3 أسنان</translation>
+    </message>
+    <message>
+        <source>3 zigzag teeth, medium decoration</source>
+        <translation>3 أسنان متعرجة، زخرفة متوسطة</translation>
+    </message>
+    <message>
+        <source>2-Tooth Zigzag</source>
+        <translation>متعرج 2 أسنان</translation>
+    </message>
+    <message>
+        <source>2 zigzag teeth, simple and clean</source>
+        <translation>2 أسنان متعرجة، بسيط ونظيف</translation>
+    </message>
+    <message>
+        <source>5-Tooth Zigzag</source>
+        <translation>متعرج 5 أسنان</translation>
+    </message>
+    <message>
+        <source>5 zigzag teeth, complex decoration</source>
+        <translation>5 أسنان متعرجة، زخرفة معقدة</translation>
+    </message>
+    <message>
+        <source>3-Wave</source>
+        <translation>3 موجات</translation>
+    </message>
+    <message>
+        <source>3 smooth S-shaped waves</source>
+        <translation>3 موجات ناعمة على شكل S</translation>
+    </message>
+    <message>
+        <source>3-Wave B</source>
+        <translation>3 موجات B</translation>
+    </message>
+    <message>
+        <source>3 smooth waves (variant)</source>
+        <translation>3 موجات ناعمة (نسخة)</translation>
+    </message>
+    <message>
+        <source>2-Wave</source>
+        <translation>2 موجات</translation>
+    </message>
+    <message>
+        <source>2 smooth waves</source>
+        <translation>2 موجات ناعمة</translation>
+    </message>
+    <message>
+        <source>Single Bump</source>
+        <translation>نتوء واحد</translation>
+    </message>
+    <message>
+        <source>Single arc bump in the middle</source>
+        <translation>نتوء قوس واحد في الوسط</translation>
+    </message>
+    <message>
+        <source>Large Arc</source>
+        <translation>قوس كبير</translation>
+    </message>
+    <message>
+        <source>Large radius arc transition</source>
+        <translation>انتقال قوس نصف قطر كبير</translation>
+    </message>
+    <message>
+        <source>Arc with Platform</source>
+        <translation>قوس مع منصة</translation>
+    </message>
+    <message>
+        <source>Arc transition with top/bottom platforms</source>
+        <translation>انتقال قوس مع منصات علوية/سفلية</translation>
+    </message>
+    <message>
+        <source>Arc with Platform B</source>
+        <translation>قوس مع منصة B</translation>
+    </message>
+    <message>
+        <source>Arc with platform (variant)</source>
+        <translation>قوس مع منصة (نسخة)</translation>
+    </message>
+    <message>
+        <source>Small Step</source>
+        <translation>درجة صغيرة</translation>
+    </message>
+    <message>
+        <source>Single small step</source>
+        <translation>درجة صغيرة واحدة</translation>
+    </message>
+    <message>
+        <source>Double Step</source>
+        <translation>درجة مزدوجة</translation>
+    </message>
+    <message>
+        <source>Two-level step</source>
+        <translation>درجة بمستويين</translation>
+    </message>
+    <message>
+        <source>Step + Arc</source>
+        <translation>درجة + قوس</translation>
+    </message>
+    <message>
+        <source>Combination of step and arc</source>
+        <translation>مزيج من الدرجة والقوس</translation>
+    </message>
+    <message>
+        <source>Complex Mixed</source>
+        <translation>مختلط معقد</translation>
+    </message>
+    <message>
+        <source>Double arc + step complex combination</source>
+        <translation>قوس مزدوج + درجة، مزيج معقد</translation>
+    </message>
+    <message>
+        <source>Simple Bevel</source>
+        <translation>شطبة بسيطة</translation>
+    </message>
+    <message>
+        <source>Linear bevel transition</source>
+        <translation>انتقال شطبة خطي</translation>
+    </message>
+    <message>
+        <source>Large Bevel</source>
+        <translation>شطبة كبيرة</translation>
+    </message>
+    <message>
+        <source>Large angle bevel transition</source>
+        <translation>انتقال شطبة بزاوية كبيرة</translation>
+    </message>
+    <message>
+        <source>Steep Bevel</source>
+        <translation>شطبة شديدة</translation>
+    </message>
+    <message>
+        <source>Steep bevel (large width)</source>
+        <translation>شطبة شديدة (عرض كبير)</translation>
+    </message>
+</context>
 </TS>

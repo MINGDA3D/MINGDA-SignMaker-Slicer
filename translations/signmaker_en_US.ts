@@ -874,4 +874,175 @@ Control points: {points}</translation>
         <translation>Single Layer</translation>
     </message>
 </context>
+<context>
+    <name>EdgePresets</name>
+    <message>
+        <source>Zigzag</source>
+        <translation>Zigzag</translation>
+    </message>
+    <message>
+        <source>Wave</source>
+        <translation>Wave</translation>
+    </message>
+    <message>
+        <source>Arc</source>
+        <translation>Arc</translation>
+    </message>
+    <message>
+        <source>Step</source>
+        <translation>Step</translation>
+    </message>
+    <message>
+        <source>Mixed</source>
+        <translation>Mixed</translation>
+    </message>
+    <message>
+        <source>Bevel</source>
+        <translation>Bevel</translation>
+    </message>
+    <message>
+        <source>4-Tooth Zigzag</source>
+        <translation>4-Tooth Zigzag</translation>
+    </message>
+    <message>
+        <source>4 sharp zigzag teeth, highly decorative</source>
+        <translation>4 sharp zigzag teeth, highly decorative</translation>
+    </message>
+    <message>
+        <source>3-Tooth Zigzag</source>
+        <translation>3-Tooth Zigzag</translation>
+    </message>
+    <message>
+        <source>3 zigzag teeth, medium decoration</source>
+        <translation>3 zigzag teeth, medium decoration</translation>
+    </message>
+    <message>
+        <source>2-Tooth Zigzag</source>
+        <translation>2-Tooth Zigzag</translation>
+    </message>
+    <message>
+        <source>2 zigzag teeth, simple and clean</source>
+        <translation>2 zigzag teeth, simple and clean</translation>
+    </message>
+    <message>
+        <source>5-Tooth Zigzag</source>
+        <translation>5-Tooth Zigzag</translation>
+    </message>
+    <message>
+        <source>5 zigzag teeth, complex decoration</source>
+        <translation>5 zigzag teeth, complex decoration</translation>
+    </message>
+    <message>
+        <source>3-Wave</source>
+        <translation>3-Wave</translation>
+    </message>
+    <message>
+        <source>3 smooth S-shaped waves</source>
+        <translation>3 smooth S-shaped waves</translation>
+    </message>
+    <message>
+        <source>3-Wave B</source>
+        <translation>3-Wave B</translation>
+    </message>
+    <message>
+        <source>3 smooth waves (variant)</source>
+        <translation>3 smooth waves (variant)</translation>
+    </message>
+    <message>
+        <source>2-Wave</source>
+        <translation>2-Wave</translation>
+    </message>
+    <message>
+        <source>2 smooth waves</source>
+        <translation>2 smooth waves</translation>
+    </message>
+    <message>
+        <source>Single Bump</source>
+        <translation>Single Bump</translation>
+    </message>
+    <message>
+        <source>Single arc bump in the middle</source>
+        <translation>Single arc bump in the middle</translation>
+    </message>
+    <message>
+        <source>Large Arc</source>
+        <translation>Large Arc</translation>
+    </message>
+    <message>
+        <source>Large radius arc transition</source>
+        <translation>Large radius arc transition</translation>
+    </message>
+    <message>
+        <source>Arc with Platform</source>
+        <translation>Arc with Platform</translation>
+    </message>
+    <message>
+        <source>Arc transition with top/bottom platforms</source>
+        <translation>Arc transition with top/bottom platforms</translation>
+    </message>
+    <message>
+        <source>Arc with Platform B</source>
+        <translation>Arc with Platform B</translation>
+    </message>
+    <message>
+        <source>Arc with platform (variant)</source>
+        <translation>Arc with platform (variant)</translation>
+    </message>
+    <message>
+        <source>Small Step</source>
+        <translation>Small Step</translation>
+    </message>
+    <message>
+        <source>Single small step</source>
+        <translation>Single small step</translation>
+    </message>
+    <message>
+        <source>Double Step</source>
+        <translation>Double Step</translation>
+    </message>
+    <message>
+        <source>Two-level step</source>
+        <translation>Two-level step</translation>
+    </message>
+    <message>
+        <source>Step + Arc</source>
+        <translation>Step + Arc</translation>
+    </message>
+    <message>
+        <source>Combination of step and arc</source>
+        <translation>Combination of step and arc</translation>
+    </message>
+    <message>
+        <source>Complex Mixed</source>
+        <translation>Complex Mixed</translation>
+    </message>
+    <message>
+        <source>Double arc + step complex combination</source>
+        <translation>Double arc + step complex combination</translation>
+    </message>
+    <message>
+        <source>Simple Bevel</source>
+        <translation>Simple Bevel</translation>
+    </message>
+    <message>
+        <source>Linear bevel transition</source>
+        <translation>Linear bevel transition</translation>
+    </message>
+    <message>
+        <source>Large Bevel</source>
+        <translation>Large Bevel</translation>
+    </message>
+    <message>
+        <source>Large angle bevel transition</source>
+        <translation>Large angle bevel transition</translation>
+    </message>
+    <message>
+        <source>Steep Bevel</source>
+        <translation>Steep Bevel</translation>
+    </message>
+    <message>
+        <source>Steep bevel (large width)</source>
+        <translation>Steep bevel (large width)</translation>
+    </message>
+</context>
 </TS>

@@ -874,4 +874,175 @@ Control points: {points}</source>
         <translation>שכבה בודדת</translation>
     </message>
 </context>
+<context>
+    <name>EdgePresets</name>
+    <message>
+        <source>Zigzag</source>
+        <translation>זיגזג</translation>
+    </message>
+    <message>
+        <source>Wave</source>
+        <translation>גל</translation>
+    </message>
+    <message>
+        <source>Arc</source>
+        <translation>קשת</translation>
+    </message>
+    <message>
+        <source>Step</source>
+        <translation>מדרגה</translation>
+    </message>
+    <message>
+        <source>Mixed</source>
+        <translation>מעורב</translation>
+    </message>
+    <message>
+        <source>Bevel</source>
+        <translation>שיפוע</translation>
+    </message>
+    <message>
+        <source>4-Tooth Zigzag</source>
+        <translation>זיגזג 4 שיניים</translation>
+    </message>
+    <message>
+        <source>4 sharp zigzag teeth, highly decorative</source>
+        <translation>4 שיני זיגזג חדות, מאוד דקורטיבי</translation>
+    </message>
+    <message>
+        <source>3-Tooth Zigzag</source>
+        <translation>זיגזג 3 שיניים</translation>
+    </message>
+    <message>
+        <source>3 zigzag teeth, medium decoration</source>
+        <translation>3 שיני זיגזג, קישוט בינוני</translation>
+    </message>
+    <message>
+        <source>2-Tooth Zigzag</source>
+        <translation>זיגזג 2 שיניים</translation>
+    </message>
+    <message>
+        <source>2 zigzag teeth, simple and clean</source>
+        <translation>2 שיני זיגזג, פשוט ונקי</translation>
+    </message>
+    <message>
+        <source>5-Tooth Zigzag</source>
+        <translation>זיגזג 5 שיניים</translation>
+    </message>
+    <message>
+        <source>5 zigzag teeth, complex decoration</source>
+        <translation>5 שיני זיגזג, קישוט מורכב</translation>
+    </message>
+    <message>
+        <source>3-Wave</source>
+        <translation>3 גלים</translation>
+    </message>
+    <message>
+        <source>3 smooth S-shaped waves</source>
+        <translation>3 גלים חלקים בצורת S</translation>
+    </message>
+    <message>
+        <source>3-Wave B</source>
+        <translation>3 גלים B</translation>
+    </message>
+    <message>
+        <source>3 smooth waves (variant)</source>
+        <translation>3 גלים חלקים (גרסה)</translation>
+    </message>
+    <message>
+        <source>2-Wave</source>
+        <translation>2 גלים</translation>
+    </message>
+    <message>
+        <source>2 smooth waves</source>
+        <translation>2 גלים חלקים</translation>
+    </message>
+    <message>
+        <source>Single Bump</source>
+        <translation>בליטה בודדת</translation>
+    </message>
+    <message>
+        <source>Single arc bump in the middle</source>
+        <translation>בליטת קשת בודדת באמצע</translation>
+    </message>
+    <message>
+        <source>Large Arc</source>
+        <translation>קשת גדולה</translation>
+    </message>
+    <message>
+        <source>Large radius arc transition</source>
+        <translation>מעבר קשת ברדיוס גדול</translation>
+    </message>
+    <message>
+        <source>Arc with Platform</source>
+        <translation>קשת עם פלטפורמה</translation>
+    </message>
+    <message>
+        <source>Arc transition with top/bottom platforms</source>
+        <translation>מעבר קשת עם פלטפורמות עליון/תחתון</translation>
+    </message>
+    <message>
+        <source>Arc with Platform B</source>
+        <translation>קשת עם פלטפורמה B</translation>
+    </message>
+    <message>
+        <source>Arc with platform (variant)</source>
+        <translation>קשת עם פלטפורמה (גרסה)</translation>
+    </message>
+    <message>
+        <source>Small Step</source>
+        <translation>מדרגה קטנה</translation>
+    </message>
+    <message>
+        <source>Single small step</source>
+        <translation>מדרגה קטנה אחת</translation>
+    </message>
+    <message>
+        <source>Double Step</source>
+        <translation>מדרגה כפולה</translation>
+    </message>
+    <message>
+        <source>Two-level step</source>
+        <translation>מדרגה דו-רמתית</translation>
+    </message>
+    <message>
+        <source>Step + Arc</source>
+        <translation>מדרגה + קשת</translation>
+    </message>
+    <message>
+        <source>Combination of step and arc</source>
+        <translation>שילוב של מדרגה וקשת</translation>
+    </message>
+    <message>
+        <source>Complex Mixed</source>
+        <translation>מעורב מורכב</translation>
+    </message>
+    <message>
+        <source>Double arc + step complex combination</source>
+        <translation>קשת כפולה + מדרגה, שילוב מורכב</translation>
+    </message>
+    <message>
+        <source>Simple Bevel</source>
+        <translation>שיפוע פשוט</translation>
+    </message>
+    <message>
+        <source>Linear bevel transition</source>
+        <translation>מעבר שיפוע לינארי</translation>
+    </message>
+    <message>
+        <source>Large Bevel</source>
+        <translation>שיפוע גדול</translation>
+    </message>
+    <message>
+        <source>Large angle bevel transition</source>
+        <translation>מעבר שיפוע בזווית גדולה</translation>
+    </message>
+    <message>
+        <source>Steep Bevel</source>
+        <translation>שיפוע תלול</translation>
+    </message>
+    <message>
+        <source>Steep bevel (large width)</source>
+        <translation>שיפוע תלול (רוחב גדול)</translation>
+    </message>
+</context>
 </TS>

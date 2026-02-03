@@ -874,4 +874,175 @@ Control points: {points}</source>
         <translation>単一層表示</translation>
     </message>
 </context>
+<context>
+    <name>EdgePresets</name>
+    <message>
+        <source>Zigzag</source>
+        <translation>ジグザグ</translation>
+    </message>
+    <message>
+        <source>Wave</source>
+        <translation>ウェーブ</translation>
+    </message>
+    <message>
+        <source>Arc</source>
+        <translation>アーク</translation>
+    </message>
+    <message>
+        <source>Step</source>
+        <translation>ステップ</translation>
+    </message>
+    <message>
+        <source>Mixed</source>
+        <translation>ミックス</translation>
+    </message>
+    <message>
+        <source>Bevel</source>
+        <translation>ベベル</translation>
+    </message>
+    <message>
+        <source>4-Tooth Zigzag</source>
+        <translation>4歯ジグザグ</translation>
+    </message>
+    <message>
+        <source>4 sharp zigzag teeth, highly decorative</source>
+        <translation>4つの鋭いジグザグ歯、装飾性が高い</translation>
+    </message>
+    <message>
+        <source>3-Tooth Zigzag</source>
+        <translation>3歯ジグザグ</translation>
+    </message>
+    <message>
+        <source>3 zigzag teeth, medium decoration</source>
+        <translation>3つのジグザグ歯、中程度の装飾</translation>
+    </message>
+    <message>
+        <source>2-Tooth Zigzag</source>
+        <translation>2歯ジグザグ</translation>
+    </message>
+    <message>
+        <source>2 zigzag teeth, simple and clean</source>
+        <translation>2つのジグザグ歯、シンプルでクリーン</translation>
+    </message>
+    <message>
+        <source>5-Tooth Zigzag</source>
+        <translation>5歯ジグザグ</translation>
+    </message>
+    <message>
+        <source>5 zigzag teeth, complex decoration</source>
+        <translation>5つのジグザグ歯、複雑な装飾</translation>
+    </message>
+    <message>
+        <source>3-Wave</source>
+        <translation>3ウェーブ</translation>
+    </message>
+    <message>
+        <source>3 smooth S-shaped waves</source>
+        <translation>3つの滑らかなS字波</translation>
+    </message>
+    <message>
+        <source>3-Wave B</source>
+        <translation>3ウェーブB</translation>
+    </message>
+    <message>
+        <source>3 smooth waves (variant)</source>
+        <translation>3つの滑らかな波（バリエーション）</translation>
+    </message>
+    <message>
+        <source>2-Wave</source>
+        <translation>2ウェーブ</translation>
+    </message>
+    <message>
+        <source>2 smooth waves</source>
+        <translation>2つの滑らかな波</translation>
+    </message>
+    <message>
+        <source>Single Bump</source>
+        <translation>シングルバンプ</translation>
+    </message>
+    <message>
+        <source>Single arc bump in the middle</source>
+        <translation>中央に単一のアーチ状の突起</translation>
+    </message>
+    <message>
+        <source>Large Arc</source>
+        <translation>大きなアーク</translation>
+    </message>
+    <message>
+        <source>Large radius arc transition</source>
+        <translation>大きな半径のアーク遷移</translation>
+    </message>
+    <message>
+        <source>Arc with Platform</source>
+        <translation>プラットフォーム付きアーク</translation>
+    </message>
+    <message>
+        <source>Arc transition with top/bottom platforms</source>
+        <translation>上下プラットフォーム付きアーク遷移</translation>
+    </message>
+    <message>
+        <source>Arc with Platform B</source>
+        <translation>プラットフォーム付きアークB</translation>
+    </message>
+    <message>
+        <source>Arc with platform (variant)</source>
+        <translation>プラットフォーム付きアーク（バリエーション）</translation>
+    </message>
+    <message>
+        <source>Small Step</source>
+        <translation>小さなステップ</translation>
+    </message>
+    <message>
+        <source>Single small step</source>
+        <translation>1つの小さなステップ</translation>
+    </message>
+    <message>
+        <source>Double Step</source>
+        <translation>ダブルステップ</translation>
+    </message>
+    <message>
+        <source>Two-level step</source>
+        <translation>2段ステップ</translation>
+    </message>
+    <message>
+        <source>Step + Arc</source>
+        <translation>ステップ + アーク</translation>
+    </message>
+    <message>
+        <source>Combination of step and arc</source>
+        <translation>ステップとアークの組み合わせ</translation>
+    </message>
+    <message>
+        <source>Complex Mixed</source>
+        <translation>複合ミックス</translation>
+    </message>
+    <message>
+        <source>Double arc + step complex combination</source>
+        <translation>ダブルアーク + ステップの複雑な組み合わせ</translation>
+    </message>
+    <message>
+        <source>Simple Bevel</source>
+        <translation>シンプルベベル</translation>
+    </message>
+    <message>
+        <source>Linear bevel transition</source>
+        <translation>リニアベベル遷移</translation>
+    </message>
+    <message>
+        <source>Large Bevel</source>
+        <translation>大きなベベル</translation>
+    </message>
+    <message>
+        <source>Large angle bevel transition</source>
+        <translation>大角度ベベル遷移</translation>
+    </message>
+    <message>
+        <source>Steep Bevel</source>
+        <translation>急なベベル</translation>
+    </message>
+    <message>
+        <source>Steep bevel (large width)</source>
+        <translation>急なベベル（大幅）</translation>
+    </message>
+</context>
 </TS>

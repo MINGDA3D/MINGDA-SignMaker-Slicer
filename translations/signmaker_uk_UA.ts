@@ -874,4 +874,175 @@ Control points: {points}</source>
         <translation>Один шар</translation>
     </message>
 </context>
+<context>
+    <name>EdgePresets</name>
+    <message>
+        <source>Zigzag</source>
+        <translation>Зигзаг</translation>
+    </message>
+    <message>
+        <source>Wave</source>
+        <translation>Хвиля</translation>
+    </message>
+    <message>
+        <source>Arc</source>
+        <translation>Дуга</translation>
+    </message>
+    <message>
+        <source>Step</source>
+        <translation>Сходинка</translation>
+    </message>
+    <message>
+        <source>Mixed</source>
+        <translation>Змішаний</translation>
+    </message>
+    <message>
+        <source>Bevel</source>
+        <translation>Скіс</translation>
+    </message>
+    <message>
+        <source>4-Tooth Zigzag</source>
+        <translation>4-зубчастий зигзаг</translation>
+    </message>
+    <message>
+        <source>4 sharp zigzag teeth, highly decorative</source>
+        <translation>4 гострих зигзаги, високодекоративний</translation>
+    </message>
+    <message>
+        <source>3-Tooth Zigzag</source>
+        <translation>3-зубчастий зигзаг</translation>
+    </message>
+    <message>
+        <source>3 zigzag teeth, medium decoration</source>
+        <translation>3 зигзаги, середній декор</translation>
+    </message>
+    <message>
+        <source>2-Tooth Zigzag</source>
+        <translation>2-зубчастий зигзаг</translation>
+    </message>
+    <message>
+        <source>2 zigzag teeth, simple and clean</source>
+        <translation>2 зигзаги, простий і чистий</translation>
+    </message>
+    <message>
+        <source>5-Tooth Zigzag</source>
+        <translation>5-зубчастий зигзаг</translation>
+    </message>
+    <message>
+        <source>5 zigzag teeth, complex decoration</source>
+        <translation>5 зигзагів, складний декор</translation>
+    </message>
+    <message>
+        <source>3-Wave</source>
+        <translation>3 хвилі</translation>
+    </message>
+    <message>
+        <source>3 smooth S-shaped waves</source>
+        <translation>3 плавні S-подібні хвилі</translation>
+    </message>
+    <message>
+        <source>3-Wave B</source>
+        <translation>3 хвилі B</translation>
+    </message>
+    <message>
+        <source>3 smooth waves (variant)</source>
+        <translation>3 плавні хвилі (варіант)</translation>
+    </message>
+    <message>
+        <source>2-Wave</source>
+        <translation>2 хвилі</translation>
+    </message>
+    <message>
+        <source>2 smooth waves</source>
+        <translation>2 плавні хвилі</translation>
+    </message>
+    <message>
+        <source>Single Bump</source>
+        <translation>Одиночний виступ</translation>
+    </message>
+    <message>
+        <source>Single arc bump in the middle</source>
+        <translation>Одиночний дуговий виступ посередині</translation>
+    </message>
+    <message>
+        <source>Large Arc</source>
+        <translation>Велика дуга</translation>
+    </message>
+    <message>
+        <source>Large radius arc transition</source>
+        <translation>Перехід з великим радіусом дуги</translation>
+    </message>
+    <message>
+        <source>Arc with Platform</source>
+        <translation>Дуга з платформою</translation>
+    </message>
+    <message>
+        <source>Arc transition with top/bottom platforms</source>
+        <translation>Перехід дуги з верхньою/нижньою платформою</translation>
+    </message>
+    <message>
+        <source>Arc with Platform B</source>
+        <translation>Дуга з платформою B</translation>
+    </message>
+    <message>
+        <source>Arc with platform (variant)</source>
+        <translation>Дуга з платформою (варіант)</translation>
+    </message>
+    <message>
+        <source>Small Step</source>
+        <translation>Маленька сходинка</translation>
+    </message>
+    <message>
+        <source>Single small step</source>
+        <translation>Одна маленька сходинка</translation>
+    </message>
+    <message>
+        <source>Double Step</source>
+        <translation>Подвійна сходинка</translation>
+    </message>
+    <message>
+        <source>Two-level step</source>
+        <translation>Дворівнева сходинка</translation>
+    </message>
+    <message>
+        <source>Step + Arc</source>
+        <translation>Сходинка + дуга</translation>
+    </message>
+    <message>
+        <source>Combination of step and arc</source>
+        <translation>Комбінація сходинки та дуги</translation>
+    </message>
+    <message>
+        <source>Complex Mixed</source>
+        <translation>Складна комбінація</translation>
+    </message>
+    <message>
+        <source>Double arc + step complex combination</source>
+        <translation>Подвійна дуга + сходинка, складна комбінація</translation>
+    </message>
+    <message>
+        <source>Simple Bevel</source>
+        <translation>Простий скіс</translation>
+    </message>
+    <message>
+        <source>Linear bevel transition</source>
+        <translation>Лінійний скіс</translation>
+    </message>
+    <message>
+        <source>Large Bevel</source>
+        <translation>Великий скіс</translation>
+    </message>
+    <message>
+        <source>Large angle bevel transition</source>
+        <translation>Скіс з великим кутом</translation>
+    </message>
+    <message>
+        <source>Steep Bevel</source>
+        <translation>Крутий скіс</translation>
+    </message>
+    <message>
+        <source>Steep bevel (large width)</source>
+        <translation>Крутий скіс (велика ширина)</translation>
+    </message>
+</context>
 </TS>

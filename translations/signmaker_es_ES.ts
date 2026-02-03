@@ -874,4 +874,175 @@ Puntos de control: {points}</translation>
         <translation>Capa unica</translation>
     </message>
 </context>
+<context>
+    <name>EdgePresets</name>
+    <message>
+        <source>Zigzag</source>
+        <translation>Zigzag</translation>
+    </message>
+    <message>
+        <source>Wave</source>
+        <translation>Ola</translation>
+    </message>
+    <message>
+        <source>Arc</source>
+        <translation>Arco</translation>
+    </message>
+    <message>
+        <source>Step</source>
+        <translation>Escalón</translation>
+    </message>
+    <message>
+        <source>Mixed</source>
+        <translation>Mixto</translation>
+    </message>
+    <message>
+        <source>Bevel</source>
+        <translation>Bisel</translation>
+    </message>
+    <message>
+        <source>4-Tooth Zigzag</source>
+        <translation>Zigzag 4 dientes</translation>
+    </message>
+    <message>
+        <source>4 sharp zigzag teeth, highly decorative</source>
+        <translation>4 dientes zigzag afilados, muy decorativo</translation>
+    </message>
+    <message>
+        <source>3-Tooth Zigzag</source>
+        <translation>Zigzag 3 dientes</translation>
+    </message>
+    <message>
+        <source>3 zigzag teeth, medium decoration</source>
+        <translation>3 dientes zigzag, decoración media</translation>
+    </message>
+    <message>
+        <source>2-Tooth Zigzag</source>
+        <translation>Zigzag 2 dientes</translation>
+    </message>
+    <message>
+        <source>2 zigzag teeth, simple and clean</source>
+        <translation>2 dientes zigzag, simple y limpio</translation>
+    </message>
+    <message>
+        <source>5-Tooth Zigzag</source>
+        <translation>Zigzag 5 dientes</translation>
+    </message>
+    <message>
+        <source>5 zigzag teeth, complex decoration</source>
+        <translation>5 dientes zigzag, decoración compleja</translation>
+    </message>
+    <message>
+        <source>3-Wave</source>
+        <translation>3 olas</translation>
+    </message>
+    <message>
+        <source>3 smooth S-shaped waves</source>
+        <translation>3 ondas suaves en forma de S</translation>
+    </message>
+    <message>
+        <source>3-Wave B</source>
+        <translation>3 olas B</translation>
+    </message>
+    <message>
+        <source>3 smooth waves (variant)</source>
+        <translation>3 ondas suaves (variante)</translation>
+    </message>
+    <message>
+        <source>2-Wave</source>
+        <translation>2 olas</translation>
+    </message>
+    <message>
+        <source>2 smooth waves</source>
+        <translation>2 ondas suaves</translation>
+    </message>
+    <message>
+        <source>Single Bump</source>
+        <translation>Protuberancia simple</translation>
+    </message>
+    <message>
+        <source>Single arc bump in the middle</source>
+        <translation>Protuberancia de arco única en el medio</translation>
+    </message>
+    <message>
+        <source>Large Arc</source>
+        <translation>Arco grande</translation>
+    </message>
+    <message>
+        <source>Large radius arc transition</source>
+        <translation>Transición de arco de radio grande</translation>
+    </message>
+    <message>
+        <source>Arc with Platform</source>
+        <translation>Arco con plataforma</translation>
+    </message>
+    <message>
+        <source>Arc transition with top/bottom platforms</source>
+        <translation>Transición de arco con plataformas superior/inferior</translation>
+    </message>
+    <message>
+        <source>Arc with Platform B</source>
+        <translation>Arco con plataforma B</translation>
+    </message>
+    <message>
+        <source>Arc with platform (variant)</source>
+        <translation>Arco con plataforma (variante)</translation>
+    </message>
+    <message>
+        <source>Small Step</source>
+        <translation>Escalón pequeño</translation>
+    </message>
+    <message>
+        <source>Single small step</source>
+        <translation>Un escalón pequeño</translation>
+    </message>
+    <message>
+        <source>Double Step</source>
+        <translation>Escalón doble</translation>
+    </message>
+    <message>
+        <source>Two-level step</source>
+        <translation>Escalón de dos niveles</translation>
+    </message>
+    <message>
+        <source>Step + Arc</source>
+        <translation>Escalón + arco</translation>
+    </message>
+    <message>
+        <source>Combination of step and arc</source>
+        <translation>Combinación de escalón y arco</translation>
+    </message>
+    <message>
+        <source>Complex Mixed</source>
+        <translation>Mixto complejo</translation>
+    </message>
+    <message>
+        <source>Double arc + step complex combination</source>
+        <translation>Doble arco + escalón, combinación compleja</translation>
+    </message>
+    <message>
+        <source>Simple Bevel</source>
+        <translation>Bisel simple</translation>
+    </message>
+    <message>
+        <source>Linear bevel transition</source>
+        <translation>Transición de bisel lineal</translation>
+    </message>
+    <message>
+        <source>Large Bevel</source>
+        <translation>Bisel grande</translation>
+    </message>
+    <message>
+        <source>Large angle bevel transition</source>
+        <translation>Transición de bisel de ángulo grande</translation>
+    </message>
+    <message>
+        <source>Steep Bevel</source>
+        <translation>Bisel empinado</translation>
+    </message>
+    <message>
+        <source>Steep bevel (large width)</source>
+        <translation>Bisel empinado (ancho grande)</translation>
+    </message>
+</context>
 </TS>

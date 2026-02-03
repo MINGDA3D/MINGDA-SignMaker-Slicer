@@ -874,4 +874,175 @@ Control points: {points}</source>
         <translation>单层显示</translation>
     </message>
 </context>
+<context>
+    <name>EdgePresets</name>
+    <message>
+        <source>Zigzag</source>
+        <translation>锯齿类</translation>
+    </message>
+    <message>
+        <source>Wave</source>
+        <translation>波浪类</translation>
+    </message>
+    <message>
+        <source>Arc</source>
+        <translation>圆弧类</translation>
+    </message>
+    <message>
+        <source>Step</source>
+        <translation>台阶类</translation>
+    </message>
+    <message>
+        <source>Mixed</source>
+        <translation>组合类</translation>
+    </message>
+    <message>
+        <source>Bevel</source>
+        <translation>斜边类</translation>
+    </message>
+    <message>
+        <source>4-Tooth Zigzag</source>
+        <translation>四锯齿边</translation>
+    </message>
+    <message>
+        <source>4 sharp zigzag teeth, highly decorative</source>
+        <translation>4个锐角锯齿，装饰性强</translation>
+    </message>
+    <message>
+        <source>3-Tooth Zigzag</source>
+        <translation>三锯齿边</translation>
+    </message>
+    <message>
+        <source>3 zigzag teeth, medium decoration</source>
+        <translation>3个锯齿，中等装饰</translation>
+    </message>
+    <message>
+        <source>2-Tooth Zigzag</source>
+        <translation>双锯齿边</translation>
+    </message>
+    <message>
+        <source>2 zigzag teeth, simple and clean</source>
+        <translation>2个锯齿，简洁大方</translation>
+    </message>
+    <message>
+        <source>5-Tooth Zigzag</source>
+        <translation>五锯齿边</translation>
+    </message>
+    <message>
+        <source>5 zigzag teeth, complex decoration</source>
+        <translation>5个锯齿，复杂装饰</translation>
+    </message>
+    <message>
+        <source>3-Wave</source>
+        <translation>三波浪边</translation>
+    </message>
+    <message>
+        <source>3 smooth S-shaped waves</source>
+        <translation>3个平滑S形波浪</translation>
+    </message>
+    <message>
+        <source>3-Wave B</source>
+        <translation>三波浪边B</translation>
+    </message>
+    <message>
+        <source>3 smooth waves (variant)</source>
+        <translation>3个平滑波浪（变体）</translation>
+    </message>
+    <message>
+        <source>2-Wave</source>
+        <translation>双波浪边</translation>
+    </message>
+    <message>
+        <source>2 smooth waves</source>
+        <translation>2个平滑波浪</translation>
+    </message>
+    <message>
+        <source>Single Bump</source>
+        <translation>单凸起</translation>
+    </message>
+    <message>
+        <source>Single arc bump in the middle</source>
+        <translation>中部单个圆弧凸起</translation>
+    </message>
+    <message>
+        <source>Large Arc</source>
+        <translation>大圆弧</translation>
+    </message>
+    <message>
+        <source>Large radius arc transition</source>
+        <translation>大弧度圆弧过渡</translation>
+    </message>
+    <message>
+        <source>Arc with Platform</source>
+        <translation>圆弧带平台</translation>
+    </message>
+    <message>
+        <source>Arc transition with top/bottom platforms</source>
+        <translation>圆弧过渡带上下平台</translation>
+    </message>
+    <message>
+        <source>Arc with Platform B</source>
+        <translation>圆弧带平台B</translation>
+    </message>
+    <message>
+        <source>Arc with platform (variant)</source>
+        <translation>圆弧过渡带平台（变体）</translation>
+    </message>
+    <message>
+        <source>Small Step</source>
+        <translation>小台阶</translation>
+    </message>
+    <message>
+        <source>Single small step</source>
+        <translation>单级小台阶</translation>
+    </message>
+    <message>
+        <source>Double Step</source>
+        <translation>双台阶</translation>
+    </message>
+    <message>
+        <source>Two-level step</source>
+        <translation>双级台阶</translation>
+    </message>
+    <message>
+        <source>Step + Arc</source>
+        <translation>台阶+圆弧</translation>
+    </message>
+    <message>
+        <source>Combination of step and arc</source>
+        <translation>台阶与圆弧组合</translation>
+    </message>
+    <message>
+        <source>Complex Mixed</source>
+        <translation>复杂组合</translation>
+    </message>
+    <message>
+        <source>Double arc + step complex combination</source>
+        <translation>双圆弧+台阶复杂组合</translation>
+    </message>
+    <message>
+        <source>Simple Bevel</source>
+        <translation>简单斜边</translation>
+    </message>
+    <message>
+        <source>Linear bevel transition</source>
+        <translation>线性斜边过渡</translation>
+    </message>
+    <message>
+        <source>Large Bevel</source>
+        <translation>大斜边</translation>
+    </message>
+    <message>
+        <source>Large angle bevel transition</source>
+        <translation>大角度斜边过渡</translation>
+    </message>
+    <message>
+        <source>Steep Bevel</source>
+        <translation>陡斜边</translation>
+    </message>
+    <message>
+        <source>Steep bevel (large width)</source>
+        <translation>陡峭斜边（大宽度）</translation>
+    </message>
+</context>
 </TS>

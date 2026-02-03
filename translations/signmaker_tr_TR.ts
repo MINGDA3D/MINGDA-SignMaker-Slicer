@@ -874,4 +874,175 @@ Kontrol noktalari: {points}</translation>
         <translation>Tek Katman</translation>
     </message>
 </context>
+<context>
+    <name>EdgePresets</name>
+    <message>
+        <source>Zigzag</source>
+        <translation>Zikzak</translation>
+    </message>
+    <message>
+        <source>Wave</source>
+        <translation>Dalga</translation>
+    </message>
+    <message>
+        <source>Arc</source>
+        <translation>Yay</translation>
+    </message>
+    <message>
+        <source>Step</source>
+        <translation>Basamak</translation>
+    </message>
+    <message>
+        <source>Mixed</source>
+        <translation>Karma</translation>
+    </message>
+    <message>
+        <source>Bevel</source>
+        <translation>Eğim</translation>
+    </message>
+    <message>
+        <source>4-Tooth Zigzag</source>
+        <translation>4 Dişli Zikzak</translation>
+    </message>
+    <message>
+        <source>4 sharp zigzag teeth, highly decorative</source>
+        <translation>4 keskin zikzak diş, oldukça dekoratif</translation>
+    </message>
+    <message>
+        <source>3-Tooth Zigzag</source>
+        <translation>3 Dişli Zikzak</translation>
+    </message>
+    <message>
+        <source>3 zigzag teeth, medium decoration</source>
+        <translation>3 zikzak diş, orta dekorasyon</translation>
+    </message>
+    <message>
+        <source>2-Tooth Zigzag</source>
+        <translation>2 Dişli Zikzak</translation>
+    </message>
+    <message>
+        <source>2 zigzag teeth, simple and clean</source>
+        <translation>2 zikzak diş, basit ve temiz</translation>
+    </message>
+    <message>
+        <source>5-Tooth Zigzag</source>
+        <translation>5 Dişli Zikzak</translation>
+    </message>
+    <message>
+        <source>5 zigzag teeth, complex decoration</source>
+        <translation>5 zikzak diş, karmaşık dekorasyon</translation>
+    </message>
+    <message>
+        <source>3-Wave</source>
+        <translation>3 Dalga</translation>
+    </message>
+    <message>
+        <source>3 smooth S-shaped waves</source>
+        <translation>3 düzgün S şeklinde dalga</translation>
+    </message>
+    <message>
+        <source>3-Wave B</source>
+        <translation>3 Dalga B</translation>
+    </message>
+    <message>
+        <source>3 smooth waves (variant)</source>
+        <translation>3 düzgün dalga (varyant)</translation>
+    </message>
+    <message>
+        <source>2-Wave</source>
+        <translation>2 Dalga</translation>
+    </message>
+    <message>
+        <source>2 smooth waves</source>
+        <translation>2 düzgün dalga</translation>
+    </message>
+    <message>
+        <source>Single Bump</source>
+        <translation>Tek Tümsek</translation>
+    </message>
+    <message>
+        <source>Single arc bump in the middle</source>
+        <translation>Ortada tek yay tümsek</translation>
+    </message>
+    <message>
+        <source>Large Arc</source>
+        <translation>Büyük Yay</translation>
+    </message>
+    <message>
+        <source>Large radius arc transition</source>
+        <translation>Büyük yarıçap yay geçişi</translation>
+    </message>
+    <message>
+        <source>Arc with Platform</source>
+        <translation>Platformlu Yay</translation>
+    </message>
+    <message>
+        <source>Arc transition with top/bottom platforms</source>
+        <translation>Üst/alt platformlu yay geçişi</translation>
+    </message>
+    <message>
+        <source>Arc with Platform B</source>
+        <translation>Platformlu Yay B</translation>
+    </message>
+    <message>
+        <source>Arc with platform (variant)</source>
+        <translation>Platformlu yay (varyant)</translation>
+    </message>
+    <message>
+        <source>Small Step</source>
+        <translation>Küçük Basamak</translation>
+    </message>
+    <message>
+        <source>Single small step</source>
+        <translation>Tek küçük basamak</translation>
+    </message>
+    <message>
+        <source>Double Step</source>
+        <translation>Çift Basamak</translation>
+    </message>
+    <message>
+        <source>Two-level step</source>
+        <translation>İki seviyeli basamak</translation>
+    </message>
+    <message>
+        <source>Step + Arc</source>
+        <translation>Basamak + Yay</translation>
+    </message>
+    <message>
+        <source>Combination of step and arc</source>
+        <translation>Basamak ve yay kombinasyonu</translation>
+    </message>
+    <message>
+        <source>Complex Mixed</source>
+        <translation>Karmaşık Karma</translation>
+    </message>
+    <message>
+        <source>Double arc + step complex combination</source>
+        <translation>Çift yay + basamak karmaşık kombinasyon</translation>
+    </message>
+    <message>
+        <source>Simple Bevel</source>
+        <translation>Basit Eğim</translation>
+    </message>
+    <message>
+        <source>Linear bevel transition</source>
+        <translation>Doğrusal eğim geçişi</translation>
+    </message>
+    <message>
+        <source>Large Bevel</source>
+        <translation>Büyük Eğim</translation>
+    </message>
+    <message>
+        <source>Large angle bevel transition</source>
+        <translation>Büyük açılı eğim geçişi</translation>
+    </message>
+    <message>
+        <source>Steep Bevel</source>
+        <translation>Dik Eğim</translation>
+    </message>
+    <message>
+        <source>Steep bevel (large width)</source>
+        <translation>Dik eğim (geniş genişlik)</translation>
+    </message>
+</context>
 </TS>

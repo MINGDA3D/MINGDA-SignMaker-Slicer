@@ -874,4 +874,175 @@ Control points: {points}</source>
         <translation>단일 레이어</translation>
     </message>
 </context>
+<context>
+    <name>EdgePresets</name>
+    <message>
+        <source>Zigzag</source>
+        <translation>지그재그</translation>
+    </message>
+    <message>
+        <source>Wave</source>
+        <translation>웨이브</translation>
+    </message>
+    <message>
+        <source>Arc</source>
+        <translation>아크</translation>
+    </message>
+    <message>
+        <source>Step</source>
+        <translation>계단</translation>
+    </message>
+    <message>
+        <source>Mixed</source>
+        <translation>혼합</translation>
+    </message>
+    <message>
+        <source>Bevel</source>
+        <translation>베벨</translation>
+    </message>
+    <message>
+        <source>4-Tooth Zigzag</source>
+        <translation>4톱니 지그재그</translation>
+    </message>
+    <message>
+        <source>4 sharp zigzag teeth, highly decorative</source>
+        <translation>4개의 날카로운 지그재그 이빨, 매우 장식적</translation>
+    </message>
+    <message>
+        <source>3-Tooth Zigzag</source>
+        <translation>3톱니 지그재그</translation>
+    </message>
+    <message>
+        <source>3 zigzag teeth, medium decoration</source>
+        <translation>3개의 지그재그 이빨, 중간 장식</translation>
+    </message>
+    <message>
+        <source>2-Tooth Zigzag</source>
+        <translation>2톱니 지그재그</translation>
+    </message>
+    <message>
+        <source>2 zigzag teeth, simple and clean</source>
+        <translation>2개의 지그재그 이빨, 단순하고 깔끔</translation>
+    </message>
+    <message>
+        <source>5-Tooth Zigzag</source>
+        <translation>5톱니 지그재그</translation>
+    </message>
+    <message>
+        <source>5 zigzag teeth, complex decoration</source>
+        <translation>5개의 지그재그 이빨, 복잡한 장식</translation>
+    </message>
+    <message>
+        <source>3-Wave</source>
+        <translation>3웨이브</translation>
+    </message>
+    <message>
+        <source>3 smooth S-shaped waves</source>
+        <translation>3개의 부드러운 S자형 웨이브</translation>
+    </message>
+    <message>
+        <source>3-Wave B</source>
+        <translation>3웨이브 B</translation>
+    </message>
+    <message>
+        <source>3 smooth waves (variant)</source>
+        <translation>3개의 부드러운 웨이브 (변형)</translation>
+    </message>
+    <message>
+        <source>2-Wave</source>
+        <translation>2웨이브</translation>
+    </message>
+    <message>
+        <source>2 smooth waves</source>
+        <translation>2개의 부드러운 웨이브</translation>
+    </message>
+    <message>
+        <source>Single Bump</source>
+        <translation>단일 돌출</translation>
+    </message>
+    <message>
+        <source>Single arc bump in the middle</source>
+        <translation>중간에 단일 아크 돌출</translation>
+    </message>
+    <message>
+        <source>Large Arc</source>
+        <translation>큰 아크</translation>
+    </message>
+    <message>
+        <source>Large radius arc transition</source>
+        <translation>큰 반경 아크 전환</translation>
+    </message>
+    <message>
+        <source>Arc with Platform</source>
+        <translation>플랫폼이 있는 아크</translation>
+    </message>
+    <message>
+        <source>Arc transition with top/bottom platforms</source>
+        <translation>상단/하단 플랫폼이 있는 아크 전환</translation>
+    </message>
+    <message>
+        <source>Arc with Platform B</source>
+        <translation>플랫폼이 있는 아크 B</translation>
+    </message>
+    <message>
+        <source>Arc with platform (variant)</source>
+        <translation>플랫폼이 있는 아크 (변형)</translation>
+    </message>
+    <message>
+        <source>Small Step</source>
+        <translation>작은 계단</translation>
+    </message>
+    <message>
+        <source>Single small step</source>
+        <translation>하나의 작은 계단</translation>
+    </message>
+    <message>
+        <source>Double Step</source>
+        <translation>이중 계단</translation>
+    </message>
+    <message>
+        <source>Two-level step</source>
+        <translation>2단 계단</translation>
+    </message>
+    <message>
+        <source>Step + Arc</source>
+        <translation>계단 + 아크</translation>
+    </message>
+    <message>
+        <source>Combination of step and arc</source>
+        <translation>계단과 아크의 조합</translation>
+    </message>
+    <message>
+        <source>Complex Mixed</source>
+        <translation>복합 혼합</translation>
+    </message>
+    <message>
+        <source>Double arc + step complex combination</source>
+        <translation>이중 아크 + 계단 복합 조합</translation>
+    </message>
+    <message>
+        <source>Simple Bevel</source>
+        <translation>단순 베벨</translation>
+    </message>
+    <message>
+        <source>Linear bevel transition</source>
+        <translation>선형 베벨 전환</translation>
+    </message>
+    <message>
+        <source>Large Bevel</source>
+        <translation>큰 베벨</translation>
+    </message>
+    <message>
+        <source>Large angle bevel transition</source>
+        <translation>큰 각도 베벨 전환</translation>
+    </message>
+    <message>
+        <source>Steep Bevel</source>
+        <translation>급한 베벨</translation>
+    </message>
+    <message>
+        <source>Steep bevel (large width)</source>
+        <translation>급한 베벨 (큰 폭)</translation>
+    </message>
+</context>
 </TS>
