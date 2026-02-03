@@ -25,7 +25,7 @@ class EdgeProfileDXFLoader:
 
     使用示例:
         loader = EdgeProfileDXFLoader()
-        profile = loader.load_from_dxf("docs/真材INC-26/special_shape/异型边1.dxf")
+        profile = loader.load_from_dxf("resources/profiles/profile_1.dxf")
 
         print(f"Width: {profile.original_width}mm")
         print(f"Height: {profile.original_height}mm")

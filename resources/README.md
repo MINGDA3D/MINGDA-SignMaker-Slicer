@@ -6,6 +6,7 @@
 
 - `icons/` - 工具栏和UI图标
 - `logos/` - 品牌Logo和示例图片
+- `profiles/` - 异形边轮廓配置文件 (DXF + 预览图)
 - `fonts/` - 字体文件
 - `images/` - 其他图片资源
 
