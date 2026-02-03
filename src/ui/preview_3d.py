@@ -594,23 +594,23 @@ class Preview3D(QWidget):
         layout.setSpacing(10)
 
         # 视角预设按钮
-        view_label = QLabel("视角:")
+        view_label = QLabel(self.tr("View:"))
         layout.addWidget(view_label)
 
-        for name, preset in [("俯视", "top"), ("正视", "front"), ("侧视", "right"), ("等轴", "iso")]:
+        for name, preset in [(self.tr("Top"), "top"), (self.tr("Front"), "front"), (self.tr("Side"), "right"), (self.tr("Isometric"), "iso")]:
             btn = QPushButton(name)
             btn.clicked.connect(lambda checked, p=preset: self.gl_widget.set_view_preset(p))
             layout.addWidget(btn)
 
         # 重置按钮
-        reset_btn = QPushButton("重置")
+        reset_btn = QPushButton(self.tr("Reset"))
         reset_btn.clicked.connect(self.gl_widget.reset_view)
         layout.addWidget(reset_btn)
 
         layout.addStretch()
 
         # 层数控制
-        self.layer_label = QLabel("层: 0/0")
+        self.layer_label = QLabel(self.tr("Layer: 0/0"))
         layout.addWidget(self.layer_label)
 
         self.layer_slider = QSlider(Qt.Orientation.Horizontal)
@@ -621,7 +621,7 @@ class Preview3D(QWidget):
         layout.addWidget(self.layer_slider)
 
         # 显示模式切换
-        self.show_all_btn = QPushButton("显示全部")
+        self.show_all_btn = QPushButton(self.tr("Show All"))
         self.show_all_btn.setCheckable(True)
         self.show_all_btn.setChecked(True)
         self.show_all_btn.clicked.connect(self._toggle_show_all)
@@ -633,12 +633,12 @@ class Preview3D(QWidget):
         """层数滑块变化"""
         self.gl_widget.set_current_layer(value)
         total = len(self.gl_widget.layers)
-        self.layer_label.setText(f"层: {value + 1}/{total}")
+        self.layer_label.setText(self.tr("Layer: {current}/{total}").format(current=value + 1, total=total))
 
     def _toggle_show_all(self, checked: bool):
         """切换显示模式"""
         self.gl_widget.show_all_layers = checked
-        self.show_all_btn.setText("显示全部" if checked else "单层显示")
+        self.show_all_btn.setText(self.tr("Show All") if checked else self.tr("Single Layer"))
         self.gl_widget.update()
 
     def set_layers(self, layers: List[Layer]):
@@ -649,7 +649,7 @@ class Preview3D(QWidget):
         total = len(layers)
         self.layer_slider.setMaximum(max(0, total - 1))
         self.layer_slider.setValue(max(0, total - 1))
-        self.layer_label.setText(f"层: {total}/{total}")
+        self.layer_label.setText(self.tr("Layer: {current}/{total}").format(current=total, total=total))
 
     def set_bed_size(self, width: float, depth: float, height: float):
         """设置打印平台尺寸"""

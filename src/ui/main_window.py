@@ -44,6 +44,10 @@ from src.business.undo_manager import (
     MirrorCommand, DeleteCommand, AddContoursCommand, ReplaceContoursCommand,
     TransformCommand
 )
+from src.i18n import (
+    init_translation_manager, get_translation_manager,
+    SUPPORTED_LANGUAGES, RTL_LANGUAGES
+)
 
 
 class MainWindow(QMainWindow):
@@ -86,7 +90,7 @@ class MainWindow(QMainWindow):
 
     def _init_window(self):
         """初始化窗口属性"""
-        self.setWindowTitle("SignMaker Slicer - 发光字切片软件")
+        self.setWindowTitle(self.tr("SignMaker Slicer - LED Sign Letter Slicer"))
         self.setMinimumSize(LAYOUT.window_min_width, LAYOUT.window_min_height)
         self.resize(1600, 900)
 
@@ -100,7 +104,7 @@ class MainWindow(QMainWindow):
         self.title_bar = TitleBar(self)
 
         # 创建标题栏工具栏（用于放置自定义标题栏）
-        title_toolbar = QToolBar("标题栏")
+        title_toolbar = QToolBar(self.tr("Title Bar"))
         title_toolbar.setObjectName("titleToolbar")
         title_toolbar.setMovable(False)
         title_toolbar.setFloatable(False)
@@ -135,16 +139,16 @@ class MainWindow(QMainWindow):
         menubar = self.menuBar()
 
         # === 文件菜单 ===
-        file_menu = menubar.addMenu("文件(&F)")
+        file_menu = menubar.addMenu(self.tr("File(&F)"))
 
         # 新建项目
-        new_action = QAction("新建项目", self)
+        new_action = QAction(self.tr("New Project"), self)
         new_action.setShortcut(QKeySequence.StandardKey.New)
         new_action.triggered.connect(self._on_new_project)
         file_menu.addAction(new_action)
 
         # 打开文件
-        open_action = QAction("打开DXF/SVG...", self)
+        open_action = QAction(self.tr("Open DXF/SVG..."), self)
         open_action.setShortcut(QKeySequence.StandardKey.Open)
         open_action.triggered.connect(self._on_open_file)
         file_menu.addAction(open_action)
@@ -152,13 +156,13 @@ class MainWindow(QMainWindow):
         file_menu.addSeparator()
 
         # 保存项目
-        save_action = QAction("保存项目", self)
+        save_action = QAction(self.tr("Save Project"), self)
         save_action.setShortcut(QKeySequence.StandardKey.Save)
         save_action.triggered.connect(self._on_save_project)
         file_menu.addAction(save_action)
 
         # 另存为
-        save_as_action = QAction("另存为...", self)
+        save_as_action = QAction(self.tr("Save As..."), self)
         save_as_action.setShortcut(QKeySequence("Ctrl+Shift+S"))
         save_as_action.triggered.connect(self._on_save_as)
         file_menu.addAction(save_as_action)
@@ -166,13 +170,13 @@ class MainWindow(QMainWindow):
         file_menu.addSeparator()
 
         # 导出G-code
-        export_gcode_action = QAction("导出G-code...", self)
+        export_gcode_action = QAction(self.tr("Export G-code..."), self)
         export_gcode_action.setShortcut(QKeySequence("Ctrl+E"))
         export_gcode_action.triggered.connect(self._on_export_gcode)
         file_menu.addAction(export_gcode_action)
 
         # 导出STL
-        export_stl_action = QAction("导出STL...", self)
+        export_stl_action = QAction(self.tr("Export STL..."), self)
         export_stl_action.setShortcut(QKeySequence("Ctrl+Shift+E"))
         export_stl_action.triggered.connect(self._on_export_stl)
         file_menu.addAction(export_stl_action)
@@ -180,78 +184,78 @@ class MainWindow(QMainWindow):
         file_menu.addSeparator()
 
         # 退出
-        exit_action = QAction("退出", self)
+        exit_action = QAction(self.tr("Exit"), self)
         exit_action.setShortcut(QKeySequence.StandardKey.Quit)
         exit_action.triggered.connect(self.close)
         file_menu.addAction(exit_action)
 
         # === 编辑菜单 ===
-        edit_menu = menubar.addMenu("编辑(&E)")
+        edit_menu = menubar.addMenu(self.tr("Edit(&E)"))
 
-        undo_action = QAction("撤销", self)
+        undo_action = QAction(self.tr("Undo"), self)
         undo_action.setShortcut(QKeySequence.StandardKey.Undo)
         undo_action.triggered.connect(self._on_undo)
         edit_menu.addAction(undo_action)
 
-        redo_action = QAction("重做", self)
+        redo_action = QAction(self.tr("Redo"), self)
         redo_action.setShortcut(QKeySequence.StandardKey.Redo)
         redo_action.triggered.connect(self._on_redo)
         edit_menu.addAction(redo_action)
 
         edit_menu.addSeparator()
 
-        select_all_action = QAction("全选", self)
+        select_all_action = QAction(self.tr("Select All"), self)
         select_all_action.setShortcut(QKeySequence.StandardKey.SelectAll)
         edit_menu.addAction(select_all_action)
 
-        delete_action = QAction("删除", self)
+        delete_action = QAction(self.tr("Delete"), self)
         delete_action.setShortcut(QKeySequence.StandardKey.Delete)
         edit_menu.addAction(delete_action)
 
         # === 视图菜单 ===
-        view_menu = menubar.addMenu("视图(&V)")
+        view_menu = menubar.addMenu(self.tr("View(&V)"))
 
-        view_2d_action = QAction("2D视图", self)
+        view_2d_action = QAction(self.tr("2D View"), self)
         view_2d_action.setShortcut(QKeySequence("1"))
         view_2d_action.triggered.connect(lambda: self._switch_view("2d"))
         view_menu.addAction(view_2d_action)
 
-        view_3d_action = QAction("3D视图", self)
+        view_3d_action = QAction(self.tr("3D View"), self)
         view_3d_action.setShortcut(QKeySequence("2"))
         view_3d_action.triggered.connect(lambda: self._switch_view("3d"))
         view_menu.addAction(view_3d_action)
 
         view_menu.addSeparator()
 
-        zoom_fit_action = QAction("适应画面", self)
+        zoom_fit_action = QAction(self.tr("Fit to Window"), self)
         zoom_fit_action.setShortcut(QKeySequence("F"))
         zoom_fit_action.triggered.connect(self._on_zoom_fit)
         view_menu.addAction(zoom_fit_action)
 
-        zoom_in_action = QAction("放大", self)
+        zoom_in_action = QAction(self.tr("Zoom In"), self)
         zoom_in_action.setShortcut(QKeySequence.StandardKey.ZoomIn)
         view_menu.addAction(zoom_in_action)
 
-        zoom_out_action = QAction("缩小", self)
+        zoom_out_action = QAction(self.tr("Zoom Out"), self)
         zoom_out_action.setShortcut(QKeySequence.StandardKey.ZoomOut)
         view_menu.addAction(zoom_out_action)
 
         # === 切片菜单 ===
-        slice_menu = menubar.addMenu("切片(&S)")
+        slice_menu = menubar.addMenu(self.tr("Slice(&S)"))
 
-        slice_action = QAction("开始切片", self)
+        slice_action = QAction(self.tr("Start Slicing"), self)
         slice_action.setShortcut(QKeySequence("Ctrl+Shift+S"))
         slice_action.triggered.connect(self._on_slice)
         slice_menu.addAction(slice_action)
 
-        preview_action = QAction("预览G-code", self)
+        preview_action = QAction(self.tr("Preview G-code"), self)
         preview_action.setShortcut(QKeySequence("Ctrl+P"))
         slice_menu.addAction(preview_action)
 
         # === 帮助菜单 ===
-        help_menu = menubar.addMenu("帮助(&H)")
+        help_menu = menubar.addMenu(self.tr("Help(&H)"))
 
-        about_action = QAction("关于", self)
+        about_action = QAction(self.tr("About"), self)
         about_action.triggered.connect(self._on_about)
         help_menu.addAction(about_action)
 
@@ -436,7 +440,7 @@ class MainWindow(QMainWindow):
         self.setStatusBar(statusbar)
 
         # 状态信息
-        self.status_label = QLabel("就绪")
+        self.status_label = QLabel(self.tr("Ready"))
         statusbar.addWidget(self.status_label, 1)
 
         # 坐标显示
@@ -458,13 +462,13 @@ class MainWindow(QMainWindow):
         self.undo_manager.can_undo_changed.connect(self._update_undo_actions)
         self.undo_manager.can_redo_changed.connect(self._update_undo_actions)
         self.undo_manager.command_executed.connect(
-            lambda desc: self._update_status(f"执行: {desc}")
+            lambda desc: self._update_status(self.tr("Executed: ") + desc)
         )
         self.undo_manager.command_undone.connect(
-            lambda desc: self._update_status(f"撤销: {desc}")
+            lambda desc: self._update_status(self.tr("Undone: ") + desc)
         )
         self.undo_manager.command_redone.connect(
-            lambda desc: self._update_status(f"重做: {desc}")
+            lambda desc: self._update_status(self.tr("Redone: ") + desc)
         )
 
     def _update_undo_actions(self):
@@ -545,12 +549,12 @@ class MainWindow(QMainWindow):
         """处理标题栏导航切换"""
         if nav == "home":
             # TODO: 显示首页/欢迎页
-            self._update_status("首页")
+            self._update_status(self.tr("Home"))
         elif nav == "project":
             # 显示项目编辑视图（2D）
             self.view_stack.setCurrentIndex(0)
             self.current_view = "2d"
-            self._update_status("项目编辑")
+            self._update_status(self.tr("Project Edit"))
         elif nav == "preview":
             # 显示3D预览
             self.view_stack.setCurrentIndex(1)
@@ -564,7 +568,7 @@ class MainWindow(QMainWindow):
                     machine.bed_depth,
                     machine.bed_height
                 )
-            self._update_status("3D预览")
+            self._update_status(self.tr("3D Preview"))
 
     def _on_menu_action(self, action: str):
         """处理标题栏菜单动作"""
@@ -579,12 +583,19 @@ class MainWindow(QMainWindow):
             "about": self._on_about,
             "quit": self.close,
         }
+
+        # 处理语言切换
+        if action.startswith("lang_"):
+            lang_code = action[5:]  # 去掉 "lang_" 前缀
+            self._on_change_language(lang_code)
+            return
+
         if action in actions:
             actions[action]()
         elif action == "settings":
-            self._update_status("设置功能开发中...")
+            self._update_status(self.tr("Settings feature under development..."))
         elif action == "help":
-            self._update_status("帮助功能开发中...")
+            self._update_status(self.tr("Help feature under development..."))
 
     def _on_new_project(self):
         """新建项目"""
@@ -595,16 +606,16 @@ class MainWindow(QMainWindow):
         self.slice_result = None
         self.current_file = None
         self.canvas.set_contours([])
-        self.setWindowTitle("SignMaker Slicer - 新项目")
-        self._update_status("新建项目")
+        self.setWindowTitle(self.tr("SignMaker Slicer - New Project"))
+        self._update_status(self.tr("New Project"))
 
     def _on_open_file(self):
         """打开DXF/SVG文件"""
         file_path, _ = QFileDialog.getOpenFileName(
             self,
-            "打开文件",
+            self.tr("Open File"),
             "",
-            "支持的文件 (*.dxf *.svg);;DXF文件 (*.dxf);;SVG文件 (*.svg);;所有文件 (*)"
+            self.tr("Supported Files (*.dxf *.svg);;DXF Files (*.dxf);;SVG Files (*.svg);;All Files (*)")
         )
 
         if file_path:
@@ -620,13 +631,13 @@ class MainWindow(QMainWindow):
             elif suffix == '.svg':
                 new_contours = self.svg_parser.parse(file_path)
             else:
-                QMessageBox.warning(self, "不支持的格式", f"暂不支持 {path.suffix} 格式")
+                QMessageBox.warning(self, self.tr("Unsupported Format"), self.tr("Format not supported: ") + path.suffix)
                 return
 
             # 创建替换轮廓命令（可撤销）
             cmd = ReplaceContoursCommand(
                 self.contours, new_contours,
-                f"加载 {path.name}"
+                self.tr("Load ") + path.name
             )
             self.undo_manager.push(cmd)
 
@@ -636,11 +647,11 @@ class MainWindow(QMainWindow):
             self.project_panel.update_contours(self.contours)
 
             self.setWindowTitle(f"SignMaker Slicer - {path.name}")
-            self._update_status(f"已加载: {path.name}, {len(self.contours)} 个轮廓")
+            self._update_status(self.tr("Loaded: {file}, {count} contours").format(file=path.name, count=len(self.contours)))
             self.project_loaded.emit(file_path)
 
         except Exception as e:
-            QMessageBox.critical(self, "加载失败", f"无法加载文件:\n{e}")
+            QMessageBox.critical(self, self.tr("Load Failed"), self.tr("Failed to load file:") + f"\n{e}")
 
     def _on_save_project(self):
         """保存项目"""
@@ -653,9 +664,9 @@ class MainWindow(QMainWindow):
         """另存为"""
         file_path, _ = QFileDialog.getSaveFileName(
             self,
-            "保存项目",
+            self.tr("Save Project"),
             "",
-            "SignMaker项目 (*.smp);;所有文件 (*)"
+            self.tr("SignMaker Project (*.smp);;All Files (*)")
         )
         if file_path:
             self._save_project(file_path)
@@ -663,19 +674,19 @@ class MainWindow(QMainWindow):
     def _save_project(self, file_path: str):
         """保存项目到文件"""
         # TODO: 实现项目保存
-        self._update_status(f"项目已保存: {Path(file_path).name}")
+        self._update_status(self.tr("Project saved: ") + Path(file_path).name)
 
     def _on_export_gcode(self):
         """导出G-code"""
         if not self.slice_result:
-            QMessageBox.information(self, "提示", "请先进行切片")
+            QMessageBox.information(self, self.tr("Info"), self.tr("Please slice first"))
             return
 
         file_path, _ = QFileDialog.getSaveFileName(
             self,
-            "导出G-code",
+            self.tr("Export G-code"),
             "",
-            "G-code文件 (*.gcode);;所有文件 (*)"
+            self.tr("G-code Files (*.gcode);;All Files (*)")
         )
 
         if file_path:
@@ -683,22 +694,22 @@ class MainWindow(QMainWindow):
                 params = self.param_panel.get_params()
                 writer = GCodeWriter(params.gcode)
                 writer.write(self.slice_result, file_path, params)
-                self._update_status(f"G-code已导出: {Path(file_path).name}")
-                QMessageBox.information(self, "导出成功", f"G-code已保存到:\n{file_path}")
+                self._update_status(self.tr("G-code exported: ") + Path(file_path).name)
+                QMessageBox.information(self, self.tr("Export Success"), self.tr("G-code saved to:") + f"\n{file_path}")
             except Exception as e:
-                QMessageBox.critical(self, "导出失败", f"无法导出G-code:\n{e}")
+                QMessageBox.critical(self, self.tr("Export Failed"), self.tr("Failed to export G-code:") + f"\n{e}")
 
     def _on_export_stl(self):
         """导出STL"""
         if not self.slice_result:
-            QMessageBox.information(self, "提示", "请先进行切片")
+            QMessageBox.information(self, self.tr("Info"), self.tr("Please slice first"))
             return
 
         file_path, _ = QFileDialog.getSaveFileName(
             self,
-            "导出STL",
+            self.tr("Export STL"),
             "",
-            "STL文件 (*.stl);;所有文件 (*)"
+            self.tr("STL Files (*.stl);;All Files (*)")
         )
 
         if file_path:
@@ -711,22 +722,22 @@ class MainWindow(QMainWindow):
                     self.slice_result, file_path,
                     contours=self.contours, params=params
                 )
-                self._update_status(f"STL已导出: {Path(file_path).name}")
-                QMessageBox.information(self, "导出成功", f"STL已保存到:\n{file_path}")
+                self._update_status(self.tr("STL exported: ") + Path(file_path).name)
+                QMessageBox.information(self, self.tr("Export Success"), self.tr("STL saved to:") + f"\n{file_path}")
             except Exception as e:
-                QMessageBox.critical(self, "导出失败", f"无法导出STL:\n{e}")
+                QMessageBox.critical(self, self.tr("Export Failed"), self.tr("Failed to export STL:") + f"\n{e}")
 
     def _on_export_baseplate(self):
         """导出底板DXF"""
         if not self.contours:
-            QMessageBox.information(self, "提示", "请先导入DXF文件")
+            QMessageBox.information(self, self.tr("Info"), self.tr("Please import a DXF file first"))
             return
 
         file_path, _ = QFileDialog.getSaveFileName(
             self,
-            "导出底板DXF",
+            self.tr("Export Baseplate DXF"),
             "",
-            "DXF文件 (*.dxf);;所有文件 (*)"
+            self.tr("DXF Files (*.dxf);;All Files (*)")
         )
 
         if file_path:
@@ -739,28 +750,28 @@ class MainWindow(QMainWindow):
                     self.contours, file_path, params, alignment_compensation
                 )
                 if success:
-                    self._update_status(f"底板DXF已导出: {Path(file_path).name}")
+                    self._update_status(self.tr("Baseplate DXF exported: ") + Path(file_path).name)
                     QMessageBox.information(
-                        self, "导出成功",
-                        f"底板DXF已保存到:\n{file_path}\n\n"
-                        f"对齐补偿: {alignment_compensation}mm"
+                        self, self.tr("Export Success"),
+                        self.tr("Baseplate DXF saved to:") + f"\n{file_path}\n\n" +
+                        self.tr("Alignment compensation: ") + f"{alignment_compensation}mm"
                     )
                 else:
-                    QMessageBox.warning(self, "导出失败", "无法生成底板轮廓")
+                    QMessageBox.warning(self, self.tr("Export Failed"), self.tr("Failed to generate baseplate contour"))
             except Exception as e:
-                QMessageBox.critical(self, "导出失败", f"无法导出底板DXF:\n{e}")
+                QMessageBox.critical(self, self.tr("Export Failed"), self.tr("Failed to export baseplate DXF:") + f"\n{e}")
 
     def _on_export_panel(self):
         """导出面板DXF"""
         if not self.contours:
-            QMessageBox.information(self, "提示", "请先导入DXF文件")
+            QMessageBox.information(self, self.tr("Info"), self.tr("Please import a DXF file first"))
             return
 
         file_path, _ = QFileDialog.getSaveFileName(
             self,
-            "导出面板DXF",
+            self.tr("Export Panel DXF"),
             "",
-            "DXF文件 (*.dxf);;所有文件 (*)"
+            self.tr("DXF Files (*.dxf);;All Files (*)")
         )
 
         if file_path:
@@ -773,16 +784,16 @@ class MainWindow(QMainWindow):
                     self.contours, file_path, params, alignment_compensation
                 )
                 if success:
-                    self._update_status(f"面板DXF已导出: {Path(file_path).name}")
+                    self._update_status(self.tr("Panel DXF exported: ") + Path(file_path).name)
                     QMessageBox.information(
-                        self, "导出成功",
-                        f"面板DXF已保存到:\n{file_path}\n\n"
-                        f"对齐补偿: {alignment_compensation}mm"
+                        self, self.tr("Export Success"),
+                        self.tr("Panel DXF saved to:") + f"\n{file_path}\n\n" +
+                        self.tr("Alignment compensation: ") + f"{alignment_compensation}mm"
                     )
                 else:
-                    QMessageBox.warning(self, "导出失败", "无法生成面板轮廓")
+                    QMessageBox.warning(self, self.tr("Export Failed"), self.tr("Failed to generate panel contour"))
             except Exception as e:
-                QMessageBox.critical(self, "导出失败", f"无法导出面板DXF:\n{e}")
+                QMessageBox.critical(self, self.tr("Export Failed"), self.tr("Failed to export panel DXF:") + f"\n{e}")
 
     def _on_undo(self):
         """撤销"""
@@ -791,7 +802,7 @@ class MainWindow(QMainWindow):
             self.canvas.update()
             self.project_panel.update_contours(self.contours)
         else:
-            self._update_status("没有可撤销的操作")
+            self._update_status(self.tr("Nothing to undo"))
 
     def _on_redo(self):
         """重做"""
@@ -800,16 +811,16 @@ class MainWindow(QMainWindow):
             self.canvas.update()
             self.project_panel.update_contours(self.contours)
         else:
-            self._update_status("没有可重做的操作")
+            self._update_status(self.tr("Nothing to redo"))
 
     def _on_slice(self):
         """执行切片"""
         if not self.contours:
-            QMessageBox.information(self, "提示", "请先导入DXF文件")
+            QMessageBox.information(self, self.tr("Info"), self.tr("Please import a DXF file first"))
             return
 
         try:
-            self._update_status("正在切片...")
+            self._update_status(self.tr("Slicing..."))
             QApplication.processEvents()
 
             # 获取参数
@@ -829,9 +840,9 @@ class MainWindow(QMainWindow):
                 )
 
             # 更新状态
-            msg = (
-                f"切片完成: {self.slice_result.total_layers} 层, "
-                f"预计时间: {self.slice_result.estimated_time / 60:.1f} 分钟"
+            msg = self.tr("Slicing complete: {layers} layers, estimated time: {time:.1f} minutes").format(
+                layers=self.slice_result.total_layers,
+                time=self.slice_result.estimated_time / 60
             )
             self._update_status(msg)
 
@@ -840,8 +851,8 @@ class MainWindow(QMainWindow):
             # 弹窗提示切片成功，询问是否导出
             reply = QMessageBox.question(
                 self,
-                "切片完成",
-                f"{msg}\n\n是否立即导出G-code?",
+                self.tr("Slicing Complete"),
+                msg + "\n\n" + self.tr("Export G-code now?"),
                 QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
                 QMessageBox.StandardButton.Yes
             )
@@ -850,8 +861,8 @@ class MainWindow(QMainWindow):
                 self._on_export_gcode()
 
         except Exception as e:
-            QMessageBox.critical(self, "切片失败", f"切片过程中发生错误:\n{e}")
-            self._update_status("切片失败")
+            QMessageBox.critical(self, self.tr("Slicing Failed"), self.tr("Error during slicing:") + f"\n{e}")
+            self._update_status(self.tr("Slicing failed"))
 
     def _switch_view(self, view_type: str):
         """切换2D/3D视图"""
@@ -871,7 +882,7 @@ class MainWindow(QMainWindow):
                     machine.bed_depth,
                     machine.bed_height
                 )
-        self._update_status(f"切换到{view_type.upper()}视图")
+        self._update_status(self.tr("Switched to {view} view").format(view=view_type.upper()))
 
     def _on_zoom_fit(self):
         """适应画面"""
@@ -919,7 +930,7 @@ class MainWindow(QMainWindow):
 
         # 显示面板并定位
         self._show_transform_panel()
-        self._update_status(f"工具: {mode}")
+        self._update_status(self.tr("Tool: ") + mode)
 
     def _show_transform_panel(self):
         """显示变换面板并定位到工具栏下方"""
@@ -987,7 +998,7 @@ class MainWindow(QMainWindow):
             dy = target_y - center.y()
             if abs(dx) > 0.001 or abs(dy) > 0.001:
                 self.canvas.move_selected(dx, dy)
-                self._update_status(f"移动到: X={target_x:.2f}, Y={target_y:.2f}")
+                self._update_status(self.tr("Move to: X={x:.2f}, Y={y:.2f}").format(x=target_x, y=target_y))
 
     def _close_transform_panel(self):
         """关闭变换面板"""
@@ -995,7 +1006,7 @@ class MainWindow(QMainWindow):
         self.current_transform_mode = None
         self.canvas_toolbar.clear_tool()
         self.canvas.set_tool("select")
-        self._update_status("就绪")
+        self._update_status(self.tr("Ready"))
 
     def _toggle_param_panel(self):
         """切换参数面板显示/隐藏"""
@@ -1007,7 +1018,7 @@ class MainWindow(QMainWindow):
     def _on_mirror(self, axis: str):
         """镜像"""
         if not self.canvas.selected_indices:
-            QMessageBox.information(self, "提示", "请先选中轮廓")
+            QMessageBox.information(self, self.tr("Info"), self.tr("Please select a contour first"))
             return
 
         # 获取选择中心
@@ -1023,7 +1034,7 @@ class MainWindow(QMainWindow):
         self.undo_manager.push(cmd)
 
         self.canvas.update()
-        self._update_status(f"镜像 {axis.upper()} 完成")
+        self._update_status(self.tr("Mirror {axis} complete").format(axis=axis.upper()))
 
     def _on_intersection(self):
         """交集"""
@@ -1045,19 +1056,19 @@ class MainWindow(QMainWindow):
         """关于对话框"""
         QMessageBox.about(
             self,
-            "关于 SignMaker Slicer",
+            self.tr("About SignMaker Slicer"),
             "<h3>SignMaker Slicer</h3>"
-            "<p>专业发光字3D打印切片软件</p>"
-            "<p>版本: 0.1.0 (开发版)</p>"
+            "<p>" + self.tr("Professional LED Sign Letter 3D Printing Slicer") + "</p>"
+            "<p>" + self.tr("Version: 0.1.0 (Development)") + "</p>"
             "<p></p>"
-            "<p>功能特性:</p>"
+            "<p>" + self.tr("Features:") + "</p>"
             "<ul>"
-            "<li>DXF/SVG文件导入</li>"
-            "<li>直边/斜边/异形边</li>"
-            "<li>多色打印支持</li>"
-            "<li>台阶/V槽</li>"
-            "<li>防翘裙边</li>"
-            "<li>连襟字</li>"
+            "<li>" + self.tr("DXF/SVG file import") + "</li>"
+            "<li>" + self.tr("Straight/Bevel/Custom edges") + "</li>"
+            "<li>" + self.tr("Multi-color printing support") + "</li>"
+            "<li>" + self.tr("Step/V-groove") + "</li>"
+            "<li>" + self.tr("Anti-warping skirt") + "</li>"
+            "<li>" + self.tr("Connected letters") + "</li>"
             "</ul>"
         )
 
@@ -1065,12 +1076,39 @@ class MainWindow(QMainWindow):
         """更新状态栏"""
         self.status_label.setText(message)
 
+    def _on_change_language(self, lang_code: str):
+        """切换语言"""
+        translation_manager = get_translation_manager()
+        if translation_manager:
+            if translation_manager.load_language(lang_code):
+                # 提示用户需要重启应用
+                QMessageBox.information(
+                    self,
+                    self.tr("Language Changed"),
+                    self.tr("Language has been changed to {lang}. Please restart the application for full effect.").format(
+                        lang=SUPPORTED_LANGUAGES.get(lang_code, lang_code)
+                    )
+                )
+            else:
+                QMessageBox.warning(
+                    self,
+                    self.tr("Language Change Failed"),
+                    self.tr("Translation file for {lang} is not available yet.").format(
+                        lang=SUPPORTED_LANGUAGES.get(lang_code, lang_code)
+                    )
+                )
+
 
 def main():
     """主程序入口"""
     app = QApplication(sys.argv)
     app.setApplicationName("SignMaker Slicer")
     app.setOrganizationName("MINGDA")
+
+    # 初始化翻译管理器
+    translation_manager = init_translation_manager(app)
+    # 加载保存的语言偏好（默认中文）
+    translation_manager.load_language(translation_manager.get_current_language())
 
     window = MainWindow()
     window.show()

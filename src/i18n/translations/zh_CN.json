@@ -1,0 +1,327 @@
+{
+  "_meta": {
+    "language": "中文",
+    "locale": "zh_CN",
+    "author": "SignMaker Slicer Team",
+    "version": "1.0.0"
+  },
+
+  "app": {
+    "name": "SignMaker Slicer",
+    "title": "SignMaker Slicer - 发光字切片软件",
+    "version": "版本"
+  },
+
+  "menu": {
+    "file": {
+      "_title": "文件(&F)",
+      "new": "新建项目",
+      "open": "打开DXF/SVG...",
+      "save": "保存项目",
+      "save_as": "另存为...",
+      "export_gcode": "导出G-code...",
+      "export_stl": "导出STL...",
+      "export_baseplate": "导出底板DXF...",
+      "export_panel": "导出面板DXF...",
+      "exit": "退出"
+    },
+    "edit": {
+      "_title": "编辑(&E)",
+      "undo": "撤销",
+      "redo": "重做",
+      "cut": "剪切",
+      "copy": "复制",
+      "paste": "粘贴",
+      "delete": "删除",
+      "select_all": "全选"
+    },
+    "view": {
+      "_title": "视图(&V)",
+      "zoom_in": "放大",
+      "zoom_out": "缩小",
+      "zoom_fit": "适应窗口",
+      "zoom_100": "实际大小",
+      "show_grid": "显示网格",
+      "show_origin": "显示原点"
+    },
+    "tools": {
+      "_title": "工具(&T)",
+      "slice": "切片",
+      "preview": "预览",
+      "settings": "设置"
+    },
+    "help": {
+      "_title": "帮助(&H)",
+      "about": "关于",
+      "manual": "用户手册",
+      "shortcuts": "快捷键"
+    }
+  },
+
+  "toolbar": {
+    "open": "打开",
+    "save": "保存",
+    "export": "导出",
+    "undo": "撤销",
+    "redo": "重做",
+    "slice": "切片",
+    "preview": "预览",
+    "menu": "菜单"
+  },
+
+  "nav": {
+    "home": "首页",
+    "project": "项目",
+    "preview": "预览"
+  },
+
+  "action": {
+    "slice": "切片",
+    "export_gcode": "导出Gcode",
+    "import": "导入图形",
+    "browse": "浏览",
+    "confirm": "确定",
+    "cancel": "取消",
+    "apply": "应用",
+    "reset": "重置",
+    "close": "关闭"
+  },
+
+  "status": {
+    "ready": "就绪",
+    "slicing": "正在切片...",
+    "slice_complete": "切片完成",
+    "exporting": "正在导出...",
+    "export_complete": "导出完成",
+    "loading": "正在加载...",
+    "load_complete": "已加载: {file}, {count} 个轮廓"
+  },
+
+  "dialog": {
+    "info": "提示",
+    "warning": "警告",
+    "error": "错误",
+    "confirm": "确认",
+    "no_file": "请先导入DXF文件",
+    "no_slice": "请先进行切片",
+    "export_success": "导出成功",
+    "export_fail": "导出失败",
+    "save_success": "已保存到: {path}",
+    "save_fail": "保存失败",
+    "load_fail": "无法加载文件",
+    "slice_fail": "切片失败: {error}",
+    "unsaved_changes": "有未保存的更改，是否保存？",
+    "confirm_delete": "确定要删除选中的项目吗？",
+    "confirm_exit": "确定要退出吗？"
+  },
+
+  "file_dialog": {
+    "open_dxf": "打开DXF/SVG文件",
+    "save_project": "保存项目",
+    "export_gcode": "导出G-code",
+    "export_stl": "导出STL",
+    "export_dxf": "导出DXF",
+    "dxf_files": "DXF文件 (*.dxf)",
+    "svg_files": "SVG文件 (*.svg)",
+    "gcode_files": "G-code文件 (*.gcode)",
+    "stl_files": "STL文件 (*.stl)",
+    "all_files": "所有文件 (*.*)"
+  },
+
+  "panel": {
+    "params": "参数设置",
+    "shapes": "图形列表",
+    "layers": "图层",
+    "properties": "属性"
+  },
+
+  "shape": {
+    "contour": "轮廓",
+    "hole": "孔洞",
+    "outer": "外轮廓",
+    "inner": "内轮廓",
+    "selected": "已选择 {count} 个图形",
+    "total": "共 {count} 个图形"
+  },
+
+  "transform": {
+    "move": "移动",
+    "rotate": "旋转",
+    "scale": "缩放",
+    "mirror": "镜像",
+    "mirror_x": "水平镜像",
+    "mirror_y": "垂直镜像",
+    "x_offset": "X偏移",
+    "y_offset": "Y偏移",
+    "angle": "角度",
+    "scale_factor": "缩放比例",
+    "center": "中心点"
+  },
+
+  "shell": {
+    "_title": "字壳工艺",
+    "print_mode": "打印模式",
+    "mirror_print": "镜像打印",
+    "edge_type": "字边类型",
+    "edge_type_label": "边缘类型:",
+    "straight": "直边",
+    "bevel": "斜边",
+    "custom": "异形边",
+    "basic_params": "基本参数",
+    "height": "字壳高度:",
+    "layer_height": "层高:",
+    "wall_thickness": "壁厚:",
+    "bevel_params": "斜边参数",
+    "bevel_direction": "斜边方向:",
+    "bevel_direction_top_small": "上小下大",
+    "bevel_direction_top_large": "上大下小",
+    "bevel_width": "斜边宽度:",
+    "baseplate_height": "底座高度:",
+    "custom_edge": "异形边设置",
+    "load_profile": "加载轮廓",
+    "preview_profile": "预览轮廓",
+    "bottom_close": "底面封闭",
+    "bottom_layers": "底面层数:",
+    "top_close": "顶面封闭",
+    "top_layers": "顶面层数:"
+  },
+
+  "color": {
+    "_title": "换色层设置",
+    "enable": "启用换色层",
+    "layer_count": "换色层数:",
+    "layer_height": "层高度:",
+    "color": "颜色:",
+    "add_layer": "添加层",
+    "remove_layer": "删除层"
+  },
+
+  "step": {
+    "_title": "台阶/V槽",
+    "enable": "启用台阶",
+    "type": "类型:",
+    "step": "台阶",
+    "vgroove": "V槽",
+    "position": "位置:",
+    "top": "顶部",
+    "bottom": "底部",
+    "width": "宽度:",
+    "depth": "深度:",
+    "angle": "角度:"
+  },
+
+  "skirt": {
+    "_title": "防翘裙边",
+    "enable": "启用裙边",
+    "width": "裙边宽度:",
+    "height": "裙边高度:",
+    "gap": "间隙:",
+    "layers": "层数:"
+  },
+
+  "connected": {
+    "_title": "连襟字",
+    "enable": "启用连襟字",
+    "gap": "连接间隙:",
+    "bridge_width": "连接宽度:",
+    "auto_detect": "自动检测"
+  },
+
+  "edge_wrap": {
+    "_title": "包边勾边",
+    "enable": "启用包边",
+    "type": "包边类型:",
+    "wrap": "包边",
+    "outline": "勾边",
+    "width": "宽度:",
+    "offset": "偏移:"
+  },
+
+  "panel_fill": {
+    "_title": "面板设置",
+    "enable": "启用面板",
+    "thickness": "厚度:",
+    "pattern": "填充图案:",
+    "solid": "实心",
+    "grid": "网格",
+    "honeycomb": "蜂窝",
+    "density": "填充密度:",
+    "offset": "边缘偏移:"
+  },
+
+  "baseplate": {
+    "_title": "底板设置",
+    "enable": "启用底板",
+    "thickness": "厚度:",
+    "pattern": "填充图案:",
+    "density": "填充密度:",
+    "margin": "边距:"
+  },
+
+  "speed": {
+    "_title": "速度设置",
+    "print_speed": "打印速度:",
+    "travel_speed": "空驶速度:",
+    "first_layer_speed": "首层速度:",
+    "infill_speed": "填充速度:",
+    "wall_speed": "外壁速度:",
+    "inner_wall_speed": "内壁速度:"
+  },
+
+  "machine": {
+    "_title": "机器设置",
+    "model": "机型:",
+    "bed_size": "打印尺寸:",
+    "bed_width": "宽度:",
+    "bed_depth": "深度:",
+    "bed_height": "高度:",
+    "nozzle_diameter": "喷嘴直径:",
+    "filament_diameter": "耗材直径:",
+    "nozzle_temp": "喷嘴温度:",
+    "bed_temp": "热床温度:"
+  },
+
+  "export": {
+    "_title": "输出设置",
+    "output_dir": "输出目录:",
+    "filename": "文件名:",
+    "format": "格式:",
+    "include_preview": "包含预览图",
+    "open_after_export": "导出后打开文件夹"
+  },
+
+  "units": {
+    "mm": " mm",
+    "mm_s": " mm/s",
+    "celsius": " °C",
+    "degree": " °",
+    "percent": " %"
+  },
+
+  "canvas": {
+    "zoom": "缩放: {level}%",
+    "pan": "平移",
+    "select": "选择",
+    "start_point": "起始点",
+    "order": "打印顺序",
+    "center": "居中"
+  },
+
+  "language": {
+    "_title": "语言",
+    "select": "选择语言",
+    "restart_hint": "语言已更改，部分界面可能需要重启应用才能完全生效。"
+  },
+
+  "settings": {
+    "_title": "设置",
+    "general": "常规",
+    "language": "语言",
+    "theme": "主题",
+    "dark": "深色",
+    "light": "浅色",
+    "auto_save": "自动保存",
+    "auto_save_interval": "自动保存间隔:",
+    "minutes": "分钟"
+  }
+}

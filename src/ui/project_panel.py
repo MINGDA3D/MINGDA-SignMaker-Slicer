@@ -167,7 +167,7 @@ class ProjectPanel(QWidget):
         layout.setSpacing(0)
 
         # 标题
-        title = QLabel("图形列表")
+        title = QLabel(self.tr("Shape List"))
         title.setStyleSheet(f"""
             padding: 12px;
             background-color: {COLORS.bg_primary};
@@ -214,7 +214,7 @@ class ProjectPanel(QWidget):
         layout.addWidget(scroll_area, 1)
 
         # 导入按钮
-        import_btn = QPushButton("+ 导入图形")
+        import_btn = QPushButton(self.tr("+ Import Shape"))
         import_btn.setCursor(Qt.CursorShape.PointingHandCursor)
         import_btn.setFixedHeight(52)
         import_btn.setStyleSheet(f"""
@@ -252,7 +252,7 @@ class ProjectPanel(QWidget):
 
         # 添加新项
         for i, contour in enumerate(contours):
-            name = contour.name if contour.name else f"发光字-{i + 1}"
+            name = contour.name if contour.name else self.tr("Letter-{index}").format(index=i + 1)
             item = ShapeListItem(i, name, i)
             item.clicked.connect(self._on_item_clicked)
             item.delete_clicked.connect(self._on_item_delete)

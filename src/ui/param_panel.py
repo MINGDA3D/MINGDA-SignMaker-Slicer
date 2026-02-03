@@ -53,7 +53,7 @@ class ParamPanel(QWidget):
         layout.setSpacing(0)
 
         # 标题
-        title = QLabel("参数设置")
+        title = QLabel(self.tr("Parameters"))
         title.setProperty("heading", True)
         title.setStyleSheet(f"""
             padding: 12px;
@@ -95,7 +95,7 @@ class ParamPanel(QWidget):
 
     def _create_shell_group(self) -> QGroupBox:
         """创建字壳工艺参数组"""
-        group = QGroupBox("字壳工艺")
+        group = QGroupBox(self.tr("Shell Settings"))
         layout = QFormLayout(group)
         layout.setSpacing(8)
 
@@ -105,7 +105,7 @@ class ParamPanel(QWidget):
         self.height_spin.setValue(30)
         self.height_spin.setSuffix(" mm")
         self.height_spin.valueChanged.connect(self._on_param_changed)
-        layout.addRow("字壳高度:", self.height_spin)
+        layout.addRow(self.tr("Shell Height:"), self.height_spin)
 
         # 层高
         self.layer_height_spin = QDoubleSpinBox()
@@ -114,7 +114,7 @@ class ParamPanel(QWidget):
         self.layer_height_spin.setSingleStep(0.05)
         self.layer_height_spin.setSuffix(" mm")
         self.layer_height_spin.valueChanged.connect(self._on_param_changed)
-        layout.addRow("层高:", self.layer_height_spin)
+        layout.addRow(self.tr("Layer Height:"), self.layer_height_spin)
 
         # 壁厚
         self.wall_thickness_spin = QDoubleSpinBox()
@@ -123,20 +123,20 @@ class ParamPanel(QWidget):
         self.wall_thickness_spin.setSingleStep(0.1)
         self.wall_thickness_spin.setSuffix(" mm")
         self.wall_thickness_spin.valueChanged.connect(self._on_param_changed)
-        layout.addRow("壁厚:", self.wall_thickness_spin)
+        layout.addRow(self.tr("Wall Thickness:"), self.wall_thickness_spin)
 
         # 壁数量
         self.wall_count_spin = QSpinBox()
         self.wall_count_spin.setRange(1, 5)
         self.wall_count_spin.setValue(1)
         self.wall_count_spin.valueChanged.connect(self._on_param_changed)
-        layout.addRow("壁数量:", self.wall_count_spin)
+        layout.addRow(self.tr("Wall Count:"), self.wall_count_spin)
 
         return group
 
     def _create_edge_group(self) -> QGroupBox:
         """创建边缘类型参数组"""
-        group = QGroupBox("边缘类型")
+        group = QGroupBox(self.tr("Edge Type"))
         layout = QVBoxLayout(group)
         layout.setSpacing(8)
 
@@ -145,11 +145,11 @@ class ParamPanel(QWidget):
         type_form.setSpacing(8)
 
         self.edge_type_combo = QComboBox()
-        self.edge_type_combo.addItem("直边", EdgeType.STRAIGHT)
-        self.edge_type_combo.addItem("斜边", EdgeType.BEVELED)
-        self.edge_type_combo.addItem("异形边", EdgeType.CUSTOM)
+        self.edge_type_combo.addItem(self.tr("Straight"), EdgeType.STRAIGHT)
+        self.edge_type_combo.addItem(self.tr("Beveled"), EdgeType.BEVELED)
+        self.edge_type_combo.addItem(self.tr("Custom"), EdgeType.CUSTOM)
         self.edge_type_combo.currentIndexChanged.connect(self._on_edge_type_changed)
-        type_form.addRow("边缘类型:", self.edge_type_combo)
+        type_form.addRow(self.tr("Edge Type:"), self.edge_type_combo)
 
         layout.addLayout(type_form)
 
@@ -161,10 +161,10 @@ class ParamPanel(QWidget):
 
         # 斜边方向
         self.bevel_direction_combo = QComboBox()
-        self.bevel_direction_combo.addItem("上小下大", BevelDirection.TOP_SMALL)
-        self.bevel_direction_combo.addItem("上大下小", BevelDirection.TOP_LARGE)
+        self.bevel_direction_combo.addItem(self.tr("Top Small"), BevelDirection.TOP_SMALL)
+        self.bevel_direction_combo.addItem(self.tr("Top Large"), BevelDirection.TOP_LARGE)
         self.bevel_direction_combo.currentIndexChanged.connect(self._on_param_changed)
-        bevel_layout.addRow("斜边方向:", self.bevel_direction_combo)
+        bevel_layout.addRow(self.tr("Bevel Direction:"), self.bevel_direction_combo)
 
         # 斜边宽度
         self.bevel_width_spin = QDoubleSpinBox()
@@ -172,7 +172,7 @@ class ParamPanel(QWidget):
         self.bevel_width_spin.setValue(5)
         self.bevel_width_spin.setSuffix(" mm")
         self.bevel_width_spin.valueChanged.connect(self._on_param_changed)
-        bevel_layout.addRow("斜边宽度:", self.bevel_width_spin)
+        bevel_layout.addRow(self.tr("Bevel Width:"), self.bevel_width_spin)
 
         # 底板厚度
         self.baseplate_spin = QDoubleSpinBox()
@@ -180,7 +180,7 @@ class ParamPanel(QWidget):
         self.baseplate_spin.setValue(10)
         self.baseplate_spin.setSuffix(" mm")
         self.baseplate_spin.valueChanged.connect(self._on_param_changed)
-        bevel_layout.addRow("底板厚度:", self.baseplate_spin)
+        bevel_layout.addRow(self.tr("Baseplate Thickness:"), self.baseplate_spin)
 
         # 面板厚度
         self.panel_thickness_spin = QDoubleSpinBox()
@@ -188,7 +188,7 @@ class ParamPanel(QWidget):
         self.panel_thickness_spin.setValue(3)
         self.panel_thickness_spin.setSuffix(" mm")
         self.panel_thickness_spin.valueChanged.connect(self._on_param_changed)
-        bevel_layout.addRow("面板厚度:", self.panel_thickness_spin)
+        bevel_layout.addRow(self.tr("Panel Thickness:"), self.panel_thickness_spin)
 
         layout.addWidget(self.bevel_params_widget)
         self.bevel_params_widget.setVisible(False)
@@ -200,7 +200,7 @@ class ParamPanel(QWidget):
         custom_layout.setSpacing(8)
 
         # 预设模板标签
-        preset_label = QLabel("预设模板:")
+        preset_label = QLabel(self.tr("Preset Templates:"))
         preset_label.setStyleSheet("color: #8B949E; font-size: 12px;")
         custom_layout.addWidget(preset_label)
 
@@ -212,8 +212,8 @@ class ParamPanel(QWidget):
 
         # 导入DXF按钮
         btn_layout = QHBoxLayout()
-        self.import_dxf_btn = QPushButton("导入DXF...")
-        self.import_dxf_btn.setToolTip("从DXF文件导入自定义异形边轮廓")
+        self.import_dxf_btn = QPushButton(self.tr("Import DXF..."))
+        self.import_dxf_btn.setToolTip(self.tr("Import custom edge profile from DXF file"))
         self.import_dxf_btn.clicked.connect(self._on_import_dxf)
         btn_layout.addWidget(self.import_dxf_btn)
         btn_layout.addStretch()
@@ -221,9 +221,9 @@ class ParamPanel(QWidget):
 
         # 当前轮廓信息
         info_layout = QFormLayout()
-        self.profile_info_label = QLabel("未选择轮廓")
+        self.profile_info_label = QLabel(self.tr("No profile selected"))
         self.profile_info_label.setStyleSheet("color: #888;")
-        info_layout.addRow("当前轮廓:", self.profile_info_label)
+        info_layout.addRow(self.tr("Current Profile:"), self.profile_info_label)
         custom_layout.addLayout(info_layout)
 
         layout.addWidget(self.custom_edge_widget)
@@ -233,12 +233,12 @@ class ParamPanel(QWidget):
 
     def _create_bottom_face_group(self) -> QGroupBox:
         """创建底面封闭参数组"""
-        group = QGroupBox("底面封闭")
+        group = QGroupBox(self.tr("Bottom Face"))
         layout = QVBoxLayout(group)
         layout.setSpacing(8)
 
         # 启用开关
-        self.bottom_face_enabled = QCheckBox("启用底面封闭")
+        self.bottom_face_enabled = QCheckBox(self.tr("Enable Bottom Face"))
         self.bottom_face_enabled.stateChanged.connect(self._on_param_changed)
         layout.addWidget(self.bottom_face_enabled)
 
@@ -253,7 +253,7 @@ class ParamPanel(QWidget):
         self.bottom_face_thickness.setSuffix(" mm")
         self.bottom_face_thickness.setEnabled(False)
         self.bottom_face_thickness.valueChanged.connect(self._on_param_changed)
-        form.addRow("底面厚度:", self.bottom_face_thickness)
+        form.addRow(self.tr("Bottom Thickness:"), self.bottom_face_thickness)
 
         layout.addLayout(form)
 
@@ -270,12 +270,12 @@ class ParamPanel(QWidget):
 
     def _create_top_face_group(self) -> QGroupBox:
         """创建顶面封闭参数组"""
-        group = QGroupBox("顶面封闭")
+        group = QGroupBox(self.tr("Top Face"))
         layout = QVBoxLayout(group)
         layout.setSpacing(8)
 
         # 启用开关
-        self.top_face_enabled = QCheckBox("启用顶面封闭")
+        self.top_face_enabled = QCheckBox(self.tr("Enable Top Face"))
         self.top_face_enabled.stateChanged.connect(self._on_param_changed)
         layout.addWidget(self.top_face_enabled)
 
@@ -290,7 +290,7 @@ class ParamPanel(QWidget):
         self.top_face_thickness.setSuffix(" mm")
         self.top_face_thickness.setEnabled(False)
         self.top_face_thickness.valueChanged.connect(self._on_param_changed)
-        form.addRow("顶面厚度:", self.top_face_thickness)
+        form.addRow(self.tr("Top Thickness:"), self.top_face_thickness)
 
         layout.addLayout(form)
 
@@ -307,12 +307,12 @@ class ParamPanel(QWidget):
 
     def _create_color_group(self) -> QGroupBox:
         """创建换色层参数组"""
-        group = QGroupBox("换色层设置")
+        group = QGroupBox(self.tr("Color Layer Settings"))
         layout = QVBoxLayout(group)
         layout.setSpacing(8)
 
         # 启用开关
-        self.color_enabled = QCheckBox("启用换色层")
+        self.color_enabled = QCheckBox(self.tr("Enable Color Layers"))
         self.color_enabled.stateChanged.connect(self._on_param_changed)
         layout.addWidget(self.color_enabled)
 
@@ -325,14 +325,14 @@ class ParamPanel(QWidget):
         self.color1_height.setValue(10)
         self.color1_height.setSuffix(" mm")
         self.color1_height.setEnabled(False)
-        form.addRow("第1色高度:", self.color1_height)
+        form.addRow(self.tr("Color 1 Height:"), self.color1_height)
 
         self.color2_height = QDoubleSpinBox()
         self.color2_height.setRange(0, 100)
         self.color2_height.setValue(20)
         self.color2_height.setSuffix(" mm")
         self.color2_height.setEnabled(False)
-        form.addRow("第2色高度:", self.color2_height)
+        form.addRow(self.tr("Color 2 Height:"), self.color2_height)
 
         layout.addLayout(form)
 
@@ -347,12 +347,12 @@ class ParamPanel(QWidget):
 
     def _create_step_group(self) -> QGroupBox:
         """创建台阶/V槽参数组"""
-        group = QGroupBox("台阶/V槽")
+        group = QGroupBox(self.tr("Step/V-Groove"))
         layout = QVBoxLayout(group)
         layout.setSpacing(8)
 
         # ===== 面板台阶（顶部）=====
-        self.panel_step_enabled = QCheckBox("启用面板台阶（顶部）")
+        self.panel_step_enabled = QCheckBox(self.tr("Enable Panel Step (Top)"))
         self.panel_step_enabled.stateChanged.connect(self._on_param_changed)
         layout.addWidget(self.panel_step_enabled)
 
@@ -363,7 +363,7 @@ class ParamPanel(QWidget):
         self.panel_step_height.setSuffix(" mm")
         self.panel_step_height.setEnabled(False)
         self.panel_step_height.valueChanged.connect(self._on_param_changed)
-        form1.addRow("台阶高度:", self.panel_step_height)
+        form1.addRow(self.tr("Step Height:"), self.panel_step_height)
 
         self.panel_step_width = QDoubleSpinBox()
         self.panel_step_width.setRange(0.5, 20)
@@ -371,9 +371,9 @@ class ParamPanel(QWidget):
         self.panel_step_width.setSuffix(" mm")
         self.panel_step_width.setEnabled(False)
         self.panel_step_width.valueChanged.connect(self._on_param_changed)
-        form1.addRow("台阶宽度:", self.panel_step_width)
+        form1.addRow(self.tr("Step Width:"), self.panel_step_width)
 
-        self.panel_step_v_groove = QCheckBox("V型槽")
+        self.panel_step_v_groove = QCheckBox(self.tr("V-Groove"))
         self.panel_step_v_groove.setEnabled(False)
         self.panel_step_v_groove.stateChanged.connect(self._on_param_changed)
         form1.addRow("", self.panel_step_v_groove)
@@ -391,7 +391,7 @@ class ParamPanel(QWidget):
         layout.addWidget(line1)
 
         # ===== 底板台阶（底部）=====
-        self.baseplate_step_enabled = QCheckBox("启用底板台阶（底部）")
+        self.baseplate_step_enabled = QCheckBox(self.tr("Enable Baseplate Step (Bottom)"))
         self.baseplate_step_enabled.stateChanged.connect(self._on_param_changed)
         layout.addWidget(self.baseplate_step_enabled)
 
@@ -402,7 +402,7 @@ class ParamPanel(QWidget):
         self.baseplate_step_height.setSuffix(" mm")
         self.baseplate_step_height.setEnabled(False)
         self.baseplate_step_height.valueChanged.connect(self._on_param_changed)
-        form2.addRow("台阶高度:", self.baseplate_step_height)
+        form2.addRow(self.tr("Step Height:"), self.baseplate_step_height)
 
         self.baseplate_step_width = QDoubleSpinBox()
         self.baseplate_step_width.setRange(0.5, 20)
@@ -410,9 +410,9 @@ class ParamPanel(QWidget):
         self.baseplate_step_width.setSuffix(" mm")
         self.baseplate_step_width.setEnabled(False)
         self.baseplate_step_width.valueChanged.connect(self._on_param_changed)
-        form2.addRow("台阶宽度:", self.baseplate_step_width)
+        form2.addRow(self.tr("Step Width:"), self.baseplate_step_width)
 
-        self.baseplate_step_v_groove = QCheckBox("V型槽")
+        self.baseplate_step_v_groove = QCheckBox(self.tr("V-Groove"))
         self.baseplate_step_v_groove.setEnabled(False)
         self.baseplate_step_v_groove.stateChanged.connect(self._on_param_changed)
         form2.addRow("", self.baseplate_step_v_groove)
@@ -446,12 +446,12 @@ class ParamPanel(QWidget):
 
     def _create_skirt_group(self) -> QGroupBox:
         """创建防翘裙边参数组"""
-        group = QGroupBox("防翘裙边")
+        group = QGroupBox(self.tr("Anti-Warping Skirt"))
         layout = QVBoxLayout(group)
         layout.setSpacing(8)
 
         # 启用开关
-        self.skirt_enabled = QCheckBox("启用防翘裙边")
+        self.skirt_enabled = QCheckBox(self.tr("Enable Anti-Warping Skirt"))
         self.skirt_enabled.stateChanged.connect(self._on_param_changed)
         layout.addWidget(self.skirt_enabled)
 
@@ -464,7 +464,7 @@ class ParamPanel(QWidget):
         self.skirt_width.setSuffix(" mm")
         self.skirt_width.setEnabled(False)
         self.skirt_width.valueChanged.connect(self._on_param_changed)
-        form.addRow("裙边宽度:", self.skirt_width)
+        form.addRow(self.tr("Skirt Width:"), self.skirt_width)
 
         self.skirt_height = QDoubleSpinBox()
         self.skirt_height.setRange(0.2, 10)
@@ -473,7 +473,7 @@ class ParamPanel(QWidget):
         self.skirt_height.setSuffix(" mm")
         self.skirt_height.setEnabled(False)
         self.skirt_height.valueChanged.connect(self._on_param_changed)
-        form.addRow("裙边高度:", self.skirt_height)
+        form.addRow(self.tr("Skirt Height:"), self.skirt_height)
 
         self.skirt_interval = QDoubleSpinBox()
         self.skirt_interval.setRange(5, 50)
@@ -481,7 +481,7 @@ class ParamPanel(QWidget):
         self.skirt_interval.setSuffix(" mm")
         self.skirt_interval.setEnabled(False)
         self.skirt_interval.valueChanged.connect(self._on_param_changed)
-        form.addRow("梯形间距:", self.skirt_interval)
+        form.addRow(self.tr("Trapezoid Interval:"), self.skirt_interval)
 
         self.skirt_offset = QDoubleSpinBox()
         self.skirt_offset.setRange(0, 20)
@@ -489,7 +489,7 @@ class ParamPanel(QWidget):
         self.skirt_offset.setSuffix(" mm")
         self.skirt_offset.setEnabled(False)
         self.skirt_offset.valueChanged.connect(self._on_param_changed)
-        form.addRow("裙边距离:", self.skirt_offset)
+        form.addRow(self.tr("Skirt Offset:"), self.skirt_offset)
 
         layout.addLayout(form)
 
@@ -508,12 +508,12 @@ class ParamPanel(QWidget):
 
     def _create_connected_group(self) -> QGroupBox:
         """创建连襟字参数组"""
-        group = QGroupBox("连襟字")
+        group = QGroupBox(self.tr("Connected Letters"))
         layout = QVBoxLayout(group)
         layout.setSpacing(8)
 
         # 启用开关
-        self.connected_enabled = QCheckBox("启用连襟字")
+        self.connected_enabled = QCheckBox(self.tr("Enable Connected Letters"))
         self.connected_enabled.stateChanged.connect(self._on_param_changed)
         layout.addWidget(self.connected_enabled)
 
@@ -522,14 +522,14 @@ class ParamPanel(QWidget):
 
         # 连襟类型
         self.connected_type = QComboBox()
-        self.connected_type.addItem("三角形连襟", "triangle")
-        self.connected_type.addItem("菱形连襟", "diamond")
+        self.connected_type.addItem(self.tr("Triangle"), "triangle")
+        self.connected_type.addItem(self.tr("Diamond"), "diamond")
         self.connected_type.setEnabled(False)
         self.connected_type.currentIndexChanged.connect(self._on_param_changed)
-        form.addRow("连襟类型:", self.connected_type)
+        form.addRow(self.tr("Connection Type:"), self.connected_type)
 
         # 自动检测
-        self.connected_auto_detect = QCheckBox("自动检测连接点")
+        self.connected_auto_detect = QCheckBox(self.tr("Auto Detect Connection Points"))
         self.connected_auto_detect.setChecked(True)
         self.connected_auto_detect.setEnabled(False)
         self.connected_auto_detect.stateChanged.connect(self._on_param_changed)
@@ -542,7 +542,7 @@ class ParamPanel(QWidget):
         self.connected_width.setSuffix(" mm")
         self.connected_width.setEnabled(False)
         self.connected_width.valueChanged.connect(self._on_param_changed)
-        form.addRow("连襟宽度:", self.connected_width)
+        form.addRow(self.tr("Connection Width:"), self.connected_width)
 
         # 斜边高度
         self.connected_height = QDoubleSpinBox()
@@ -551,7 +551,7 @@ class ParamPanel(QWidget):
         self.connected_height.setSuffix(" mm")
         self.connected_height.setEnabled(False)
         self.connected_height.valueChanged.connect(self._on_param_changed)
-        form.addRow("斜边高度:", self.connected_height)
+        form.addRow(self.tr("Bevel Height:"), self.connected_height)
 
         # 底座高度
         self.connected_base_height = QDoubleSpinBox()
@@ -560,7 +560,7 @@ class ParamPanel(QWidget):
         self.connected_base_height.setSuffix(" mm")
         self.connected_base_height.setEnabled(False)
         self.connected_base_height.valueChanged.connect(self._on_param_changed)
-        form.addRow("底座高度:", self.connected_base_height)
+        form.addRow(self.tr("Base Height:"), self.connected_base_height)
 
         # 支撑偏移
         self.connected_support_offset = QDoubleSpinBox()
@@ -569,7 +569,7 @@ class ParamPanel(QWidget):
         self.connected_support_offset.setSuffix(" mm")
         self.connected_support_offset.setEnabled(False)
         self.connected_support_offset.valueChanged.connect(self._on_param_changed)
-        form.addRow("支撑偏移:", self.connected_support_offset)
+        form.addRow(self.tr("Support Offset:"), self.connected_support_offset)
 
         layout.addLayout(form)
 
@@ -590,12 +590,12 @@ class ParamPanel(QWidget):
 
     def _create_edge_wrap_group(self) -> QGroupBox:
         """创建包边/勾边参数组"""
-        group = QGroupBox("包边勾边")
+        group = QGroupBox(self.tr("Edge Wrap/Outline"))
         layout = QVBoxLayout(group)
         layout.setSpacing(8)
 
         # 包边设置
-        self.wrap_enabled = QCheckBox("启用包边")
+        self.wrap_enabled = QCheckBox(self.tr("Enable Edge Wrap"))
         self.wrap_enabled.stateChanged.connect(self._on_param_changed)
         layout.addWidget(self.wrap_enabled)
 
@@ -604,8 +604,8 @@ class ParamPanel(QWidget):
 
         # 包边方向单选按钮
         wrap_dir_layout = QHBoxLayout()
-        self.wrap_dir_inner = QRadioButton("内部")
-        self.wrap_dir_outer = QRadioButton("外部")
+        self.wrap_dir_inner = QRadioButton(self.tr("Inner"))
+        self.wrap_dir_outer = QRadioButton(self.tr("Outer"))
         self.wrap_dir_inner.setChecked(True)  # 默认内部
         self.wrap_dir_inner.setEnabled(False)
         self.wrap_dir_outer.setEnabled(False)
@@ -616,7 +616,7 @@ class ParamPanel(QWidget):
         wrap_dir_layout.addWidget(self.wrap_dir_inner)
         wrap_dir_layout.addWidget(self.wrap_dir_outer)
         wrap_dir_layout.addStretch()
-        wrap_form.addRow("包边方向:", wrap_dir_layout)
+        wrap_form.addRow(self.tr("Wrap Direction:"), wrap_dir_layout)
 
         self.wrap_width = QDoubleSpinBox()
         self.wrap_width.setRange(0.5, 10)
@@ -624,7 +624,7 @@ class ParamPanel(QWidget):
         self.wrap_width.setSingleStep(0.1)
         self.wrap_width.setSuffix(" mm")
         self.wrap_width.setEnabled(False)
-        wrap_form.addRow("包边宽度:", self.wrap_width)
+        wrap_form.addRow(self.tr("Wrap Width:"), self.wrap_width)
 
         self.wrap_height = QDoubleSpinBox()
         self.wrap_height.setRange(0.5, 20)
@@ -632,7 +632,7 @@ class ParamPanel(QWidget):
         self.wrap_height.setSingleStep(0.5)
         self.wrap_height.setSuffix(" mm")
         self.wrap_height.setEnabled(False)
-        wrap_form.addRow("包边高度:", self.wrap_height)
+        wrap_form.addRow(self.tr("Wrap Height:"), self.wrap_height)
 
         layout.addLayout(wrap_form)
 
@@ -656,7 +656,7 @@ class ParamPanel(QWidget):
         layout.addWidget(line)
 
         # 勾边设置
-        self.outline_enabled = QCheckBox("启用勾边")
+        self.outline_enabled = QCheckBox(self.tr("Enable Outline"))
         self.outline_enabled.stateChanged.connect(self._on_param_changed)
         layout.addWidget(self.outline_enabled)
 
@@ -665,8 +665,8 @@ class ParamPanel(QWidget):
 
         # 勾边方向单选按钮
         outline_dir_layout = QHBoxLayout()
-        self.outline_dir_inner = QRadioButton("内部")
-        self.outline_dir_outer = QRadioButton("外部")
+        self.outline_dir_inner = QRadioButton(self.tr("Inner"))
+        self.outline_dir_outer = QRadioButton(self.tr("Outer"))
         self.outline_dir_inner.setChecked(True)  # 默认内部
         self.outline_dir_inner.setEnabled(False)
         self.outline_dir_outer.setEnabled(False)
@@ -677,7 +677,7 @@ class ParamPanel(QWidget):
         outline_dir_layout.addWidget(self.outline_dir_inner)
         outline_dir_layout.addWidget(self.outline_dir_outer)
         outline_dir_layout.addStretch()
-        outline_form.addRow("勾边方向:", outline_dir_layout)
+        outline_form.addRow(self.tr("Outline Direction:"), outline_dir_layout)
 
         self.outline_width = QDoubleSpinBox()
         self.outline_width.setRange(0.3, 5)
@@ -685,7 +685,7 @@ class ParamPanel(QWidget):
         self.outline_width.setSingleStep(0.1)
         self.outline_width.setSuffix(" mm")
         self.outline_width.setEnabled(False)
-        outline_form.addRow("勾边宽度:", self.outline_width)
+        outline_form.addRow(self.tr("Outline Width:"), self.outline_width)
 
         self.outline_height = QDoubleSpinBox()
         self.outline_height.setRange(0.3, 10)
@@ -693,7 +693,7 @@ class ParamPanel(QWidget):
         self.outline_height.setSingleStep(0.1)
         self.outline_height.setSuffix(" mm")
         self.outline_height.setEnabled(False)
-        outline_form.addRow("勾边高度:", self.outline_height)
+        outline_form.addRow(self.tr("Outline Height:"), self.outline_height)
 
         self.outline_offset = QDoubleSpinBox()
         self.outline_offset.setRange(-5, 5)
@@ -701,7 +701,7 @@ class ParamPanel(QWidget):
         self.outline_offset.setSingleStep(0.1)
         self.outline_offset.setSuffix(" mm")
         self.outline_offset.setEnabled(False)
-        outline_form.addRow("勾边偏移:", self.outline_offset)
+        outline_form.addRow(self.tr("Outline Offset:"), self.outline_offset)
 
         layout.addLayout(outline_form)
 
@@ -725,7 +725,7 @@ class ParamPanel(QWidget):
 
     def _create_speed_group(self) -> QGroupBox:
         """创建速度参数组"""
-        group = QGroupBox("速度设置")
+        group = QGroupBox(self.tr("Speed Settings"))
         layout = QFormLayout(group)
         layout.setSpacing(8)
 
@@ -735,7 +735,7 @@ class ParamPanel(QWidget):
         self.print_speed.setValue(50)
         self.print_speed.setSuffix(" mm/s")
         self.print_speed.valueChanged.connect(self._on_param_changed)
-        layout.addRow("打印速度:", self.print_speed)
+        layout.addRow(self.tr("Print Speed:"), self.print_speed)
 
         # 空走速度
         self.travel_speed = QSpinBox()
@@ -743,7 +743,7 @@ class ParamPanel(QWidget):
         self.travel_speed.setValue(150)
         self.travel_speed.setSuffix(" mm/s")
         self.travel_speed.valueChanged.connect(self._on_param_changed)
-        layout.addRow("空走速度:", self.travel_speed)
+        layout.addRow(self.tr("Travel Speed:"), self.travel_speed)
 
         # 首层速度
         self.first_layer_speed = QSpinBox()
@@ -751,7 +751,7 @@ class ParamPanel(QWidget):
         self.first_layer_speed.setValue(20)
         self.first_layer_speed.setSuffix(" mm/s")
         self.first_layer_speed.valueChanged.connect(self._on_param_changed)
-        layout.addRow("首层速度:", self.first_layer_speed)
+        layout.addRow(self.tr("First Layer Speed:"), self.first_layer_speed)
 
         return group
 
@@ -1015,9 +1015,9 @@ class ParamPanel(QWidget):
 
         file_path, _ = QFileDialog.getOpenFileName(
             self,
-            "导入异形边DXF",
+            self.tr("Import Custom Edge DXF"),
             "",
-            "DXF文件 (*.dxf);;所有文件 (*.*)"
+            self.tr("DXF Files (*.dxf);;All Files (*.*)")
         )
 
         if not file_path:
@@ -1033,17 +1033,20 @@ class ParamPanel(QWidget):
             self._on_param_changed()
 
             QMessageBox.information(
-                self, "导入成功",
-                f"已导入异形边轮廓: {profile.name}\n"
-                f"尺寸: {profile.original_width:.1f} x {profile.original_height:.1f} mm\n"
-                f"控制点: {len(profile.control_points)} 个"
+                self, self.tr("Import Success"),
+                self.tr("Imported custom edge profile: {name}\nSize: {width:.1f} x {height:.1f} mm\nControl points: {points}").format(
+                    name=profile.name,
+                    width=profile.original_width,
+                    height=profile.original_height,
+                    points=len(profile.control_points)
+                )
             )
 
         except Exception as e:
             from PySide6.QtWidgets import QMessageBox
             QMessageBox.warning(
-                self, "导入失败",
-                f"无法导入DXF文件:\n{str(e)}"
+                self, self.tr("Import Failed"),
+                self.tr("Failed to import DXF file:\n{error}").format(error=str(e))
             )
 
     def _update_profile_info(self):
@@ -1051,9 +1054,9 @@ class ParamPanel(QWidget):
         if self._current_profile:
             info = f"{self._current_profile.name}"
             if self._current_profile.control_points:
-                info += f" ({len(self._current_profile.control_points)}点)"
+                info += self.tr(" ({count} points)").format(count=len(self._current_profile.control_points))
             self.profile_info_label.setText(info)
             self.profile_info_label.setStyleSheet("color: #58A6FF;")
         else:
-            self.profile_info_label.setText("未选择轮廓")
+            self.profile_info_label.setText(self.tr("No profile selected"))
             self.profile_info_label.setStyleSheet("color: #888;")
