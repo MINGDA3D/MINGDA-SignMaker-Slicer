@@ -1,5 +1,5 @@
 """
-SignMaker Slicer - 单元测试
+MINGDA SignMaker - 单元测试
 
 测试核心模块功能：
 - types: 数据类型
@@ -320,7 +320,7 @@ class TestGCodeWriter:
         """测试G-code包含头部"""
         lines = writer.generate(simple_result)
 
-        assert any("SignMaker Slicer" in line for line in lines)
+        assert any("MINGDA SignMaker" in line for line in lines)
         assert any("Home" in line for line in lines)
 
     def test_gcode_contains_footer(self, writer, simple_result):

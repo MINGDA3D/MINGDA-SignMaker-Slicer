@@ -4,8 +4,8 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <source>SignMaker Slicer - LED Sign Letter Slicer</source>
-        <translation>SignMaker Slicer - LED Isikli Harf Dilimleyici</translation>
+        <source>MINGDA SignMaker - LED Sign Letter Slicer</source>
+        <translation>MINGDA SignMaker - LED Isikli Harf Dilimleyici</translation>
     </message>
     <message>
         <source>Title Bar</source>
@@ -144,8 +144,8 @@
         <translation>Yardim ozelligi gelistiriliyor...</translation>
     </message>
     <message>
-        <source>SignMaker Slicer - New Project</source>
-        <translation>SignMaker Slicer - Yeni Proje</translation>
+        <source>MINGDA SignMaker - New Project</source>
+        <translation>MINGDA SignMaker - Yeni Proje</translation>
     </message>
     <message>
         <source>Open File</source>
@@ -352,8 +352,8 @@
         <translation>{axis} aynalama tamamlandi</translation>
     </message>
     <message>
-        <source>About SignMaker Slicer</source>
-        <translation>SignMaker Slicer Hakkinda</translation>
+        <source>About MINGDA SignMaker</source>
+        <translation>MINGDA SignMaker Hakkinda</translation>
     </message>
     <message>
         <source>Professional LED Sign Letter 3D Printing Slicer</source>

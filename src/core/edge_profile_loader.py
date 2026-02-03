@@ -1,5 +1,5 @@
 """
-SignMaker Slicer - 异形边DXF加载器
+MINGDA SignMaker - 异形边DXF加载器
 
 从DXF文件加载异形边轮廓，支持INC-S格式的SPLINE曲线。
 

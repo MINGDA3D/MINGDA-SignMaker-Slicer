@@ -1,5 +1,5 @@
 """
-SignMaker Slicer - 撤销/重做管理器
+MINGDA SignMaker - 撤销/重做管理器
 
 实现命令模式（Command Pattern）的撤销/重做系统。
 

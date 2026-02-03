@@ -1,5 +1,5 @@
 """
-SignMaker Slicer - 画布工具栏
+MINGDA SignMaker - 画布工具栏
 
 嵌入在画布区域顶部的工具栏，包含：
 - 左侧：变换工具、镜像、布尔操作、组合操作

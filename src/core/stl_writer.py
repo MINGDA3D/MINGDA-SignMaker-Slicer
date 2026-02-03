@@ -1,5 +1,5 @@
 """
-SignMaker Slicer - STL导出模块
+MINGDA SignMaker - STL导出模块
 
 使用 trimesh + shapely 将切片结果转换为STL格式的3D模型文件。
 

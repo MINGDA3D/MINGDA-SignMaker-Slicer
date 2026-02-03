@@ -1,5 +1,5 @@
 """
-SignMaker Slicer - 参数设置界面
+MINGDA SignMaker - 参数设置界面
 根据实际UI界面和INC-S文档生成
 分为两张图片：Part1 (预设+1-6) 和 Part2 (7-11+机器设置)
 """

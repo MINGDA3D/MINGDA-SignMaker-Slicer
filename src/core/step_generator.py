@@ -1,5 +1,5 @@
 """
-SignMaker Slicer - 台阶/V槽生成器模块
+MINGDA SignMaker - 台阶/V槽生成器模块
 
 生成台阶和V槽结构，用于安装面板和底板。
 

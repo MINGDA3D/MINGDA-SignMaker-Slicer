@@ -1,5 +1,5 @@
 """
-SignMaker Slicer - 异形边轮廓生成器
+MINGDA SignMaker - 异形边轮廓生成器
 
 提供多种插值算法来生成异形边轮廓曲线，支持：
 - 线性插值

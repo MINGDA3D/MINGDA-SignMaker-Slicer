@@ -1,5 +1,5 @@
 """
-SignMaker Slicer - 参数面板组件
+MINGDA SignMaker - 参数面板组件
 
 用于设置切片参数的面板，包含：
 - 字壳工艺参数

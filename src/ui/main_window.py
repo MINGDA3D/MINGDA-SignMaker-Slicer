@@ -1,5 +1,5 @@
 """
-SignMaker Slicer - 主窗口
+MINGDA SignMaker - 主窗口
 
 应用程序的主窗口，包含：
 - 菜单栏
@@ -51,7 +51,7 @@ from src.i18n import (
 
 
 class MainWindow(QMainWindow):
-    """SignMaker Slicer 主窗口"""
+    """MINGDA SignMaker 主窗口"""
 
     # 信号
     project_loaded = Signal(str)  # 项目加载信号
@@ -90,7 +90,7 @@ class MainWindow(QMainWindow):
 
     def _init_window(self):
         """初始化窗口属性"""
-        self.setWindowTitle(self.tr("SignMaker Slicer - LED Sign Letter Slicer"))
+        self.setWindowTitle(self.tr("MINGDA SignMaker - LED Sign Letter Slicer"))
         self.setMinimumSize(LAYOUT.window_min_width, LAYOUT.window_min_height)
         self.resize(1600, 900)
 
@@ -606,7 +606,7 @@ class MainWindow(QMainWindow):
         self.slice_result = None
         self.current_file = None
         self.canvas.set_contours([])
-        self.setWindowTitle(self.tr("SignMaker Slicer - New Project"))
+        self.setWindowTitle(self.tr("MINGDA SignMaker - New Project"))
         self._update_status(self.tr("New Project"))
 
     def _on_open_file(self):
@@ -646,7 +646,7 @@ class MainWindow(QMainWindow):
             self.canvas.fit_view()
             self.project_panel.update_contours(self.contours)
 
-            self.setWindowTitle(f"SignMaker Slicer - {path.name}")
+            self.setWindowTitle(f"MINGDA SignMaker - {path.name}")
             self._update_status(self.tr("Loaded: {file}, {count} contours").format(file=path.name, count=len(self.contours)))
             self.project_loaded.emit(file_path)
 
@@ -1056,8 +1056,8 @@ class MainWindow(QMainWindow):
         """关于对话框"""
         QMessageBox.about(
             self,
-            self.tr("About SignMaker Slicer"),
-            "<h3>SignMaker Slicer</h3>"
+            self.tr("About MINGDA SignMaker"),
+            "<h3>MINGDA SignMaker</h3>"
             "<p>" + self.tr("Professional LED Sign Letter 3D Printing Slicer") + "</p>"
             "<p>" + self.tr("Version: 0.1.0 (Development)") + "</p>"
             "<p></p>"
@@ -1102,7 +1102,7 @@ class MainWindow(QMainWindow):
 def main():
     """主程序入口"""
     app = QApplication(sys.argv)
-    app.setApplicationName("SignMaker Slicer")
+    app.setApplicationName("MINGDA SignMaker")
     app.setOrganizationName("MINGDA")
 
     # 初始化翻译管理器

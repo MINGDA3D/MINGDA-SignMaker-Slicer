@@ -1,5 +1,5 @@
 """
-SignMaker Slicer - 首页设计 v3
+MINGDA SignMaker - 首页设计 v3
 极简大气风格 - 居中布局 + 光晕渐变 + 精致细节
 一次生成两张图片：最近项目 和 精选案例
 """
@@ -453,7 +453,7 @@ def generate_home_image(tab_selected, output_filename):
 
     draw_text(28, footer_y + 10, "*", font_body, C["success"])
     draw_text(42, footer_y + 10, "就绪", font_small, C["text_muted"])
-    draw_text(WIDTH - 160, footer_y + 10, "SignMaker Slicer v1.0", font_small, C["text_muted"])
+    draw_text(WIDTH - 160, footer_y + 10, "MINGDA SignMaker v1.0", font_small, C["text_muted"])
 
     # ============================================
     # 保存

@@ -1,5 +1,5 @@
 """
-SignMaker Slicer - SVG解析器单元测试
+MINGDA SignMaker - SVG解析器单元测试
 
 测试SVG解析功能（基于svgpathtools库）：
 - 基本图形解析（rect, circle, ellipse, polygon, path）

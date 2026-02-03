@@ -1,5 +1,5 @@
 """
-SignMaker Slicer - 项目面板组件
+MINGDA SignMaker - 项目面板组件
 
 显示项目中的图形列表，支持：
 - 图形列表显示（带颜色标识）

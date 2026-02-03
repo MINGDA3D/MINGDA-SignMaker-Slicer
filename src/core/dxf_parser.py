@@ -1,5 +1,5 @@
 """
-SignMaker Slicer - DXF文件解析模块
+MINGDA SignMaker - DXF文件解析模块
 
 将DXF文件解析为内部Contour数据结构，包括：
 - 提取图形实体（LWPOLYLINE, POLYLINE, LINE, SPLINE, ARC, CIRCLE）

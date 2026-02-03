@@ -1,5 +1,5 @@
 """
-SignMaker Slicer - 2D画布组件
+MINGDA SignMaker - 2D画布组件
 
 用于显示和编辑2D轮廓的画布组件，支持：
 - 轮廓渲染

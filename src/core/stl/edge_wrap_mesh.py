@@ -1,5 +1,5 @@
 """
-SignMaker Slicer - 包边/勾边网格生成器
+MINGDA SignMaker - 包边/勾边网格生成器
 
 生成包边和勾边的3D网格：
 - 包边：矩形截面，围绕字壳轮廓的环形带

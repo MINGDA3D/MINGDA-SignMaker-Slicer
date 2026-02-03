@@ -4,8 +4,8 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <source>SignMaker Slicer - LED Sign Letter Slicer</source>
-        <translation>SignMaker Slicer - Слайсер для светящихся букв</translation>
+        <source>MINGDA SignMaker - LED Sign Letter Slicer</source>
+        <translation>MINGDA SignMaker - Слайсер для светящихся букв</translation>
     </message>
     <message>
         <source>Title Bar</source>
@@ -144,8 +144,8 @@
         <translation>Функция справки в разработке...</translation>
     </message>
     <message>
-        <source>SignMaker Slicer - New Project</source>
-        <translation>SignMaker Slicer - Новый проект</translation>
+        <source>MINGDA SignMaker - New Project</source>
+        <translation>MINGDA SignMaker - Новый проект</translation>
     </message>
     <message>
         <source>Open File</source>
@@ -352,8 +352,8 @@
         <translation>Отражение по {axis} завершено</translation>
     </message>
     <message>
-        <source>About SignMaker Slicer</source>
-        <translation>О программе SignMaker Slicer</translation>
+        <source>About MINGDA SignMaker</source>
+        <translation>О программе MINGDA SignMaker</translation>
     </message>
     <message>
         <source>Professional LED Sign Letter 3D Printing Slicer</source>

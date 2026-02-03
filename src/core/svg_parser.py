@@ -1,5 +1,5 @@
 """
-SignMaker Slicer - SVG文件解析模块
+MINGDA SignMaker - SVG文件解析模块
 
 使用 svgpathtools 库将SVG文件解析为内部Contour数据结构，包括：
 - 提取图形元素（path, rect, circle, ellipse, polygon, polyline, line）

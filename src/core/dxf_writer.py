@@ -1,5 +1,5 @@
 """
-SignMaker Slicer - DXF文件写入模块
+MINGDA SignMaker - DXF文件写入模块
 
 用于生成底板和面板的DXF文件，支持：
 - 根据字壳轮廓生成底板/面板轮廓

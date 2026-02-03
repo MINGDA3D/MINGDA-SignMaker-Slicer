@@ -1,5 +1,5 @@
 """
-SignMaker Slicer - 几何工具模块
+MINGDA SignMaker - 几何工具模块
 
 提供通用几何计算函数。
 """

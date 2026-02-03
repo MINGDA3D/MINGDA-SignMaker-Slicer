@@ -1,5 +1,5 @@
 """
-SignMaker Slicer - 国际化 (i18n) 模块
+MINGDA SignMaker - 国际化 (i18n) 模块
 
 使用 Qt 官方的 .ts/.qm 翻译系统，支持14种语言：
 - 中文 (zh_CN)
@@ -26,7 +26,7 @@ SignMaker Slicer - 国际化 (i18n) 模块
     translation_manager.load_language("en_US")
 
     # 在 QWidget 中使用 self.tr() 标记可翻译字符串
-    self.setWindowTitle(self.tr("SignMaker Slicer"))
+    self.setWindowTitle(self.tr("MINGDA SignMaker"))
 """
 
 from .translation_manager import (

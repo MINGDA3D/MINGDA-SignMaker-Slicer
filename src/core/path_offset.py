@@ -1,5 +1,5 @@
 """
-SignMaker Slicer - 路径偏移模块
+MINGDA SignMaker - 路径偏移模块
 
 使用pyclipper库进行路径的内/外偏移操作，支持：
 - 单路径偏移（内缩/外扩）

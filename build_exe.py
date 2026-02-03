@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-SignMaker Slicer - PyInstaller打包脚本
+MINGDA SignMaker - PyInstaller打包脚本
 
 运行方式：
     python build_exe.py
@@ -17,7 +17,7 @@ def build():
     # PyInstaller参数
     args = [
         sys.executable, "-m", "PyInstaller",
-        "--name=SignMaker Slicer",
+        "--name=MINGDA SignMaker",
         "--windowed",  # 无控制台窗口
         "--onefile",   # 单文件模式
         f"--icon={project_root / 'docs' / 'images' / 'MINGDA_logo.ico'}",
@@ -49,14 +49,14 @@ def build():
         str(project_root / "main.py"),
     ]
 
-    print("Building SignMaker Slicer...")
+    print("Building MINGDA SignMaker...")
     print(f"Command: {' '.join(args[2:])}")
     print()
 
     result = subprocess.run(args, cwd=project_root)
 
     if result.returncode == 0:
-        exe_path = project_root / "dist" / "SignMaker Slicer.exe"
+        exe_path = project_root / "dist" / "MINGDA SignMaker.exe"
         print()
         print("=" * 50)
         print("Build successful!")

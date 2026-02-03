@@ -4,7 +4,7 @@
 
 ### 首次发布
 
-SignMaker Slicer 是一款专为发光字3D打印设计的切片软件，支持生成字壳G-code和STL模型。
+MINGDA SignMaker 是一款专为发光字3D打印设计的切片软件，支持生成字壳G-code和STL模型。
 
 ### 核心功能
 
@@ -73,4 +73,4 @@ SignMaker Slicer 是一款专为发光字3D打印设计的切片软件，支持�
 
 ---
 
-*SignMaker Slicer - 发光字3D打印切片软件*
+*MINGDA SignMaker - 发光字3D打印切片软件*

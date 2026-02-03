@@ -4,8 +4,8 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <source>SignMaker Slicer - LED Sign Letter Slicer</source>
-        <translation>SignMaker Slicer - مقطّع حروف اللافتات المضيئة</translation>
+        <source>MINGDA SignMaker - LED Sign Letter Slicer</source>
+        <translation>MINGDA SignMaker - مقطّع حروف اللافتات المضيئة</translation>
     </message>
     <message>
         <source>Title Bar</source>
@@ -144,8 +144,8 @@
         <translation>ميزة المساعدة قيد التطوير...</translation>
     </message>
     <message>
-        <source>SignMaker Slicer - New Project</source>
-        <translation>SignMaker Slicer - مشروع جديد</translation>
+        <source>MINGDA SignMaker - New Project</source>
+        <translation>MINGDA SignMaker - مشروع جديد</translation>
     </message>
     <message>
         <source>Open File</source>
@@ -352,8 +352,8 @@
         <translation>اكتمل الانعكاس {axis}</translation>
     </message>
     <message>
-        <source>About SignMaker Slicer</source>
-        <translation>حول SignMaker Slicer</translation>
+        <source>About MINGDA SignMaker</source>
+        <translation>حول MINGDA SignMaker</translation>
     </message>
     <message>
         <source>Professional LED Sign Letter 3D Printing Slicer</source>

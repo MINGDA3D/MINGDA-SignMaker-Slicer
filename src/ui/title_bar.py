@@ -1,5 +1,5 @@
 """
-SignMaker Slicer - 导航栏
+MINGDA SignMaker - 导航栏
 
 导航栏设计：
 - 最左侧：菜单按钮

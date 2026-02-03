@@ -1,5 +1,5 @@
 """
-SignMaker Slicer - 异形边模块单元测试
+MINGDA SignMaker - 异形边模块单元测试
 
 测试内容：
 1. EdgeProfile 数据类

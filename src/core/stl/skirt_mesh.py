@@ -1,5 +1,5 @@
 """
-SignMaker Slicer - 裙边网格生成器
+MINGDA SignMaker - 裙边网格生成器
 
 生成防翘裙边的3D网格。
 裙边是围绕字壳底部的梯形结构，用于防止打印时翘边。

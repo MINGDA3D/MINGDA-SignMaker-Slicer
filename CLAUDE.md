@@ -1,7 +1,7 @@
-# CLAUDE.md - SignMaker Slicer Project Context
+# CLAUDE.md - MINGDA SignMaker Project Context
 
 ## Project Overview
-**SignMaker Slicer** - A specialized 3D printing slicer software for illuminated sign letters (发光字).
+**MINGDA SignMaker** - A specialized 3D printing slicer software for illuminated sign letters (发光字).
 
 This project aims to create a software similar to INC-S and SASM3D, which generates G-code for 3D printing sign letter shells with features like:
 - Straight edge, beveled edge, and custom edge profiles
@@ -22,7 +22,7 @@ This project aims to create a software similar to INC-S and SASM3D, which genera
 
 ## Directory Structure
 ```
-SignMaker Slicer/
+MINGDA SignMaker/
 ├── CLAUDE.md              # This file - project context
 ├── requirements.txt       # Python dependencies
 ├── main.py               # Application entry point (planned)
@@ -48,10 +48,18 @@ SignMaker Slicer/
 │   │   ├── main_window.py # Main application window (planned)
 │   │   ├── canvas_2d.py  # 2D preview canvas (planned)
 │   │   └── preview_3d.py # 3D preview widget (planned)
+│   ├── i18n/             # Internationalization (i18n)
+│   │   ├── __init__.py   # i18n module exports
+│   │   └── translation_manager.py # Translation manager
 │   └── utils/            # Utility functions (planned)
+├── translations/         # Qt translation files (.ts/.qm)
+│   ├── signmaker_zh_CN.ts  # Chinese translations
+│   ├── signmaker_en_US.ts  # English translations
+│   └── signmaker_*.ts      # Other languages (ru, uk, de, fr, es, pt, it, he, ar, ja, ko, tr)
 ├── tools/                # Development tools
 │   ├── generate_ui_mockup.py
-│   └── add_preset_to_ui.py
+│   ├── add_preset_to_ui.py
+│   └── update_translations.py  # Translation file management tool
 ├── docs/                 # Documentation and assets
 │   ├── 功能需求清单.md    # Feature requirements (comprehensive)
 │   ├── 功能清单.md        # Feature list
@@ -109,6 +117,53 @@ The theme is defined in `src/ui/theme.py`:
 - Colors: `bg_primary=#0D1117`, `accent_primary=#58A6FF`
 - Fonts: Microsoft YaHei UI, Consolas
 - Complete Qt stylesheet for PySide6
+
+## Internationalization (i18n)
+
+The application supports 14 languages using Qt's translation system:
+
+### Supported Languages
+| Code | Language |
+|------|----------|
+| zh_CN | 中文 (Chinese) |
+| en_US | English |
+| ru_RU | Русский (Russian) |
+| uk_UA | Українська (Ukrainian) |
+| de_DE | Deutsch (German) |
+| fr_FR | Français (French) |
+| es_ES | Español (Spanish) |
+| pt_BR | Português (Portuguese) |
+| it_IT | Italiano (Italian) |
+| he_IL | עברית (Hebrew) |
+| ar_SA | العربية (Arabic) |
+| ja_JP | 日本語 (Japanese) |
+| ko_KR | 한국어 (Korean) |
+| tr_TR | Türkçe (Turkish) |
+
+### Translation Workflow
+```bash
+# 1. Initialize empty .ts files
+python tools/update_translations.py init
+
+# 2. Extract translatable strings from source code
+python tools/update_translations.py extract
+
+# 3. Edit translations using Qt Linguist
+python tools/update_translations.py edit en_US
+
+# 4. Compile .ts files to .qm binary files
+python tools/update_translations.py compile
+```
+
+### Using Translations in Code
+```python
+# In QWidget subclasses, use self.tr():
+self.setWindowTitle(self.tr("MINGDA SignMaker"))
+button.setText(self.tr("Save"))
+
+# With format placeholders:
+self.tr("Loaded: {file}, {count} contours").format(file=name, count=5)
+```
 
 ## Key Features (from 功能需求清单.md)
 
@@ -206,6 +261,7 @@ The theme is defined in `src/ui/theme.py`:
 - [x] Parameter panels
 - [ ] 3D preview
 - [x] File operations (DXF导入/G-code导出)
+- [x] Internationalization (i18n) - 14 languages supported
 
 ## Development Guidelines
 

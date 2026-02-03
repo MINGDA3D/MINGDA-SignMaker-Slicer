@@ -1,4 +1,4 @@
-# Core algorithms for SignMaker Slicer
+# Core algorithms for MINGDA SignMaker
 
 from .types import (
     # 基础几何类型

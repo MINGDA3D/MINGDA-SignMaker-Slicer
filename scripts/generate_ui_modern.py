@@ -1,5 +1,5 @@
 """
-SignMaker Slicer - Modern UI Design
+MINGDA SignMaker - Modern UI Design
 现代化UI设计 - 独特风格
 灵感来源: Figma, Blender, VS Code, Fusion 360
 """
@@ -637,7 +637,7 @@ draw_text(100, HEIGHT - FOOTER_H + 10, "图形: 3个", font_small, C["text_muted
 draw_text(200, HEIGHT - FOOTER_H + 10, "机器: AD-F4 (800×1200x100mm)", font_small, C["text_muted"])
 
 # 版本
-draw_text(WIDTH - 150, HEIGHT - FOOTER_H + 10, "SignMaker Slicer v1.0", font_small, C["text_muted"])
+draw_text(WIDTH - 150, HEIGHT - FOOTER_H + 10, "MINGDA SignMaker v1.0", font_small, C["text_muted"])
 
 # ============================================
 # 保存

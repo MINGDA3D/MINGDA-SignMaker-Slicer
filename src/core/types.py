@@ -1,5 +1,5 @@
 """
-SignMaker Slicer - 核心数据类型定义
+MINGDA SignMaker - 核心数据类型定义
 
 定义切片器使用的所有基础数据结构，包括：
 - 几何类型：Point, Point3D, Path, Contour

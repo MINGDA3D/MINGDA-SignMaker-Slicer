@@ -1,5 +1,5 @@
 """
-SignMaker Slicer - 字壳网格生成器
+MINGDA SignMaker - 字壳网格生成器
 
 生成空心字壳的3D网格，支持逐层挤出。
 """

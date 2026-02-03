@@ -1,1 +1,1 @@
-# Utility functions for SignMaker Slicer
+# Utility functions for MINGDA SignMaker

@@ -1,5 +1,5 @@
 """
-SignMaker Slicer - 异形边预设模板库
+MINGDA SignMaker - 异形边预设模板库
 
 提供基于INC-S的20个预设异形边模板，分为以下类别：
 - 锯齿类 (Zigzag): 装饰性锯齿边缘

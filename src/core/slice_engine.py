@@ -1,5 +1,5 @@
 """
-SignMaker Slicer - 切片引擎模块
+MINGDA SignMaker - 切片引擎模块
 
 核心切片逻辑，协调各子生成器，将轮廓数据转换为打印层数据。
 

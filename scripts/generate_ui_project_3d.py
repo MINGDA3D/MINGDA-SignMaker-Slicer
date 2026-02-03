@@ -1,5 +1,5 @@
 """
-SignMaker Slicer - 项目模式 3D视图 效果图
+MINGDA SignMaker - 项目模式 3D视图 效果图
 """
 
 from PIL import Image, ImageDraw, ImageFont
@@ -673,7 +673,7 @@ draw_rounded_rect(0, HEIGHT - FOOTER_H, WIDTH, FOOTER_H, 0, fill=C["bg_primary"]
 draw_text(20, HEIGHT - FOOTER_H + 10, "● 就绪", font_body, C["success"])
 draw_text(100, HEIGHT - FOOTER_H + 10, "图形: 3个", font_small, C["text_muted"])
 draw_text(200, HEIGHT - FOOTER_H + 10, "机器: AD-F4 (800×1200x100mm)", font_small, C["text_muted"])
-draw_text(WIDTH - 150, HEIGHT - FOOTER_H + 10, "SignMaker Slicer v1.0", font_small, C["text_muted"])
+draw_text(WIDTH - 150, HEIGHT - FOOTER_H + 10, "MINGDA SignMaker v1.0", font_small, C["text_muted"])
 
 # ============================================
 # 保存

@@ -110,8 +110,8 @@ def add_preset_template_section(img):
 
 def main():
     # 加载原始图片
-    input_path = r"E:\SignMaker Slicer\docs\UI\UI_Modern.png"
-    output_path = r"E:\SignMaker Slicer\docs\UI\UI_Modern_WithPresets.png"
+    input_path = r"E:\MINGDA SignMaker\docs\UI\UI_Modern.png"
+    output_path = r"E:\MINGDA SignMaker\docs\UI\UI_Modern_WithPresets.png"
 
     print(f"Loading original UI: {input_path}")
     img = Image.open(input_path)

@@ -4,8 +4,8 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <source>SignMaker Slicer - LED Sign Letter Slicer</source>
-        <translation>SignMaker Slicer - LED 채널 레터 슬라이서</translation>
+        <source>MINGDA SignMaker - LED Sign Letter Slicer</source>
+        <translation>MINGDA SignMaker - LED 채널 레터 슬라이서</translation>
     </message>
     <message>
         <source>Title Bar</source>
@@ -144,8 +144,8 @@
         <translation>도움말 기능 개발 중...</translation>
     </message>
     <message>
-        <source>SignMaker Slicer - New Project</source>
-        <translation>SignMaker Slicer - 새 프로젝트</translation>
+        <source>MINGDA SignMaker - New Project</source>
+        <translation>MINGDA SignMaker - 새 프로젝트</translation>
     </message>
     <message>
         <source>Open File</source>
@@ -352,8 +352,8 @@
         <translation>{axis} 대칭 완료</translation>
     </message>
     <message>
-        <source>About SignMaker Slicer</source>
-        <translation>SignMaker Slicer 정보</translation>
+        <source>About MINGDA SignMaker</source>
+        <translation>MINGDA SignMaker 정보</translation>
     </message>
     <message>
         <source>Professional LED Sign Letter 3D Printing Slicer</source>

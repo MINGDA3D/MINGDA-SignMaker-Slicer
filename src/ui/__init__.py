@@ -1,4 +1,4 @@
-# SignMaker Slicer UI Module
+# MINGDA SignMaker UI Module
 
 from .theme import (
     Colors, Fonts, Layout,

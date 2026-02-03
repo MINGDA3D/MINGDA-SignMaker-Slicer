@@ -1,5 +1,5 @@
 """
-SignMaker Slicer UI Mockup Generator
+MINGDA SignMaker UI Mockup Generator
 生成带有预设模板功能的现代化UI界面设计图
 """
 
@@ -90,7 +90,7 @@ class UIGenerator:
             x += 80
 
         # 标题
-        title = "SignMaker Slicer v1.0 - [未保存项目]"
+        title = "MINGDA SignMaker v1.0 - [未保存项目]"
         title_x = self.width // 2 - 120
         self.draw_text(title_x, 6, title, '#cccccc', self.font_normal)
 
@@ -340,7 +340,7 @@ class UIGenerator:
             x += 180
 
         # 右侧版本信息
-        self.draw_text(self.width - 200, y+9, "SignMaker Slicer v1.0", '#ffffff', self.font_small)
+        self.draw_text(self.width - 200, y+9, "MINGDA SignMaker v1.0", '#ffffff', self.font_small)
 
     def generate(self):
         """生成完整UI"""
@@ -364,6 +364,6 @@ if __name__ == "__main__":
     generator = UIGenerator(1920, 1080)
     img = generator.generate()
 
-    output_path = r"E:\SignMaker Slicer\docs\UI\UI_Modern_WithPresets.png"
+    output_path = r"E:\MINGDA SignMaker\docs\UI\UI_Modern_WithPresets.png"
     generator.save(output_path)
     print("Done!")

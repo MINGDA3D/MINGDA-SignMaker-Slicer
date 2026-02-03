@@ -2,13 +2,13 @@
   "_meta": {
     "language": "中文",
     "locale": "zh_CN",
-    "author": "SignMaker Slicer Team",
+    "author": "MINGDA SignMaker Team",
     "version": "1.0.0"
   },
 
   "app": {
-    "name": "SignMaker Slicer",
-    "title": "SignMaker Slicer - 发光字切片软件",
+    "name": "MINGDA SignMaker",
+    "title": "MINGDA SignMaker - 发光字切片软件",
     "version": "版本"
   },
 

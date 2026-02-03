@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-SignMaker Slicer - 发光字3D打印切片软件
+MINGDA SignMaker - 发光字3D打印切片软件
 
 主程序入口
 """

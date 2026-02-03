@@ -1,5 +1,5 @@
 """
-SignMaker Slicer - UI组件
+MINGDA SignMaker - UI组件
 """
 
 from .edge_preset_selector import EdgePresetSelector, PresetThumbnail

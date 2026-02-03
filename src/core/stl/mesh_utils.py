@@ -1,5 +1,5 @@
 """
-SignMaker Slicer - 网格工具类
+MINGDA SignMaker - 网格工具类
 
 提供基础网格操作的通用工具方法，被其他网格生成器共享使用。
 """

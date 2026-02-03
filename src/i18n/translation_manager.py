@@ -1,5 +1,5 @@
 """
-SignMaker Slicer - 翻译管理器
+MINGDA SignMaker - 翻译管理器
 
 管理 Qt 翻译系统，包括：
 - 加载和切换语言

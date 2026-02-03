@@ -1,5 +1,5 @@
 """
-SignMaker Slicer UI Theme
+MINGDA SignMaker UI Theme
 深色主题配色和样式定义
 """
 
@@ -110,7 +110,7 @@ def get_stylesheet() -> str:
 
     return f"""
 /* ============================================ */
-/* SignMaker Slicer - Dark Theme Stylesheet    */
+/* MINGDA SignMaker - Dark Theme Stylesheet    */
 /* ============================================ */
 
 /* 全局样式 */

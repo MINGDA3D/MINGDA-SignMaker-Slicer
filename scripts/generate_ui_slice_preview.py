@@ -1,5 +1,5 @@
 """
-SignMaker Slicer - 切片预览界面效果图
+MINGDA SignMaker - 切片预览界面效果图
 风格与项目其他页面保持一致，内容参考 OrcaSlicer 的信息架构
 """
 
@@ -563,7 +563,7 @@ def generate_preview_mode():
     draw_text(20, HEIGHT - FOOTER_H + 10, "● 切片完成", font_body, C["success"])
     draw_text(140, HEIGHT - FOOTER_H + 10, "文件: 发光字-发.gcode", font_small, C["text_muted"])
     draw_text(340, HEIGHT - FOOTER_H + 10, "机器: AD-F4 (800×1200x100mm)", font_small, C["text_muted"])
-    draw_text(WIDTH - 150, HEIGHT - FOOTER_H + 10, "SignMaker Slicer v1.0", font_small, C["text_muted"])
+    draw_text(WIDTH - 150, HEIGHT - FOOTER_H + 10, "MINGDA SignMaker v1.0", font_small, C["text_muted"])
 
     return img
 
