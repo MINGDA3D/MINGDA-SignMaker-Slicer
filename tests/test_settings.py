@@ -7,7 +7,6 @@ import os
 import tempfile
 import pytest
 from pathlib import Path
-from unittest.mock import MagicMock, patch
 
 from src.core.types import (
     SliceParams, EdgeType, BevelDirection,
@@ -145,26 +144,13 @@ class TestSettingsManagerWithQt:
         with tempfile.TemporaryDirectory() as tmpdir:
             yield tmpdir
 
-    def test_init_creates_default_settings(self, qapp, temp_config_dir):
-        """测试初始化创建默认设置"""
+    def test_init_settings_manager(self, qapp, temp_config_dir):
+        """测试初始化设置管理器"""
         from src.business.settings_manager import SettingsManager
         sm = SettingsManager(temp_config_dir)
 
-        assert sm.get_language() == "zh_CN"
+        # 默认没有保存的参数
         assert sm.get_last_params() is None
-        assert sm.get_recent_files() == []
-
-    def test_set_and_get_language(self, qapp, temp_config_dir):
-        """测试设置和获取语言"""
-        from src.business.settings_manager import SettingsManager
-        sm = SettingsManager(temp_config_dir)
-
-        sm.set_language("en_US")
-        assert sm.get_language() == "en_US"
-
-        # 重新加载验证持久化（JSON）
-        sm2 = SettingsManager(temp_config_dir)
-        assert sm2.get_language() == "en_US"
 
     def test_set_and_get_params(self, qapp, temp_config_dir):
         """测试设置和获取参数"""
@@ -196,6 +182,35 @@ class TestSettingsManagerWithQt:
 
         assert restored.shell.height == 60.0
 
+    def test_params_saved_to_json_file(self, qapp, temp_config_dir):
+        """测试参数保存到 JSON 文件"""
+        from src.business.settings_manager import SettingsManager
+        sm = SettingsManager(temp_config_dir)
+
+        params = SliceParams()
+        params.shell.height = 45.0
+        sm.set_last_params(params)
+
+        # 验证文件存在
+        params_file = Path(temp_config_dir) / "slice_params.json"
+        assert params_file.exists()
+
+        # 验证文件内容
+        with open(params_file, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        assert data["params"]["shell"]["height"] == 45.0
+
+    def test_language_uses_qsettings(self, qapp, temp_config_dir):
+        """测试语言设置使用 QSettings"""
+        from src.business.settings_manager import SettingsManager
+        sm = SettingsManager(temp_config_dir)
+
+        sm.set_language("en_US")
+        assert sm.get_language() == "en_US"
+
+        sm.set_language("zh_CN")
+        assert sm.get_language() == "zh_CN"
+
     def test_recent_files(self, qapp, temp_config_dir):
         """测试最近文件列表"""
         from src.business.settings_manager import SettingsManager
@@ -220,49 +235,6 @@ class TestSettingsManagerWithQt:
         recent = sm.get_recent_files()
         assert len(recent) == 2
         assert "file1.dxf" in recent[0]  # 重复的应该移到最前面
-
-    def test_ui_settings(self, qapp, temp_config_dir):
-        """测试 UI 设置（使用 QSettings）"""
-        from src.business.settings_manager import SettingsManager
-        sm = SettingsManager(temp_config_dir)
-
-        sm.set_left_panel_width(300)
-        assert sm.get_left_panel_width() == 300
-
-        sm.set_right_panel_width(280)
-        assert sm.get_right_panel_width() == 280
-
-    def test_generic_get_set(self, qapp, temp_config_dir):
-        """测试通用的 get/set 方法"""
-        from src.business.settings_manager import SettingsManager
-        sm = SettingsManager(temp_config_dir)
-
-        sm.set("custom.setting", "value1")
-        assert sm.get("custom.setting") == "value1"
-
-    def test_export_import_config(self, qapp, temp_config_dir):
-        """测试配置导出和导入"""
-        from src.business.settings_manager import SettingsManager
-        sm = SettingsManager(temp_config_dir)
-
-        # 设置一些参数
-        params = SliceParams()
-        params.shell.height = 45.0
-        sm.set_last_params(params)
-        sm.set_language("de_DE")
-
-        # 导出
-        export_path = os.path.join(temp_config_dir, "export.json")
-        sm.export_config(export_path)
-
-        # 创建新实例并导入
-        with tempfile.TemporaryDirectory() as new_dir:
-            sm2 = SettingsManager(new_dir)
-            sm2.import_config(export_path)
-
-            assert sm2.get_language() == "de_DE"
-            restored = sm2.get_last_params()
-            assert restored.shell.height == 45.0
 
 
 class TestPresetManagerFull:

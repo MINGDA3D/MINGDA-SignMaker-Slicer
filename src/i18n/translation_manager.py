@@ -4,15 +4,14 @@ MINGDA SignMaker - 翻译管理器
 管理 Qt 翻译系统，包括：
 - 加载和切换语言
 - 管理 QTranslator 实例
-- 保存用户语言偏好
+- 保存用户语言偏好（使用 QSettings）
 - RTL 语言支持
 """
 
-import json
 from pathlib import Path
 from typing import Optional, Dict, Callable, List
 
-from PySide6.QtCore import QObject, Signal, QTranslator, QLocale, QCoreApplication
+from PySide6.QtCore import QObject, Signal, QTranslator, QLocale, QCoreApplication, QSettings
 from PySide6.QtWidgets import QApplication
 
 
@@ -44,6 +43,7 @@ class TranslationManager(QObject):
 
     负责加载和切换应用程序的语言。
     使用 Qt 的 QTranslator 系统加载 .qm 文件。
+    使用 QSettings 保存语言偏好。
     """
 
     # 语言变更信号
@@ -60,9 +60,8 @@ class TranslationManager(QObject):
         # 翻译文件目录
         self._translations_dir = Path(__file__).parent.parent.parent / "translations"
 
-        # 配置文件路径（保存用户语言偏好）
-        self._config_dir = Path(__file__).parent.parent.parent / "config"
-        self._config_file = self._config_dir / "settings.json"
+        # 使用 QSettings 保存语言偏好（与 SettingsManager 使用相同的组织/应用名称）
+        self._settings = QSettings("MINGDA", "SignMaker")
 
         # 语言变更回调列表
         self._callbacks: List[Callable[[], None]] = []
@@ -72,34 +71,13 @@ class TranslationManager(QObject):
 
     def _load_saved_language(self):
         """加载保存的语言偏好"""
-        if self._config_file.exists():
-            try:
-                with open(self._config_file, 'r', encoding='utf-8') as f:
-                    config = json.load(f)
-                    saved_lang = config.get('language', 'zh_CN')
-                    if saved_lang in SUPPORTED_LANGUAGES:
-                        self._current_language = saved_lang
-            except Exception as e:
-                print(f"[i18n] Failed to load language config: {e}")
+        saved_lang = self._settings.value("language", "zh_CN", type=str)
+        if saved_lang in SUPPORTED_LANGUAGES:
+            self._current_language = saved_lang
 
     def _save_language_preference(self, lang_code: str):
-        """保存语言偏好到配置文件"""
-        try:
-            # 确保配置目录存在
-            self._config_dir.mkdir(parents=True, exist_ok=True)
-
-            # 读取现有配置或创建新配置
-            config = {}
-            if self._config_file.exists():
-                with open(self._config_file, 'r', encoding='utf-8') as f:
-                    config = json.load(f)
-
-            config['language'] = lang_code
-
-            with open(self._config_file, 'w', encoding='utf-8') as f:
-                json.dump(config, f, ensure_ascii=False, indent=2)
-        except Exception as e:
-            print(f"[i18n] Failed to save language config: {e}")
+        """保存语言偏好"""
+        self._settings.setValue("language", lang_code)
 
     def get_current_language(self) -> str:
         """获取当前语言代码"""
