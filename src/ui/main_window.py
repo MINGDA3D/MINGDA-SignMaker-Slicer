@@ -44,6 +44,9 @@ from src.business.undo_manager import (
     MirrorCommand, DeleteCommand, AddContoursCommand, ReplaceContoursCommand,
     TransformCommand
 )
+from src.business.settings_manager import (
+    SettingsManager, init_settings_manager, get_settings_manager
+)
 from src.i18n import (
     init_translation_manager, get_translation_manager,
     SUPPORTED_LANGUAGES, RTL_LANGUAGES
@@ -59,6 +62,9 @@ class MainWindow(QMainWindow):
 
     def __init__(self):
         super().__init__()
+
+        # 初始化设置管理器
+        self.settings_manager = init_settings_manager()
 
         # 数据
         self.contours: List[Contour] = []
@@ -87,6 +93,9 @@ class MainWindow(QMainWindow):
 
         # 应用样式
         self.setStyleSheet(get_stylesheet())
+
+        # 加载保存的参数
+        self._load_saved_params()
 
     def _init_window(self):
         """初始化窗口属性"""
@@ -1098,6 +1107,50 @@ class MainWindow(QMainWindow):
                     )
                 )
 
+    # =========================================================================
+    # 设置保存/加载
+    # =========================================================================
+
+    def _load_saved_params(self):
+        """加载保存的参数"""
+        if self.settings_manager:
+            saved_params = self.settings_manager.get_last_params()
+            if saved_params:
+                self.slice_params = saved_params
+                # 更新参数面板
+                if hasattr(self, 'param_panel') and self.param_panel:
+                    self.param_panel.set_params(saved_params)
+                self._update_status(self.tr("Loaded saved parameters"))
+
+    def _save_current_params(self):
+        """保存当前参数"""
+        if self.settings_manager and hasattr(self, 'param_panel') and self.param_panel:
+            try:
+                current_params = self.param_panel.get_params()
+                self.settings_manager.set_last_params(current_params)
+            except Exception as e:
+                print(f"[MainWindow] 保存参数失败: {e}")
+
+    def _save_window_state(self):
+        """保存窗口状态（使用 QSettings）"""
+        if self.settings_manager:
+            self.settings_manager.save_window_state(self)
+
+    def _restore_window_state(self):
+        """恢复窗口状态（使用 QSettings）"""
+        if self.settings_manager:
+            return self.settings_manager.restore_window_state(self)
+        return False
+
+    def closeEvent(self, event):
+        """窗口关闭事件"""
+        # 保存当前参数
+        self._save_current_params()
+        # 保存窗口状态（使用 QSettings）
+        self._save_window_state()
+        # 接受关闭事件
+        event.accept()
+
 
 def main():
     """主程序入口"""
@@ -1111,6 +1164,10 @@ def main():
     translation_manager.load_language(translation_manager.get_current_language())
 
     window = MainWindow()
+
+    # 恢复窗口状态（使用 QSettings）
+    window._restore_window_state()
+
     window.show()
 
     sys.exit(app.exec())

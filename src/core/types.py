@@ -826,3 +826,299 @@ class Project:
     contours: List[Contour] = field(default_factory=list)
     params: SliceParams = field(default_factory=SliceParams)
     gcode_params: GCodeParams = field(default_factory=GCodeParams)
+
+
+# =============================================================================
+# 参数序列化/反序列化辅助函数
+# =============================================================================
+
+def _serialize_enum(value) -> str:
+    """序列化枚举值"""
+    if isinstance(value, Enum):
+        return value.name
+    return value
+
+
+def _deserialize_enum(enum_class, value):
+    """反序列化枚举值"""
+    if value is None:
+        return None
+    if isinstance(value, enum_class):
+        return value
+    if isinstance(value, str):
+        try:
+            return enum_class[value]
+        except KeyError:
+            # 尝试按值查找
+            for member in enum_class:
+                if member.value == value:
+                    return member
+            # 返回默认值
+            return list(enum_class)[0]
+    return value
+
+
+def serialize_params(params: SliceParams) -> dict:
+    """将 SliceParams 序列化为字典
+
+    支持完整的参数序列化，包括：
+    - 所有子参数组
+    - 枚举类型转换为字符串
+    - EdgeProfile 对象的序列化
+
+    Args:
+        params: 切片参数对象
+
+    Returns:
+        可以序列化为 JSON 的字典
+    """
+    def serialize_value(value):
+        """递归序列化值"""
+        if value is None:
+            return None
+        if isinstance(value, Enum):
+            return value.name
+        if isinstance(value, EdgeProfile):
+            return value.to_dict()
+        if isinstance(value, (list, tuple)):
+            return [serialize_value(v) for v in value]
+        if isinstance(value, dict):
+            return {k: serialize_value(v) for k, v in value.items()}
+        if hasattr(value, '__dataclass_fields__'):
+            # dataclass 对象
+            result = {}
+            for field_name in value.__dataclass_fields__:
+                field_value = getattr(value, field_name)
+                result[field_name] = serialize_value(field_value)
+            return result
+        if isinstance(value, Point):
+            return {"x": value.x, "y": value.y}
+        if isinstance(value, Path):
+            return {
+                "points": [{"x": p.x, "y": p.y} for p in value.points],
+                "path_type": value.path_type.name,
+                "color": list(value.color),
+                "is_closed": value.is_closed
+            }
+        return value
+
+    return {
+        "shell": serialize_value(params.shell),
+        "color": serialize_value(params.color),
+        "step": serialize_value(params.step),
+        "skirt": serialize_value(params.skirt),
+        "connected": serialize_value(params.connected),
+        "edge_wrap": serialize_value(params.edge_wrap),
+        "panel": serialize_value(params.panel),
+        "baseplate": serialize_value(params.baseplate),
+        "grid": serialize_value(params.grid),
+        "bottom_face": serialize_value(params.bottom_face),
+        "top_face": serialize_value(params.top_face),
+        "layout": serialize_value(params.layout),
+        "speed": serialize_value(params.speed),
+        "gcode": serialize_value(params.gcode),
+        "machine": serialize_value(params.machine),
+    }
+
+
+def deserialize_params(data: dict) -> SliceParams:
+    """从字典反序列化为 SliceParams
+
+    Args:
+        data: 包含参数数据的字典
+
+    Returns:
+        SliceParams 对象
+    """
+    params = SliceParams()
+
+    if not data:
+        return params
+
+    # Shell 参数
+    if "shell" in data:
+        shell_data = data["shell"]
+        params.shell.height = shell_data.get("height", 30.0)
+        params.shell.layer_height = shell_data.get("layer_height", 0.3)
+        params.shell.wall_thickness = shell_data.get("wall_thickness", 1.2)
+        params.shell.wall_count = shell_data.get("wall_count", 1)
+        params.shell.wall_offset = shell_data.get("wall_offset", 0.0)
+        params.shell.edge_type = _deserialize_enum(EdgeType, shell_data.get("edge_type", "STRAIGHT"))
+        params.shell.bevel_width = shell_data.get("bevel_width", 5.0)
+        params.shell.bevel_direction = _deserialize_enum(
+            BevelDirection, shell_data.get("bevel_direction", "TOP_SMALL")
+        )
+        params.shell.baseplate_thickness = shell_data.get("baseplate_thickness", 10.0)
+        params.shell.panel_thickness = shell_data.get("panel_thickness", 3.0)
+        params.shell.safety_line_count = shell_data.get("safety_line_count", 0)
+        params.shell.safety_line_offset = shell_data.get("safety_line_offset", 5.0)
+
+        # EdgeProfile
+        if shell_data.get("edge_profile"):
+            params.shell.edge_profile = EdgeProfile.from_dict(shell_data["edge_profile"])
+
+    # Color 参数
+    if "color" in data:
+        color_data = data["color"]
+        params.color.enabled = color_data.get("enabled", False)
+        if "layers" in color_data:
+            params.color.layers = []
+            for layer_data in color_data["layers"]:
+                layer = ColorLayerConfig(
+                    height=layer_data.get("height", 10.0),
+                    extruder=_deserialize_enum(ExtruderType, layer_data.get("extruder", "EXTRUDER_1"))
+                )
+                params.color.layers.append(layer)
+
+    # Step 参数
+    if "step" in data:
+        step_data = data["step"]
+        params.step.enabled = step_data.get("enabled", False)
+        params.step.panel_step_enabled = step_data.get("panel_step_enabled", False)
+        params.step.panel_step_height = step_data.get("panel_step_height", 3.0)
+        params.step.panel_step_width = step_data.get("panel_step_width", 3.0)
+        params.step.panel_step_is_v_groove = step_data.get("panel_step_is_v_groove", False)
+        params.step.baseplate_step_enabled = step_data.get("baseplate_step_enabled", False)
+        params.step.baseplate_step_height = step_data.get("baseplate_step_height", 3.0)
+        params.step.baseplate_step_width = step_data.get("baseplate_step_width", 3.0)
+        params.step.baseplate_step_is_v_groove = step_data.get("baseplate_step_is_v_groove", False)
+        params.step.step_thickness = step_data.get("step_thickness", 0.3)
+        params.step.extrusion_width = step_data.get("extrusion_width", 1.2)
+        params.step.print_speed = step_data.get("print_speed", 30.0)
+        params.step.horizontal_offset = step_data.get("horizontal_offset", 0.0)
+
+    # Skirt 参数
+    if "skirt" in data:
+        skirt_data = data["skirt"]
+        params.skirt.enabled = skirt_data.get("enabled", False)
+        params.skirt.width = skirt_data.get("width", 5.0)
+        params.skirt.height = skirt_data.get("height", 0.3)
+        params.skirt.offset = skirt_data.get("offset", 0.0)
+        params.skirt.interval = skirt_data.get("interval", 10.0)
+        params.skirt.is_outer = skirt_data.get("is_outer", True)
+        params.skirt.extrusion_width = skirt_data.get("extrusion_width", 1.2)
+
+    # Connected 参数
+    if "connected" in data:
+        conn_data = data["connected"]
+        params.connected.enabled = conn_data.get("enabled", False)
+        params.connected.type = conn_data.get("type", "triangle")
+        params.connected.width = conn_data.get("width", 15.0)
+        params.connected.height = conn_data.get("height", 5.0)
+        params.connected.base_height = conn_data.get("base_height", 5.0)
+        params.connected.support_offset = conn_data.get("support_offset", 2.5)
+        params.connected.auto_detect = conn_data.get("auto_detect", True)
+
+    # EdgeWrap 参数
+    if "edge_wrap" in data:
+        wrap_data = data["edge_wrap"]
+        params.edge_wrap.wrap_enabled = wrap_data.get("wrap_enabled", False)
+        params.edge_wrap.wrap_width = wrap_data.get("wrap_width", 2.0)
+        params.edge_wrap.wrap_height = wrap_data.get("wrap_height", 3.0)
+        params.edge_wrap.wrap_direction = _deserialize_enum(
+            EdgeDirection, wrap_data.get("wrap_direction", "INNER")
+        )
+        params.edge_wrap.outline_enabled = wrap_data.get("outline_enabled", False)
+        params.edge_wrap.outline_width = wrap_data.get("outline_width", 1.0)
+        params.edge_wrap.outline_height = wrap_data.get("outline_height", 1.0)
+        params.edge_wrap.outline_offset = wrap_data.get("outline_offset", 0.0)
+        params.edge_wrap.outline_direction = _deserialize_enum(
+            EdgeDirection, wrap_data.get("outline_direction", "INNER")
+        )
+
+    # Panel 参数
+    if "panel" in data:
+        panel_data = data["panel"]
+        params.panel.enabled = panel_data.get("enabled", False)
+        params.panel.pattern_enabled = panel_data.get("pattern_enabled", False)
+        if "fill_config" in panel_data:
+            fc = panel_data["fill_config"]
+            params.panel.fill_config.spacing = fc.get("spacing", 5.0)
+            params.panel.fill_config.spacing2 = fc.get("spacing2", 3.0)
+            params.panel.fill_config.angle = fc.get("angle", 45.0)
+            params.panel.fill_config.boundary_distance = fc.get("boundary_distance", 1.0)
+
+    # Baseplate 参数
+    if "baseplate" in data:
+        bp_data = data["baseplate"]
+        params.baseplate.enabled = bp_data.get("enabled", False)
+        params.baseplate.thickness = bp_data.get("thickness", 10.0)
+        if "fill_config" in bp_data:
+            fc = bp_data["fill_config"]
+            params.baseplate.fill_config.spacing = fc.get("spacing", 5.0)
+            params.baseplate.fill_config.spacing2 = fc.get("spacing2", 3.0)
+            params.baseplate.fill_config.angle = fc.get("angle", 45.0)
+            params.baseplate.fill_config.boundary_distance = fc.get("boundary_distance", 1.0)
+
+    # Grid 参数
+    if "grid" in data:
+        grid_data = data["grid"]
+        params.grid.enabled = grid_data.get("enabled", False)
+        if "fill_config" in grid_data:
+            fc = grid_data["fill_config"]
+            params.grid.fill_config.spacing = fc.get("spacing", 5.0)
+            params.grid.fill_config.spacing2 = fc.get("spacing2", 3.0)
+            params.grid.fill_config.angle = fc.get("angle", 45.0)
+            params.grid.fill_config.boundary_distance = fc.get("boundary_distance", 1.0)
+
+    # BottomFace 参数
+    if "bottom_face" in data:
+        bf_data = data["bottom_face"]
+        params.bottom_face.enabled = bf_data.get("enabled", False)
+        params.bottom_face.thickness = bf_data.get("thickness", 1.0)
+
+    # TopFace 参数
+    if "top_face" in data:
+        tf_data = data["top_face"]
+        params.top_face.enabled = tf_data.get("enabled", False)
+        params.top_face.thickness = tf_data.get("thickness", 1.0)
+
+    # Layout 参数
+    if "layout" in data:
+        layout_data = data["layout"]
+        params.layout.auto_arrange = layout_data.get("auto_arrange", True)
+        params.layout.spacing = layout_data.get("spacing", 10.0)
+        params.layout.margin = layout_data.get("margin", 20.0)
+
+    # Speed 参数
+    if "speed" in data:
+        speed_data = data["speed"]
+        params.speed.print_speed = speed_data.get("print_speed", 50.0)
+        params.speed.travel_speed = speed_data.get("travel_speed", 150.0)
+        params.speed.first_layer_speed = speed_data.get("first_layer_speed", 20.0)
+        params.speed.wall_speed = speed_data.get("wall_speed", 40.0)
+        params.speed.fill_speed = speed_data.get("fill_speed", 60.0)
+
+    # GCode 参数
+    if "gcode" in data:
+        gcode_data = data["gcode"]
+        params.gcode.machine_type = gcode_data.get("machine_type", "MINGDA")
+        params.gcode.extruder1_temp = gcode_data.get("extruder1_temp", 220)
+        params.gcode.extruder2_temp = gcode_data.get("extruder2_temp", 220)
+        params.gcode.extruder3_temp = gcode_data.get("extruder3_temp", 0)
+        params.gcode.bed_temp = gcode_data.get("bed_temp", 60)
+        params.gcode.retract_length = gcode_data.get("retract_length", 2.0)
+        params.gcode.retract_speed = gcode_data.get("retract_speed", 40.0)
+        params.gcode.color_change_retract = gcode_data.get("color_change_retract", 30.0)
+        params.gcode.color_change_prime = gcode_data.get("color_change_prime", 35.0)
+        params.gcode.z_hop_height1 = gcode_data.get("z_hop_height1", 0.5)
+        params.gcode.z_hop_height2 = gcode_data.get("z_hop_height2", 5.0)
+        params.gcode.distance_threshold = gcode_data.get("distance_threshold", 100.0)
+        params.gcode.prime_length = gcode_data.get("prime_length", 5.0)
+        params.gcode.filament_diameter = gcode_data.get("filament_diameter", 1.75)
+        params.gcode.print_speed = gcode_data.get("print_speed", 50.0)
+        params.gcode.travel_speed = gcode_data.get("travel_speed", 150.0)
+        params.gcode.first_layer_speed = gcode_data.get("first_layer_speed", 20.0)
+        params.gcode.end_z_position = gcode_data.get("end_z_position", 100.0)
+
+    # Machine 参数
+    if "machine" in data:
+        machine_data = data["machine"]
+        params.machine.name = machine_data.get("name", "MINGDA")
+        params.machine.bed_width = machine_data.get("bed_width", 400.0)
+        params.machine.bed_depth = machine_data.get("bed_depth", 400.0)
+        params.machine.bed_height = machine_data.get("bed_height", 500.0)
+        params.machine.nozzle_diameter = machine_data.get("nozzle_diameter", 0.8)
+        params.machine.extruder_count = machine_data.get("extruder_count", 2)
+
+    return params
