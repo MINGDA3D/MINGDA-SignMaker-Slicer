@@ -4,613 +4,874 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../src/ui/main_window.py" line="93"/>
         <source>SignMaker Slicer - LED Sign Letter Slicer</source>
-        <translation type="unfinished"></translation>
+        <translation>SignMaker Slicer - LED Sign Letter Slicer</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="107"/>
         <source>Title Bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Title Bar</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="142"/>
         <source>File(&amp;F)</source>
-        <translation type="unfinished"></translation>
+        <translation>File(&amp;F)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="145"/>
-        <location filename="../src/ui/main_window.py" line="603"/>
         <source>New Project</source>
-        <translation type="unfinished"></translation>
+        <translation>New Project</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="151"/>
         <source>Open DXF/SVG...</source>
-        <translation type="unfinished"></translation>
+        <translation>Open DXF/SVG...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="159"/>
-        <location filename="../src/ui/main_window.py" line="660"/>
         <source>Save Project</source>
-        <translation type="unfinished"></translation>
+        <translation>Save Project</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="165"/>
         <source>Save As...</source>
-        <translation type="unfinished"></translation>
+        <translation>Save As...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="173"/>
         <source>Export G-code...</source>
-        <translation type="unfinished"></translation>
+        <translation>Export G-code...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="179"/>
         <source>Export STL...</source>
-        <translation type="unfinished"></translation>
+        <translation>Export STL...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="187"/>
         <source>Exit</source>
-        <translation type="unfinished"></translation>
+        <translation>Exit</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="193"/>
         <source>Edit(&amp;E)</source>
-        <translation type="unfinished"></translation>
+        <translation>Edit(&amp;E)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="195"/>
         <source>Undo</source>
-        <translation type="unfinished"></translation>
+        <translation>Undo</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="200"/>
         <source>Redo</source>
-        <translation type="unfinished"></translation>
+        <translation>Redo</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="207"/>
         <source>Select All</source>
-        <translation type="unfinished"></translation>
+        <translation>Select All</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="211"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Delete</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="216"/>
         <source>View(&amp;V)</source>
-        <translation type="unfinished"></translation>
+        <translation>View(&amp;V)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="218"/>
         <source>2D View</source>
-        <translation type="unfinished"></translation>
+        <translation>2D View</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="223"/>
         <source>3D View</source>
-        <translation type="unfinished"></translation>
+        <translation>3D View</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="230"/>
         <source>Fit to Window</source>
-        <translation type="unfinished"></translation>
+        <translation>Fit to Window</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="235"/>
         <source>Zoom In</source>
-        <translation type="unfinished"></translation>
+        <translation>Zoom In</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="239"/>
         <source>Zoom Out</source>
-        <translation type="unfinished"></translation>
+        <translation>Zoom Out</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="244"/>
         <source>Slice(&amp;S)</source>
-        <translation type="unfinished"></translation>
+        <translation>Slice(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="246"/>
         <source>Start Slicing</source>
-        <translation type="unfinished"></translation>
+        <translation>Start Slicing</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="251"/>
         <source>Preview G-code</source>
-        <translation type="unfinished"></translation>
+        <translation>Preview G-code</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="256"/>
         <source>Help(&amp;H)</source>
-        <translation type="unfinished"></translation>
+        <translation>Help(&amp;H)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="258"/>
         <source>About</source>
-        <translation type="unfinished"></translation>
+        <translation>About</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="443"/>
-        <location filename="../src/ui/main_window.py" line="1002"/>
         <source>Ready</source>
-        <translation type="unfinished"></translation>
+        <translation>Ready</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="465"/>
         <source>Executed: </source>
-        <translation type="unfinished"></translation>
+        <translation>Executed: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="468"/>
         <source>Undone: </source>
-        <translation type="unfinished"></translation>
+        <translation>Undone: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="471"/>
         <source>Redone: </source>
-        <translation type="unfinished"></translation>
+        <translation>Redone: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="552"/>
         <source>Home</source>
-        <translation type="unfinished"></translation>
+        <translation>Home</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="557"/>
         <source>Project Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Project Edit</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="571"/>
         <source>3D Preview</source>
-        <translation type="unfinished"></translation>
+        <translation>3D Preview</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="589"/>
         <source>Settings feature under development...</source>
-        <translation type="unfinished"></translation>
+        <translation>Settings feature under development...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="591"/>
         <source>Help feature under development...</source>
-        <translation type="unfinished"></translation>
+        <translation>Help feature under development...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="602"/>
         <source>SignMaker Slicer - New Project</source>
-        <translation type="unfinished"></translation>
+        <translation>SignMaker Slicer - New Project</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="609"/>
         <source>Open File</source>
-        <translation type="unfinished"></translation>
+        <translation>Open File</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="611"/>
         <source>Supported Files (*.dxf *.svg);;DXF Files (*.dxf);;SVG Files (*.svg);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Supported Files (*.dxf *.svg);;DXF Files (*.dxf);;SVG Files (*.svg);;All Files (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="627"/>
         <source>Unsupported Format</source>
-        <translation type="unfinished"></translation>
+        <translation>Unsupported Format</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="627"/>
         <source>Format not supported: </source>
-        <translation type="unfinished"></translation>
+        <translation>Format not supported: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="633"/>
         <source>Load </source>
-        <translation type="unfinished"></translation>
+        <translation>Load </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="643"/>
         <source>Loaded: {file}, {count} contours</source>
-        <translation type="unfinished"></translation>
+        <translation>Loaded: {file}, {count} contours</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="647"/>
         <source>Load Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Load Failed</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="647"/>
         <source>Failed to load file:</source>
-        <translation type="unfinished"></translation>
+        <translation>Failed to load file:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="662"/>
         <source>SignMaker Project (*.smp);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>SignMaker Project (*.smp);;All Files (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="670"/>
         <source>Project saved: </source>
-        <translation type="unfinished"></translation>
+        <translation>Project saved: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="675"/>
-        <location filename="../src/ui/main_window.py" line="698"/>
-        <location filename="../src/ui/main_window.py" line="726"/>
-        <location filename="../src/ui/main_window.py" line="760"/>
-        <location filename="../src/ui/main_window.py" line="812"/>
-        <location filename="../src/ui/main_window.py" line="1014"/>
         <source>Info</source>
-        <translation type="unfinished"></translation>
+        <translation>Info</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="675"/>
-        <location filename="../src/ui/main_window.py" line="698"/>
         <source>Please slice first</source>
-        <translation type="unfinished"></translation>
+        <translation>Please slice first</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="680"/>
         <source>Export G-code</source>
-        <translation type="unfinished"></translation>
+        <translation>Export G-code</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="682"/>
         <source>G-code Files (*.gcode);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>G-code Files (*.gcode);;All Files (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="690"/>
         <source>G-code exported: </source>
-        <translation type="unfinished"></translation>
+        <translation>G-code exported: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="691"/>
-        <location filename="../src/ui/main_window.py" line="719"/>
-        <location filename="../src/ui/main_window.py" line="748"/>
-        <location filename="../src/ui/main_window.py" line="782"/>
         <source>Export Success</source>
-        <translation type="unfinished"></translation>
+        <translation>Export Success</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="691"/>
         <source>G-code saved to:</source>
-        <translation type="unfinished"></translation>
+        <translation>G-code saved to:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="693"/>
-        <location filename="../src/ui/main_window.py" line="721"/>
-        <location filename="../src/ui/main_window.py" line="753"/>
-        <location filename="../src/ui/main_window.py" line="755"/>
-        <location filename="../src/ui/main_window.py" line="787"/>
-        <location filename="../src/ui/main_window.py" line="789"/>
         <source>Export Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Export Failed</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="693"/>
         <source>Failed to export G-code:</source>
-        <translation type="unfinished"></translation>
+        <translation>Failed to export G-code:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="703"/>
         <source>Export STL</source>
-        <translation type="unfinished"></translation>
+        <translation>Export STL</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="705"/>
         <source>STL Files (*.stl);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>STL Files (*.stl);;All Files (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="718"/>
         <source>STL exported: </source>
-        <translation type="unfinished"></translation>
+        <translation>STL exported: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="719"/>
         <source>STL saved to:</source>
-        <translation type="unfinished"></translation>
+        <translation>STL saved to:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="721"/>
         <source>Failed to export STL:</source>
-        <translation type="unfinished"></translation>
+        <translation>Failed to export STL:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="726"/>
-        <location filename="../src/ui/main_window.py" line="760"/>
-        <location filename="../src/ui/main_window.py" line="812"/>
         <source>Please import a DXF file first</source>
-        <translation type="unfinished"></translation>
+        <translation>Please import a DXF file first</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="731"/>
         <source>Export Baseplate DXF</source>
-        <translation type="unfinished"></translation>
+        <translation>Export Baseplate DXF</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="733"/>
-        <location filename="../src/ui/main_window.py" line="767"/>
         <source>DXF Files (*.dxf);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>DXF Files (*.dxf);;All Files (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="746"/>
         <source>Baseplate DXF exported: </source>
-        <translation type="unfinished"></translation>
+        <translation>Baseplate DXF exported: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="749"/>
         <source>Baseplate DXF saved to:</source>
-        <translation type="unfinished"></translation>
+        <translation>Baseplate DXF saved to:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="750"/>
-        <location filename="../src/ui/main_window.py" line="784"/>
         <source>Alignment compensation: </source>
-        <translation type="unfinished"></translation>
+        <translation>Alignment compensation: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="753"/>
         <source>Failed to generate baseplate contour</source>
-        <translation type="unfinished"></translation>
+        <translation>Failed to generate baseplate contour</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="755"/>
         <source>Failed to export baseplate DXF:</source>
-        <translation type="unfinished"></translation>
+        <translation>Failed to export baseplate DXF:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="765"/>
         <source>Export Panel DXF</source>
-        <translation type="unfinished"></translation>
+        <translation>Export Panel DXF</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="780"/>
         <source>Panel DXF exported: </source>
-        <translation type="unfinished"></translation>
+        <translation>Panel DXF exported: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="783"/>
         <source>Panel DXF saved to:</source>
-        <translation type="unfinished"></translation>
+        <translation>Panel DXF saved to:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="787"/>
         <source>Failed to generate panel contour</source>
-        <translation type="unfinished"></translation>
+        <translation>Failed to generate panel contour</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="789"/>
         <source>Failed to export panel DXF:</source>
-        <translation type="unfinished"></translation>
+        <translation>Failed to export panel DXF:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="798"/>
         <source>Nothing to undo</source>
-        <translation type="unfinished"></translation>
+        <translation>Nothing to undo</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="807"/>
         <source>Nothing to redo</source>
-        <translation type="unfinished"></translation>
+        <translation>Nothing to redo</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="816"/>
         <source>Slicing...</source>
-        <translation type="unfinished"></translation>
+        <translation>Slicing...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="836"/>
         <source>Slicing complete: {layers} layers, estimated time: {time:.1f} minutes</source>
-        <translation type="unfinished"></translation>
+        <translation>Slicing complete: {layers} layers, estimated time: {time:.1f} minutes</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="847"/>
         <source>Slicing Complete</source>
-        <translation type="unfinished"></translation>
+        <translation>Slicing Complete</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="848"/>
         <source>Export G-code now?</source>
-        <translation type="unfinished"></translation>
+        <translation>Export G-code now?</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="857"/>
         <source>Slicing Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Slicing Failed</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="857"/>
         <source>Error during slicing:</source>
-        <translation type="unfinished"></translation>
+        <translation>Error during slicing:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="858"/>
         <source>Slicing failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Slicing failed</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="878"/>
         <source>Switched to {view} view</source>
-        <translation type="unfinished"></translation>
+        <translation>Switched to {view} view</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="926"/>
         <source>Tool: </source>
-        <translation type="unfinished"></translation>
+        <translation>Tool: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="994"/>
         <source>Move to: X={x:.2f}, Y={y:.2f}</source>
-        <translation type="unfinished"></translation>
+        <translation>Move to: X={x:.2f}, Y={y:.2f}</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1014"/>
         <source>Please select a contour first</source>
-        <translation type="unfinished"></translation>
+        <translation>Please select a contour first</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1030"/>
         <source>Mirror {axis} complete</source>
-        <translation type="unfinished"></translation>
+        <translation>Mirror {axis} complete</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1052"/>
         <source>About SignMaker Slicer</source>
-        <translation type="unfinished"></translation>
+        <translation>About SignMaker Slicer</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1054"/>
         <source>Professional LED Sign Letter 3D Printing Slicer</source>
-        <translation type="unfinished"></translation>
+        <translation>Professional LED Sign Letter 3D Printing Slicer</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1055"/>
         <source>Version: 0.1.0 (Development)</source>
-        <translation type="unfinished"></translation>
+        <translation>Version: 0.1.0 (Development)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1057"/>
         <source>Features:</source>
-        <translation type="unfinished"></translation>
+        <translation>Features:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1059"/>
         <source>DXF/SVG file import</source>
-        <translation type="unfinished"></translation>
+        <translation>DXF/SVG file import</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1060"/>
         <source>Straight/Bevel/Custom edges</source>
-        <translation type="unfinished"></translation>
+        <translation>Straight/Bevel/Custom edges</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1061"/>
         <source>Multi-color printing support</source>
-        <translation type="unfinished"></translation>
+        <translation>Multi-color printing support</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1062"/>
         <source>Step/V-groove</source>
-        <translation type="unfinished"></translation>
+        <translation>Step/V-groove</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1063"/>
         <source>Anti-warping skirt</source>
-        <translation type="unfinished"></translation>
+        <translation>Anti-warping skirt</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1064"/>
         <source>Connected letters</source>
-        <translation type="unfinished"></translation>
+        <translation>Connected letters</translation>
+    </message>
+    <message>
+        <source>Language</source>
+        <translation>Language</translation>
+    </message>
+    <message>
+        <source>Language Changed</source>
+        <translation>Language Changed</translation>
+    </message>
+    <message>
+        <source>Language has been changed to {lang}. Please restart the application for full effect.</source>
+        <translation>Language has been changed to {lang}. Please restart the application for full effect.</translation>
+    </message>
+    <message>
+        <source>Language Change Failed</source>
+        <translation>Language Change Failed</translation>
+    </message>
+    <message>
+        <source>Translation file for {lang} is not available yet.</source>
+        <translation>Translation file for {lang} is not available yet.</translation>
     </message>
 </context>
 <context>
     <name>TitleBar</name>
     <message>
-        <location filename="../src/ui/title_bar.py" line="55"/>
         <source>Menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Menu</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="74"/>
         <source>Open</source>
-        <translation type="unfinished"></translation>
+        <translation>Open</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="83"/>
         <source>Save</source>
-        <translation type="unfinished"></translation>
+        <translation>Save</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="92"/>
         <source>Export</source>
-        <translation type="unfinished"></translation>
+        <translation>Export</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="113"/>
         <source>Undo</source>
-        <translation type="unfinished"></translation>
+        <translation>Undo</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="122"/>
         <source>Redo</source>
-        <translation type="unfinished"></translation>
+        <translation>Redo</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="138"/>
         <source>Home</source>
-        <translation type="unfinished"></translation>
+        <translation>Home</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="144"/>
         <source>Project</source>
-        <translation type="unfinished"></translation>
+        <translation>Project</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="150"/>
         <source>Preview</source>
-        <translation type="unfinished"></translation>
+        <translation>Preview</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="167"/>
         <source>Slice</source>
-        <translation type="unfinished"></translation>
+        <translation>Slice</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="173"/>
         <source>Export Gcode</source>
-        <translation type="unfinished"></translation>
+        <translation>Export Gcode</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="323"/>
         <source>New Project</source>
-        <translation type="unfinished"></translation>
+        <translation>New Project</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="324"/>
         <source>Open File...</source>
-        <translation type="unfinished"></translation>
+        <translation>Open File...</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="325"/>
         <source>Save Project</source>
-        <translation type="unfinished"></translation>
+        <translation>Save Project</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="327"/>
         <source>Export G-code...</source>
-        <translation type="unfinished"></translation>
+        <translation>Export G-code...</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="328"/>
         <source>Export STL...</source>
-        <translation type="unfinished"></translation>
+        <translation>Export STL...</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="330"/>
         <source>Export Baseplate DXF...</source>
-        <translation type="unfinished"></translation>
+        <translation>Export Baseplate DXF...</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="331"/>
         <source>Export Panel DXF...</source>
-        <translation type="unfinished"></translation>
+        <translation>Export Panel DXF...</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="333"/>
         <source>About</source>
-        <translation type="unfinished"></translation>
+        <translation>About</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="335"/>
         <source>Exit</source>
-        <translation type="unfinished"></translation>
+        <translation>Exit</translation>
+    </message>
+    <message>
+        <source>Language</source>
+        <translation>Language</translation>
+    </message>
+</context>
+<context>
+    <name>ParamPanel</name>
+    <message>
+        <source>Parameters</source>
+        <translation>Parameters</translation>
+    </message>
+    <message>
+        <source>Shell Settings</source>
+        <translation>Shell Settings</translation>
+    </message>
+    <message>
+        <source>Shell Height:</source>
+        <translation>Shell Height:</translation>
+    </message>
+    <message>
+        <source>Layer Height:</source>
+        <translation>Layer Height:</translation>
+    </message>
+    <message>
+        <source>Wall Thickness:</source>
+        <translation>Wall Thickness:</translation>
+    </message>
+    <message>
+        <source>Wall Count:</source>
+        <translation>Wall Count:</translation>
+    </message>
+    <message>
+        <source>Edge Type</source>
+        <translation>Edge Type</translation>
+    </message>
+    <message>
+        <source>Straight</source>
+        <translation>Straight</translation>
+    </message>
+    <message>
+        <source>Beveled</source>
+        <translation>Beveled</translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation>Custom</translation>
+    </message>
+    <message>
+        <source>Edge Type:</source>
+        <translation>Edge Type:</translation>
+    </message>
+    <message>
+        <source>Top Small</source>
+        <translation>Top Small</translation>
+    </message>
+    <message>
+        <source>Top Large</source>
+        <translation>Top Large</translation>
+    </message>
+    <message>
+        <source>Bevel Direction:</source>
+        <translation>Bevel Direction:</translation>
+    </message>
+    <message>
+        <source>Bevel Width:</source>
+        <translation>Bevel Width:</translation>
+    </message>
+    <message>
+        <source>Baseplate Thickness:</source>
+        <translation>Baseplate Thickness:</translation>
+    </message>
+    <message>
+        <source>Panel Thickness:</source>
+        <translation>Panel Thickness:</translation>
+    </message>
+    <message>
+        <source>Preset Templates:</source>
+        <translation>Preset Templates:</translation>
+    </message>
+    <message>
+        <source>Import DXF...</source>
+        <translation>Import DXF...</translation>
+    </message>
+    <message>
+        <source>Import custom edge profile from DXF file</source>
+        <translation>Import custom edge profile from DXF file</translation>
+    </message>
+    <message>
+        <source>No profile selected</source>
+        <translation>No profile selected</translation>
+    </message>
+    <message>
+        <source>Current Profile:</source>
+        <translation>Current Profile:</translation>
+    </message>
+    <message>
+        <source>Bottom Face</source>
+        <translation>Bottom Face</translation>
+    </message>
+    <message>
+        <source>Enable Bottom Face</source>
+        <translation>Enable Bottom Face</translation>
+    </message>
+    <message>
+        <source>Bottom Thickness:</source>
+        <translation>Bottom Thickness:</translation>
+    </message>
+    <message>
+        <source>Top Face</source>
+        <translation>Top Face</translation>
+    </message>
+    <message>
+        <source>Enable Top Face</source>
+        <translation>Enable Top Face</translation>
+    </message>
+    <message>
+        <source>Top Thickness:</source>
+        <translation>Top Thickness:</translation>
+    </message>
+    <message>
+        <source>Color Layer Settings</source>
+        <translation>Color Layer Settings</translation>
+    </message>
+    <message>
+        <source>Enable Color Layers</source>
+        <translation>Enable Color Layers</translation>
+    </message>
+    <message>
+        <source>Color 1 Height:</source>
+        <translation>Color 1 Height:</translation>
+    </message>
+    <message>
+        <source>Color 2 Height:</source>
+        <translation>Color 2 Height:</translation>
+    </message>
+    <message>
+        <source>Step/V-Groove</source>
+        <translation>Step/V-Groove</translation>
+    </message>
+    <message>
+        <source>Enable Panel Step (Top)</source>
+        <translation>Enable Panel Step (Top)</translation>
+    </message>
+    <message>
+        <source>Step Height:</source>
+        <translation>Step Height:</translation>
+    </message>
+    <message>
+        <source>Step Width:</source>
+        <translation>Step Width:</translation>
+    </message>
+    <message>
+        <source>V-Groove</source>
+        <translation>V-Groove</translation>
+    </message>
+    <message>
+        <source>Enable Baseplate Step (Bottom)</source>
+        <translation>Enable Baseplate Step (Bottom)</translation>
+    </message>
+    <message>
+        <source>Anti-Warping Skirt</source>
+        <translation>Anti-Warping Skirt</translation>
+    </message>
+    <message>
+        <source>Enable Anti-Warping Skirt</source>
+        <translation>Enable Anti-Warping Skirt</translation>
+    </message>
+    <message>
+        <source>Skirt Width:</source>
+        <translation>Skirt Width:</translation>
+    </message>
+    <message>
+        <source>Skirt Height:</source>
+        <translation>Skirt Height:</translation>
+    </message>
+    <message>
+        <source>Trapezoid Interval:</source>
+        <translation>Trapezoid Interval:</translation>
+    </message>
+    <message>
+        <source>Skirt Offset:</source>
+        <translation>Skirt Offset:</translation>
+    </message>
+    <message>
+        <source>Connected Letters</source>
+        <translation>Connected Letters</translation>
+    </message>
+    <message>
+        <source>Enable Connected Letters</source>
+        <translation>Enable Connected Letters</translation>
+    </message>
+    <message>
+        <source>Triangle</source>
+        <translation>Triangle</translation>
+    </message>
+    <message>
+        <source>Diamond</source>
+        <translation>Diamond</translation>
+    </message>
+    <message>
+        <source>Connection Type:</source>
+        <translation>Connection Type:</translation>
+    </message>
+    <message>
+        <source>Auto Detect Connection Points</source>
+        <translation>Auto Detect Connection Points</translation>
+    </message>
+    <message>
+        <source>Connection Width:</source>
+        <translation>Connection Width:</translation>
+    </message>
+    <message>
+        <source>Bevel Height:</source>
+        <translation>Bevel Height:</translation>
+    </message>
+    <message>
+        <source>Base Height:</source>
+        <translation>Base Height:</translation>
+    </message>
+    <message>
+        <source>Support Offset:</source>
+        <translation>Support Offset:</translation>
+    </message>
+    <message>
+        <source>Edge Wrap/Outline</source>
+        <translation>Edge Wrap/Outline</translation>
+    </message>
+    <message>
+        <source>Enable Edge Wrap</source>
+        <translation>Enable Edge Wrap</translation>
+    </message>
+    <message>
+        <source>Inner</source>
+        <translation>Inner</translation>
+    </message>
+    <message>
+        <source>Outer</source>
+        <translation>Outer</translation>
+    </message>
+    <message>
+        <source>Wrap Direction:</source>
+        <translation>Wrap Direction:</translation>
+    </message>
+    <message>
+        <source>Wrap Width:</source>
+        <translation>Wrap Width:</translation>
+    </message>
+    <message>
+        <source>Wrap Height:</source>
+        <translation>Wrap Height:</translation>
+    </message>
+    <message>
+        <source>Enable Outline</source>
+        <translation>Enable Outline</translation>
+    </message>
+    <message>
+        <source>Outline Direction:</source>
+        <translation>Outline Direction:</translation>
+    </message>
+    <message>
+        <source>Outline Width:</source>
+        <translation>Outline Width:</translation>
+    </message>
+    <message>
+        <source>Outline Height:</source>
+        <translation>Outline Height:</translation>
+    </message>
+    <message>
+        <source>Outline Offset:</source>
+        <translation>Outline Offset:</translation>
+    </message>
+    <message>
+        <source>Speed Settings</source>
+        <translation>Speed Settings</translation>
+    </message>
+    <message>
+        <source>Print Speed:</source>
+        <translation>Print Speed:</translation>
+    </message>
+    <message>
+        <source>Travel Speed:</source>
+        <translation>Travel Speed:</translation>
+    </message>
+    <message>
+        <source>First Layer Speed:</source>
+        <translation>First Layer Speed:</translation>
+    </message>
+    <message>
+        <source>Import Custom Edge DXF</source>
+        <translation>Import Custom Edge DXF</translation>
+    </message>
+    <message>
+        <source>DXF Files (*.dxf);;All Files (*.*)</source>
+        <translation>DXF Files (*.dxf);;All Files (*.*)</translation>
+    </message>
+    <message>
+        <source>Import Success</source>
+        <translation>Import Success</translation>
+    </message>
+    <message>
+        <source>Imported custom edge profile: {name}
+Size: {width:.1f} x {height:.1f} mm
+Control points: {points}</source>
+        <translation>Imported custom edge profile: {name}
+Size: {width:.1f} x {height:.1f} mm
+Control points: {points}</translation>
+    </message>
+    <message>
+        <source>Import Failed</source>
+        <translation>Import Failed</translation>
+    </message>
+    <message>
+        <source>Failed to import DXF file:
+{error}</source>
+        <translation>Failed to import DXF file:
+{error}</translation>
+    </message>
+    <message>
+        <source> ({count} points)</source>
+        <translation> ({count} points)</translation>
+    </message>
+</context>
+<context>
+    <name>ProjectPanel</name>
+    <message>
+        <source>Shape List</source>
+        <translation>Shape List</translation>
+    </message>
+    <message>
+        <source>+ Import Shape</source>
+        <translation>+ Import Shape</translation>
+    </message>
+    <message>
+        <source>Letter-{index}</source>
+        <translation>Letter-{index}</translation>
+    </message>
+</context>
+<context>
+    <name>Preview3D</name>
+    <message>
+        <source>View:</source>
+        <translation>View:</translation>
+    </message>
+    <message>
+        <source>Top</source>
+        <translation>Top</translation>
+    </message>
+    <message>
+        <source>Front</source>
+        <translation>Front</translation>
+    </message>
+    <message>
+        <source>Side</source>
+        <translation>Side</translation>
+    </message>
+    <message>
+        <source>Isometric</source>
+        <translation>Isometric</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>Reset</translation>
+    </message>
+    <message>
+        <source>Layer: 0/0</source>
+        <translation>Layer: 0/0</translation>
+    </message>
+    <message>
+        <source>Layer: {current}/{total}</source>
+        <translation>Layer: {current}/{total}</translation>
+    </message>
+    <message>
+        <source>Show All</source>
+        <translation>Show All</translation>
+    </message>
+    <message>
+        <source>Single Layer</source>
+        <translation>Single Layer</translation>
     </message>
 </context>
 </TS>

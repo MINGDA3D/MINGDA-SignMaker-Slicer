@@ -4,613 +4,874 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../src/ui/main_window.py" line="93"/>
         <source>SignMaker Slicer - LED Sign Letter Slicer</source>
-        <translation type="unfinished"></translation>
+        <translation>SignMaker Slicer - مقطّع حروف اللافتات المضيئة</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="107"/>
         <source>Title Bar</source>
-        <translation type="unfinished"></translation>
+        <translation>شريط العنوان</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="142"/>
         <source>File(&amp;F)</source>
-        <translation type="unfinished"></translation>
+        <translation>ملف(&amp;F)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="145"/>
-        <location filename="../src/ui/main_window.py" line="603"/>
         <source>New Project</source>
-        <translation type="unfinished"></translation>
+        <translation>مشروع جديد</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="151"/>
         <source>Open DXF/SVG...</source>
-        <translation type="unfinished"></translation>
+        <translation>فتح DXF/SVG...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="159"/>
-        <location filename="../src/ui/main_window.py" line="660"/>
         <source>Save Project</source>
-        <translation type="unfinished"></translation>
+        <translation>حفظ المشروع</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="165"/>
         <source>Save As...</source>
-        <translation type="unfinished"></translation>
+        <translation>حفظ باسم...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="173"/>
         <source>Export G-code...</source>
-        <translation type="unfinished"></translation>
+        <translation>تصدير G-code...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="179"/>
         <source>Export STL...</source>
-        <translation type="unfinished"></translation>
+        <translation>تصدير STL...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="187"/>
         <source>Exit</source>
-        <translation type="unfinished"></translation>
+        <translation>خروج</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="193"/>
         <source>Edit(&amp;E)</source>
-        <translation type="unfinished"></translation>
+        <translation>تحرير(&amp;E)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="195"/>
         <source>Undo</source>
-        <translation type="unfinished"></translation>
+        <translation>تراجع</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="200"/>
         <source>Redo</source>
-        <translation type="unfinished"></translation>
+        <translation>إعادة</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="207"/>
         <source>Select All</source>
-        <translation type="unfinished"></translation>
+        <translation>تحديد الكل</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="211"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>حذف</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="216"/>
         <source>View(&amp;V)</source>
-        <translation type="unfinished"></translation>
+        <translation>عرض(&amp;V)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="218"/>
         <source>2D View</source>
-        <translation type="unfinished"></translation>
+        <translation>عرض ثنائي الأبعاد</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="223"/>
         <source>3D View</source>
-        <translation type="unfinished"></translation>
+        <translation>عرض ثلاثي الأبعاد</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="230"/>
         <source>Fit to Window</source>
-        <translation type="unfinished"></translation>
+        <translation>ملاءمة النافذة</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="235"/>
         <source>Zoom In</source>
-        <translation type="unfinished"></translation>
+        <translation>تكبير</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="239"/>
         <source>Zoom Out</source>
-        <translation type="unfinished"></translation>
+        <translation>تصغير</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="244"/>
         <source>Slice(&amp;S)</source>
-        <translation type="unfinished"></translation>
+        <translation>تقطيع(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="246"/>
         <source>Start Slicing</source>
-        <translation type="unfinished"></translation>
+        <translation>بدء التقطيع</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="251"/>
         <source>Preview G-code</source>
-        <translation type="unfinished"></translation>
+        <translation>معاينة G-code</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="256"/>
         <source>Help(&amp;H)</source>
-        <translation type="unfinished"></translation>
+        <translation>مساعدة(&amp;H)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="258"/>
         <source>About</source>
-        <translation type="unfinished"></translation>
+        <translation>حول</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="443"/>
-        <location filename="../src/ui/main_window.py" line="1002"/>
         <source>Ready</source>
-        <translation type="unfinished"></translation>
+        <translation>جاهز</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="465"/>
         <source>Executed: </source>
-        <translation type="unfinished"></translation>
+        <translation>تم التنفيذ: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="468"/>
         <source>Undone: </source>
-        <translation type="unfinished"></translation>
+        <translation>تم التراجع: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="471"/>
         <source>Redone: </source>
-        <translation type="unfinished"></translation>
+        <translation>تمت الإعادة: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="552"/>
         <source>Home</source>
-        <translation type="unfinished"></translation>
+        <translation>الرئيسية</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="557"/>
         <source>Project Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>تحرير المشروع</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="571"/>
         <source>3D Preview</source>
-        <translation type="unfinished"></translation>
+        <translation>معاينة ثلاثية الأبعاد</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="589"/>
         <source>Settings feature under development...</source>
-        <translation type="unfinished"></translation>
+        <translation>ميزة الإعدادات قيد التطوير...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="591"/>
         <source>Help feature under development...</source>
-        <translation type="unfinished"></translation>
+        <translation>ميزة المساعدة قيد التطوير...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="602"/>
         <source>SignMaker Slicer - New Project</source>
-        <translation type="unfinished"></translation>
+        <translation>SignMaker Slicer - مشروع جديد</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="609"/>
         <source>Open File</source>
-        <translation type="unfinished"></translation>
+        <translation>فتح ملف</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="611"/>
         <source>Supported Files (*.dxf *.svg);;DXF Files (*.dxf);;SVG Files (*.svg);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>الملفات المدعومة (*.dxf *.svg);;ملفات DXF (*.dxf);;ملفات SVG (*.svg);;جميع الملفات (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="627"/>
         <source>Unsupported Format</source>
-        <translation type="unfinished"></translation>
+        <translation>تنسيق غير مدعوم</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="627"/>
         <source>Format not supported: </source>
-        <translation type="unfinished"></translation>
+        <translation>التنسيق غير مدعوم: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="633"/>
         <source>Load </source>
-        <translation type="unfinished"></translation>
+        <translation>تحميل </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="643"/>
         <source>Loaded: {file}, {count} contours</source>
-        <translation type="unfinished"></translation>
+        <translation>تم التحميل: {file}، {count} محيط</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="647"/>
         <source>Load Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>فشل التحميل</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="647"/>
         <source>Failed to load file:</source>
-        <translation type="unfinished"></translation>
+        <translation>فشل في تحميل الملف:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="662"/>
         <source>SignMaker Project (*.smp);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>مشروع SignMaker (*.smp);;جميع الملفات (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="670"/>
         <source>Project saved: </source>
-        <translation type="unfinished"></translation>
+        <translation>تم حفظ المشروع: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="675"/>
-        <location filename="../src/ui/main_window.py" line="698"/>
-        <location filename="../src/ui/main_window.py" line="726"/>
-        <location filename="../src/ui/main_window.py" line="760"/>
-        <location filename="../src/ui/main_window.py" line="812"/>
-        <location filename="../src/ui/main_window.py" line="1014"/>
         <source>Info</source>
-        <translation type="unfinished"></translation>
+        <translation>معلومات</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="675"/>
-        <location filename="../src/ui/main_window.py" line="698"/>
         <source>Please slice first</source>
-        <translation type="unfinished"></translation>
+        <translation>يرجى التقطيع أولاً</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="680"/>
         <source>Export G-code</source>
-        <translation type="unfinished"></translation>
+        <translation>تصدير G-code</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="682"/>
         <source>G-code Files (*.gcode);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>ملفات G-code (*.gcode);;جميع الملفات (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="690"/>
         <source>G-code exported: </source>
-        <translation type="unfinished"></translation>
+        <translation>تم تصدير G-code: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="691"/>
-        <location filename="../src/ui/main_window.py" line="719"/>
-        <location filename="../src/ui/main_window.py" line="748"/>
-        <location filename="../src/ui/main_window.py" line="782"/>
         <source>Export Success</source>
-        <translation type="unfinished"></translation>
+        <translation>نجح التصدير</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="691"/>
         <source>G-code saved to:</source>
-        <translation type="unfinished"></translation>
+        <translation>تم حفظ G-code في:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="693"/>
-        <location filename="../src/ui/main_window.py" line="721"/>
-        <location filename="../src/ui/main_window.py" line="753"/>
-        <location filename="../src/ui/main_window.py" line="755"/>
-        <location filename="../src/ui/main_window.py" line="787"/>
-        <location filename="../src/ui/main_window.py" line="789"/>
         <source>Export Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>فشل التصدير</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="693"/>
         <source>Failed to export G-code:</source>
-        <translation type="unfinished"></translation>
+        <translation>فشل في تصدير G-code:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="703"/>
         <source>Export STL</source>
-        <translation type="unfinished"></translation>
+        <translation>تصدير STL</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="705"/>
         <source>STL Files (*.stl);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>ملفات STL (*.stl);;جميع الملفات (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="718"/>
         <source>STL exported: </source>
-        <translation type="unfinished"></translation>
+        <translation>تم تصدير STL: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="719"/>
         <source>STL saved to:</source>
-        <translation type="unfinished"></translation>
+        <translation>تم حفظ STL في:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="721"/>
         <source>Failed to export STL:</source>
-        <translation type="unfinished"></translation>
+        <translation>فشل في تصدير STL:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="726"/>
-        <location filename="../src/ui/main_window.py" line="760"/>
-        <location filename="../src/ui/main_window.py" line="812"/>
         <source>Please import a DXF file first</source>
-        <translation type="unfinished"></translation>
+        <translation>يرجى استيراد ملف DXF أولاً</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="731"/>
         <source>Export Baseplate DXF</source>
-        <translation type="unfinished"></translation>
+        <translation>تصدير DXF اللوحة السفلية</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="733"/>
-        <location filename="../src/ui/main_window.py" line="767"/>
         <source>DXF Files (*.dxf);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>ملفات DXF (*.dxf);;جميع الملفات (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="746"/>
         <source>Baseplate DXF exported: </source>
-        <translation type="unfinished"></translation>
+        <translation>تم تصدير DXF اللوحة السفلية: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="749"/>
         <source>Baseplate DXF saved to:</source>
-        <translation type="unfinished"></translation>
+        <translation>تم حفظ DXF اللوحة السفلية في:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="750"/>
-        <location filename="../src/ui/main_window.py" line="784"/>
         <source>Alignment compensation: </source>
-        <translation type="unfinished"></translation>
+        <translation>تعويض المحاذاة: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="753"/>
         <source>Failed to generate baseplate contour</source>
-        <translation type="unfinished"></translation>
+        <translation>فشل في إنشاء محيط اللوحة السفلية</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="755"/>
         <source>Failed to export baseplate DXF:</source>
-        <translation type="unfinished"></translation>
+        <translation>فشل في تصدير DXF اللوحة السفلية:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="765"/>
         <source>Export Panel DXF</source>
-        <translation type="unfinished"></translation>
+        <translation>تصدير DXF اللوحة الأمامية</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="780"/>
         <source>Panel DXF exported: </source>
-        <translation type="unfinished"></translation>
+        <translation>تم تصدير DXF اللوحة الأمامية: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="783"/>
         <source>Panel DXF saved to:</source>
-        <translation type="unfinished"></translation>
+        <translation>تم حفظ DXF اللوحة الأمامية في:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="787"/>
         <source>Failed to generate panel contour</source>
-        <translation type="unfinished"></translation>
+        <translation>فشل في إنشاء محيط اللوحة الأمامية</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="789"/>
         <source>Failed to export panel DXF:</source>
-        <translation type="unfinished"></translation>
+        <translation>فشل في تصدير DXF اللوحة الأمامية:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="798"/>
         <source>Nothing to undo</source>
-        <translation type="unfinished"></translation>
+        <translation>لا يوجد شيء للتراجع عنه</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="807"/>
         <source>Nothing to redo</source>
-        <translation type="unfinished"></translation>
+        <translation>لا يوجد شيء لإعادته</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="816"/>
         <source>Slicing...</source>
-        <translation type="unfinished"></translation>
+        <translation>جارٍ التقطيع...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="836"/>
         <source>Slicing complete: {layers} layers, estimated time: {time:.1f} minutes</source>
-        <translation type="unfinished"></translation>
+        <translation>اكتمل التقطيع: {layers} طبقة، الوقت المقدر: {time:.1f} دقيقة</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="847"/>
         <source>Slicing Complete</source>
-        <translation type="unfinished"></translation>
+        <translation>اكتمل التقطيع</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="848"/>
         <source>Export G-code now?</source>
-        <translation type="unfinished"></translation>
+        <translation>هل تريد تصدير G-code الآن؟</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="857"/>
         <source>Slicing Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>فشل التقطيع</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="857"/>
         <source>Error during slicing:</source>
-        <translation type="unfinished"></translation>
+        <translation>حدث خطأ أثناء التقطيع:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="858"/>
         <source>Slicing failed</source>
-        <translation type="unfinished"></translation>
+        <translation>فشل التقطيع</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="878"/>
         <source>Switched to {view} view</source>
-        <translation type="unfinished"></translation>
+        <translation>تم التبديل إلى عرض {view}</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="926"/>
         <source>Tool: </source>
-        <translation type="unfinished"></translation>
+        <translation>الأداة: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="994"/>
         <source>Move to: X={x:.2f}, Y={y:.2f}</source>
-        <translation type="unfinished"></translation>
+        <translation>نقل إلى: X={x:.2f}، Y={y:.2f}</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1014"/>
         <source>Please select a contour first</source>
-        <translation type="unfinished"></translation>
+        <translation>يرجى تحديد محيط أولاً</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1030"/>
         <source>Mirror {axis} complete</source>
-        <translation type="unfinished"></translation>
+        <translation>اكتمل الانعكاس {axis}</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1052"/>
         <source>About SignMaker Slicer</source>
-        <translation type="unfinished"></translation>
+        <translation>حول SignMaker Slicer</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1054"/>
         <source>Professional LED Sign Letter 3D Printing Slicer</source>
-        <translation type="unfinished"></translation>
+        <translation>برنامج تقطيع احترافي للطباعة ثلاثية الأبعاد لحروف اللافتات المضيئة</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1055"/>
         <source>Version: 0.1.0 (Development)</source>
-        <translation type="unfinished"></translation>
+        <translation>الإصدار: 0.1.0 (تطوير)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1057"/>
         <source>Features:</source>
-        <translation type="unfinished"></translation>
+        <translation>الميزات:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1059"/>
         <source>DXF/SVG file import</source>
-        <translation type="unfinished"></translation>
+        <translation>استيراد ملفات DXF/SVG</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1060"/>
         <source>Straight/Bevel/Custom edges</source>
-        <translation type="unfinished"></translation>
+        <translation>حواف مستقيمة/مشطوفة/مخصصة</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1061"/>
         <source>Multi-color printing support</source>
-        <translation type="unfinished"></translation>
+        <translation>دعم الطباعة متعددة الألوان</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1062"/>
         <source>Step/V-groove</source>
-        <translation type="unfinished"></translation>
+        <translation>درج/أخدود V</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1063"/>
         <source>Anti-warping skirt</source>
-        <translation type="unfinished"></translation>
+        <translation>تنورة مانعة للالتواء</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1064"/>
         <source>Connected letters</source>
-        <translation type="unfinished"></translation>
+        <translation>حروف متصلة</translation>
+    </message>
+    <message>
+        <source>Language</source>
+        <translation>اللغة</translation>
+    </message>
+    <message>
+        <source>Language Changed</source>
+        <translation>تم تغيير اللغة</translation>
+    </message>
+    <message>
+        <source>Language has been changed to {lang}. Please restart the application for full effect.</source>
+        <translation>تم تغيير اللغة إلى {lang}. يرجى إعادة تشغيل التطبيق للتطبيق الكامل.</translation>
+    </message>
+    <message>
+        <source>Language Change Failed</source>
+        <translation>فشل تغيير اللغة</translation>
+    </message>
+    <message>
+        <source>Translation file for {lang} is not available yet.</source>
+        <translation>ملف الترجمة لـ {lang} غير متوفر بعد.</translation>
     </message>
 </context>
 <context>
     <name>TitleBar</name>
     <message>
-        <location filename="../src/ui/title_bar.py" line="55"/>
         <source>Menu</source>
-        <translation type="unfinished"></translation>
+        <translation>القائمة</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="74"/>
         <source>Open</source>
-        <translation type="unfinished"></translation>
+        <translation>فتح</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="83"/>
         <source>Save</source>
-        <translation type="unfinished"></translation>
+        <translation>حفظ</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="92"/>
         <source>Export</source>
-        <translation type="unfinished"></translation>
+        <translation>تصدير</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="113"/>
         <source>Undo</source>
-        <translation type="unfinished"></translation>
+        <translation>تراجع</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="122"/>
         <source>Redo</source>
-        <translation type="unfinished"></translation>
+        <translation>إعادة</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="138"/>
         <source>Home</source>
-        <translation type="unfinished"></translation>
+        <translation>الرئيسية</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="144"/>
         <source>Project</source>
-        <translation type="unfinished"></translation>
+        <translation>المشروع</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="150"/>
         <source>Preview</source>
-        <translation type="unfinished"></translation>
+        <translation>معاينة</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="167"/>
         <source>Slice</source>
-        <translation type="unfinished"></translation>
+        <translation>تقطيع</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="173"/>
         <source>Export Gcode</source>
-        <translation type="unfinished"></translation>
+        <translation>تصدير Gcode</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="323"/>
         <source>New Project</source>
-        <translation type="unfinished"></translation>
+        <translation>مشروع جديد</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="324"/>
         <source>Open File...</source>
-        <translation type="unfinished"></translation>
+        <translation>فتح ملف...</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="325"/>
         <source>Save Project</source>
-        <translation type="unfinished"></translation>
+        <translation>حفظ المشروع</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="327"/>
         <source>Export G-code...</source>
-        <translation type="unfinished"></translation>
+        <translation>تصدير G-code...</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="328"/>
         <source>Export STL...</source>
-        <translation type="unfinished"></translation>
+        <translation>تصدير STL...</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="330"/>
         <source>Export Baseplate DXF...</source>
-        <translation type="unfinished"></translation>
+        <translation>تصدير DXF اللوحة السفلية...</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="331"/>
         <source>Export Panel DXF...</source>
-        <translation type="unfinished"></translation>
+        <translation>تصدير DXF اللوحة الأمامية...</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="333"/>
         <source>About</source>
-        <translation type="unfinished"></translation>
+        <translation>حول</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="335"/>
         <source>Exit</source>
-        <translation type="unfinished"></translation>
+        <translation>خروج</translation>
+    </message>
+    <message>
+        <source>Language</source>
+        <translation>اللغة</translation>
+    </message>
+</context>
+<context>
+    <name>ParamPanel</name>
+    <message>
+        <source>Parameters</source>
+        <translation>المعلمات</translation>
+    </message>
+    <message>
+        <source>Shell Settings</source>
+        <translation>إعدادات الغلاف</translation>
+    </message>
+    <message>
+        <source>Shell Height:</source>
+        <translation>ارتفاع الغلاف:</translation>
+    </message>
+    <message>
+        <source>Layer Height:</source>
+        <translation>ارتفاع الطبقة:</translation>
+    </message>
+    <message>
+        <source>Wall Thickness:</source>
+        <translation>سمك الجدار:</translation>
+    </message>
+    <message>
+        <source>Wall Count:</source>
+        <translation>عدد الجدران:</translation>
+    </message>
+    <message>
+        <source>Edge Type</source>
+        <translation>نوع الحافة</translation>
+    </message>
+    <message>
+        <source>Straight</source>
+        <translation>مستقيم</translation>
+    </message>
+    <message>
+        <source>Beveled</source>
+        <translation>مشطوف</translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation>مخصص</translation>
+    </message>
+    <message>
+        <source>Edge Type:</source>
+        <translation>نوع الحافة:</translation>
+    </message>
+    <message>
+        <source>Top Small</source>
+        <translation>أعلى أصغر</translation>
+    </message>
+    <message>
+        <source>Top Large</source>
+        <translation>أعلى أكبر</translation>
+    </message>
+    <message>
+        <source>Bevel Direction:</source>
+        <translation>اتجاه الشطف:</translation>
+    </message>
+    <message>
+        <source>Bevel Width:</source>
+        <translation>عرض الشطف:</translation>
+    </message>
+    <message>
+        <source>Baseplate Thickness:</source>
+        <translation>سمك اللوحة السفلية:</translation>
+    </message>
+    <message>
+        <source>Panel Thickness:</source>
+        <translation>سمك اللوحة الأمامية:</translation>
+    </message>
+    <message>
+        <source>Preset Templates:</source>
+        <translation>القوالب المسبقة:</translation>
+    </message>
+    <message>
+        <source>Import DXF...</source>
+        <translation>استيراد DXF...</translation>
+    </message>
+    <message>
+        <source>Import custom edge profile from DXF file</source>
+        <translation>استيراد ملف تعريف الحافة المخصصة من ملف DXF</translation>
+    </message>
+    <message>
+        <source>No profile selected</source>
+        <translation>لم يتم تحديد ملف تعريف</translation>
+    </message>
+    <message>
+        <source>Current Profile:</source>
+        <translation>الملف التعريفي الحالي:</translation>
+    </message>
+    <message>
+        <source>Bottom Face</source>
+        <translation>الوجه السفلي</translation>
+    </message>
+    <message>
+        <source>Enable Bottom Face</source>
+        <translation>تفعيل الوجه السفلي</translation>
+    </message>
+    <message>
+        <source>Bottom Thickness:</source>
+        <translation>سمك القاع:</translation>
+    </message>
+    <message>
+        <source>Top Face</source>
+        <translation>الوجه العلوي</translation>
+    </message>
+    <message>
+        <source>Enable Top Face</source>
+        <translation>تفعيل الوجه العلوي</translation>
+    </message>
+    <message>
+        <source>Top Thickness:</source>
+        <translation>سمك الأعلى:</translation>
+    </message>
+    <message>
+        <source>Color Layer Settings</source>
+        <translation>إعدادات طبقة اللون</translation>
+    </message>
+    <message>
+        <source>Enable Color Layers</source>
+        <translation>تفعيل طبقات اللون</translation>
+    </message>
+    <message>
+        <source>Color 1 Height:</source>
+        <translation>ارتفاع اللون 1:</translation>
+    </message>
+    <message>
+        <source>Color 2 Height:</source>
+        <translation>ارتفاع اللون 2:</translation>
+    </message>
+    <message>
+        <source>Step/V-Groove</source>
+        <translation>درج/أخدود V</translation>
+    </message>
+    <message>
+        <source>Enable Panel Step (Top)</source>
+        <translation>تفعيل درج اللوحة (أعلى)</translation>
+    </message>
+    <message>
+        <source>Step Height:</source>
+        <translation>ارتفاع الدرج:</translation>
+    </message>
+    <message>
+        <source>Step Width:</source>
+        <translation>عرض الدرج:</translation>
+    </message>
+    <message>
+        <source>V-Groove</source>
+        <translation>أخدود V</translation>
+    </message>
+    <message>
+        <source>Enable Baseplate Step (Bottom)</source>
+        <translation>تفعيل درج اللوحة السفلية (أسفل)</translation>
+    </message>
+    <message>
+        <source>Anti-Warping Skirt</source>
+        <translation>تنورة مانعة للالتواء</translation>
+    </message>
+    <message>
+        <source>Enable Anti-Warping Skirt</source>
+        <translation>تفعيل التنورة المانعة للالتواء</translation>
+    </message>
+    <message>
+        <source>Skirt Width:</source>
+        <translation>عرض التنورة:</translation>
+    </message>
+    <message>
+        <source>Skirt Height:</source>
+        <translation>ارتفاع التنورة:</translation>
+    </message>
+    <message>
+        <source>Trapezoid Interval:</source>
+        <translation>فاصل شبه المنحرف:</translation>
+    </message>
+    <message>
+        <source>Skirt Offset:</source>
+        <translation>إزاحة التنورة:</translation>
+    </message>
+    <message>
+        <source>Connected Letters</source>
+        <translation>حروف متصلة</translation>
+    </message>
+    <message>
+        <source>Enable Connected Letters</source>
+        <translation>تفعيل الحروف المتصلة</translation>
+    </message>
+    <message>
+        <source>Triangle</source>
+        <translation>مثلث</translation>
+    </message>
+    <message>
+        <source>Diamond</source>
+        <translation>معين</translation>
+    </message>
+    <message>
+        <source>Connection Type:</source>
+        <translation>نوع الاتصال:</translation>
+    </message>
+    <message>
+        <source>Auto Detect Connection Points</source>
+        <translation>الكشف التلقائي عن نقاط الاتصال</translation>
+    </message>
+    <message>
+        <source>Connection Width:</source>
+        <translation>عرض الاتصال:</translation>
+    </message>
+    <message>
+        <source>Bevel Height:</source>
+        <translation>ارتفاع الشطف:</translation>
+    </message>
+    <message>
+        <source>Base Height:</source>
+        <translation>ارتفاع القاعدة:</translation>
+    </message>
+    <message>
+        <source>Support Offset:</source>
+        <translation>إزاحة الدعم:</translation>
+    </message>
+    <message>
+        <source>Edge Wrap/Outline</source>
+        <translation>تغليف/محيط الحافة</translation>
+    </message>
+    <message>
+        <source>Enable Edge Wrap</source>
+        <translation>تفعيل تغليف الحافة</translation>
+    </message>
+    <message>
+        <source>Inner</source>
+        <translation>داخلي</translation>
+    </message>
+    <message>
+        <source>Outer</source>
+        <translation>خارجي</translation>
+    </message>
+    <message>
+        <source>Wrap Direction:</source>
+        <translation>اتجاه التغليف:</translation>
+    </message>
+    <message>
+        <source>Wrap Width:</source>
+        <translation>عرض التغليف:</translation>
+    </message>
+    <message>
+        <source>Wrap Height:</source>
+        <translation>ارتفاع التغليف:</translation>
+    </message>
+    <message>
+        <source>Enable Outline</source>
+        <translation>تفعيل المحيط</translation>
+    </message>
+    <message>
+        <source>Outline Direction:</source>
+        <translation>اتجاه المحيط:</translation>
+    </message>
+    <message>
+        <source>Outline Width:</source>
+        <translation>عرض المحيط:</translation>
+    </message>
+    <message>
+        <source>Outline Height:</source>
+        <translation>ارتفاع المحيط:</translation>
+    </message>
+    <message>
+        <source>Outline Offset:</source>
+        <translation>إزاحة المحيط:</translation>
+    </message>
+    <message>
+        <source>Speed Settings</source>
+        <translation>إعدادات السرعة</translation>
+    </message>
+    <message>
+        <source>Print Speed:</source>
+        <translation>سرعة الطباعة:</translation>
+    </message>
+    <message>
+        <source>Travel Speed:</source>
+        <translation>سرعة الانتقال:</translation>
+    </message>
+    <message>
+        <source>First Layer Speed:</source>
+        <translation>سرعة الطبقة الأولى:</translation>
+    </message>
+    <message>
+        <source>Import Custom Edge DXF</source>
+        <translation>استيراد DXF حافة مخصصة</translation>
+    </message>
+    <message>
+        <source>DXF Files (*.dxf);;All Files (*.*)</source>
+        <translation>ملفات DXF (*.dxf);;جميع الملفات (*.*)</translation>
+    </message>
+    <message>
+        <source>Import Success</source>
+        <translation>نجح الاستيراد</translation>
+    </message>
+    <message>
+        <source>Imported custom edge profile: {name}
+Size: {width:.1f} x {height:.1f} mm
+Control points: {points}</source>
+        <translation>تم استيراد ملف تعريف الحافة المخصصة: {name}
+الحجم: {width:.1f} x {height:.1f} مم
+نقاط التحكم: {points}</translation>
+    </message>
+    <message>
+        <source>Import Failed</source>
+        <translation>فشل الاستيراد</translation>
+    </message>
+    <message>
+        <source>Failed to import DXF file:
+{error}</source>
+        <translation>فشل في استيراد ملف DXF:
+{error}</translation>
+    </message>
+    <message>
+        <source> ({count} points)</source>
+        <translation> ({count} نقطة)</translation>
+    </message>
+</context>
+<context>
+    <name>ProjectPanel</name>
+    <message>
+        <source>Shape List</source>
+        <translation>قائمة الأشكال</translation>
+    </message>
+    <message>
+        <source>+ Import Shape</source>
+        <translation>+ استيراد شكل</translation>
+    </message>
+    <message>
+        <source>Letter-{index}</source>
+        <translation>حرف-{index}</translation>
+    </message>
+</context>
+<context>
+    <name>Preview3D</name>
+    <message>
+        <source>View:</source>
+        <translation>العرض:</translation>
+    </message>
+    <message>
+        <source>Top</source>
+        <translation>علوي</translation>
+    </message>
+    <message>
+        <source>Front</source>
+        <translation>أمامي</translation>
+    </message>
+    <message>
+        <source>Side</source>
+        <translation>جانبي</translation>
+    </message>
+    <message>
+        <source>Isometric</source>
+        <translation>متساوي القياس</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>إعادة تعيين</translation>
+    </message>
+    <message>
+        <source>Layer: 0/0</source>
+        <translation>طبقة: 0/0</translation>
+    </message>
+    <message>
+        <source>Layer: {current}/{total}</source>
+        <translation>طبقة: {current}/{total}</translation>
+    </message>
+    <message>
+        <source>Show All</source>
+        <translation>إظهار الكل</translation>
+    </message>
+    <message>
+        <source>Single Layer</source>
+        <translation>طبقة واحدة</translation>
     </message>
 </context>
 </TS>

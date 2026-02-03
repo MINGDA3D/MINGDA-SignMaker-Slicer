@@ -4,613 +4,874 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../src/ui/main_window.py" line="93"/>
         <source>SignMaker Slicer - LED Sign Letter Slicer</source>
-        <translation type="unfinished"></translation>
+        <translation>SignMaker Slicer - LED 채널 레터 슬라이서</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="107"/>
         <source>Title Bar</source>
-        <translation type="unfinished"></translation>
+        <translation>제목 표시줄</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="142"/>
         <source>File(&amp;F)</source>
-        <translation type="unfinished"></translation>
+        <translation>파일(&amp;F)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="145"/>
-        <location filename="../src/ui/main_window.py" line="603"/>
         <source>New Project</source>
-        <translation type="unfinished"></translation>
+        <translation>새 프로젝트</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="151"/>
         <source>Open DXF/SVG...</source>
-        <translation type="unfinished"></translation>
+        <translation>DXF/SVG 열기...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="159"/>
-        <location filename="../src/ui/main_window.py" line="660"/>
         <source>Save Project</source>
-        <translation type="unfinished"></translation>
+        <translation>프로젝트 저장</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="165"/>
         <source>Save As...</source>
-        <translation type="unfinished"></translation>
+        <translation>다른 이름으로 저장...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="173"/>
         <source>Export G-code...</source>
-        <translation type="unfinished"></translation>
+        <translation>G-code 내보내기...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="179"/>
         <source>Export STL...</source>
-        <translation type="unfinished"></translation>
+        <translation>STL 내보내기...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="187"/>
         <source>Exit</source>
-        <translation type="unfinished"></translation>
+        <translation>종료</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="193"/>
         <source>Edit(&amp;E)</source>
-        <translation type="unfinished"></translation>
+        <translation>편집(&amp;E)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="195"/>
         <source>Undo</source>
-        <translation type="unfinished"></translation>
+        <translation>실행 취소</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="200"/>
         <source>Redo</source>
-        <translation type="unfinished"></translation>
+        <translation>다시 실행</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="207"/>
         <source>Select All</source>
-        <translation type="unfinished"></translation>
+        <translation>모두 선택</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="211"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>삭제</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="216"/>
         <source>View(&amp;V)</source>
-        <translation type="unfinished"></translation>
+        <translation>보기(&amp;V)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="218"/>
         <source>2D View</source>
-        <translation type="unfinished"></translation>
+        <translation>2D 보기</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="223"/>
         <source>3D View</source>
-        <translation type="unfinished"></translation>
+        <translation>3D 보기</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="230"/>
         <source>Fit to Window</source>
-        <translation type="unfinished"></translation>
+        <translation>창에 맞추기</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="235"/>
         <source>Zoom In</source>
-        <translation type="unfinished"></translation>
+        <translation>확대</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="239"/>
         <source>Zoom Out</source>
-        <translation type="unfinished"></translation>
+        <translation>축소</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="244"/>
         <source>Slice(&amp;S)</source>
-        <translation type="unfinished"></translation>
+        <translation>슬라이스(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="246"/>
         <source>Start Slicing</source>
-        <translation type="unfinished"></translation>
+        <translation>슬라이싱 시작</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="251"/>
         <source>Preview G-code</source>
-        <translation type="unfinished"></translation>
+        <translation>G-code 미리보기</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="256"/>
         <source>Help(&amp;H)</source>
-        <translation type="unfinished"></translation>
+        <translation>도움말(&amp;H)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="258"/>
         <source>About</source>
-        <translation type="unfinished"></translation>
+        <translation>정보</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="443"/>
-        <location filename="../src/ui/main_window.py" line="1002"/>
         <source>Ready</source>
-        <translation type="unfinished"></translation>
+        <translation>준비됨</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="465"/>
         <source>Executed: </source>
-        <translation type="unfinished"></translation>
+        <translation>실행됨: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="468"/>
         <source>Undone: </source>
-        <translation type="unfinished"></translation>
+        <translation>실행 취소됨: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="471"/>
         <source>Redone: </source>
-        <translation type="unfinished"></translation>
+        <translation>다시 실행됨: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="552"/>
         <source>Home</source>
-        <translation type="unfinished"></translation>
+        <translation>홈</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="557"/>
         <source>Project Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>프로젝트 편집</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="571"/>
         <source>3D Preview</source>
-        <translation type="unfinished"></translation>
+        <translation>3D 미리보기</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="589"/>
         <source>Settings feature under development...</source>
-        <translation type="unfinished"></translation>
+        <translation>설정 기능 개발 중...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="591"/>
         <source>Help feature under development...</source>
-        <translation type="unfinished"></translation>
+        <translation>도움말 기능 개발 중...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="602"/>
         <source>SignMaker Slicer - New Project</source>
-        <translation type="unfinished"></translation>
+        <translation>SignMaker Slicer - 새 프로젝트</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="609"/>
         <source>Open File</source>
-        <translation type="unfinished"></translation>
+        <translation>파일 열기</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="611"/>
         <source>Supported Files (*.dxf *.svg);;DXF Files (*.dxf);;SVG Files (*.svg);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>지원 파일 (*.dxf *.svg);;DXF 파일 (*.dxf);;SVG 파일 (*.svg);;모든 파일 (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="627"/>
         <source>Unsupported Format</source>
-        <translation type="unfinished"></translation>
+        <translation>지원되지 않는 형식</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="627"/>
         <source>Format not supported: </source>
-        <translation type="unfinished"></translation>
+        <translation>지원되지 않는 형식: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="633"/>
         <source>Load </source>
-        <translation type="unfinished"></translation>
+        <translation>불러오기 </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="643"/>
         <source>Loaded: {file}, {count} contours</source>
-        <translation type="unfinished"></translation>
+        <translation>불러옴: {file}, {count}개 윤곽선</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="647"/>
         <source>Load Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>불러오기 실패</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="647"/>
         <source>Failed to load file:</source>
-        <translation type="unfinished"></translation>
+        <translation>파일을 불러올 수 없습니다:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="662"/>
         <source>SignMaker Project (*.smp);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>SignMaker 프로젝트 (*.smp);;모든 파일 (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="670"/>
         <source>Project saved: </source>
-        <translation type="unfinished"></translation>
+        <translation>프로젝트 저장됨: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="675"/>
-        <location filename="../src/ui/main_window.py" line="698"/>
-        <location filename="../src/ui/main_window.py" line="726"/>
-        <location filename="../src/ui/main_window.py" line="760"/>
-        <location filename="../src/ui/main_window.py" line="812"/>
-        <location filename="../src/ui/main_window.py" line="1014"/>
         <source>Info</source>
-        <translation type="unfinished"></translation>
+        <translation>정보</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="675"/>
-        <location filename="../src/ui/main_window.py" line="698"/>
         <source>Please slice first</source>
-        <translation type="unfinished"></translation>
+        <translation>먼저 슬라이싱을 수행하세요</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="680"/>
         <source>Export G-code</source>
-        <translation type="unfinished"></translation>
+        <translation>G-code 내보내기</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="682"/>
         <source>G-code Files (*.gcode);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>G-code 파일 (*.gcode);;모든 파일 (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="690"/>
         <source>G-code exported: </source>
-        <translation type="unfinished"></translation>
+        <translation>G-code 내보내기 완료: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="691"/>
-        <location filename="../src/ui/main_window.py" line="719"/>
-        <location filename="../src/ui/main_window.py" line="748"/>
-        <location filename="../src/ui/main_window.py" line="782"/>
         <source>Export Success</source>
-        <translation type="unfinished"></translation>
+        <translation>내보내기 성공</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="691"/>
         <source>G-code saved to:</source>
-        <translation type="unfinished"></translation>
+        <translation>G-code 저장 위치:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="693"/>
-        <location filename="../src/ui/main_window.py" line="721"/>
-        <location filename="../src/ui/main_window.py" line="753"/>
-        <location filename="../src/ui/main_window.py" line="755"/>
-        <location filename="../src/ui/main_window.py" line="787"/>
-        <location filename="../src/ui/main_window.py" line="789"/>
         <source>Export Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>내보내기 실패</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="693"/>
         <source>Failed to export G-code:</source>
-        <translation type="unfinished"></translation>
+        <translation>G-code를 내보낼 수 없습니다:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="703"/>
         <source>Export STL</source>
-        <translation type="unfinished"></translation>
+        <translation>STL 내보내기</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="705"/>
         <source>STL Files (*.stl);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>STL 파일 (*.stl);;모든 파일 (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="718"/>
         <source>STL exported: </source>
-        <translation type="unfinished"></translation>
+        <translation>STL 내보내기 완료: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="719"/>
         <source>STL saved to:</source>
-        <translation type="unfinished"></translation>
+        <translation>STL 저장 위치:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="721"/>
         <source>Failed to export STL:</source>
-        <translation type="unfinished"></translation>
+        <translation>STL을 내보낼 수 없습니다:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="726"/>
-        <location filename="../src/ui/main_window.py" line="760"/>
-        <location filename="../src/ui/main_window.py" line="812"/>
         <source>Please import a DXF file first</source>
-        <translation type="unfinished"></translation>
+        <translation>먼저 DXF 파일을 가져오세요</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="731"/>
         <source>Export Baseplate DXF</source>
-        <translation type="unfinished"></translation>
+        <translation>베이스플레이트 DXF 내보내기</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="733"/>
-        <location filename="../src/ui/main_window.py" line="767"/>
         <source>DXF Files (*.dxf);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>DXF 파일 (*.dxf);;모든 파일 (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="746"/>
         <source>Baseplate DXF exported: </source>
-        <translation type="unfinished"></translation>
+        <translation>베이스플레이트 DXF 내보내기 완료: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="749"/>
         <source>Baseplate DXF saved to:</source>
-        <translation type="unfinished"></translation>
+        <translation>베이스플레이트 DXF 저장 위치:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="750"/>
-        <location filename="../src/ui/main_window.py" line="784"/>
         <source>Alignment compensation: </source>
-        <translation type="unfinished"></translation>
+        <translation>정렬 보정: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="753"/>
         <source>Failed to generate baseplate contour</source>
-        <translation type="unfinished"></translation>
+        <translation>베이스플레이트 윤곽선을 생성할 수 없습니다</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="755"/>
         <source>Failed to export baseplate DXF:</source>
-        <translation type="unfinished"></translation>
+        <translation>베이스플레이트 DXF를 내보낼 수 없습니다:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="765"/>
         <source>Export Panel DXF</source>
-        <translation type="unfinished"></translation>
+        <translation>패널 DXF 내보내기</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="780"/>
         <source>Panel DXF exported: </source>
-        <translation type="unfinished"></translation>
+        <translation>패널 DXF 내보내기 완료: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="783"/>
         <source>Panel DXF saved to:</source>
-        <translation type="unfinished"></translation>
+        <translation>패널 DXF 저장 위치:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="787"/>
         <source>Failed to generate panel contour</source>
-        <translation type="unfinished"></translation>
+        <translation>패널 윤곽선을 생성할 수 없습니다</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="789"/>
         <source>Failed to export panel DXF:</source>
-        <translation type="unfinished"></translation>
+        <translation>패널 DXF를 내보낼 수 없습니다:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="798"/>
         <source>Nothing to undo</source>
-        <translation type="unfinished"></translation>
+        <translation>실행 취소할 항목이 없습니다</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="807"/>
         <source>Nothing to redo</source>
-        <translation type="unfinished"></translation>
+        <translation>다시 실행할 항목이 없습니다</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="816"/>
         <source>Slicing...</source>
-        <translation type="unfinished"></translation>
+        <translation>슬라이싱 중...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="836"/>
         <source>Slicing complete: {layers} layers, estimated time: {time:.1f} minutes</source>
-        <translation type="unfinished"></translation>
+        <translation>슬라이싱 완료: {layers}개 레이어, 예상 시간: {time:.1f}분</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="847"/>
         <source>Slicing Complete</source>
-        <translation type="unfinished"></translation>
+        <translation>슬라이싱 완료</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="848"/>
         <source>Export G-code now?</source>
-        <translation type="unfinished"></translation>
+        <translation>지금 G-code를 내보내시겠습니까?</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="857"/>
         <source>Slicing Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>슬라이싱 실패</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="857"/>
         <source>Error during slicing:</source>
-        <translation type="unfinished"></translation>
+        <translation>슬라이싱 중 오류 발생:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="858"/>
         <source>Slicing failed</source>
-        <translation type="unfinished"></translation>
+        <translation>슬라이싱 실패</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="878"/>
         <source>Switched to {view} view</source>
-        <translation type="unfinished"></translation>
+        <translation>{view} 보기로 전환됨</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="926"/>
         <source>Tool: </source>
-        <translation type="unfinished"></translation>
+        <translation>도구: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="994"/>
         <source>Move to: X={x:.2f}, Y={y:.2f}</source>
-        <translation type="unfinished"></translation>
+        <translation>이동 위치: X={x:.2f}, Y={y:.2f}</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1014"/>
         <source>Please select a contour first</source>
-        <translation type="unfinished"></translation>
+        <translation>먼저 윤곽선을 선택하세요</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1030"/>
         <source>Mirror {axis} complete</source>
-        <translation type="unfinished"></translation>
+        <translation>{axis} 대칭 완료</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1052"/>
         <source>About SignMaker Slicer</source>
-        <translation type="unfinished"></translation>
+        <translation>SignMaker Slicer 정보</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1054"/>
         <source>Professional LED Sign Letter 3D Printing Slicer</source>
-        <translation type="unfinished"></translation>
+        <translation>전문 LED 채널 레터 3D 프린팅 슬라이서</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1055"/>
         <source>Version: 0.1.0 (Development)</source>
-        <translation type="unfinished"></translation>
+        <translation>버전: 0.1.0 (개발 버전)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1057"/>
         <source>Features:</source>
-        <translation type="unfinished"></translation>
+        <translation>기능:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1059"/>
         <source>DXF/SVG file import</source>
-        <translation type="unfinished"></translation>
+        <translation>DXF/SVG 파일 가져오기</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1060"/>
         <source>Straight/Bevel/Custom edges</source>
-        <translation type="unfinished"></translation>
+        <translation>직선/베벨/사용자 정의 엣지</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1061"/>
         <source>Multi-color printing support</source>
-        <translation type="unfinished"></translation>
+        <translation>다색 인쇄 지원</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1062"/>
         <source>Step/V-groove</source>
-        <translation type="unfinished"></translation>
+        <translation>단/V홈</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1063"/>
         <source>Anti-warping skirt</source>
-        <translation type="unfinished"></translation>
+        <translation>휨 방지 스커트</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1064"/>
         <source>Connected letters</source>
-        <translation type="unfinished"></translation>
+        <translation>연결된 글자</translation>
+    </message>
+    <message>
+        <source>Language</source>
+        <translation>언어</translation>
+    </message>
+    <message>
+        <source>Language Changed</source>
+        <translation>언어 변경됨</translation>
+    </message>
+    <message>
+        <source>Language has been changed to {lang}. Please restart the application for full effect.</source>
+        <translation>언어가 {lang}(으)로 변경되었습니다. 완전히 적용하려면 애플리케이션을 다시 시작하세요.</translation>
+    </message>
+    <message>
+        <source>Language Change Failed</source>
+        <translation>언어 변경 실패</translation>
+    </message>
+    <message>
+        <source>Translation file for {lang} is not available yet.</source>
+        <translation>{lang} 번역 파일을 아직 사용할 수 없습니다.</translation>
     </message>
 </context>
 <context>
     <name>TitleBar</name>
     <message>
-        <location filename="../src/ui/title_bar.py" line="55"/>
         <source>Menu</source>
-        <translation type="unfinished"></translation>
+        <translation>메뉴</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="74"/>
         <source>Open</source>
-        <translation type="unfinished"></translation>
+        <translation>열기</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="83"/>
         <source>Save</source>
-        <translation type="unfinished"></translation>
+        <translation>저장</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="92"/>
         <source>Export</source>
-        <translation type="unfinished"></translation>
+        <translation>내보내기</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="113"/>
         <source>Undo</source>
-        <translation type="unfinished"></translation>
+        <translation>실행 취소</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="122"/>
         <source>Redo</source>
-        <translation type="unfinished"></translation>
+        <translation>다시 실행</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="138"/>
         <source>Home</source>
-        <translation type="unfinished"></translation>
+        <translation>홈</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="144"/>
         <source>Project</source>
-        <translation type="unfinished"></translation>
+        <translation>프로젝트</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="150"/>
         <source>Preview</source>
-        <translation type="unfinished"></translation>
+        <translation>미리보기</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="167"/>
         <source>Slice</source>
-        <translation type="unfinished"></translation>
+        <translation>슬라이스</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="173"/>
         <source>Export Gcode</source>
-        <translation type="unfinished"></translation>
+        <translation>Gcode 내보내기</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="323"/>
         <source>New Project</source>
-        <translation type="unfinished"></translation>
+        <translation>새 프로젝트</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="324"/>
         <source>Open File...</source>
-        <translation type="unfinished"></translation>
+        <translation>파일 열기...</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="325"/>
         <source>Save Project</source>
-        <translation type="unfinished"></translation>
+        <translation>프로젝트 저장</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="327"/>
         <source>Export G-code...</source>
-        <translation type="unfinished"></translation>
+        <translation>G-code 내보내기...</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="328"/>
         <source>Export STL...</source>
-        <translation type="unfinished"></translation>
+        <translation>STL 내보내기...</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="330"/>
         <source>Export Baseplate DXF...</source>
-        <translation type="unfinished"></translation>
+        <translation>베이스플레이트 DXF 내보내기...</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="331"/>
         <source>Export Panel DXF...</source>
-        <translation type="unfinished"></translation>
+        <translation>패널 DXF 내보내기...</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="333"/>
         <source>About</source>
-        <translation type="unfinished"></translation>
+        <translation>정보</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="335"/>
         <source>Exit</source>
-        <translation type="unfinished"></translation>
+        <translation>종료</translation>
+    </message>
+    <message>
+        <source>Language</source>
+        <translation>언어</translation>
+    </message>
+</context>
+<context>
+    <name>ParamPanel</name>
+    <message>
+        <source>Parameters</source>
+        <translation>매개변수</translation>
+    </message>
+    <message>
+        <source>Shell Settings</source>
+        <translation>쉘 설정</translation>
+    </message>
+    <message>
+        <source>Shell Height:</source>
+        <translation>쉘 높이:</translation>
+    </message>
+    <message>
+        <source>Layer Height:</source>
+        <translation>레이어 높이:</translation>
+    </message>
+    <message>
+        <source>Wall Thickness:</source>
+        <translation>벽 두께:</translation>
+    </message>
+    <message>
+        <source>Wall Count:</source>
+        <translation>벽 개수:</translation>
+    </message>
+    <message>
+        <source>Edge Type</source>
+        <translation>엣지 유형</translation>
+    </message>
+    <message>
+        <source>Straight</source>
+        <translation>직선</translation>
+    </message>
+    <message>
+        <source>Beveled</source>
+        <translation>베벨</translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation>사용자 정의</translation>
+    </message>
+    <message>
+        <source>Edge Type:</source>
+        <translation>엣지 유형:</translation>
+    </message>
+    <message>
+        <source>Top Small</source>
+        <translation>상단 좁게</translation>
+    </message>
+    <message>
+        <source>Top Large</source>
+        <translation>상단 넓게</translation>
+    </message>
+    <message>
+        <source>Bevel Direction:</source>
+        <translation>베벨 방향:</translation>
+    </message>
+    <message>
+        <source>Bevel Width:</source>
+        <translation>베벨 너비:</translation>
+    </message>
+    <message>
+        <source>Baseplate Thickness:</source>
+        <translation>베이스플레이트 두께:</translation>
+    </message>
+    <message>
+        <source>Panel Thickness:</source>
+        <translation>패널 두께:</translation>
+    </message>
+    <message>
+        <source>Preset Templates:</source>
+        <translation>사전 설정 템플릿:</translation>
+    </message>
+    <message>
+        <source>Import DXF...</source>
+        <translation>DXF 가져오기...</translation>
+    </message>
+    <message>
+        <source>Import custom edge profile from DXF file</source>
+        <translation>DXF 파일에서 사용자 정의 엣지 프로파일 가져오기</translation>
+    </message>
+    <message>
+        <source>No profile selected</source>
+        <translation>선택된 프로파일 없음</translation>
+    </message>
+    <message>
+        <source>Current Profile:</source>
+        <translation>현재 프로파일:</translation>
+    </message>
+    <message>
+        <source>Bottom Face</source>
+        <translation>하단면</translation>
+    </message>
+    <message>
+        <source>Enable Bottom Face</source>
+        <translation>하단면 활성화</translation>
+    </message>
+    <message>
+        <source>Bottom Thickness:</source>
+        <translation>하단 두께:</translation>
+    </message>
+    <message>
+        <source>Top Face</source>
+        <translation>상단면</translation>
+    </message>
+    <message>
+        <source>Enable Top Face</source>
+        <translation>상단면 활성화</translation>
+    </message>
+    <message>
+        <source>Top Thickness:</source>
+        <translation>상단 두께:</translation>
+    </message>
+    <message>
+        <source>Color Layer Settings</source>
+        <translation>색상 레이어 설정</translation>
+    </message>
+    <message>
+        <source>Enable Color Layers</source>
+        <translation>색상 레이어 활성화</translation>
+    </message>
+    <message>
+        <source>Color 1 Height:</source>
+        <translation>색상 1 높이:</translation>
+    </message>
+    <message>
+        <source>Color 2 Height:</source>
+        <translation>색상 2 높이:</translation>
+    </message>
+    <message>
+        <source>Step/V-Groove</source>
+        <translation>단/V홈</translation>
+    </message>
+    <message>
+        <source>Enable Panel Step (Top)</source>
+        <translation>패널 단 활성화 (상단)</translation>
+    </message>
+    <message>
+        <source>Step Height:</source>
+        <translation>단 높이:</translation>
+    </message>
+    <message>
+        <source>Step Width:</source>
+        <translation>단 너비:</translation>
+    </message>
+    <message>
+        <source>V-Groove</source>
+        <translation>V홈</translation>
+    </message>
+    <message>
+        <source>Enable Baseplate Step (Bottom)</source>
+        <translation>베이스플레이트 단 활성화 (하단)</translation>
+    </message>
+    <message>
+        <source>Anti-Warping Skirt</source>
+        <translation>휨 방지 스커트</translation>
+    </message>
+    <message>
+        <source>Enable Anti-Warping Skirt</source>
+        <translation>휨 방지 스커트 활성화</translation>
+    </message>
+    <message>
+        <source>Skirt Width:</source>
+        <translation>스커트 너비:</translation>
+    </message>
+    <message>
+        <source>Skirt Height:</source>
+        <translation>스커트 높이:</translation>
+    </message>
+    <message>
+        <source>Trapezoid Interval:</source>
+        <translation>사다리꼴 간격:</translation>
+    </message>
+    <message>
+        <source>Skirt Offset:</source>
+        <translation>스커트 오프셋:</translation>
+    </message>
+    <message>
+        <source>Connected Letters</source>
+        <translation>연결된 글자</translation>
+    </message>
+    <message>
+        <source>Enable Connected Letters</source>
+        <translation>연결된 글자 활성화</translation>
+    </message>
+    <message>
+        <source>Triangle</source>
+        <translation>삼각형</translation>
+    </message>
+    <message>
+        <source>Diamond</source>
+        <translation>다이아몬드</translation>
+    </message>
+    <message>
+        <source>Connection Type:</source>
+        <translation>연결 유형:</translation>
+    </message>
+    <message>
+        <source>Auto Detect Connection Points</source>
+        <translation>연결점 자동 감지</translation>
+    </message>
+    <message>
+        <source>Connection Width:</source>
+        <translation>연결 너비:</translation>
+    </message>
+    <message>
+        <source>Bevel Height:</source>
+        <translation>베벨 높이:</translation>
+    </message>
+    <message>
+        <source>Base Height:</source>
+        <translation>베이스 높이:</translation>
+    </message>
+    <message>
+        <source>Support Offset:</source>
+        <translation>지지대 오프셋:</translation>
+    </message>
+    <message>
+        <source>Edge Wrap/Outline</source>
+        <translation>엣지 래핑/윤곽선</translation>
+    </message>
+    <message>
+        <source>Enable Edge Wrap</source>
+        <translation>엣지 래핑 활성화</translation>
+    </message>
+    <message>
+        <source>Inner</source>
+        <translation>내부</translation>
+    </message>
+    <message>
+        <source>Outer</source>
+        <translation>외부</translation>
+    </message>
+    <message>
+        <source>Wrap Direction:</source>
+        <translation>래핑 방향:</translation>
+    </message>
+    <message>
+        <source>Wrap Width:</source>
+        <translation>래핑 너비:</translation>
+    </message>
+    <message>
+        <source>Wrap Height:</source>
+        <translation>래핑 높이:</translation>
+    </message>
+    <message>
+        <source>Enable Outline</source>
+        <translation>윤곽선 활성화</translation>
+    </message>
+    <message>
+        <source>Outline Direction:</source>
+        <translation>윤곽선 방향:</translation>
+    </message>
+    <message>
+        <source>Outline Width:</source>
+        <translation>윤곽선 너비:</translation>
+    </message>
+    <message>
+        <source>Outline Height:</source>
+        <translation>윤곽선 높이:</translation>
+    </message>
+    <message>
+        <source>Outline Offset:</source>
+        <translation>윤곽선 오프셋:</translation>
+    </message>
+    <message>
+        <source>Speed Settings</source>
+        <translation>속도 설정</translation>
+    </message>
+    <message>
+        <source>Print Speed:</source>
+        <translation>인쇄 속도:</translation>
+    </message>
+    <message>
+        <source>Travel Speed:</source>
+        <translation>이동 속도:</translation>
+    </message>
+    <message>
+        <source>First Layer Speed:</source>
+        <translation>첫 레이어 속도:</translation>
+    </message>
+    <message>
+        <source>Import Custom Edge DXF</source>
+        <translation>사용자 정의 엣지 DXF 가져오기</translation>
+    </message>
+    <message>
+        <source>DXF Files (*.dxf);;All Files (*.*)</source>
+        <translation>DXF 파일 (*.dxf);;모든 파일 (*.*)</translation>
+    </message>
+    <message>
+        <source>Import Success</source>
+        <translation>가져오기 성공</translation>
+    </message>
+    <message>
+        <source>Imported custom edge profile: {name}
+Size: {width:.1f} x {height:.1f} mm
+Control points: {points}</source>
+        <translation>사용자 정의 엣지 프로파일 가져옴: {name}
+크기: {width:.1f} x {height:.1f} mm
+제어점: {points}개</translation>
+    </message>
+    <message>
+        <source>Import Failed</source>
+        <translation>가져오기 실패</translation>
+    </message>
+    <message>
+        <source>Failed to import DXF file:
+{error}</source>
+        <translation>DXF 파일을 가져올 수 없습니다:
+{error}</translation>
+    </message>
+    <message>
+        <source> ({count} points)</source>
+        <translation> ({count}개 점)</translation>
+    </message>
+</context>
+<context>
+    <name>ProjectPanel</name>
+    <message>
+        <source>Shape List</source>
+        <translation>도형 목록</translation>
+    </message>
+    <message>
+        <source>+ Import Shape</source>
+        <translation>+ 도형 가져오기</translation>
+    </message>
+    <message>
+        <source>Letter-{index}</source>
+        <translation>글자-{index}</translation>
+    </message>
+</context>
+<context>
+    <name>Preview3D</name>
+    <message>
+        <source>View:</source>
+        <translation>보기:</translation>
+    </message>
+    <message>
+        <source>Top</source>
+        <translation>상단</translation>
+    </message>
+    <message>
+        <source>Front</source>
+        <translation>정면</translation>
+    </message>
+    <message>
+        <source>Side</source>
+        <translation>측면</translation>
+    </message>
+    <message>
+        <source>Isometric</source>
+        <translation>등각</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>재설정</translation>
+    </message>
+    <message>
+        <source>Layer: 0/0</source>
+        <translation>레이어: 0/0</translation>
+    </message>
+    <message>
+        <source>Layer: {current}/{total}</source>
+        <translation>레이어: {current}/{total}</translation>
+    </message>
+    <message>
+        <source>Show All</source>
+        <translation>모두 표시</translation>
+    </message>
+    <message>
+        <source>Single Layer</source>
+        <translation>단일 레이어</translation>
     </message>
 </context>
 </TS>

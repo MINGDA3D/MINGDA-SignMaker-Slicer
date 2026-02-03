@@ -4,613 +4,874 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../src/ui/main_window.py" line="93"/>
         <source>SignMaker Slicer - LED Sign Letter Slicer</source>
-        <translation type="unfinished"></translation>
+        <translation>SignMaker Slicer - Слайсер для светящихся букв</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="107"/>
         <source>Title Bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Заголовок</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="142"/>
         <source>File(&amp;F)</source>
-        <translation type="unfinished"></translation>
+        <translation>Файл(&amp;F)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="145"/>
-        <location filename="../src/ui/main_window.py" line="603"/>
         <source>New Project</source>
-        <translation type="unfinished"></translation>
+        <translation>Новый проект</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="151"/>
         <source>Open DXF/SVG...</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть DXF/SVG...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="159"/>
-        <location filename="../src/ui/main_window.py" line="660"/>
         <source>Save Project</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранить проект</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="165"/>
         <source>Save As...</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранить как...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="173"/>
         <source>Export G-code...</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспорт G-code...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="179"/>
         <source>Export STL...</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспорт STL...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="187"/>
         <source>Exit</source>
-        <translation type="unfinished"></translation>
+        <translation>Выход</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="193"/>
         <source>Edit(&amp;E)</source>
-        <translation type="unfinished"></translation>
+        <translation>Редактирование(&amp;E)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="195"/>
         <source>Undo</source>
-        <translation type="unfinished"></translation>
+        <translation>Отменить</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="200"/>
         <source>Redo</source>
-        <translation type="unfinished"></translation>
+        <translation>Повторить</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="207"/>
         <source>Select All</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбрать всё</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="211"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="216"/>
         <source>View(&amp;V)</source>
-        <translation type="unfinished"></translation>
+        <translation>Вид(&amp;V)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="218"/>
         <source>2D View</source>
-        <translation type="unfinished"></translation>
+        <translation>2D вид</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="223"/>
         <source>3D View</source>
-        <translation type="unfinished"></translation>
+        <translation>3D вид</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="230"/>
         <source>Fit to Window</source>
-        <translation type="unfinished"></translation>
+        <translation>Подогнать под окно</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="235"/>
         <source>Zoom In</source>
-        <translation type="unfinished"></translation>
+        <translation>Увеличить</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="239"/>
         <source>Zoom Out</source>
-        <translation type="unfinished"></translation>
+        <translation>Уменьшить</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="244"/>
         <source>Slice(&amp;S)</source>
-        <translation type="unfinished"></translation>
+        <translation>Нарезка(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="246"/>
         <source>Start Slicing</source>
-        <translation type="unfinished"></translation>
+        <translation>Начать нарезку</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="251"/>
         <source>Preview G-code</source>
-        <translation type="unfinished"></translation>
+        <translation>Предпросмотр G-code</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="256"/>
         <source>Help(&amp;H)</source>
-        <translation type="unfinished"></translation>
+        <translation>Справка(&amp;H)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="258"/>
         <source>About</source>
-        <translation type="unfinished"></translation>
+        <translation>О программе</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="443"/>
-        <location filename="../src/ui/main_window.py" line="1002"/>
         <source>Ready</source>
-        <translation type="unfinished"></translation>
+        <translation>Готово</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="465"/>
         <source>Executed: </source>
-        <translation type="unfinished"></translation>
+        <translation>Выполнено: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="468"/>
         <source>Undone: </source>
-        <translation type="unfinished"></translation>
+        <translation>Отменено: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="471"/>
         <source>Redone: </source>
-        <translation type="unfinished"></translation>
+        <translation>Повторено: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="552"/>
         <source>Home</source>
-        <translation type="unfinished"></translation>
+        <translation>Главная</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="557"/>
         <source>Project Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Редактирование проекта</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="571"/>
         <source>3D Preview</source>
-        <translation type="unfinished"></translation>
+        <translation>3D предпросмотр</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="589"/>
         <source>Settings feature under development...</source>
-        <translation type="unfinished"></translation>
+        <translation>Функция настроек в разработке...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="591"/>
         <source>Help feature under development...</source>
-        <translation type="unfinished"></translation>
+        <translation>Функция справки в разработке...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="602"/>
         <source>SignMaker Slicer - New Project</source>
-        <translation type="unfinished"></translation>
+        <translation>SignMaker Slicer - Новый проект</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="609"/>
         <source>Open File</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть файл</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="611"/>
         <source>Supported Files (*.dxf *.svg);;DXF Files (*.dxf);;SVG Files (*.svg);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Поддерживаемые файлы (*.dxf *.svg);;Файлы DXF (*.dxf);;Файлы SVG (*.svg);;Все файлы (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="627"/>
         <source>Unsupported Format</source>
-        <translation type="unfinished"></translation>
+        <translation>Неподдерживаемый формат</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="627"/>
         <source>Format not supported: </source>
-        <translation type="unfinished"></translation>
+        <translation>Формат не поддерживается: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="633"/>
         <source>Load </source>
-        <translation type="unfinished"></translation>
+        <translation>Загрузка </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="643"/>
         <source>Loaded: {file}, {count} contours</source>
-        <translation type="unfinished"></translation>
+        <translation>Загружено: {file}, {count} контуров</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="647"/>
         <source>Load Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка загрузки</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="647"/>
         <source>Failed to load file:</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось загрузить файл:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="662"/>
         <source>SignMaker Project (*.smp);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Проект SignMaker (*.smp);;Все файлы (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="670"/>
         <source>Project saved: </source>
-        <translation type="unfinished"></translation>
+        <translation>Проект сохранён: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="675"/>
-        <location filename="../src/ui/main_window.py" line="698"/>
-        <location filename="../src/ui/main_window.py" line="726"/>
-        <location filename="../src/ui/main_window.py" line="760"/>
-        <location filename="../src/ui/main_window.py" line="812"/>
-        <location filename="../src/ui/main_window.py" line="1014"/>
         <source>Info</source>
-        <translation type="unfinished"></translation>
+        <translation>Информация</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="675"/>
-        <location filename="../src/ui/main_window.py" line="698"/>
         <source>Please slice first</source>
-        <translation type="unfinished"></translation>
+        <translation>Сначала выполните нарезку</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="680"/>
         <source>Export G-code</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспорт G-code</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="682"/>
         <source>G-code Files (*.gcode);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Файлы G-code (*.gcode);;Все файлы (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="690"/>
         <source>G-code exported: </source>
-        <translation type="unfinished"></translation>
+        <translation>G-code экспортирован: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="691"/>
-        <location filename="../src/ui/main_window.py" line="719"/>
-        <location filename="../src/ui/main_window.py" line="748"/>
-        <location filename="../src/ui/main_window.py" line="782"/>
         <source>Export Success</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспорт успешен</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="691"/>
         <source>G-code saved to:</source>
-        <translation type="unfinished"></translation>
+        <translation>G-code сохранён в:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="693"/>
-        <location filename="../src/ui/main_window.py" line="721"/>
-        <location filename="../src/ui/main_window.py" line="753"/>
-        <location filename="../src/ui/main_window.py" line="755"/>
-        <location filename="../src/ui/main_window.py" line="787"/>
-        <location filename="../src/ui/main_window.py" line="789"/>
         <source>Export Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка экспорта</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="693"/>
         <source>Failed to export G-code:</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось экспортировать G-code:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="703"/>
         <source>Export STL</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспорт STL</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="705"/>
         <source>STL Files (*.stl);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Файлы STL (*.stl);;Все файлы (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="718"/>
         <source>STL exported: </source>
-        <translation type="unfinished"></translation>
+        <translation>STL экспортирован: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="719"/>
         <source>STL saved to:</source>
-        <translation type="unfinished"></translation>
+        <translation>STL сохранён в:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="721"/>
         <source>Failed to export STL:</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось экспортировать STL:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="726"/>
-        <location filename="../src/ui/main_window.py" line="760"/>
-        <location filename="../src/ui/main_window.py" line="812"/>
         <source>Please import a DXF file first</source>
-        <translation type="unfinished"></translation>
+        <translation>Сначала импортируйте файл DXF</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="731"/>
         <source>Export Baseplate DXF</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспорт DXF подложки</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="733"/>
-        <location filename="../src/ui/main_window.py" line="767"/>
         <source>DXF Files (*.dxf);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Файлы DXF (*.dxf);;Все файлы (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="746"/>
         <source>Baseplate DXF exported: </source>
-        <translation type="unfinished"></translation>
+        <translation>DXF подложки экспортирован: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="749"/>
         <source>Baseplate DXF saved to:</source>
-        <translation type="unfinished"></translation>
+        <translation>DXF подложки сохранён в:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="750"/>
-        <location filename="../src/ui/main_window.py" line="784"/>
         <source>Alignment compensation: </source>
-        <translation type="unfinished"></translation>
+        <translation>Компенсация выравнивания: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="753"/>
         <source>Failed to generate baseplate contour</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось создать контур подложки</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="755"/>
         <source>Failed to export baseplate DXF:</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось экспортировать DXF подложки:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="765"/>
         <source>Export Panel DXF</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспорт DXF панели</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="780"/>
         <source>Panel DXF exported: </source>
-        <translation type="unfinished"></translation>
+        <translation>DXF панели экспортирован: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="783"/>
         <source>Panel DXF saved to:</source>
-        <translation type="unfinished"></translation>
+        <translation>DXF панели сохранён в:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="787"/>
         <source>Failed to generate panel contour</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось создать контур панели</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="789"/>
         <source>Failed to export panel DXF:</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось экспортировать DXF панели:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="798"/>
         <source>Nothing to undo</source>
-        <translation type="unfinished"></translation>
+        <translation>Нечего отменять</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="807"/>
         <source>Nothing to redo</source>
-        <translation type="unfinished"></translation>
+        <translation>Нечего повторять</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="816"/>
         <source>Slicing...</source>
-        <translation type="unfinished"></translation>
+        <translation>Нарезка...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="836"/>
         <source>Slicing complete: {layers} layers, estimated time: {time:.1f} minutes</source>
-        <translation type="unfinished"></translation>
+        <translation>Нарезка завершена: {layers} слоёв, расчётное время: {time:.1f} минут</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="847"/>
         <source>Slicing Complete</source>
-        <translation type="unfinished"></translation>
+        <translation>Нарезка завершена</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="848"/>
         <source>Export G-code now?</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспортировать G-code сейчас?</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="857"/>
         <source>Slicing Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка нарезки</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="857"/>
         <source>Error during slicing:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка при нарезке:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="858"/>
         <source>Slicing failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Нарезка не удалась</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="878"/>
         <source>Switched to {view} view</source>
-        <translation type="unfinished"></translation>
+        <translation>Переключено на вид {view}</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="926"/>
         <source>Tool: </source>
-        <translation type="unfinished"></translation>
+        <translation>Инструмент: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="994"/>
         <source>Move to: X={x:.2f}, Y={y:.2f}</source>
-        <translation type="unfinished"></translation>
+        <translation>Переместить в: X={x:.2f}, Y={y:.2f}</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1014"/>
         <source>Please select a contour first</source>
-        <translation type="unfinished"></translation>
+        <translation>Сначала выберите контур</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1030"/>
         <source>Mirror {axis} complete</source>
-        <translation type="unfinished"></translation>
+        <translation>Отражение по {axis} завершено</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1052"/>
         <source>About SignMaker Slicer</source>
-        <translation type="unfinished"></translation>
+        <translation>О программе SignMaker Slicer</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1054"/>
         <source>Professional LED Sign Letter 3D Printing Slicer</source>
-        <translation type="unfinished"></translation>
+        <translation>Профессиональный слайсер для 3D-печати светящихся букв</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1055"/>
         <source>Version: 0.1.0 (Development)</source>
-        <translation type="unfinished"></translation>
+        <translation>Версия: 0.1.0 (Разработка)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1057"/>
         <source>Features:</source>
-        <translation type="unfinished"></translation>
+        <translation>Функции:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1059"/>
         <source>DXF/SVG file import</source>
-        <translation type="unfinished"></translation>
+        <translation>Импорт файлов DXF/SVG</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1060"/>
         <source>Straight/Bevel/Custom edges</source>
-        <translation type="unfinished"></translation>
+        <translation>Прямая/Скошенная/Произвольная кромка</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1061"/>
         <source>Multi-color printing support</source>
-        <translation type="unfinished"></translation>
+        <translation>Поддержка многоцветной печати</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1062"/>
         <source>Step/V-groove</source>
-        <translation type="unfinished"></translation>
+        <translation>Ступень/V-паз</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1063"/>
         <source>Anti-warping skirt</source>
-        <translation type="unfinished"></translation>
+        <translation>Ант��деформационная юбка</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1064"/>
         <source>Connected letters</source>
-        <translation type="unfinished"></translation>
+        <translation>Соединённые буквы</translation>
+    </message>
+    <message>
+        <source>Language</source>
+        <translation>Язык</translation>
+    </message>
+    <message>
+        <source>Language Changed</source>
+        <translation>Язык изменён</translation>
+    </message>
+    <message>
+        <source>Language has been changed to {lang}. Please restart the application for full effect.</source>
+        <translation>Язык изменён на {lang}. Перезапустите приложение для полного применения.</translation>
+    </message>
+    <message>
+        <source>Language Change Failed</source>
+        <translation>Не удалось изменить язык</translation>
+    </message>
+    <message>
+        <source>Translation file for {lang} is not available yet.</source>
+        <translation>Файл перевода для {lang} пока недоступен.</translation>
     </message>
 </context>
 <context>
     <name>TitleBar</name>
     <message>
-        <location filename="../src/ui/title_bar.py" line="55"/>
         <source>Menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Меню</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="74"/>
         <source>Open</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="83"/>
         <source>Save</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранить</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="92"/>
         <source>Export</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспорт</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="113"/>
         <source>Undo</source>
-        <translation type="unfinished"></translation>
+        <translation>Отменить</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="122"/>
         <source>Redo</source>
-        <translation type="unfinished"></translation>
+        <translation>Повторить</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="138"/>
         <source>Home</source>
-        <translation type="unfinished"></translation>
+        <translation>Главная</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="144"/>
         <source>Project</source>
-        <translation type="unfinished"></translation>
+        <translation>Проект</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="150"/>
         <source>Preview</source>
-        <translation type="unfinished"></translation>
+        <translation>Предпросмотр</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="167"/>
         <source>Slice</source>
-        <translation type="unfinished"></translation>
+        <translation>Нарезка</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="173"/>
         <source>Export Gcode</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспорт Gcode</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="323"/>
         <source>New Project</source>
-        <translation type="unfinished"></translation>
+        <translation>Новый проект</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="324"/>
         <source>Open File...</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть файл...</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="325"/>
         <source>Save Project</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранить проект</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="327"/>
         <source>Export G-code...</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспорт G-code...</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="328"/>
         <source>Export STL...</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспорт STL...</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="330"/>
         <source>Export Baseplate DXF...</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспорт DXF подложки...</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="331"/>
         <source>Export Panel DXF...</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспорт DXF панели...</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="333"/>
         <source>About</source>
-        <translation type="unfinished"></translation>
+        <translation>О программе</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="335"/>
         <source>Exit</source>
-        <translation type="unfinished"></translation>
+        <translation>Выход</translation>
+    </message>
+    <message>
+        <source>Language</source>
+        <translation>Язык</translation>
+    </message>
+</context>
+<context>
+    <name>ParamPanel</name>
+    <message>
+        <source>Parameters</source>
+        <translation>Параметры</translation>
+    </message>
+    <message>
+        <source>Shell Settings</source>
+        <translation>Настройки оболочки</translation>
+    </message>
+    <message>
+        <source>Shell Height:</source>
+        <translation>Высота оболочки:</translation>
+    </message>
+    <message>
+        <source>Layer Height:</source>
+        <translation>Высота слоя:</translation>
+    </message>
+    <message>
+        <source>Wall Thickness:</source>
+        <translation>Толщина стенки:</translation>
+    </message>
+    <message>
+        <source>Wall Count:</source>
+        <translation>Количество стенок:</translation>
+    </message>
+    <message>
+        <source>Edge Type</source>
+        <translation>Тип кромки</translation>
+    </message>
+    <message>
+        <source>Straight</source>
+        <translation>Прямой</translation>
+    </message>
+    <message>
+        <source>Beveled</source>
+        <translation>Скошенный</translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation>Произвольный</translation>
+    </message>
+    <message>
+        <source>Edge Type:</source>
+        <translation>Тип кромки:</translation>
+    </message>
+    <message>
+        <source>Top Small</source>
+        <translation>Сужение вверх</translation>
+    </message>
+    <message>
+        <source>Top Large</source>
+        <translation>Расширение вверх</translation>
+    </message>
+    <message>
+        <source>Bevel Direction:</source>
+        <translation>Направление скоса:</translation>
+    </message>
+    <message>
+        <source>Bevel Width:</source>
+        <translation>Ширина скоса:</translation>
+    </message>
+    <message>
+        <source>Baseplate Thickness:</source>
+        <translation>Толщина подложки:</translation>
+    </message>
+    <message>
+        <source>Panel Thickness:</source>
+        <translation>Толщина панели:</translation>
+    </message>
+    <message>
+        <source>Preset Templates:</source>
+        <translation>Шаблоны:</translation>
+    </message>
+    <message>
+        <source>Import DXF...</source>
+        <translation>Импорт DXF...</translation>
+    </message>
+    <message>
+        <source>Import custom edge profile from DXF file</source>
+        <translation>Импорт профиля кромки из файла DXF</translation>
+    </message>
+    <message>
+        <source>No profile selected</source>
+        <translation>Профиль не выбран</translation>
+    </message>
+    <message>
+        <source>Current Profile:</source>
+        <translation>Текущий профиль:</translation>
+    </message>
+    <message>
+        <source>Bottom Face</source>
+        <translation>Нижняя грань</translation>
+    </message>
+    <message>
+        <source>Enable Bottom Face</source>
+        <translation>Включить нижнюю грань</translation>
+    </message>
+    <message>
+        <source>Bottom Thickness:</source>
+        <translation>Толщина дна:</translation>
+    </message>
+    <message>
+        <source>Top Face</source>
+        <translation>Верхняя грань</translation>
+    </message>
+    <message>
+        <source>Enable Top Face</source>
+        <translation>Включить верхнюю грань</translation>
+    </message>
+    <message>
+        <source>Top Thickness:</source>
+        <translation>Толщина верха:</translation>
+    </message>
+    <message>
+        <source>Color Layer Settings</source>
+        <translation>Настройки цветных слоёв</translation>
+    </message>
+    <message>
+        <source>Enable Color Layers</source>
+        <translation>Включить цветные слои</translation>
+    </message>
+    <message>
+        <source>Color 1 Height:</source>
+        <translation>Высота цвета 1:</translation>
+    </message>
+    <message>
+        <source>Color 2 Height:</source>
+        <translation>Высота цвета 2:</translation>
+    </message>
+    <message>
+        <source>Step/V-Groove</source>
+        <translation>Ступень/V-паз</translation>
+    </message>
+    <message>
+        <source>Enable Panel Step (Top)</source>
+        <translation>Включить ступень панели (верх)</translation>
+    </message>
+    <message>
+        <source>Step Height:</source>
+        <translation>Высота ступени:</translation>
+    </message>
+    <message>
+        <source>Step Width:</source>
+        <translation>Ширина ступени:</translation>
+    </message>
+    <message>
+        <source>V-Groove</source>
+        <translation>V-паз</translation>
+    </message>
+    <message>
+        <source>Enable Baseplate Step (Bottom)</source>
+        <translation>Включить ступень подложки (низ)</translation>
+    </message>
+    <message>
+        <source>Anti-Warping Skirt</source>
+        <translation>Антидеформационная юбка</translation>
+    </message>
+    <message>
+        <source>Enable Anti-Warping Skirt</source>
+        <translation>Включить антидеформационную юбку</translation>
+    </message>
+    <message>
+        <source>Skirt Width:</source>
+        <translation>Ширина юбки:</translation>
+    </message>
+    <message>
+        <source>Skirt Height:</source>
+        <translation>Высота юбки:</translation>
+    </message>
+    <message>
+        <source>Trapezoid Interval:</source>
+        <translation>Интервал трапеций:</translation>
+    </message>
+    <message>
+        <source>Skirt Offset:</source>
+        <translation>Отступ юбки:</translation>
+    </message>
+    <message>
+        <source>Connected Letters</source>
+        <translation>Соединённые буквы</translation>
+    </message>
+    <message>
+        <source>Enable Connected Letters</source>
+        <translation>Включить соединённые буквы</translation>
+    </message>
+    <message>
+        <source>Triangle</source>
+        <translation>Треугольное соединение</translation>
+    </message>
+    <message>
+        <source>Diamond</source>
+        <translation>Ромбовидное соединение</translation>
+    </message>
+    <message>
+        <source>Connection Type:</source>
+        <translation>Тип соединения:</translation>
+    </message>
+    <message>
+        <source>Auto Detect Connection Points</source>
+        <translation>Автоопределение точек соединения</translation>
+    </message>
+    <message>
+        <source>Connection Width:</source>
+        <translation>Ширина соединения:</translation>
+    </message>
+    <message>
+        <source>Bevel Height:</source>
+        <translation>Высота скоса:</translation>
+    </message>
+    <message>
+        <source>Base Height:</source>
+        <translation>Высота основания:</translation>
+    </message>
+    <message>
+        <source>Support Offset:</source>
+        <translation>Смещение поддержки:</translation>
+    </message>
+    <message>
+        <source>Edge Wrap/Outline</source>
+        <translation>Обёртка/Контур кромки</translation>
+    </message>
+    <message>
+        <source>Enable Edge Wrap</source>
+        <translation>Включить обёртку кромки</translation>
+    </message>
+    <message>
+        <source>Inner</source>
+        <translation>Внутренняя</translation>
+    </message>
+    <message>
+        <source>Outer</source>
+        <translation>Внешняя</translation>
+    </message>
+    <message>
+        <source>Wrap Direction:</source>
+        <translation>Направление обёртки:</translation>
+    </message>
+    <message>
+        <source>Wrap Width:</source>
+        <translation>Ширина обёртки:</translation>
+    </message>
+    <message>
+        <source>Wrap Height:</source>
+        <translation>Высота обёртки:</translation>
+    </message>
+    <message>
+        <source>Enable Outline</source>
+        <translation>Включить контур</translation>
+    </message>
+    <message>
+        <source>Outline Direction:</source>
+        <translation>Направление контура:</translation>
+    </message>
+    <message>
+        <source>Outline Width:</source>
+        <translation>Ширина контура:</translation>
+    </message>
+    <message>
+        <source>Outline Height:</source>
+        <translation>Высота контура:</translation>
+    </message>
+    <message>
+        <source>Outline Offset:</source>
+        <translation>Смещение контура:</translation>
+    </message>
+    <message>
+        <source>Speed Settings</source>
+        <translation>Настройки скорости</translation>
+    </message>
+    <message>
+        <source>Print Speed:</source>
+        <translation>Скорость печати:</translation>
+    </message>
+    <message>
+        <source>Travel Speed:</source>
+        <translation>Скорость перемещения:</translation>
+    </message>
+    <message>
+        <source>First Layer Speed:</source>
+        <translation>Скорость первого слоя:</translation>
+    </message>
+    <message>
+        <source>Import Custom Edge DXF</source>
+        <translation>Импорт DXF произвольной кромки</translation>
+    </message>
+    <message>
+        <source>DXF Files (*.dxf);;All Files (*.*)</source>
+        <translation>Файлы DXF (*.dxf);;Все файлы (*.*)</translation>
+    </message>
+    <message>
+        <source>Import Success</source>
+        <translation>Импорт успешен</translation>
+    </message>
+    <message>
+        <source>Imported custom edge profile: {name}
+Size: {width:.1f} x {height:.1f} mm
+Control points: {points}</source>
+        <translation>Импортирован профиль кромки: {name}
+Размер: {width:.1f} x {height:.1f} мм
+Контрольных точек: {points}</translation>
+    </message>
+    <message>
+        <source>Import Failed</source>
+        <translation>Ошибка импорта</translation>
+    </message>
+    <message>
+        <source>Failed to import DXF file:
+{error}</source>
+        <translation>Не удалось импортировать файл DXF:
+{error}</translation>
+    </message>
+    <message>
+        <source> ({count} points)</source>
+        <translation> ({count} точек)</translation>
+    </message>
+</context>
+<context>
+    <name>ProjectPanel</name>
+    <message>
+        <source>Shape List</source>
+        <translation>Список фигур</translation>
+    </message>
+    <message>
+        <source>+ Import Shape</source>
+        <translation>+ Импорт фигуры</translation>
+    </message>
+    <message>
+        <source>Letter-{index}</source>
+        <translation>Буква-{index}</translation>
+    </message>
+</context>
+<context>
+    <name>Preview3D</name>
+    <message>
+        <source>View:</source>
+        <translation>Вид:</translation>
+    </message>
+    <message>
+        <source>Top</source>
+        <translation>Сверху</translation>
+    </message>
+    <message>
+        <source>Front</source>
+        <translation>Спереди</translation>
+    </message>
+    <message>
+        <source>Side</source>
+        <translation>Сбоку</translation>
+    </message>
+    <message>
+        <source>Isometric</source>
+        <translation>Изометрия</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>Сброс</translation>
+    </message>
+    <message>
+        <source>Layer: 0/0</source>
+        <translation>Слой: 0/0</translation>
+    </message>
+    <message>
+        <source>Layer: {current}/{total}</source>
+        <translation>Слой: {current}/{total}</translation>
+    </message>
+    <message>
+        <source>Show All</source>
+        <translation>Показать всё</translation>
+    </message>
+    <message>
+        <source>Single Layer</source>
+        <translation>Один слой</translation>
     </message>
 </context>
 </TS>
