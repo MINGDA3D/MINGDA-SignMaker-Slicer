@@ -1045,4 +1045,22 @@ Control points: {points}</source>
         <translation>급한 베벨 (큰 폭)</translation>
     </message>
 </context>
+<context>
+    <name>PresetThumbnail</name>
+    <message>
+        <source>Width</source>
+        <translation>너비</translation>
+    </message>
+</context>
+<context>
+    <name>ShellPanel</name>
+    <message>
+        <source>points</source>
+        <translation>점</translation>
+    </message>
+    <message>
+        <source>No profile selected</source>
+        <translation>프로필이 선택되지 않음</translation>
+    </message>
+</context>
 </TS>

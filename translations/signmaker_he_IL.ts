@@ -1045,4 +1045,22 @@ Control points: {points}</source>
         <translation>שיפוע תלול (רוחב גדול)</translation>
     </message>
 </context>
+<context>
+    <name>PresetThumbnail</name>
+    <message>
+        <source>Width</source>
+        <translation>רוחב</translation>
+    </message>
+</context>
+<context>
+    <name>ShellPanel</name>
+    <message>
+        <source>points</source>
+        <translation> נקודות</translation>
+    </message>
+    <message>
+        <source>No profile selected</source>
+        <translation>לא נבחר פרופיל</translation>
+    </message>
+</context>
 </TS>

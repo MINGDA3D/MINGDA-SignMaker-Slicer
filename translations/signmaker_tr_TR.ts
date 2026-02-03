@@ -1045,4 +1045,22 @@ Kontrol noktalari: {points}</translation>
         <translation>Dik eğim (geniş genişlik)</translation>
     </message>
 </context>
+<context>
+    <name>PresetThumbnail</name>
+    <message>
+        <source>Width</source>
+        <translation>Genişlik</translation>
+    </message>
+</context>
+<context>
+    <name>ShellPanel</name>
+    <message>
+        <source>points</source>
+        <translation> nokta</translation>
+    </message>
+    <message>
+        <source>No profile selected</source>
+        <translation>Profil seçilmedi</translation>
+    </message>
+</context>
 </TS>

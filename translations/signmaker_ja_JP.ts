@@ -1045,4 +1045,22 @@ Control points: {points}</source>
         <translation>急なベベル（大幅）</translation>
     </message>
 </context>
+<context>
+    <name>PresetThumbnail</name>
+    <message>
+        <source>Width</source>
+        <translation>幅</translation>
+    </message>
+</context>
+<context>
+    <name>ShellPanel</name>
+    <message>
+        <source>points</source>
+        <translation>点</translation>
+    </message>
+    <message>
+        <source>No profile selected</source>
+        <translation>プロファイルが選択されていません</translation>
+    </message>
+</context>
 </TS>

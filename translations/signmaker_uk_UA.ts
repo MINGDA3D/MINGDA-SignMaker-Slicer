@@ -1045,4 +1045,22 @@ Control points: {points}</source>
         <translation>Крутий скіс (велика ширина)</translation>
     </message>
 </context>
+<context>
+    <name>PresetThumbnail</name>
+    <message>
+        <source>Width</source>
+        <translation>Ширина</translation>
+    </message>
+</context>
+<context>
+    <name>ShellPanel</name>
+    <message>
+        <source>points</source>
+        <translation> точок</translation>
+    </message>
+    <message>
+        <source>No profile selected</source>
+        <translation>Профіль не вибрано</translation>
+    </message>
+</context>
 </TS>

@@ -11,7 +11,7 @@ from PySide6.QtWidgets import (
     QComboBox, QCheckBox, QPushButton, QFileDialog,
     QMessageBox
 )
-from PySide6.QtCore import Signal
+from PySide6.QtCore import Signal, QCoreApplication
 
 from src.core.types import ShellParams, EdgeType, BevelDirection, EdgeProfile
 from src.core.edge_presets import EdgePresetManager, ProfileCategory
@@ -327,11 +327,14 @@ class ShellPanel(QWidget):
     def _update_profile_info(self):
         """更新轮廓信息显示"""
         if self._current_profile:
-            info = f"{self._current_profile.name}"
+            # Translate profile name if it's a preset
+            name = self._current_profile.name
+            translated_name = QCoreApplication.translate("EdgePresets", name)
+            info = f"{translated_name}"
             if self._current_profile.control_points:
-                info += f" ({len(self._current_profile.control_points)}点)"
+                info += f" ({len(self._current_profile.control_points)}{self.tr('points')})"
             self.profile_info_label.setText(info)
             self.profile_info_label.setStyleSheet("color: #58A6FF;")
         else:
-            self.profile_info_label.setText("未选择轮廓")
+            self.profile_info_label.setText(self.tr("No profile selected"))
             self.profile_info_label.setStyleSheet("color: #888;")

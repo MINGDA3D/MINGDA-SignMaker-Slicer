@@ -1045,4 +1045,22 @@ Control points: {points}</translation>
         <translation>Steep bevel (large width)</translation>
     </message>
 </context>
+<context>
+    <name>PresetThumbnail</name>
+    <message>
+        <source>Width</source>
+        <translation>Width</translation>
+    </message>
+</context>
+<context>
+    <name>ShellPanel</name>
+    <message>
+        <source>points</source>
+        <translation> points</translation>
+    </message>
+    <message>
+        <source>No profile selected</source>
+        <translation>No profile selected</translation>
+    </message>
+</context>
 </TS>

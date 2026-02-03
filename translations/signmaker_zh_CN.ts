@@ -1045,4 +1045,22 @@ Control points: {points}</source>
         <translation>陡峭斜边（大宽度）</translation>
     </message>
 </context>
+<context>
+    <name>PresetThumbnail</name>
+    <message>
+        <source>Width</source>
+        <translation>宽度</translation>
+    </message>
+</context>
+<context>
+    <name>ShellPanel</name>
+    <message>
+        <source>points</source>
+        <translation>点</translation>
+    </message>
+    <message>
+        <source>No profile selected</source>
+        <translation>未选择轮廓</translation>
+    </message>
+</context>
 </TS>

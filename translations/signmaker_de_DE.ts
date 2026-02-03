@@ -1045,4 +1045,22 @@ Kontrollpunkte: {points}</translation>
         <translation>Steile Schräge (große Breite)</translation>
     </message>
 </context>
+<context>
+    <name>PresetThumbnail</name>
+    <message>
+        <source>Width</source>
+        <translation>Breite</translation>
+    </message>
+</context>
+<context>
+    <name>ShellPanel</name>
+    <message>
+        <source>points</source>
+        <translation> Punkte</translation>
+    </message>
+    <message>
+        <source>No profile selected</source>
+        <translation>Kein Profil ausgewählt</translation>
+    </message>
+</context>
 </TS>

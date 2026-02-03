@@ -1045,4 +1045,22 @@ Pontos de controle: {points}</translation>
         <translation>Chanfro íngreme (largura grande)</translation>
     </message>
 </context>
+<context>
+    <name>PresetThumbnail</name>
+    <message>
+        <source>Width</source>
+        <translation>Largura</translation>
+    </message>
+</context>
+<context>
+    <name>ShellPanel</name>
+    <message>
+        <source>points</source>
+        <translation> pontos</translation>
+    </message>
+    <message>
+        <source>No profile selected</source>
+        <translation>Nenhum perfil selecionado</translation>
+    </message>
+</context>
 </TS>

@@ -1045,4 +1045,22 @@ Puntos de control: {points}</translation>
         <translation>Bisel empinado (ancho grande)</translation>
     </message>
 </context>
+<context>
+    <name>PresetThumbnail</name>
+    <message>
+        <source>Width</source>
+        <translation>Ancho</translation>
+    </message>
+</context>
+<context>
+    <name>ShellPanel</name>
+    <message>
+        <source>points</source>
+        <translation> puntos</translation>
+    </message>
+    <message>
+        <source>No profile selected</source>
+        <translation>Ningún perfil seleccionado</translation>
+    </message>
+</context>
 </TS>

@@ -1045,4 +1045,22 @@ Punti di controllo: {points}</translation>
         <translation>Smusso ripido (larghezza grande)</translation>
     </message>
 </context>
+<context>
+    <name>PresetThumbnail</name>
+    <message>
+        <source>Width</source>
+        <translation>Larghezza</translation>
+    </message>
+</context>
+<context>
+    <name>ShellPanel</name>
+    <message>
+        <source>points</source>
+        <translation> punti</translation>
+    </message>
+    <message>
+        <source>No profile selected</source>
+        <translation>Nessun profilo selezionato</translation>
+    </message>
+</context>
 </TS>

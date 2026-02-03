@@ -10,7 +10,7 @@ from PySide6.QtWidgets import (
     QLabel, QPushButton, QScrollArea, QFrame,
     QSizePolicy
 )
-from PySide6.QtCore import Signal, Qt, QSize
+from PySide6.QtCore import Signal, Qt, QSize, QCoreApplication
 from PySide6.QtGui import QPixmap, QPainter, QPen, QColor, QPainterPath
 
 from src.core.edge_presets import EdgePresetManager
@@ -50,10 +50,14 @@ class PresetThumbnail(QFrame):
         layout.addWidget(self.image_label, alignment=Qt.AlignCenter)
 
         # 设置tooltip显示名称
+        display_name = QCoreApplication.translate(
+            "EdgePresets", self.preset_info['display_name'])
+        description = QCoreApplication.translate(
+            "EdgePresets", self.preset_info['description'])
         self.setToolTip(
-            f"{self.preset_info['display_name']}\n"
-            f"{self.preset_info['description']}\n"
-            f"宽度: {self.preset_info['default_width']:.1f}mm"
+            f"{display_name}\n"
+            f"{description}\n"
+            f"{self.tr('Width')}: {self.preset_info['default_width']:.1f}mm"
         )
 
     def _draw_profile(self):

@@ -1045,4 +1045,22 @@ Points de contrôle : {points}</translation>
         <translation>Biseau raide (grande largeur)</translation>
     </message>
 </context>
+<context>
+    <name>PresetThumbnail</name>
+    <message>
+        <source>Width</source>
+        <translation>Largeur</translation>
+    </message>
+</context>
+<context>
+    <name>ShellPanel</name>
+    <message>
+        <source>points</source>
+        <translation> points</translation>
+    </message>
+    <message>
+        <source>No profile selected</source>
+        <translation>Aucun profil sélectionné</translation>
+    </message>
+</context>
 </TS>

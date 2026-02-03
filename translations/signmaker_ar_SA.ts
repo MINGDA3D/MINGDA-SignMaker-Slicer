@@ -1045,4 +1045,22 @@ Control points: {points}</source>
         <translation>شطبة شديدة (عرض كبير)</translation>
     </message>
 </context>
+<context>
+    <name>PresetThumbnail</name>
+    <message>
+        <source>Width</source>
+        <translation>العرض</translation>
+    </message>
+</context>
+<context>
+    <name>ShellPanel</name>
+    <message>
+        <source>points</source>
+        <translation> نقاط</translation>
+    </message>
+    <message>
+        <source>No profile selected</source>
+        <translation>لم يتم تحديد ملف تعريف</translation>
+    </message>
+</context>
 </TS>
