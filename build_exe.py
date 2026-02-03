@@ -20,9 +20,9 @@ def build():
         "--name=MINGDA SignMaker",
         "--windowed",  # 无控制台窗口
         "--onefile",   # 单文件模式
-        f"--icon={project_root / 'docs' / 'images' / 'MINGDA_logo.ico'}",
+        f"--icon={project_root / 'resources' / 'logos' / 'MINGDA_logo.ico'}",
         # 添加资源文件
-        f"--add-data={project_root / 'docs' / 'images'};docs/images",
+        f"--add-data={project_root / 'resources'};resources",
         # 隐藏导入
         "--hidden-import=PySide6.QtSvg",
         "--hidden-import=PySide6.QtOpenGL",

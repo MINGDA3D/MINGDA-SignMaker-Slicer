@@ -28,6 +28,9 @@ from PySide6.QtGui import QAction, QIcon, QKeySequence, QPixmap, QFont, QColor
 from .theme import get_stylesheet, COLORS, LAYOUT
 from .canvas_2d import Canvas2D
 from .param_panel import ParamPanel
+
+# 导入 Qt 资源文件
+from resources import rc_resources  # noqa: F401
 from .project_panel import ProjectPanel
 from .preview_3d import Preview3D
 from .title_bar import TitleBar
@@ -103,10 +106,8 @@ class MainWindow(QMainWindow):
         self.setMinimumSize(LAYOUT.window_min_width, LAYOUT.window_min_height)
         self.resize(1600, 900)
 
-        # 设置窗口图标（如果存在）
-        icon_path = Path(__file__).parent.parent.parent / "docs" / "images" / "MINGDA_logo.png"
-        if icon_path.exists():
-            self.setWindowIcon(QIcon(str(icon_path)))
+        # 设置窗口图标
+        self.setWindowIcon(QIcon(":/logos/logos/MINGDA_logo.png"))
 
     def _init_title_bar(self):
         """初始化自定义标题栏"""

@@ -11,7 +11,6 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QIcon
-from pathlib import Path
 
 
 class CanvasToolbar(QWidget):
@@ -35,13 +34,9 @@ class CanvasToolbar(QWidget):
         self._init_ui()
         self._apply_styles()
 
-    def _get_icon_path(self, name: str) -> str:
-        """获取图标路径"""
-        icon_dir = Path(__file__).parent.parent.parent / "docs" / "images"
-        icon_path = icon_dir / name
-        if icon_path.exists():
-            return str(icon_path)
-        return ""
+    def _get_icon(self, name: str) -> QIcon:
+        """获取图标"""
+        return QIcon(f":/icons/icons/{name}")
 
     def _init_ui(self):
         """初始化UI"""
@@ -82,18 +77,18 @@ class CanvasToolbar(QWidget):
         layout.addWidget(self._create_separator())
 
         # ========== 布尔操作 ==========
-        self.btn_intersection = self._create_icon_button("交集.png", "交集")
+        self.btn_intersection = self._create_icon_button("intersection.png", "交集")
         self.btn_intersection.clicked.connect(self.intersection_clicked.emit)
         layout.addWidget(self.btn_intersection)
 
-        self.btn_difference = self._create_icon_button("差集.png", "差集")
+        self.btn_difference = self._create_icon_button("difference.png", "差集")
         self.btn_difference.clicked.connect(self.difference_clicked.emit)
         layout.addWidget(self.btn_difference)
 
         layout.addWidget(self._create_separator())
 
         # ========== 组合操作 ==========
-        self.btn_group = self._create_icon_button("组合.png", "组合")
+        self.btn_group = self._create_icon_button("group.png", "组合")
         self.btn_group.clicked.connect(self.group_clicked.emit)
         layout.addWidget(self.btn_group)
 
@@ -104,16 +99,16 @@ class CanvasToolbar(QWidget):
         layout.addWidget(self._create_separator())
 
         # ========== 起始点/顺序 ==========
-        self.btn_start_point = self._create_icon_button("起始点.png", "起始点")
+        self.btn_start_point = self._create_icon_button("start_point.png", "起始点")
         layout.addWidget(self.btn_start_point)
 
-        self.btn_order = self._create_icon_button("顺序.png", "打印顺序")
+        self.btn_order = self._create_icon_button("print_order.png", "打印顺序")
         layout.addWidget(self.btn_order)
 
         layout.addWidget(self._create_separator())
 
         # ========== 视图居中 ==========
-        self.btn_center = self._create_icon_button("画面中心.png", "居中")
+        self.btn_center = self._create_icon_button("center_view.png", "居中")
         layout.addWidget(self.btn_center)
 
         # ========== 右侧弹性空间（居中用）==========
@@ -129,14 +124,7 @@ class CanvasToolbar(QWidget):
         btn.setToolTip(tooltip)
         btn.setCursor(Qt.CursorShape.PointingHandCursor)
         btn.setIconSize(QSize(36, 36))
-
-        icon_path = self._get_icon_path(icon_name)
-        if icon_path:
-            btn.setIcon(QIcon(icon_path))
-        else:
-            # 如果没有图标，使用文字
-            btn.setText(tooltip[:2])
-
+        btn.setIcon(self._get_icon(icon_name))
         return btn
 
     def _create_text_button(self, text: str) -> QPushButton:

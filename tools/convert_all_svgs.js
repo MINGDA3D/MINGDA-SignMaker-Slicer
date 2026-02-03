@@ -2,7 +2,7 @@ const sharp = require('sharp');
 const fs = require('fs');
 const path = require('path');
 
-const inputDir = path.join(__dirname, '../docs/images');
+const inputDir = path.join(__dirname, '../resources/icons');
 const outputDir = inputDir;
 
 // Read all files in directory

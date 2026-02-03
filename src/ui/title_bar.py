@@ -12,7 +12,6 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt, Signal, QSize
 from PySide6.QtGui import QIcon
-from pathlib import Path
 
 
 class TitleBar(QWidget):
@@ -34,7 +33,6 @@ class TitleBar(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.current_nav = "project"
-        self._icon_dir = Path(__file__).parent.parent.parent / "resources" / "icons"
         self._init_ui()
         self._apply_styles()
 
@@ -49,7 +47,7 @@ class TitleBar(QWidget):
 
         # ========== 最左侧：菜单按钮 ==========
         self.btn_menu = QPushButton()
-        self.btn_menu.setIcon(QIcon(str(self._icon_dir / "topbar_dropdown.svg")))
+        self.btn_menu.setIcon(QIcon(":/icons/icons/topbar_dropdown.svg"))
         self.btn_menu.setIconSize(icon_size)
         self.btn_menu.setObjectName("iconButton")
         self.btn_menu.setToolTip(self.tr("Menu"))
@@ -68,7 +66,7 @@ class TitleBar(QWidget):
         file_layout.setAlignment(Qt.AlignmentFlag.AlignVCenter)
 
         self.btn_open = QPushButton()
-        self.btn_open.setIcon(QIcon(str(self._icon_dir / "topbar_open.svg")))
+        self.btn_open.setIcon(QIcon(":/icons/icons/topbar_open.svg"))
         self.btn_open.setIconSize(icon_size)
         self.btn_open.setObjectName("iconButton")
         self.btn_open.setToolTip(self.tr("Open"))
@@ -77,7 +75,7 @@ class TitleBar(QWidget):
         file_layout.addWidget(self.btn_open)
 
         self.btn_save = QPushButton()
-        self.btn_save.setIcon(QIcon(str(self._icon_dir / "topbar_save.svg")))
+        self.btn_save.setIcon(QIcon(":/icons/icons/topbar_save.svg"))
         self.btn_save.setIconSize(icon_size)
         self.btn_save.setObjectName("iconButton")
         self.btn_save.setToolTip(self.tr("Save"))
@@ -86,7 +84,7 @@ class TitleBar(QWidget):
         file_layout.addWidget(self.btn_save)
 
         self.btn_export = QPushButton()
-        self.btn_export.setIcon(QIcon(str(self._icon_dir / "topbar_publish.svg")))
+        self.btn_export.setIcon(QIcon(":/icons/icons/topbar_publish.svg"))
         self.btn_export.setIconSize(icon_size)
         self.btn_export.setObjectName("iconButton")
         self.btn_export.setToolTip(self.tr("Export"))
@@ -107,7 +105,7 @@ class TitleBar(QWidget):
         edit_layout.setAlignment(Qt.AlignmentFlag.AlignVCenter)
 
         self.btn_undo = QPushButton()
-        self.btn_undo.setIcon(QIcon(str(self._icon_dir / "topbar_undo.svg")))
+        self.btn_undo.setIcon(QIcon(":/icons/icons/topbar_undo.svg"))
         self.btn_undo.setIconSize(icon_size)
         self.btn_undo.setObjectName("iconButton")
         self.btn_undo.setToolTip(self.tr("Undo"))
@@ -116,7 +114,7 @@ class TitleBar(QWidget):
         edit_layout.addWidget(self.btn_undo)
 
         self.btn_redo = QPushButton()
-        self.btn_redo.setIcon(QIcon(str(self._icon_dir / "topbar_redo.svg")))
+        self.btn_redo.setIcon(QIcon(":/icons/icons/topbar_redo.svg"))
         self.btn_redo.setIconSize(icon_size)
         self.btn_redo.setObjectName("iconButton")
         self.btn_redo.setToolTip(self.tr("Redo"))

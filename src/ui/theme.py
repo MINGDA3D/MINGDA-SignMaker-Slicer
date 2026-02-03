@@ -515,6 +515,7 @@ QCheckBox::indicator:hover {{
 QCheckBox::indicator:checked {{
     background-color: {c.accent_primary};
     border-color: {c.accent_primary};
+    image: url(:/icons/icons/check.svg);
 }}
 
 QCheckBox::indicator:disabled {{

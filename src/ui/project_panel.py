@@ -9,7 +9,6 @@ MINGDA SignMaker - 项目面板组件
 
 from __future__ import annotations
 from typing import List
-from pathlib import Path
 
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel,
@@ -75,13 +74,7 @@ class ShapeListItem(QFrame):
         self.delete_btn.setFixedSize(28, 28)
         self.delete_btn.setCursor(Qt.CursorShape.PointingHandCursor)
         self.delete_btn.setIconSize(QSize(18, 18))
-
-        # 使用图标
-        icon_path = Path(__file__).parent.parent.parent / "resources" / "icons" / "delete.png"
-        if icon_path.exists():
-            self.delete_btn.setIcon(QIcon(str(icon_path)))
-        else:
-            self.delete_btn.setText("×")
+        self.delete_btn.setIcon(QIcon(":/icons/icons/delete.png"))
 
         self.delete_btn.setStyleSheet("""
             QPushButton {

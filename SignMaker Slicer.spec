@@ -2,10 +2,10 @@
 
 
 a = Analysis(
-    ['E:\\MINGDA SignMaker\\main.py'],
+    ['main.py'],
     pathex=[],
     binaries=[],
-    datas=[('E:\\MINGDA SignMaker\\docs\\images', 'docs/images')],
+    datas=[('resources', 'resources')],
     hiddenimports=['PySide6.QtSvg', 'PySide6.QtOpenGL', 'PySide6.QtOpenGLWidgets', 'ezdxf', 'pyclipper', 'svgpathtools', 'numpy', 'OpenGL', 'OpenGL.GL', 'OpenGL.GLU', 'shapely', 'trimesh', 'mapbox_earcut'],
     hookspath=[],
     hooksconfig={},
@@ -35,5 +35,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=['E:\\MINGDA SignMaker\\docs\\images\\MINGDA_logo.ico'],
+    icon=['resources/logos/MINGDA_logo.ico'],
 )

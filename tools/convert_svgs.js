@@ -2,18 +2,18 @@ const sharp = require('sharp');
 const fs = require('fs');
 const path = require('path');
 
-const inputDir = path.join(__dirname, '../docs/images');
+const inputDir = path.join(__dirname, '../resources/logos');
 const outputDir = inputDir;
 
 const files = [
     'tiktok.svg',
     'ChatGPT_logo.svg',
     'Logo_Benz.svg',
-    '宝马.svg',
-    '特斯拉.svg',
-    '星巴克.svg',
-    '麦当劳-01.svg',
-    '耐克.svg'
+    'bmw.svg',
+    'tesla.svg',
+    'starbucks.svg',
+    'mcdonalds.svg',
+    'nike.svg'
 ];
 
 files.forEach(file => {
