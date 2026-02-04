@@ -17,7 +17,7 @@ from PySide6.QtWidgets import (
     QComboBox, QCheckBox, QGroupBox, QFrame,
     QPushButton, QTabWidget, QFormLayout, QRadioButton, QButtonGroup
 )
-from PySide6.QtCore import Qt, Signal
+from PySide6.QtCore import Qt, Signal, QCoreApplication
 
 from src.core.types import (
     SliceParams, ShellParams, EdgeType, ExtruderType, EdgeDirection, BevelDirection,
@@ -1052,7 +1052,10 @@ class ParamPanel(QWidget):
     def _update_profile_info(self):
         """更新轮廓信息显示"""
         if self._current_profile:
-            info = f"{self._current_profile.name}"
+            # 翻译预设名称
+            translated_name = QCoreApplication.translate(
+                "EdgePresets", self._current_profile.name)
+            info = f"{translated_name}"
             if self._current_profile.control_points:
                 info += self.tr(" ({count} points)").format(count=len(self._current_profile.control_points))
             self.profile_info_label.setText(info)
