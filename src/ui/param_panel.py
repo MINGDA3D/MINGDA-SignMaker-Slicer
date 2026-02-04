@@ -13,7 +13,7 @@ from typing import Optional
 
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QScrollArea,
-    QLabel, QLineEdit, QSpinBox, QDoubleSpinBox,
+    QLabel, QLineEdit,
     QComboBox, QCheckBox, QGroupBox, QFrame,
     QPushButton, QTabWidget, QFormLayout, QRadioButton, QButtonGroup
 )
@@ -25,6 +25,7 @@ from src.core.types import (
 )
 from src.core.edge_presets import EdgePresetManager, ProfileCategory
 from src.ui.widgets.edge_preset_selector import EdgePresetSelector
+from src.ui.widgets.plus_minus_spinbox import PlusMinusSpinBox, PlusMinusIntSpinBox
 from .theme import COLORS, LAYOUT
 
 
@@ -100,33 +101,33 @@ class ParamPanel(QWidget):
         layout.setSpacing(8)
 
         # 字壳高度
-        self.height_spin = QDoubleSpinBox()
+        self.height_spin = PlusMinusSpinBox()
         self.height_spin.setRange(1, 500)
         self.height_spin.setValue(30)
-        self.height_spin.setSuffix(" mm")
+        self.height_spin.setSuffix("mm")
         self.height_spin.valueChanged.connect(self._on_param_changed)
         layout.addRow(self.tr("Shell Height:"), self.height_spin)
 
         # 层高
-        self.layer_height_spin = QDoubleSpinBox()
+        self.layer_height_spin = PlusMinusSpinBox()
         self.layer_height_spin.setRange(0.1, 1.0)
         self.layer_height_spin.setValue(0.3)
         self.layer_height_spin.setSingleStep(0.05)
-        self.layer_height_spin.setSuffix(" mm")
+        self.layer_height_spin.setSuffix("mm")
         self.layer_height_spin.valueChanged.connect(self._on_param_changed)
         layout.addRow(self.tr("Layer Height:"), self.layer_height_spin)
 
         # 壁厚
-        self.wall_thickness_spin = QDoubleSpinBox()
+        self.wall_thickness_spin = PlusMinusSpinBox()
         self.wall_thickness_spin.setRange(0.4, 3.0)
         self.wall_thickness_spin.setValue(1.2)
         self.wall_thickness_spin.setSingleStep(0.1)
-        self.wall_thickness_spin.setSuffix(" mm")
+        self.wall_thickness_spin.setSuffix("mm")
         self.wall_thickness_spin.valueChanged.connect(self._on_param_changed)
         layout.addRow(self.tr("Wall Thickness:"), self.wall_thickness_spin)
 
         # 壁数量
-        self.wall_count_spin = QSpinBox()
+        self.wall_count_spin = PlusMinusIntSpinBox()
         self.wall_count_spin.setRange(1, 5)
         self.wall_count_spin.setValue(1)
         self.wall_count_spin.valueChanged.connect(self._on_param_changed)
@@ -167,26 +168,26 @@ class ParamPanel(QWidget):
         bevel_layout.addRow(self.tr("Bevel Direction:"), self.bevel_direction_combo)
 
         # 斜边宽度
-        self.bevel_width_spin = QDoubleSpinBox()
+        self.bevel_width_spin = PlusMinusSpinBox()
         self.bevel_width_spin.setRange(0, 50)
         self.bevel_width_spin.setValue(5)
-        self.bevel_width_spin.setSuffix(" mm")
+        self.bevel_width_spin.setSuffix("mm")
         self.bevel_width_spin.valueChanged.connect(self._on_param_changed)
         bevel_layout.addRow(self.tr("Bevel Width:"), self.bevel_width_spin)
 
         # 底板厚度
-        self.baseplate_spin = QDoubleSpinBox()
+        self.baseplate_spin = PlusMinusSpinBox()
         self.baseplate_spin.setRange(0, 50)
         self.baseplate_spin.setValue(10)
-        self.baseplate_spin.setSuffix(" mm")
+        self.baseplate_spin.setSuffix("mm")
         self.baseplate_spin.valueChanged.connect(self._on_param_changed)
         bevel_layout.addRow(self.tr("Baseplate Thickness:"), self.baseplate_spin)
 
         # 面板厚度
-        self.panel_thickness_spin = QDoubleSpinBox()
+        self.panel_thickness_spin = PlusMinusSpinBox()
         self.panel_thickness_spin.setRange(0, 20)
         self.panel_thickness_spin.setValue(3)
-        self.panel_thickness_spin.setSuffix(" mm")
+        self.panel_thickness_spin.setSuffix("mm")
         self.panel_thickness_spin.valueChanged.connect(self._on_param_changed)
         bevel_layout.addRow(self.tr("Panel Thickness:"), self.panel_thickness_spin)
 
@@ -246,11 +247,11 @@ class ParamPanel(QWidget):
         form.setSpacing(8)
 
         # 底面厚度
-        self.bottom_face_thickness = QDoubleSpinBox()
+        self.bottom_face_thickness = PlusMinusSpinBox()
         self.bottom_face_thickness.setRange(0.3, 10.0)
         self.bottom_face_thickness.setValue(1.0)
         self.bottom_face_thickness.setSingleStep(0.1)
-        self.bottom_face_thickness.setSuffix(" mm")
+        self.bottom_face_thickness.setSuffix("mm")
         self.bottom_face_thickness.setEnabled(False)
         self.bottom_face_thickness.valueChanged.connect(self._on_param_changed)
         form.addRow(self.tr("Bottom Thickness:"), self.bottom_face_thickness)
@@ -283,11 +284,11 @@ class ParamPanel(QWidget):
         form.setSpacing(8)
 
         # 顶面厚度
-        self.top_face_thickness = QDoubleSpinBox()
+        self.top_face_thickness = PlusMinusSpinBox()
         self.top_face_thickness.setRange(0.3, 10.0)
         self.top_face_thickness.setValue(1.0)
         self.top_face_thickness.setSingleStep(0.1)
-        self.top_face_thickness.setSuffix(" mm")
+        self.top_face_thickness.setSuffix("mm")
         self.top_face_thickness.setEnabled(False)
         self.top_face_thickness.valueChanged.connect(self._on_param_changed)
         form.addRow(self.tr("Top Thickness:"), self.top_face_thickness)
@@ -320,17 +321,17 @@ class ParamPanel(QWidget):
         form = QFormLayout()
         form.setSpacing(8)
 
-        self.color1_height = QDoubleSpinBox()
+        self.color1_height = PlusMinusSpinBox()
         self.color1_height.setRange(0, 100)
         self.color1_height.setValue(10)
-        self.color1_height.setSuffix(" mm")
+        self.color1_height.setSuffix("mm")
         self.color1_height.setEnabled(False)
         form.addRow(self.tr("Color 1 Height:"), self.color1_height)
 
-        self.color2_height = QDoubleSpinBox()
+        self.color2_height = PlusMinusSpinBox()
         self.color2_height.setRange(0, 100)
         self.color2_height.setValue(20)
-        self.color2_height.setSuffix(" mm")
+        self.color2_height.setSuffix("mm")
         self.color2_height.setEnabled(False)
         form.addRow(self.tr("Color 2 Height:"), self.color2_height)
 
@@ -357,18 +358,18 @@ class ParamPanel(QWidget):
         layout.addWidget(self.panel_step_enabled)
 
         form1 = QFormLayout()
-        self.panel_step_height = QDoubleSpinBox()
+        self.panel_step_height = PlusMinusSpinBox()
         self.panel_step_height.setRange(0.3, 30)
         self.panel_step_height.setValue(3)
-        self.panel_step_height.setSuffix(" mm")
+        self.panel_step_height.setSuffix("mm")
         self.panel_step_height.setEnabled(False)
         self.panel_step_height.valueChanged.connect(self._on_param_changed)
         form1.addRow(self.tr("Step Height:"), self.panel_step_height)
 
-        self.panel_step_width = QDoubleSpinBox()
+        self.panel_step_width = PlusMinusSpinBox()
         self.panel_step_width.setRange(0.5, 20)
         self.panel_step_width.setValue(3)
-        self.panel_step_width.setSuffix(" mm")
+        self.panel_step_width.setSuffix("mm")
         self.panel_step_width.setEnabled(False)
         self.panel_step_width.valueChanged.connect(self._on_param_changed)
         form1.addRow(self.tr("Step Width:"), self.panel_step_width)
@@ -396,18 +397,18 @@ class ParamPanel(QWidget):
         layout.addWidget(self.baseplate_step_enabled)
 
         form2 = QFormLayout()
-        self.baseplate_step_height = QDoubleSpinBox()
+        self.baseplate_step_height = PlusMinusSpinBox()
         self.baseplate_step_height.setRange(0.3, 30)
         self.baseplate_step_height.setValue(3)
-        self.baseplate_step_height.setSuffix(" mm")
+        self.baseplate_step_height.setSuffix("mm")
         self.baseplate_step_height.setEnabled(False)
         self.baseplate_step_height.valueChanged.connect(self._on_param_changed)
         form2.addRow(self.tr("Step Height:"), self.baseplate_step_height)
 
-        self.baseplate_step_width = QDoubleSpinBox()
+        self.baseplate_step_width = PlusMinusSpinBox()
         self.baseplate_step_width.setRange(0.5, 20)
         self.baseplate_step_width.setValue(3)
-        self.baseplate_step_width.setSuffix(" mm")
+        self.baseplate_step_width.setSuffix("mm")
         self.baseplate_step_width.setEnabled(False)
         self.baseplate_step_width.valueChanged.connect(self._on_param_changed)
         form2.addRow(self.tr("Step Width:"), self.baseplate_step_width)
@@ -458,35 +459,35 @@ class ParamPanel(QWidget):
         form = QFormLayout()
         form.setSpacing(8)
 
-        self.skirt_width = QDoubleSpinBox()
+        self.skirt_width = PlusMinusSpinBox()
         self.skirt_width.setRange(1, 20)
         self.skirt_width.setValue(5)
-        self.skirt_width.setSuffix(" mm")
+        self.skirt_width.setSuffix("mm")
         self.skirt_width.setEnabled(False)
         self.skirt_width.valueChanged.connect(self._on_param_changed)
         form.addRow(self.tr("Skirt Width:"), self.skirt_width)
 
-        self.skirt_height = QDoubleSpinBox()
+        self.skirt_height = PlusMinusSpinBox()
         self.skirt_height.setRange(0.2, 10)
         self.skirt_height.setValue(0.3)
         self.skirt_height.setSingleStep(0.1)
-        self.skirt_height.setSuffix(" mm")
+        self.skirt_height.setSuffix("mm")
         self.skirt_height.setEnabled(False)
         self.skirt_height.valueChanged.connect(self._on_param_changed)
         form.addRow(self.tr("Skirt Height:"), self.skirt_height)
 
-        self.skirt_interval = QDoubleSpinBox()
+        self.skirt_interval = PlusMinusSpinBox()
         self.skirt_interval.setRange(5, 50)
         self.skirt_interval.setValue(10)
-        self.skirt_interval.setSuffix(" mm")
+        self.skirt_interval.setSuffix("mm")
         self.skirt_interval.setEnabled(False)
         self.skirt_interval.valueChanged.connect(self._on_param_changed)
         form.addRow(self.tr("Trapezoid Interval:"), self.skirt_interval)
 
-        self.skirt_offset = QDoubleSpinBox()
+        self.skirt_offset = PlusMinusSpinBox()
         self.skirt_offset.setRange(0, 20)
         self.skirt_offset.setValue(0)
-        self.skirt_offset.setSuffix(" mm")
+        self.skirt_offset.setSuffix("mm")
         self.skirt_offset.setEnabled(False)
         self.skirt_offset.valueChanged.connect(self._on_param_changed)
         form.addRow(self.tr("Skirt Offset:"), self.skirt_offset)
@@ -536,37 +537,37 @@ class ParamPanel(QWidget):
         form.addRow("", self.connected_auto_detect)
 
         # 连襟宽度
-        self.connected_width = QDoubleSpinBox()
+        self.connected_width = PlusMinusSpinBox()
         self.connected_width.setRange(1, 50)
         self.connected_width.setValue(15)
-        self.connected_width.setSuffix(" mm")
+        self.connected_width.setSuffix("mm")
         self.connected_width.setEnabled(False)
         self.connected_width.valueChanged.connect(self._on_param_changed)
         form.addRow(self.tr("Connection Width:"), self.connected_width)
 
         # 斜边高度
-        self.connected_height = QDoubleSpinBox()
+        self.connected_height = PlusMinusSpinBox()
         self.connected_height.setRange(1, 20)
         self.connected_height.setValue(5)
-        self.connected_height.setSuffix(" mm")
+        self.connected_height.setSuffix("mm")
         self.connected_height.setEnabled(False)
         self.connected_height.valueChanged.connect(self._on_param_changed)
         form.addRow(self.tr("Bevel Height:"), self.connected_height)
 
         # 底座高度
-        self.connected_base_height = QDoubleSpinBox()
+        self.connected_base_height = PlusMinusSpinBox()
         self.connected_base_height.setRange(1, 20)
         self.connected_base_height.setValue(5)
-        self.connected_base_height.setSuffix(" mm")
+        self.connected_base_height.setSuffix("mm")
         self.connected_base_height.setEnabled(False)
         self.connected_base_height.valueChanged.connect(self._on_param_changed)
         form.addRow(self.tr("Base Height:"), self.connected_base_height)
 
         # 支撑偏移
-        self.connected_support_offset = QDoubleSpinBox()
+        self.connected_support_offset = PlusMinusSpinBox()
         self.connected_support_offset.setRange(0, 10)
         self.connected_support_offset.setValue(2.5)
-        self.connected_support_offset.setSuffix(" mm")
+        self.connected_support_offset.setSuffix("mm")
         self.connected_support_offset.setEnabled(False)
         self.connected_support_offset.valueChanged.connect(self._on_param_changed)
         form.addRow(self.tr("Support Offset:"), self.connected_support_offset)
@@ -618,19 +619,19 @@ class ParamPanel(QWidget):
         wrap_dir_layout.addStretch()
         wrap_form.addRow(self.tr("Wrap Direction:"), wrap_dir_layout)
 
-        self.wrap_width = QDoubleSpinBox()
+        self.wrap_width = PlusMinusSpinBox()
         self.wrap_width.setRange(0.5, 10)
         self.wrap_width.setValue(2.0)
         self.wrap_width.setSingleStep(0.1)
-        self.wrap_width.setSuffix(" mm")
+        self.wrap_width.setSuffix("mm")
         self.wrap_width.setEnabled(False)
         wrap_form.addRow(self.tr("Wrap Width:"), self.wrap_width)
 
-        self.wrap_height = QDoubleSpinBox()
+        self.wrap_height = PlusMinusSpinBox()
         self.wrap_height.setRange(0.5, 20)
         self.wrap_height.setValue(3.0)
         self.wrap_height.setSingleStep(0.5)
-        self.wrap_height.setSuffix(" mm")
+        self.wrap_height.setSuffix("mm")
         self.wrap_height.setEnabled(False)
         wrap_form.addRow(self.tr("Wrap Height:"), self.wrap_height)
 
@@ -679,27 +680,27 @@ class ParamPanel(QWidget):
         outline_dir_layout.addStretch()
         outline_form.addRow(self.tr("Outline Direction:"), outline_dir_layout)
 
-        self.outline_width = QDoubleSpinBox()
+        self.outline_width = PlusMinusSpinBox()
         self.outline_width.setRange(0.3, 5)
         self.outline_width.setValue(1.0)
         self.outline_width.setSingleStep(0.1)
-        self.outline_width.setSuffix(" mm")
+        self.outline_width.setSuffix("mm")
         self.outline_width.setEnabled(False)
         outline_form.addRow(self.tr("Outline Width:"), self.outline_width)
 
-        self.outline_height = QDoubleSpinBox()
+        self.outline_height = PlusMinusSpinBox()
         self.outline_height.setRange(0.3, 10)
         self.outline_height.setValue(1.0)
         self.outline_height.setSingleStep(0.1)
-        self.outline_height.setSuffix(" mm")
+        self.outline_height.setSuffix("mm")
         self.outline_height.setEnabled(False)
         outline_form.addRow(self.tr("Outline Height:"), self.outline_height)
 
-        self.outline_offset = QDoubleSpinBox()
+        self.outline_offset = PlusMinusSpinBox()
         self.outline_offset.setRange(-5, 5)
         self.outline_offset.setValue(0.0)
         self.outline_offset.setSingleStep(0.1)
-        self.outline_offset.setSuffix(" mm")
+        self.outline_offset.setSuffix("mm")
         self.outline_offset.setEnabled(False)
         outline_form.addRow(self.tr("Outline Offset:"), self.outline_offset)
 
@@ -730,26 +731,26 @@ class ParamPanel(QWidget):
         layout.setSpacing(8)
 
         # 打印速度
-        self.print_speed = QSpinBox()
+        self.print_speed = PlusMinusIntSpinBox()
         self.print_speed.setRange(10, 200)
         self.print_speed.setValue(50)
-        self.print_speed.setSuffix(" mm/s")
+        self.print_speed.setSuffix("mm/s")
         self.print_speed.valueChanged.connect(self._on_param_changed)
         layout.addRow(self.tr("Print Speed:"), self.print_speed)
 
         # 空走速度
-        self.travel_speed = QSpinBox()
+        self.travel_speed = PlusMinusIntSpinBox()
         self.travel_speed.setRange(50, 300)
         self.travel_speed.setValue(150)
-        self.travel_speed.setSuffix(" mm/s")
+        self.travel_speed.setSuffix("mm/s")
         self.travel_speed.valueChanged.connect(self._on_param_changed)
         layout.addRow(self.tr("Travel Speed:"), self.travel_speed)
 
         # 首层速度
-        self.first_layer_speed = QSpinBox()
+        self.first_layer_speed = PlusMinusIntSpinBox()
         self.first_layer_speed.setRange(5, 50)
         self.first_layer_speed.setValue(20)
-        self.first_layer_speed.setSuffix(" mm/s")
+        self.first_layer_speed.setSuffix("mm/s")
         self.first_layer_speed.valueChanged.connect(self._on_param_changed)
         layout.addRow(self.tr("First Layer Speed:"), self.first_layer_speed)
 

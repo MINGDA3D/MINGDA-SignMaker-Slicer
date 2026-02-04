@@ -1,6 +1,8 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource prefix="icons">
     <file>icons/check.svg</file>
+    <file>icons/plus.svg</file>
+    <file>icons/minus.svg</file>
     <file>icons/arrange.png</file>
     <file>icons/arrange.svg</file>
     <file>icons/bottom_hole.png</file>
