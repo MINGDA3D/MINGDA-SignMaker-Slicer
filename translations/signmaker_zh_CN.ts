@@ -411,6 +411,22 @@
         <source>Translation file for {lang} is not available yet.</source>
         <translation>{lang} 的翻译文件尚不可用。</translation>
     </message>
+    <message>
+        <source>Arrow keys: 1mm, Shift+Arrow: 10mm</source>
+        <translation>方向键: 1mm, Shift+方向键: 10mm</translation>
+    </message>
+    <message>
+        <source>Rotation</source>
+        <translation>旋转</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>缩放</translation>
+    </message>
+    <message>
+        <source>Position</source>
+        <translation>位置</translation>
+    </message>
 </context>
 <context>
     <name>TitleBar</name>

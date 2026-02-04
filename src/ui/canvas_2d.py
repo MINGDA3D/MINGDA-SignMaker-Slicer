@@ -28,6 +28,7 @@ class Canvas2D(QWidget):
 
     # 信号
     contour_selected = Signal(int)  # 轮廓选中信号
+    selection_cleared = Signal()    # 选择清除信号
     mouse_moved = Signal(float, float)  # 鼠标移动信号
     zoom_changed = Signal(float)  # 缩放变化信号
     contours_modified = Signal()  # 轮廓被修改信号
@@ -779,35 +780,49 @@ class Canvas2D(QWidget):
             self.pan_start = event.position()
             self.setCursor(Qt.CursorShape.ClosedHandCursor)
         elif event.button() == Qt.MouseButton.LeftButton:
-            if self.current_tool == "select":
-                self._handle_selection(event.position())
-            elif self.current_tool in ("move", "rotate", "scale"):
-                # 检查是否点击在已选中的轮廓上
-                clicked_on_selected = False
+            # 先检查是否点击在已选中的轮廓上（支持直接拖动）
+            clicked_on_selected = False
+            if self.selected_indices:
                 for idx in self.selected_indices:
                     if idx < len(self.contours):
                         if self._point_in_contour(world_pos, self.contours[idx]):
                             clicked_on_selected = True
                             break
 
-                if clicked_on_selected:
-                    # 开始变换操作
-                    self.is_transforming = True
-                    self.transform_start = world_pos
-                    self.transform_start_screen = event.position()  # 保存屏幕坐标
-                    self.transform_center = self._get_selection_center()
-                    self.accumulated_rotation = 0.0  # 累计旋转角度
-                    # 重置变换追踪
-                    self._transform_total_dx = 0.0
-                    self._transform_total_dy = 0.0
-                    self._transform_total_angle = 0.0
-                    self._transform_total_scale = 1.0
-                    # 发出变换开始信号
-                    self.transform_started.emit(self.current_tool, list(self.selected_indices))
-                    self._set_tool_cursor()
-                else:
-                    # 点击了其他位置，尝试选择新轮廓
-                    self._handle_selection(event.position())
+            if clicked_on_selected and self.current_tool in ("select", "move"):
+                # 在选择模式下点击已选中轮廓，开始拖动移动
+                self.is_transforming = True
+                self._active_drag_tool = "move"  # 记录实际的拖动工具
+                self.transform_start = world_pos
+                self.transform_start_screen = event.position()
+                self.transform_center = self._get_selection_center()
+                # 重置变换追踪
+                self._transform_total_dx = 0.0
+                self._transform_total_dy = 0.0
+                self._transform_total_angle = 0.0
+                self._transform_total_scale = 1.0
+                # 发出变换开始信号
+                self.transform_started.emit("move", list(self.selected_indices))
+                self.setCursor(Qt.CursorShape.SizeAllCursor)
+            elif clicked_on_selected and self.current_tool in ("rotate", "scale"):
+                # 旋转/缩放工具
+                self.is_transforming = True
+                self._active_drag_tool = self.current_tool
+                self.transform_start = world_pos
+                self.transform_start_screen = event.position()
+                self.transform_center = self._get_selection_center()
+                self.accumulated_rotation = 0.0
+                # 重置变换追踪
+                self._transform_total_dx = 0.0
+                self._transform_total_dy = 0.0
+                self._transform_total_angle = 0.0
+                self._transform_total_scale = 1.0
+                # 发出变换开始信号
+                self.transform_started.emit(self.current_tool, list(self.selected_indices))
+                self._set_tool_cursor()
+            else:
+                # 点击了其他位置，尝试选择新轮廓
+                self._handle_selection(event.position())
 
     def mouseMoveEvent(self, event: QMouseEvent):
         """鼠标移动"""
@@ -821,15 +836,16 @@ class Canvas2D(QWidget):
             self.pan_start = pos
             self.update()
         elif self.is_transforming and self.selected_indices:
-            # 执行变换
-            if self.current_tool == "move":
+            # 执行变换 - 使用实际的拖动工具
+            active_tool = getattr(self, '_active_drag_tool', self.current_tool)
+            if active_tool == "move":
                 dx = world_pos.x() - self.transform_start.x()
                 dy = world_pos.y() - self.transform_start.y()
                 self.move_selected(dx, dy)
                 self._transform_total_dx += dx
                 self._transform_total_dy += dy
                 self.transform_start = world_pos
-            elif self.current_tool == "rotate":
+            elif active_tool == "rotate":
                 # 使用水平拖动控制旋转：每100像素 = 45度
                 dx_screen = pos.x() - self.last_mouse_pos.x()
                 angle_delta = dx_screen * 0.5  # 每像素0.5度
@@ -846,7 +862,7 @@ class Canvas2D(QWidget):
                 else:
                     self.rotate_selected(angle_delta)
                     self._transform_total_angle += angle_delta
-            elif self.current_tool == "scale":
+            elif active_tool == "scale":
                 # 使用水平拖动控制缩放：向右放大，向左缩小
                 dx_screen = pos.x() - self.last_mouse_pos.x()
                 scale_factor = 1.0 + dx_screen * 0.005  # 每像素0.5%
@@ -871,8 +887,10 @@ class Canvas2D(QWidget):
         elif event.button() == Qt.MouseButton.LeftButton:
             if self.is_transforming:
                 self.is_transforming = False
-                # 发出变换结束信号，携带变换信息
-                self.transform_ended.emit(self.current_tool, list(self.selected_indices))
+                # 发出变换结束信号，使用实际的拖动工具
+                active_tool = getattr(self, '_active_drag_tool', self.current_tool)
+                self.transform_ended.emit(active_tool, list(self.selected_indices))
+                self._active_drag_tool = None  # 清除
                 self._set_tool_cursor()
 
     def get_transform_delta(self) -> dict:
@@ -904,11 +922,33 @@ class Canvas2D(QWidget):
         elif event.key() == Qt.Key.Key_Escape:
             # 取消选择
             self.selected_indices = []
+            self.selection_cleared.emit()
             self.update()
         elif event.key() == Qt.Key.Key_A and event.modifiers() == Qt.KeyboardModifier.ControlModifier:
             # 全选
             self.selected_indices = list(range(len(self.contours)))
             self.update()
+        elif event.key() in (Qt.Key.Key_Left, Qt.Key.Key_Right, Qt.Key.Key_Up, Qt.Key.Key_Down):
+            # 方向键移动选中的轮廓
+            if self.selected_indices:
+                # Shift键：大步移动（10mm），普通：小步移动（1mm）
+                step = 10.0 if Qt.KeyboardModifier.ShiftModifier in event.modifiers() else 1.0
+                dx, dy = 0.0, 0.0
+                if event.key() == Qt.Key.Key_Left:
+                    dx = -step
+                elif event.key() == Qt.Key.Key_Right:
+                    dx = step
+                elif event.key() == Qt.Key.Key_Up:
+                    dy = step
+                elif event.key() == Qt.Key.Key_Down:
+                    dy = -step
+
+                # 发出变换信号用于撤销/重做
+                self.transform_started.emit("move", list(self.selected_indices))
+                self._transform_total_dx = dx
+                self._transform_total_dy = dy
+                self.move_selected(dx, dy)
+                self.transform_ended.emit("move", list(self.selected_indices))
 
     def _handle_selection(self, pos: QPointF):
         """处理选择"""
@@ -943,6 +983,7 @@ class Canvas2D(QWidget):
         # 点击空白区域：取消选择
         if Qt.KeyboardModifier.ControlModifier not in QApplication.keyboardModifiers():
             self.selected_indices = []
+            self.selection_cleared.emit()
             self.update()
 
     def _point_in_contour(self, pos: QPointF, contour: Contour) -> bool:

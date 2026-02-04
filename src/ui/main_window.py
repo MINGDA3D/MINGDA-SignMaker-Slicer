@@ -300,7 +300,7 @@ class MainWindow(QMainWindow):
                 border-radius: 3px;
                 color: #C9D1D9;
                 padding: 4px 8px;
-                min-width: 70px;
+                min-width: 80px;
             }
             QDoubleSpinBox:focus {
                 border-color: #58A6FF;
@@ -313,58 +313,52 @@ class MainWindow(QMainWindow):
         panel_layout.setContentsMargins(12, 8, 12, 8)
         panel_layout.setSpacing(8)
 
-        # 标题行（可折叠）
+        # 标题行
         title_layout = QHBoxLayout()
-        self.transform_title = QLabel("▼ World coordinates")
+        self.transform_title = QLabel("▼ Position")
         self.transform_title.setStyleSheet("color: #58A6FF; font-weight: bold;")
         title_layout.addWidget(self.transform_title)
-
-        # X Y Z 标签
-        for label_text in ["X", "Y", "Z"]:
-            lbl = QLabel(label_text)
-            lbl.setStyleSheet("color: #58A6FF; font-weight: bold; min-width: 70px;")
-            lbl.setAlignment(Qt.AlignmentFlag.AlignCenter)
-            title_layout.addWidget(lbl)
-
-        title_layout.addWidget(QLabel(""))  # 占位
+        title_layout.addStretch()
         panel_layout.addLayout(title_layout)
 
-        # Position 行
+        # Position 行 - 只有X和Y
         pos_layout = QHBoxLayout()
-        self.transform_row_label = QLabel("Position")
-        self.transform_row_label.setMinimumWidth(120)
-        pos_layout.addWidget(self.transform_row_label)
+        pos_layout.setSpacing(12)
 
         # X坐标
+        x_layout = QHBoxLayout()
+        x_layout.setSpacing(4)
+        x_label = QLabel("X")
+        x_label.setStyleSheet("color: #58A6FF; font-weight: bold;")
+        x_layout.addWidget(x_label)
         self.transform_x = QDoubleSpinBox()
         self.transform_x.setRange(-10000, 10000)
         self.transform_x.setValue(0)
         self.transform_x.setDecimals(2)
-        self.transform_x.setButtonSymbols(QDoubleSpinBox.ButtonSymbols.NoButtons)
-        pos_layout.addWidget(self.transform_x)
+        self.transform_x.setSuffix(" mm")
+        x_layout.addWidget(self.transform_x)
+        pos_layout.addLayout(x_layout)
 
         # Y坐标
+        y_layout = QHBoxLayout()
+        y_layout.setSpacing(4)
+        y_label = QLabel("Y")
+        y_label.setStyleSheet("color: #58A6FF; font-weight: bold;")
+        y_layout.addWidget(y_label)
         self.transform_y = QDoubleSpinBox()
         self.transform_y.setRange(-10000, 10000)
         self.transform_y.setValue(0)
         self.transform_y.setDecimals(2)
-        self.transform_y.setButtonSymbols(QDoubleSpinBox.ButtonSymbols.NoButtons)
-        pos_layout.addWidget(self.transform_y)
-
-        # Z坐标
-        self.transform_z = QDoubleSpinBox()
-        self.transform_z.setRange(-10000, 10000)
-        self.transform_z.setValue(0)
-        self.transform_z.setDecimals(2)
-        self.transform_z.setButtonSymbols(QDoubleSpinBox.ButtonSymbols.NoButtons)
-        pos_layout.addWidget(self.transform_z)
-
-        # 单位标签
-        unit_label = QLabel("mm")
-        unit_label.setMinimumWidth(30)
-        pos_layout.addWidget(unit_label)
+        self.transform_y.setSuffix(" mm")
+        y_layout.addWidget(self.transform_y)
+        pos_layout.addLayout(y_layout)
 
         panel_layout.addLayout(pos_layout)
+
+        # 提示文本
+        hint_label = QLabel(self.tr("Arrow keys: 1mm, Shift+Arrow: 10mm"))
+        hint_label.setStyleSheet("color: #6E7681; font-size: 10px;")
+        panel_layout.addWidget(hint_label)
 
         # 当前变换模式
         self.current_transform_mode = None
@@ -372,7 +366,6 @@ class MainWindow(QMainWindow):
         # 连接信号 - 当值改变时实时应用
         self.transform_x.valueChanged.connect(self._on_transform_value_changed)
         self.transform_y.valueChanged.connect(self._on_transform_value_changed)
-        self.transform_z.valueChanged.connect(self._on_transform_value_changed)
 
     def _init_central_widget(self):
         """初始化中央区域"""
@@ -467,6 +460,9 @@ class MainWindow(QMainWindow):
         self.canvas.transform_started.connect(self._on_transform_started)
         self.canvas.transform_ended.connect(self._on_transform_ended)
         self.canvas.delete_requested.connect(self._on_delete_requested)
+        self.canvas.contour_selected.connect(self._on_contour_selected)
+        self.canvas.selection_cleared.connect(self._on_selection_cleared)
+        self.canvas.contours_modified.connect(self._on_contours_modified)
 
         # 撤销管理器信号
         self.undo_manager.can_undo_changed.connect(self._update_undo_actions)
@@ -550,6 +546,27 @@ class MainWindow(QMainWindow):
     def _on_contour_deleted(self, index: int):
         """处理项目面板的删除请求"""
         self._on_delete_requested([index])
+
+    def _on_contour_selected(self, index: int):
+        """当选中轮廓时显示位置面板"""
+        if self.canvas.selected_indices:
+            # 显示位置面板
+            self.transform_title.setText(self.tr("Position"))
+            self.current_transform_mode = "move"
+            self._update_transform_panel_values()
+            self._show_transform_panel()
+        else:
+            # 取消选择时隐藏面板
+            self._close_transform_panel()
+
+    def _on_contours_modified(self):
+        """当轮廓被修改时更新面板"""
+        if self.canvas.selected_indices and self.transform_panel.isVisible():
+            self._update_transform_panel_values()
+
+    def _on_selection_cleared(self):
+        """当选择被清除时隐藏面板"""
+        self._close_transform_panel()
 
     # =========================================================================
     # 事件处理
@@ -926,14 +943,11 @@ class MainWindow(QMainWindow):
 
         # 配置面板显示
         if mode == "move":
-            self.transform_title.setText("▼ World coordinates")
-            self.transform_row_label.setText("Position")
+            self.transform_title.setText(self.tr("Position"))
         elif mode == "rotate":
-            self.transform_title.setText("▼ Rotation")
-            self.transform_row_label.setText("Angle (°)")
+            self.transform_title.setText(self.tr("Rotation"))
         elif mode == "scale":
-            self.transform_title.setText("▼ Scale")
-            self.transform_row_label.setText("Scale (%)")
+            self.transform_title.setText(self.tr("Scale"))
 
         # 更新面板中的值（显示选中轮廓的当前位置）
         self._update_transform_panel_values()
@@ -965,7 +979,6 @@ class MainWindow(QMainWindow):
         if not self.canvas.selected_indices:
             self.transform_x.setValue(0)
             self.transform_y.setValue(0)
-            self.transform_z.setValue(0)
             return
 
         # 获取选中轮廓的中心位置
@@ -974,24 +987,13 @@ class MainWindow(QMainWindow):
         # 阻止信号触发
         self.transform_x.blockSignals(True)
         self.transform_y.blockSignals(True)
-        self.transform_z.blockSignals(True)
 
-        if self.current_transform_mode == "move":
-            self.transform_x.setValue(center.x())
-            self.transform_y.setValue(center.y())
-            self.transform_z.setValue(0)  # Z坐标暂时为0
-        elif self.current_transform_mode == "rotate":
-            self.transform_x.setValue(0)
-            self.transform_y.setValue(0)
-            self.transform_z.setValue(0)
-        elif self.current_transform_mode == "scale":
-            self.transform_x.setValue(100)
-            self.transform_y.setValue(100)
-            self.transform_z.setValue(100)
+        # 显示当前位置
+        self.transform_x.setValue(center.x())
+        self.transform_y.setValue(center.y())
 
         self.transform_x.blockSignals(False)
         self.transform_y.blockSignals(False)
-        self.transform_z.blockSignals(False)
 
     def _on_transform_value_changed(self):
         """当面板中的值改变时"""
