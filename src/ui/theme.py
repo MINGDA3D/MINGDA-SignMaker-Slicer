@@ -317,6 +317,36 @@ QSpinBox::down-button:hover, QDoubleSpinBox::down-button:hover {{
     background-color: {c.bg_hover};
 }}
 
+QSpinBox::up-arrow, QDoubleSpinBox::up-arrow {{
+    image: none;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-bottom: 5px solid {c.text_secondary};
+    width: 0px;
+    height: 0px;
+}}
+
+QSpinBox::down-arrow, QDoubleSpinBox::down-arrow {{
+    image: none;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 5px solid {c.text_secondary};
+    width: 0px;
+    height: 0px;
+}}
+
+QSpinBox::up-arrow:hover, QDoubleSpinBox::up-arrow:hover,
+QSpinBox::down-arrow:hover, QDoubleSpinBox::down-arrow:hover {{
+    border-bottom-color: {c.text_primary};
+    border-top-color: {c.text_primary};
+}}
+
+QSpinBox::up-arrow:disabled, QDoubleSpinBox::up-arrow:disabled,
+QSpinBox::down-arrow:disabled, QDoubleSpinBox::down-arrow:disabled {{
+    border-bottom-color: {c.text_muted};
+    border-top-color: {c.text_muted};
+}}
+
 /* ============================================ */
 /* 下拉框                                        */
 /* ============================================ */
