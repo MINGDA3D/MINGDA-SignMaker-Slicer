@@ -1063,4 +1063,55 @@ Kontrollpunkte: {points}</translation>
         <translation>Kein Profil ausgewählt</translation>
     </message>
 </context>
+<context>
+    <name>CanvasToolbar</name>
+    <message>
+        <source>Move</source>
+        <translation>Verschieben</translation>
+    </message>
+    <message>
+        <source>Rotate</source>
+        <translation>Drehen</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>Skalieren</translation>
+    </message>
+    <message>
+        <source>Mirror Horizontal</source>
+        <translation>Horizontal spiegeln</translation>
+    </message>
+    <message>
+        <source>Mirror Vertical</source>
+        <translation>Vertikal spiegeln</translation>
+    </message>
+    <message>
+        <source>Intersection</source>
+        <translation>Schnittmenge</translation>
+    </message>
+    <message>
+        <source>Difference</source>
+        <translation>Differenz</translation>
+    </message>
+    <message>
+        <source>Group</source>
+        <translation>Gruppieren</translation>
+    </message>
+    <message>
+        <source>Ungroup</source>
+        <translation>Gruppierung aufheben</translation>
+    </message>
+    <message>
+        <source>Start Point</source>
+        <translation>Startpunkt</translation>
+    </message>
+    <message>
+        <source>Print Order</source>
+        <translation>Druckreihenfolge</translation>
+    </message>
+    <message>
+        <source>Center View</source>
+        <translation>Ansicht zentrieren</translation>
+    </message>
+</context>
 </TS>

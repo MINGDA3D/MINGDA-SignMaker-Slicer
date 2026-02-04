@@ -1063,4 +1063,55 @@ Control points: {points}</source>
         <translation>未选择轮廓</translation>
     </message>
 </context>
+<context>
+    <name>CanvasToolbar</name>
+    <message>
+        <source>Move</source>
+        <translation>移动</translation>
+    </message>
+    <message>
+        <source>Rotate</source>
+        <translation>旋转</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>缩放</translation>
+    </message>
+    <message>
+        <source>Mirror Horizontal</source>
+        <translation>水平镜像</translation>
+    </message>
+    <message>
+        <source>Mirror Vertical</source>
+        <translation>垂直镜像</translation>
+    </message>
+    <message>
+        <source>Intersection</source>
+        <translation>交集</translation>
+    </message>
+    <message>
+        <source>Difference</source>
+        <translation>差集</translation>
+    </message>
+    <message>
+        <source>Group</source>
+        <translation>组合</translation>
+    </message>
+    <message>
+        <source>Ungroup</source>
+        <translation>打散</translation>
+    </message>
+    <message>
+        <source>Start Point</source>
+        <translation>起始点</translation>
+    </message>
+    <message>
+        <source>Print Order</source>
+        <translation>打印顺序</translation>
+    </message>
+    <message>
+        <source>Center View</source>
+        <translation>居中视图</translation>
+    </message>
+</context>
 </TS>

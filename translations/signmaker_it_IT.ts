@@ -1063,4 +1063,55 @@ Punti di controllo: {points}</translation>
         <translation>Nessun profilo selezionato</translation>
     </message>
 </context>
+<context>
+    <name>CanvasToolbar</name>
+    <message>
+        <source>Move</source>
+        <translation>Sposta</translation>
+    </message>
+    <message>
+        <source>Rotate</source>
+        <translation>Ruota</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>Scala</translation>
+    </message>
+    <message>
+        <source>Mirror Horizontal</source>
+        <translation>Specchio orizzontale</translation>
+    </message>
+    <message>
+        <source>Mirror Vertical</source>
+        <translation>Specchio verticale</translation>
+    </message>
+    <message>
+        <source>Intersection</source>
+        <translation>Intersezione</translation>
+    </message>
+    <message>
+        <source>Difference</source>
+        <translation>Differenza</translation>
+    </message>
+    <message>
+        <source>Group</source>
+        <translation>Raggruppa</translation>
+    </message>
+    <message>
+        <source>Ungroup</source>
+        <translation>Separa</translation>
+    </message>
+    <message>
+        <source>Start Point</source>
+        <translation>Punto iniziale</translation>
+    </message>
+    <message>
+        <source>Print Order</source>
+        <translation>Ordine di stampa</translation>
+    </message>
+    <message>
+        <source>Center View</source>
+        <translation>Centra vista</translation>
+    </message>
+</context>
 </TS>

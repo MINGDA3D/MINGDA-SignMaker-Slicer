@@ -1063,4 +1063,55 @@ Control points: {points}</source>
         <translation>Профиль не выбран</translation>
     </message>
 </context>
+<context>
+    <name>CanvasToolbar</name>
+    <message>
+        <source>Move</source>
+        <translation>Переместить</translation>
+    </message>
+    <message>
+        <source>Rotate</source>
+        <translation>Повернуть</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>Масштабировать</translation>
+    </message>
+    <message>
+        <source>Mirror Horizontal</source>
+        <translation>Отразить горизонтально</translation>
+    </message>
+    <message>
+        <source>Mirror Vertical</source>
+        <translation>Отразить вертикально</translation>
+    </message>
+    <message>
+        <source>Intersection</source>
+        <translation>Пересечение</translation>
+    </message>
+    <message>
+        <source>Difference</source>
+        <translation>Вычитание</translation>
+    </message>
+    <message>
+        <source>Group</source>
+        <translation>Группировать</translation>
+    </message>
+    <message>
+        <source>Ungroup</source>
+        <translation>Разгруппировать</translation>
+    </message>
+    <message>
+        <source>Start Point</source>
+        <translation>Начальная точка</translation>
+    </message>
+    <message>
+        <source>Print Order</source>
+        <translation>Порядок печати</translation>
+    </message>
+    <message>
+        <source>Center View</source>
+        <translation>Центрировать вид</translation>
+    </message>
+</context>
 </TS>

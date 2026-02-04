@@ -1063,4 +1063,55 @@ Control points: {points}</source>
         <translation>プロファイルが選択されていません</translation>
     </message>
 </context>
+<context>
+    <name>CanvasToolbar</name>
+    <message>
+        <source>Move</source>
+        <translation>移動</translation>
+    </message>
+    <message>
+        <source>Rotate</source>
+        <translation>回転</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>拡大縮小</translation>
+    </message>
+    <message>
+        <source>Mirror Horizontal</source>
+        <translation>水平反転</translation>
+    </message>
+    <message>
+        <source>Mirror Vertical</source>
+        <translation>垂直反転</translation>
+    </message>
+    <message>
+        <source>Intersection</source>
+        <translation>交差</translation>
+    </message>
+    <message>
+        <source>Difference</source>
+        <translation>差分</translation>
+    </message>
+    <message>
+        <source>Group</source>
+        <translation>グループ化</translation>
+    </message>
+    <message>
+        <source>Ungroup</source>
+        <translation>グループ解除</translation>
+    </message>
+    <message>
+        <source>Start Point</source>
+        <translation>開始点</translation>
+    </message>
+    <message>
+        <source>Print Order</source>
+        <translation>印刷順序</translation>
+    </message>
+    <message>
+        <source>Center View</source>
+        <translation>表示を中央に</translation>
+    </message>
+</context>
 </TS>

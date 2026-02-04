@@ -1063,4 +1063,55 @@ Kontrol noktalari: {points}</translation>
         <translation>Profil seçilmedi</translation>
     </message>
 </context>
+<context>
+    <name>CanvasToolbar</name>
+    <message>
+        <source>Move</source>
+        <translation>Taşı</translation>
+    </message>
+    <message>
+        <source>Rotate</source>
+        <translation>Döndür</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>Ölçekle</translation>
+    </message>
+    <message>
+        <source>Mirror Horizontal</source>
+        <translation>Yatay Aynala</translation>
+    </message>
+    <message>
+        <source>Mirror Vertical</source>
+        <translation>Dikey Aynala</translation>
+    </message>
+    <message>
+        <source>Intersection</source>
+        <translation>Kesişim</translation>
+    </message>
+    <message>
+        <source>Difference</source>
+        <translation>Fark</translation>
+    </message>
+    <message>
+        <source>Group</source>
+        <translation>Grupla</translation>
+    </message>
+    <message>
+        <source>Ungroup</source>
+        <translation>Grubu Çöz</translation>
+    </message>
+    <message>
+        <source>Start Point</source>
+        <translation>Başlangıç Noktası</translation>
+    </message>
+    <message>
+        <source>Print Order</source>
+        <translation>Yazdırma Sırası</translation>
+    </message>
+    <message>
+        <source>Center View</source>
+        <translation>Görünümü Ortala</translation>
+    </message>
+</context>
 </TS>

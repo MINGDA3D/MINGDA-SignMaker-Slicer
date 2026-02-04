@@ -1063,4 +1063,55 @@ Control points: {points}</source>
         <translation>프로필이 선택되지 않음</translation>
     </message>
 </context>
+<context>
+    <name>CanvasToolbar</name>
+    <message>
+        <source>Move</source>
+        <translation>이동</translation>
+    </message>
+    <message>
+        <source>Rotate</source>
+        <translation>회전</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>크기 조정</translation>
+    </message>
+    <message>
+        <source>Mirror Horizontal</source>
+        <translation>수평 반전</translation>
+    </message>
+    <message>
+        <source>Mirror Vertical</source>
+        <translation>수직 반전</translation>
+    </message>
+    <message>
+        <source>Intersection</source>
+        <translation>교집합</translation>
+    </message>
+    <message>
+        <source>Difference</source>
+        <translation>차집합</translation>
+    </message>
+    <message>
+        <source>Group</source>
+        <translation>그룹화</translation>
+    </message>
+    <message>
+        <source>Ungroup</source>
+        <translation>그룹 해제</translation>
+    </message>
+    <message>
+        <source>Start Point</source>
+        <translation>시작점</translation>
+    </message>
+    <message>
+        <source>Print Order</source>
+        <translation>인쇄 순서</translation>
+    </message>
+    <message>
+        <source>Center View</source>
+        <translation>화면 중앙</translation>
+    </message>
+</context>
 </TS>

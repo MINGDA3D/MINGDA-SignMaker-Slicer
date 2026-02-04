@@ -1063,4 +1063,55 @@ Control points: {points}</source>
         <translation>Профіль не вибрано</translation>
     </message>
 </context>
+<context>
+    <name>CanvasToolbar</name>
+    <message>
+        <source>Move</source>
+        <translation>Перемістити</translation>
+    </message>
+    <message>
+        <source>Rotate</source>
+        <translation>Повернути</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>Масштабувати</translation>
+    </message>
+    <message>
+        <source>Mirror Horizontal</source>
+        <translation>Віддзеркалити горизонтально</translation>
+    </message>
+    <message>
+        <source>Mirror Vertical</source>
+        <translation>Віддзеркалити вертикально</translation>
+    </message>
+    <message>
+        <source>Intersection</source>
+        <translation>Перетин</translation>
+    </message>
+    <message>
+        <source>Difference</source>
+        <translation>Різниця</translation>
+    </message>
+    <message>
+        <source>Group</source>
+        <translation>Згрупувати</translation>
+    </message>
+    <message>
+        <source>Ungroup</source>
+        <translation>Розгрупувати</translation>
+    </message>
+    <message>
+        <source>Start Point</source>
+        <translation>Початкова точка</translation>
+    </message>
+    <message>
+        <source>Print Order</source>
+        <translation>Порядок друку</translation>
+    </message>
+    <message>
+        <source>Center View</source>
+        <translation>Центрувати вид</translation>
+    </message>
+</context>
 </TS>

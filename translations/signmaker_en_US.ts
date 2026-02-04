@@ -1063,4 +1063,55 @@ Control points: {points}</translation>
         <translation>No profile selected</translation>
     </message>
 </context>
+<context>
+    <name>CanvasToolbar</name>
+    <message>
+        <source>Move</source>
+        <translation>Move</translation>
+    </message>
+    <message>
+        <source>Rotate</source>
+        <translation>Rotate</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>Scale</translation>
+    </message>
+    <message>
+        <source>Mirror Horizontal</source>
+        <translation>Mirror Horizontal</translation>
+    </message>
+    <message>
+        <source>Mirror Vertical</source>
+        <translation>Mirror Vertical</translation>
+    </message>
+    <message>
+        <source>Intersection</source>
+        <translation>Intersection</translation>
+    </message>
+    <message>
+        <source>Difference</source>
+        <translation>Difference</translation>
+    </message>
+    <message>
+        <source>Group</source>
+        <translation>Group</translation>
+    </message>
+    <message>
+        <source>Ungroup</source>
+        <translation>Ungroup</translation>
+    </message>
+    <message>
+        <source>Start Point</source>
+        <translation>Start Point</translation>
+    </message>
+    <message>
+        <source>Print Order</source>
+        <translation>Print Order</translation>
+    </message>
+    <message>
+        <source>Center View</source>
+        <translation>Center View</translation>
+    </message>
+</context>
 </TS>

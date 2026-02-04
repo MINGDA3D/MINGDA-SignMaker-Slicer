@@ -1063,4 +1063,55 @@ Control points: {points}</source>
         <translation>لم يتم تحديد ملف تعريف</translation>
     </message>
 </context>
+<context>
+    <name>CanvasToolbar</name>
+    <message>
+        <source>Move</source>
+        <translation>تحريك</translation>
+    </message>
+    <message>
+        <source>Rotate</source>
+        <translation>تدوير</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>تحجيم</translation>
+    </message>
+    <message>
+        <source>Mirror Horizontal</source>
+        <translation>انعكاس أفقي</translation>
+    </message>
+    <message>
+        <source>Mirror Vertical</source>
+        <translation>انعكاس عمودي</translation>
+    </message>
+    <message>
+        <source>Intersection</source>
+        <translation>تقاطع</translation>
+    </message>
+    <message>
+        <source>Difference</source>
+        <translation>فرق</translation>
+    </message>
+    <message>
+        <source>Group</source>
+        <translation>تجميع</translation>
+    </message>
+    <message>
+        <source>Ungroup</source>
+        <translation>إلغاء التجميع</translation>
+    </message>
+    <message>
+        <source>Start Point</source>
+        <translation>نقطة البداية</translation>
+    </message>
+    <message>
+        <source>Print Order</source>
+        <translation>ترتيب الطباعة</translation>
+    </message>
+    <message>
+        <source>Center View</source>
+        <translation>توسيط العرض</translation>
+    </message>
+</context>
 </TS>

@@ -48,17 +48,17 @@ class CanvasToolbar(QWidget):
         layout.addStretch(1)
 
         # ========== 变换工具 ==========
-        self.btn_move = self._create_icon_button("move.png", "移动")
+        self.btn_move = self._create_icon_button("move.png", self.tr("Move"))
         self.btn_move.setCheckable(True)
         self.btn_move.clicked.connect(self._on_move_clicked)
         layout.addWidget(self.btn_move)
 
-        self.btn_rotate = self._create_icon_button("rotate.png", "旋转")
+        self.btn_rotate = self._create_icon_button("rotate.png", self.tr("Rotate"))
         self.btn_rotate.setCheckable(True)
         self.btn_rotate.clicked.connect(self._on_rotate_clicked)
         layout.addWidget(self.btn_rotate)
 
-        self.btn_scale = self._create_icon_button("scale.png", "缩放")
+        self.btn_scale = self._create_icon_button("scale.png", self.tr("Scale"))
         self.btn_scale.setCheckable(True)
         self.btn_scale.clicked.connect(self._on_scale_clicked)
         layout.addWidget(self.btn_scale)
@@ -66,49 +66,49 @@ class CanvasToolbar(QWidget):
         layout.addWidget(self._create_separator())
 
         # ========== 镜像 ==========
-        self.btn_mirror_x = self._create_icon_button("mirror_x.png", "水平镜像")
+        self.btn_mirror_x = self._create_icon_button("mirror_x.png", self.tr("Mirror Horizontal"))
         self.btn_mirror_x.clicked.connect(self.mirror_x_clicked.emit)
         layout.addWidget(self.btn_mirror_x)
 
-        self.btn_mirror_y = self._create_icon_button("mirror_y.png", "垂直镜像")
+        self.btn_mirror_y = self._create_icon_button("mirror_y.png", self.tr("Mirror Vertical"))
         self.btn_mirror_y.clicked.connect(self.mirror_y_clicked.emit)
         layout.addWidget(self.btn_mirror_y)
 
         layout.addWidget(self._create_separator())
 
         # ========== 布尔操作 ==========
-        self.btn_intersection = self._create_icon_button("intersection.png", "交集")
+        self.btn_intersection = self._create_icon_button("intersection.png", self.tr("Intersection"))
         self.btn_intersection.clicked.connect(self.intersection_clicked.emit)
         layout.addWidget(self.btn_intersection)
 
-        self.btn_difference = self._create_icon_button("difference.png", "差集")
+        self.btn_difference = self._create_icon_button("difference.png", self.tr("Difference"))
         self.btn_difference.clicked.connect(self.difference_clicked.emit)
         layout.addWidget(self.btn_difference)
 
         layout.addWidget(self._create_separator())
 
         # ========== 组合操作 ==========
-        self.btn_group = self._create_icon_button("group.png", "组合")
+        self.btn_group = self._create_icon_button("group.png", self.tr("Group"))
         self.btn_group.clicked.connect(self.group_clicked.emit)
         layout.addWidget(self.btn_group)
 
-        self.btn_ungroup = self._create_icon_button("split_objects_dark.png", "打散")
+        self.btn_ungroup = self._create_icon_button("split_objects_dark.png", self.tr("Ungroup"))
         self.btn_ungroup.clicked.connect(self.ungroup_clicked.emit)
         layout.addWidget(self.btn_ungroup)
 
         layout.addWidget(self._create_separator())
 
         # ========== 起始点/顺序 ==========
-        self.btn_start_point = self._create_icon_button("start_point.png", "起始点")
+        self.btn_start_point = self._create_icon_button("start_point.png", self.tr("Start Point"))
         layout.addWidget(self.btn_start_point)
 
-        self.btn_order = self._create_icon_button("print_order.png", "打印顺序")
+        self.btn_order = self._create_icon_button("print_order.png", self.tr("Print Order"))
         layout.addWidget(self.btn_order)
 
         layout.addWidget(self._create_separator())
 
         # ========== 视图居中 ==========
-        self.btn_center = self._create_icon_button("center_view.png", "居中")
+        self.btn_center = self._create_icon_button("center_view.png", self.tr("Center View"))
         layout.addWidget(self.btn_center)
 
         # ========== 右侧弹性空间（居中用）==========

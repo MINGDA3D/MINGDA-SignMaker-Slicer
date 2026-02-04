@@ -1063,4 +1063,55 @@ Control points: {points}</source>
         <translation>לא נבחר פרופיל</translation>
     </message>
 </context>
+<context>
+    <name>CanvasToolbar</name>
+    <message>
+        <source>Move</source>
+        <translation>הזז</translation>
+    </message>
+    <message>
+        <source>Rotate</source>
+        <translation>סובב</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>שנה קנה מידה</translation>
+    </message>
+    <message>
+        <source>Mirror Horizontal</source>
+        <translation>שיקוף אופקי</translation>
+    </message>
+    <message>
+        <source>Mirror Vertical</source>
+        <translation>שיקוף אנכי</translation>
+    </message>
+    <message>
+        <source>Intersection</source>
+        <translation>חיתוך</translation>
+    </message>
+    <message>
+        <source>Difference</source>
+        <translation>הפרש</translation>
+    </message>
+    <message>
+        <source>Group</source>
+        <translation>קבץ</translation>
+    </message>
+    <message>
+        <source>Ungroup</source>
+        <translation>בטל קיבוץ</translation>
+    </message>
+    <message>
+        <source>Start Point</source>
+        <translation>נקודת התחלה</translation>
+    </message>
+    <message>
+        <source>Print Order</source>
+        <translation>סדר הדפסה</translation>
+    </message>
+    <message>
+        <source>Center View</source>
+        <translation>מרכז תצוגה</translation>
+    </message>
+</context>
 </TS>
