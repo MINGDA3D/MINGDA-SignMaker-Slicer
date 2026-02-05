@@ -35,6 +35,7 @@ from .project_panel import ProjectPanel
 from .preview_3d import Preview3D
 from .title_bar import TitleBar
 from .canvas_toolbar import CanvasToolbar
+from .home_page import HomePage
 
 from src.core import (
     DXFParser, SVGParser, SliceEngine, GCodeWriter,
@@ -373,14 +374,24 @@ class MainWindow(QMainWindow):
 
     def _init_central_widget(self):
         """初始化中央区域"""
-        # 主分割器
-        main_splitter = QSplitter(Qt.Orientation.Horizontal)
+        # === 主视图堆栈（首页 / 编辑器）===
+        self.main_stack = QStackedWidget()
+
+        # === 首页 ===
+        self.home_page = HomePage()
+        self.home_page.new_project_clicked.connect(self._on_new_project)
+        self.home_page.open_file_clicked.connect(self._on_open_file)
+        self.home_page.recent_project_clicked.connect(self._load_file)
+        self.main_stack.addWidget(self.home_page)  # index 0
+
+        # === 编辑器视图（分割器）===
+        self.editor_splitter = QSplitter(Qt.Orientation.Horizontal)
 
         # === 左侧参数面板 ===
         self.param_panel = ParamPanel()
         self.param_panel.setMinimumWidth(280)
         self.param_panel.setMaximumWidth(400)
-        main_splitter.addWidget(self.param_panel)
+        self.editor_splitter.addWidget(self.param_panel)
 
         # === 中央视图区域（工具栏 + 2D/3D视图）===
         center_container = QWidget()
@@ -408,7 +419,7 @@ class MainWindow(QMainWindow):
         self.current_view = "2d"
 
         center_layout.addWidget(self.view_stack)
-        main_splitter.addWidget(center_container)
+        self.editor_splitter.addWidget(center_container)
 
         # === 右侧图形列表面板 ===
         self.project_panel = ProjectPanel()
@@ -416,12 +427,18 @@ class MainWindow(QMainWindow):
         self.project_panel.setMaximumWidth(300)
         self.project_panel.import_clicked.connect(self._on_open_file)
         self.project_panel.contour_deleted.connect(self._on_contour_deleted)
-        main_splitter.addWidget(self.project_panel)
+        self.editor_splitter.addWidget(self.project_panel)
 
         # 设置分割比例
-        main_splitter.setSizes([320, 900, 200])
+        self.editor_splitter.setSizes([320, 900, 200])
 
-        self.setCentralWidget(main_splitter)
+        self.main_stack.addWidget(self.editor_splitter)  # index 1
+
+        # 默认显示首页
+        self.main_stack.setCurrentIndex(0)
+        self.current_main_view = "home"
+
+        self.setCentralWidget(self.main_stack)
 
         # 连接画布工具栏信号
         self._connect_canvas_toolbar_signals()
@@ -579,15 +596,21 @@ class MainWindow(QMainWindow):
     def _on_nav_changed(self, nav: str):
         """处理标题栏导航切换"""
         if nav == "home":
-            # TODO: 显示首页/欢迎页
+            # 显示首页
+            self.main_stack.setCurrentIndex(0)
+            self.current_main_view = "home"
             self._update_status(self.tr("Home"))
         elif nav == "project":
             # 显示项目编辑视图（2D）
+            self.main_stack.setCurrentIndex(1)
+            self.current_main_view = "editor"
             self.view_stack.setCurrentIndex(0)
             self.current_view = "2d"
             self._update_status(self.tr("Project Edit"))
         elif nav == "preview":
             # 显示3D预览
+            self.main_stack.setCurrentIndex(1)
+            self.current_main_view = "editor"
             self.view_stack.setCurrentIndex(1)
             self.current_view = "3d"
             # 如果有切片结果，更新3D预览
@@ -702,6 +725,15 @@ class MainWindow(QMainWindow):
         self.canvas.fit_view()
         self.project_panel.update_contours(self.contours)
 
+        # 切换到编辑器视图
+        self.main_stack.setCurrentIndex(1)
+        self.current_main_view = "editor"
+        self.view_stack.setCurrentIndex(0)
+        self.current_view = "2d"
+        # 更新标题栏导航状态
+        if hasattr(self, 'title_bar'):
+            self.title_bar.set_nav("project")
+
         self.setWindowTitle(f"MINGDA SignMaker - {path.name}")
         self._update_status(self.tr("Loaded: {file}, {count} contours").format(file=path.name, count=len(self.contours)))
         self.project_loaded.emit(str(path))
@@ -726,6 +758,15 @@ class MainWindow(QMainWindow):
             self.canvas.fit_view()
             self.project_panel.update_contours(self.contours)
             self.param_panel.set_params(self.slice_params)
+
+            # 切换到编辑器视图
+            self.main_stack.setCurrentIndex(1)
+            self.current_main_view = "editor"
+            self.view_stack.setCurrentIndex(0)
+            self.current_view = "2d"
+            # 更新标题栏导航状态
+            if hasattr(self, 'title_bar'):
+                self.title_bar.set_nav("project")
 
             # 更新窗口标题
             self.setWindowTitle(f"MINGDA SignMaker - {project.meta.name}")

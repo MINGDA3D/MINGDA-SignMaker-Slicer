@@ -1174,4 +1174,35 @@ Control points: {points}</source>
         <translation>居中视图</translation>
     </message>
 </context>
+<context>
+    <name>HomePage</name>
+    <message>
+        <source>Professional LED Sign Letter Slicer</source>
+        <translation>专业的广告发光字切片软件</translation>
+    </message>
+    <message>
+        <source>One-click G-code  ·  Multiple Edge Types  ·  High Precision</source>
+        <translation>一键生成 G-code  ·  支持多种边型  ·  高效精准</translation>
+    </message>
+    <message>
+        <source>+ New Project</source>
+        <translation>+ 新建项目</translation>
+    </message>
+    <message>
+        <source>Open File</source>
+        <translation>打开文件</translation>
+    </message>
+    <message>
+        <source>Recent Projects</source>
+        <translation>最近项目</translation>
+    </message>
+    <message>
+        <source>Featured Cases</source>
+        <translation>精选案例</translation>
+    </message>
+    <message>
+        <source>View All -></source>
+        <translation>查看全部 -></translation>
+    </message>
+</context>
 </TS>
