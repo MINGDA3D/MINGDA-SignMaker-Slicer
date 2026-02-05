@@ -50,6 +50,7 @@ from src.business.undo_manager import (
 from src.business.settings_manager import (
     SettingsManager, init_settings_manager, get_settings_manager
 )
+from src.business.project_manager import ProjectManager
 from src.i18n import (
     init_translation_manager, get_translation_manager,
     SUPPORTED_LANGUAGES, RTL_LANGUAGES
@@ -68,6 +69,9 @@ class MainWindow(QMainWindow):
 
         # 初始化设置管理器
         self.settings_manager = init_settings_manager()
+
+        # 初始化项目管理器
+        self.project_manager = ProjectManager()
 
         # 数据
         self.contours: List[Contour] = []
@@ -138,7 +142,7 @@ class MainWindow(QMainWindow):
         self.title_bar.menu_action.connect(self._on_menu_action)
         self.title_bar.open_clicked.connect(self._on_open_file)
         self.title_bar.save_clicked.connect(self._on_save_project)
-        self.title_bar.export_clicked.connect(self._on_export_gcode)
+        self.title_bar.export_clicked.connect(self._on_show_export_menu)
         self.title_bar.undo_clicked.connect(self._on_undo)
         self.title_bar.redo_clicked.connect(self._on_redo)
         self.title_bar.slice_clicked.connect(self._on_slice)
@@ -602,7 +606,9 @@ class MainWindow(QMainWindow):
         actions = {
             "new": self._on_new_project,
             "open": self._on_open_file,
+            "open_project": self._on_open_project,
             "save": self._on_save_project,
+            "save_as": self._on_save_as,
             "export_gcode": self._on_export_gcode,
             "export_stl": self._on_export_stl,
             "export_baseplate": self._on_export_baseplate,
@@ -637,71 +643,196 @@ class MainWindow(QMainWindow):
         self._update_status(self.tr("New Project"))
 
     def _on_open_file(self):
-        """打开DXF/SVG文件"""
+        """打开DXF/SVG/SMP文件"""
         file_path, _ = QFileDialog.getOpenFileName(
             self,
             self.tr("Open File"),
             "",
-            self.tr("Supported Files (*.dxf *.svg);;DXF Files (*.dxf);;SVG Files (*.svg);;All Files (*)")
+            self.tr("Supported Files (*.dxf *.svg *.smp);;SignMaker Project (*.smp);;DXF Files (*.dxf);;SVG Files (*.svg);;All Files (*)")
         )
 
         if file_path:
             self._load_file(file_path)
+
+    def _on_open_project(self):
+        """专门打开项目文件（.smp）"""
+        file_path, _ = QFileDialog.getOpenFileName(
+            self,
+            self.tr("Open Project"),
+            "",
+            self.tr("SignMaker Project (*.smp);;All Files (*)")
+        )
+
+        if file_path:
+            self._load_project(file_path)
 
     def _load_file(self, file_path: str):
         """加载文件"""
         try:
             path = Path(file_path)
             suffix = path.suffix.lower()
-            if suffix == '.dxf':
+
+            if suffix == '.smp':
+                # 加载项目文件
+                self._load_project(file_path)
+            elif suffix == '.dxf':
                 new_contours = self.dxf_parser.parse(file_path)
+                self._load_contours(new_contours, path)
             elif suffix == '.svg':
                 new_contours = self.svg_parser.parse(file_path)
+                self._load_contours(new_contours, path)
             else:
                 QMessageBox.warning(self, self.tr("Unsupported Format"), self.tr("Format not supported: ") + path.suffix)
                 return
 
-            # 创建替换轮廓命令（可撤销）
-            cmd = ReplaceContoursCommand(
-                self.contours, new_contours,
-                self.tr("Load ") + path.name
-            )
-            self.undo_manager.push(cmd)
-
-            self.current_file = file_path
-            self.canvas.set_contours(self.contours)
-            self.canvas.fit_view()
-            self.project_panel.update_contours(self.contours)
-
-            self.setWindowTitle(f"MINGDA SignMaker - {path.name}")
-            self._update_status(self.tr("Loaded: {file}, {count} contours").format(file=path.name, count=len(self.contours)))
-            self.project_loaded.emit(file_path)
-
         except Exception as e:
             QMessageBox.critical(self, self.tr("Load Failed"), self.tr("Failed to load file:") + f"\n{e}")
 
+    def _load_contours(self, new_contours: List[Contour], path: Path):
+        """加载轮廓数据（从 DXF/SVG 导入）"""
+        # 创建替换轮廓命令（可撤销）
+        cmd = ReplaceContoursCommand(
+            self.contours, new_contours,
+            self.tr("Load ") + path.name
+        )
+        self.undo_manager.push(cmd)
+
+        self.current_file = str(path)
+        self.canvas.set_contours(self.contours)
+        self.canvas.fit_view()
+        self.project_panel.update_contours(self.contours)
+
+        self.setWindowTitle(f"MINGDA SignMaker - {path.name}")
+        self._update_status(self.tr("Loaded: {file}, {count} contours").format(file=path.name, count=len(self.contours)))
+        self.project_loaded.emit(str(path))
+
+    def _load_project(self, file_path: str):
+        """加载项目文件（.smp）"""
+        try:
+            project = self.project_manager.open_project(file_path)
+
+            # 清空撤销历史
+            self.undo_manager.clear()
+
+            # 更新数据（替换列表内容而非引用）
+            self.contours.clear()
+            self.contours.extend(project.contours)
+            self.slice_params = project.params
+            self.slice_result = None
+            self.current_file = file_path
+
+            # 更新UI
+            self.canvas.set_contours(self.contours)
+            self.canvas.fit_view()
+            self.project_panel.update_contours(self.contours)
+            self.param_panel.set_params(self.slice_params)
+
+            # 更新窗口标题
+            self.setWindowTitle(f"MINGDA SignMaker - {project.meta.name}")
+            self._update_status(self.tr("Project loaded: {name}, {count} contours").format(
+                name=project.meta.name,
+                count=len(self.contours)
+            ))
+            self.project_loaded.emit(file_path)
+
+        except Exception as e:
+            QMessageBox.critical(self, self.tr("Load Failed"), self.tr("Failed to load project:") + f"\n{e}")
+
     def _on_save_project(self):
         """保存项目"""
-        if not self.current_file:
+        if not self.current_file or not self.current_file.endswith('.smp'):
             self._on_save_as()
         else:
             self._save_project(self.current_file)
 
     def _on_save_as(self):
         """另存为"""
+        # 生成默认文件名
+        default_name = ""
+        if self.current_file:
+            default_name = Path(self.current_file).stem + ".smp"
+
         file_path, _ = QFileDialog.getSaveFileName(
             self,
             self.tr("Save Project"),
-            "",
+            default_name,
             self.tr("SignMaker Project (*.smp);;All Files (*)")
         )
         if file_path:
+            # 确保扩展名
+            if not file_path.lower().endswith('.smp'):
+                file_path += '.smp'
             self._save_project(file_path)
 
     def _save_project(self, file_path: str):
         """保存项目到文件"""
-        # TODO: 实现项目保存
-        self._update_status(self.tr("Project saved: ") + Path(file_path).name)
+        try:
+            # 获取当前参数
+            current_params = self.param_panel.get_params()
+
+            # 获取项目名称
+            project_name = Path(file_path).stem
+
+            # 创建或更新项目
+            if self.project_manager.current_project is None:
+                self.project_manager.new_project()
+
+            # 更新项目数据
+            self.project_manager.current_project.meta.name = project_name
+            self.project_manager.current_project.contours = self.contours
+            self.project_manager.current_project.params = current_params
+
+            # 保存
+            self.project_manager.save_project(file_path)
+
+            # 更新状态
+            self.current_file = file_path
+            self.setWindowTitle(f"MINGDA SignMaker - {project_name}")
+            self._update_status(self.tr("Project saved: ") + Path(file_path).name)
+
+            # 添加到最近文件列表
+            if self.settings_manager:
+                self.settings_manager.add_recent_file(file_path)
+
+        except Exception as e:
+            QMessageBox.critical(self, self.tr("Save Failed"), self.tr("Failed to save project:") + f"\n{e}")
+
+    def _on_show_export_menu(self):
+        """显示导出菜单"""
+        from PySide6.QtWidgets import QMenu
+        from PySide6.QtGui import QCursor
+
+        menu = QMenu(self)
+        menu.setStyleSheet("""
+            QMenu {
+                background-color: #161B22;
+                border: 1px solid #30363D;
+                border-radius: 6px;
+                padding: 4px;
+            }
+            QMenu::item {
+                background-color: transparent;
+                color: #C9D1D9;
+                padding: 8px 16px;
+                border-radius: 4px;
+            }
+            QMenu::item:selected {
+                background-color: #21262D;
+            }
+            QMenu::separator {
+                height: 1px;
+                background-color: #30363D;
+                margin: 4px 8px;
+            }
+        """)
+
+        menu.addAction(self.tr("Export G-code..."), self._on_export_gcode)
+        menu.addAction(self.tr("Export STL..."), self._on_export_stl)
+        menu.addSeparator()
+        menu.addAction(self.tr("Export Baseplate DXF..."), self._on_export_baseplate)
+        menu.addAction(self.tr("Export Panel DXF..."), self._on_export_panel)
+
+        menu.exec(QCursor.pos())
 
     def _on_export_gcode(self):
         """导出G-code"""

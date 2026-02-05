@@ -188,6 +188,30 @@
         <translation>项目已保存: </translation>
     </message>
     <message>
+        <source>Open Project</source>
+        <translation>打开项目</translation>
+    </message>
+    <message>
+        <source>Project loaded: {name}, {count} contours</source>
+        <translation>项目已加载: {name}, {count} 个轮廓</translation>
+    </message>
+    <message>
+        <source>Failed to load project:</source>
+        <translation>无法加载项目:</translation>
+    </message>
+    <message>
+        <source>Save Failed</source>
+        <translation>保存失败</translation>
+    </message>
+    <message>
+        <source>Failed to save project:</source>
+        <translation>无法保存项目:</translation>
+    </message>
+    <message>
+        <source>Supported Files (*.dxf *.svg *.smp);;SignMaker Project (*.smp);;DXF Files (*.dxf);;SVG Files (*.svg);;All Files (*)</source>
+        <translation>支持的文件 (*.dxf *.svg *.smp);;SignMaker项目 (*.smp);;DXF文件 (*.dxf);;SVG文件 (*.svg);;所有文件 (*)</translation>
+    </message>
+    <message>
         <source>Info</source>
         <translation>提示</translation>
     </message>
@@ -439,12 +463,24 @@
         <translation>打开</translation>
     </message>
     <message>
+        <source>Open File (DXF/SVG/SMP)</source>
+        <translation>打开文件 (DXF/SVG/SMP)</translation>
+    </message>
+    <message>
         <source>Save</source>
         <translation>保存</translation>
     </message>
     <message>
+        <source>Save Project</source>
+        <translation>保存项目</translation>
+    </message>
+    <message>
         <source>Export</source>
         <translation>导出</translation>
+    </message>
+    <message>
+        <source>Export Project</source>
+        <translation>导出项目</translation>
     </message>
     <message>
         <source>Undo</source>
@@ -483,8 +519,16 @@
         <translation>打开文件...</translation>
     </message>
     <message>
+        <source>Open Project...</source>
+        <translation>打开项目...</translation>
+    </message>
+    <message>
         <source>Save Project</source>
         <translation>保存项目</translation>
+    </message>
+    <message>
+        <source>Save As...</source>
+        <translation>另存为...</translation>
     </message>
     <message>
         <source>Export G-code...</source>

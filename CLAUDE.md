@@ -51,6 +51,11 @@ MINGDA SignMaker/
 │   ├── i18n/             # Internationalization (i18n)
 │   │   ├── __init__.py   # i18n module exports
 │   │   └── translation_manager.py # Translation manager
+│   ├── business/         # Business logic layer
+│   │   ├── project_manager.py  # Project management
+│   │   ├── project_format.py   # .smp file format (ZIP + binary)
+│   │   ├── undo_manager.py     # Undo/Redo system
+│   │   └── settings_manager.py # Settings persistence
 │   └── utils/            # Utility functions (planned)
 ├── translations/         # Qt translation files (.ts/.qm)
 │   ├── signmaker_zh_CN.ts  # Chinese translations
@@ -169,8 +174,27 @@ self.tr("Loaded: {file}, {count} contours").format(file=name, count=5)
 
 ### File Operations
 - DXF, SVG file import
+- Project save/load (.smp format - ZIP container with binary geometry)
 - G-code export (.gcode)
 - STL, PLT, DXF export (planned)
+
+### Project File Format (.smp)
+项目文件使用 ZIP 容器格式，包含：
+```
+project.smp (ZIP)
+├── manifest.json    # 项目元数据（JSON）
+├── params.json      # 切片参数（JSON）
+└── contours.bin     # 轮廓几何数据（二进制）
+```
+
+设计参考：
+- [3MF 格式](https://github.com/3MFConsortium/spec_core) - ZIP + XML 容器
+- [PrusaSlicer 二进制 G-code](https://help.prusa3d.com/article/binary-g-code_646763)
+
+优点：
+- 几何数据使用二进制格式，文件体积小、精度高
+- 参数使用 JSON 格式，便于调试和扩展
+- ZIP 压缩进一步减小文件大小
 
 ### Editing Operations
 - Undo/Redo
@@ -309,6 +333,7 @@ self.tr("Loaded: {file}, {count} contours").format(file=name, count=5)
 - [x] Parameter panel (src/ui/param_panel.py)
 - [x] Project panel (src/ui/project_panel.py)
 - [x] Undo/Redo system (src/business/undo_manager.py) - 21 tests passing
+- [x] Project save/load (src/business/project_manager.py) - .smp format, 12 tests passing
 
 ### In Progress
 - [ ] 3D preview widget
@@ -319,7 +344,6 @@ self.tr("Loaded: {file}, {count} contours").format(file=name, count=5)
 - [ ] Step/V-groove generation
 - [ ] Connected letters (连襟字)
 - [ ] Panel/baseplate infill patterns
-- [ ] Project save/load (.smp format)
 
 ## Commands Reference
 
