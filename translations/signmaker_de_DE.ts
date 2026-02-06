@@ -1114,4 +1114,23 @@ Kontrollpunkte: {points}</translation>
         <translation>Ansicht zentrieren</translation>
     </message>
 </context>
+<context>
+    <name>HomePage</name>
+    <message>
+        <source>Professional Illuminated Sign Slicer</source>
+        <translation>Professioneller Leuchtbuchstaben-Slicer</translation>
+    </message>
+    <message>
+        <source>One-click G-code  ·  Multiple Edge Types  ·  High Precision</source>
+        <translation>Ein-Klick-G-code  ·  Verschiedene Kantentypen  ·  Hohe Präzision</translation>
+    </message>
+    <message>
+        <source>+ New Project</source>
+        <translation>+ Neues Projekt</translation>
+    </message>
+    <message>
+        <source>Open File</source>
+        <translation>Datei öffnen</translation>
+    </message>
+</context>
 </TS>

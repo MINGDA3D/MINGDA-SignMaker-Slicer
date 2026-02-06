@@ -32,7 +32,7 @@ class TitleBar(QWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.current_nav = "project"
+        self.current_nav = "home"
         self._init_ui()
         self._apply_styles()
 
@@ -134,13 +134,13 @@ class TitleBar(QWidget):
         nav_layout.setAlignment(Qt.AlignmentFlag.AlignVCenter)
 
         self.btn_home = QPushButton(self.tr("Home"))
-        self.btn_home.setObjectName("navButton")
+        self.btn_home.setObjectName("navButtonActive")
         self.btn_home.setCursor(Qt.CursorShape.PointingHandCursor)
         self.btn_home.clicked.connect(lambda: self._on_nav_click("home"))
         nav_layout.addWidget(self.btn_home)
 
         self.btn_project = QPushButton(self.tr("Project"))
-        self.btn_project.setObjectName("navButtonActive")
+        self.btn_project.setObjectName("navButton")
         self.btn_project.setCursor(Qt.CursorShape.PointingHandCursor)
         self.btn_project.clicked.connect(lambda: self._on_nav_click("project"))
         nav_layout.addWidget(self.btn_project)

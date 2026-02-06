@@ -1114,4 +1114,23 @@ Punti di controllo: {points}</translation>
         <translation>Centra vista</translation>
     </message>
 </context>
+<context>
+    <name>HomePage</name>
+    <message>
+        <source>Professional Illuminated Sign Slicer</source>
+        <translation>Slicer Professionale per Lettere Luminose</translation>
+    </message>
+    <message>
+        <source>One-click G-code  ·  Multiple Edge Types  ·  High Precision</source>
+        <translation>G-code con un clic  ·  Molteplici Tipi di Bordo  ·  Alta Precisione</translation>
+    </message>
+    <message>
+        <source>+ New Project</source>
+        <translation>+ Nuovo Progetto</translation>
+    </message>
+    <message>
+        <source>Open File</source>
+        <translation>Apri File</translation>
+    </message>
+</context>
 </TS>

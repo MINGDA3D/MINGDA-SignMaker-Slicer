@@ -665,6 +665,10 @@ class MainWindow(QMainWindow):
         self.setWindowTitle(self.tr("MINGDA SignMaker - New Project"))
         self._update_status(self.tr("New Project"))
 
+        # 切换到项目页面
+        self.title_bar.set_nav("project")
+        self._on_nav_changed("project")
+
     def _on_open_file(self):
         """打开DXF/SVG/SMP文件"""
         file_path, _ = QFileDialog.getOpenFileName(

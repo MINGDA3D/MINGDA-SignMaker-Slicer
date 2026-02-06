@@ -1114,4 +1114,23 @@ Control points: {points}</source>
         <translation>表示を中央に</translation>
     </message>
 </context>
+<context>
+    <name>HomePage</name>
+    <message>
+        <source>Professional Illuminated Sign Slicer</source>
+        <translation>プロフェッショナル発光文字スライサー</translation>
+    </message>
+    <message>
+        <source>One-click G-code  ·  Multiple Edge Types  ·  High Precision</source>
+        <translation>ワンクリックGコード生成  ·  複数のエッジタイプ  ·  高精度</translation>
+    </message>
+    <message>
+        <source>+ New Project</source>
+        <translation>+ 新規プロジェクト</translation>
+    </message>
+    <message>
+        <source>Open File</source>
+        <translation>ファイルを開く</translation>
+    </message>
+</context>
 </TS>

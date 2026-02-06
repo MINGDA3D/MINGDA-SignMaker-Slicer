@@ -1114,4 +1114,23 @@ Control points: {points}</translation>
         <translation>Center View</translation>
     </message>
 </context>
+<context>
+    <name>HomePage</name>
+    <message>
+        <source>Professional Illuminated Sign Slicer</source>
+        <translation>Professional Illuminated Sign Slicer</translation>
+    </message>
+    <message>
+        <source>One-click G-code  ·  Multiple Edge Types  ·  High Precision</source>
+        <translation>One-click G-code  ·  Multiple Edge Types  ·  High Precision</translation>
+    </message>
+    <message>
+        <source>+ New Project</source>
+        <translation>+ New Project</translation>
+    </message>
+    <message>
+        <source>Open File</source>
+        <translation>Open File</translation>
+    </message>
+</context>
 </TS>

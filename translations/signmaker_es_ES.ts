@@ -1114,4 +1114,23 @@ Puntos de control: {points}</translation>
         <translation>Centrar vista</translation>
     </message>
 </context>
+<context>
+    <name>HomePage</name>
+    <message>
+        <source>Professional Illuminated Sign Slicer</source>
+        <translation>Cortador Profesional de Letras Luminosas</translation>
+    </message>
+    <message>
+        <source>One-click G-code  ·  Multiple Edge Types  ·  High Precision</source>
+        <translation>G-code con un clic  ·  Múltiples Tipos de Borde  ·  Alta Precisión</translation>
+    </message>
+    <message>
+        <source>+ New Project</source>
+        <translation>+ Nuevo Proyecto</translation>
+    </message>
+    <message>
+        <source>Open File</source>
+        <translation>Abrir Archivo</translation>
+    </message>
+</context>
 </TS>

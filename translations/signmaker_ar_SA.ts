@@ -1114,4 +1114,23 @@ Control points: {points}</source>
         <translation>توسيط العرض</translation>
     </message>
 </context>
+<context>
+    <name>HomePage</name>
+    <message>
+        <source>Professional Illuminated Sign Slicer</source>
+        <translation>مقطّع احترافي للحروف المضيئة</translation>
+    </message>
+    <message>
+        <source>One-click G-code  ·  Multiple Edge Types  ·  High Precision</source>
+        <translation>G-code بنقرة واحدة  ·  أنواع حواف متعددة  ·  دقة عالية</translation>
+    </message>
+    <message>
+        <source>+ New Project</source>
+        <translation>+ مشروع جديد</translation>
+    </message>
+    <message>
+        <source>Open File</source>
+        <translation>فتح ملف</translation>
+    </message>
+</context>
 </TS>

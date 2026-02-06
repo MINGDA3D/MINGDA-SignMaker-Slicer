@@ -1114,4 +1114,23 @@ Control points: {points}</source>
         <translation>화면 중앙</translation>
     </message>
 </context>
+<context>
+    <name>HomePage</name>
+    <message>
+        <source>Professional Illuminated Sign Slicer</source>
+        <translation>전문 조명 간판 슬라이서</translation>
+    </message>
+    <message>
+        <source>One-click G-code  ·  Multiple Edge Types  ·  High Precision</source>
+        <translation>원클릭 G-code 생성  ·  다양한 엣지 유형  ·  고정밀도</translation>
+    </message>
+    <message>
+        <source>+ New Project</source>
+        <translation>+ 새 프로젝트</translation>
+    </message>
+    <message>
+        <source>Open File</source>
+        <translation>파일 열기</translation>
+    </message>
+</context>
 </TS>

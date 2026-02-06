@@ -1177,7 +1177,7 @@ Control points: {points}</source>
 <context>
     <name>HomePage</name>
     <message>
-        <source>Professional LED Sign Letter Slicer</source>
+        <source>Professional Illuminated Sign Slicer</source>
         <translation>专业的广告发光字切片软件</translation>
     </message>
     <message>

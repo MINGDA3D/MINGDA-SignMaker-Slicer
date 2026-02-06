@@ -1114,4 +1114,23 @@ Kontrol noktalari: {points}</translation>
         <translation>Görünümü Ortala</translation>
     </message>
 </context>
+<context>
+    <name>HomePage</name>
+    <message>
+        <source>Professional Illuminated Sign Slicer</source>
+        <translation>Profesyonel Işıklı Tabela Dilimleyici</translation>
+    </message>
+    <message>
+        <source>One-click G-code  ·  Multiple Edge Types  ·  High Precision</source>
+        <translation>Tek tıkla G-code  ·  Çoklu Kenar Türleri  ·  Yüksek Hassasiyet</translation>
+    </message>
+    <message>
+        <source>+ New Project</source>
+        <translation>+ Yeni Proje</translation>
+    </message>
+    <message>
+        <source>Open File</source>
+        <translation>Dosya Aç</translation>
+    </message>
+</context>
 </TS>

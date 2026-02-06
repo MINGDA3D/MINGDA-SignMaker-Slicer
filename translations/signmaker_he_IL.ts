@@ -1114,4 +1114,23 @@ Control points: {points}</source>
         <translation>מרכז תצוגה</translation>
     </message>
 </context>
+<context>
+    <name>HomePage</name>
+    <message>
+        <source>Professional Illuminated Sign Slicer</source>
+        <translation>פורס מקצועי לאותיות מוארות</translation>
+    </message>
+    <message>
+        <source>One-click G-code  ·  Multiple Edge Types  ·  High Precision</source>
+        <translation>G-code בלחיצה אחת  ·  סוגי קצוות מרובים  ·  דיוק גבוה</translation>
+    </message>
+    <message>
+        <source>+ New Project</source>
+        <translation>+ פרויקט חדש</translation>
+    </message>
+    <message>
+        <source>Open File</source>
+        <translation>פתח קובץ</translation>
+    </message>
+</context>
 </TS>

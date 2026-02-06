@@ -319,8 +319,15 @@ class HomePage(QWidget):
         self._load_demo_data()
 
     def _load_demo_data(self):
-        """加载演示数据"""
-        self._recent_projects = [
+        """加载演示数据 - 暂时屏蔽最近项目和精选案例"""
+        # 暂时清空数据
+        self._recent_projects = []
+        self._featured_cases = []
+        self._cards = []
+        return
+
+        # 以下为原始演示数据（已屏蔽）
+        self._recent_projects_disabled = [
             {"name": "发光字-门头招牌.sms", "date": "2025-12-25 14:30:04", "char": "洋", "path": ""},
             {"name": "连襟字-客户订单.sms", "date": "2025-12-24 16:45:22", "char": "明", "path": ""},
             {"name": "包边字-测试样品.sms", "date": "2025-12-22 09:15:38", "char": "达", "path": ""},
@@ -417,6 +424,14 @@ class HomePage(QWidget):
         h = self.height()
 
         # ============================================
+        # 动态计算垂直居中位置
+        # ============================================
+        # 内容总高度：标题(60) + 副标题(35) + 功能点(35) + 间距(30) + 按钮(48) = 208
+        content_height = 208
+        hero_y = (h - content_height) // 2
+        btn_y = hero_y + 160
+
+        # ============================================
         # 背景：深邃渐变
         # ============================================
         bg_color = hex_to_qcolor(COLORS["bg_base"])
@@ -425,9 +440,9 @@ class HomePage(QWidget):
         # ============================================
         # 多层光晕效果
         # ============================================
-        self._draw_soft_glow(painter, w // 2, 0, 600, hex_to_qcolor(COLORS["accent_primary"]), 0.06)
-        self._draw_soft_glow(painter, w // 2 - 300, 50, 400, hex_to_qcolor(COLORS["info"]), 0.04)
-        self._draw_soft_glow(painter, w // 2 + 300, 50, 400, hex_to_qcolor(COLORS["accent_secondary"]), 0.04)
+        self._draw_soft_glow(painter, w // 2, h // 2 - 100, 600, hex_to_qcolor(COLORS["accent_primary"]), 0.06)
+        self._draw_soft_glow(painter, w // 2 - 300, h // 2 - 50, 400, hex_to_qcolor(COLORS["info"]), 0.04)
+        self._draw_soft_glow(painter, w // 2 + 300, h // 2 - 50, 400, hex_to_qcolor(COLORS["accent_secondary"]), 0.04)
 
         # ============================================
         # 英雄区域
@@ -438,29 +453,29 @@ class HomePage(QWidget):
         painter.setFont(font_display)
         painter.setPen(hex_to_qcolor(COLORS["text_primary"]))
 
-        title = "SignMakerSlicer"
+        title = "MINGDA SignMaker"
         fm = QFontMetrics(font_display)
         title_w = fm.horizontalAdvance(title)
         title_x = (w - title_w) // 2
-        painter.drawText(title_x, self.hero_y + 40, title)
+        painter.drawText(title_x, hero_y + 40, title)
 
         # 副标题（渐变色）
-        subtitle = "专业的广告发光字切片软件"
+        subtitle = self.tr("Professional Illuminated Sign Slicer")
         font_h2 = QFont("Microsoft YaHei UI", 12)
         self._draw_gradient_text(
             painter, subtitle, font_h2,
-            self.hero_y + 75,
+            hero_y + 75,
             hex_to_qcolor(COLORS["accent_primary"]),
             hex_to_qcolor(COLORS["accent_secondary"]),
             w
         )
 
         # 功能点（渐变色）
-        features = "一键生成 G-code  ·  支持多种边型  ·  高效精���"
+        features = self.tr("One-click G-code  ·  Multiple Edge Types  ·  High Precision")
         font_body = QFont("Microsoft YaHei UI", 9)
         self._draw_gradient_text(
             painter, features, font_body,
-            self.hero_y + 108,
+            hero_y + 108,
             QColor(6, 182, 212),
             QColor(168, 85, 247),
             w
@@ -476,7 +491,7 @@ class HomePage(QWidget):
         btn2_x = btn1_x + btn_w + btn_gap
 
         # 新建项目按钮（蓝色填充）
-        btn1_rect = QRectF(btn1_x, self.btn_y, btn_w, btn_h)
+        btn1_rect = QRectF(btn1_x, btn_y, btn_w, btn_h)
         painter.setPen(Qt.PenStyle.NoPen)
         painter.setBrush(hex_to_qcolor(COLORS["accent_primary"]))
         painter.drawRoundedRect(btn1_rect, 10, 10)
@@ -485,81 +500,28 @@ class HomePage(QWidget):
         painter.setFont(font_btn)
         painter.setPen(QColor(255, 255, 255))
         fm = QFontMetrics(font_btn)
-        btn1_text = "+ 新建项目"
+        btn1_text = self.tr("+ New Project")
         btn1_tw = fm.horizontalAdvance(btn1_text)
-        painter.drawText(int(btn1_x + (btn_w - btn1_tw) / 2), int(self.btn_y + btn_h / 2 + 5), btn1_text)
+        painter.drawText(int(btn1_x + (btn_w - btn1_tw) / 2), int(btn_y + btn_h / 2 + 5), btn1_text)
 
         # 打开文件按钮（边框）
-        btn2_rect = QRectF(btn2_x, self.btn_y, btn_w, btn_h)
+        btn2_rect = QRectF(btn2_x, btn_y, btn_w, btn_h)
         painter.setPen(QPen(hex_to_qcolor(COLORS["border_default"]), 1))
         painter.setBrush(hex_to_qcolor(COLORS["bg_card"]))
         painter.drawRoundedRect(btn2_rect, 10, 10)
 
         painter.setPen(hex_to_qcolor(COLORS["text_secondary"]))
-        btn2_text = "打开文件"
+        btn2_text = self.tr("Open File")
         btn2_tw = fm.horizontalAdvance(btn2_text)
-        painter.drawText(int(btn2_x + (btn_w - btn2_tw) / 2), int(self.btn_y + btn_h / 2 + 5), btn2_text)
+        painter.drawText(int(btn2_x + (btn_w - btn2_tw) / 2), int(btn_y + btn_h / 2 + 5), btn2_text)
 
         # 保存按钮区域用于点击检测
         self._btn1_rect = btn1_rect
         self._btn2_rect = btn2_rect
 
         # ============================================
-        # 标签栏
+        # 标签栏和卡片区域 - 暂时屏蔽
         # ============================================
-        tab1_text = "最近项目"
-        tab2_text = "精选案例"
-
-        font_h1 = QFont("Microsoft YaHei UI", 18)
-        font_h1.setWeight(QFont.Weight.Bold)
-        painter.setFont(font_h1)
-
-        fm = QFontMetrics(font_h1)
-        tab1_w = fm.horizontalAdvance(tab1_text)
-        tab2_w = fm.horizontalAdvance(tab2_text)
-
-        tab_x = 80
-        divider_x = tab_x + tab1_w + 16
-
-        # 最近项目标签
-        if self._current_tab == 0:
-            painter.setPen(hex_to_qcolor(COLORS["text_primary"]))
-        else:
-            painter.setPen(hex_to_qcolor(COLORS["text_muted"]))
-        painter.drawText(tab_x, self.section_y + 20, tab1_text)
-
-        # 选中下划线
-        if self._current_tab == 0:
-            painter.setPen(Qt.PenStyle.NoPen)
-            painter.setBrush(hex_to_qcolor(COLORS["accent_primary"]))
-            painter.drawRoundedRect(QRectF(tab_x, self.section_y + 32, tab1_w, 3), 1, 1)
-
-        # 分隔符
-        painter.setPen(hex_to_qcolor(COLORS["text_muted"]))
-        painter.drawText(divider_x, self.section_y + 20, "|")
-
-        # 精选案例标签
-        tab2_x = divider_x + 16
-        if self._current_tab == 1:
-            painter.setPen(hex_to_qcolor(COLORS["text_primary"]))
-        else:
-            painter.setPen(hex_to_qcolor(COLORS["text_muted"]))
-        painter.drawText(tab2_x, self.section_y + 20, tab2_text)
-
-        if self._current_tab == 1:
-            painter.setPen(Qt.PenStyle.NoPen)
-            painter.setBrush(hex_to_qcolor(COLORS["accent_primary"]))
-            painter.drawRoundedRect(QRectF(tab2_x, self.section_y + 32, tab2_w, 3), 1, 1)
-
-        # 保存标签区域用于点击检测
-        self._tab1_rect = QRectF(tab_x, self.section_y, tab1_w, 40)
-        self._tab2_rect = QRectF(tab2_x, self.section_y, tab2_w, 40)
-
-        # 查看全部链接
-        font_small = QFont("Microsoft YaHei UI", 8)
-        painter.setFont(font_small)
-        painter.setPen(hex_to_qcolor(COLORS["accent_secondary"]))
-        painter.drawText(w - 130, self.section_y + 26, "查看全部 ->")
 
     def _draw_soft_glow(self, painter: QPainter, cx: int, cy: int, radius: int, color: QColor, intensity: float):
         """绘制柔和光晕"""

@@ -1114,4 +1114,23 @@ Control points: {points}</source>
         <translation>Центрувати вид</translation>
     </message>
 </context>
+<context>
+    <name>HomePage</name>
+    <message>
+        <source>Professional Illuminated Sign Slicer</source>
+        <translation>Професійний слайсер для світлових букв</translation>
+    </message>
+    <message>
+        <source>One-click G-code  ·  Multiple Edge Types  ·  High Precision</source>
+        <translation>G-код в один клік  ·  Багато типів кромок  ·  Висока точність</translation>
+    </message>
+    <message>
+        <source>+ New Project</source>
+        <translation>+ Новий проект</translation>
+    </message>
+    <message>
+        <source>Open File</source>
+        <translation>Відкрити файл</translation>
+    </message>
+</context>
 </TS>
