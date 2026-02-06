@@ -757,9 +757,9 @@ class GCodeParams:
 class MachineParams:
     """机器设置参数"""
     name: str = "MINGDA"
-    bed_width: float = 400.0
-    bed_depth: float = 400.0
-    bed_height: float = 500.0
+    bed_width: float = 800.0    # 发光字专用打印平台宽度
+    bed_depth: float = 1200.0   # 发光字专用打印平台深度
+    bed_height: float = 100.0   # 发光字打印高度
     nozzle_diameter: float = 0.8
     extruder_count: int = 2
 
@@ -1115,9 +1115,9 @@ def deserialize_params(data: dict) -> SliceParams:
     if "machine" in data:
         machine_data = data["machine"]
         params.machine.name = machine_data.get("name", "MINGDA")
-        params.machine.bed_width = machine_data.get("bed_width", 400.0)
-        params.machine.bed_depth = machine_data.get("bed_depth", 400.0)
-        params.machine.bed_height = machine_data.get("bed_height", 500.0)
+        params.machine.bed_width = machine_data.get("bed_width", 800.0)
+        params.machine.bed_depth = machine_data.get("bed_depth", 1200.0)
+        params.machine.bed_height = machine_data.get("bed_height", 100.0)
         params.machine.nozzle_diameter = machine_data.get("nozzle_diameter", 0.8)
         params.machine.extruder_count = machine_data.get("extruder_count", 2)
 

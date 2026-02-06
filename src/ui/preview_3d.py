@@ -16,9 +16,9 @@ from typing import List, Optional, Tuple
 from PySide6.QtCore import Qt, Signal, QPoint, QTimer
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QSlider, QLabel,
-    QPushButton, QFrame, QSizePolicy
+    QPushButton, QFrame, QSizePolicy, QCheckBox
 )
-from PySide6.QtGui import QMouseEvent, QWheelEvent
+from PySide6.QtGui import QMouseEvent, QWheelEvent, QPainter, QPen, QColor
 
 try:
     from PySide6.QtOpenGLWidgets import QOpenGLWidget
@@ -75,10 +75,10 @@ class Preview3DWidget(QOpenGLWidget):
         self.pan_x: float = 0.0
         self.pan_y: float = 0.0
 
-        # 打印平台尺寸 (mm)
-        self.bed_width: float = 400.0
-        self.bed_depth: float = 400.0
-        self.bed_height: float = 500.0
+        # 打印平台尺寸 (mm) - 发光字专用
+        self.bed_width: float = 800.0   # X方向
+        self.bed_depth: float = 1200.0  # Y方向
+        self.bed_height: float = 100.0  # Z方向最大高度
 
         # 模型边界信息
         self.model_center: Tuple[float, float, float] = (0, 0, 0)
@@ -229,16 +229,19 @@ class Preview3DWidget(QOpenGLWidget):
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
 
-        # 计算观察距离
-        if self.layers and self.model_size > 0:
-            view_distance = self.model_size * 3.0 / self.zoom
-            cx, cy, cz = self.model_center
-        else:
-            view_distance = 300.0 / self.zoom
-            cx, cy, cz = 0, 0, 0
+        # 计算观察距离和中心点
+        # 使用打印平台中心作为观察点，而不是模型中心
+        platform_center_x = self.bed_width / 2
+        platform_center_y = self.bed_depth / 2
+        platform_center_z = self.bed_height / 2
+
+        # 观察距离基于平台尺寸
+        platform_diagonal = math.sqrt(self.bed_width**2 + self.bed_depth**2 + self.bed_height**2)
+        view_distance = platform_diagonal * 1.5 / self.zoom
+
+        cx, cy, cz = platform_center_x, platform_center_y, platform_center_z
 
         # 设置相机位置（使用简化的视角计算）
-        import math
         # 将角度转换为弧度
         pitch = math.radians(self.rotation_x)
         yaw = math.radians(self.rotation_z)
@@ -257,17 +260,16 @@ class Preview3DWidget(QOpenGLWidget):
         # 应用平移
         glTranslatef(self.pan_x, self.pan_y, 0)
 
-        # 绘制场景 - 在模型中心位置绘制辅助元素
-        cx, cy, cz = self.model_center if self.layers else (0, 0, 0)
-
+        # 绘制场景 - 平台从原点开始，不居中
         if self.show_platform:
-            self._draw_platform_at(cx, cy)
+            self._draw_platform()
 
         if self.show_grid:
-            self._draw_grid_at(cx, cy)
+            self._draw_grid()
 
         if self.show_axes:
-            self._draw_axes_at(cx, cy, cz)
+            # 坐标轴在原点显示
+            self._draw_axes_at(0, 0, 0)
 
         # 绘制切片层
         self._draw_layers()
@@ -290,73 +292,88 @@ class Preview3DWidget(QOpenGLWidget):
         gluPerspective(fov, aspect, near, far)
 
     def _draw_platform(self):
-        """绘制打印平台（在原点）"""
-        self._draw_platform_at(0, 0)
+        """绘制打印平台（从原点开始，不居中）"""
+        w = self.bed_width
+        d = self.bed_depth
+        h = self.bed_height
 
-    def _draw_platform_at(self, cx: float, cy: float):
-        """绘制打印平台（在指定中心）"""
-        hw = self.bed_width / 2
-        hd = self.bed_depth / 2
-
-        # 平台边框
-        glColor4f(0.3, 0.4, 0.5, 1.0)
+        # 1. 绘制完整的3D打印区域边框（绿色立方体框架）
+        glColor4f(0.3, 0.8, 0.3, 0.8)  # 绿色
         glLineWidth(2.0)
+
+        # 底面四条边
         glBegin(GL_LINE_LOOP)
-        glVertex3f(cx - hw, cy - hd, 0)
-        glVertex3f(cx + hw, cy - hd, 0)
-        glVertex3f(cx + hw, cy + hd, 0)
-        glVertex3f(cx - hw, cy + hd, 0)
+        glVertex3f(0, 0, 0)
+        glVertex3f(w, 0, 0)
+        glVertex3f(w, d, 0)
+        glVertex3f(0, d, 0)
         glEnd()
 
-        # 平台表面（半透明）
-        glColor4f(0.15, 0.2, 0.25, 0.3)
+        # 顶面四条边
+        glBegin(GL_LINE_LOOP)
+        glVertex3f(0, 0, h)
+        glVertex3f(w, 0, h)
+        glVertex3f(w, d, h)
+        glVertex3f(0, d, h)
+        glEnd()
+
+        # 四条竖边
+        glBegin(GL_LINES)
+        glVertex3f(0, 0, 0)
+        glVertex3f(0, 0, h)
+
+        glVertex3f(w, 0, 0)
+        glVertex3f(w, 0, h)
+
+        glVertex3f(w, d, 0)
+        glVertex3f(w, d, h)
+
+        glVertex3f(0, d, 0)
+        glVertex3f(0, d, h)
+        glEnd()
+
+        # 2. 平台表面（深色半透明）
+        glColor4f(0.1, 0.12, 0.15, 0.2)
         glBegin(GL_QUADS)
-        glVertex3f(cx - hw, cy - hd, 0)
-        glVertex3f(cx + hw, cy - hd, 0)
-        glVertex3f(cx + hw, cy + hd, 0)
-        glVertex3f(cx - hw, cy + hd, 0)
+        glVertex3f(0, 0, 0)
+        glVertex3f(w, 0, 0)
+        glVertex3f(w, d, 0)
+        glVertex3f(0, d, 0)
         glEnd()
 
         glLineWidth(self.line_width)
 
     def _draw_grid(self):
-        """绘制网格（在原点）"""
-        self._draw_grid_at(0, 0)
+        """绘制网格（从原点开始，20mm间距）"""
+        w = self.bed_width
+        d = self.bed_depth
+        grid_spacing = 20.0  # 20mm 网格间距
 
-    def _draw_grid_at(self, cx: float, cy: float):
-        """绘制网格（在指定中心）"""
-        hw = self.bed_width / 2
-        hd = self.bed_depth / 2
-        grid_spacing = 50.0  # 50mm 网格（适合大模型）
-
-        glColor4f(0.2, 0.25, 0.3, 0.5)
+        glColor4f(0.2, 0.25, 0.3, 0.4)
         glLineWidth(1.0)
         glBegin(GL_LINES)
 
-        # X方向线
-        y = cy - hd
-        while y <= cy + hd:
-            glVertex3f(cx - hw, y, 0)
-            glVertex3f(cx + hw, y, 0)
-            y += grid_spacing
-
-        # Y方向线
-        x = cx - hw
-        while x <= cx + hw:
-            glVertex3f(x, cy - hd, 0)
-            glVertex3f(x, cy + hd, 0)
+        # Y方向线（平行于Y轴）
+        x = 0.0
+        while x <= w:
+            glVertex3f(x, 0, 0)
+            glVertex3f(x, d, 0)
             x += grid_spacing
+
+        # X方向线（平行于X轴）
+        y = 0.0
+        while y <= d:
+            glVertex3f(0, y, 0)
+            glVertex3f(w, y, 0)
+            y += grid_spacing
 
         glEnd()
         glLineWidth(self.line_width)
 
-    def _draw_axes(self):
-        """绘制坐标轴（在原点）"""
-        self._draw_axes_at(0, 0, 0)
-
     def _draw_axes_at(self, cx: float, cy: float, cz: float):
         """绘制坐标轴（在指定位置）"""
-        axis_length = max(100.0, self.model_size * 0.3) if self.layers else 50.0
+        # 坐标轴长度固定为100mm，便于识别
+        axis_length = 100.0
 
         glLineWidth(3.0)
         glBegin(GL_LINES)
@@ -382,8 +399,7 @@ class Preview3DWidget(QOpenGLWidget):
     def _draw_layers(self):
         """绘制切片层"""
         if not self.layers:
-            # 没有切片数据时绘制测试立方体
-            self._draw_test_cube()
+            # 没有切片数据时不绘制任何东西
             return
 
         # 确定要绘制的层范围
@@ -536,7 +552,11 @@ class Preview3D(QWidget):
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(0)
 
-        # 3D预览组件
+        # 顶部工具栏（显示选项）
+        top_toolbar = self._create_top_toolbar()
+        layout.addWidget(top_toolbar)
+
+        # 3D预览组件（直接占满中间区域）
         self.gl_widget = Preview3DWidget(self)
         self.gl_widget.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         layout.addWidget(self.gl_widget, 1)
@@ -544,6 +564,105 @@ class Preview3D(QWidget):
         # 底部控制栏
         control_bar = self._create_control_bar()
         layout.addWidget(control_bar)
+
+    def _create_top_toolbar(self) -> QFrame:
+        """创建顶部工具栏（显示选项）"""
+        toolbar = QFrame()
+        toolbar.setStyleSheet("""
+            QFrame {
+                background-color: #161B22;
+                border-bottom: 1px solid #30363D;
+            }
+            QCheckBox {
+                color: #C9D1D9;
+                padding: 6px 12px;
+                spacing: 6px;
+            }
+            QCheckBox::indicator {
+                width: 16px;
+                height: 16px;
+                border: 1px solid #30363D;
+                border-radius: 3px;
+                background-color: #0D1117;
+            }
+            QCheckBox::indicator:checked {
+                background-color: #58A6FF;
+                border-color: #58A6FF;
+            }
+            QCheckBox::indicator:hover {
+                border-color: #58A6FF;
+            }
+        """)
+
+        layout = QHBoxLayout(toolbar)
+        layout.setContentsMargins(16, 8, 16, 8)
+        layout.setSpacing(12)
+
+        # 显示选项复选框
+        self.cb_outer_wall = QCheckBox(self.tr("外壳"))
+        self.cb_outer_wall.setChecked(True)
+        self.cb_outer_wall.toggled.connect(self._on_display_option_changed)
+        layout.addWidget(self.cb_outer_wall)
+
+        self.cb_inner_wall = QCheckBox(self.tr("内壳"))
+        self.cb_inner_wall.setChecked(True)
+        self.cb_inner_wall.toggled.connect(self._on_display_option_changed)
+        layout.addWidget(self.cb_inner_wall)
+
+        self.cb_fill = QCheckBox(self.tr("填充"))
+        self.cb_fill.setChecked(True)
+        self.cb_fill.toggled.connect(self._on_display_option_changed)
+        layout.addWidget(self.cb_fill)
+
+        self.cb_solid = QCheckBox(self.tr("实边"))
+        self.cb_solid.setChecked(True)
+        self.cb_solid.toggled.connect(self._on_display_option_changed)
+        layout.addWidget(self.cb_solid)
+
+        self.cb_color_change = QCheckBox(self.tr("换色"))
+        self.cb_color_change.setChecked(True)
+        self.cb_color_change.toggled.connect(self._on_display_option_changed)
+        layout.addWidget(self.cb_color_change)
+
+        self.cb_bottom = QCheckBox(self.tr("底面"))
+        self.cb_bottom.setChecked(True)
+        self.cb_bottom.toggled.connect(self._on_display_option_changed)
+        layout.addWidget(self.cb_bottom)
+
+        self.cb_top = QCheckBox(self.tr("顶面"))
+        self.cb_top.setChecked(True)
+        self.cb_top.toggled.connect(self._on_display_option_changed)
+        layout.addWidget(self.cb_top)
+
+        layout.addStretch()
+
+        # 右侧工具按钮
+        search_btn = QPushButton(self.tr("图层编辑"))
+        search_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #21262D;
+                color: #8B949E;
+                border: 1px solid #30363D;
+                border-radius: 4px;
+                padding: 4px 12px;
+            }
+            QPushButton:hover {
+                background-color: #30363D;
+                border-color: #58A6FF;
+            }
+        """)
+        layout.addWidget(search_btn)
+
+        filter_btn = QPushButton(self.tr("层数编辑"))
+        filter_btn.setStyleSheet(search_btn.styleSheet())
+        layout.addWidget(filter_btn)
+
+        return toolbar
+
+    def _on_display_option_changed(self):
+        """显示选项变化时的处理"""
+        # TODO: 根据复选框状态过滤显示的路径类型
+        self.gl_widget.update()
 
     def _create_control_bar(self) -> QFrame:
         """创建底部控制栏"""
@@ -558,18 +677,22 @@ class Preview3D(QWidget):
                 color: #C9D1D9;
                 border: 1px solid #30363D;
                 border-radius: 4px;
-                padding: 4px 8px;
-                min-width: 60px;
+                padding: 6px 12px;
+                min-width: 48px;
+                min-height: 32px;
+                font-size: 13px;
             }
             QPushButton:hover {
                 background-color: #30363D;
                 border-color: #58A6FF;
             }
-            QPushButton:pressed {
+            QPushButton:pressed, QPushButton:checked {
                 background-color: #0D1117;
+                border-color: #58A6FF;
             }
             QLabel {
                 color: #8B949E;
+                font-size: 12px;
             }
             QSlider::groove:horizontal {
                 background: #21262D;
@@ -590,56 +713,108 @@ class Preview3D(QWidget):
         """)
 
         layout = QHBoxLayout(bar)
-        layout.setContentsMargins(10, 6, 10, 6)
-        layout.setSpacing(10)
+        layout.setContentsMargins(12, 8, 12, 8)
+        layout.setSpacing(8)
 
-        # 视角预设按钮
-        view_label = QLabel(self.tr("View:"))
-        layout.addWidget(view_label)
+        # 左侧：视角切换按钮（正、俯、侧、透）
+        self.btn_front = QPushButton(self.tr("正"))
+        self.btn_front.setCheckable(True)
+        self.btn_front.clicked.connect(lambda: self._set_view_and_highlight("front"))
+        layout.addWidget(self.btn_front)
 
-        for name, preset in [(self.tr("Top"), "top"), (self.tr("Front"), "front"), (self.tr("Side"), "right"), (self.tr("Isometric"), "iso")]:
-            btn = QPushButton(name)
-            btn.clicked.connect(lambda checked, p=preset: self.gl_widget.set_view_preset(p))
-            layout.addWidget(btn)
+        self.btn_top = QPushButton(self.tr("俯"))
+        self.btn_top.setCheckable(True)
+        self.btn_top.clicked.connect(lambda: self._set_view_and_highlight("top"))
+        layout.addWidget(self.btn_top)
 
-        # 重置按钮
-        reset_btn = QPushButton(self.tr("Reset"))
-        reset_btn.clicked.connect(self.gl_widget.reset_view)
-        layout.addWidget(reset_btn)
+        self.btn_side = QPushButton(self.tr("侧"))
+        self.btn_side.setCheckable(True)
+        self.btn_side.clicked.connect(lambda: self._set_view_and_highlight("right"))
+        layout.addWidget(self.btn_side)
+
+        self.btn_iso = QPushButton(self.tr("透"))
+        self.btn_iso.setCheckable(True)
+        self.btn_iso.setChecked(True)  # 默认等轴测视图
+        self.btn_iso.clicked.connect(lambda: self._set_view_and_highlight("iso"))
+        layout.addWidget(self.btn_iso)
+
+        # 存储视图按钮以便管理选中状态
+        self.view_buttons = [self.btn_front, self.btn_top, self.btn_side, self.btn_iso]
+
+        layout.addSpacing(20)
+
+        # 中间：坐标和速度显示
+        self.coord_label = QLabel("X: 342.652    Y: 521.196    Z: 26.700")
+        self.coord_label.setStyleSheet("color: #C9D1D9; font-family: Consolas;")
+        layout.addWidget(self.coord_label)
+
+        layout.addSpacing(20)
+
+        self.speed_label = QLabel("Speed:    50")
+        self.speed_label.setStyleSheet("color: #8B949E; font-family: Consolas;")
+        layout.addWidget(self.speed_label)
 
         layout.addStretch()
 
-        # 层数控制
-        self.layer_label = QLabel(self.tr("Layer: 0/0"))
-        layout.addWidget(self.layer_label)
-
+        # 右侧：层数控制
         self.layer_slider = QSlider(Qt.Orientation.Horizontal)
         self.layer_slider.setMinimum(0)
         self.layer_slider.setMaximum(0)
-        self.layer_slider.setMinimumWidth(200)
+        self.layer_slider.setMinimumWidth(150)
         self.layer_slider.valueChanged.connect(self._on_layer_changed)
         layout.addWidget(self.layer_slider)
 
-        # 显示模式切换
-        self.show_all_btn = QPushButton(self.tr("Show All"))
-        self.show_all_btn.setCheckable(True)
-        self.show_all_btn.setChecked(True)
-        self.show_all_btn.clicked.connect(self._toggle_show_all)
-        layout.addWidget(self.show_all_btn)
+        # 层数显示（使用渐变色）
+        layer_info_widget = QWidget()
+        layer_info_layout = QVBoxLayout(layer_info_widget)
+        layer_info_layout.setContentsMargins(8, 0, 0, 0)
+        layer_info_layout.setSpacing(2)
+
+        self.layer_current_label = QLabel("1")
+        self.layer_current_label.setStyleSheet("color: #58A6FF; font-size: 16px; font-weight: bold;")
+        layer_info_layout.addWidget(self.layer_current_label)
+
+        self.layer_total_label = QLabel("24.7%")
+        self.layer_total_label.setStyleSheet("color: #8B949E; font-size: 10px;")
+        layer_info_layout.addWidget(self.layer_total_label)
+
+        layout.addWidget(layer_info_widget)
 
         return bar
+
+    def _set_view_and_highlight(self, preset: str):
+        """设置视图并高亮对应按钮"""
+        # 取消所有按钮的选中���态
+        for btn in self.view_buttons:
+            btn.setChecked(False)
+
+        # 设置当前按钮为选中
+        if preset == "front":
+            self.btn_front.setChecked(True)
+        elif preset == "top":
+            self.btn_top.setChecked(True)
+        elif preset == "right":
+            self.btn_side.setChecked(True)
+        elif preset == "iso":
+            self.btn_iso.setChecked(True)
+
+        # 设置视图
+        self.gl_widget.set_view_preset(preset)
 
     def _on_layer_changed(self, value: int):
         """层数滑块变化"""
         self.gl_widget.set_current_layer(value)
         total = len(self.gl_widget.layers)
-        self.layer_label.setText(self.tr("Layer: {current}/{total}").format(current=value + 1, total=total))
 
-    def _toggle_show_all(self, checked: bool):
-        """切换显示模式"""
-        self.gl_widget.show_all_layers = checked
-        self.show_all_btn.setText(self.tr("Show All") if checked else self.tr("Single Layer"))
-        self.gl_widget.update()
+        # 更新层数显示
+        self.layer_current_label.setText(str(value + 1))
+
+        # 计算百分比
+        if total > 0:
+            percentage = ((value + 1) / total) * 100
+            self.layer_total_label.setText(f"{percentage:.1f}%")
+        else:
+            self.layer_total_label.setText("0.0%")
 
     def set_layers(self, layers: List[Layer]):
         """设置切片层数据"""
@@ -649,7 +824,13 @@ class Preview3D(QWidget):
         total = len(layers)
         self.layer_slider.setMaximum(max(0, total - 1))
         self.layer_slider.setValue(max(0, total - 1))
-        self.layer_label.setText(self.tr("Layer: {current}/{total}").format(current=total, total=total))
+
+        # 更新层数显示
+        self.layer_current_label.setText(str(total))
+        if total > 0:
+            self.layer_total_label.setText("100.0%")
+        else:
+            self.layer_total_label.setText("0.0%")
 
     def set_bed_size(self, width: float, depth: float, height: float):
         """设置打印平台尺寸"""

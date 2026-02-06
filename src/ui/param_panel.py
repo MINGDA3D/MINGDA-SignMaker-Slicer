@@ -893,6 +893,16 @@ class ParamPanel(QWidget):
         """设置参数"""
         self._params = params
 
+        # 确保机器参数使用当前默认值（避免旧配置的平台尺寸被加载）
+        # 如果机器参数是旧的默认值（400×400×500），更新为新默认值（800×1200×100）
+        if (params.machine.bed_width == 400.0 and
+            params.machine.bed_depth == 400.0 and
+            params.machine.bed_height == 500.0):
+            # 这是旧的默认值，更新为新默认值
+            params.machine.bed_width = 800.0
+            params.machine.bed_depth = 1200.0
+            params.machine.bed_height = 100.0
+
         # 阻止各控件信号，防止设置值时触发 _on_param_changed
         widgets = [
             self.height_spin, self.layer_height_spin, self.wall_thickness_spin,
