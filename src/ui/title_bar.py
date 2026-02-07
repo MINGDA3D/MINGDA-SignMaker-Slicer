@@ -28,7 +28,7 @@ class TitleBar(QWidget):
     undo_clicked = Signal()
     redo_clicked = Signal()
     slice_clicked = Signal()
-    export_gcode_clicked = Signal()
+    export_stl_clicked = Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -163,16 +163,16 @@ class TitleBar(QWidget):
         action_layout.setAlignment(Qt.AlignmentFlag.AlignVCenter)
 
         self.btn_slice = QPushButton(self.tr("Slice"))
-        self.btn_slice.setObjectName("actionButton")
+        self.btn_slice.setObjectName("primaryButton")
         self.btn_slice.setCursor(Qt.CursorShape.PointingHandCursor)
         self.btn_slice.clicked.connect(self.slice_clicked.emit)
         action_layout.addWidget(self.btn_slice)
 
-        self.btn_export_gcode = QPushButton(self.tr("Export Gcode"))
-        self.btn_export_gcode.setObjectName("primaryButton")
-        self.btn_export_gcode.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.btn_export_gcode.clicked.connect(self.export_gcode_clicked.emit)
-        action_layout.addWidget(self.btn_export_gcode)
+        self.btn_export_stl = QPushButton(self.tr("Export STL"))
+        self.btn_export_stl.setObjectName("primaryButton")
+        self.btn_export_stl.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.btn_export_stl.clicked.connect(self.export_stl_clicked.emit)
+        action_layout.addWidget(self.btn_export_stl)
 
         layout.addWidget(action_container)
 

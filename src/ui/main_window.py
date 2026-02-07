@@ -147,7 +147,7 @@ class MainWindow(QMainWindow):
         self.title_bar.undo_clicked.connect(self._on_undo)
         self.title_bar.redo_clicked.connect(self._on_redo)
         self.title_bar.slice_clicked.connect(self._on_slice)
-        self.title_bar.export_gcode_clicked.connect(self._on_export_gcode)
+        self.title_bar.export_stl_clicked.connect(self._on_export_stl)
 
     def _init_menubar(self):
         """初始化菜单栏"""
