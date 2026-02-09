@@ -88,12 +88,12 @@
         <translation>缩小</translation>
     </message>
     <message>
-        <source>Slice(&amp;S)</source>
-        <translation>切片(&amp;S)</translation>
+        <source>Process(&amp;P)</source>
+        <translation>处理(&amp;P)</translation>
     </message>
     <message>
-        <source>Start Slicing</source>
-        <translation>开始切片</translation>
+        <source>Start Processing</source>
+        <translation>开始处理</translation>
     </message>
     <message>
         <source>Preview G-code</source>
@@ -328,32 +328,32 @@
         <translation>没有可重做的操作</translation>
     </message>
     <message>
-        <source>Slicing...</source>
-        <translation>正在切片...</translation>
+        <source>Processing...</source>
+        <translation>正在处理...</translation>
     </message>
     <message>
-        <source>Slicing complete: {layers} layers, estimated time: {time:.1f} minutes</source>
-        <translation>切片完成: {layers} 层, 预计时间: {time:.1f} 分钟</translation>
+        <source>Processing complete: {layers} layers, estimated time: {time:.1f} minutes</source>
+        <translation>处理完成: {layers} 层, 预计时间: {time:.1f} 分钟</translation>
     </message>
     <message>
-        <source>Slicing Complete</source>
-        <translation>切片完成</translation>
+        <source>Processing Complete</source>
+        <translation>处理完成</translation>
     </message>
     <message>
         <source>Export G-code now?</source>
         <translation>是否立即导出G-code?</translation>
     </message>
     <message>
-        <source>Slicing Failed</source>
-        <translation>切片失败</translation>
+        <source>Processing Failed</source>
+        <translation>处理失败</translation>
     </message>
     <message>
-        <source>Error during slicing:</source>
-        <translation>切片过程中发生错误:</translation>
+        <source>Error during processing:</source>
+        <translation>处理过程中发生错误:</translation>
     </message>
     <message>
-        <source>Slicing failed</source>
-        <translation>切片失败</translation>
+        <source>Processing failed</source>
+        <translation>处理失败</translation>
     </message>
     <message>
         <source>Switched to {view} view</source>
@@ -503,8 +503,12 @@
         <translation>预览</translation>
     </message>
     <message>
-        <source>Slice</source>
-        <translation>切片</translation>
+        <source>Process</source>
+        <translation>处理</translation>
+    </message>
+    <message>
+        <source>Process the model and generate layers</source>
+        <translation>处理模型并生成图层</translation>
     </message>
     <message>
         <source>Export Gcode</source>

@@ -184,11 +184,11 @@ class MainWindow(QMainWindow):
 
         file_menu.addSeparator()
 
-        # 导出G-code
-        export_gcode_action = QAction(self.tr("Export G-code..."), self)
-        export_gcode_action.setShortcut(QKeySequence("Ctrl+E"))
-        export_gcode_action.triggered.connect(self._on_export_gcode)
-        file_menu.addAction(export_gcode_action)
+        # 导出G-code (暂时屏蔽)
+        # export_gcode_action = QAction(self.tr("Export G-code..."), self)
+        # export_gcode_action.setShortcut(QKeySequence("Ctrl+E"))
+        # export_gcode_action.triggered.connect(self._on_export_gcode)
+        # file_menu.addAction(export_gcode_action)
 
         # 导出STL
         export_stl_action = QAction(self.tr("Export STL..."), self)
@@ -255,10 +255,10 @@ class MainWindow(QMainWindow):
         zoom_out_action.setShortcut(QKeySequence.StandardKey.ZoomOut)
         view_menu.addAction(zoom_out_action)
 
-        # === 切片菜单 ===
-        slice_menu = menubar.addMenu(self.tr("Slice(&S)"))
+        # === 处理菜单 ===
+        slice_menu = menubar.addMenu(self.tr("Process(&P)"))
 
-        slice_action = QAction(self.tr("Start Slicing"), self)
+        slice_action = QAction(self.tr("Start Processing"), self)
         slice_action.setShortcut(QKeySequence("Ctrl+Shift+S"))
         slice_action.triggered.connect(self._on_slice)
         slice_menu.addAction(slice_action)
@@ -632,7 +632,7 @@ class MainWindow(QMainWindow):
             "open_project": self._on_open_project,
             "save": self._on_save_project,
             "save_as": self._on_save_as,
-            "export_gcode": self._on_export_gcode,
+            # "export_gcode": self._on_export_gcode,  # 暂时屏蔽
             "export_stl": self._on_export_stl,
             "export_baseplate": self._on_export_baseplate,
             "export_panel": self._on_export_panel,
@@ -871,7 +871,7 @@ class MainWindow(QMainWindow):
             }
         """)
 
-        menu.addAction(self.tr("Export G-code..."), self._on_export_gcode)
+        # menu.addAction(self.tr("Export G-code..."), self._on_export_gcode)  # 暂时屏蔽
         menu.addAction(self.tr("Export STL..."), self._on_export_stl)
         menu.addSeparator()
         menu.addAction(self.tr("Export Baseplate DXF..."), self._on_export_baseplate)
@@ -879,28 +879,29 @@ class MainWindow(QMainWindow):
 
         menu.exec(QCursor.pos())
 
-    def _on_export_gcode(self):
-        """导出G-code"""
-        if not self.slice_result:
-            QMessageBox.information(self, self.tr("Info"), self.tr("Please slice first"))
-            return
-
-        file_path, _ = QFileDialog.getSaveFileName(
-            self,
-            self.tr("Export G-code"),
-            "",
-            self.tr("G-code Files (*.gcode);;All Files (*)")
-        )
-
-        if file_path:
-            try:
-                params = self.param_panel.get_params()
-                writer = GCodeWriter(params.gcode)
-                writer.write(self.slice_result, file_path, params)
-                self._update_status(self.tr("G-code exported: ") + Path(file_path).name)
-                QMessageBox.information(self, self.tr("Export Success"), self.tr("G-code saved to:") + f"\n{file_path}")
-            except Exception as e:
-                QMessageBox.critical(self, self.tr("Export Failed"), self.tr("Failed to export G-code:") + f"\n{e}")
+    # 暂时屏蔽导出G-code功能
+    # def _on_export_gcode(self):
+    #     """导出G-code"""
+    #     if not self.slice_result:
+    #         QMessageBox.information(self, self.tr("Info"), self.tr("Please slice first"))
+    #         return
+    #
+    #     file_path, _ = QFileDialog.getSaveFileName(
+    #         self,
+    #         self.tr("Export G-code"),
+    #         "",
+    #         self.tr("G-code Files (*.gcode);;All Files (*)")
+    #     )
+    #
+    #     if file_path:
+    #         try:
+    #             params = self.param_panel.get_params()
+    #             writer = GCodeWriter(params.gcode)
+    #             writer.write(self.slice_result, file_path, params)
+    #             self._update_status(self.tr("G-code exported: ") + Path(file_path).name)
+    #             QMessageBox.information(self, self.tr("Export Success"), self.tr("G-code saved to:") + f"\n{file_path}")
+    #         except Exception as e:
+    #             QMessageBox.critical(self, self.tr("Export Failed"), self.tr("Failed to export G-code:") + f"\n{e}")
 
     def _on_export_stl(self):
         """导出STL"""
@@ -1017,13 +1018,13 @@ class MainWindow(QMainWindow):
             self._update_status(self.tr("Nothing to redo"))
 
     def _on_slice(self):
-        """执行切片"""
+        """执行处理"""
         if not self.contours:
             QMessageBox.information(self, self.tr("Info"), self.tr("Please import a DXF file first"))
             return
 
         try:
-            self._update_status(self.tr("Slicing..."))
+            self._update_status(self.tr("Processing..."))
             QApplication.processEvents()
 
             # 获取参数
@@ -1043,7 +1044,7 @@ class MainWindow(QMainWindow):
                 )
 
             # 更新状态
-            msg = self.tr("Slicing complete: {layers} layers, estimated time: {time:.1f} minutes").format(
+            msg = self.tr("Processing complete: {layers} layers, estimated time: {time:.1f} minutes").format(
                 layers=self.slice_result.total_layers,
                 time=self.slice_result.estimated_time / 60
             )
@@ -1051,21 +1052,22 @@ class MainWindow(QMainWindow):
 
             self.slice_completed.emit(self.slice_result)
 
-            # 弹窗提示切片成功，询问是否导出
-            reply = QMessageBox.question(
-                self,
-                self.tr("Slicing Complete"),
-                msg + "\n\n" + self.tr("Export G-code now?"),
-                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
-                QMessageBox.StandardButton.Yes
-            )
-
-            if reply == QMessageBox.StandardButton.Yes:
-                self._on_export_gcode()
+            # 切片完成，不再自动弹出导出对话框
+            # 用户可以通过菜单 File -> Export G-code 或快捷键 Ctrl+E 手动导出
+            # reply = QMessageBox.question(
+            #     self,
+            #     self.tr("Processing Complete"),
+            #     msg + "\n\n" + self.tr("Export G-code now?"),
+            #     QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+            #     QMessageBox.StandardButton.Yes
+            # )
+            #
+            # if reply == QMessageBox.StandardButton.Yes:
+            #     self._on_export_gcode()
 
         except Exception as e:
-            QMessageBox.critical(self, self.tr("Slicing Failed"), self.tr("Error during slicing:") + f"\n{e}")
-            self._update_status(self.tr("Slicing failed"))
+            QMessageBox.critical(self, self.tr("Processing Failed"), self.tr("Error during processing:") + f"\n{e}")
+            self._update_status(self.tr("Processing failed"))
 
     def _switch_view(self, view_type: str):
         """切换2D/3D视图"""

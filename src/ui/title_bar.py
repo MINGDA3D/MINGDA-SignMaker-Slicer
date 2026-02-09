@@ -162,8 +162,9 @@ class TitleBar(QWidget):
         action_layout.setSpacing(8)
         action_layout.setAlignment(Qt.AlignmentFlag.AlignVCenter)
 
-        self.btn_slice = QPushButton(self.tr("Slice"))
+        self.btn_slice = QPushButton(self.tr("Process"))
         self.btn_slice.setObjectName("primaryButton")
+        self.btn_slice.setToolTip(self.tr("Process the model and generate layers"))
         self.btn_slice.setCursor(Qt.CursorShape.PointingHandCursor)
         self.btn_slice.clicked.connect(self.slice_clicked.emit)
         action_layout.addWidget(self.btn_slice)
@@ -325,7 +326,8 @@ class TitleBar(QWidget):
         menu.addAction(self.tr("Save Project"), lambda: self.menu_action.emit("save"))
         menu.addAction(self.tr("Save As..."), lambda: self.menu_action.emit("save_as"))
         menu.addSeparator()
-        menu.addAction(self.tr("Export G-code..."), lambda: self.menu_action.emit("export_gcode"))
+        # 暂时屏蔽导出G-code功能
+        # menu.addAction(self.tr("Export G-code..."), lambda: self.menu_action.emit("export_gcode"))
         menu.addAction(self.tr("Export STL..."), lambda: self.menu_action.emit("export_stl"))
         menu.addSeparator()
         menu.addAction(self.tr("Export Baseplate DXF..."), lambda: self.menu_action.emit("export_baseplate"))

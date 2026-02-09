@@ -88,12 +88,12 @@
         <translation>Zoom Out</translation>
     </message>
     <message>
-        <source>Slice(&amp;S)</source>
-        <translation>Slice(&amp;S)</translation>
+        <source>Process(&amp;P)</source>
+        <translation>Process(&amp;P)</translation>
     </message>
     <message>
-        <source>Start Slicing</source>
-        <translation>Start Slicing</translation>
+        <source>Start Processing</source>
+        <translation>Start Processing</translation>
     </message>
     <message>
         <source>Preview G-code</source>
@@ -304,32 +304,32 @@
         <translation>Nothing to redo</translation>
     </message>
     <message>
-        <source>Slicing...</source>
-        <translation>Slicing...</translation>
+        <source>Processing...</source>
+        <translation>Processing...</translation>
     </message>
     <message>
-        <source>Slicing complete: {layers} layers, estimated time: {time:.1f} minutes</source>
-        <translation>Slicing complete: {layers} layers, estimated time: {time:.1f} minutes</translation>
+        <source>Processing complete: {layers} layers, estimated time: {time:.1f} minutes</source>
+        <translation>Processing complete: {layers} layers, estimated time: {time:.1f} minutes</translation>
     </message>
     <message>
-        <source>Slicing Complete</source>
-        <translation>Slicing Complete</translation>
+        <source>Processing Complete</source>
+        <translation>Processing Complete</translation>
     </message>
     <message>
         <source>Export G-code now?</source>
         <translation>Export G-code now?</translation>
     </message>
     <message>
-        <source>Slicing Failed</source>
-        <translation>Slicing Failed</translation>
+        <source>Processing Failed</source>
+        <translation>Processing Failed</translation>
     </message>
     <message>
-        <source>Error during slicing:</source>
-        <translation>Error during slicing:</translation>
+        <source>Error during processing:</source>
+        <translation>Error during processing:</translation>
     </message>
     <message>
-        <source>Slicing failed</source>
-        <translation>Slicing failed</translation>
+        <source>Processing failed</source>
+        <translation>Processing failed</translation>
     </message>
     <message>
         <source>Switched to {view} view</source>
@@ -451,8 +451,12 @@
         <translation>Preview</translation>
     </message>
     <message>
-        <source>Slice</source>
-        <translation>Slice</translation>
+        <source>Process</source>
+        <translation>Process</translation>
+    </message>
+    <message>
+        <source>Process the model and generate layers</source>
+        <translation>Process the model and generate layers</translation>
     </message>
     <message>
         <source>Export Gcode</source>
