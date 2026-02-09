@@ -15,13 +15,16 @@
 """
 
 import math
-from typing import List, Tuple, Optional
+from typing import List, Tuple, Optional, TYPE_CHECKING
 from dataclasses import dataclass
 
 from src.core.types import (
     Contour, SkirtParams, LayerPath, PathRole,
     ExtruderType, Point, Path
 )
+
+if TYPE_CHECKING:
+    from src.core.path_offset import PathOffset
 
 
 @dataclass
@@ -127,6 +130,231 @@ class SkirtGenerator:
             )
             paths.append(layer_path)
 
+        return paths
+
+    def generate_skirt_clipped(
+        self,
+        contour: Contour,
+        all_contours: List[Contour],
+        params: SkirtParams,
+        wall_thickness: float,
+        path_offset: 'PathOffset'
+    ) -> List[LayerPath]:
+        """
+        生成经过裁剪的防翘裙边（不��犯壁区域）
+
+        算法步骤：
+        1. 收集所有轮廓的壁区域作为禁区
+        2. 生成原始梯形裙边
+        3. 将每个梯形与允许区域做布尔交集，裁剪掉侵入壁的部分
+
+        Args:
+            contour: 当前轮廓
+            all_contours: 所有轮廓（用于计算禁区）
+            params: 裙边参数
+            wall_thickness: 壁厚
+            path_offset: 路径偏移工具
+
+        Returns:
+            裁剪后的裙边路径列表
+        """
+        if not params.enabled:
+            return []
+
+        # Step 1: 构建禁区（排除当前轮廓自身，只包含其他轮廓的壁区域）
+        forbidden_zones = self._build_forbidden_zones(
+            all_contours, wall_thickness, path_offset,
+            exclude_contour=contour
+        )
+
+        # Step 2: 生成原始梯形
+        if params.is_outer:
+            raw_trapezoids = self._generate_trapezoids_along_path(
+                contour.outer, params, is_outer=True
+            )
+        else:
+            raw_trapezoids = []
+            for hole in contour.holes:
+                raw_trapezoids.extend(
+                    self._generate_trapezoids_along_path(
+                        hole, params, is_outer=False
+                    )
+                )
+
+        if not raw_trapezoids or not forbidden_zones:
+            # 没有禁区，直接返回未裁剪的路径
+            return self._trapezoids_to_layer_paths(raw_trapezoids, params)
+
+        # Step 3: 裁剪每个梯形
+        clipped_paths = []
+        for trap in raw_trapezoids:
+            trap_path = Path(
+                points=[
+                    trap.top_left,
+                    trap.bottom_left,
+                    trap.bottom_right,
+                    trap.top_right
+                ],
+                is_closed=True
+            )
+
+            # 从梯形中减去所有禁区
+            remaining = path_offset.boolean_difference_multi(
+                [trap_path], forbidden_zones
+            )
+
+            for clipped in remaining:
+                if len(clipped.points) >= 3:
+                    layer_path = LayerPath(
+                        points=clipped.points,
+                        role=PathRole.SKIRT,
+                        extruder=ExtruderType.EXTRUDER_1,
+                        line_width=params.extrusion_width,
+                        is_closed=True
+                    )
+                    clipped_paths.append(layer_path)
+
+        return clipped_paths
+
+    def generate_skirt_3d_clipped(
+        self,
+        contour: Contour,
+        all_contours: List[Contour],
+        params: SkirtParams,
+        wall_thickness: float,
+        path_offset: 'PathOffset'
+    ) -> List[TrapezoidSkirt]:
+        """
+        生成经过裁剪的3D梯形裙边（用于STL导出）
+
+        与 generate_skirt_clipped 类似，但返回 TrapezoidSkirt 数据。
+        对于被裁剪的梯形，跳过整个梯形（因为裁剪后不再是梯形）。
+
+        简化策略：检测梯形是否与禁区重叠，如果重叠则丢弃该梯形。
+
+        Args:
+            contour: 当前轮廓
+            all_contours: 所有轮廓
+            params: 裙边参数
+            wall_thickness: 壁厚
+            path_offset: 路径偏移工具
+
+        Returns:
+            未被裁剪的梯形列表
+        """
+        if not params.enabled:
+            return []
+
+        # 构建禁区（排除当前轮廓自身）
+        forbidden_zones = self._build_forbidden_zones(
+            all_contours, wall_thickness, path_offset,
+            exclude_contour=contour
+        )
+
+        # 生成原始梯形
+        raw_trapezoids = self._generate_trapezoids_along_path(
+            contour.outer, params, is_outer=params.is_outer
+        )
+
+        if not forbidden_zones:
+            return raw_trapezoids
+
+        # 过滤掉与禁区重叠的梯形
+        valid_trapezoids = []
+        for trap in raw_trapezoids:
+            trap_path = Path(
+                points=[
+                    trap.top_left,
+                    trap.bottom_left,
+                    trap.bottom_right,
+                    trap.top_right
+                ],
+                is_closed=True
+            )
+
+            # 计算梯形与禁区的交集
+            overlap = path_offset.boolean_intersection_multi(
+                [trap_path], forbidden_zones
+            )
+
+            if not overlap:
+                # 完全不重叠，保留
+                valid_trapezoids.append(trap)
+            # 重叠的梯形直接丢弃（STL中不好处理不规则形状）
+
+        return valid_trapezoids
+
+    def _build_forbidden_zones(
+        self,
+        all_contours: List[Contour],
+        wall_thickness: float,
+        path_offset: 'PathOffset',
+        exclude_contour: Optional[Contour] = None
+    ) -> List[Path]:
+        """
+        构建其他轮廓的壁区域作为禁区
+
+        禁区包括：
+        - 其他轮廓（非当前轮廓）的外轮廓（裙边不应进入其他字母内部）
+        - 其他轮廓的内孔壁区域（内孔向外偏移 wall_thickness）
+        - 当前轮廓自身的内孔壁区域（外部裙边不应进入自己的内孔壁）
+
+        注意：当前轮廓的外轮廓不加入禁区，因为裙边的顶边
+        贴着自己的外壁，加入禁区会导致梯形被误删。
+
+        Args:
+            all_contours: 所有轮廓
+            wall_thickness: 壁厚
+            path_offset: 路径偏移工具
+            exclude_contour: 当前正在生成裙边的轮廓（排除其外轮廓）
+
+        Returns:
+            禁区路径列表
+        """
+        from src.core.path_offset import JoinType
+
+        forbidden = []
+        for contour in all_contours:
+            is_current = (exclude_contour is not None and
+                          contour is exclude_contour)
+
+            # 其他轮廓的外轮廓是禁区（裙边不应进入其他字母内部）
+            if not is_current and len(contour.outer.points) >= 3:
+                forbidden.append(contour.outer)
+
+            # 所有轮廓的内孔壁区域都是禁区
+            # （包括当前轮廓自己的内孔——外部裙边不应进入内孔壁）
+            for hole in contour.holes:
+                if len(hole.points) >= 3:
+                    expanded_holes = path_offset.offset(
+                        hole, wall_thickness, JoinType.ROUND
+                    )
+                    forbidden.extend(expanded_holes)
+
+        return forbidden
+
+    def _trapezoids_to_layer_paths(
+        self,
+        trapezoids: List[TrapezoidSkirt],
+        params: SkirtParams
+    ) -> List[LayerPath]:
+        """将梯形列表转换为打印路径列表"""
+        paths = []
+        for trap in trapezoids:
+            points = [
+                trap.top_left,
+                trap.bottom_left,
+                trap.bottom_right,
+                trap.top_right
+            ]
+            layer_path = LayerPath(
+                points=points,
+                role=PathRole.SKIRT,
+                extruder=ExtruderType.EXTRUDER_1,
+                line_width=params.extrusion_width,
+                is_closed=True
+            )
+            paths.append(layer_path)
         return paths
 
     def _generate_inner_skirt(self, hole_path: Path,

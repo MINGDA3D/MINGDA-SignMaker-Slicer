@@ -25,6 +25,7 @@ from .types import (
 from .path_offset import PathOffset, JoinType
 from .step_generator import StepGenerator
 from .edge_profile_generator import EdgeProfileGenerator
+from .skirt_generator import SkirtGenerator
 
 
 @dataclass
@@ -40,6 +41,7 @@ class SliceEngine:
         self.path_offset = PathOffset()
         self.step_generator = StepGenerator(self.path_offset)
         self.edge_profile_generator = EdgeProfileGenerator()
+        self.skirt_generator = SkirtGenerator()
 
     def slice(self, contours: List[Contour], params: SliceParams) -> SliceResult:
         """
@@ -277,12 +279,10 @@ class SliceEngine:
                 )
                 layer.paths.extend(baseplate_step_paths)
 
-            # 7. 生成防翘裙边（仅首层）
-            if info.has_skirt:
-                skirt_paths = self._generate_skirt_paths(
-                    modified_contour, params
-                )
-                layer.paths.extend(skirt_paths)
+        # 7. 生成防翘裙边（仅首层，在所有轮廓处理完后统一生成）
+        if info.has_skirt:
+            skirt_paths = self._generate_all_skirt_paths(contours, params)
+            layer.paths.extend(skirt_paths)
 
         return layer
 
@@ -547,10 +547,44 @@ class SliceEngine:
 
         return paths
 
+    def _generate_all_skirt_paths(self, contours: List[Contour],
+                                   params: SliceParams) -> List[LayerPath]:
+        """
+        生成所有轮廓的防翘裙边路径（带壁区域裁剪）
+
+        统一处理所有轮廓，确保裙边不侵入任何轮廓的壁区域。
+
+        Args:
+            contours: 所有轮廓
+            params: 切片参数
+
+        Returns:
+            裁剪后的裙边路径列表
+        """
+        paths = []
+        skirt_params = params.skirt
+
+        if not skirt_params.enabled:
+            return paths
+
+        wall_thickness = params.shell.wall_thickness
+
+        for contour in contours:
+            contour_skirt_paths = self.skirt_generator.generate_skirt_clipped(
+                contour=contour,
+                all_contours=contours,
+                params=skirt_params,
+                wall_thickness=wall_thickness,
+                path_offset=self.path_offset
+            )
+            paths.extend(contour_skirt_paths)
+
+        return paths
+
     def _generate_skirt_paths(self, contour: Contour,
                                params: SliceParams) -> List[LayerPath]:
         """
-        生成防翘裙边路径
+        生成防翘裙边路径（旧版，不带裁剪）
 
         裙边在首层生成，围绕轮廓外部
         """

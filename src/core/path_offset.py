@@ -249,6 +249,72 @@ class PathOffset:
 
         return self._unscale_paths(solution)
 
+    def boolean_difference_multi(self, subjects: List[Path],
+                                  clips: List[Path]) -> List[Path]:
+        """
+        多路径布尔差集运算
+
+        从所有subjects中减去所有clips区域
+        """
+        valid_subjects = [s for s in subjects if len(s.points) >= 3]
+        valid_clips = [c for c in clips if len(c.points) >= 3]
+
+        if not valid_subjects:
+            return []
+        if not valid_clips:
+            return valid_subjects
+
+        pc = pyclipper.Pyclipper()
+
+        try:
+            for s in valid_subjects:
+                pc.AddPath(self._scale_path(s), pyclipper.PT_SUBJECT, True)
+            for c in valid_clips:
+                pc.AddPath(self._scale_path(c), pyclipper.PT_CLIP, True)
+        except Exception:
+            return valid_subjects
+
+        try:
+            solution = pc.Execute(pyclipper.CT_DIFFERENCE,
+                                  pyclipper.PFT_NONZERO,
+                                  pyclipper.PFT_NONZERO)
+        except Exception:
+            return valid_subjects
+
+        return self._unscale_paths(solution)
+
+    def boolean_intersection_multi(self, subjects: List[Path],
+                                    clips: List[Path]) -> List[Path]:
+        """
+        多路径布尔交集运算
+
+        返回所有subjects与所有clips的重叠区域
+        """
+        valid_subjects = [s for s in subjects if len(s.points) >= 3]
+        valid_clips = [c for c in clips if len(c.points) >= 3]
+
+        if not valid_subjects or not valid_clips:
+            return []
+
+        pc = pyclipper.Pyclipper()
+
+        try:
+            for s in valid_subjects:
+                pc.AddPath(self._scale_path(s), pyclipper.PT_SUBJECT, True)
+            for c in valid_clips:
+                pc.AddPath(self._scale_path(c), pyclipper.PT_CLIP, True)
+        except Exception:
+            return []
+
+        try:
+            solution = pc.Execute(pyclipper.CT_INTERSECTION,
+                                  pyclipper.PFT_NONZERO,
+                                  pyclipper.PFT_NONZERO)
+        except Exception:
+            return []
+
+        return self._unscale_paths(solution)
+
     def boolean_intersection(self, subject: Path, clip: Path) -> List[Path]:
         """
         布尔交集运算

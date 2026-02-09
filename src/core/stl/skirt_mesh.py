@@ -68,9 +68,13 @@ class SkirtMeshBuilder:
 
         for contour in contours:
             try:
-                # 外轮廓：裙边向外延伸
-                trapezoids = self.skirt_generator.generate_skirt_3d(
-                    contour, skirt_params
+                # 外轮廓：裙边向外延伸（带壁区域裁剪）
+                trapezoids = self.skirt_generator.generate_skirt_3d_clipped(
+                    contour=contour,
+                    all_contours=contours,
+                    params=skirt_params,
+                    wall_thickness=params.shell.wall_thickness,
+                    path_offset=self.path_offset
                 )
 
                 for trap in trapezoids:
@@ -87,9 +91,12 @@ class SkirtMeshBuilder:
 
                     # 内孔作为临时contour的外轮廓
                     hole_contour = Contour(outer=hole, holes=[])
-                    hole_trapezoids = self.skirt_generator.generate_skirt_3d(
-                        hole_contour,
-                        hole_skirt_params
+                    hole_trapezoids = self.skirt_generator.generate_skirt_3d_clipped(
+                        contour=hole_contour,
+                        all_contours=contours,
+                        params=hole_skirt_params,
+                        wall_thickness=params.shell.wall_thickness,
+                        path_offset=self.path_offset
                     )
                     for trap in hole_trapezoids:
                         trap_mesh = self._create_trapezoid_mesh(trap, skirt_height)
