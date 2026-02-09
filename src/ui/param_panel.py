@@ -83,12 +83,21 @@ class ParamPanel(QWidget):
         content_layout.addWidget(self._create_edge_group())
         content_layout.addWidget(self._create_bottom_face_group())  # 底面封闭
         content_layout.addWidget(self._create_top_face_group())  # 顶面封闭
-        content_layout.addWidget(self._create_color_group())
+
+        # 暂时隐藏换色层设置
+        color_group = self._create_color_group()
+        color_group.setVisible(False)
+        content_layout.addWidget(color_group)
+
         content_layout.addWidget(self._create_step_group())
         content_layout.addWidget(self._create_skirt_group())
         content_layout.addWidget(self._create_connected_group())
         content_layout.addWidget(self._create_edge_wrap_group())
-        content_layout.addWidget(self._create_speed_group())
+
+        # 暂时隐藏速度设置
+        speed_group = self._create_speed_group()
+        speed_group.setVisible(False)
+        content_layout.addWidget(speed_group)
 
         content_layout.addStretch()
 
