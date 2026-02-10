@@ -485,6 +485,12 @@ class MainWindow(QMainWindow):
         self.canvas.selection_cleared.connect(self._on_selection_cleared)
         self.canvas.contours_modified.connect(self._on_contours_modified)
 
+        # 右键菜单信号
+        self.canvas.mirror_requested.connect(self._on_mirror)
+        self.canvas.fit_view_requested.connect(self.canvas.fit_view)
+        self.canvas.reset_view_requested.connect(self.canvas._init_view)
+        self.canvas.reset_view_requested.connect(self.canvas.update)
+
         # 撤销管理器信号
         self.undo_manager.can_undo_changed.connect(self._update_undo_actions)
         self.undo_manager.can_redo_changed.connect(self._update_undo_actions)

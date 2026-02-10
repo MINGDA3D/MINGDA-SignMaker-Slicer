@@ -12,11 +12,11 @@ from __future__ import annotations
 from typing import List, Optional, Tuple
 import math
 
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QApplication
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QApplication, QMenu
 from PySide6.QtCore import Qt, Signal, QPointF, QRectF
 from PySide6.QtGui import (
     QPainter, QPen, QBrush, QColor, QPainterPath,
-    QWheelEvent, QMouseEvent, QKeyEvent, QTransform
+    QWheelEvent, QMouseEvent, QKeyEvent, QTransform, QKeySequence
 )
 
 from src.core.types import Point, Path, Contour, PathType
@@ -37,6 +37,12 @@ class Canvas2D(QWidget):
     transform_started = Signal(str, list)  # 变换开始（操作类型, 索引列表）
     transform_ended = Signal(str, list)    # 变换结束（操作类型, 索引列表）
     delete_requested = Signal(list)        # 请求删除（索引列表）
+
+    # 右键菜单信号
+    select_all_requested = Signal()        # 全选
+    mirror_requested = Signal(str)         # 镜像（"x" 或 "y"）
+    fit_view_requested = Signal()          # 适应视图
+    reset_view_requested = Signal()        # 重置视图
 
     # 平台/标尺配置
     PLATFORM_WIDTH = 800    # 平台宽度 (mm)
@@ -67,6 +73,7 @@ class Canvas2D(QWidget):
         self.is_panning = False  # 是否正在平移视图
         self.is_transforming = False  # 是否正在变换轮廓
         self.pan_start = QPointF()  # 平移起始点
+        self._right_button_moved = False  # 右键拖动过则为平移，否则为单击
         self.transform_start = QPointF()  # 变换起始点（世界坐标）
         self.transform_start_screen = QPointF()  # 变换起始点（屏幕坐标）
         self.last_mouse_pos = QPointF()
@@ -779,6 +786,12 @@ class Canvas2D(QWidget):
             self.is_panning = True
             self.pan_start = event.position()
             self.setCursor(Qt.CursorShape.ClosedHandCursor)
+        elif event.button() == Qt.MouseButton.RightButton:
+            # 右键按下：准备平移，拖动即平移，不拖动则为单击
+            self.is_panning = True
+            self._right_button_moved = False
+            self.pan_start = event.position()
+            self.setCursor(Qt.CursorShape.ClosedHandCursor)
         elif event.button() == Qt.MouseButton.LeftButton:
             # 先检查是否点击在已选中的轮廓上（支持直接拖动）
             clicked_on_selected = False
@@ -834,6 +847,7 @@ class Canvas2D(QWidget):
             delta = pos - self.pan_start
             self.view_offset += delta
             self.pan_start = pos
+            self._right_button_moved = True
             self.update()
         elif self.is_transforming and self.selected_indices:
             # 执行变换 - 使用实际的拖动工具
@@ -884,6 +898,12 @@ class Canvas2D(QWidget):
         if event.button() == Qt.MouseButton.MiddleButton:
             self.is_panning = False
             self.setCursor(Qt.CursorShape.ArrowCursor)
+        elif event.button() == Qt.MouseButton.RightButton:
+            self.is_panning = False
+            self._set_tool_cursor()
+            if not self._right_button_moved:
+                # 没拖动过，视为右键单击，弹出右键菜单
+                self._show_context_menu(event.globalPosition().toPoint())
         elif event.button() == Qt.MouseButton.LeftButton:
             if self.is_transforming:
                 self.is_transforming = False
@@ -902,6 +922,56 @@ class Canvas2D(QWidget):
             'scale': self._transform_total_scale,
             'center': (self.transform_center.x(), self.transform_center.y())
         }
+
+    def _show_context_menu(self, global_pos):
+        """显示右键菜单"""
+        menu = QMenu(self)
+        has_selection = bool(self.selected_indices)
+        has_contours = bool(self.contours)
+
+        # ---- 选中时的操作 ----
+        if has_selection:
+            # 删除
+            act_delete = menu.addAction(self.tr("Delete"))
+            act_delete.setShortcut(QKeySequence(Qt.Key.Key_Delete))
+            act_delete.triggered.connect(
+                lambda: self.delete_requested.emit(list(self.selected_indices)))
+
+            menu.addSeparator()
+
+            # 镜像
+            mirror_menu = menu.addMenu(self.tr("Mirror"))
+            act_mirror_x = mirror_menu.addAction(self.tr("Mirror X"))
+            act_mirror_x.triggered.connect(lambda: self.mirror_requested.emit("x"))
+            act_mirror_y = mirror_menu.addAction(self.tr("Mirror Y"))
+            act_mirror_y.triggered.connect(lambda: self.mirror_requested.emit("y"))
+
+            menu.addSeparator()
+
+        # ---- 通用操作 ----
+        # 全选
+        act_select_all = menu.addAction(self.tr("Select All"))
+        act_select_all.setShortcut(QKeySequence(Qt.Modifier.CTRL | Qt.Key.Key_A))
+        act_select_all.setEnabled(has_contours)
+        act_select_all.triggered.connect(self._select_all)
+
+        menu.addSeparator()
+
+        # 适应视图
+        act_fit = menu.addAction(self.tr("Fit View"))
+        act_fit.setEnabled(has_contours)
+        act_fit.triggered.connect(self.fit_view_requested.emit)
+
+        # 重置视图
+        act_reset = menu.addAction(self.tr("Reset View"))
+        act_reset.triggered.connect(self.reset_view_requested.emit)
+
+        menu.exec(global_pos)
+
+    def _select_all(self):
+        """全选所有轮廓"""
+        self.selected_indices = list(range(len(self.contours)))
+        self.update()
 
     def _set_tool_cursor(self):
         """根据当前工具设置光标"""
