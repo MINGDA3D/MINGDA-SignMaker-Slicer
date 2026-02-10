@@ -732,9 +732,13 @@ class MainWindow(QMainWindow):
     def _on_contour_selected(self, index: int):
         """当选中轮廓时显示位置面板"""
         if self.canvas.selected_indices:
-            # 选中新轮廓时重置累计旋转角度
+            # 选中新轮廓时重置累计旋转角度和缩放基准
             self.canvas._cumulative_angle = 0.0
+            self._scale_original_w = None
+            self._scale_original_h = None
             if self.current_transform_mode in ("rotate", "scale"):
+                if self.current_transform_mode == "scale":
+                    self._capture_original_size()
                 # 保持当前工具模式不变
                 self._update_transform_panel_values()
                 self._show_transform_panel()
@@ -1307,15 +1311,14 @@ class MainWindow(QMainWindow):
             self.rot_widget.setVisible(True)
             self.scale_widget.setVisible(False)
             self.transform_hint.setText(self.tr("Drag grabber on ring to rotate"))
-            # 切换到旋转工具时重置累计角度
-            self.canvas._cumulative_angle = 0.0
         elif mode == "scale":
             self.transform_title.setText(self.tr("Scale"))
             self.pos_widget.setVisible(False)
             self.rot_widget.setVisible(False)
             self.scale_widget.setVisible(True)
             self.transform_hint.setText(self.tr("Drag to scale, input exact values above"))
-            self._capture_original_size()
+            if not hasattr(self, '_scale_original_w') or self._scale_original_w is None:
+                self._capture_original_size()
 
         # 更新面板中的值
         self._update_transform_panel_values()
