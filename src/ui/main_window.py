@@ -326,8 +326,10 @@ class MainWindow(QMainWindow):
         title_layout.addStretch()
         panel_layout.addLayout(title_layout)
 
-        # Position 行 - 只有X和Y
-        pos_layout = QHBoxLayout()
+        # === Position 行（移动模式）===
+        self.pos_widget = QWidget()
+        pos_layout = QHBoxLayout(self.pos_widget)
+        pos_layout.setContentsMargins(0, 0, 0, 0)
         pos_layout.setSpacing(12)
 
         # X坐标
@@ -358,12 +360,33 @@ class MainWindow(QMainWindow):
         y_layout.addWidget(self.transform_y)
         pos_layout.addLayout(y_layout)
 
-        panel_layout.addLayout(pos_layout)
+        panel_layout.addWidget(self.pos_widget)
+
+        # === Rotation 行（旋转模式）===
+        self.rot_widget = QWidget()
+        rot_layout = QHBoxLayout(self.rot_widget)
+        rot_layout.setContentsMargins(0, 0, 0, 0)
+        rot_layout.setSpacing(4)
+
+        rot_label = QLabel("Z")
+        rot_label.setStyleSheet("color: #58A6FF; font-weight: bold;")
+        rot_layout.addWidget(rot_label)
+        self.transform_angle = QDoubleSpinBox()
+        self.transform_angle.setRange(-360, 360)
+        self.transform_angle.setValue(0)
+        self.transform_angle.setDecimals(2)
+        self.transform_angle.setSuffix(" °")
+        self.transform_angle.setWrapping(True)
+        rot_layout.addWidget(self.transform_angle)
+        rot_layout.addStretch()
+
+        self.rot_widget.setVisible(False)
+        panel_layout.addWidget(self.rot_widget)
 
         # 提示文本
-        hint_label = QLabel(self.tr("Arrow keys: 1mm, Shift+Arrow: 10mm"))
-        hint_label.setStyleSheet("color: #6E7681; font-size: 10px;")
-        panel_layout.addWidget(hint_label)
+        self.transform_hint = QLabel(self.tr("Arrow keys: 1mm, Shift+Arrow: 10mm"))
+        self.transform_hint.setStyleSheet("color: #6E7681; font-size: 10px;")
+        panel_layout.addWidget(self.transform_hint)
 
         # 当前变换模式
         self.current_transform_mode = None
@@ -371,6 +394,7 @@ class MainWindow(QMainWindow):
         # 连接信号 - 当值改变时实时应用
         self.transform_x.valueChanged.connect(self._on_transform_value_changed)
         self.transform_y.valueChanged.connect(self._on_transform_value_changed)
+        self.transform_angle.valueChanged.connect(self._on_transform_value_changed)
 
     def _init_central_widget(self):
         """初始化中央区域"""
@@ -577,11 +601,19 @@ class MainWindow(QMainWindow):
     def _on_contour_selected(self, index: int):
         """当选中轮廓时显示位置面板"""
         if self.canvas.selected_indices:
-            # 显示位置面板
-            self.transform_title.setText(self.tr("Position"))
-            self.current_transform_mode = "move"
-            self._update_transform_panel_values()
-            self._show_transform_panel()
+            if self.current_transform_mode in ("rotate", "scale"):
+                # 保持当前工具模式不变
+                self._update_transform_panel_values()
+                self._show_transform_panel()
+            else:
+                # 默认显示位置面板
+                self.transform_title.setText(self.tr("Position"))
+                self.current_transform_mode = "move"
+                self.pos_widget.setVisible(True)
+                self.rot_widget.setVisible(False)
+                self.transform_hint.setText(self.tr("Arrow keys: 1mm, Shift+Arrow: 10mm"))
+                self._update_transform_panel_values()
+                self._show_transform_panel()
         else:
             # 取消选择时隐藏面板
             self._close_transform_panel()
@@ -1125,15 +1157,24 @@ class MainWindow(QMainWindow):
         self.canvas.set_tool(mode)
         self.current_transform_mode = mode
 
-        # 配置面板显示
+        # 配置面板显示：根据模式切换内容
         if mode == "move":
             self.transform_title.setText(self.tr("Position"))
+            self.pos_widget.setVisible(True)
+            self.rot_widget.setVisible(False)
+            self.transform_hint.setText(self.tr("Arrow keys: 1mm, Shift+Arrow: 10mm"))
         elif mode == "rotate":
             self.transform_title.setText(self.tr("Rotation"))
+            self.pos_widget.setVisible(False)
+            self.rot_widget.setVisible(True)
+            self.transform_hint.setText(self.tr("Drag grabber on ring to rotate"))
         elif mode == "scale":
             self.transform_title.setText(self.tr("Scale"))
+            self.pos_widget.setVisible(True)
+            self.rot_widget.setVisible(False)
+            self.transform_hint.setText(self.tr("Arrow keys: 1mm, Shift+Arrow: 10mm"))
 
-        # 更新面板中的值（显示选中轮廓的当前位置）
+        # 更新面板中的值
         self._update_transform_panel_values()
 
         # 显示面板并定位
@@ -1163,21 +1204,26 @@ class MainWindow(QMainWindow):
         if not self.canvas.selected_indices:
             self.transform_x.setValue(0)
             self.transform_y.setValue(0)
+            self.transform_angle.setValue(0)
             return
 
-        # 获取选中轮廓的中心位置
-        center = self.canvas._get_selection_center()
+        mode = self.current_transform_mode
 
-        # 阻止信号触发
-        self.transform_x.blockSignals(True)
-        self.transform_y.blockSignals(True)
-
-        # 显示当前位置
-        self.transform_x.setValue(center.x())
-        self.transform_y.setValue(center.y())
-
-        self.transform_x.blockSignals(False)
-        self.transform_y.blockSignals(False)
+        if mode == "rotate":
+            # 旋转模式：显示当前累计旋转角度
+            self.transform_angle.blockSignals(True)
+            angle_deg = getattr(self.canvas, '_transform_total_angle', 0.0)
+            self.transform_angle.setValue(angle_deg)
+            self.transform_angle.blockSignals(False)
+        else:
+            # 位置模式：显示选中轮廓的中心位置
+            center = self.canvas._get_selection_center()
+            self.transform_x.blockSignals(True)
+            self.transform_y.blockSignals(True)
+            self.transform_x.setValue(center.x())
+            self.transform_y.setValue(center.y())
+            self.transform_x.blockSignals(False)
+            self.transform_y.blockSignals(False)
 
     def _on_transform_value_changed(self):
         """当面板中的值改变时"""
@@ -1195,6 +1241,15 @@ class MainWindow(QMainWindow):
             if abs(dx) > 0.001 or abs(dy) > 0.001:
                 self.canvas.move_selected(dx, dy)
                 self._update_status(self.tr("Move to: X={x:.2f}, Y={y:.2f}").format(x=target_x, y=target_y))
+        elif mode == "rotate":
+            # 计算需要旋转的增量角度
+            target_angle = self.transform_angle.value()
+            current_angle = getattr(self.canvas, '_transform_total_angle', 0.0)
+            delta = target_angle - current_angle
+            if abs(delta) > 0.001:
+                self.canvas.rotate_selected(delta)
+                self.canvas._transform_total_angle = target_angle
+                self._update_status(self.tr("Rotation: {angle:.2f}°").format(angle=target_angle))
 
     def _close_transform_panel(self):
         """关闭变换面板"""
