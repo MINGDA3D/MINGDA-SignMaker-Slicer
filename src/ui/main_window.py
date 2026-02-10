@@ -20,7 +20,7 @@ from PySide6.QtWidgets import (
     QSplitter, QMenuBar, QMenu, QToolBar, QStatusBar, QLabel,
     QPushButton, QFrame, QScrollArea, QDockWidget, QFileDialog,
     QMessageBox, QSizePolicy, QDoubleSpinBox, QSpinBox, QStackedWidget,
-    QGraphicsDropShadowEffect
+    QGraphicsDropShadowEffect, QCheckBox
 )
 from PySide6.QtCore import Qt, Signal, QSize, QPoint
 from PySide6.QtGui import QAction, QIcon, QKeySequence, QPixmap, QFont, QColor
@@ -383,6 +383,123 @@ class MainWindow(QMainWindow):
         self.rot_widget.setVisible(False)
         panel_layout.addWidget(self.rot_widget)
 
+        # === Scale 区域（缩放模式）===
+        self.scale_widget = QWidget()
+        scale_main_layout = QVBoxLayout(self.scale_widget)
+        scale_main_layout.setContentsMargins(0, 0, 0, 0)
+        scale_main_layout.setSpacing(6)
+
+        # Scale 行（百分比）
+        scale_pct_layout = QHBoxLayout()
+        scale_pct_layout.setSpacing(8)
+        scale_label = QLabel(self.tr("Scale"))
+        scale_label.setStyleSheet("color: #8B949E; min-width: 36px;")
+        scale_pct_layout.addWidget(scale_label)
+
+        # X%
+        sx_layout = QHBoxLayout()
+        sx_layout.setSpacing(4)
+        sx_label = QLabel("X")
+        sx_label.setStyleSheet("color: #FF6B6B; font-weight: bold;")
+        sx_layout.addWidget(sx_label)
+        self.scale_x_pct = QDoubleSpinBox()
+        self.scale_x_pct.setRange(1, 10000)
+        self.scale_x_pct.setValue(100)
+        self.scale_x_pct.setDecimals(2)
+        self.scale_x_pct.setSuffix(" %")
+        sx_layout.addWidget(self.scale_x_pct)
+        scale_pct_layout.addLayout(sx_layout)
+
+        # Y%
+        sy_layout = QHBoxLayout()
+        sy_layout.setSpacing(4)
+        sy_label = QLabel("Y")
+        sy_label.setStyleSheet("color: #69DB7C; font-weight: bold;")
+        sy_layout.addWidget(sy_label)
+        self.scale_y_pct = QDoubleSpinBox()
+        self.scale_y_pct.setRange(1, 10000)
+        self.scale_y_pct.setValue(100)
+        self.scale_y_pct.setDecimals(2)
+        self.scale_y_pct.setSuffix(" %")
+        sy_layout.addWidget(self.scale_y_pct)
+        scale_pct_layout.addLayout(sy_layout)
+
+        scale_main_layout.addLayout(scale_pct_layout)
+
+        # Size 行（绝对尺寸）
+        size_layout = QHBoxLayout()
+        size_layout.setSpacing(8)
+        size_label = QLabel(self.tr("Size"))
+        size_label.setStyleSheet("color: #8B949E; min-width: 36px;")
+        size_layout.addWidget(size_label)
+
+        # W (宽)
+        sw_layout = QHBoxLayout()
+        sw_layout.setSpacing(4)
+        sw_label = QLabel("W")
+        sw_label.setStyleSheet("color: #FF6B6B; font-weight: bold;")
+        sw_layout.addWidget(sw_label)
+        self.scale_w = QDoubleSpinBox()
+        self.scale_w.setRange(0.01, 100000)
+        self.scale_w.setValue(100)
+        self.scale_w.setDecimals(2)
+        self.scale_w.setSuffix(" mm")
+        sw_layout.addWidget(self.scale_w)
+        size_layout.addLayout(sw_layout)
+
+        # H (高)
+        sh_layout = QHBoxLayout()
+        sh_layout.setSpacing(4)
+        sh_label = QLabel("H")
+        sh_label.setStyleSheet("color: #69DB7C; font-weight: bold;")
+        sh_layout.addWidget(sh_label)
+        self.scale_h = QDoubleSpinBox()
+        self.scale_h.setRange(0.01, 100000)
+        self.scale_h.setValue(100)
+        self.scale_h.setDecimals(2)
+        self.scale_h.setSuffix(" mm")
+        sh_layout.addWidget(self.scale_h)
+        size_layout.addLayout(sh_layout)
+
+        scale_main_layout.addLayout(size_layout)
+
+        # 分隔线
+        separator = QFrame()
+        separator.setFrameShape(QFrame.Shape.HLine)
+        separator.setStyleSheet("color: #30363D;")
+        scale_main_layout.addWidget(separator)
+
+        # Uniform Scale 复选框
+        self.uniform_scale_cb = QCheckBox(self.tr("Uniform Scale"))
+        self.uniform_scale_cb.setChecked(True)
+        self.uniform_scale_cb.setStyleSheet("""
+            QCheckBox {
+                color: #8B949E;
+                font-size: 12px;
+                spacing: 6px;
+            }
+            QCheckBox::indicator {
+                width: 14px;
+                height: 14px;
+                border: 1px solid #444C56;
+                border-radius: 3px;
+                background-color: #0D1117;
+            }
+            QCheckBox::indicator:checked {
+                background-color: #58A6FF;
+                border-color: #58A6FF;
+            }
+        """)
+        scale_main_layout.addWidget(self.uniform_scale_cb)
+
+        self.scale_widget.setVisible(False)
+        panel_layout.addWidget(self.scale_widget)
+
+        # 记录原始尺寸（用于百分比↔尺寸换算）
+        self._scale_original_w = 1.0
+        self._scale_original_h = 1.0
+        self._scale_updating = False  # 防止递归更新
+
         # 提示文本
         self.transform_hint = QLabel(self.tr("Arrow keys: 1mm, Shift+Arrow: 10mm"))
         self.transform_hint.setStyleSheet("color: #6E7681; font-size: 10px;")
@@ -395,6 +512,10 @@ class MainWindow(QMainWindow):
         self.transform_x.valueChanged.connect(self._on_transform_value_changed)
         self.transform_y.valueChanged.connect(self._on_transform_value_changed)
         self.transform_angle.valueChanged.connect(self._on_transform_value_changed)
+        self.scale_x_pct.valueChanged.connect(self._on_scale_pct_changed)
+        self.scale_y_pct.valueChanged.connect(self._on_scale_pct_changed)
+        self.scale_w.valueChanged.connect(self._on_scale_size_changed)
+        self.scale_h.valueChanged.connect(self._on_scale_size_changed)
 
     def _init_central_widget(self):
         """初始化中央区域"""
@@ -611,6 +732,7 @@ class MainWindow(QMainWindow):
                 self.current_transform_mode = "move"
                 self.pos_widget.setVisible(True)
                 self.rot_widget.setVisible(False)
+                self.scale_widget.setVisible(False)
                 self.transform_hint.setText(self.tr("Arrow keys: 1mm, Shift+Arrow: 10mm"))
                 self._update_transform_panel_values()
                 self._show_transform_panel()
@@ -1162,17 +1284,21 @@ class MainWindow(QMainWindow):
             self.transform_title.setText(self.tr("Position"))
             self.pos_widget.setVisible(True)
             self.rot_widget.setVisible(False)
+            self.scale_widget.setVisible(False)
             self.transform_hint.setText(self.tr("Arrow keys: 1mm, Shift+Arrow: 10mm"))
         elif mode == "rotate":
             self.transform_title.setText(self.tr("Rotation"))
             self.pos_widget.setVisible(False)
             self.rot_widget.setVisible(True)
+            self.scale_widget.setVisible(False)
             self.transform_hint.setText(self.tr("Drag grabber on ring to rotate"))
         elif mode == "scale":
             self.transform_title.setText(self.tr("Scale"))
-            self.pos_widget.setVisible(True)
+            self.pos_widget.setVisible(False)
             self.rot_widget.setVisible(False)
-            self.transform_hint.setText(self.tr("Arrow keys: 1mm, Shift+Arrow: 10mm"))
+            self.scale_widget.setVisible(True)
+            self.transform_hint.setText(self.tr("Drag to scale, input exact values above"))
+            self._capture_original_size()
 
         # 更新面板中的值
         self._update_transform_panel_values()
@@ -1215,6 +1341,9 @@ class MainWindow(QMainWindow):
             angle_deg = getattr(self.canvas, '_transform_total_angle', 0.0)
             self.transform_angle.setValue(angle_deg)
             self.transform_angle.blockSignals(False)
+        elif mode == "scale":
+            # 缩放模式：更新当前尺寸和百分比
+            self._update_scale_panel_values()
         else:
             # 位置模式：显示选中轮廓的中心位置
             center = self.canvas._get_selection_center()
@@ -1250,6 +1379,103 @@ class MainWindow(QMainWindow):
                 self.canvas.rotate_selected(delta)
                 self.canvas._transform_total_angle = target_angle
                 self._update_status(self.tr("Rotation: {angle:.2f}°").format(angle=target_angle))
+
+    def _capture_original_size(self):
+        """记录当前选中轮廓的尺寸作为缩放基准（100%）"""
+        bounds = self.canvas.get_selection_bounds()
+        if bounds:
+            self._scale_original_w = max(bounds[2] - bounds[0], 0.01)
+            self._scale_original_h = max(bounds[3] - bounds[1], 0.01)
+
+    def _update_scale_panel_values(self):
+        """更新缩放面板中的尺寸和百分比"""
+        if self._scale_updating:
+            return
+        self._scale_updating = True
+
+        bounds = self.canvas.get_selection_bounds()
+        if bounds:
+            cur_w = bounds[2] - bounds[0]
+            cur_h = bounds[3] - bounds[1]
+            pct_x = cur_w / self._scale_original_w * 100.0
+            pct_y = cur_h / self._scale_original_h * 100.0
+
+            for spin in (self.scale_x_pct, self.scale_y_pct,
+                         self.scale_w, self.scale_h):
+                spin.blockSignals(True)
+
+            self.scale_x_pct.setValue(pct_x)
+            self.scale_y_pct.setValue(pct_y)
+            self.scale_w.setValue(cur_w)
+            self.scale_h.setValue(cur_h)
+
+            for spin in (self.scale_x_pct, self.scale_y_pct,
+                         self.scale_w, self.scale_h):
+                spin.blockSignals(False)
+
+        self._scale_updating = False
+
+    def _on_scale_pct_changed(self):
+        """Scale百分比输入改变"""
+        if self._scale_updating or not self.canvas.selected_indices:
+            return
+
+        sender = self.sender()
+        target_pct_x = self.scale_x_pct.value()
+        target_pct_y = self.scale_y_pct.value()
+
+        if self.uniform_scale_cb.isChecked():
+            # 等比例：用改变的那个轴的百分比同步另一个
+            if sender is self.scale_x_pct:
+                target_pct_y = target_pct_x
+            else:
+                target_pct_x = target_pct_y
+
+        # 计算目标尺寸
+        target_w = self._scale_original_w * target_pct_x / 100.0
+        target_h = self._scale_original_h * target_pct_y / 100.0
+        self._apply_scale_to_size(target_w, target_h)
+
+    def _on_scale_size_changed(self):
+        """Size尺寸输入改变"""
+        if self._scale_updating or not self.canvas.selected_indices:
+            return
+
+        sender = self.sender()
+        target_w = self.scale_w.value()
+        target_h = self.scale_h.value()
+
+        if self.uniform_scale_cb.isChecked():
+            # 等比例：用改变的那个轴的比例同步另一个
+            if sender is self.scale_w:
+                ratio = target_w / self._scale_original_w
+                target_h = self._scale_original_h * ratio
+            else:
+                ratio = target_h / self._scale_original_h
+                target_w = self._scale_original_w * ratio
+
+        self._apply_scale_to_size(target_w, target_h)
+
+    def _apply_scale_to_size(self, target_w: float, target_h: float):
+        """根据目标尺寸计算缩放因子并应用"""
+        bounds = self.canvas.get_selection_bounds()
+        if not bounds:
+            return
+
+        cur_w = max(bounds[2] - bounds[0], 0.01)
+        cur_h = max(bounds[3] - bounds[1], 0.01)
+        sx = target_w / cur_w
+        sy = target_h / cur_h
+
+        if abs(sx - 1.0) > 0.0001 or abs(sy - 1.0) > 0.0001:
+            self.canvas.scale_selected_xy(sx, sy)
+            self._update_scale_panel_values()
+            self._update_status(
+                self.tr("Scale: {px:.1f}% x {py:.1f}%").format(
+                    px=target_w / self._scale_original_w * 100,
+                    py=target_h / self._scale_original_h * 100
+                )
+            )
 
     def _close_transform_panel(self):
         """关闭变换面板"""

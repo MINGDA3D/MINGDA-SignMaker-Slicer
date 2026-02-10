@@ -351,17 +351,21 @@ class Canvas2D(QWidget):
         path.points = new_points
 
     def scale_selected(self, scale_factor: float):
-        """缩放选中的轮廓（绕选择中心）"""
-        if not self.selected_indices or scale_factor <= 0:
+        """缩放选中的轮廓（绕选择中心，等比例）"""
+        self.scale_selected_xy(scale_factor, scale_factor)
+
+    def scale_selected_xy(self, sx: float, sy: float):
+        """缩放选中的轮廓（绕选择中心，X/Y独立）"""
+        if not self.selected_indices or sx <= 0 or sy <= 0:
             return
 
         center = self._get_selection_center()
 
         for idx in self.selected_indices:
             contour = self.contours[idx]
-            self._scale_path(contour.outer, center, scale_factor)
+            self._scale_path_xy(contour.outer, center, sx, sy)
             for hole in contour.holes:
-                self._scale_path(hole, center, scale_factor)
+                self._scale_path_xy(hole, center, sx, sy)
 
         self.contours_modified.emit()
         self.update()
@@ -375,6 +379,38 @@ class Canvas2D(QWidget):
             new_y = cy + (p.y - cy) * factor
             new_points.append(Point(new_x, new_y))
         path.points = new_points
+
+    def _scale_path_xy(self, path: Path, center: QPointF, sx: float, sy: float):
+        """缩放路径（X/Y独立）"""
+        cx, cy = center.x(), center.y()
+        new_points = []
+        for p in path.points:
+            new_x = cx + (p.x - cx) * sx
+            new_y = cy + (p.y - cy) * sy
+            new_points.append(Point(new_x, new_y))
+        path.points = new_points
+
+    def get_selection_bounds(self) -> Optional[Tuple[float, float, float, float]]:
+        """获取选中轮廓的边界框 (min_x, min_y, max_x, max_y)"""
+        if not self.selected_indices:
+            return None
+
+        min_x = float('inf')
+        min_y = float('inf')
+        max_x = float('-inf')
+        max_y = float('-inf')
+
+        for idx in self.selected_indices:
+            if idx < len(self.contours):
+                bounds = self.contours[idx].outer.bounds
+                min_x = min(min_x, bounds[0])
+                min_y = min(min_y, bounds[1])
+                max_x = max(max_x, bounds[2])
+                max_y = max(max_y, bounds[3])
+
+        if min_x == float('inf'):
+            return None
+        return (min_x, min_y, max_x, max_y)
 
     def _get_selection_center(self) -> QPointF:
         """获取选中轮廓的中心点"""
