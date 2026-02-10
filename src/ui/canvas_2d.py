@@ -81,7 +81,17 @@ class Canvas2D(QWidget):
         self.transform_start_screen = QPointF()  # 变换起始点（屏幕坐标）
         self.last_mouse_pos = QPointF()
         self.transform_center = QPointF()  # 变换中心点
-        self.accumulated_rotation = 0.0  # 累计旋转角度（用于Shift吸附）
+
+        # 旋转Gizmo状态（OrcaSlicer风格）
+        self._rotate_gizmo_radius = 0.0    # 旋转圆环半径（屏幕像素）
+        self._rotate_start_angle = 0.0     # 拖动开始时的鼠标极角（弧度）
+        self._rotate_current_angle = 0.0   # 当前鼠标极角（弧度）
+        self._rotate_base_angle = 0.0      # 拖动开始前的累计旋转角度
+        self._rotate_hovering_grabber = False  # 鼠标是否悬停在Grabber上
+        self._GIZMO_RADIUS_OFFSET = 30     # 圆环半径比包围球多出的像素数
+        self._GRABBER_RADIUS = 8           # Grabber手柄半径（像素）
+        self._SNAP_COARSE_STEPS = 8        # 粗吸附：45度
+        self._SNAP_FINE_STEPS = 72         # 细吸附：5度
 
         # 变换追踪（用于撤销/重做）
         self._transform_total_dx = 0.0
@@ -102,6 +112,9 @@ class Canvas2D(QWidget):
         self.selected_color = QColor(COLORS.accent_primary)
         self.start_point_color = QColor(COLORS.accent_success)
         self.transform_handle_color = QColor(COLORS.accent_primary)
+        self.rotate_gizmo_color = QColor(88, 166, 255, 180)  # 旋转圆环颜色
+        self.rotate_arc_color = QColor(88, 166, 255, 120)    # 旋转角度弧颜色
+        self.rotate_snap_color = QColor(88, 166, 255, 60)    # 吸附参考线颜色
 
         # 设置
         self.setMinimumSize(400, 300)
@@ -213,7 +226,10 @@ class Canvas2D(QWidget):
     def set_tool(self, tool: str):
         """设置当前工具"""
         self.current_tool = tool
+        self._rotate_base_angle = 0.0  # 切换工具时重置旋转Gizmo
+        self._rotate_hovering_grabber = False
         self._set_tool_cursor()
+        self.update()
 
     def fit_view(self):
         """适应视图"""
@@ -426,6 +442,10 @@ class Canvas2D(QWidget):
         self._draw_selection_overlay(painter)
 
         painter.restore()
+
+        # 绘制旋转Gizmo（屏幕坐标，不受世界变换影响）
+        if self.current_tool == "rotate" and self.selected_indices:
+            self._draw_rotate_gizmo(painter)
 
         # 绘制标尺（不受变换影响）
         self._draw_rulers(painter)
@@ -752,6 +772,237 @@ class Canvas2D(QWidget):
             QPointF(center_x, center_y + cross_size)
         )
 
+    def _draw_rotate_gizmo(self, painter: QPainter):
+        """绘制OrcaSlicer风格的旋转Gizmo（屏幕坐标系）"""
+        center_world = self._get_selection_center()
+        center_screen = self._world_to_screen(center_world)
+        cx, cy = center_screen.x(), center_screen.y()
+
+        # 计算圆环半径：基于选中区域的包围球 + 偏移
+        radius = self._calc_gizmo_radius()
+        self._rotate_gizmo_radius = radius
+
+        is_dragging = self.is_transforming and getattr(self, '_active_drag_tool', None) == "rotate"
+
+        # --- 1. 绘制旋转圆环 ---
+        pen = QPen(self.rotate_gizmo_color)
+        pen.setWidthF(2.0 if not is_dragging else 2.5)
+        painter.setPen(pen)
+        painter.setBrush(Qt.BrushStyle.NoBrush)
+        painter.drawEllipse(QPointF(cx, cy), radius, radius)
+
+        # --- 2. 绘制45度吸附参考线（内区域）---
+        if self._rotate_hovering_grabber or is_dragging:
+            pen_snap = QPen(self.rotate_snap_color)
+            pen_snap.setWidthF(1.0)
+            painter.setPen(pen_snap)
+            coarse_inner = radius / 3.0
+            coarse_outer = radius * 2.0 / 3.0
+            for i in range(self._SNAP_COARSE_STEPS):
+                angle = i * 2 * math.pi / self._SNAP_COARSE_STEPS
+                cos_a, sin_a = math.cos(angle), math.sin(angle)
+                painter.drawLine(
+                    QPointF(cx + cos_a * coarse_inner, cy - sin_a * coarse_inner),
+                    QPointF(cx + cos_a * coarse_outer, cy - sin_a * coarse_outer)
+                )
+
+        # --- 3. 绘制刻度线（圆环边缘，每5度一个）---
+        if self._rotate_hovering_grabber or is_dragging:
+            pen_tick = QPen(self.rotate_gizmo_color)
+            pen_tick.setWidthF(1.0)
+            painter.setPen(pen_tick)
+            for i in range(self._SNAP_FINE_STEPS):
+                angle = i * 2 * math.pi / self._SNAP_FINE_STEPS
+                cos_a, sin_a = math.cos(angle), math.sin(angle)
+                # 每10度（偶数索引）较长刻度
+                tick_len = 8 if (i % 2 == 0) else 4
+                r_inner = radius - tick_len
+                painter.drawLine(
+                    QPointF(cx + cos_a * r_inner, cy - sin_a * r_inner),
+                    QPointF(cx + cos_a * radius, cy - sin_a * radius)
+                )
+
+        # --- 4. 拖动中：绘制参考线和角度弧 ---
+        if is_dragging:
+            # 参考线（起始方向）
+            pen_ref = QPen(self.rotate_gizmo_color)
+            pen_ref.setWidthF(1.0)
+            pen_ref.setStyle(Qt.PenStyle.DashLine)
+            painter.setPen(pen_ref)
+            ref_angle = self._rotate_start_angle
+            painter.drawLine(
+                QPointF(cx, cy),
+                QPointF(cx + math.cos(ref_angle) * radius,
+                        cy - math.sin(ref_angle) * radius)
+            )
+
+            # 当前方向线
+            pen_cur = QPen(self.selected_color)
+            pen_cur.setWidthF(1.5)
+            painter.setPen(pen_cur)
+            cur_angle = self._rotate_current_angle
+            painter.drawLine(
+                QPointF(cx, cy),
+                QPointF(cx + math.cos(cur_angle) * radius,
+                        cy - math.sin(cur_angle) * radius)
+            )
+
+            # 角度弧
+            swept = cur_angle - ref_angle
+            # 归一化到 [-π, π]
+            while swept > math.pi:
+                swept -= 2 * math.pi
+            while swept < -math.pi:
+                swept += 2 * math.pi
+
+            arc_radius = radius * 0.4
+            arc_path = QPainterPath()
+            segments = max(2, int(abs(swept) / (math.pi / 32)))
+            start = ref_angle
+            for j in range(segments + 1):
+                t = start + swept * j / segments
+                px = cx + math.cos(t) * arc_radius
+                py = cy - math.sin(t) * arc_radius
+                if j == 0:
+                    arc_path.moveTo(px, py)
+                else:
+                    arc_path.lineTo(px, py)
+
+            pen_arc = QPen(self.rotate_arc_color)
+            pen_arc.setWidthF(3.0)
+            painter.setPen(pen_arc)
+            painter.drawPath(arc_path)
+
+            # 角度文本
+            angle_deg = math.degrees(swept)
+            text = f"{angle_deg:+.1f}°"
+            from PySide6.QtGui import QFont
+            font = QFont("Consolas", 11)
+            font.setBold(True)
+            painter.setFont(font)
+            painter.setPen(QColor(255, 255, 255))
+            # 文本位置在弧的中间方向
+            mid_angle = ref_angle + swept / 2
+            text_r = arc_radius + 18
+            text_x = cx + math.cos(mid_angle) * text_r
+            text_y = cy - math.sin(mid_angle) * text_r
+            painter.drawText(int(text_x - 25), int(text_y + 5), text)
+
+        # --- 5. 绘制Grabber手柄 ---
+        grabber_r = radius * 1.12  # 手柄在圆环外15%处
+        if is_dragging:
+            grabber_angle = self._rotate_current_angle
+        else:
+            # 非拖动状态：手柄在0度方向（或上一次旋转后的位置）
+            grabber_angle = self._rotate_base_angle
+        gx = cx + math.cos(grabber_angle) * grabber_r
+        gy = cy - math.sin(grabber_angle) * grabber_r
+
+        # 手柄到圆心的连线
+        pen_conn = QPen(self.rotate_gizmo_color)
+        pen_conn.setWidthF(1.0)
+        painter.setPen(pen_conn)
+        painter.drawLine(QPointF(cx, cy), QPointF(gx, gy))
+
+        # 手柄圆点
+        if self._rotate_hovering_grabber or is_dragging:
+            painter.setBrush(QBrush(self.selected_color))
+            pen_g = QPen(QColor(255, 255, 255))
+        else:
+            painter.setBrush(QBrush(QColor(255, 255, 255)))
+            pen_g = QPen(self.rotate_gizmo_color)
+        pen_g.setWidthF(2.0)
+        painter.setPen(pen_g)
+        painter.drawEllipse(QPointF(gx, gy), self._GRABBER_RADIUS, self._GRABBER_RADIUS)
+
+    def _calc_gizmo_radius(self) -> float:
+        """计算旋转Gizmo的圆环半径（屏幕像素）"""
+        if not self.selected_indices:
+            return 60.0
+
+        # 计算选中区域在屏幕上的包围球半径
+        center = self._get_selection_center()
+        max_dist_sq = 0.0
+        for idx in self.selected_indices:
+            if idx < len(self.contours):
+                bounds = self.contours[idx].outer.bounds
+                # 检查四个角到中心的距离
+                for bx, by in [(bounds[0], bounds[1]), (bounds[2], bounds[1]),
+                                (bounds[2], bounds[3]), (bounds[0], bounds[3])]:
+                    dx = bx - center.x()
+                    dy = by - center.y()
+                    max_dist_sq = max(max_dist_sq, dx * dx + dy * dy)
+
+        world_radius = math.sqrt(max_dist_sq) if max_dist_sq > 0 else 30.0
+        screen_radius = world_radius * self.view_scale
+        return max(60.0, screen_radius + self._GIZMO_RADIUS_OFFSET)
+
+    def _screen_angle_to_center(self, screen_pos: QPointF) -> float:
+        """计算屏幕点相对于选区中心的极角（弧度，屏幕坐标系，Y向上）"""
+        center_screen = self._world_to_screen(self._get_selection_center())
+        dx = screen_pos.x() - center_screen.x()
+        dy = -(screen_pos.y() - center_screen.y())  # 屏幕Y向下→翻转为Y向上
+        return math.atan2(dy, dx)
+
+    def _screen_dist_to_center(self, screen_pos: QPointF) -> float:
+        """计算屏幕点到选区中心的距离（像素）"""
+        center_screen = self._world_to_screen(self._get_selection_center())
+        dx = screen_pos.x() - center_screen.x()
+        dy = screen_pos.y() - center_screen.y()
+        return math.sqrt(dx * dx + dy * dy)
+
+    def _snap_rotation_angle(self, angle: float, mouse_dist: float) -> float:
+        """根据鼠标到中心距离进行角度吸附（OrcaSlicer距离分区吸附）
+
+        Args:
+            angle: 原始角度（弧度）
+            mouse_dist: 鼠标到旋转中心的屏幕距离
+
+        Returns:
+            吸附后的角度（弧度）
+        """
+        radius = self._rotate_gizmo_radius
+        coarse_inner = radius / 3.0
+        coarse_outer = radius * 2.0 / 3.0
+        fine_inner = radius - 10
+        fine_outer = radius + 10
+
+        if coarse_inner <= mouse_dist <= coarse_outer:
+            # 粗吸附区域：45度
+            step = 2 * math.pi / self._SNAP_COARSE_STEPS
+            return step * round(angle / step)
+        elif fine_inner <= mouse_dist <= fine_outer:
+            # 细吸附区域：5度
+            step = 2 * math.pi / self._SNAP_FINE_STEPS
+            return step * round(angle / step)
+        else:
+            # 自由旋转
+            return angle
+
+    def _is_on_grabber(self, screen_pos: QPointF) -> bool:
+        """判断屏幕点是否在旋转Grabber手柄上"""
+        if not self.selected_indices:
+            return False
+        center_screen = self._world_to_screen(self._get_selection_center())
+        radius = self._calc_gizmo_radius()
+        grabber_r = radius * 1.12
+        angle = self._rotate_base_angle
+        gx = center_screen.x() + math.cos(angle) * grabber_r
+        gy = center_screen.y() - math.sin(angle) * grabber_r
+        dx = screen_pos.x() - gx
+        dy = screen_pos.y() - gy
+        # 点击区域比手柄视觉半径稍大，更容易点击
+        hit_radius = self._GRABBER_RADIUS + 4
+        return (dx * dx + dy * dy) <= hit_radius * hit_radius
+
+    def _is_on_ring(self, screen_pos: QPointF) -> bool:
+        """判断屏幕点是否在旋转圆环附近"""
+        if not self.selected_indices:
+            return False
+        dist = self._screen_dist_to_center(screen_pos)
+        radius = self._calc_gizmo_radius()
+        return abs(dist - radius) <= 12  # 圆环12像素容差
+
     # =========================================================================
     # 事件处理
     # =========================================================================
@@ -815,21 +1066,35 @@ class Canvas2D(QWidget):
                 # 发出变换开始信号
                 self.transform_started.emit("move", list(self.selected_indices))
                 self.setCursor(Qt.CursorShape.SizeAllCursor)
-            elif clicked_on_selected and self.current_tool in ("rotate", "scale"):
-                # 旋转/缩放工具
+            elif self.current_tool == "rotate" and self.selected_indices and self._is_on_grabber(event.position()):
+                # 旋转工具：点击Grabber开始旋转
                 self.is_transforming = True
-                self._active_drag_tool = self.current_tool
-                self.transform_start = world_pos
-                self.transform_start_screen = event.position()
+                self._active_drag_tool = "rotate"
                 self.transform_center = self._get_selection_center()
-                self.accumulated_rotation = 0.0
+                self._rotate_start_angle = self._screen_angle_to_center(event.position())
+                self._rotate_current_angle = self._rotate_start_angle
                 # 重置变换追踪
                 self._transform_total_dx = 0.0
                 self._transform_total_dy = 0.0
                 self._transform_total_angle = 0.0
                 self._transform_total_scale = 1.0
                 # 发出变换开始信号
-                self.transform_started.emit(self.current_tool, list(self.selected_indices))
+                self.transform_started.emit("rotate", list(self.selected_indices))
+                self.setCursor(Qt.CursorShape.CrossCursor)
+            elif clicked_on_selected and self.current_tool == "scale":
+                # 缩放工具
+                self.is_transforming = True
+                self._active_drag_tool = "scale"
+                self.transform_start = world_pos
+                self.transform_start_screen = event.position()
+                self.transform_center = self._get_selection_center()
+                # 重置变换追踪
+                self._transform_total_dx = 0.0
+                self._transform_total_dy = 0.0
+                self._transform_total_angle = 0.0
+                self._transform_total_scale = 1.0
+                # 发出变换开始信号
+                self.transform_started.emit("scale", list(self.selected_indices))
                 self._set_tool_cursor()
             else:
                 # 点击了其他位置，尝试选择新轮廓
@@ -867,22 +1132,29 @@ class Canvas2D(QWidget):
                 self._transform_total_dy += dy
                 self.transform_start = world_pos
             elif active_tool == "rotate":
-                # 使用水平拖动控制旋转：每100像素 = 45度
-                dx_screen = pos.x() - self.last_mouse_pos.x()
-                angle_delta = dx_screen * 0.5  # 每像素0.5度
+                # OrcaSlicer风格：基于鼠标极角控制旋转
+                raw_angle = self._screen_angle_to_center(pos)
+                mouse_dist = self._screen_dist_to_center(pos)
+                snapped_angle = self._snap_rotation_angle(raw_angle, mouse_dist)
+                self._rotate_current_angle = snapped_angle
 
-                # Shift键：吸附到15度增量
-                if Qt.KeyboardModifier.ShiftModifier in QApplication.keyboardModifiers():
-                    self.accumulated_rotation += angle_delta
-                    # 当累计超过15度时执行旋转
-                    if abs(self.accumulated_rotation) >= 15:
-                        snap_angle = 15 * (self.accumulated_rotation // 15)
-                        self.rotate_selected(snap_angle)
-                        self._transform_total_angle += snap_angle
-                        self.accumulated_rotation -= snap_angle
-                else:
-                    self.rotate_selected(angle_delta)
-                    self._transform_total_angle += angle_delta
+                # 计算相对于上一帧的增量
+                angle_delta = snapped_angle - self._rotate_start_angle
+                # 归一化到 [-π, π]
+                while angle_delta > math.pi:
+                    angle_delta -= 2 * math.pi
+                while angle_delta < -math.pi:
+                    angle_delta += 2 * math.pi
+
+                # 计算从拖动开始到现在的总旋转
+                # 先反转之前已应用的旋转，再应用新的总旋转
+                prev_total = self._transform_total_angle
+                new_total_deg = math.degrees(angle_delta)
+                delta_deg = new_total_deg - prev_total
+                if abs(delta_deg) > 0.001:
+                    self.rotate_selected(delta_deg)
+                    self._transform_total_angle = new_total_deg
+                self.update()
             elif active_tool == "scale":
                 # 使用水平拖动控制缩放：向右放大，向左缩小
                 dx_screen = pos.x() - self.last_mouse_pos.x()
@@ -897,6 +1169,13 @@ class Canvas2D(QWidget):
         else:
             # 更新坐标显示
             self.mouse_moved.emit(world_pos.x(), world_pos.y())
+
+            # 旋转工具：更新Grabber悬停状态
+            if self.current_tool == "rotate" and self.selected_indices:
+                was_hovering = self._rotate_hovering_grabber
+                self._rotate_hovering_grabber = self._is_on_grabber(pos) or self._is_on_ring(pos)
+                if was_hovering != self._rotate_hovering_grabber:
+                    self.update()  # 悬停状态改变时重绘
 
         self.last_mouse_pos = pos
 
@@ -914,9 +1193,12 @@ class Canvas2D(QWidget):
                 self._show_context_menu(event.globalPosition().toPoint())
         elif event.button() == Qt.MouseButton.LeftButton:
             if self.is_transforming:
-                self.is_transforming = False
-                # 发出变换结束信号，使用实际的拖动工具
                 active_tool = getattr(self, '_active_drag_tool', self.current_tool)
+                # 旋转结束时更新Grabber基准角度
+                if active_tool == "rotate":
+                    self._rotate_base_angle = self._rotate_current_angle
+                self.is_transforming = False
+                # 发出变换结束信号
                 self.transform_ended.emit(active_tool, list(self.selected_indices))
                 self._active_drag_tool = None  # 清除
                 self._set_tool_cursor()
