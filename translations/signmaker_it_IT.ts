@@ -411,6 +411,27 @@
         <source>Translation file for {lang} is not available yet.</source>
         <translation>Il file di traduzione per {lang} non e ancora disponibile.</translation>
     </message>
+    <message>
+        <source>Angle</source>
+        <translation>Angolo</translation>
+    </message>
+    <message>
+        <source>Drag grabber on ring to rotate</source>
+        <translation>Trascinare la maniglia sull'anello per ruotare</translation>
+    </message>
+
+    <message>
+        <source>Size</source>
+        <translation>Dimensione</translation>
+    </message>
+    <message>
+        <source>Uniform Scale</source>
+        <translation>Scala uniforme</translation>
+    </message>
+    <message>
+        <source>Drag to scale, input exact values above</source>
+        <translation>Trascinare per scalare, inserire valori esatti sopra</translation>
+    </message>
 </context>
 <context>
     <name>TitleBar</name>

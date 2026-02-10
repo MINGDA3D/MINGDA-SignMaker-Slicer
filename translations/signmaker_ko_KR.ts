@@ -411,6 +411,27 @@
         <source>Translation file for {lang} is not available yet.</source>
         <translation>{lang} 번역 파일을 아직 사용할 수 없습니다.</translation>
     </message>
+    <message>
+        <source>Angle</source>
+        <translation>각도</translation>
+    </message>
+    <message>
+        <source>Drag grabber on ring to rotate</source>
+        <translation>링의 핸들을 드래그하여 회전</translation>
+    </message>
+
+    <message>
+        <source>Size</source>
+        <translation>크기</translation>
+    </message>
+    <message>
+        <source>Uniform Scale</source>
+        <translation>균일 스케일</translation>
+    </message>
+    <message>
+        <source>Drag to scale, input exact values above</source>
+        <translation>드래그하여 스케일, 위에 정확한 값 입력</translation>
+    </message>
 </context>
 <context>
     <name>TitleBar</name>

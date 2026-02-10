@@ -411,6 +411,27 @@
         <source>Translation file for {lang} is not available yet.</source>
         <translation>{lang}の翻訳ファイルはまだ利用できません。</translation>
     </message>
+    <message>
+        <source>Angle</source>
+        <translation>角度</translation>
+    </message>
+    <message>
+        <source>Drag grabber on ring to rotate</source>
+        <translation>リング上のハンドルをドラッグして回転</translation>
+    </message>
+
+    <message>
+        <source>Size</source>
+        <translation>サイズ</translation>
+    </message>
+    <message>
+        <source>Uniform Scale</source>
+        <translation>均一スケール</translation>
+    </message>
+    <message>
+        <source>Drag to scale, input exact values above</source>
+        <translation>ドラッグしてスケール、上に正確な値を入力</translation>
+    </message>
 </context>
 <context>
     <name>TitleBar</name>

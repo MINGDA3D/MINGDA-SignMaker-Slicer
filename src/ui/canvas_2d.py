@@ -98,6 +98,8 @@ class Canvas2D(QWidget):
         self._transform_total_dy = 0.0
         self._transform_total_angle = 0.0
         self._transform_total_scale = 1.0
+        # 累计旋转角度（跨多次操作，用于面板显示）
+        self._cumulative_angle = 0.0
 
         # 样式
         self.bg_color = QColor(COLORS.bg_primary)

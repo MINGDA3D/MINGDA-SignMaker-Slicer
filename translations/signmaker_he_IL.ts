@@ -411,6 +411,27 @@
         <source>Translation file for {lang} is not available yet.</source>
         <translation>קובץ התרגום עבור {lang} אינו זמין עדיין.</translation>
     </message>
+    <message>
+        <source>Angle</source>
+        <translation>זווית</translation>
+    </message>
+    <message>
+        <source>Drag grabber on ring to rotate</source>
+        <translation>גרור את הידית על הטבעת כדי לסובב</translation>
+    </message>
+
+    <message>
+        <source>Size</source>
+        <translation>גודל</translation>
+    </message>
+    <message>
+        <source>Uniform Scale</source>
+        <translation>קנה מידה אחיד</translation>
+    </message>
+    <message>
+        <source>Drag to scale, input exact values above</source>
+        <translation>גרור לשינוי קנה מידה, הזן ערכים מדויקים למעלה</translation>
+    </message>
 </context>
 <context>
     <name>TitleBar</name>

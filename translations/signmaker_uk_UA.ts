@@ -411,6 +411,27 @@
         <source>Translation file for {lang} is not available yet.</source>
         <translation>Файл перекладу для {lang} ще недоступний.</translation>
     </message>
+    <message>
+        <source>Angle</source>
+        <translation>Кут</translation>
+    </message>
+    <message>
+        <source>Drag grabber on ring to rotate</source>
+        <translation>Перетягніть захоплювач на кільці для обертання</translation>
+    </message>
+
+    <message>
+        <source>Size</source>
+        <translation>Розмір</translation>
+    </message>
+    <message>
+        <source>Uniform Scale</source>
+        <translation>Рівномірне масштабування</translation>
+    </message>
+    <message>
+        <source>Drag to scale, input exact values above</source>
+        <translation>Перетягніть для масштабування, введіть точні значення вище</translation>
+    </message>
 </context>
 <context>
     <name>TitleBar</name>

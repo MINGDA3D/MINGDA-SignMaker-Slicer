@@ -411,6 +411,27 @@
         <source>Translation file for {lang} is not available yet.</source>
         <translation>ملف الترجمة لـ {lang} غير متوفر بعد.</translation>
     </message>
+    <message>
+        <source>Angle</source>
+        <translation>زاوية</translation>
+    </message>
+    <message>
+        <source>Drag grabber on ring to rotate</source>
+        <translation>اسحب المقبض على الحلقة للتدوير</translation>
+    </message>
+
+    <message>
+        <source>Size</source>
+        <translation>الحجم</translation>
+    </message>
+    <message>
+        <source>Uniform Scale</source>
+        <translation>تحجيم موحد</translation>
+    </message>
+    <message>
+        <source>Drag to scale, input exact values above</source>
+        <translation>اسحب للتحجيم، أدخل القيم الدقيقة أعلاه</translation>
+    </message>
 </context>
 <context>
     <name>TitleBar</name>

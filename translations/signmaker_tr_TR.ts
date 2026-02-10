@@ -411,6 +411,27 @@
         <source>Translation file for {lang} is not available yet.</source>
         <translation>{lang} icin ceviri dosyasi henuz mevcut degil.</translation>
     </message>
+    <message>
+        <source>Angle</source>
+        <translation>Açı</translation>
+    </message>
+    <message>
+        <source>Drag grabber on ring to rotate</source>
+        <translation>Döndürmek için halka üzerindeki tutamacı sürükleyin</translation>
+    </message>
+
+    <message>
+        <source>Size</source>
+        <translation>Boyut</translation>
+    </message>
+    <message>
+        <source>Uniform Scale</source>
+        <translation>Orantılı ölçekleme</translation>
+    </message>
+    <message>
+        <source>Drag to scale, input exact values above</source>
+        <translation>Ölçeklemek için sürükleyin, yukarıya kesin değerleri girin</translation>
+    </message>
 </context>
 <context>
     <name>TitleBar</name>

@@ -370,7 +370,7 @@ class MainWindow(QMainWindow):
         rot_layout.setContentsMargins(0, 0, 0, 0)
         rot_layout.setSpacing(4)
 
-        rot_label = QLabel("Z")
+        rot_label = QLabel(self.tr("Angle"))
         rot_label.setStyleSheet("color: #58A6FF; font-weight: bold;")
         rot_layout.addWidget(rot_label)
         self.transform_angle = QDoubleSpinBox()
@@ -699,6 +699,9 @@ class MainWindow(QMainWindow):
                 self._pending_transform.description = f"旋转 {delta['angle']:.1f}°"
                 self._pending_transform.capture_after()
                 self.undo_manager.push(self._pending_transform, execute=False)
+                # 拖拽结束后累加角度并更新面板
+                self.canvas._cumulative_angle += delta['angle']
+                self._update_transform_panel_values()
 
             elif tool == "scale" and abs(delta['scale'] - 1.0) > 0.001:
                 # 捕获变换后的状态
@@ -729,6 +732,8 @@ class MainWindow(QMainWindow):
     def _on_contour_selected(self, index: int):
         """当选中轮廓时显示位置面板"""
         if self.canvas.selected_indices:
+            # 选中新轮廓时重置累计旋转角度
+            self.canvas._cumulative_angle = 0.0
             if self.current_transform_mode in ("rotate", "scale"):
                 # 保持当前工具模式不变
                 self._update_transform_panel_values()
@@ -750,6 +755,9 @@ class MainWindow(QMainWindow):
     def _on_contours_modified(self):
         """当轮廓被修改时更新面板"""
         if self.canvas.selected_indices and self.transform_panel.isVisible():
+            # 拖拽旋转过程中不更新面板，等拖拽结束后再更新
+            if self.canvas.is_transforming and self.current_transform_mode == "rotate":
+                return
             self._update_transform_panel_values()
 
     def _on_selection_cleared(self):
@@ -1299,6 +1307,8 @@ class MainWindow(QMainWindow):
             self.rot_widget.setVisible(True)
             self.scale_widget.setVisible(False)
             self.transform_hint.setText(self.tr("Drag grabber on ring to rotate"))
+            # 切换到旋转工具时重置累计角度
+            self.canvas._cumulative_angle = 0.0
         elif mode == "scale":
             self.transform_title.setText(self.tr("Scale"))
             self.pos_widget.setVisible(False)
@@ -1343,9 +1353,9 @@ class MainWindow(QMainWindow):
         mode = self.current_transform_mode
 
         if mode == "rotate":
-            # 旋转模式：显示当前累计旋转角度
+            # 旋转模式：显示累计旋转角度
             self.transform_angle.blockSignals(True)
-            angle_deg = getattr(self.canvas, '_transform_total_angle', 0.0)
+            angle_deg = getattr(self.canvas, '_cumulative_angle', 0.0)
             self.transform_angle.setValue(angle_deg)
             self.transform_angle.blockSignals(False)
         elif mode == "scale":
@@ -1380,11 +1390,11 @@ class MainWindow(QMainWindow):
         elif mode == "rotate":
             # 计算需要旋转的增量角度
             target_angle = self.transform_angle.value()
-            current_angle = getattr(self.canvas, '_transform_total_angle', 0.0)
+            current_angle = getattr(self.canvas, '_cumulative_angle', 0.0)
             delta = target_angle - current_angle
             if abs(delta) > 0.001:
+                self.canvas._cumulative_angle = target_angle
                 self.canvas.rotate_selected(delta)
-                self.canvas._transform_total_angle = target_angle
                 self._update_status(self.tr("Rotation: {angle:.2f}°").format(angle=target_angle))
 
     def _capture_original_size(self):

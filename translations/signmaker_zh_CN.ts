@@ -451,6 +451,27 @@
         <source>Position</source>
         <translation>位置</translation>
     </message>
+    <message>
+        <source>Angle</source>
+        <translation>角度</translation>
+    </message>
+    <message>
+        <source>Drag grabber on ring to rotate</source>
+        <translation>拖拽圆环上的手柄进行旋转</translation>
+    </message>
+
+    <message>
+        <source>Size</source>
+        <translation>尺寸</translation>
+    </message>
+    <message>
+        <source>Uniform Scale</source>
+        <translation>等比缩放</translation>
+    </message>
+    <message>
+        <source>Drag to scale, input exact values above</source>
+        <translation>拖拽缩放，或在上方输入精确值</translation>
+    </message>
 </context>
 <context>
     <name>TitleBar</name>
