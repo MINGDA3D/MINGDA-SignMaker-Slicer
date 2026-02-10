@@ -73,7 +73,10 @@ class Canvas2D(QWidget):
         self.is_panning = False  # 是否正在平移视图
         self.is_transforming = False  # 是否正在变换轮廓
         self.pan_start = QPointF()  # 平移起始点
-        self._right_button_moved = False  # 右键拖动过则为平移，否则为单击
+        self._pan_button_down = False  # 右键/中键已按下，等待判定是否为平移
+        self._pan_origin = QPointF()   # 按下时的位置（用于阈值判定）
+        self._pan_button = Qt.MouseButton.NoButton  # 记录触发平移的按键
+        self._PAN_THRESHOLD = 4  # 拖动超过4像素才视为平移（避免误触）
         self.transform_start = QPointF()  # 变换起始点（世界坐标）
         self.transform_start_screen = QPointF()  # 变换起始点（屏幕坐标）
         self.last_mouse_pos = QPointF()
@@ -781,17 +784,12 @@ class Canvas2D(QWidget):
         self.last_mouse_pos = event.position()
         world_pos = self._screen_to_world(event.position())
 
-        if event.button() == Qt.MouseButton.MiddleButton:
-            # 中键平移视图
-            self.is_panning = True
+        if event.button() in (Qt.MouseButton.MiddleButton, Qt.MouseButton.RightButton):
+            # 中键/右键按下：记录位置，等移动超过阈值后才开始平移
+            self._pan_button_down = True
+            self._pan_button = event.button()
+            self._pan_origin = event.position()
             self.pan_start = event.position()
-            self.setCursor(Qt.CursorShape.ClosedHandCursor)
-        elif event.button() == Qt.MouseButton.RightButton:
-            # 右键按下：准备平移，拖动即平移，不拖动则为单击
-            self.is_panning = True
-            self._right_button_moved = False
-            self.pan_start = event.position()
-            self.setCursor(Qt.CursorShape.ClosedHandCursor)
         elif event.button() == Qt.MouseButton.LeftButton:
             # 先检查是否点击在已选中的轮廓上（支持直接拖动）
             clicked_on_selected = False
@@ -842,12 +840,21 @@ class Canvas2D(QWidget):
         pos = event.position()
         world_pos = self._screen_to_world(pos)
 
+        if self._pan_button_down and not self.is_panning:
+            # 判断是否超过拖动阈值
+            delta = pos - self._pan_origin
+            distance = (delta.x() ** 2 + delta.y() ** 2) ** 0.5
+            if distance >= self._PAN_THRESHOLD:
+                # 超过阈值，正式进入平移模式
+                self.is_panning = True
+                self.pan_start = pos  # 从当前位置开始平移（避免跳跃）
+                self.setCursor(Qt.CursorShape.ClosedHandCursor)
+
         if self.is_panning:
             # 平移视图
             delta = pos - self.pan_start
             self.view_offset += delta
             self.pan_start = pos
-            self._right_button_moved = True
             self.update()
         elif self.is_transforming and self.selected_indices:
             # 执行变换 - 使用实际的拖动工具
@@ -895,14 +902,15 @@ class Canvas2D(QWidget):
 
     def mouseReleaseEvent(self, event: QMouseEvent):
         """鼠标释放"""
-        if event.button() == Qt.MouseButton.MiddleButton:
+        if event.button() in (Qt.MouseButton.MiddleButton, Qt.MouseButton.RightButton):
+            was_panning = self.is_panning
             self.is_panning = False
-            self.setCursor(Qt.CursorShape.ArrowCursor)
-        elif event.button() == Qt.MouseButton.RightButton:
-            self.is_panning = False
+            self._pan_button_down = False
+            self._pan_button = Qt.MouseButton.NoButton
             self._set_tool_cursor()
-            if not self._right_button_moved:
-                # 没拖动过，视为右键单击，弹出右键菜单
+
+            if not was_panning and event.button() == Qt.MouseButton.RightButton:
+                # 未超过阈值，视为右键单击 → 弹出右键菜单
                 self._show_context_menu(event.globalPosition().toPoint())
         elif event.button() == Qt.MouseButton.LeftButton:
             if self.is_transforming:
