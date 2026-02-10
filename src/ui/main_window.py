@@ -343,6 +343,7 @@ class MainWindow(QMainWindow):
         self.transform_x.setValue(0)
         self.transform_x.setDecimals(2)
         self.transform_x.setSuffix(" mm")
+        self.transform_x.setKeyboardTracking(False)
         x_layout.addWidget(self.transform_x)
         pos_layout.addLayout(x_layout)
 
@@ -357,6 +358,7 @@ class MainWindow(QMainWindow):
         self.transform_y.setValue(0)
         self.transform_y.setDecimals(2)
         self.transform_y.setSuffix(" mm")
+        self.transform_y.setKeyboardTracking(False)
         y_layout.addWidget(self.transform_y)
         pos_layout.addLayout(y_layout)
 
@@ -377,6 +379,7 @@ class MainWindow(QMainWindow):
         self.transform_angle.setDecimals(2)
         self.transform_angle.setSuffix(" °")
         self.transform_angle.setWrapping(True)
+        self.transform_angle.setKeyboardTracking(False)
         rot_layout.addWidget(self.transform_angle)
         rot_layout.addStretch()
 
@@ -407,6 +410,7 @@ class MainWindow(QMainWindow):
         self.scale_x_pct.setValue(100)
         self.scale_x_pct.setDecimals(2)
         self.scale_x_pct.setSuffix(" %")
+        self.scale_x_pct.setKeyboardTracking(False)
         sx_layout.addWidget(self.scale_x_pct)
         scale_pct_layout.addLayout(sx_layout)
 
@@ -421,6 +425,7 @@ class MainWindow(QMainWindow):
         self.scale_y_pct.setValue(100)
         self.scale_y_pct.setDecimals(2)
         self.scale_y_pct.setSuffix(" %")
+        self.scale_y_pct.setKeyboardTracking(False)
         sy_layout.addWidget(self.scale_y_pct)
         scale_pct_layout.addLayout(sy_layout)
 
@@ -444,6 +449,7 @@ class MainWindow(QMainWindow):
         self.scale_w.setValue(100)
         self.scale_w.setDecimals(2)
         self.scale_w.setSuffix(" mm")
+        self.scale_w.setKeyboardTracking(False)
         sw_layout.addWidget(self.scale_w)
         size_layout.addLayout(sw_layout)
 
@@ -458,6 +464,7 @@ class MainWindow(QMainWindow):
         self.scale_h.setValue(100)
         self.scale_h.setDecimals(2)
         self.scale_h.setSuffix(" mm")
+        self.scale_h.setKeyboardTracking(False)
         sh_layout.addWidget(self.scale_h)
         size_layout.addLayout(sh_layout)
 
@@ -509,13 +516,13 @@ class MainWindow(QMainWindow):
         self.current_transform_mode = None
 
         # 连接信号 - 当值改变时实时应用
-        self.transform_x.valueChanged.connect(self._on_transform_value_changed)
-        self.transform_y.valueChanged.connect(self._on_transform_value_changed)
-        self.transform_angle.valueChanged.connect(self._on_transform_value_changed)
-        self.scale_x_pct.valueChanged.connect(self._on_scale_pct_changed)
-        self.scale_y_pct.valueChanged.connect(self._on_scale_pct_changed)
-        self.scale_w.valueChanged.connect(self._on_scale_size_changed)
-        self.scale_h.valueChanged.connect(self._on_scale_size_changed)
+        self.transform_x.editingFinished.connect(self._on_transform_value_changed)
+        self.transform_y.editingFinished.connect(self._on_transform_value_changed)
+        self.transform_angle.editingFinished.connect(self._on_transform_value_changed)
+        self.scale_x_pct.editingFinished.connect(lambda: self._on_scale_pct_changed(self.scale_x_pct))
+        self.scale_y_pct.editingFinished.connect(lambda: self._on_scale_pct_changed(self.scale_y_pct))
+        self.scale_w.editingFinished.connect(lambda: self._on_scale_size_changed(self.scale_w))
+        self.scale_h.editingFinished.connect(lambda: self._on_scale_size_changed(self.scale_h))
 
     def _init_central_widget(self):
         """初始化中央区域"""
@@ -1415,12 +1422,11 @@ class MainWindow(QMainWindow):
 
         self._scale_updating = False
 
-    def _on_scale_pct_changed(self):
+    def _on_scale_pct_changed(self, sender):
         """Scale百分比输入改变"""
         if self._scale_updating or not self.canvas.selected_indices:
             return
 
-        sender = self.sender()
         target_pct_x = self.scale_x_pct.value()
         target_pct_y = self.scale_y_pct.value()
 
@@ -1436,12 +1442,11 @@ class MainWindow(QMainWindow):
         target_h = self._scale_original_h * target_pct_y / 100.0
         self._apply_scale_to_size(target_w, target_h)
 
-    def _on_scale_size_changed(self):
+    def _on_scale_size_changed(self, sender):
         """Size尺寸输入改变"""
         if self._scale_updating or not self.canvas.selected_indices:
             return
 
-        sender = self.sender()
         target_w = self.scale_w.value()
         target_h = self.scale_h.value()
 
