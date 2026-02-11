@@ -192,8 +192,8 @@
         <translation>מידע</translation>
     </message>
     <message>
-        <source>Please slice first</source>
-        <translation>נא לבצע פריסה תחילה</translation>
+        <source>Please process first</source>
+        <translation>נא לבצע עיבוד תחילה</translation>
     </message>
     <message>
         <source>Export G-code</source>
@@ -360,7 +360,7 @@
         <translation>פורס מקצועי להדפסת 3D של אותיות שילוט LED</translation>
     </message>
     <message>
-        <source>Version: 0.1.1 (Development)</source>
+        <source>Version: 0.1.2 (Development)</source>
         <translation>גרסה: 0.1.0 (פיתוח)</translation>
     </message>
     <message>
@@ -431,6 +431,14 @@
     <message>
         <source>Drag to scale, input exact values above</source>
         <translation>גרור לשינוי קנה מידה, הזן ערכים מדויקים למעלה</translation>
+    </message>
+    <message>
+        <source>Loading file...</source>
+        <translation>טוען קובץ...</translation>
+    </message>
+    <message>
+        <source>Exporting STL...</source>
+        <translation>מייצא STL...</translation>
     </message>
 </context>
 <context>

@@ -192,8 +192,8 @@
         <translation>情報</translation>
     </message>
     <message>
-        <source>Please slice first</source>
-        <translation>先にスライスしてください</translation>
+        <source>Please process first</source>
+        <translation>先に処理を実行してください</translation>
     </message>
     <message>
         <source>Export G-code</source>
@@ -360,7 +360,7 @@
         <translation>プロフェッショナルLED看板文字3Dプリントスライサー</translation>
     </message>
     <message>
-        <source>Version: 0.1.1 (Development)</source>
+        <source>Version: 0.1.2 (Development)</source>
         <translation>バージョン: 0.1.0 (開発版)</translation>
     </message>
     <message>
@@ -431,6 +431,14 @@
     <message>
         <source>Drag to scale, input exact values above</source>
         <translation>ドラッグしてスケール、上に正確な値を入力</translation>
+    </message>
+    <message>
+        <source>Loading file...</source>
+        <translation>ファイルを読み込み中...</translation>
+    </message>
+    <message>
+        <source>Exporting STL...</source>
+        <translation>STLをエクスポート中...</translation>
     </message>
 </context>
 <context>

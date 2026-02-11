@@ -192,8 +192,8 @@
         <translation>Bilgi</translation>
     </message>
     <message>
-        <source>Please slice first</source>
-        <translation>Lutfen once dilimleyin</translation>
+        <source>Please process first</source>
+        <translation>Lutfen once isleme yapin</translation>
     </message>
     <message>
         <source>Export G-code</source>
@@ -360,7 +360,7 @@
         <translation>Profesyonel LED Isikli Harf 3D Baski Dilimleyici</translation>
     </message>
     <message>
-        <source>Version: 0.1.1 (Development)</source>
+        <source>Version: 0.1.2 (Development)</source>
         <translation>Surum: 0.1.0 (Gelistirme)</translation>
     </message>
     <message>
@@ -431,6 +431,14 @@
     <message>
         <source>Drag to scale, input exact values above</source>
         <translation>Ölçeklemek için sürükleyin, yukarıya kesin değerleri girin</translation>
+    </message>
+    <message>
+        <source>Loading file...</source>
+        <translation>Dosya yükleniyor...</translation>
+    </message>
+    <message>
+        <source>Exporting STL...</source>
+        <translation>STL dışa aktarılıyor...</translation>
     </message>
 </context>
 <context>

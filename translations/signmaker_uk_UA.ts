@@ -192,8 +192,8 @@
         <translation>Інформація</translation>
     </message>
     <message>
-        <source>Please slice first</source>
-        <translation>Спочатку виконайте нарізку</translation>
+        <source>Please process first</source>
+        <translation>Спочатку виконайте обробку</translation>
     </message>
     <message>
         <source>Export G-code</source>
@@ -360,7 +360,7 @@
         <translation>Професійний слайсер для 3D-друку світлових букв</translation>
     </message>
     <message>
-        <source>Version: 0.1.1 (Development)</source>
+        <source>Version: 0.1.2 (Development)</source>
         <translation>Версія: 0.1.0 (Розробка)</translation>
     </message>
     <message>
@@ -431,6 +431,14 @@
     <message>
         <source>Drag to scale, input exact values above</source>
         <translation>Перетягніть для масштабування, введіть точні значення вище</translation>
+    </message>
+    <message>
+        <source>Loading file...</source>
+        <translation>Завантаження файлу...</translation>
+    </message>
+    <message>
+        <source>Exporting STL...</source>
+        <translation>Експорт STL...</translation>
     </message>
 </context>
 <context>

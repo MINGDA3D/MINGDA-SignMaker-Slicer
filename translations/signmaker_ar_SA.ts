@@ -192,8 +192,8 @@
         <translation>معلومات</translation>
     </message>
     <message>
-        <source>Please slice first</source>
-        <translation>يرجى التقطيع أولاً</translation>
+        <source>Please process first</source>
+        <translation>يرجى المعالجة أولاً</translation>
     </message>
     <message>
         <source>Export G-code</source>
@@ -360,7 +360,7 @@
         <translation>برنامج تقطيع احترافي للطباعة ثلاثية الأبعاد لحروف اللافتات المضيئة</translation>
     </message>
     <message>
-        <source>Version: 0.1.1 (Development)</source>
+        <source>Version: 0.1.2 (Development)</source>
         <translation>الإصدار: 0.1.0 (تطوير)</translation>
     </message>
     <message>
@@ -431,6 +431,14 @@
     <message>
         <source>Drag to scale, input exact values above</source>
         <translation>اسحب للتحجيم، أدخل القيم الدقيقة أعلاه</translation>
+    </message>
+    <message>
+        <source>Loading file...</source>
+        <translation>جاري تحميل الملف...</translation>
+    </message>
+    <message>
+        <source>Exporting STL...</source>
+        <translation>جاري تصدير STL...</translation>
     </message>
 </context>
 <context>

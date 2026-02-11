@@ -192,8 +192,8 @@
         <translation>정보</translation>
     </message>
     <message>
-        <source>Please slice first</source>
-        <translation>먼저 슬라이싱을 수행하세요</translation>
+        <source>Please process first</source>
+        <translation>먼저 처리를 수행하세요</translation>
     </message>
     <message>
         <source>Export G-code</source>
@@ -360,7 +360,7 @@
         <translation>전문 LED 채널 레터 3D 프린팅 슬라이서</translation>
     </message>
     <message>
-        <source>Version: 0.1.1 (Development)</source>
+        <source>Version: 0.1.2 (Development)</source>
         <translation>버전: 0.1.0 (개발 버전)</translation>
     </message>
     <message>
@@ -431,6 +431,14 @@
     <message>
         <source>Drag to scale, input exact values above</source>
         <translation>드래그하여 스케일, 위에 정확한 값 입력</translation>
+    </message>
+    <message>
+        <source>Loading file...</source>
+        <translation>파일 로딩 중...</translation>
+    </message>
+    <message>
+        <source>Exporting STL...</source>
+        <translation>STL 내보내기 중...</translation>
     </message>
 </context>
 <context>

@@ -192,8 +192,8 @@
         <translation>Informacao</translation>
     </message>
     <message>
-        <source>Please slice first</source>
-        <translation>Por favor, fatie primeiro</translation>
+        <source>Please process first</source>
+        <translation>Por favor, processe primeiro</translation>
     </message>
     <message>
         <source>Export G-code</source>
@@ -360,7 +360,7 @@
         <translation>Fatiador profissional de impressao 3D para letras luminosas LED</translation>
     </message>
     <message>
-        <source>Version: 0.1.1 (Development)</source>
+        <source>Version: 0.1.2 (Development)</source>
         <translation>Versao: 0.1.0 (Desenvolvimento)</translation>
     </message>
     <message>
@@ -431,6 +431,14 @@
     <message>
         <source>Drag to scale, input exact values above</source>
         <translation>Arraste para escalar, insira valores exatos acima</translation>
+    </message>
+    <message>
+        <source>Loading file...</source>
+        <translation>Carregando arquivo...</translation>
+    </message>
+    <message>
+        <source>Exporting STL...</source>
+        <translation>Exportando STL...</translation>
     </message>
 </context>
 <context>

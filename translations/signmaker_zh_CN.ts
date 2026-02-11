@@ -216,8 +216,8 @@
         <translation>提示</translation>
     </message>
     <message>
-        <source>Please slice first</source>
-        <translation>请先进行切片</translation>
+        <source>Please process first</source>
+        <translation>请先进行处理</translation>
     </message>
     <message>
         <source>Export G-code</source>
@@ -384,8 +384,8 @@
         <translation>专业发光字3D打印切片软件</translation>
     </message>
     <message>
-        <source>Version: 0.1.1 (Development)</source>
-        <translation>版本: 0.1.1 (开发版)</translation>
+        <source>Version: 0.1.2 (Development)</source>
+        <translation>版本: 0.1.2 (开发版)</translation>
     </message>
     <message>
         <source>Features:</source>
@@ -471,6 +471,14 @@
     <message>
         <source>Drag to scale, input exact values above</source>
         <translation>拖拽缩放，或在上方输入精确值</translation>
+    </message>
+    <message>
+        <source>Loading file...</source>
+        <translation>正在加载文件...</translation>
+    </message>
+    <message>
+        <source>Exporting STL...</source>
+        <translation>正在导出STL...</translation>
     </message>
 </context>
 <context>

@@ -192,8 +192,8 @@
         <translation>Informazione</translation>
     </message>
     <message>
-        <source>Please slice first</source>
-        <translation>Prima esegui l'affettatura</translation>
+        <source>Please process first</source>
+        <translation>Prima esegui l'elaborazione</translation>
     </message>
     <message>
         <source>Export G-code</source>
@@ -360,7 +360,7 @@
         <translation>Affettatrice professionale per stampa 3D di lettere luminose LED</translation>
     </message>
     <message>
-        <source>Version: 0.1.1 (Development)</source>
+        <source>Version: 0.1.2 (Development)</source>
         <translation>Versione: 0.1.0 (Sviluppo)</translation>
     </message>
     <message>
@@ -431,6 +431,14 @@
     <message>
         <source>Drag to scale, input exact values above</source>
         <translation>Trascinare per scalare, inserire valori esatti sopra</translation>
+    </message>
+    <message>
+        <source>Loading file...</source>
+        <translation>Caricamento file...</translation>
+    </message>
+    <message>
+        <source>Exporting STL...</source>
+        <translation>Esportazione STL...</translation>
     </message>
 </context>
 <context>

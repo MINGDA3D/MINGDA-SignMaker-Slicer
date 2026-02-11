@@ -36,6 +36,7 @@ from .preview_3d import Preview3D
 from .title_bar import TitleBar
 from .canvas_toolbar import CanvasToolbar
 from .home_page import HomePage
+from .busy_dialog import run_async
 
 from src.core import (
     DXFParser, SVGParser, SliceEngine, GCodeWriter,
@@ -946,26 +947,32 @@ class MainWindow(QMainWindow):
             self._load_project(file_path)
 
     def _load_file(self, file_path: str):
-        """加载文件"""
-        try:
-            path = Path(file_path)
-            suffix = path.suffix.lower()
+        """加载文件（异步）"""
+        path = Path(file_path)
+        suffix = path.suffix.lower()
 
-            if suffix == '.smp':
-                # 加载项目文件
-                self._load_project(file_path)
-            elif suffix == '.dxf':
-                new_contours = self.dxf_parser.parse(file_path)
-                self._load_contours(new_contours, path)
-            elif suffix == '.svg':
-                new_contours = self.svg_parser.parse(file_path)
-                self._load_contours(new_contours, path)
-            else:
-                QMessageBox.warning(self, self.tr("Unsupported Format"), self.tr("Format not supported: ") + path.suffix)
-                return
+        if suffix == '.smp':
+            self._load_project(file_path)
+            return
 
-        except Exception as e:
-            QMessageBox.critical(self, self.tr("Load Failed"), self.tr("Failed to load file:") + f"\n{e}")
+        if suffix == '.dxf':
+            parse_func = lambda: self.dxf_parser.parse(file_path)
+        elif suffix == '.svg':
+            parse_func = lambda: self.svg_parser.parse(file_path)
+        else:
+            QMessageBox.warning(self, self.tr("Unsupported Format"), self.tr("Format not supported: ") + path.suffix)
+            return
+
+        run_async(
+            self,
+            self.tr("Loading file..."),
+            parse_func,
+            on_success=lambda contours: self._load_contours(contours, path),
+            on_error=lambda err: QMessageBox.critical(
+                self, self.tr("Load Failed"),
+                self.tr("Failed to load file:") + f"\n{err}"
+            ),
+        )
 
     def _load_contours(self, new_contours: List[Contour], path: Path):
         """加载轮廓数据（从 DXF/SVG 导入）"""
@@ -1139,7 +1146,7 @@ class MainWindow(QMainWindow):
     # def _on_export_gcode(self):
     #     """导出G-code"""
     #     if not self.slice_result:
-    #         QMessageBox.information(self, self.tr("Info"), self.tr("Please slice first"))
+    #         QMessageBox.information(self, self.tr("Info"), self.tr("Please process first"))
     #         return
     #
     #     file_path, _ = QFileDialog.getSaveFileName(
@@ -1160,9 +1167,9 @@ class MainWindow(QMainWindow):
     #             QMessageBox.critical(self, self.tr("Export Failed"), self.tr("Failed to export G-code:") + f"\n{e}")
 
     def _on_export_stl(self):
-        """导出STL"""
+        """导出STL（异步）"""
         if not self.slice_result:
-            QMessageBox.information(self, self.tr("Info"), self.tr("Please slice first"))
+            QMessageBox.information(self, self.tr("Info"), self.tr("Please process first"))
             return
 
         file_path, _ = QFileDialog.getSaveFileName(
@@ -1173,19 +1180,32 @@ class MainWindow(QMainWindow):
         )
 
         if file_path:
-            try:
-                # 获取当前参数
-                params = self.param_panel.get_params()
+            # 获取当前参数
+            params = self.param_panel.get_params()
+            slice_result = self.slice_result
+            contours = self.contours
+
+            def do_export():
                 writer = STLWriter(wall_thickness=params.shell.wall_thickness)
-                # 传递轮廓和参数用于生成包边
                 writer.write(
-                    self.slice_result, file_path,
-                    contours=self.contours, params=params
+                    slice_result, file_path,
+                    contours=contours, params=params
                 )
+
+            def on_success(_result):
                 self._update_status(self.tr("STL exported: ") + Path(file_path).name)
                 QMessageBox.information(self, self.tr("Export Success"), self.tr("STL saved to:") + f"\n{file_path}")
-            except Exception as e:
-                QMessageBox.critical(self, self.tr("Export Failed"), self.tr("Failed to export STL:") + f"\n{e}")
+
+            def on_error(err):
+                QMessageBox.critical(self, self.tr("Export Failed"), self.tr("Failed to export STL:") + f"\n{err}")
+
+            run_async(
+                self,
+                self.tr("Exporting STL..."),
+                do_export,
+                on_success=on_success,
+                on_error=on_error,
+            )
 
     def _on_export_baseplate(self):
         """导出底板DXF"""
@@ -1274,20 +1294,19 @@ class MainWindow(QMainWindow):
             self._update_status(self.tr("Nothing to redo"))
 
     def _on_slice(self):
-        """执行处理"""
+        """执行处理（异步）"""
         if not self.contours:
             QMessageBox.information(self, self.tr("Info"), self.tr("Please import a DXF file first"))
             return
 
-        try:
-            self._update_status(self.tr("Processing..."))
-            QApplication.processEvents()
+        # 获取参数
+        params = self.param_panel.get_params()
 
-            # 获取参数
-            params = self.param_panel.get_params()
+        def do_slice():
+            return self.slice_engine.slice(self.contours, params)
 
-            # 执行切片
-            self.slice_result = self.slice_engine.slice(self.contours, params)
+        def on_success(result):
+            self.slice_result = result
 
             # 更新3D预览
             if self.slice_result and self.slice_result.layers:
@@ -1305,25 +1324,19 @@ class MainWindow(QMainWindow):
                 time=self.slice_result.estimated_time / 60
             )
             self._update_status(msg)
-
             self.slice_completed.emit(self.slice_result)
 
-            # 切片完成，不再自动弹出导出对话框
-            # 用户可以通过菜单 File -> Export G-code 或快捷键 Ctrl+E 手动导出
-            # reply = QMessageBox.question(
-            #     self,
-            #     self.tr("Processing Complete"),
-            #     msg + "\n\n" + self.tr("Export G-code now?"),
-            #     QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
-            #     QMessageBox.StandardButton.Yes
-            # )
-            #
-            # if reply == QMessageBox.StandardButton.Yes:
-            #     self._on_export_gcode()
-
-        except Exception as e:
-            QMessageBox.critical(self, self.tr("Processing Failed"), self.tr("Error during processing:") + f"\n{e}")
+        def on_error(err):
+            QMessageBox.critical(self, self.tr("Processing Failed"), self.tr("Error during processing:") + f"\n{err}")
             self._update_status(self.tr("Processing failed"))
+
+        run_async(
+            self,
+            self.tr("Processing..."),
+            do_slice,
+            on_success=on_success,
+            on_error=on_error,
+        )
 
     def _switch_view(self, view_type: str):
         """切换2D/3D视图"""
@@ -1677,7 +1690,7 @@ class MainWindow(QMainWindow):
             self.tr("About MINGDA SignMaker"),
             "<h3>MINGDA SignMaker</h3>"
             "<p>" + self.tr("Professional LED Sign Letter 3D Printing Slicer") + "</p>"
-            "<p>" + self.tr("Version: 0.1.1 (Development)") + "</p>"
+            "<p>" + self.tr("Version: 0.1.2 (Development)") + "</p>"
             "<p></p>"
             "<p>" + self.tr("Features:") + "</p>"
             "<ul>"

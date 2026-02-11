@@ -192,8 +192,8 @@
         <translation>Information</translation>
     </message>
     <message>
-        <source>Please slice first</source>
-        <translation>Veuillez d'abord effectuer le tranchage</translation>
+        <source>Please process first</source>
+        <translation>Veuillez d'abord effectuer le traitement</translation>
     </message>
     <message>
         <source>Export G-code</source>
@@ -360,7 +360,7 @@
         <translation>Trancheur professionnel pour impression 3D de lettres lumineuses LED</translation>
     </message>
     <message>
-        <source>Version: 0.1.1 (Development)</source>
+        <source>Version: 0.1.2 (Development)</source>
         <translation>Version : 0.1.0 (Développement)</translation>
     </message>
     <message>
@@ -431,6 +431,14 @@
     <message>
         <source>Drag to scale, input exact values above</source>
         <translation>Glisser pour redimensionner, saisir les valeurs exactes ci-dessus</translation>
+    </message>
+    <message>
+        <source>Loading file...</source>
+        <translation>Chargement du fichier...</translation>
+    </message>
+    <message>
+        <source>Exporting STL...</source>
+        <translation>Exportation STL...</translation>
     </message>
 </context>
 <context>

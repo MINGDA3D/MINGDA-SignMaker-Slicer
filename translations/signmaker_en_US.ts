@@ -192,8 +192,8 @@
         <translation>Info</translation>
     </message>
     <message>
-        <source>Please slice first</source>
-        <translation>Please slice first</translation>
+        <source>Please process first</source>
+        <translation>Please process first</translation>
     </message>
     <message>
         <source>Export G-code</source>
@@ -360,8 +360,8 @@
         <translation>Professional LED Sign Letter 3D Printing Slicer</translation>
     </message>
     <message>
-        <source>Version: 0.1.1 (Development)</source>
-        <translation>Version: 0.1.1 (Development)</translation>
+        <source>Version: 0.1.2 (Development)</source>
+        <translation>Version: 0.1.2 (Development)</translation>
     </message>
     <message>
         <source>Features:</source>
@@ -431,6 +431,14 @@
     <message>
         <source>Drag to scale, input exact values above</source>
         <translation>Drag to scale, input exact values above</translation>
+    </message>
+    <message>
+        <source>Loading file...</source>
+        <translation>Loading file...</translation>
+    </message>
+    <message>
+        <source>Exporting STL...</source>
+        <translation>Exporting STL...</translation>
     </message>
 </context>
 <context>

@@ -192,8 +192,8 @@
         <translation>Informacion</translation>
     </message>
     <message>
-        <source>Please slice first</source>
-        <translation>Por favor, rebane primero</translation>
+        <source>Please process first</source>
+        <translation>Por favor, procese primero</translation>
     </message>
     <message>
         <source>Export G-code</source>
@@ -360,8 +360,8 @@
         <translation>Rebanador profesional de impresion 3D para letras luminosas LED</translation>
     </message>
     <message>
-        <source>Version: 0.1.1 (Development)</source>
-        <translation>Version: 0.1.1 (Desarrollo)</translation>
+        <source>Version: 0.1.2 (Development)</source>
+        <translation>Version: 0.1.2 (Desarrollo)</translation>
     </message>
     <message>
         <source>Features:</source>
@@ -431,6 +431,14 @@
     <message>
         <source>Drag to scale, input exact values above</source>
         <translation>Arrastre para escalar, introduzca valores exactos arriba</translation>
+    </message>
+    <message>
+        <source>Loading file...</source>
+        <translation>Cargando archivo...</translation>
+    </message>
+    <message>
+        <source>Exporting STL...</source>
+        <translation>Exportando STL...</translation>
     </message>
 </context>
 <context>

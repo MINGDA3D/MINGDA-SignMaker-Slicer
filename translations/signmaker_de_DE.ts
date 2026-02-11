@@ -192,8 +192,8 @@
         <translation>Info</translation>
     </message>
     <message>
-        <source>Please slice first</source>
-        <translation>Bitte zuerst slicen</translation>
+        <source>Please process first</source>
+        <translation>Bitte zuerst verarbeiten</translation>
     </message>
     <message>
         <source>Export G-code</source>
@@ -360,8 +360,8 @@
         <translation>Professioneller LED-Leuchtbuchstaben 3D-Druck-Slicer</translation>
     </message>
     <message>
-        <source>Version: 0.1.1 (Development)</source>
-        <translation>Version: 0.1.1 (Entwicklung)</translation>
+        <source>Version: 0.1.2 (Development)</source>
+        <translation>Version: 0.1.2 (Entwicklung)</translation>
     </message>
     <message>
         <source>Features:</source>
@@ -431,6 +431,14 @@
     <message>
         <source>Drag to scale, input exact values above</source>
         <translation>Ziehen zum Skalieren, genaue Werte oben eingeben</translation>
+    </message>
+    <message>
+        <source>Loading file...</source>
+        <translation>Datei wird geladen...</translation>
+    </message>
+    <message>
+        <source>Exporting STL...</source>
+        <translation>STL wird exportiert...</translation>
     </message>
 </context>
 <context>
