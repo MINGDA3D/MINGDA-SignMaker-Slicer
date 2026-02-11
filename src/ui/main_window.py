@@ -505,6 +505,8 @@ class MainWindow(QMainWindow):
         # 记录原始尺寸（用于百分比↔尺寸换算）
         self._scale_original_w = 1.0
         self._scale_original_h = 1.0
+        self._scale_pct_x = 100.0  # 独立存储的缩放百分比（不受旋转影响）
+        self._scale_pct_y = 100.0
         self._scale_updating = False  # 防止递归更新
 
         # 提示文本
@@ -708,6 +710,9 @@ class MainWindow(QMainWindow):
                 self._pending_transform.description = f"缩放 {delta['scale']*100:.0f}%"
                 self._pending_transform.capture_after()
                 self.undo_manager.push(self._pending_transform, execute=False)
+                # 拖拽缩放后更新存储的百分比
+                self._scale_pct_x *= delta['scale']
+                self._scale_pct_y *= delta['scale']
 
         self._pending_transform = None
 
@@ -736,6 +741,8 @@ class MainWindow(QMainWindow):
             self.canvas._cumulative_angle = 0.0
             self._scale_original_w = None
             self._scale_original_h = None
+            self._scale_pct_x = 100.0
+            self._scale_pct_y = 100.0
             if self.current_transform_mode in ("rotate", "scale"):
                 if self.current_transform_mode == "scale":
                     self._capture_original_size()
@@ -1406,6 +1413,8 @@ class MainWindow(QMainWindow):
         if bounds:
             self._scale_original_w = max(bounds[2] - bounds[0], 0.01)
             self._scale_original_h = max(bounds[3] - bounds[1], 0.01)
+            self._scale_pct_x = 100.0
+            self._scale_pct_y = 100.0
 
     def _update_scale_panel_values(self):
         """更新缩放面板中的尺寸和百分比"""
@@ -1417,15 +1426,15 @@ class MainWindow(QMainWindow):
         if bounds:
             cur_w = bounds[2] - bounds[0]
             cur_h = bounds[3] - bounds[1]
-            pct_x = cur_w / self._scale_original_w * 100.0
-            pct_y = cur_h / self._scale_original_h * 100.0
 
             for spin in (self.scale_x_pct, self.scale_y_pct,
                          self.scale_w, self.scale_h):
                 spin.blockSignals(True)
 
-            self.scale_x_pct.setValue(pct_x)
-            self.scale_y_pct.setValue(pct_y)
+            # 百分比使用独立存储的值（不受旋转影响）
+            self.scale_x_pct.setValue(self._scale_pct_x)
+            self.scale_y_pct.setValue(self._scale_pct_y)
+            # 尺寸使用实际包围盒
             self.scale_w.setValue(cur_w)
             self.scale_h.setValue(cur_h)
 
@@ -1450,10 +1459,22 @@ class MainWindow(QMainWindow):
             else:
                 target_pct_x = target_pct_y
 
-        # 计算目标尺寸
-        target_w = self._scale_original_w * target_pct_x / 100.0
-        target_h = self._scale_original_h * target_pct_y / 100.0
-        self._apply_scale_to_size(target_w, target_h)
+        # 通过百分比比值计算缩放因子（不依赖包围盒，旋转后仍正确）
+        old_pct_x = self._scale_pct_x if self._scale_pct_x > 0.001 else 100.0
+        old_pct_y = self._scale_pct_y if self._scale_pct_y > 0.001 else 100.0
+        sx = target_pct_x / old_pct_x
+        sy = target_pct_y / old_pct_y
+
+        if abs(sx - 1.0) > 0.0001 or abs(sy - 1.0) > 0.0001:
+            self.canvas.scale_selected_xy(sx, sy)
+            self._scale_pct_x = target_pct_x
+            self._scale_pct_y = target_pct_y
+            self._update_scale_panel_values()
+            self._update_status(
+                self.tr("Scale: {px:.1f}% x {py:.1f}%").format(
+                    px=target_pct_x, py=target_pct_y
+                )
+            )
 
     def _on_scale_size_changed(self, sender):
         """Size尺寸输入改变"""
@@ -1463,16 +1484,34 @@ class MainWindow(QMainWindow):
         target_w = self.scale_w.value()
         target_h = self.scale_h.value()
 
+        bounds = self.canvas.get_selection_bounds()
+        if not bounds:
+            return
+        cur_w = max(bounds[2] - bounds[0], 0.01)
+        cur_h = max(bounds[3] - bounds[1], 0.01)
+
         if self.uniform_scale_cb.isChecked():
             # 等比例：用改变的那个轴的比例同步另一个
             if sender is self.scale_w:
-                ratio = target_w / self._scale_original_w
-                target_h = self._scale_original_h * ratio
+                sx = target_w / cur_w
+                sy = sx
             else:
-                ratio = target_h / self._scale_original_h
-                target_w = self._scale_original_w * ratio
+                sy = target_h / cur_h
+                sx = sy
+        else:
+            sx = target_w / cur_w
+            sy = target_h / cur_h
 
-        self._apply_scale_to_size(target_w, target_h)
+        if abs(sx - 1.0) > 0.0001 or abs(sy - 1.0) > 0.0001:
+            self.canvas.scale_selected_xy(sx, sy)
+            self._scale_pct_x *= sx
+            self._scale_pct_y *= sy
+            self._update_scale_panel_values()
+            self._update_status(
+                self.tr("Scale: {px:.1f}% x {py:.1f}%").format(
+                    px=self._scale_pct_x, py=self._scale_pct_y
+                )
+            )
 
     def _apply_scale_to_size(self, target_w: float, target_h: float):
         """根据目标尺寸计算缩放因子并应用"""
@@ -1487,11 +1526,12 @@ class MainWindow(QMainWindow):
 
         if abs(sx - 1.0) > 0.0001 or abs(sy - 1.0) > 0.0001:
             self.canvas.scale_selected_xy(sx, sy)
+            self._scale_pct_x *= sx
+            self._scale_pct_y *= sy
             self._update_scale_panel_values()
             self._update_status(
                 self.tr("Scale: {px:.1f}% x {py:.1f}%").format(
-                    px=target_w / self._scale_original_w * 100,
-                    py=target_h / self._scale_original_h * 100
+                    px=self._scale_pct_x, py=self._scale_pct_y
                 )
             )
 
