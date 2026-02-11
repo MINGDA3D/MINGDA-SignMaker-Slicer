@@ -384,8 +384,8 @@
         <translation>专业发光字3D打印切片软件</translation>
     </message>
     <message>
-        <source>Version: 0.1.0 (Development)</source>
-        <translation>版本: 0.1.0 (开发版)</translation>
+        <source>Version: 0.1.1 (Development)</source>
+        <translation>版本: 0.1.1 (开发版)</translation>
     </message>
     <message>
         <source>Features:</source>
@@ -536,6 +536,10 @@
         <translation>导出Gcode</translation>
     </message>
     <message>
+        <source>Export STL</source>
+        <translation>导出STL</translation>
+    </message>
+    <message>
         <source>New Project</source>
         <translation>新建项目</translation>
     </message>
@@ -546,10 +550,6 @@
     <message>
         <source>Open Project...</source>
         <translation>打开项目...</translation>
-    </message>
-    <message>
-        <source>Save Project</source>
-        <translation>保存项目</translation>
     </message>
     <message>
         <source>Save As...</source>

@@ -360,7 +360,7 @@
         <translation>전문 LED 채널 레터 3D 프린팅 슬라이서</translation>
     </message>
     <message>
-        <source>Version: 0.1.0 (Development)</source>
+        <source>Version: 0.1.1 (Development)</source>
         <translation>버전: 0.1.0 (개발 버전)</translation>
     </message>
     <message>
@@ -518,6 +518,26 @@
     <message>
         <source>Language</source>
         <translation>언어</translation>
+    </message>
+    <message>
+        <source>Open File (DXF/SVG/SMP)</source>
+        <translation>파일 열기 (DXF/SVG/SMP)</translation>
+    </message>
+    <message>
+        <source>Export Project</source>
+        <translation>프로젝트 내보내기</translation>
+    </message>
+    <message>
+        <source>Export STL</source>
+        <translation>STL 내보내기</translation>
+    </message>
+    <message>
+        <source>Open Project...</source>
+        <translation>프로젝트 열기...</translation>
+    </message>
+    <message>
+        <source>Save As...</source>
+        <translation>다른 이름으로 저장...</translation>
     </message>
 </context>
 <context>

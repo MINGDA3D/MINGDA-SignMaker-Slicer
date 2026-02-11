@@ -360,7 +360,7 @@
         <translation>פורס מקצועי להדפסת 3D של אותיות שילוט LED</translation>
     </message>
     <message>
-        <source>Version: 0.1.0 (Development)</source>
+        <source>Version: 0.1.1 (Development)</source>
         <translation>גרסה: 0.1.0 (פיתוח)</translation>
     </message>
     <message>
@@ -518,6 +518,26 @@
     <message>
         <source>Language</source>
         <translation>שפה</translation>
+    </message>
+    <message>
+        <source>Open File (DXF/SVG/SMP)</source>
+        <translation>פתח קובץ (DXF/SVG/SMP)</translation>
+    </message>
+    <message>
+        <source>Export Project</source>
+        <translation>ייצוא פרויקט</translation>
+    </message>
+    <message>
+        <source>Export STL</source>
+        <translation>ייצוא STL</translation>
+    </message>
+    <message>
+        <source>Open Project...</source>
+        <translation>פתח פרויקט...</translation>
+    </message>
+    <message>
+        <source>Save As...</source>
+        <translation>שמור בשם...</translation>
     </message>
 </context>
 <context>

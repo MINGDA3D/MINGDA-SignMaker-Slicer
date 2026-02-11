@@ -360,7 +360,7 @@
         <translation>Trancheur professionnel pour impression 3D de lettres lumineuses LED</translation>
     </message>
     <message>
-        <source>Version: 0.1.0 (Development)</source>
+        <source>Version: 0.1.1 (Development)</source>
         <translation>Version : 0.1.0 (Développement)</translation>
     </message>
     <message>
@@ -518,6 +518,26 @@
     <message>
         <source>Language</source>
         <translation>Langue</translation>
+    </message>
+    <message>
+        <source>Open File (DXF/SVG/SMP)</source>
+        <translation>Ouvrir un fichier (DXF/SVG/SMP)</translation>
+    </message>
+    <message>
+        <source>Export Project</source>
+        <translation>Exporter le projet</translation>
+    </message>
+    <message>
+        <source>Export STL</source>
+        <translation>Exporter STL</translation>
+    </message>
+    <message>
+        <source>Open Project...</source>
+        <translation>Ouvrir un projet...</translation>
+    </message>
+    <message>
+        <source>Save As...</source>
+        <translation>Enregistrer sous...</translation>
     </message>
 </context>
 <context>

@@ -360,7 +360,7 @@
         <translation>Профессиональный слайсер для 3D-печати светящихся букв</translation>
     </message>
     <message>
-        <source>Version: 0.1.0 (Development)</source>
+        <source>Version: 0.1.1 (Development)</source>
         <translation>Версия: 0.1.0 (Разработка)</translation>
     </message>
     <message>
@@ -518,6 +518,26 @@
     <message>
         <source>Language</source>
         <translation>Язык</translation>
+    </message>
+    <message>
+        <source>Open File (DXF/SVG/SMP)</source>
+        <translation>Открыть файл (DXF/SVG/SMP)</translation>
+    </message>
+    <message>
+        <source>Export Project</source>
+        <translation>Экспорт проекта</translation>
+    </message>
+    <message>
+        <source>Export STL</source>
+        <translation>Экспорт STL</translation>
+    </message>
+    <message>
+        <source>Open Project...</source>
+        <translation>Открыть проект...</translation>
+    </message>
+    <message>
+        <source>Save As...</source>
+        <translation>Сохранить как...</translation>
     </message>
 </context>
 <context>

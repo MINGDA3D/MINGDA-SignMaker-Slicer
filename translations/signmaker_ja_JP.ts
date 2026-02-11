@@ -360,7 +360,7 @@
         <translation>プロフェッショナルLED看板文字3Dプリントスライサー</translation>
     </message>
     <message>
-        <source>Version: 0.1.0 (Development)</source>
+        <source>Version: 0.1.1 (Development)</source>
         <translation>バージョン: 0.1.0 (開発版)</translation>
     </message>
     <message>
@@ -518,6 +518,26 @@
     <message>
         <source>Language</source>
         <translation>言語</translation>
+    </message>
+    <message>
+        <source>Open File (DXF/SVG/SMP)</source>
+        <translation>ファイルを開く (DXF/SVG/SMP)</translation>
+    </message>
+    <message>
+        <source>Export Project</source>
+        <translation>プロジェクトをエクスポート</translation>
+    </message>
+    <message>
+        <source>Export STL</source>
+        <translation>STLをエクスポート</translation>
+    </message>
+    <message>
+        <source>Open Project...</source>
+        <translation>プロジェクトを開く...</translation>
+    </message>
+    <message>
+        <source>Save As...</source>
+        <translation>名前を付けて保存...</translation>
     </message>
 </context>
 <context>

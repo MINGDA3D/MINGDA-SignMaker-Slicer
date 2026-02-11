@@ -368,8 +368,8 @@ class ParamPanel(QWidget):
 
         form1 = QFormLayout()
         self.panel_step_height = PlusMinusSpinBox()
-        self.panel_step_height.setRange(0.3, 30)
-        self.panel_step_height.setValue(3)
+        self.panel_step_height.setRange(0.3, 50)
+        self.panel_step_height.setValue(28)
         self.panel_step_height.setSuffix("mm")
         self.panel_step_height.setEnabled(False)
         self.panel_step_height.valueChanged.connect(self._on_param_changed)
@@ -548,7 +548,7 @@ class ParamPanel(QWidget):
         # 连襟宽度
         self.connected_width = PlusMinusSpinBox()
         self.connected_width.setRange(1, 50)
-        self.connected_width.setValue(15)
+        self.connected_width.setValue(5)
         self.connected_width.setSuffix("mm")
         self.connected_width.setEnabled(False)
         self.connected_width.valueChanged.connect(self._on_param_changed)

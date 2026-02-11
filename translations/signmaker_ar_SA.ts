@@ -360,7 +360,7 @@
         <translation>برنامج تقطيع احترافي للطباعة ثلاثية الأبعاد لحروف اللافتات المضيئة</translation>
     </message>
     <message>
-        <source>Version: 0.1.0 (Development)</source>
+        <source>Version: 0.1.1 (Development)</source>
         <translation>الإصدار: 0.1.0 (تطوير)</translation>
     </message>
     <message>
@@ -518,6 +518,26 @@
     <message>
         <source>Language</source>
         <translation>اللغة</translation>
+    </message>
+    <message>
+        <source>Open File (DXF/SVG/SMP)</source>
+        <translation>فتح ملف (DXF/SVG/SMP)</translation>
+    </message>
+    <message>
+        <source>Export Project</source>
+        <translation>تصدير المشروع</translation>
+    </message>
+    <message>
+        <source>Export STL</source>
+        <translation>تصدير STL</translation>
+    </message>
+    <message>
+        <source>Open Project...</source>
+        <translation>فتح مشروع...</translation>
+    </message>
+    <message>
+        <source>Save As...</source>
+        <translation>حفظ باسم...</translation>
     </message>
 </context>
 <context>

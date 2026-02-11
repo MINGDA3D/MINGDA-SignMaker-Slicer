@@ -360,7 +360,7 @@
         <translation>Profesyonel LED Isikli Harf 3D Baski Dilimleyici</translation>
     </message>
     <message>
-        <source>Version: 0.1.0 (Development)</source>
+        <source>Version: 0.1.1 (Development)</source>
         <translation>Surum: 0.1.0 (Gelistirme)</translation>
     </message>
     <message>
@@ -518,6 +518,26 @@
     <message>
         <source>Language</source>
         <translation>Dil</translation>
+    </message>
+    <message>
+        <source>Open File (DXF/SVG/SMP)</source>
+        <translation>Dosya Aç (DXF/SVG/SMP)</translation>
+    </message>
+    <message>
+        <source>Export Project</source>
+        <translation>Projeyi Dışa Aktar</translation>
+    </message>
+    <message>
+        <source>Export STL</source>
+        <translation>STL Dışa Aktar</translation>
+    </message>
+    <message>
+        <source>Open Project...</source>
+        <translation>Proje Aç...</translation>
+    </message>
+    <message>
+        <source>Save As...</source>
+        <translation>Farklı Kaydet...</translation>
     </message>
 </context>
 <context>

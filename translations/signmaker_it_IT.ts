@@ -360,7 +360,7 @@
         <translation>Affettatrice professionale per stampa 3D di lettere luminose LED</translation>
     </message>
     <message>
-        <source>Version: 0.1.0 (Development)</source>
+        <source>Version: 0.1.1 (Development)</source>
         <translation>Versione: 0.1.0 (Sviluppo)</translation>
     </message>
     <message>
@@ -518,6 +518,26 @@
     <message>
         <source>Language</source>
         <translation>Lingua</translation>
+    </message>
+    <message>
+        <source>Open File (DXF/SVG/SMP)</source>
+        <translation>Apri file (DXF/SVG/SMP)</translation>
+    </message>
+    <message>
+        <source>Export Project</source>
+        <translation>Esporta progetto</translation>
+    </message>
+    <message>
+        <source>Export STL</source>
+        <translation>Esporta STL</translation>
+    </message>
+    <message>
+        <source>Open Project...</source>
+        <translation>Apri progetto...</translation>
+    </message>
+    <message>
+        <source>Save As...</source>
+        <translation>Salva con nome...</translation>
     </message>
 </context>
 <context>

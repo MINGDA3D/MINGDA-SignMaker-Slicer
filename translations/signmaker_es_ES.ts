@@ -360,8 +360,8 @@
         <translation>Rebanador profesional de impresion 3D para letras luminosas LED</translation>
     </message>
     <message>
-        <source>Version: 0.1.0 (Development)</source>
-        <translation>Version: 0.1.0 (Desarrollo)</translation>
+        <source>Version: 0.1.1 (Development)</source>
+        <translation>Version: 0.1.1 (Desarrollo)</translation>
     </message>
     <message>
         <source>Features:</source>
@@ -518,6 +518,26 @@
     <message>
         <source>Language</source>
         <translation>Idioma</translation>
+    </message>
+    <message>
+        <source>Open File (DXF/SVG/SMP)</source>
+        <translation>Abrir archivo (DXF/SVG/SMP)</translation>
+    </message>
+    <message>
+        <source>Export Project</source>
+        <translation>Exportar proyecto</translation>
+    </message>
+    <message>
+        <source>Export STL</source>
+        <translation>Exportar STL</translation>
+    </message>
+    <message>
+        <source>Open Project...</source>
+        <translation>Abrir proyecto...</translation>
+    </message>
+    <message>
+        <source>Save As...</source>
+        <translation>Guardar como...</translation>
     </message>
 </context>
 <context>

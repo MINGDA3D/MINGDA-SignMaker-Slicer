@@ -519,7 +519,7 @@ class StepParams:
 
     # 面板台阶（顶部）- 用于安装面板
     panel_step_enabled: bool = False
-    panel_step_height: float = 3.0      # 面板厚度/台阶高度 (mm)
+    panel_step_height: float = 28.0     # 面板厚度/台阶高度 (mm)
     panel_step_width: float = 3.0       # 台阶向内延伸宽度 (mm)
     panel_step_is_v_groove: bool = False  # 是否为V槽
 
@@ -603,7 +603,7 @@ class ConnectedParams:
     """
     enabled: bool = False
     type: str = "triangle"              # 连襟类型: "triangle" 或 "diamond"
-    width: float = 15.0                 # 连襟宽度 (mm) - 连接桥的宽度
+    width: float = 5.0                  # 连襟宽度 (mm) - 连接桥的宽度
     height: float = 5.0                 # 斜边高度 (mm) - 顶部斜边的高度
     base_height: float = 5.0            # 底座高度 (mm) - 底部直边的高度
     support_offset: float = 2.5         # 支撑偏移 (mm) - 与字壳边缘的距离

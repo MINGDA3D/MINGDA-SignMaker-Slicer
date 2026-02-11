@@ -360,7 +360,7 @@
         <translation>Fatiador profissional de impressao 3D para letras luminosas LED</translation>
     </message>
     <message>
-        <source>Version: 0.1.0 (Development)</source>
+        <source>Version: 0.1.1 (Development)</source>
         <translation>Versao: 0.1.0 (Desenvolvimento)</translation>
     </message>
     <message>
@@ -518,6 +518,26 @@
     <message>
         <source>Language</source>
         <translation>Idioma</translation>
+    </message>
+    <message>
+        <source>Open File (DXF/SVG/SMP)</source>
+        <translation>Abrir arquivo (DXF/SVG/SMP)</translation>
+    </message>
+    <message>
+        <source>Export Project</source>
+        <translation>Exportar projeto</translation>
+    </message>
+    <message>
+        <source>Export STL</source>
+        <translation>Exportar STL</translation>
+    </message>
+    <message>
+        <source>Open Project...</source>
+        <translation>Abrir projeto...</translation>
+    </message>
+    <message>
+        <source>Save As...</source>
+        <translation>Salvar como...</translation>
     </message>
 </context>
 <context>

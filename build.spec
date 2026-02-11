@@ -18,8 +18,8 @@ PROJECT_ROOT = Path('.').absolute()
 datas = [
     # Qt resources
     ('resources', 'resources'),
-    # Translations (if exists)
-    # ('translations/*.qm', 'translations'),
+    # Translations
+    ('translations/*.qm', 'translations'),
 ]
 
 # Resources already added above, no need for additional logo path

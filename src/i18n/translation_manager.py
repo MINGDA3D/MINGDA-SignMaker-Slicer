@@ -10,6 +10,7 @@ MINGDA SignMaker - 翻译管理器
 
 from pathlib import Path
 from typing import Optional, Dict, Callable, List
+import sys
 
 from PySide6.QtCore import QObject, Signal, QTranslator, QLocale, QCoreApplication, QSettings
 from PySide6.QtWidgets import QApplication
@@ -57,8 +58,14 @@ class TranslationManager(QObject):
         self._translator: Optional[QTranslator] = None
         self._qt_translator: Optional[QTranslator] = None
 
-        # 翻译文件目录
-        self._translations_dir = Path(__file__).parent.parent.parent / "translations"
+        # 翻译文件目录（兼容 PyInstaller 打包环境）
+        if getattr(sys, 'frozen', False):
+            # PyInstaller 打包后，资源在 sys._MEIPASS 目录下
+            base_dir = Path(sys._MEIPASS)
+        else:
+            # 开发环境，从源码目录向上查找
+            base_dir = Path(__file__).parent.parent.parent
+        self._translations_dir = base_dir / "translations"
 
         # 使用 QSettings 保存语言偏好（与 SettingsManager 使用相同的组织/应用名称）
         self._settings = QSettings("MINGDA", "SignMaker")

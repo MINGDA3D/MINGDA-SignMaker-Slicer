@@ -360,8 +360,8 @@
         <translation>Professional LED Sign Letter 3D Printing Slicer</translation>
     </message>
     <message>
-        <source>Version: 0.1.0 (Development)</source>
-        <translation>Version: 0.1.0 (Development)</translation>
+        <source>Version: 0.1.1 (Development)</source>
+        <translation>Version: 0.1.1 (Development)</translation>
     </message>
     <message>
         <source>Features:</source>
@@ -522,6 +522,26 @@
     <message>
         <source>Language</source>
         <translation>Language</translation>
+    </message>
+    <message>
+        <source>Open File (DXF/SVG/SMP)</source>
+        <translation>Open File (DXF/SVG/SMP)</translation>
+    </message>
+    <message>
+        <source>Export Project</source>
+        <translation>Export Project</translation>
+    </message>
+    <message>
+        <source>Export STL</source>
+        <translation>Export STL</translation>
+    </message>
+    <message>
+        <source>Open Project...</source>
+        <translation>Open Project...</translation>
+    </message>
+    <message>
+        <source>Save As...</source>
+        <translation>Save As...</translation>
     </message>
 </context>
 <context>

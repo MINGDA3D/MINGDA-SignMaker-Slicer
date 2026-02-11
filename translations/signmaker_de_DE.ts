@@ -360,8 +360,8 @@
         <translation>Professioneller LED-Leuchtbuchstaben 3D-Druck-Slicer</translation>
     </message>
     <message>
-        <source>Version: 0.1.0 (Development)</source>
-        <translation>Version: 0.1.0 (Entwicklung)</translation>
+        <source>Version: 0.1.1 (Development)</source>
+        <translation>Version: 0.1.1 (Entwicklung)</translation>
     </message>
     <message>
         <source>Features:</source>
@@ -518,6 +518,26 @@
     <message>
         <source>Language</source>
         <translation>Sprache</translation>
+    </message>
+    <message>
+        <source>Open File (DXF/SVG/SMP)</source>
+        <translation>Datei öffnen (DXF/SVG/SMP)</translation>
+    </message>
+    <message>
+        <source>Export Project</source>
+        <translation>Projekt exportieren</translation>
+    </message>
+    <message>
+        <source>Export STL</source>
+        <translation>STL exportieren</translation>
+    </message>
+    <message>
+        <source>Open Project...</source>
+        <translation>Projekt öffnen...</translation>
+    </message>
+    <message>
+        <source>Save As...</source>
+        <translation>Speichern unter...</translation>
     </message>
 </context>
 <context>
