@@ -503,11 +503,15 @@ class MainWindow(QMainWindow):
         panel_layout.addWidget(self.scale_widget)
 
         # 记录原始尺寸（用于百分比↔尺寸换算）
-        self._scale_original_w = 1.0
-        self._scale_original_h = 1.0
-        self._scale_pct_x = 100.0  # 独立存储的缩放百分比（不受旋转影响）
+        self._scale_original_w = None
+        self._scale_original_h = None
+        self._scale_pct_x = 100.0  # 当前活跃轮廓的缩放百分比
         self._scale_pct_y = 100.0
         self._scale_updating = False  # 防止递归更新
+        # 每个轮廓独立存储的变换状态（参考OrcaSlicer per-ModelInstance设计）
+        # key: id(contour), value: {angle, scale_pct_x, scale_pct_y, original_w, original_h}
+        self._contour_transforms: dict = {}
+        self._current_selected_id: Optional[int] = None
 
         # 提示文本
         self.transform_hint = QLabel(self.tr("Arrow keys: 1mm, Shift+Arrow: 10mm"))
@@ -701,7 +705,8 @@ class MainWindow(QMainWindow):
                 self._pending_transform.description = f"旋转 {delta['angle']:.1f}°"
                 self._pending_transform.capture_after()
                 self.undo_manager.push(self._pending_transform, execute=False)
-                # 拖拽结束后累加角度并更新面板
+                # 更新所有被旋转轮廓的累计角度
+                self._update_selected_rotation(delta['angle'])
                 self.canvas._cumulative_angle += delta['angle']
                 self._update_transform_panel_values()
 
@@ -710,7 +715,8 @@ class MainWindow(QMainWindow):
                 self._pending_transform.description = f"缩放 {delta['scale']*100:.0f}%"
                 self._pending_transform.capture_after()
                 self.undo_manager.push(self._pending_transform, execute=False)
-                # 拖拽缩放后更新存储的百分比
+                # 更新所有被缩放轮廓的累计百分比
+                self._update_selected_scale(delta['scale'], delta['scale'])
                 self._scale_pct_x *= delta['scale']
                 self._scale_pct_y *= delta['scale']
 
@@ -720,6 +726,14 @@ class MainWindow(QMainWindow):
         """处理删除请求"""
         if not indices:
             return
+
+        # 清除被删除轮廓的变换状态
+        for idx in indices:
+            if 0 <= idx < len(self.contours):
+                cid = id(self.contours[idx])
+                self._contour_transforms.pop(cid, None)
+                if self._current_selected_id == cid:
+                    self._current_selected_id = None
 
         # 创建删除命令
         cmd = DeleteCommand(self.contours, indices)
@@ -734,17 +748,66 @@ class MainWindow(QMainWindow):
         """处理项目面板的删除请求"""
         self._on_delete_requested([index])
 
+    def _get_selected_contour_id(self) -> Optional[int]:
+        """获取当前选中轮廓的唯一ID（单选时使用 object id）"""
+        if self.canvas.selected_indices and len(self.canvas.selected_indices) == 1:
+            idx = self.canvas.selected_indices[0]
+            if 0 <= idx < len(self.contours):
+                return id(self.contours[idx])
+        return None
+
+    def _get_contour_state(self, contour_id: int) -> dict:
+        """获取或创建指定轮廓的变换状态"""
+        if contour_id not in self._contour_transforms:
+            self._contour_transforms[contour_id] = {
+                'angle': 0.0,
+                'scale_pct_x': 100.0,
+                'scale_pct_y': 100.0,
+                'original_w': None,
+                'original_h': None,
+            }
+        return self._contour_transforms[contour_id]
+
+    def _update_selected_rotation(self, delta_angle: float):
+        """更新所有选中轮廓的累计旋转角度（每个轮廓独立跟踪）"""
+        for idx in self.canvas.selected_indices:
+            if 0 <= idx < len(self.contours):
+                state = self._get_contour_state(id(self.contours[idx]))
+                state['angle'] += delta_angle
+
+    def _update_selected_scale(self, sx: float, sy: float):
+        """更新所有选中轮廓的累计缩放百分比（每个轮廓独立跟踪）"""
+        for idx in self.canvas.selected_indices:
+            if 0 <= idx < len(self.contours):
+                state = self._get_contour_state(id(self.contours[idx]))
+                state['scale_pct_x'] *= sx
+                state['scale_pct_y'] *= sy
+
+    def _restore_contour_transform(self, contour_id: Optional[int]):
+        """从 per-contour 字典恢复指定轮廓的变换状态到显示变量"""
+        if contour_id is not None and contour_id in self._contour_transforms:
+            state = self._contour_transforms[contour_id]
+            self.canvas._cumulative_angle = state['angle']
+            self._scale_pct_x = state['scale_pct_x']
+            self._scale_pct_y = state['scale_pct_y']
+            self._scale_original_w = state['original_w']
+            self._scale_original_h = state['original_h']
+        else:
+            self.canvas._cumulative_angle = 0.0
+            self._scale_pct_x = 100.0
+            self._scale_pct_y = 100.0
+            self._scale_original_w = None
+            self._scale_original_h = None
+        self._current_selected_id = contour_id
+
     def _on_contour_selected(self, index: int):
         """当选中轮廓时显示位置面板"""
         if self.canvas.selected_indices:
-            # 选中新轮廓时重置累计旋转角度和缩放基准
-            self.canvas._cumulative_angle = 0.0
-            self._scale_original_w = None
-            self._scale_original_h = None
-            self._scale_pct_x = 100.0
-            self._scale_pct_y = 100.0
+            # 恢复新选中轮廓的变换状态
+            new_id = self._get_selected_contour_id()
+            self._restore_contour_transform(new_id)
             if self.current_transform_mode in ("rotate", "scale"):
-                if self.current_transform_mode == "scale":
+                if self.current_transform_mode == "scale" and self._scale_original_w is None:
                     self._capture_original_size()
                 # 保持当前工具模式不变
                 self._update_transform_panel_values()
@@ -773,6 +836,7 @@ class MainWindow(QMainWindow):
 
     def _on_selection_cleared(self):
         """当选择被清除时隐藏面板"""
+        self._current_selected_id = None
         self._close_transform_panel()
 
     # =========================================================================
@@ -847,6 +911,8 @@ class MainWindow(QMainWindow):
         self.contours = []
         self.slice_result = None
         self.current_file = None
+        self._contour_transforms.clear()
+        self._current_selected_id = None
         self.canvas.set_contours([])
         self.setWindowTitle(self.tr("MINGDA SignMaker - New Project"))
         self._update_status(self.tr("New Project"))
@@ -911,6 +977,8 @@ class MainWindow(QMainWindow):
         self.undo_manager.push(cmd)
 
         self.current_file = str(path)
+        self._contour_transforms.clear()
+        self._current_selected_id = None
         self.canvas.set_contours(self.contours)
         self.canvas.fit_view()
         self.project_panel.update_contours(self.contours)
@@ -942,6 +1010,8 @@ class MainWindow(QMainWindow):
             self.slice_params = project.params
             self.slice_result = None
             self.current_file = file_path
+            self._contour_transforms.clear()
+            self._current_selected_id = None
 
             # 更新UI
             self.canvas.set_contours(self.contours)
@@ -1405,16 +1475,26 @@ class MainWindow(QMainWindow):
             if abs(delta) > 0.001:
                 self.canvas._cumulative_angle = target_angle
                 self.canvas.rotate_selected(delta)
+                self._update_selected_rotation(delta)
                 self._update_status(self.tr("Rotation: {angle:.2f}°").format(angle=target_angle))
 
     def _capture_original_size(self):
-        """记录当前选中轮廓的尺寸作为缩放基准（100%）"""
+        """记录当前选中轮廓的尺寸作为缩放基准"""
         bounds = self.canvas.get_selection_bounds()
         if bounds:
             self._scale_original_w = max(bounds[2] - bounds[0], 0.01)
             self._scale_original_h = max(bounds[3] - bounds[1], 0.01)
-            self._scale_pct_x = 100.0
-            self._scale_pct_y = 100.0
+            # 如果轮廓已有累计缩放状态（如之前全选缩放过），保留它
+            cid = self._get_selected_contour_id()
+            if cid is not None and cid in self._contour_transforms:
+                state = self._contour_transforms[cid]
+                self._scale_pct_x = state['scale_pct_x']
+                self._scale_pct_y = state['scale_pct_y']
+                state['original_w'] = self._scale_original_w
+                state['original_h'] = self._scale_original_h
+            else:
+                self._scale_pct_x = 100.0
+                self._scale_pct_y = 100.0
 
     def _update_scale_panel_values(self):
         """更新缩放面板中的尺寸和百分比"""
@@ -1469,6 +1549,7 @@ class MainWindow(QMainWindow):
             self.canvas.scale_selected_xy(sx, sy)
             self._scale_pct_x = target_pct_x
             self._scale_pct_y = target_pct_y
+            self._update_selected_scale(sx, sy)
             self._update_scale_panel_values()
             self._update_status(
                 self.tr("Scale: {px:.1f}% x {py:.1f}%").format(
@@ -1506,6 +1587,7 @@ class MainWindow(QMainWindow):
             self.canvas.scale_selected_xy(sx, sy)
             self._scale_pct_x *= sx
             self._scale_pct_y *= sy
+            self._update_selected_scale(sx, sy)
             self._update_scale_panel_values()
             self._update_status(
                 self.tr("Scale: {px:.1f}% x {py:.1f}%").format(
@@ -1528,6 +1610,7 @@ class MainWindow(QMainWindow):
             self.canvas.scale_selected_xy(sx, sy)
             self._scale_pct_x *= sx
             self._scale_pct_y *= sy
+            self._update_selected_scale(sx, sy)
             self._update_scale_panel_values()
             self._update_status(
                 self.tr("Scale: {px:.1f}% x {py:.1f}%").format(
