@@ -361,7 +361,7 @@
     </message>
     <message>
         <source>Version: 0.1.2 (Development)</source>
-        <translation>Versione: 0.1.0 (Sviluppo)</translation>
+        <translation>Versione: 0.1.2 (Sviluppo)</translation>
     </message>
     <message>
         <source>Features:</source>
@@ -440,6 +440,34 @@
         <source>Exporting STL...</source>
         <translation>Esportazione STL...</translation>
     </message>
+    <message>
+        <source>Start Processing</source>
+        <translation>Avvia elaborazione</translation>
+    </message>
+    <message>
+        <source>Processing...</source>
+        <translation>Elaborazione...</translation>
+    </message>
+    <message>
+        <source>Processing complete: {layers} layers, estimated time: {time:.1f} minutes</source>
+        <translation>Elaborazione completata: {layers} strati, tempo stimato: {time:.1f} minuti</translation>
+    </message>
+    <message>
+        <source>Processing Complete</source>
+        <translation>Elaborazione completata</translation>
+    </message>
+    <message>
+        <source>Processing Failed</source>
+        <translation>Elaborazione fallita</translation>
+    </message>
+    <message>
+        <source>Error during processing:</source>
+        <translation>Errore durante l'elaborazione:</translation>
+    </message>
+    <message>
+        <source>Processing failed</source>
+        <translation>Elaborazione fallita</translation>
+    </message>
 </context>
 <context>
     <name>TitleBar</name>
@@ -480,8 +508,8 @@
         <translation>Anteprima</translation>
     </message>
     <message>
-        <source>Slice</source>
-        <translation>Affetta</translation>
+        <source>Process</source>
+        <translation>Elabora</translation>
     </message>
     <message>
         <source>Export Gcode</source>
@@ -546,6 +574,10 @@
     <message>
         <source>Save As...</source>
         <translation>Salva con nome...</translation>
+    </message>
+    <message>
+        <source>Process the model and generate layers</source>
+        <translation>Elabora il modello e genera gli strati</translation>
     </message>
 </context>
 <context>

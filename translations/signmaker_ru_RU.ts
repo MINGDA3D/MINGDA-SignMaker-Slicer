@@ -361,7 +361,7 @@
     </message>
     <message>
         <source>Version: 0.1.2 (Development)</source>
-        <translation>Версия: 0.1.0 (Разработка)</translation>
+        <translation>Версия: 0.1.2 (Разработка)</translation>
     </message>
     <message>
         <source>Features:</source>
@@ -440,6 +440,34 @@
         <source>Exporting STL...</source>
         <translation>Экспорт STL...</translation>
     </message>
+    <message>
+        <source>Start Processing</source>
+        <translation>Начать обработку</translation>
+    </message>
+    <message>
+        <source>Processing...</source>
+        <translation>Обработка...</translation>
+    </message>
+    <message>
+        <source>Processing complete: {layers} layers, estimated time: {time:.1f} minutes</source>
+        <translation>Обработка завершена: {layers} слоёв, оценочное время: {time:.1f} минут</translation>
+    </message>
+    <message>
+        <source>Processing Complete</source>
+        <translation>Обработка завершена</translation>
+    </message>
+    <message>
+        <source>Processing Failed</source>
+        <translation>Ошибка обработки</translation>
+    </message>
+    <message>
+        <source>Error during processing:</source>
+        <translation>Ошибка при обработке:</translation>
+    </message>
+    <message>
+        <source>Processing failed</source>
+        <translation>Обработка не удалась</translation>
+    </message>
 </context>
 <context>
     <name>TitleBar</name>
@@ -480,8 +508,8 @@
         <translation>Предпросмотр</translation>
     </message>
     <message>
-        <source>Slice</source>
-        <translation>Нарезка</translation>
+        <source>Process</source>
+        <translation>Обработка</translation>
     </message>
     <message>
         <source>Export Gcode</source>
@@ -546,6 +574,10 @@
     <message>
         <source>Save As...</source>
         <translation>Сохранить как...</translation>
+    </message>
+    <message>
+        <source>Process the model and generate layers</source>
+        <translation>Обработать модель и создать слои</translation>
     </message>
 </context>
 <context>

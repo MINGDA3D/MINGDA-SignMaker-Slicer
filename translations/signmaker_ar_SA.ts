@@ -361,7 +361,7 @@
     </message>
     <message>
         <source>Version: 0.1.2 (Development)</source>
-        <translation>الإصدار: 0.1.0 (تطوير)</translation>
+        <translation>الإصدار: 0.1.2 (تطوير)</translation>
     </message>
     <message>
         <source>Features:</source>
@@ -440,6 +440,34 @@
         <source>Exporting STL...</source>
         <translation>جاري تصدير STL...</translation>
     </message>
+    <message>
+        <source>Start Processing</source>
+        <translation>بدء المعالجة</translation>
+    </message>
+    <message>
+        <source>Processing...</source>
+        <translation>جاري المعالجة...</translation>
+    </message>
+    <message>
+        <source>Processing complete: {layers} layers, estimated time: {time:.1f} minutes</source>
+        <translation>اكتملت المعالجة: {layers} طبقات، الوقت المقدر: {time:.1f} دقائق</translation>
+    </message>
+    <message>
+        <source>Processing Complete</source>
+        <translation>اكتملت المعالجة</translation>
+    </message>
+    <message>
+        <source>Processing Failed</source>
+        <translation>فشلت المعالجة</translation>
+    </message>
+    <message>
+        <source>Error during processing:</source>
+        <translation>خطأ أثناء المعالجة:</translation>
+    </message>
+    <message>
+        <source>Processing failed</source>
+        <translation>فشلت المعالجة</translation>
+    </message>
 </context>
 <context>
     <name>TitleBar</name>
@@ -480,8 +508,8 @@
         <translation>معاينة</translation>
     </message>
     <message>
-        <source>Slice</source>
-        <translation>تقطيع</translation>
+        <source>Process</source>
+        <translation>معالجة</translation>
     </message>
     <message>
         <source>Export Gcode</source>
@@ -546,6 +574,10 @@
     <message>
         <source>Save As...</source>
         <translation>حفظ باسم...</translation>
+    </message>
+    <message>
+        <source>Process the model and generate layers</source>
+        <translation>معالجة النموذج وإنشاء الطبقات</translation>
     </message>
 </context>
 <context>

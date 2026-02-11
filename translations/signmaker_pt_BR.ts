@@ -361,7 +361,7 @@
     </message>
     <message>
         <source>Version: 0.1.2 (Development)</source>
-        <translation>Versao: 0.1.0 (Desenvolvimento)</translation>
+        <translation>Versão: 0.1.2 (Desenvolvimento)</translation>
     </message>
     <message>
         <source>Features:</source>
@@ -440,6 +440,34 @@
         <source>Exporting STL...</source>
         <translation>Exportando STL...</translation>
     </message>
+    <message>
+        <source>Start Processing</source>
+        <translation>Iniciar processamento</translation>
+    </message>
+    <message>
+        <source>Processing...</source>
+        <translation>Processando...</translation>
+    </message>
+    <message>
+        <source>Processing complete: {layers} layers, estimated time: {time:.1f} minutes</source>
+        <translation>Processamento completo: {layers} camadas, tempo estimado: {time:.1f} minutos</translation>
+    </message>
+    <message>
+        <source>Processing Complete</source>
+        <translation>Processamento completo</translation>
+    </message>
+    <message>
+        <source>Processing Failed</source>
+        <translation>Processamento falhou</translation>
+    </message>
+    <message>
+        <source>Error during processing:</source>
+        <translation>Erro durante o processamento:</translation>
+    </message>
+    <message>
+        <source>Processing failed</source>
+        <translation>Processamento falhou</translation>
+    </message>
 </context>
 <context>
     <name>TitleBar</name>
@@ -480,8 +508,8 @@
         <translation>Pre-visualizar</translation>
     </message>
     <message>
-        <source>Slice</source>
-        <translation>Fatiar</translation>
+        <source>Process</source>
+        <translation>Processar</translation>
     </message>
     <message>
         <source>Export Gcode</source>
@@ -546,6 +574,10 @@
     <message>
         <source>Save As...</source>
         <translation>Salvar como...</translation>
+    </message>
+    <message>
+        <source>Process the model and generate layers</source>
+        <translation>Processar o modelo e gerar camadas</translation>
     </message>
 </context>
 <context>

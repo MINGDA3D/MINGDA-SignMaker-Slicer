@@ -361,7 +361,7 @@
     </message>
     <message>
         <source>Version: 0.1.2 (Development)</source>
-        <translation>Версія: 0.1.0 (Розробка)</translation>
+        <translation>Версія: 0.1.2 (Розробка)</translation>
     </message>
     <message>
         <source>Features:</source>
@@ -440,6 +440,34 @@
         <source>Exporting STL...</source>
         <translation>Експорт STL...</translation>
     </message>
+    <message>
+        <source>Start Processing</source>
+        <translation>Почати обробку</translation>
+    </message>
+    <message>
+        <source>Processing...</source>
+        <translation>Обробка...</translation>
+    </message>
+    <message>
+        <source>Processing complete: {layers} layers, estimated time: {time:.1f} minutes</source>
+        <translation>Обробку завершено: {layers} шарів, орієнтовний час: {time:.1f} хвилин</translation>
+    </message>
+    <message>
+        <source>Processing Complete</source>
+        <translation>Обробку завершено</translation>
+    </message>
+    <message>
+        <source>Processing Failed</source>
+        <translation>Помилка обробки</translation>
+    </message>
+    <message>
+        <source>Error during processing:</source>
+        <translation>Помилка під час обробки:</translation>
+    </message>
+    <message>
+        <source>Processing failed</source>
+        <translation>Обробка не вдалася</translation>
+    </message>
 </context>
 <context>
     <name>TitleBar</name>
@@ -480,8 +508,8 @@
         <translation>Перегляд</translation>
     </message>
     <message>
-        <source>Slice</source>
-        <translation>Нарізка</translation>
+        <source>Process</source>
+        <translation>Обробка</translation>
     </message>
     <message>
         <source>Export Gcode</source>
@@ -546,6 +574,10 @@
     <message>
         <source>Save As...</source>
         <translation>Зберегти як...</translation>
+    </message>
+    <message>
+        <source>Process the model and generate layers</source>
+        <translation>Обробити модель і створити шари</translation>
     </message>
 </context>
 <context>

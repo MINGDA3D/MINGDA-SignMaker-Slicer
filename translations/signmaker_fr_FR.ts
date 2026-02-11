@@ -361,7 +361,7 @@
     </message>
     <message>
         <source>Version: 0.1.2 (Development)</source>
-        <translation>Version : 0.1.0 (Développement)</translation>
+        <translation>Version : 0.1.2 (Développement)</translation>
     </message>
     <message>
         <source>Features:</source>
@@ -440,6 +440,34 @@
         <source>Exporting STL...</source>
         <translation>Exportation STL...</translation>
     </message>
+    <message>
+        <source>Start Processing</source>
+        <translation>Lancer le traitement</translation>
+    </message>
+    <message>
+        <source>Processing...</source>
+        <translation>Traitement...</translation>
+    </message>
+    <message>
+        <source>Processing complete: {layers} layers, estimated time: {time:.1f} minutes</source>
+        <translation>Traitement terminé : {layers} couches, temps estimé : {time:.1f} minutes</translation>
+    </message>
+    <message>
+        <source>Processing Complete</source>
+        <translation>Traitement terminé</translation>
+    </message>
+    <message>
+        <source>Processing Failed</source>
+        <translation>Échec du traitement</translation>
+    </message>
+    <message>
+        <source>Error during processing:</source>
+        <translation>Erreur lors du traitement :</translation>
+    </message>
+    <message>
+        <source>Processing failed</source>
+        <translation>Échec du traitement</translation>
+    </message>
 </context>
 <context>
     <name>TitleBar</name>
@@ -480,8 +508,8 @@
         <translation>Aperçu</translation>
     </message>
     <message>
-        <source>Slice</source>
-        <translation>Trancher</translation>
+        <source>Process</source>
+        <translation>Traiter</translation>
     </message>
     <message>
         <source>Export Gcode</source>
@@ -546,6 +574,10 @@
     <message>
         <source>Save As...</source>
         <translation>Enregistrer sous...</translation>
+    </message>
+    <message>
+        <source>Process the model and generate layers</source>
+        <translation>Traiter le modèle et générer les couches</translation>
     </message>
 </context>
 <context>

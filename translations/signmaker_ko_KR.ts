@@ -361,7 +361,7 @@
     </message>
     <message>
         <source>Version: 0.1.2 (Development)</source>
-        <translation>버전: 0.1.0 (개발 버전)</translation>
+        <translation>버전: 0.1.2 (개발판)</translation>
     </message>
     <message>
         <source>Features:</source>
@@ -440,6 +440,34 @@
         <source>Exporting STL...</source>
         <translation>STL 내보내기 중...</translation>
     </message>
+    <message>
+        <source>Start Processing</source>
+        <translation>처리 시작</translation>
+    </message>
+    <message>
+        <source>Processing...</source>
+        <translation>처리 중...</translation>
+    </message>
+    <message>
+        <source>Processing complete: {layers} layers, estimated time: {time:.1f} minutes</source>
+        <translation>처리 완료: {layers}개 레이어, 예상 시간: {time:.1f}분</translation>
+    </message>
+    <message>
+        <source>Processing Complete</source>
+        <translation>처리 완료</translation>
+    </message>
+    <message>
+        <source>Processing Failed</source>
+        <translation>처리 실패</translation>
+    </message>
+    <message>
+        <source>Error during processing:</source>
+        <translation>처리 중 오류 발생:</translation>
+    </message>
+    <message>
+        <source>Processing failed</source>
+        <translation>처리 실패</translation>
+    </message>
 </context>
 <context>
     <name>TitleBar</name>
@@ -480,8 +508,8 @@
         <translation>미리보기</translation>
     </message>
     <message>
-        <source>Slice</source>
-        <translation>슬라이스</translation>
+        <source>Process</source>
+        <translation>처리</translation>
     </message>
     <message>
         <source>Export Gcode</source>
@@ -546,6 +574,10 @@
     <message>
         <source>Save As...</source>
         <translation>다른 이름으로 저장...</translation>
+    </message>
+    <message>
+        <source>Process the model and generate layers</source>
+        <translation>모델을 처리하고 레이어 생성</translation>
     </message>
 </context>
 <context>

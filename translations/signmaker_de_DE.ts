@@ -440,6 +440,34 @@
         <source>Exporting STL...</source>
         <translation>STL wird exportiert...</translation>
     </message>
+    <message>
+        <source>Start Processing</source>
+        <translation>Verarbeitung starten</translation>
+    </message>
+    <message>
+        <source>Processing...</source>
+        <translation>Verarbeitung...</translation>
+    </message>
+    <message>
+        <source>Processing complete: {layers} layers, estimated time: {time:.1f} minutes</source>
+        <translation>Verarbeitung abgeschlossen: {layers} Schichten, geschätzte Zeit: {time:.1f} Minuten</translation>
+    </message>
+    <message>
+        <source>Processing Complete</source>
+        <translation>Verarbeitung abgeschlossen</translation>
+    </message>
+    <message>
+        <source>Processing Failed</source>
+        <translation>Verarbeitung fehlgeschlagen</translation>
+    </message>
+    <message>
+        <source>Error during processing:</source>
+        <translation>Fehler bei der Verarbeitung:</translation>
+    </message>
+    <message>
+        <source>Processing failed</source>
+        <translation>Verarbeitung fehlgeschlagen</translation>
+    </message>
 </context>
 <context>
     <name>TitleBar</name>
@@ -480,8 +508,8 @@
         <translation>Vorschau</translation>
     </message>
     <message>
-        <source>Slice</source>
-        <translation>Slicen</translation>
+        <source>Process</source>
+        <translation>Verarbeiten</translation>
     </message>
     <message>
         <source>Export Gcode</source>
@@ -546,6 +574,10 @@
     <message>
         <source>Save As...</source>
         <translation>Speichern unter...</translation>
+    </message>
+    <message>
+        <source>Process the model and generate layers</source>
+        <translation>Modell verarbeiten und Schichten generieren</translation>
     </message>
 </context>
 <context>

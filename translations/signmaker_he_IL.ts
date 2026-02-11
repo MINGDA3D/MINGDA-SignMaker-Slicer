@@ -361,7 +361,7 @@
     </message>
     <message>
         <source>Version: 0.1.2 (Development)</source>
-        <translation>גרסה: 0.1.0 (פיתוח)</translation>
+        <translation>גרסה: 0.1.2 (פיתוח)</translation>
     </message>
     <message>
         <source>Features:</source>
@@ -440,6 +440,34 @@
         <source>Exporting STL...</source>
         <translation>מייצא STL...</translation>
     </message>
+    <message>
+        <source>Start Processing</source>
+        <translation>התחל עיבוד</translation>
+    </message>
+    <message>
+        <source>Processing...</source>
+        <translation>מעבד...</translation>
+    </message>
+    <message>
+        <source>Processing complete: {layers} layers, estimated time: {time:.1f} minutes</source>
+        <translation>עיבוד הושלם: {layers} שכבות, זמן משוער: {time:.1f} דקות</translation>
+    </message>
+    <message>
+        <source>Processing Complete</source>
+        <translation>עיבוד הושלם</translation>
+    </message>
+    <message>
+        <source>Processing Failed</source>
+        <translation>עיבוד נכשל</translation>
+    </message>
+    <message>
+        <source>Error during processing:</source>
+        <translation>שגיאה במהלך העיבוד:</translation>
+    </message>
+    <message>
+        <source>Processing failed</source>
+        <translation>עיבוד נכשל</translation>
+    </message>
 </context>
 <context>
     <name>TitleBar</name>
@@ -480,8 +508,8 @@
         <translation>תצוגה מקדימה</translation>
     </message>
     <message>
-        <source>Slice</source>
-        <translation>פריסה</translation>
+        <source>Process</source>
+        <translation>עיבוד</translation>
     </message>
     <message>
         <source>Export Gcode</source>
@@ -546,6 +574,10 @@
     <message>
         <source>Save As...</source>
         <translation>שמור בשם...</translation>
+    </message>
+    <message>
+        <source>Process the model and generate layers</source>
+        <translation>עבד את המודל וצור שכבות</translation>
     </message>
 </context>
 <context>

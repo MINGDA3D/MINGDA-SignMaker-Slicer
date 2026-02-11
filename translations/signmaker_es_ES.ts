@@ -440,6 +440,34 @@
         <source>Exporting STL...</source>
         <translation>Exportando STL...</translation>
     </message>
+    <message>
+        <source>Start Processing</source>
+        <translation>Iniciar procesamiento</translation>
+    </message>
+    <message>
+        <source>Processing...</source>
+        <translation>Procesando...</translation>
+    </message>
+    <message>
+        <source>Processing complete: {layers} layers, estimated time: {time:.1f} minutes</source>
+        <translation>Procesamiento completo: {layers} capas, tiempo estimado: {time:.1f} minutos</translation>
+    </message>
+    <message>
+        <source>Processing Complete</source>
+        <translation>Procesamiento completo</translation>
+    </message>
+    <message>
+        <source>Processing Failed</source>
+        <translation>Procesamiento fallido</translation>
+    </message>
+    <message>
+        <source>Error during processing:</source>
+        <translation>Error durante el procesamiento:</translation>
+    </message>
+    <message>
+        <source>Processing failed</source>
+        <translation>Procesamiento fallido</translation>
+    </message>
 </context>
 <context>
     <name>TitleBar</name>
@@ -480,8 +508,8 @@
         <translation>Vista previa</translation>
     </message>
     <message>
-        <source>Slice</source>
-        <translation>Rebanar</translation>
+        <source>Process</source>
+        <translation>Procesar</translation>
     </message>
     <message>
         <source>Export Gcode</source>
@@ -546,6 +574,10 @@
     <message>
         <source>Save As...</source>
         <translation>Guardar como...</translation>
+    </message>
+    <message>
+        <source>Process the model and generate layers</source>
+        <translation>Procesar el modelo y generar capas</translation>
     </message>
 </context>
 <context>

@@ -361,7 +361,7 @@
     </message>
     <message>
         <source>Version: 0.1.2 (Development)</source>
-        <translation>Surum: 0.1.0 (Gelistirme)</translation>
+        <translation>Sürüm: 0.1.2 (Geliştirme)</translation>
     </message>
     <message>
         <source>Features:</source>
@@ -440,6 +440,34 @@
         <source>Exporting STL...</source>
         <translation>STL dışa aktarılıyor...</translation>
     </message>
+    <message>
+        <source>Start Processing</source>
+        <translation>İşlemeyi başlat</translation>
+    </message>
+    <message>
+        <source>Processing...</source>
+        <translation>İşleniyor...</translation>
+    </message>
+    <message>
+        <source>Processing complete: {layers} layers, estimated time: {time:.1f} minutes</source>
+        <translation>İşlem tamamlandı: {layers} katman, tahmini süre: {time:.1f} dakika</translation>
+    </message>
+    <message>
+        <source>Processing Complete</source>
+        <translation>İşlem tamamlandı</translation>
+    </message>
+    <message>
+        <source>Processing Failed</source>
+        <translation>İşlem başarısız</translation>
+    </message>
+    <message>
+        <source>Error during processing:</source>
+        <translation>İşlem sırasında hata:</translation>
+    </message>
+    <message>
+        <source>Processing failed</source>
+        <translation>İşlem başarısız</translation>
+    </message>
 </context>
 <context>
     <name>TitleBar</name>
@@ -480,8 +508,8 @@
         <translation>Onizleme</translation>
     </message>
     <message>
-        <source>Slice</source>
-        <translation>Dilimle</translation>
+        <source>Process</source>
+        <translation>İşle</translation>
     </message>
     <message>
         <source>Export Gcode</source>
@@ -546,6 +574,10 @@
     <message>
         <source>Save As...</source>
         <translation>Farklı Kaydet...</translation>
+    </message>
+    <message>
+        <source>Process the model and generate layers</source>
+        <translation>Modeli işle ve katmanları oluştur</translation>
     </message>
 </context>
 <context>

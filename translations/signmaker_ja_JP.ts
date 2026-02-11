@@ -361,7 +361,7 @@
     </message>
     <message>
         <source>Version: 0.1.2 (Development)</source>
-        <translation>バージョン: 0.1.0 (開発版)</translation>
+        <translation>バージョン: 0.1.2 (開発版)</translation>
     </message>
     <message>
         <source>Features:</source>
@@ -440,6 +440,34 @@
         <source>Exporting STL...</source>
         <translation>STLをエクスポート中...</translation>
     </message>
+    <message>
+        <source>Start Processing</source>
+        <translation>処理開始</translation>
+    </message>
+    <message>
+        <source>Processing...</source>
+        <translation>処理中...</translation>
+    </message>
+    <message>
+        <source>Processing complete: {layers} layers, estimated time: {time:.1f} minutes</source>
+        <translation>処理完了: {layers} 層, 推定時間: {time:.1f} 分</translation>
+    </message>
+    <message>
+        <source>Processing Complete</source>
+        <translation>処理完了</translation>
+    </message>
+    <message>
+        <source>Processing Failed</source>
+        <translation>処理失敗</translation>
+    </message>
+    <message>
+        <source>Error during processing:</source>
+        <translation>処理中にエラーが発生:</translation>
+    </message>
+    <message>
+        <source>Processing failed</source>
+        <translation>処理失敗</translation>
+    </message>
 </context>
 <context>
     <name>TitleBar</name>
@@ -480,8 +508,8 @@
         <translation>プレビュー</translation>
     </message>
     <message>
-        <source>Slice</source>
-        <translation>スライス</translation>
+        <source>Process</source>
+        <translation>処理</translation>
     </message>
     <message>
         <source>Export Gcode</source>
@@ -546,6 +574,10 @@
     <message>
         <source>Save As...</source>
         <translation>名前を付けて保存...</translation>
+    </message>
+    <message>
+        <source>Process the model and generate layers</source>
+        <translation>モデルを処理してレイヤーを生成</translation>
     </message>
 </context>
 <context>
