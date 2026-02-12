@@ -254,11 +254,35 @@ class EdgePresetManager:
         Initialize preset manager
 
         Args:
-            base_path: Base path for resource files (default: current directory)
+            base_path: Base path for resource files (default: auto-detect)
         """
-        self.base_path = base_path or os.getcwd()
+        if base_path:
+            self.base_path = base_path
+        else:
+            # Auto-detect base path (支持打包后的exe)
+            self.base_path = self._get_resource_base_path()
         self._cache: Dict[str, EdgeProfile] = {}
         self._loader = None
+
+    def _get_resource_base_path(self) -> str:
+        """
+        获取资源文件基础路径
+
+        支持开发环境和PyInstaller打包后的环境
+        """
+        import sys
+
+        # PyInstaller打包后，资源文件在_MEIPASS目录下
+        if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+            return sys._MEIPASS
+
+        # 开发环境：返回项目根目录
+        # 假设edge_presets.py在src/core/目录下
+        current_file = os.path.abspath(__file__)
+        src_core_dir = os.path.dirname(current_file)
+        src_dir = os.path.dirname(src_core_dir)
+        project_root = os.path.dirname(src_dir)
+        return project_root
 
     def _get_loader(self):
         """Get DXF loader (lazy loading)"""
@@ -362,6 +386,7 @@ class EdgePresetManager:
         else:
             # Load from DXF file
             dxf_path = os.path.join(self.base_path, info.source_file)
+
             if not os.path.exists(dxf_path):
                 # Try using path directly
                 dxf_path = info.source_file
@@ -375,7 +400,7 @@ class EdgePresetManager:
                 profile.name = info.display_name
                 profile.description = info.description
             except Exception as e:
-                print(f"Warning: Failed to load preset {preset_name}: {e}")
+                print(f"[EdgePresetManager] Warning: Failed to load preset {preset_name}: {e}")
                 # Fallback to simple bevel
                 profile = EdgeProfile(
                     profile_type=EdgeProfileType.PRESET,
