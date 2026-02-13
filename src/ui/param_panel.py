@@ -115,6 +115,7 @@ class ParamPanel(QWidget):
         self.height_spin.setValue(30)
         self.height_spin.setSuffix("mm")
         self.height_spin.valueChanged.connect(self._on_param_changed)
+        self.height_spin.valueChanged.connect(self._update_step_ranges)
         layout.addRow(self.tr("Shell Height:"), self.height_spin)
 
         # 层高
@@ -368,7 +369,7 @@ class ParamPanel(QWidget):
 
         form1 = QFormLayout()
         self.panel_step_height = PlusMinusSpinBox()
-        self.panel_step_height.setRange(0.3, 50)
+        self.panel_step_height.setRange(self.height_spin.value() / 2, self.height_spin.value())
         self.panel_step_height.setValue(28)
         self.panel_step_height.setSuffix("mm")
         self.panel_step_height.setEnabled(False)
@@ -407,7 +408,7 @@ class ParamPanel(QWidget):
 
         form2 = QFormLayout()
         self.baseplate_step_height = PlusMinusSpinBox()
-        self.baseplate_step_height.setRange(0.3, 30)
+        self.baseplate_step_height.setRange(0.3, self.height_spin.value() / 2)
         self.baseplate_step_height.setValue(3)
         self.baseplate_step_height.setSuffix("mm")
         self.baseplate_step_height.setEnabled(False)
@@ -441,6 +442,25 @@ class ParamPanel(QWidget):
         self.bottom_groove_height = self.baseplate_step_height
 
         return group
+
+    def _update_step_ranges(self):
+        """根据字壳高度更新台阶高度范围
+
+        顶部卡槽：[字壳高度/2, 字壳高度]
+        底部卡槽：[0.3, 字壳高度/2]
+        """
+        shell_height = self.height_spin.value()
+        half = shell_height / 2
+
+        # 顶部卡槽
+        self.panel_step_height.setRange(half, shell_height)
+        if self.panel_step_height.value() < half:
+            self.panel_step_height.setValue(half)
+
+        # 底部卡槽
+        self.baseplate_step_height.setRange(0.3, max(0.3, half))
+        if self.baseplate_step_height.value() > half:
+            self.baseplate_step_height.setValue(half)
 
     def _toggle_panel_step_controls(self, enabled: bool):
         """切换面板台阶控件的启用状态"""
@@ -1013,6 +1033,7 @@ class ParamPanel(QWidget):
         self._toggle_connected_controls(params.connected.enabled)
         self._toggle_bottom_face_controls(params.bottom_face.enabled)
         self._toggle_top_face_controls(params.top_face.enabled)
+        self._update_step_ranges()
 
     # ===== 异形边相关方法 =====
 

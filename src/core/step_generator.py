@@ -580,6 +580,11 @@ class StepGenerator:
         step_width = params.panel_step_width
         is_v_groove = params.panel_step_is_v_groove
 
+        # 限制顶部卡槽范围：不低于字壳一半高度
+        min_step_height = total_height / 2
+        if step_height < min_step_height:
+            step_height = min_step_height
+
         # 台阶区域：从 (总高度 - 台阶高度) 到 总高度
         step_start = total_height - step_height
         step_end = total_height
@@ -636,6 +641,11 @@ class StepGenerator:
         step_height = params.baseplate_step_height
         step_width = params.baseplate_step_width
         is_v_groove = params.baseplate_step_is_v_groove
+
+        # 限制底部卡槽范围：不超过字壳一半高度
+        max_step_height = total_height / 2
+        if step_height > max_step_height:
+            step_height = max_step_height
 
         # 台阶区域：从 0 到 台阶高度
         step_start = 0

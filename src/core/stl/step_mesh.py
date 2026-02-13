@@ -82,6 +82,10 @@ class StepMeshBuilder:
                 # ===== 面板台阶（顶部）=====
                 if params.step.panel_step_enabled:
                     panel_z = params.step.panel_step_height
+                    # 限制顶部卡槽范围：不低于字壳一半高度
+                    min_panel_z = total_height / 2
+                    if panel_z < min_panel_z:
+                        panel_z = min_panel_z
                     # 验证高度是否合法
                     if panel_z >= total_height:
                         print(f"警告：面板台阶高度({panel_z}mm)超过模型高度({total_height}mm)，跳过")
@@ -101,6 +105,10 @@ class StepMeshBuilder:
                 # ===== 底板台阶（底部）=====
                 if params.step.baseplate_step_enabled:
                     baseplate_z = params.step.baseplate_step_height
+                    # 限制底部卡槽范围：不超过字壳一半高度
+                    max_baseplate_z = total_height / 2
+                    if baseplate_z > max_baseplate_z:
+                        baseplate_z = max_baseplate_z
                     # 验证高度是否合法
                     if baseplate_z >= total_height:
                         print(f"警告：底板台阶高度({baseplate_z}mm)超过模型高度({total_height}mm)，跳过")
@@ -131,6 +139,10 @@ class StepMeshBuilder:
                     # 面板台阶（内孔）
                     if params.step.panel_step_enabled:
                         panel_z = params.step.panel_step_height
+                        # 限制顶部卡槽范围：不低于字壳一半高度
+                        min_panel_z = total_height / 2
+                        if panel_z < min_panel_z:
+                            panel_z = min_panel_z
                         if 0 <= panel_z < total_height:
                             hole_panel_mesh = self._create_thin_step_ring(
                                 hole_inner_coords,
@@ -145,6 +157,10 @@ class StepMeshBuilder:
                     # 底板台阶（内孔）
                     if params.step.baseplate_step_enabled:
                         baseplate_z = params.step.baseplate_step_height
+                        # 限制底部卡槽范围：不超过字壳一半高度
+                        max_baseplate_z = total_height / 2
+                        if baseplate_z > max_baseplate_z:
+                            baseplate_z = max_baseplate_z
                         if 0 <= baseplate_z < total_height:
                             hole_baseplate_mesh = self._create_thin_step_ring(
                                 hole_inner_coords,
