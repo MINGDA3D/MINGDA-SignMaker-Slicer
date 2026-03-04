@@ -615,6 +615,7 @@ class StepGenerator:
     def generate_baseplate_step_for_layer(self, contour: Contour,
                                            z_height: float,
                                            layer_height: float,
+                                           total_height: float,
                                            params: StepParams,
                                            wall_thickness: float = 1.2,
                                            extruder: ExtruderType = ExtruderType.EXTRUDER_1) -> List[LayerPath]:
@@ -628,6 +629,7 @@ class StepGenerator:
             contour: 轮廓
             z_height: 当前层高度
             layer_height: 层高
+            total_height: 字壳总高度
             params: 台阶参数
             wall_thickness: 壁厚
             extruder: 挤出机

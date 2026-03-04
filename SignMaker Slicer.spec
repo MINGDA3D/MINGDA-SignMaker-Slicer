@@ -5,7 +5,7 @@ a = Analysis(
     ['main.py'],
     pathex=[],
     binaries=[],
-    datas=[('resources', 'resources')],
+    datas=[('resources', 'resources'), ('translations/*.qm', 'translations')],
     hiddenimports=['PySide6.QtSvg', 'PySide6.QtOpenGL', 'PySide6.QtOpenGLWidgets', 'ezdxf', 'pyclipper', 'svgpathtools', 'numpy', 'OpenGL', 'OpenGL.GL', 'OpenGL.GLU', 'shapely', 'trimesh', 'mapbox_earcut'],
     hookspath=[],
     hooksconfig={},

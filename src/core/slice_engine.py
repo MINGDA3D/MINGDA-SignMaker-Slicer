@@ -273,6 +273,7 @@ class SliceEngine:
                     modified_contour,
                     info.z_height,
                     info.layer_height,
+                    params.shell.height,
                     params.step,
                     params.shell.wall_thickness,
                     info.extruder

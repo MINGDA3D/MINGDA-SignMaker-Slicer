@@ -449,6 +449,10 @@ class ParamPanel(QWidget):
         顶部卡槽：[字壳高度/2, 字壳高度]
         底部卡槽：[0.3, 字壳高度/2]
         """
+        # 检查控件是否已创建
+        if not hasattr(self, 'panel_step_height') or not hasattr(self, 'baseplate_step_height'):
+            return
+
         shell_height = self.height_spin.value()
         half = shell_height / 2
 
@@ -751,6 +755,10 @@ class ParamPanel(QWidget):
             lambda: self.outline_dir_outer.setEnabled(self.outline_enabled.isChecked())
         )
 
+        # 包边和勾边互斥
+        self.wrap_enabled.stateChanged.connect(self._on_wrap_outline_mutual_exclusive)
+        self.outline_enabled.stateChanged.connect(self._on_wrap_outline_mutual_exclusive)
+
         return group
 
     def _create_speed_group(self) -> QGroupBox:
@@ -805,6 +813,18 @@ class ParamPanel(QWidget):
         """参数变化处理"""
         self._update_params()
         self.params_changed.emit()
+
+    def _on_wrap_outline_mutual_exclusive(self):
+        """包边和勾边互斥处理"""
+        sender = self.sender()
+        if sender == self.wrap_enabled and self.wrap_enabled.isChecked():
+            self.outline_enabled.blockSignals(True)
+            self.outline_enabled.setChecked(False)
+            self.outline_enabled.blockSignals(False)
+        elif sender == self.outline_enabled and self.outline_enabled.isChecked():
+            self.wrap_enabled.blockSignals(True)
+            self.wrap_enabled.setChecked(False)
+            self.wrap_enabled.blockSignals(False)
 
     def _update_params(self):
         """更新内部参数"""
