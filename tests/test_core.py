@@ -727,6 +727,47 @@ class TestSliceEngineWithSteps:
 
         assert baseplate_step_found, "应该在底部找到底板台阶路径"
 
+    def test_beveled_edge_with_steps_regression(self, engine, simple_contour):
+        """回归测试：斜边字+台阶组合，防止台阶悬空问题"""
+        params = SliceParams()
+        params.shell.height = 50.0
+        params.shell.layer_height = 0.3
+        params.shell.wall_thickness = 1.2
+        params.shell.edge_type = EdgeType.BEVELED
+        params.shell.bevel_width = 5.0
+        params.shell.bevel_direction = BevelDirection.TOP_LARGE
+
+        # 启用底板和面板台阶
+        params.step.enabled = True
+        params.step.baseplate_step_enabled = True
+        params.step.baseplate_step_height = 10.0
+        params.step.baseplate_step_width = 3.0
+        params.step.panel_step_enabled = True
+        params.step.panel_step_height = 40.0
+        params.step.panel_step_width = 3.0
+
+        result = engine.slice([simple_contour], params)
+
+        assert result.total_layers > 0
+
+        # 验证底板台阶层存在WALL路径（用于台阶生成）
+        baseplate_layer_found = False
+        panel_layer_found = False
+
+        for layer in result.layers:
+            if abs(layer.z_height - 10.0) < 0.2:
+                wall_paths = [p for p in layer.paths if p.role == PathRole.WALL]
+                if wall_paths:
+                    baseplate_layer_found = True
+
+            if abs(layer.z_height - 40.0) < 0.2:
+                wall_paths = [p for p in layer.paths if p.role == PathRole.WALL]
+                if wall_paths:
+                    panel_layer_found = True
+
+        assert baseplate_layer_found, "底板台阶层应该有WALL路径"
+        assert panel_layer_found, "面板台阶层应该有WALL路径"
+
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
