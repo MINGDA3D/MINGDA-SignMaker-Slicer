@@ -149,7 +149,9 @@ class STLWriter:
 
 
 def write_stl(result: SliceResult, output_path: str,
-              binary: bool = True, wall_thickness: float = 1.2) -> None:
+              binary: bool = True, wall_thickness: float = 1.2,
+              contours: Optional[List[Contour]] = None,
+              params: Optional[SliceParams] = None) -> None:
     """
     便捷函数：生成并写入STL文件
 
@@ -158,6 +160,8 @@ def write_stl(result: SliceResult, output_path: str,
         output_path: 输出文件路径
         binary: 是否使用二进制格式
         wall_thickness: 壁厚
+        contours: 原始轮廓列表（用于生成裙边等功能）
+        params: 切片参数（用于获取裙边等设置）
     """
     writer = STLWriter(wall_thickness=wall_thickness)
-    writer.write(result, output_path, binary)
+    writer.write(result, output_path, binary, contours=contours, params=params)

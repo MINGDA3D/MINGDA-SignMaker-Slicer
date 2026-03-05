@@ -164,7 +164,7 @@ class SkirtGenerator:
         # Step 1: 构建禁区（排除当前轮廓自身，只包含其他轮廓的壁区域）
         forbidden_zones = self._build_forbidden_zones(
             all_contours, wall_thickness, path_offset,
-            exclude_contour=contour
+            exclude_contour=contour, skirt_params=params
         )
 
         # Step 2: 生成原始梯形
@@ -248,7 +248,7 @@ class SkirtGenerator:
         # 构建禁区（排除当前轮廓自身）
         forbidden_zones = self._build_forbidden_zones(
             all_contours, wall_thickness, path_offset,
-            exclude_contour=contour
+            exclude_contour=contour, skirt_params=params
         )
 
         # 生成原始梯形
@@ -262,51 +262,82 @@ class SkirtGenerator:
         # 过滤掉与禁区重叠的梯形
         valid_trapezoids = []
         for trap in raw_trapezoids:
-            trap_path = Path(
-                points=[
-                    trap.top_left,
-                    trap.bottom_left,
-                    trap.bottom_right,
-                    trap.top_right
-                ],
-                is_closed=True
-            )
-
-            # 计算梯形与禁区的交集
-            overlap = path_offset.boolean_intersection_multi(
-                [trap_path], forbidden_zones
-            )
-
-            if not overlap:
-                # 完全不重叠，保留
+            if not self._trapezoid_overlaps_forbidden(trap, forbidden_zones):
                 valid_trapezoids.append(trap)
-            # 重叠的梯形直接丢弃（STL中不好处理不规则形状）
 
         return valid_trapezoids
+
+    def _point_in_polygon(self, point: Point, polygon: List[Point]) -> bool:
+        """
+        判断点是否在多边形内部（射线法）
+
+        Args:
+            point: 测试点
+            polygon: 多边形顶点列表
+
+        Returns:
+            True if point is inside polygon
+        """
+        x, y = point.x, point.y
+        n = len(polygon)
+        inside = False
+
+        p1x, p1y = polygon[0].x, polygon[0].y
+        for i in range(1, n + 1):
+            p2x, p2y = polygon[i % n].x, polygon[i % n].y
+            if y > min(p1y, p2y):
+                if y <= max(p1y, p2y):
+                    if x <= max(p1x, p2x):
+                        if p1y != p2y:
+                            xinters = (y - p1y) * (p2x - p1x) / (p2y - p1y) + p1x
+                        if p1x == p2x or x <= xinters:
+                            inside = not inside
+            p1x, p1y = p2x, p2y
+
+        return inside
+
+    def _trapezoid_overlaps_forbidden(
+        self,
+        trap: TrapezoidSkirt,
+        forbidden_zones: List[Path]
+    ) -> bool:
+        """检查梯形底边中点是否在禁区内（底边是远离字壳的边）"""
+        if not forbidden_zones:
+            return False
+
+        # 只检测底边中点（远离字壳的边）
+        bottom_mid = Point(
+            (trap.bottom_left.x + trap.bottom_right.x) / 2,
+            (trap.bottom_left.y + trap.bottom_right.y) / 2
+        )
+
+        for zone in forbidden_zones:
+            if self._point_in_polygon(bottom_mid, zone.points):
+                return True
+
+        return False
 
     def _build_forbidden_zones(
         self,
         all_contours: List[Contour],
         wall_thickness: float,
         path_offset: 'PathOffset',
-        exclude_contour: Optional[Contour] = None
+        exclude_contour: Optional[Contour] = None,
+        skirt_params: Optional[SkirtParams] = None
     ) -> List[Path]:
         """
         构建其他轮廓的壁区域作为禁区
 
         禁区包括：
-        - 其他轮廓（非当前轮廓）的外轮廓（裙边不应进入其他字母内部）
-        - 其他轮廓的内孔壁区域（内孔向外偏移 wall_thickness）
-        - 当前轮廓自身的内孔壁区域（外部裙边不应进入自己的内孔壁）
-
-        注意：当前轮廓的外轮廓不加入禁区，因为裙边的顶边
-        贴着自己的外壁，加入禁区会导致梯形被误删。
+        - 其他轮廓的外轮廓（防止裙边进入其他字母内部）
+        - 所有轮廓的内孔扩展 wall_thickness（防止进入内孔壁区域）
 
         Args:
             all_contours: 所有轮廓
             wall_thickness: 壁厚
             path_offset: 路径偏移工具
             exclude_contour: 当前正在生成裙边的轮廓（排除其外轮廓）
+            skirt_params: 裙边参数（未使用，保留兼容性）
 
         Returns:
             禁区路径列表
@@ -314,16 +345,15 @@ class SkirtGenerator:
         from src.core.path_offset import JoinType
 
         forbidden = []
-        for contour in all_contours:
-            is_current = (exclude_contour is not None and
-                          contour is exclude_contour)
 
-            # 其他轮廓的外轮廓是禁区（裙边不应进入其他字母内部）
+        for contour in all_contours:
+            is_current = (exclude_contour is not None and contour is exclude_contour)
+
+            # 其他轮廓的外轮廓直接作为禁区
             if not is_current and len(contour.outer.points) >= 3:
                 forbidden.append(contour.outer)
 
-            # 所有轮廓的内孔壁区域都是禁区
-            # （包括当前轮廓自己的内孔——外部裙边不应进入内孔壁）
+            # 所有轮廓的内孔扩展 wall_thickness
             for hole in contour.holes:
                 if len(hole.points) >= 3:
                     expanded_holes = path_offset.offset(
@@ -449,7 +479,7 @@ class SkirtGenerator:
             return trapezoids
 
         # 计算梯形数量
-        num_trapezoids = max(1, int(total_length / params.interval))
+        num_trapezoids = max(1, int(math.ceil(total_length / params.interval)))
         actual_interval = total_length / num_trapezoids
 
         # 裙边参数
@@ -461,7 +491,7 @@ class SkirtGenerator:
         for i in range(num_trapezoids):
             # 梯形顶边的两个端点位置（沿路径的距离）
             dist_left = i * actual_interval
-            dist_right = ((i + 1) * actual_interval) % total_length
+            dist_right = min((i + 1) * actual_interval, total_length)
 
             # 获取两个端点的位置和方向
             pos_left, dir_left = self._get_point_and_direction_at_distance(
