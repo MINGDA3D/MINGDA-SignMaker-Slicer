@@ -769,5 +769,47 @@ class TestSliceEngineWithSteps:
         assert panel_layer_found, "面板台阶层应该有WALL路径"
 
 
+class TestSTLExport:
+    """STL导出验证测试"""
+
+    @pytest.fixture
+    def engine(self):
+        from src.core.slice_engine import SliceEngine
+        return SliceEngine()
+
+    @pytest.fixture
+    def simple_contour(self):
+        outer = Path(points=[
+            Point(0, 0), Point(100, 0), Point(100, 100), Point(0, 100)
+        ])
+        return Contour(outer=outer)
+
+    @pytest.fixture
+    def stl_writer(self):
+        from src.core.stl_writer import STLWriter
+        return STLWriter()
+
+    def test_beveled_edge_with_steps_stl_export(self, engine, simple_contour, stl_writer, tmp_path):
+        """验证斜边字+台阶的STL导出包含台阶网格"""
+        params = SliceParams()
+        params.shell.height = 50.0
+        params.shell.layer_height = 0.3
+        params.shell.wall_thickness = 1.2
+        params.shell.edge_type = EdgeType.BEVELED
+        params.shell.bevel_width = 5.0
+
+        params.step.baseplate_step_enabled = True
+        params.step.baseplate_step_height = 10.0
+        params.step.baseplate_step_width = 3.0
+
+        result = engine.slice([simple_contour], params)
+
+        stl_file = tmp_path / "test_beveled_steps.stl"
+        stl_writer.write(result, str(stl_file), True, [simple_contour], params)
+
+        assert stl_file.exists(), "STL文件应该被创建"
+        assert stl_file.stat().st_size > 1000, "STL文件应该包含网格数据"
+
+
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
