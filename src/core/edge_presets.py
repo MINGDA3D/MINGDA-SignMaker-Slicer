@@ -447,3 +447,23 @@ class EdgePresetManager:
     def clear_cache(self):
         """Clear preset cache"""
         self._cache.clear()
+
+
+# Module-level convenience functions
+_default_manager = None
+
+
+def get_preset_profile(preset_name: str, bevel_width: Optional[float] = None) -> Optional[EdgeProfile]:
+    """Get EdgeProfile for a preset (convenience function)"""
+    global _default_manager
+    if _default_manager is None:
+        _default_manager = EdgePresetManager()
+    return _default_manager.get_preset_profile(preset_name, bevel_width)
+
+
+def get_all_presets() -> List[Dict]:
+    """Get all presets (convenience function)"""
+    global _default_manager
+    if _default_manager is None:
+        _default_manager = EdgePresetManager()
+    return _default_manager.get_preset_list()
