@@ -13,6 +13,7 @@ MINGDA SignMaker - 切片引擎模块
 
 from __future__ import annotations
 import math
+from copy import copy
 from typing import List, Dict, Optional
 from dataclasses import dataclass, field
 
@@ -571,6 +572,7 @@ class SliceEngine:
         wall_thickness = params.shell.wall_thickness
 
         for contour in contours:
+            # 1. 外轮廓裙边
             contour_skirt_paths = self.skirt_generator.generate_skirt_clipped(
                 contour=contour,
                 all_contours=contours,
@@ -579,6 +581,19 @@ class SliceEngine:
                 path_offset=self.path_offset
             )
             paths.extend(contour_skirt_paths)
+
+            # 2. 内孔裙边（方向相反，向孔内延伸）
+            if contour.holes:
+                hole_skirt_params = copy(skirt_params)
+                hole_skirt_params.is_outer = False
+                hole_skirt_paths = self.skirt_generator.generate_skirt_clipped(
+                    contour=contour,
+                    all_contours=contours,
+                    params=hole_skirt_params,
+                    wall_thickness=wall_thickness,
+                    path_offset=self.path_offset
+                )
+                paths.extend(hole_skirt_paths)
 
         return paths
 

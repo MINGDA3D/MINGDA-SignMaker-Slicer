@@ -674,6 +674,7 @@ class SkirtGenerator:
         1. 其他轮廓的外轮廓（防止裙边进入其他字母内部）
         2. 其他轮廓的外轮廓向外扩展 wall_thickness（防止裙边太靠近其他字母壁）
         3. 所有轮廓的内孔扩展 wall_thickness（防止裙边进入孔壁区域）
+           - 但对于内孔裙边（is_outer=False），跳过当前正在生成裙边的那个孔
         4. 当前轮廓的内部区域（防止裙边穿入自身内部）——对外裙边
 
         Args:
@@ -689,11 +690,26 @@ class SkirtGenerator:
         from src.core.path_offset import JoinType
 
         forbidden = []
+        is_inner_skirt = skirt_params is not None and not skirt_params.is_outer
+
+        # 对于内孔裙边：current_contour.outer 实际上是某个轮廓的 hole，
+        # 需要找到这个 hole 所属的父轮廓，并排除相关禁区
+        parent_contour = None
+        if is_inner_skirt:
+            current_hole_path = current_contour.outer
+            for contour in all_contours:
+                for hole in contour.holes:
+                    if hole is current_hole_path or self._paths_are_same(hole, current_hole_path):
+                        parent_contour = contour
+                        break
+                if parent_contour is not None:
+                    break
 
         for contour in all_contours:
             is_current = (contour is current_contour)
+            is_parent = (parent_contour is not None and contour is parent_contour)
 
-            if not is_current and len(contour.outer.points) >= 3:
+            if not is_current and not is_parent and len(contour.outer.points) >= 3:
                 # 其他轮廓的外轮廓直接作为禁区
                 forbidden.append(contour.outer)
 
@@ -704,14 +720,31 @@ class SkirtGenerator:
                 forbidden.extend(expanded)
 
             # 所有轮廓的内孔扩展 wall_thickness
-            for hole in contour.holes:
-                if len(hole.points) >= 3:
-                    expanded_holes = path_offset.offset(
-                        hole, wall_thickness, JoinType.ROUND
-                    )
-                    forbidden.extend(expanded_holes)
+            # 对于内孔裙边：跳过当前轮廓（或父轮廓）的所有内孔，
+            # 因为裙边就是要在这些孔内侧生成的
+            if is_inner_skirt and (is_current or is_parent):
+                pass  # 不把当前/父轮廓的孔加入禁区
+            else:
+                for hole in contour.holes:
+                    if len(hole.points) >= 3:
+                        expanded_holes = path_offset.offset(
+                            hole, wall_thickness, JoinType.ROUND
+                        )
+                        forbidden.extend(expanded_holes)
 
         return forbidden
+
+    @staticmethod
+    def _paths_are_same(path_a: Path, path_b: Path) -> bool:
+        """判断两个 Path 是否是同一个孔（基于点坐标匹配）"""
+        if path_a is path_b:
+            return True
+        if len(path_a.points) != len(path_b.points):
+            return False
+        for pa, pb in zip(path_a.points, path_b.points):
+            if abs(pa.x - pb.x) > 0.001 or abs(pa.y - pb.y) > 0.001:
+                return False
+        return True
 
     # ================================================================
     # 旧版梯形生成（保持兼容，用于 generate_skirt / generate_skirt_3d / STL）
