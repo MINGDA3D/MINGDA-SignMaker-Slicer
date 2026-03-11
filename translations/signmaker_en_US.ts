@@ -360,8 +360,8 @@
         <translation>Professional LED Sign Letter 3D Printing Slicer</translation>
     </message>
     <message>
-        <source>Version: 0.1.4 (Development)</source>
-        <translation>Version: 0.1.4 (Development)</translation>
+        <source>Version: 0.1.5 (Development)</source>
+        <translation>Version: 0.1.5 (Development)</translation>
     </message>
     <message>
         <source>Features:</source>

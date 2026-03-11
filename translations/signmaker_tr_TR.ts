@@ -360,8 +360,8 @@
         <translation>Profesyonel LED Isikli Harf 3D Baski Dilimleyici</translation>
     </message>
     <message>
-        <source>Version: 0.1.4 (Development)</source>
-        <translation>Sürüm: 0.1.4 (Geliştirme)</translation>
+        <source>Version: 0.1.5 (Development)</source>
+        <translation>Sürüm: 0.1.5 (Geliştirme)</translation>
     </message>
     <message>
         <source>Features:</source>

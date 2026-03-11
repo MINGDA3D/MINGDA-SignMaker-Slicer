@@ -360,8 +360,8 @@
         <translation>Профессиональный слайсер для 3D-печати светящихся букв</translation>
     </message>
     <message>
-        <source>Version: 0.1.4 (Development)</source>
-        <translation>Версия: 0.1.4 (Разработка)</translation>
+        <source>Version: 0.1.5 (Development)</source>
+        <translation>Версия: 0.1.5 (Разработка)</translation>
     </message>
     <message>
         <source>Features:</source>

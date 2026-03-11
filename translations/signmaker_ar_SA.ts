@@ -360,8 +360,8 @@
         <translation>برنامج تقطيع احترافي للطباعة ثلاثية الأبعاد لحروف اللافتات المضيئة</translation>
     </message>
     <message>
-        <source>Version: 0.1.4 (Development)</source>
-        <translation>الإصدار: 0.1.4 (تطوير)</translation>
+        <source>Version: 0.1.5 (Development)</source>
+        <translation>الإصدار: 0.1.5 (تطوير)</translation>
     </message>
     <message>
         <source>Features:</source>

@@ -360,8 +360,8 @@
         <translation>Trancheur professionnel pour impression 3D de lettres lumineuses LED</translation>
     </message>
     <message>
-        <source>Version: 0.1.4 (Development)</source>
-        <translation>Version : 0.1.4 (Développement)</translation>
+        <source>Version: 0.1.5 (Development)</source>
+        <translation>Version : 0.1.5 (Développement)</translation>
     </message>
     <message>
         <source>Features:</source>
