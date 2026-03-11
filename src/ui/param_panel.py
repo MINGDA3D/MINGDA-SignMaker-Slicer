@@ -1063,7 +1063,17 @@ class ParamPanel(QWidget):
         for w in widgets:
             w.blockSignals(False)
 
-        # 手动更新控件的启用状态
+        # 手动更新控件的启用/可见状态
+        # 边缘类型：展开对应的参数面板
+        edge_type = params.shell.edge_type
+        self.bevel_params_widget.setVisible(edge_type == EdgeType.BEVELED)
+        self.custom_edge_widget.setVisible(edge_type == EdgeType.CUSTOM)
+
+        # 异形边：恢复 profile
+        if edge_type == EdgeType.CUSTOM and params.shell.edge_profile is not None:
+            self._current_profile = params.shell.edge_profile
+            self._update_profile_info()
+
         self._toggle_skirt_controls(params.skirt.enabled)
         self._toggle_connected_controls(params.connected.enabled)
         self._toggle_panel_step_controls(params.step.panel_step_enabled)
