@@ -360,8 +360,8 @@
         <translation>Fatiador profissional de impressao 3D para letras luminosas LED</translation>
     </message>
     <message>
-        <source>Version: 0.1.2 (Development)</source>
-        <translation>Versão: 0.1.2 (Desenvolvimento)</translation>
+        <source>Version: 0.1.4 (Development)</source>
+        <translation>Versão: 0.1.4 (Desenvolvimento)</translation>
     </message>
     <message>
         <source>Features:</source>

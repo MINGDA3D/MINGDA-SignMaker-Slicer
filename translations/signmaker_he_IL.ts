@@ -360,8 +360,8 @@
         <translation>פורס מקצועי להדפסת 3D של אותיות שילוט LED</translation>
     </message>
     <message>
-        <source>Version: 0.1.2 (Development)</source>
-        <translation>גרסה: 0.1.2 (פיתוח)</translation>
+        <source>Version: 0.1.4 (Development)</source>
+        <translation>גרסה: 0.1.4 (פיתוח)</translation>
     </message>
     <message>
         <source>Features:</source>

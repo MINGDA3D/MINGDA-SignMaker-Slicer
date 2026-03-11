@@ -360,8 +360,8 @@
         <translation>Rebanador profesional de impresion 3D para letras luminosas LED</translation>
     </message>
     <message>
-        <source>Version: 0.1.2 (Development)</source>
-        <translation>Version: 0.1.2 (Desarrollo)</translation>
+        <source>Version: 0.1.4 (Development)</source>
+        <translation>Version: 0.1.4 (Desarrollo)</translation>
     </message>
     <message>
         <source>Features:</source>

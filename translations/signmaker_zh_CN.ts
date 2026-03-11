@@ -384,8 +384,8 @@
         <translation>专业发光字3D打印切片软件</translation>
     </message>
     <message>
-        <source>Version: 0.1.2 (Development)</source>
-        <translation>版本: 0.1.2 (开发版)</translation>
+        <source>Version: 0.1.4 (Development)</source>
+        <translation>版本: 0.1.4 (开发版)</translation>
     </message>
     <message>
         <source>Features:</source>

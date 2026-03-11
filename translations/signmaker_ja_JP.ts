@@ -360,8 +360,8 @@
         <translation>プロフェッショナルLED看板文字3Dプリントスライサー</translation>
     </message>
     <message>
-        <source>Version: 0.1.2 (Development)</source>
-        <translation>バージョン: 0.1.2 (開発版)</translation>
+        <source>Version: 0.1.4 (Development)</source>
+        <translation>バージョン: 0.1.4 (開発版)</translation>
     </message>
     <message>
         <source>Features:</source>

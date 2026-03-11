@@ -360,8 +360,8 @@
         <translation>Professioneller LED-Leuchtbuchstaben 3D-Druck-Slicer</translation>
     </message>
     <message>
-        <source>Version: 0.1.2 (Development)</source>
-        <translation>Version: 0.1.2 (Entwicklung)</translation>
+        <source>Version: 0.1.4 (Development)</source>
+        <translation>Version: 0.1.4 (Entwicklung)</translation>
     </message>
     <message>
         <source>Features:</source>

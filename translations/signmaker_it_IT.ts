@@ -360,8 +360,8 @@
         <translation>Affettatrice professionale per stampa 3D di lettere luminose LED</translation>
     </message>
     <message>
-        <source>Version: 0.1.2 (Development)</source>
-        <translation>Versione: 0.1.2 (Sviluppo)</translation>
+        <source>Version: 0.1.4 (Development)</source>
+        <translation>Versione: 0.1.4 (Sviluppo)</translation>
     </message>
     <message>
         <source>Features:</source>
