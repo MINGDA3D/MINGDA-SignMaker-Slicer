@@ -1069,9 +1069,12 @@ class ParamPanel(QWidget):
         self.bevel_params_widget.setVisible(edge_type == EdgeType.BEVELED)
         self.custom_edge_widget.setVisible(edge_type == EdgeType.CUSTOM)
 
-        # 异形边：恢复 profile
+        # 异形边：恢复 profile 和预设选中状态
         if edge_type == EdgeType.CUSTOM and params.shell.edge_profile is not None:
             self._current_profile = params.shell.edge_profile
+            # 恢复预设缩略图的选中高亮
+            if params.shell.edge_profile.preset_name:
+                self.preset_selector.select_preset(params.shell.edge_profile.preset_name)
             self._update_profile_info()
 
         self._toggle_skirt_controls(params.skirt.enabled)
