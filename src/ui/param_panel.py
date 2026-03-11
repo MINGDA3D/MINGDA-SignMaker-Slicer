@@ -1036,6 +1036,21 @@ class ParamPanel(QWidget):
         else:
             self.outline_dir_outer.setChecked(True)
 
+        # 换色层参数
+        self.color_enabled.setChecked(params.color.enabled)
+
+        # 台阶参数 - 面板台阶（顶部）
+        self.panel_step_enabled.setChecked(params.step.panel_step_enabled)
+        self.panel_step_height.setValue(params.step.panel_step_height)
+        self.panel_step_width.setValue(params.step.panel_step_width)
+        self.panel_step_v_groove.setChecked(params.step.panel_step_is_v_groove)
+
+        # 台阶参数 - 底板台阶（底部）
+        self.baseplate_step_enabled.setChecked(params.step.baseplate_step_enabled)
+        self.baseplate_step_height.setValue(params.step.baseplate_step_height)
+        self.baseplate_step_width.setValue(params.step.baseplate_step_width)
+        self.baseplate_step_v_groove.setChecked(params.step.baseplate_step_is_v_groove)
+
         # 底面封闭参数
         self.bottom_face_enabled.setChecked(params.bottom_face.enabled)
         self.bottom_face_thickness.setValue(params.bottom_face.thickness)
@@ -1051,6 +1066,10 @@ class ParamPanel(QWidget):
         # 手动更新控件的启用状态
         self._toggle_skirt_controls(params.skirt.enabled)
         self._toggle_connected_controls(params.connected.enabled)
+        self._toggle_panel_step_controls(params.step.panel_step_enabled)
+        self._toggle_baseplate_step_controls(params.step.baseplate_step_enabled)
+        self.color1_height.setEnabled(params.color.enabled)
+        self.color2_height.setEnabled(params.color.enabled)
         self._toggle_bottom_face_controls(params.bottom_face.enabled)
         self._toggle_top_face_controls(params.top_face.enabled)
         self._update_step_ranges()
