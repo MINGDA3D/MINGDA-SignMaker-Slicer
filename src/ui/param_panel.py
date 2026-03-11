@@ -272,8 +272,30 @@ class ParamPanel(QWidget):
         self.bottom_face_enabled.stateChanged.connect(
             lambda: self.bottom_face_thickness.setEnabled(self.bottom_face_enabled.isChecked())
         )
+        # 与 Baseplate Step (Bottom) 互斥
+        self.bottom_face_enabled.stateChanged.connect(self._on_bottom_face_toggled)
 
         return group
+
+    def _on_bottom_face_toggled(self):
+        """底面封闭启用时，自动关闭底板台阶（互斥）"""
+        if self.bottom_face_enabled.isChecked() and hasattr(self, 'baseplate_step_enabled'):
+            if self.baseplate_step_enabled.isChecked():
+                self.baseplate_step_enabled.blockSignals(True)
+                self.baseplate_step_enabled.setChecked(False)
+                self._toggle_baseplate_step_controls(False)
+                self.baseplate_step_enabled.blockSignals(False)
+                self._on_param_changed()
+
+    def _on_baseplate_step_toggled(self):
+        """底板台阶启用时，自动关闭底面封闭（互斥）"""
+        if self.baseplate_step_enabled.isChecked() and hasattr(self, 'bottom_face_enabled'):
+            if self.bottom_face_enabled.isChecked():
+                self.bottom_face_enabled.blockSignals(True)
+                self.bottom_face_enabled.setChecked(False)
+                self.bottom_face_thickness.setEnabled(False)
+                self.bottom_face_enabled.blockSignals(False)
+                self._on_param_changed()
 
     def _toggle_bottom_face_controls(self, enabled: bool):
         """切换底面封闭控件的启用状态"""
@@ -309,8 +331,30 @@ class ParamPanel(QWidget):
         self.top_face_enabled.stateChanged.connect(
             lambda: self.top_face_thickness.setEnabled(self.top_face_enabled.isChecked())
         )
+        # 与 Panel Step (Top) 互斥
+        self.top_face_enabled.stateChanged.connect(self._on_top_face_toggled)
 
         return group
+
+    def _on_top_face_toggled(self):
+        """顶面封闭启用时，自动关闭面板台阶（互斥）"""
+        if self.top_face_enabled.isChecked() and hasattr(self, 'panel_step_enabled'):
+            if self.panel_step_enabled.isChecked():
+                self.panel_step_enabled.blockSignals(True)
+                self.panel_step_enabled.setChecked(False)
+                self._toggle_panel_step_controls(False)
+                self.panel_step_enabled.blockSignals(False)
+                self._on_param_changed()
+
+    def _on_panel_step_toggled(self):
+        """面板台阶启用时，自动关闭顶面封闭（互斥）"""
+        if self.panel_step_enabled.isChecked() and hasattr(self, 'top_face_enabled'):
+            if self.top_face_enabled.isChecked():
+                self.top_face_enabled.blockSignals(True)
+                self.top_face_enabled.setChecked(False)
+                self.top_face_thickness.setEnabled(False)
+                self.top_face_enabled.blockSignals(False)
+                self._on_param_changed()
 
     def _toggle_top_face_controls(self, enabled: bool):
         """切换顶面封闭控件的启用状态"""
@@ -394,6 +438,8 @@ class ParamPanel(QWidget):
         self.panel_step_enabled.stateChanged.connect(
             lambda: self._toggle_panel_step_controls(self.panel_step_enabled.isChecked())
         )
+        # 与 Top Face 互斥
+        self.panel_step_enabled.stateChanged.connect(self._on_panel_step_toggled)
 
         # 分隔线
         line1 = QFrame()
@@ -433,6 +479,8 @@ class ParamPanel(QWidget):
         self.baseplate_step_enabled.stateChanged.connect(
             lambda: self._toggle_baseplate_step_controls(self.baseplate_step_enabled.isChecked())
         )
+        # 与 Bottom Face 互斥
+        self.baseplate_step_enabled.stateChanged.connect(self._on_baseplate_step_toggled)
 
         # 兼容旧变量（避免其他代码报错）
         self.top_step_enabled = self.panel_step_enabled
