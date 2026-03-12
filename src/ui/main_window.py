@@ -616,6 +616,7 @@ class MainWindow(QMainWindow):
         self.canvas_toolbar.difference_clicked.connect(self._on_difference)
         self.canvas_toolbar.group_clicked.connect(self._on_group)
         self.canvas_toolbar.ungroup_clicked.connect(self._on_ungroup)
+        self.canvas_toolbar.text_clicked.connect(self._on_text)
 
     def _init_statusbar(self):
         """初始化状态栏"""
@@ -1682,6 +1683,22 @@ class MainWindow(QMainWindow):
     def _on_ungroup(self):
         """打散"""
         self.canvas.ungroup_selected()
+
+    def _on_text(self):
+        """文字生成"""
+        from .text_dialog import TextDialog
+        dialog = TextDialog(self)
+        if dialog.exec():
+            contours = dialog.get_contours()
+            if contours:
+                # 使用撤销系统添加轮廓
+                cmd = AddContoursCommand(self.contours, contours)
+                self.undo_manager.push(cmd)
+
+                # 更新UI
+                self.canvas.set_contours(self.contours)
+                self.project_panel.update_contours(self.contours)
+                self._update_status(self.tr("Text added"))
 
     def _on_about(self):
         """关于对话框"""

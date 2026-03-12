@@ -26,6 +26,7 @@ class CanvasToolbar(QWidget):
     difference_clicked = Signal()
     group_clicked = Signal()
     ungroup_clicked = Signal()
+    text_clicked = Signal()
     slice_clicked = Signal()
 
     def __init__(self, parent=None):
@@ -95,6 +96,13 @@ class CanvasToolbar(QWidget):
         self.btn_ungroup = self._create_icon_button("split_objects_dark.png", self.tr("Ungroup"))
         self.btn_ungroup.clicked.connect(self.ungroup_clicked.emit)
         layout.addWidget(self.btn_ungroup)
+
+        layout.addWidget(self._create_separator())
+
+        # ========== 文字生成 ==========
+        self.btn_text = self._create_icon_button("text.svg", self.tr("Text"))
+        self.btn_text.clicked.connect(self.text_clicked.emit)
+        layout.addWidget(self.btn_text)
 
         layout.addWidget(self._create_separator())
 
