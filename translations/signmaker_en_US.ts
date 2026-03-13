@@ -6,37 +6,37 @@
     <message>
         <location filename="../src/ui/canvas_2d.py" line="1263"/>
         <source>Delete</source>
-        <translation type="unfinished">Delete</translation>
+        <translation>Delete</translation>
     </message>
     <message>
         <location filename="../src/ui/canvas_2d.py" line="1271"/>
         <source>Mirror</source>
-        <translation type="unfinished"></translation>
+        <translation>Mirror</translation>
     </message>
     <message>
         <location filename="../src/ui/canvas_2d.py" line="1272"/>
         <source>Mirror X</source>
-        <translation type="unfinished"></translation>
+        <translation>Mirror X</translation>
     </message>
     <message>
         <location filename="../src/ui/canvas_2d.py" line="1274"/>
         <source>Mirror Y</source>
-        <translation type="unfinished"></translation>
+        <translation>Mirror Y</translation>
     </message>
     <message>
         <location filename="../src/ui/canvas_2d.py" line="1281"/>
         <source>Select All</source>
-        <translation type="unfinished">Select All</translation>
+        <translation>Select All</translation>
     </message>
     <message>
         <location filename="../src/ui/canvas_2d.py" line="1289"/>
         <source>Fit View</source>
-        <translation type="unfinished"></translation>
+        <translation>Fit View</translation>
     </message>
     <message>
         <location filename="../src/ui/canvas_2d.py" line="1294"/>
         <source>Reset View</source>
-        <translation type="unfinished"></translation>
+        <translation>Reset View</translation>
     </message>
 </context>
 <context>
@@ -89,7 +89,7 @@
     <message>
         <location filename="../src/ui/canvas_toolbar.py" line="103"/>
         <source>Text</source>
-        <translation type="unfinished"></translation>
+        <translation>Text</translation>
     </message>
     <message>
         <location filename="../src/ui/canvas_toolbar.py" line="110"/>
@@ -513,7 +513,7 @@
     <message>
         <location filename="../src/ui/main_window.py" line="1755"/>
         <source>Loaded saved parameters</source>
-        <translation type="unfinished"></translation>
+        <translation>Loaded saved parameters</translation>
     </message>
     <message>
         <source>Supported Files (*.dxf *.svg);;DXF Files (*.dxf);;SVG Files (*.svg);;All Files (*)</source>
@@ -594,12 +594,12 @@
     <message>
         <location filename="../src/ui/main_window.py" line="1141"/>
         <source>Export Baseplate DXF...</source>
-        <translation type="unfinished">Export Baseplate DXF...</translation>
+        <translation>Export Baseplate DXF...</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="1142"/>
         <source>Export Panel DXF...</source>
-        <translation type="unfinished">Export Panel DXF...</translation>
+        <translation>Export Panel DXF...</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="1173"/>
@@ -811,14 +811,14 @@
     <message>
         <location filename="../src/ui/main_window.py" line="1493"/>
         <source>Rotation: {angle:.2f}°</source>
-        <translation type="unfinished"></translation>
+        <translation>Rotation: {angle:.2f}°</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="1569"/>
         <location filename="../src/ui/main_window.py" line="1607"/>
         <location filename="../src/ui/main_window.py" line="1630"/>
         <source>Scale: {px:.1f}% x {py:.1f}%</source>
-        <translation type="unfinished"></translation>
+        <translation>Scale: {px:.1f}% x {py:.1f}%</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="1653"/>
@@ -1392,67 +1392,67 @@ Control points: {points}</translation>
     <message>
         <location filename="../src/ui/preview_3d.py" line="602"/>
         <source>外壳</source>
-        <translation type="unfinished"></translation>
+        <translation>Outer Shell</translation>
     </message>
     <message>
         <location filename="../src/ui/preview_3d.py" line="607"/>
         <source>内壳</source>
-        <translation type="unfinished"></translation>
+        <translation>Inner Shell</translation>
     </message>
     <message>
         <location filename="../src/ui/preview_3d.py" line="612"/>
         <source>填充</source>
-        <translation type="unfinished"></translation>
+        <translation>Fill</translation>
     </message>
     <message>
         <location filename="../src/ui/preview_3d.py" line="617"/>
         <source>实边</source>
-        <translation type="unfinished"></translation>
+        <translation>Solid Edge</translation>
     </message>
     <message>
         <location filename="../src/ui/preview_3d.py" line="622"/>
         <source>换色</source>
-        <translation type="unfinished"></translation>
+        <translation>Color Change</translation>
     </message>
     <message>
         <location filename="../src/ui/preview_3d.py" line="627"/>
         <source>底面</source>
-        <translation type="unfinished"></translation>
+        <translation>Bottom Face</translation>
     </message>
     <message>
         <location filename="../src/ui/preview_3d.py" line="632"/>
         <source>顶面</source>
-        <translation type="unfinished"></translation>
+        <translation>Top Face</translation>
     </message>
     <message>
         <location filename="../src/ui/preview_3d.py" line="640"/>
         <source>图层编辑</source>
-        <translation type="unfinished"></translation>
+        <translation>Layer Edit</translation>
     </message>
     <message>
         <location filename="../src/ui/preview_3d.py" line="656"/>
         <source>层数编辑</source>
-        <translation type="unfinished"></translation>
+        <translation>Layer Count Edit</translation>
     </message>
     <message>
         <location filename="../src/ui/preview_3d.py" line="720"/>
         <source>正</source>
-        <translation type="unfinished"></translation>
+        <translation>Front</translation>
     </message>
     <message>
         <location filename="../src/ui/preview_3d.py" line="725"/>
         <source>俯</source>
-        <translation type="unfinished"></translation>
+        <translation>Top</translation>
     </message>
     <message>
         <location filename="../src/ui/preview_3d.py" line="730"/>
         <source>侧</source>
-        <translation type="unfinished"></translation>
+        <translation>Side</translation>
     </message>
     <message>
         <location filename="../src/ui/preview_3d.py" line="735"/>
         <source>透</source>
-        <translation type="unfinished"></translation>
+        <translation>Iso</translation>
     </message>
 </context>
 <context>
@@ -1490,58 +1490,58 @@ Control points: {points}</translation>
     <message>
         <location filename="../src/ui/text_dialog.py" line="28"/>
         <source>Generate Text</source>
-        <translation type="unfinished"></translation>
+        <translation>Generate Text</translation>
     </message>
     <message>
         <location filename="../src/ui/text_dialog.py" line="36"/>
         <source>Font:</source>
-        <translation type="unfinished"></translation>
+        <translation>Font:</translation>
     </message>
     <message>
         <location filename="../src/ui/text_dialog.py" line="44"/>
         <source>Text:</source>
-        <translation type="unfinished"></translation>
+        <translation>Text:</translation>
     </message>
     <message>
         <location filename="../src/ui/text_dialog.py" line="51"/>
         <source>Font Size (mm):</source>
-        <translation type="unfinished"></translation>
+        <translation>Font Size (mm):</translation>
     </message>
     <message>
         <location filename="../src/ui/text_dialog.py" line="61"/>
         <source>Character Spacing (mm):</source>
-        <translation type="unfinished"></translation>
+        <translation>Character Spacing (mm):</translation>
     </message>
     <message>
         <location filename="../src/ui/text_dialog.py" line="73"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Cancel</translation>
     </message>
     <message>
         <location filename="../src/ui/text_dialog.py" line="76"/>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>OK</translation>
     </message>
     <message>
         <location filename="../src/ui/text_dialog.py" line="86"/>
         <location filename="../src/ui/text_dialog.py" line="92"/>
         <source>Warning</source>
-        <translation type="unfinished"></translation>
+        <translation>Warning</translation>
     </message>
     <message>
         <location filename="../src/ui/text_dialog.py" line="86"/>
         <source>Please enter text</source>
-        <translation type="unfinished"></translation>
+        <translation>Please enter text</translation>
     </message>
     <message>
         <location filename="../src/ui/text_dialog.py" line="92"/>
         <source>Font not found</source>
-        <translation type="unfinished"></translation>
+        <translation>Font not found</translation>
     </message>
     <message>
         <location filename="../src/ui/text_dialog.py" line="104"/>
         <source>Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Error</translation>
     </message>
 </context>
 <context>
@@ -1553,11 +1553,11 @@ Control points: {points}</translation>
     </message>
     <message>
         <source>Open</source>
-        <translation type="vanished">Open</translation>
+        <translation>Open</translation>
     </message>
     <message>
         <source>Save</source>
-        <translation type="vanished">Save</translation>
+        <translation>Save</translation>
     </message>
     <message>
         <source>Export</source>

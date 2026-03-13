@@ -6,37 +6,37 @@
     <message>
         <location filename="../src/ui/canvas_2d.py" line="1263"/>
         <source>Delete</source>
-        <translation type="unfinished">삭제</translation>
+        <translation>삭제</translation>
     </message>
     <message>
         <location filename="../src/ui/canvas_2d.py" line="1271"/>
         <source>Mirror</source>
-        <translation type="unfinished"></translation>
+        <translation>미러</translation>
     </message>
     <message>
         <location filename="../src/ui/canvas_2d.py" line="1272"/>
         <source>Mirror X</source>
-        <translation type="unfinished"></translation>
+        <translation>X축 미러</translation>
     </message>
     <message>
         <location filename="../src/ui/canvas_2d.py" line="1274"/>
         <source>Mirror Y</source>
-        <translation type="unfinished"></translation>
+        <translation>Y축 미러</translation>
     </message>
     <message>
         <location filename="../src/ui/canvas_2d.py" line="1281"/>
         <source>Select All</source>
-        <translation type="unfinished">모두 선택</translation>
+        <translation>모두 선택</translation>
     </message>
     <message>
         <location filename="../src/ui/canvas_2d.py" line="1289"/>
         <source>Fit View</source>
-        <translation type="unfinished"></translation>
+        <translation>뷰 맞춤</translation>
     </message>
     <message>
         <location filename="../src/ui/canvas_2d.py" line="1294"/>
         <source>Reset View</source>
-        <translation type="unfinished"></translation>
+        <translation>뷰 재설정</translation>
     </message>
 </context>
 <context>
@@ -89,7 +89,7 @@
     <message>
         <location filename="../src/ui/canvas_toolbar.py" line="103"/>
         <source>Text</source>
-        <translation type="unfinished"></translation>
+        <translation>텍스트</translation>
     </message>
     <message>
         <location filename="../src/ui/canvas_toolbar.py" line="110"/>
@@ -592,12 +592,12 @@
     <message>
         <location filename="../src/ui/main_window.py" line="1141"/>
         <source>Export Baseplate DXF...</source>
-        <translation type="unfinished">베이스플레이트 DXF 내보내기...</translation>
+        <translation>베이스플레이트 DXF 내보내기...</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="1142"/>
         <source>Export Panel DXF...</source>
-        <translation type="unfinished">패널 DXF 내보내기...</translation>
+        <translation>패널 DXF 내보내기...</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="1173"/>
@@ -756,7 +756,7 @@
     <message>
         <location filename="../src/ui/main_window.py" line="1755"/>
         <source>Loaded saved parameters</source>
-        <translation type="unfinished"></translation>
+        <translation>저장된 매개변수를 불러왔습니다</translation>
     </message>
     <message>
         <source>Slicing...</source>
@@ -809,14 +809,14 @@
     <message>
         <location filename="../src/ui/main_window.py" line="1493"/>
         <source>Rotation: {angle:.2f}°</source>
-        <translation type="unfinished"></translation>
+        <translation>회전: {angle:.2f}°</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="1569"/>
         <location filename="../src/ui/main_window.py" line="1607"/>
         <location filename="../src/ui/main_window.py" line="1630"/>
         <source>Scale: {px:.1f}% x {py:.1f}%</source>
-        <translation type="unfinished"></translation>
+        <translation>크기: {px:.1f}% x {py:.1f}%</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="1653"/>
@@ -1424,67 +1424,67 @@ Control points: {points}</source>
     <message>
         <location filename="../src/ui/preview_3d.py" line="602"/>
         <source>外壳</source>
-        <translation type="unfinished"></translation>
+        <translation>외부 쉘</translation>
     </message>
     <message>
         <location filename="../src/ui/preview_3d.py" line="607"/>
         <source>内壳</source>
-        <translation type="unfinished"></translation>
+        <translation>내부 쉘</translation>
     </message>
     <message>
         <location filename="../src/ui/preview_3d.py" line="612"/>
         <source>填充</source>
-        <translation type="unfinished"></translation>
+        <translation>채우기</translation>
     </message>
     <message>
         <location filename="../src/ui/preview_3d.py" line="617"/>
         <source>实边</source>
-        <translation type="unfinished"></translation>
+        <translation>솔리드 엣지</translation>
     </message>
     <message>
         <location filename="../src/ui/preview_3d.py" line="622"/>
         <source>换色</source>
-        <translation type="unfinished"></translation>
+        <translation>색상 변경</translation>
     </message>
     <message>
         <location filename="../src/ui/preview_3d.py" line="627"/>
         <source>底面</source>
-        <translation type="unfinished"></translation>
+        <translation>하단면</translation>
     </message>
     <message>
         <location filename="../src/ui/preview_3d.py" line="632"/>
         <source>顶面</source>
-        <translation type="unfinished"></translation>
+        <translation>상단면</translation>
     </message>
     <message>
         <location filename="../src/ui/preview_3d.py" line="640"/>
         <source>图层编辑</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어 편집</translation>
     </message>
     <message>
         <location filename="../src/ui/preview_3d.py" line="656"/>
         <source>层数编辑</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어 수 편집</translation>
     </message>
     <message>
         <location filename="../src/ui/preview_3d.py" line="720"/>
         <source>正</source>
-        <translation type="unfinished"></translation>
+        <translation>정면</translation>
     </message>
     <message>
         <location filename="../src/ui/preview_3d.py" line="725"/>
         <source>俯</source>
-        <translation type="unfinished"></translation>
+        <translation>상단</translation>
     </message>
     <message>
         <location filename="../src/ui/preview_3d.py" line="730"/>
         <source>侧</source>
-        <translation type="unfinished"></translation>
+        <translation>측면</translation>
     </message>
     <message>
         <location filename="../src/ui/preview_3d.py" line="735"/>
         <source>透</source>
-        <translation type="unfinished"></translation>
+        <translation>아이소</translation>
     </message>
 </context>
 <context>
@@ -1522,58 +1522,58 @@ Control points: {points}</source>
     <message>
         <location filename="../src/ui/text_dialog.py" line="28"/>
         <source>Generate Text</source>
-        <translation type="unfinished"></translation>
+        <translation>텍스트 생성</translation>
     </message>
     <message>
         <location filename="../src/ui/text_dialog.py" line="36"/>
         <source>Font:</source>
-        <translation type="unfinished"></translation>
+        <translation>글꼴:</translation>
     </message>
     <message>
         <location filename="../src/ui/text_dialog.py" line="44"/>
         <source>Text:</source>
-        <translation type="unfinished"></translation>
+        <translation>텍스트:</translation>
     </message>
     <message>
         <location filename="../src/ui/text_dialog.py" line="51"/>
         <source>Font Size (mm):</source>
-        <translation type="unfinished"></translation>
+        <translation>글꼴 크기 (mm):</translation>
     </message>
     <message>
         <location filename="../src/ui/text_dialog.py" line="61"/>
         <source>Character Spacing (mm):</source>
-        <translation type="unfinished"></translation>
+        <translation>문자 간격 (mm):</translation>
     </message>
     <message>
         <location filename="../src/ui/text_dialog.py" line="73"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>취소</translation>
     </message>
     <message>
         <location filename="../src/ui/text_dialog.py" line="76"/>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>확인</translation>
     </message>
     <message>
         <location filename="../src/ui/text_dialog.py" line="86"/>
         <location filename="../src/ui/text_dialog.py" line="92"/>
         <source>Warning</source>
-        <translation type="unfinished"></translation>
+        <translation>경고</translation>
     </message>
     <message>
         <location filename="../src/ui/text_dialog.py" line="86"/>
         <source>Please enter text</source>
-        <translation type="unfinished"></translation>
+        <translation>텍스트를 입력하세요</translation>
     </message>
     <message>
         <location filename="../src/ui/text_dialog.py" line="92"/>
         <source>Font not found</source>
-        <translation type="unfinished"></translation>
+        <translation>글꼴을 찾을 수 없습니다</translation>
     </message>
     <message>
         <location filename="../src/ui/text_dialog.py" line="104"/>
         <source>Error</source>
-        <translation type="unfinished"></translation>
+        <translation>오류</translation>
     </message>
 </context>
 <context>
@@ -1585,11 +1585,11 @@ Control points: {points}</source>
     </message>
     <message>
         <source>Open</source>
-        <translation type="vanished">열기</translation>
+        <translation>열기</translation>
     </message>
     <message>
         <source>Save</source>
-        <translation type="vanished">저장</translation>
+        <translation>저장</translation>
     </message>
     <message>
         <source>Export</source>
