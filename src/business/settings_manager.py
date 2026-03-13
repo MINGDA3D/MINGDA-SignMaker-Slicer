@@ -223,6 +223,34 @@ class SettingsManager:
         self._qsettings.setValue("Import/last_dir", str(Path(dir_path).resolve()))
 
     # =========================================================================
+    # 文字生成设置（使用 QSettings）
+    # =========================================================================
+
+    def get_text_font(self) -> str:
+        """获取文字生成的字体名称"""
+        return self._qsettings.value("TextGen/font", "", type=str)
+
+    def set_text_font(self, font_name: str):
+        """设置文字生成的字体名称"""
+        self._qsettings.setValue("TextGen/font", font_name)
+
+    def get_text_size(self) -> int:
+        """获取文字生成的字体大小"""
+        return self._qsettings.value("TextGen/size", 100, type=int)
+
+    def set_text_size(self, size: int):
+        """设置文字生成的字体大小"""
+        self._qsettings.setValue("TextGen/size", size)
+
+    def get_text_spacing(self) -> float:
+        """获取文字生成的字符间距"""
+        return self._qsettings.value("TextGen/spacing", 10.0, type=float)
+
+    def set_text_spacing(self, spacing: float):
+        """设置文字生成的字符间距"""
+        self._qsettings.setValue("TextGen/spacing", spacing)
+
+    # =========================================================================
     # 参数备份/恢复（便于迁移）
     # =========================================================================
 

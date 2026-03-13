@@ -37,9 +37,22 @@ class TextGenerator:
 
         # Load font
         face = freetype.Face(font_path)
-        # Set font size: convert mm to points (1 inch = 25.4mm = 72 points)
-        points = font_size * 72 / 25.4
-        face.set_char_size(int(points * 64))  # 26.6 fractional points
+
+        # Measure global bbox at reference size
+        face.set_char_size(1000 * 64)
+        global_ymin = 0
+        global_ymax = 0
+        for char in text:
+            face.load_char(char, freetype.FT_LOAD_NO_BITMAP)
+            if face.glyph.outline:
+                bbox = face.glyph.outline.get_bbox()
+                global_ymin = min(global_ymin, bbox.yMin / 64.0)
+                global_ymax = max(global_ymax, bbox.yMax / 64.0)
+
+        # Scale to achieve target height
+        ref_height = global_ymax - global_ymin
+        target_points = font_size * 72 / 25.4 * (1000.0 / ref_height)
+        face.set_char_size(int(target_points * 64))
 
         contours = []
         x_offset = 0.0

@@ -11,6 +11,7 @@ from typing import List, Optional
 from ..core.font_manager import FontManager
 from ..core.text_generator import TextGenerator
 from ..core.types import Contour
+from ..business.settings_manager import get_settings_manager
 
 
 class TextDialog(QDialog):
@@ -51,7 +52,7 @@ class TextDialog(QDialog):
         size_layout.addWidget(QLabel(self.tr("Font Size (mm):")))
         self.size_spin = QSpinBox()
         self.size_spin.setRange(1, 1000)
-        self.size_spin.setValue(50)
+        self.size_spin.setValue(100)
         size_layout.addWidget(self.size_spin)
         size_layout.addStretch()
         layout.addLayout(size_layout)
@@ -61,11 +62,14 @@ class TextDialog(QDialog):
         spacing_layout.addWidget(QLabel(self.tr("Character Spacing (mm):")))
         self.spacing_spin = QDoubleSpinBox()
         self.spacing_spin.setRange(-50, 100)
-        self.spacing_spin.setValue(0)
+        self.spacing_spin.setValue(10)
         self.spacing_spin.setSingleStep(0.5)
         spacing_layout.addWidget(self.spacing_spin)
         spacing_layout.addStretch()
         layout.addLayout(spacing_layout)
+
+        # Load saved settings
+        self._load_settings()
 
         # Buttons
         btn_layout = QHBoxLayout()
@@ -78,6 +82,33 @@ class TextDialog(QDialog):
         self.btn_ok.setDefault(True)
         btn_layout.addWidget(self.btn_ok)
         layout.addLayout(btn_layout)
+
+    def _load_settings(self):
+        """Load saved settings"""
+        settings = get_settings_manager()
+        if not settings:
+            return
+
+        # Load font
+        saved_font = settings.get_text_font()
+        if saved_font:
+            index = self.font_combo.findText(saved_font)
+            if index >= 0:
+                self.font_combo.setCurrentIndex(index)
+
+        # Load size and spacing
+        self.size_spin.setValue(settings.get_text_size())
+        self.spacing_spin.setValue(settings.get_text_spacing())
+
+    def _save_settings(self):
+        """Save current settings"""
+        settings = get_settings_manager()
+        if not settings:
+            return
+
+        settings.set_text_font(self.font_combo.currentText())
+        settings.set_text_size(self.size_spin.value())
+        settings.set_text_spacing(self.spacing_spin.value())
 
     def _on_ok(self):
         """Generate contours and accept dialog"""
@@ -99,6 +130,7 @@ class TextDialog(QDialog):
                 font_size=self.size_spin.value(),
                 spacing=self.spacing_spin.value()
             )
+            self._save_settings()
             self.accept()
         except Exception as e:
             QMessageBox.critical(self, self.tr("Error"), str(e))

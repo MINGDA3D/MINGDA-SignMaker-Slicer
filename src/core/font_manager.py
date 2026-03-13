@@ -49,7 +49,7 @@ class FontManager:
         for font_dir in font_dirs:
             for root, _, files in os.walk(font_dir):
                 for file in files:
-                    if file.lower().endswith(('.ttf', '.otf')):
+                    if file.lower().endswith(('.ttf', '.otf', '.ttc')):
                         font_path = os.path.join(root, file)
                         try:
                             face = freetype.Face(font_path)
