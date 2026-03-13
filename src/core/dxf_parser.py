@@ -608,7 +608,7 @@ class DXFParser:
                     normal_paths.append(path)
 
         # 按面积降序排序（外轮廓通常面积最大）
-        normal_paths.sort(key=lambda p: p.area, reverse=True)
+        normal_paths.sort(key=lambda p: abs(p.area), reverse=True)
 
         # 建立包含关系
         contours: List[Contour] = []

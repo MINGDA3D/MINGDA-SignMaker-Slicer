@@ -532,10 +532,10 @@ class SliceEngine:
                 )
                 paths.append(layer_path)
 
-            # 偏移内孔（方向相反）
+            # 偏移内孔（方向相同，都是向内收缩）
             for hole in contour.holes:
                 hole_offset_results = self.path_offset.offset(
-                    hole, -offset_distance, JoinType.MITER
+                    hole, offset_distance, JoinType.MITER
                 )
                 for offset_hole in hole_offset_results:
                     layer_path = LayerPath(

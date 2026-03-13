@@ -59,19 +59,19 @@ class TextGenerator:
             paths = self._outline_to_paths(outline, x_offset)
 
             if paths:
-                # Separate outer and holes
+                # Separate outer and holes using signed area
+                # FreeType: outer contours are typically the largest area
                 outer_path = None
                 holes = []
 
+                # Find the path with largest absolute area as outer
                 for path in paths:
-                    if path.area > 0:  # Counter-clockwise = outer
-                        if outer_path is None or path.area > outer_path.area:
-                            if outer_path:
-                                holes.append(outer_path)
-                            outer_path = path
-                        else:
-                            holes.append(path)
-                    else:  # Clockwise = hole
+                    abs_area = abs(path.area)
+                    if outer_path is None or abs_area > abs(outer_path.area):
+                        if outer_path:
+                            holes.append(outer_path)
+                        outer_path = path
+                    else:
                         holes.append(path)
 
                 if outer_path:
