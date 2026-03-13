@@ -840,8 +840,8 @@
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="1703"/>
-        <source>Version: 0.1.5 (Development)</source>
-        <translation>الإصدار: 0.1.5 (تطوير)</translation>
+        <source>Version: 0.1.6 (Development)</source>
+        <translation>الإصدار: 0.1.6 (تطوير)</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="1705"/>
