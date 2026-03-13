@@ -91,7 +91,32 @@ class STLWriter:
         # 以下功能需要轮廓和参数
         if contours and params:
             # 2. 构建台阶网格
-            step_mesh = self.step_builder.build(contours, result, params)
+            # 计算台阶高度处经过边缘变换后的轮廓
+            from .slice_engine import SliceEngine
+            temp_engine = SliceEngine()
+
+            panel_contours = []
+            baseplate_contours = []
+
+            if params.step.panel_step_enabled or params.step.baseplate_step_enabled:
+                panel_z = params.step.panel_step_height
+                baseplate_z = params.step.baseplate_step_height
+
+                for c in contours:
+                    if params.step.panel_step_enabled:
+                        pc = temp_engine._apply_edge_profile(c, panel_z, params.shell)
+                        if pc:
+                            panel_contours.append(pc)
+                    if params.step.baseplate_step_enabled:
+                        bc = temp_engine._apply_edge_profile(c, baseplate_z, params.shell)
+                        if bc:
+                            baseplate_contours.append(bc)
+
+            step_mesh = self.step_builder.build(
+                contours, result, params,
+                panel_contours=panel_contours,
+                baseplate_contours=baseplate_contours
+            )
             if step_mesh is not None:
                 meshes.append(step_mesh)
 

@@ -32,7 +32,9 @@ class StepMeshBuilder:
         self.mesh_utils = MeshUtils()
 
     def build(self, contours: List[Contour], result: SliceResult,
-              params: SliceParams) -> Optional[trimesh.Trimesh]:
+              params: SliceParams,
+              panel_contours: Optional[List[Contour]] = None,
+              baseplate_contours: Optional[List[Contour]] = None) -> Optional[trimesh.Trimesh]:
         """
         构建台阶网格
 
@@ -53,6 +55,8 @@ class StepMeshBuilder:
             contours: 原始轮廓列表
             result: 切片结果
             params: 切片参数
+            panel_contours: 面板台阶高度处经过边缘变换后的轮廓
+            baseplate_contours: 底板台阶高度处经过边缘变换后的轮廓
 
         Returns:
             台阶网格
@@ -69,48 +73,31 @@ class StepMeshBuilder:
             result, params, total_height, contours
         )
 
+        # 使用变换后的轮廓（如果提供）或原始轮廓
+        panel_contours_to_use = panel_contours if panel_contours else contours
+        baseplate_contours_to_use = baseplate_contours if baseplate_contours else contours
+
         for contour_idx, contour in enumerate(contours):
             try:
                 outer_points = contour.outer.points
                 if not outer_points:
                     continue
 
-                # 获取该轮廓的壁位置信息
-                wall_positions = contour_wall_positions.get(contour_idx, {})
-
                 # ===== 面板台阶（顶部）=====
-                if params.step.panel_step_enabled:
+                if params.step.panel_step_enabled and contour_idx < len(panel_contours_to_use):
                     panel_z = params.step.panel_step_height
-                    # 限制顶部卡槽范围：不低于字壳一半高度
                     min_panel_z = total_height / 2
                     if panel_z < min_panel_z:
                         panel_z = min_panel_z
-                    # 验证高度是否合法
-                    if panel_z >= total_height:
-                        print(f"警告：面板台阶高度({panel_z}mm)超过模型高度({total_height}mm)，跳过")
-                    elif panel_z < 0:
-                        print(f"警告：面板台阶高度({panel_z}mm)不能为负数，跳过")
-                    else:
-                        # 尝试从切片结果中获取壁位置
-                        panel_wall_paths = wall_positions.get('panel', [])
-                        inner_wall_coords = None
+                    if 0 <= panel_z < total_height:
+                        # 使用变换后的轮廓
+                        transformed_contour = panel_contours_to_use[contour_idx]
+                        inner_wall_results = self.path_offset.offset(transformed_contour.outer, -wall_thickness)
+                        if inner_wall_results:
+                            inner_wall_coords = [(p.x, p.y) for p in inner_wall_results[0].points]
+                            if inner_wall_coords and inner_wall_coords[0] != inner_wall_coords[-1]:
+                                inner_wall_coords.append(inner_wall_coords[0])
 
-                        if panel_wall_paths:
-                            # 找到外轮廓的壁路径（最大的）
-                            outer_wall_path = max(panel_wall_paths, key=lambda p: len(p.points))
-                            inner_wall_coords = self._calculate_inner_wall_from_path(
-                                outer_wall_path, wall_thickness
-                            )
-
-                        # 如果没有提取到壁位置，回退到原始方法
-                        if not inner_wall_coords:
-                            inner_wall_results = self.path_offset.offset(contour.outer, -wall_thickness)
-                            if inner_wall_results:
-                                inner_wall_coords = [(p.x, p.y) for p in inner_wall_results[0].points]
-                                if inner_wall_coords and inner_wall_coords[0] != inner_wall_coords[-1]:
-                                    inner_wall_coords.append(inner_wall_coords[0])
-
-                        if inner_wall_coords:
                             panel_mesh = self._create_thin_step_ring(
                                 inner_wall_coords,
                                 step_width=params.step.panel_step_width,
@@ -121,39 +108,38 @@ class StepMeshBuilder:
                             if panel_mesh is not None:
                                 meshes.append(panel_mesh)
 
+                        # 处理内孔
+                        for hole in transformed_contour.holes:
+                            # 内孔的壁内边缘就是变换后的孔本身
+                            hole_inner_coords = [(p.x, p.y) for p in hole.points]
+                            if hole_inner_coords and hole_inner_coords[0] != hole_inner_coords[-1]:
+                                hole_inner_coords.append(hole_inner_coords[0])
+
+                            hole_panel_mesh = self._create_thin_step_ring(
+                                hole_inner_coords,
+                                step_width=params.step.panel_step_width,
+                                step_thickness=step_thickness,
+                                z_position=panel_z,
+                                is_hole=True
+                            )
+                            if hole_panel_mesh is not None:
+                                meshes.append(hole_panel_mesh)
+
                 # ===== 底板台阶（底部）=====
-                if params.step.baseplate_step_enabled:
+                if params.step.baseplate_step_enabled and contour_idx < len(baseplate_contours_to_use):
                     baseplate_z = params.step.baseplate_step_height
-                    # 限制底部卡槽范围：不超过字壳一半高度
                     max_baseplate_z = total_height / 2
                     if baseplate_z > max_baseplate_z:
                         baseplate_z = max_baseplate_z
-                    # 验证高度是否合法
-                    if baseplate_z >= total_height:
-                        print(f"警告：底板台阶高度({baseplate_z}mm)超过模型高度({total_height}mm)，跳过")
-                    elif baseplate_z < 0:
-                        print(f"警告：底板台阶高度({baseplate_z}mm)不能为负数，跳过")
-                    else:
-                        # 尝试从切片结果中获取壁位置
-                        baseplate_wall_paths = wall_positions.get('baseplate', [])
-                        inner_wall_coords = None
+                    if 0 <= baseplate_z < total_height:
+                        # 使用变换后的轮廓
+                        transformed_contour = baseplate_contours_to_use[contour_idx]
+                        inner_wall_results = self.path_offset.offset(transformed_contour.outer, -wall_thickness)
+                        if inner_wall_results:
+                            inner_wall_coords = [(p.x, p.y) for p in inner_wall_results[0].points]
+                            if inner_wall_coords and inner_wall_coords[0] != inner_wall_coords[-1]:
+                                inner_wall_coords.append(inner_wall_coords[0])
 
-                        if baseplate_wall_paths:
-                            # 找到外轮廓的壁路径（最大的）
-                            outer_wall_path = max(baseplate_wall_paths, key=lambda p: len(p.points))
-                            inner_wall_coords = self._calculate_inner_wall_from_path(
-                                outer_wall_path, wall_thickness
-                            )
-
-                        # 如果没有提取到壁位置，回退到原始方法
-                        if not inner_wall_coords:
-                            inner_wall_results = self.path_offset.offset(contour.outer, -wall_thickness)
-                            if inner_wall_results:
-                                inner_wall_coords = [(p.x, p.y) for p in inner_wall_results[0].points]
-                                if inner_wall_coords and inner_wall_coords[0] != inner_wall_coords[-1]:
-                                    inner_wall_coords.append(inner_wall_coords[0])
-
-                        if inner_wall_coords:
                             baseplate_mesh = self._create_thin_step_ring(
                                 inner_wall_coords,
                                 step_width=params.step.baseplate_step_width,
@@ -164,75 +150,22 @@ class StepMeshBuilder:
                             if baseplate_mesh is not None:
                                 meshes.append(baseplate_mesh)
 
-                # ===== 处理内孔的台阶 =====
-                for hole in contour.holes:
-                    # 面板台阶（内孔）
-                    if params.step.panel_step_enabled:
-                        panel_z = params.step.panel_step_height
-                        min_panel_z = total_height / 2
-                        if panel_z < min_panel_z:
-                            panel_z = min_panel_z
-                        if 0 <= panel_z < total_height:
-                            panel_wall_paths = wall_positions.get('panel', [])
-                            hole_inner_coords = None
+                        # 处理内孔
+                        for hole in transformed_contour.holes:
+                            # 内孔的壁内边缘就是变换后的孔本身
+                            hole_inner_coords = [(p.x, p.y) for p in hole.points]
+                            if hole_inner_coords and hole_inner_coords[0] != hole_inner_coords[-1]:
+                                hole_inner_coords.append(hole_inner_coords[0])
 
-                            if panel_wall_paths and len(panel_wall_paths) > 1:
-                                hole_wall_path = min(panel_wall_paths, key=lambda p: len(p.points))
-                                hole_inner_coords = [(p.x, p.y) for p in hole_wall_path.points]
-                                if hole_inner_coords and hole_inner_coords[0] != hole_inner_coords[-1]:
-                                    hole_inner_coords.append(hole_inner_coords[0])
-
-                            if not hole_inner_coords:
-                                hole_inner_results = self.path_offset.offset(hole, wall_thickness)
-                                if hole_inner_results:
-                                    hole_inner_coords = [(p.x, p.y) for p in hole_inner_results[0].points]
-                                    if hole_inner_coords and hole_inner_coords[0] != hole_inner_coords[-1]:
-                                        hole_inner_coords.append(hole_inner_coords[0])
-
-                            if hole_inner_coords:
-                                hole_panel_mesh = self._create_thin_step_ring(
-                                    hole_inner_coords,
-                                    step_width=params.step.panel_step_width,
-                                    step_thickness=step_thickness,
-                                    z_position=panel_z,
-                                    is_hole=True
-                                )
-                                if hole_panel_mesh is not None:
-                                    meshes.append(hole_panel_mesh)
-
-                    # 底板台阶（内孔）
-                    if params.step.baseplate_step_enabled:
-                        baseplate_z = params.step.baseplate_step_height
-                        max_baseplate_z = total_height / 2
-                        if baseplate_z > max_baseplate_z:
-                            baseplate_z = max_baseplate_z
-                        if 0 <= baseplate_z < total_height:
-                            baseplate_wall_paths = wall_positions.get('baseplate', [])
-                            hole_inner_coords = None
-
-                            if baseplate_wall_paths and len(baseplate_wall_paths) > 1:
-                                hole_wall_path = min(baseplate_wall_paths, key=lambda p: len(p.points))
-                                hole_inner_coords = [(p.x, p.y) for p in hole_wall_path.points]
-                                if hole_inner_coords and hole_inner_coords[0] != hole_inner_coords[-1]:
-                                    hole_inner_coords.append(hole_inner_coords[0])
-
-                            if not hole_inner_coords:
-                                hole_inner_results = self.path_offset.offset(hole, wall_thickness)
-                                if hole_inner_results:
-                                    hole_inner_coords = [(p.x, p.y) for p in hole_inner_results[0].points]
-                                    if hole_inner_coords and hole_inner_coords[0] != hole_inner_coords[-1]:
-                                        hole_inner_coords.append(hole_inner_coords[0])
-
-                            if hole_inner_coords:
-                                hole_baseplate_mesh = self._create_thin_step_ring(
-                                    hole_inner_coords,
-                                    step_width=params.step.baseplate_step_width,
-                                    step_thickness=step_thickness,
-                                    z_position=baseplate_z,
-                                    is_hole=True
-                                )
-                                if hole_baseplate_mesh is not None:
-                                    meshes.append(hole_baseplate_mesh)
+                            hole_baseplate_mesh = self._create_thin_step_ring(
+                                hole_inner_coords,
+                                step_width=params.step.baseplate_step_width,
+                                step_thickness=step_thickness,
+                                z_position=baseplate_z,
+                                is_hole=True
+                            )
+                            if hole_baseplate_mesh is not None:
+                                meshes.append(hole_baseplate_mesh)
 
             except Exception as e:
                 print(f"警告：处理轮廓台阶失败: {e}")
@@ -270,15 +203,15 @@ class StepMeshBuilder:
             # 计算内边缘（向内偏移step_width）
             outer_path = CorePath(points=[Point(c[0], c[1]) for c in wall_inner_coords[:-1]])
 
+            # pyclipper规范化后的路径都是逆时针（正面积）
+            # 外轮廓：负偏移向内收缩（向字壳中心）
+            # 内孔：正偏移向外扩展（向孔外，远离孔中心）
             if is_hole:
-                # 内孔的台阶：向孔内延伸（正偏移，让孔变小）
-                inner_results = self.path_offset.offset(outer_path, step_width)
+                offset_dist = step_width
             else:
-                # 外轮廓的台阶：向字壳内部延伸（负偏移）
-                inner_results = self.path_offset.offset(outer_path, -step_width)
+                offset_dist = -step_width
 
-            if not inner_results:
-                return None
+            inner_results = self.path_offset.offset(outer_path, offset_dist)
 
             inner_ring_coords = [(p.x, p.y) for p in inner_results[0].points]
             if inner_ring_coords[0] != inner_ring_coords[-1]:

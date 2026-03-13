@@ -168,7 +168,12 @@ class Path:
             j = (i + 1) % n
             area += self.points[i].x * self.points[j].y
             area -= self.points[j].x * self.points[i].y
-        return abs(area) / 2
+        return area / 2
+
+    @property
+    def signed_area(self) -> float:
+        """计算有符号面积（正=逆时针，负=顺时针）"""
+        return self.area
 
     @property
     def centroid(self) -> Point:

@@ -170,6 +170,24 @@ button.setText(self.tr("Save"))
 self.tr("Loaded: {file}, {count} contours").format(file=name, count=5)
 ```
 
+## Version Number Update
+
+发布新版本时，需要更新以下位置的版本号：
+
+| 文件 | 说明 |
+|------|------|
+| `src/ui/main_window.py` | 关于对话框中的版本显示 (`Version: x.x.x (Development)`) |
+| `CHANGELOG.md` | 更新日志，添加新版本条目 |
+| `translations/signmaker_*.ts` | 14 个翻译文件中的 source 和 translation 版本字符串 |
+
+### 快速更新步骤
+```bash
+# 1. 更新 main_window.py 中的版本号（手动修改）
+# 2. 更新 CHANGELOG.md（手动添加新版本条目）
+# 3. 批量更新所有翻译文件的版本号
+sed -i 's/0\.1\.X/0.1.Y/g' translations/signmaker_*.ts
+```
+
 ## Key Features (from 功能需求清单.md)
 
 ### File Operations
@@ -377,7 +395,51 @@ Icons are stored in `docs/images/` with Chinese names:
 - 顺序.png - Print order
 - 画面中心.png - Center on canvas
 
+## Known Issues & Solutions
+
+### Issue 1: Step Generation for Internal Holes (2026-03-13)
+
+**Problem:** Internal holes (like the triangle in letter "A") were not generating steps, or steps were misaligned with walls.
+
+**Root Causes:**
+1. **Signed Area Loss**: `Path.area` property used `abs()`, losing winding order information needed to distinguish outer contours from holes
+2. **Wall Path Extraction Failure**: Attempting to extract wall positions from slice results using centroid distance was unreliable when contours were close together
+3. **Edge Transform Mismatch**: Steps used original contours while walls used edge-transformed contours, causing misalignment in beveled/custom edge shells
+
+**Solution:**
+1. **Remove `abs()` from area calculation** (`src/core/types.py`):
+   ```python
+   @property
+   def area(self) -> float:
+       # Return signed area (CCW=positive, CW=negative)
+       return area / 2  # Removed abs()
+   ```
+
+2. **Use transformed contours for step generation** (`src/core/stl_writer.py`):
+   ```python
+   # Calculate transformed contours at step heights
+   temp_engine = SliceEngine()
+   panel_contours = [temp_engine._apply_edge_profile(c, panel_z, params.shell) for c in contours]
+   baseplate_contours = [temp_engine._apply_edge_profile(c, baseplate_z, params.shell) for c in contours]
+
+   # Pass to step builder
+   step_mesh = self.step_builder.build(contours, result, params,
+                                        panel_contours=panel_contours,
+                                        baseplate_contours=baseplate_contours)
+   ```
+
+3. **Correct wall inner edge calculation** (`src/core/stl/step_mesh.py`):
+   - **Outer contour**: `wall_inner_edge = transformed_contour.outer + offset(-wall_thickness)`
+   - **Inner hole**: `wall_inner_edge = transformed_hole` (no offset needed, as offset(-wall_thickness/2) and offset(+wall_thickness/2) cancel out)
+
+**Key Insight:**
+- Wall generation: `transformed_contour + offset(-wall_thickness/2) = wall_center_line`
+- Wall inner edge (outer): `wall_center_line + offset(-wall_thickness/2) = transformed_contour + offset(-wall_thickness)`
+- Wall inner edge (hole): `wall_center_line + offset(+wall_thickness/2) = transformed_hole + offset(0) = transformed_hole`
+
+**Lesson Learned:** When generating features (steps, skirts, etc.) that must align with walls, always use the same edge-transformed contours that the slice engine uses, not the original contours.
+
 ---
 *Document created: 2026-01-06*
-*Last updated: 2026-01-13*
+*Last updated: 2026-03-13*
 *Based on INC-S and SASM3D software analysis*
