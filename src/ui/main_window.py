@@ -1686,19 +1686,22 @@ class MainWindow(QMainWindow):
 
     def _on_text(self):
         """文字生成"""
-        from .text_dialog import TextDialog
-        dialog = TextDialog(self)
-        if dialog.exec():
-            contours = dialog.get_contours()
-            if contours:
-                # 使用撤销系统添加轮廓
-                cmd = AddContoursCommand(self.contours, contours)
-                self.undo_manager.push(cmd)
+        try:
+            from .text_dialog import TextDialog
+            dialog = TextDialog(self)
+            if dialog.exec():
+                contours = dialog.get_contours()
+                if contours:
+                    # 使用撤销系统添加轮廓
+                    cmd = AddContoursCommand(self.contours, contours)
+                    self.undo_manager.push(cmd)
 
-                # 更新UI
-                self.canvas.set_contours(self.contours)
-                self.project_panel.update_contours(self.contours)
-                self._update_status(self.tr("Text added"))
+                    # 更新UI
+                    self.canvas.set_contours(self.contours)
+                    self.project_panel.update_contours(self.contours)
+                    self._update_status(self.tr("Text added"))
+        except Exception as e:
+            QMessageBox.critical(self, self.tr("Error"), f"{self.tr('Failed to open text dialog')}: {str(e)}")
 
     def _on_about(self):
         """关于对话框"""

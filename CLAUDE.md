@@ -384,8 +384,8 @@ python main.py
 # Run tests
 pytest tests/
 
-# Build standalone exe
-python -m PyInstaller --clean --noconfirm "SignMaker Slicer.spec"
+# Build standalone exe (MUST use virtual environment Python)
+.venv\Scripts\python -m PyInstaller --clean --noconfirm "SignMaker Slicer.spec"
 # Output: dist/MINGDA SignMaker.exe (single-file executable)
 ```
 
