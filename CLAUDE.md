@@ -378,11 +378,15 @@ python scripts/generate_ui_modern.py
 python scripts/generate_ui_project_3d.py
 python scripts/generate_ui_params.py
 
-# Run application (planned)
+# Run application
 python main.py
 
-# Run tests (planned)
+# Run tests
 pytest tests/
+
+# Build standalone exe
+python -m PyInstaller --clean --noconfirm "SignMaker Slicer.spec"
+# Output: dist/MINGDA SignMaker.exe (single-file executable)
 ```
 
 ## Icon Naming Convention
@@ -439,7 +443,29 @@ Icons are stored in `docs/images/` with Chinese names:
 
 **Lesson Learned:** When generating features (steps, skirts, etc.) that must align with walls, always use the same edge-transformed contours that the slice engine uses, not the original contours.
 
+### Issue 2: Bottom Face Gap with Internal Holes (2026-03-17)
+
+**Problem:** When generating STL with "Enable Bottom Face" for letters with internal holes (like "R"), there was a visible gap between the outer wall and inner hole wall in the bottom face.
+
+**Root Cause:** Same as Issue 1 - the bottom face builder used original contours while walls were generated from edge-transformed contours (after `_apply_edge_profile()`), causing misalignment.
+
+**Solution:** Pass transformed contours at z=0 to the bottom face builder (`src/core/stl_writer.py`):
+```python
+# Calculate transformed contours at z=0 (bottom)
+bottom_contours = []
+for c in contours:
+    bc = temp_engine._apply_edge_profile(c, 0, params.shell)
+    if bc:
+        bottom_contours.append(bc)
+
+bottom_face_mesh = self.bottom_face_builder.build(
+    bottom_contours if bottom_contours else contours, params
+)
+```
+
+**Lesson Learned:** All STL mesh features (walls, steps, bottom face, etc.) must use the same edge-transformed contours to ensure proper alignment.
+
 ---
 *Document created: 2026-01-06*
-*Last updated: 2026-03-13*
+*Last updated: 2026-03-17*
 *Based on INC-S and SASM3D software analysis*

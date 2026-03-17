@@ -150,7 +150,16 @@ class STLWriter:
 
             # 7. 构建底面封闭网格
             if params.bottom_face.enabled:
-                bottom_face_mesh = self.bottom_face_builder.build(contours, params)
+                # 计算底部变换后的轮廓（z=0处）
+                bottom_contours = []
+                for c in contours:
+                    bc = temp_engine._apply_edge_profile(c, 0, params.shell)
+                    if bc:
+                        bottom_contours.append(bc)
+
+                bottom_face_mesh = self.bottom_face_builder.build(
+                    bottom_contours if bottom_contours else contours, params
+                )
                 if bottom_face_mesh is not None:
                     meshes.append(bottom_face_mesh)
 
