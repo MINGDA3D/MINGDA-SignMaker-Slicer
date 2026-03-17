@@ -40,7 +40,7 @@ class TopFaceMeshBuilder:
         使用轮廓的内缩版本（减去壁厚）生成实心顶面，填满字壳内部空间。
 
         Args:
-            contours: 轮廓列表
+            contours: 已经过边缘变换的轮廓列表（z=total_height处）
             params: 切片参数
 
         Returns:
@@ -67,13 +67,8 @@ class TopFaceMeshBuilder:
 
         for contour in contours:
             try:
-                # 获取顶部轮廓（考虑斜边等边缘类型）
-                top_contour = self._get_top_contour(contour, params)
-                if not top_contour:
-                    continue
-
                 # 内缩外轮廓
-                inset_outer = self.path_offset.offset(top_contour.outer, -inset_distance)
+                inset_outer = self.path_offset.offset(contour.outer, -inset_distance)
                 if not inset_outer:
                     continue
 
@@ -82,11 +77,11 @@ class TopFaceMeshBuilder:
                     if len(outer_coords) < 3:
                         continue
 
-                    # 内缩内孔
+                    # 内缩内孔（使用负偏移，和墙壁生成保持一致）
                     hole_coords_list = []
-                    for hole in top_contour.holes:
-                        # 内孔需要向外扩展（正偏移）以保持正确的孔形状
-                        inset_holes = self.path_offset.offset(hole, inset_distance)
+                    for hole in contour.holes:
+                        # 内孔也向内收缩（负偏移），和墙壁生成方向一致
+                        inset_holes = self.path_offset.offset(hole, -inset_distance)
                         for inset_hole in inset_holes:
                             hole_coords = [(p.x, p.y) for p in inset_hole.points]
                             if len(hole_coords) >= 3:
@@ -131,74 +126,3 @@ class TopFaceMeshBuilder:
                 continue
 
         return MeshUtils.merge_meshes(meshes)
-
-    def _get_top_contour(self, contour: Contour,
-                         params: SliceParams) -> Optional[Contour]:
-        """
-        获取顶部轮廓
-
-        对于斜边和异形边，顶部轮廓可能与原始轮廓不同。
-
-        Args:
-            contour: 原始轮廓
-            params: 切片参数
-
-        Returns:
-            顶部轮廓
-        """
-        edge_type = params.shell.edge_type
-
-        if edge_type == EdgeType.STRAIGHT:
-            # 直边：直接使用原始轮廓
-            return contour
-
-        elif edge_type == EdgeType.BEVELED:
-            # 斜边：根据方向确定顶部轮廓
-            bevel_direction = params.shell.bevel_direction
-            bevel_width = params.shell.bevel_width
-
-            if bevel_direction == BevelDirection.TOP_SMALL:
-                # 上小下大：顶部是最小的，需要内缩
-                offset_outer = self.path_offset.offset(contour.outer, -bevel_width)
-                if not offset_outer:
-                    return None
-
-                offset_holes = []
-                for hole in contour.holes:
-                    offset_hole = self.path_offset.offset(hole, -bevel_width)
-                    offset_holes.extend(offset_hole)
-
-                return Contour(
-                    outer=offset_outer[0],
-                    holes=offset_holes,
-                    name=contour.name
-                )
-            else:
-                # 上大下小：顶部是最大的，不需要偏移
-                return contour
-
-        elif edge_type == EdgeType.CUSTOM:
-            # 异形边：根据轮廓在z=total_height处的偏移量
-            profile = params.shell.edge_profile
-            total_height = params.shell.height
-            if profile and profile.control_points:
-                # 获取顶部（归一化高度=1.0）的偏移量
-                offset = profile.get_offset_at_height(1.0, params.shell.bevel_width, total_height)
-                if abs(offset) > 0.001:
-                    offset_outer = self.path_offset.offset(contour.outer, offset)
-                    if not offset_outer:
-                        return None
-
-                    offset_holes = []
-                    for hole in contour.holes:
-                        offset_hole = self.path_offset.offset(hole, offset)
-                        offset_holes.extend(offset_hole)
-
-                    return Contour(
-                        outer=offset_outer[0],
-                        holes=offset_holes,
-                        name=contour.name
-                    )
-            return contour
-
-        return contour

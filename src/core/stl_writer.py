@@ -165,7 +165,16 @@ class STLWriter:
 
             # 8. 构建顶面封闭网格
             if params.top_face.enabled:
-                top_face_mesh = self.top_face_builder.build(contours, params)
+                # 计算顶部变换后的轮廓（z=total_height处）
+                top_contours = []
+                for c in contours:
+                    tc = temp_engine._apply_edge_profile(c, params.shell.height, params.shell)
+                    if tc:
+                        top_contours.append(tc)
+
+                top_face_mesh = self.top_face_builder.build(
+                    top_contours if top_contours else contours, params
+                )
                 if top_face_mesh is not None:
                     meshes.append(top_face_mesh)
 
