@@ -571,7 +571,9 @@ class SkirtParams:
     height: float = 0.3               # 裙边高度 (mm) - 用于STL导出，最小0.2
     offset: float = 0.0               # 距离轮廓的偏移 (mm) - 通常为0，贴着字壳
     interval: float = 10.0            # 梯形间距 (mm) - 相邻梯形顶边的中心距离
-    is_outer: bool = True             # 是否外部裙边（True=外部，False=内部孔）
+    outer_enabled: bool = True        # 外裙边：外轮廓朝外，内孔朝内
+    inner_enabled: bool = False       # 内裙边：外轮廓朝内，内孔朝外
+    is_outer: bool = True             # 旧参数，保留兼容
 
     # 以下参数用于G-code生成
     extrusion_width: float = 1.2      # 吐丝宽度
@@ -1000,7 +1002,10 @@ def deserialize_params(data: dict) -> SliceParams:
         params.skirt.height = skirt_data.get("height", 0.3)
         params.skirt.offset = skirt_data.get("offset", 0.0)
         params.skirt.interval = skirt_data.get("interval", 10.0)
-        params.skirt.is_outer = skirt_data.get("is_outer", True)
+        legacy_is_outer = skirt_data.get("is_outer", True)
+        params.skirt.outer_enabled = skirt_data.get("outer_enabled", legacy_is_outer)
+        params.skirt.inner_enabled = skirt_data.get("inner_enabled", not legacy_is_outer and "is_outer" in skirt_data)
+        params.skirt.is_outer = legacy_is_outer
         params.skirt.extrusion_width = skirt_data.get("extrusion_width", 1.2)
 
     # Connected 参数

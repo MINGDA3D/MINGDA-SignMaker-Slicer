@@ -75,6 +75,19 @@ class TestSerializeParams:
         assert restored.step.panel_step_enabled is True
         assert restored.speed.print_speed == 80.0
 
+    def test_deserialize_legacy_skirt_side_flag(self):
+        """测试旧版 skirt is_outer 参数兼容"""
+        restored = deserialize_params({
+            "skirt": {
+                "enabled": True,
+                "is_outer": False
+            }
+        })
+
+        assert restored.skirt.enabled is True
+        assert restored.skirt.outer_enabled is False
+        assert restored.skirt.inner_enabled is True
+
     def test_roundtrip_all_params(self):
         """测试完整参数的往返序列化"""
         params = SliceParams()

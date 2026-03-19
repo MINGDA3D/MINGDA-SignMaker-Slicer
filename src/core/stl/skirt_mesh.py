@@ -9,7 +9,6 @@ meshes that only touch at edges.
 
 from __future__ import annotations
 
-from copy import copy
 from typing import List, Optional
 
 import trimesh
@@ -53,18 +52,6 @@ class SkirtMeshBuilder:
                     path_offset=self.path_offset,
                 )
                 skirt_polygons.extend(self._paths_to_polygons(outer_paths))
-
-                if contour.holes:
-                    hole_params = copy(params.skirt)
-                    hole_params.is_outer = False
-                    hole_paths = self.skirt_generator.generate_skirt_clipped(
-                        contour=contour,
-                        all_contours=all_contours,
-                        params=hole_params,
-                        wall_thickness=params.shell.wall_thickness,
-                        path_offset=self.path_offset,
-                    )
-                    skirt_polygons.extend(self._paths_to_polygons(hole_paths))
             except Exception as exc:
                 print(f"Warning: Failed to process contour skirt: {exc}")
                 continue

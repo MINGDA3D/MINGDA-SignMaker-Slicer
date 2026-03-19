@@ -573,6 +573,20 @@ class ParamPanel(QWidget):
         self.skirt_offset.valueChanged.connect(self._on_param_changed)
         form.addRow(self.tr("Skirt Offset:"), self.skirt_offset)
 
+        direction_layout = QHBoxLayout()
+        direction_layout.setContentsMargins(0, 0, 0, 0)
+        self.skirt_outer_enabled = QCheckBox(self.tr("Outer"))
+        self.skirt_outer_enabled.setChecked(True)
+        self.skirt_outer_enabled.setEnabled(False)
+        self.skirt_outer_enabled.stateChanged.connect(self._on_param_changed)
+        direction_layout.addWidget(self.skirt_outer_enabled)
+        self.skirt_inner_enabled = QCheckBox(self.tr("Inner"))
+        self.skirt_inner_enabled.setEnabled(False)
+        self.skirt_inner_enabled.stateChanged.connect(self._on_param_changed)
+        direction_layout.addWidget(self.skirt_inner_enabled)
+        direction_layout.addStretch()
+        form.addRow(self.tr("Skirt Sides:"), direction_layout)
+
         layout.addLayout(form)
 
         self.skirt_enabled.stateChanged.connect(
@@ -587,6 +601,8 @@ class ParamPanel(QWidget):
         self.skirt_height.setEnabled(enabled)
         self.skirt_interval.setEnabled(enabled)
         self.skirt_offset.setEnabled(enabled)
+        self.skirt_outer_enabled.setEnabled(enabled)
+        self.skirt_inner_enabled.setEnabled(enabled)
 
     def _create_connected_group(self) -> QGroupBox:
         """创建连襟字参数组"""
@@ -936,6 +952,9 @@ class ParamPanel(QWidget):
         self._params.skirt.height = self.skirt_height.value()
         self._params.skirt.interval = self.skirt_interval.value()
         self._params.skirt.offset = self.skirt_offset.value()
+        self._params.skirt.outer_enabled = self.skirt_outer_enabled.isChecked()
+        self._params.skirt.inner_enabled = self.skirt_inner_enabled.isChecked()
+        self._params.skirt.is_outer = self.skirt_outer_enabled.isChecked()
 
         # 连襟字参数
         self._params.connected.enabled = self.connected_enabled.isChecked()
@@ -1008,6 +1027,7 @@ class ParamPanel(QWidget):
             self.print_speed, self.travel_speed, self.first_layer_speed,
             self.skirt_enabled, self.skirt_width, self.skirt_height,
             self.skirt_interval, self.skirt_offset,
+            self.skirt_outer_enabled, self.skirt_inner_enabled,
             self.connected_enabled, self.connected_type, self.connected_auto_detect,
             self.connected_width, self.connected_height, self.connected_base_height,
             self.connected_support_offset,
@@ -1054,6 +1074,8 @@ class ParamPanel(QWidget):
         self.skirt_height.setValue(params.skirt.height)
         self.skirt_interval.setValue(params.skirt.interval)
         self.skirt_offset.setValue(params.skirt.offset)
+        self.skirt_outer_enabled.setChecked(params.skirt.outer_enabled)
+        self.skirt_inner_enabled.setChecked(params.skirt.inner_enabled)
         self.skirt_enabled.setChecked(params.skirt.enabled)
 
         # 连襟字参数

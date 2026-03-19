@@ -4,7 +4,7 @@
 
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QFormLayout, QGroupBox,
-    QDoubleSpinBox, QCheckBox, QRadioButton, QButtonGroup
+    QDoubleSpinBox, QCheckBox
 )
 from PySide6.QtCore import Signal
 
@@ -32,11 +32,11 @@ class SkirtPanel(QWidget):
         # 位置选择
         pos_group = QGroupBox("位置")
         pos_layout = QVBoxLayout(pos_group)
-        self.outer_radio = QRadioButton("外防翘")
-        self.inner_radio = QRadioButton("内防翘")
-        self.outer_radio.setChecked(True)
-        pos_layout.addWidget(self.outer_radio)
-        pos_layout.addWidget(self.inner_radio)
+        self.outer_check = QCheckBox("外裙边")
+        self.inner_check = QCheckBox("内裙边")
+        self.outer_check.setChecked(True)
+        pos_layout.addWidget(self.outer_check)
+        pos_layout.addWidget(self.inner_check)
         layout.addWidget(pos_group)
 
         # 参数组
@@ -90,7 +90,8 @@ class SkirtPanel(QWidget):
 
     def _connect_signals(self):
         self.enabled_check.toggled.connect(self._emit_params)
-        self.outer_radio.toggled.connect(self._emit_params)
+        self.outer_check.toggled.connect(self._emit_params)
+        self.inner_check.toggled.connect(self._emit_params)
         self.line_width_spin.valueChanged.connect(self._emit_params)
         self.extrusion_spin.valueChanged.connect(self._emit_params)
         self.speed_spin.valueChanged.connect(self._emit_params)
@@ -101,7 +102,9 @@ class SkirtPanel(QWidget):
 
     def _emit_params(self):
         self._params.enabled = self.enabled_check.isChecked()
-        self._params.is_outer = self.outer_radio.isChecked()
+        self._params.outer_enabled = self.outer_check.isChecked()
+        self._params.inner_enabled = self.inner_check.isChecked()
+        self._params.is_outer = self.outer_check.isChecked()
         self._params.line_width = self.line_width_spin.value()
         self._params.extrusion_width = self.extrusion_spin.value()
         self._params.speed = self.speed_spin.value()
@@ -120,8 +123,8 @@ class SkirtPanel(QWidget):
 
     def _update_ui(self):
         self.enabled_check.setChecked(self._params.enabled)
-        self.outer_radio.setChecked(self._params.is_outer)
-        self.inner_radio.setChecked(not self._params.is_outer)
+        self.outer_check.setChecked(self._params.outer_enabled)
+        self.inner_check.setChecked(self._params.inner_enabled)
         self.line_width_spin.setValue(self._params.line_width)
         self.extrusion_spin.setValue(self._params.extrusion_width)
         self.speed_spin.setValue(self._params.speed)

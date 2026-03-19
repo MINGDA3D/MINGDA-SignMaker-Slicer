@@ -209,34 +209,19 @@ class SkirtGenerator:
 
         result = []
 
-        # 生成外轮廓裙边
-        if params.is_outer:
-            skirt_ring = self._generate_skirt_ring(
-                contour.outer, 5.0, True, path_offset
-            )
-            if skirt_ring:
-                result.append(self._path_to_layer_path(skirt_ring, params))
-
-            connections = self._generate_connections(
-                contour.outer, skirt_ring, 15.0, True
-            )
-            for conn in connections:
-                result.append(self._connection_to_layer_path(conn, params))
-
-        # 生成内孔裙边
-        else:
-            for hole in contour.holes:
-                skirt_ring = self._generate_skirt_ring(
-                    hole, 5.0, False, path_offset
+        if params.outer_enabled:
+            result.extend(
+                self._generate_contour_side_paths(
+                    contour, params, path_offset, generate_outer_side=True
                 )
-                if skirt_ring:
-                    result.append(self._path_to_layer_path(skirt_ring, params))
+            )
 
-                connections = self._generate_connections(
-                    hole, skirt_ring, 15.0, False
+        if params.inner_enabled:
+            result.extend(
+                self._generate_contour_side_paths(
+                    contour, params, path_offset, generate_outer_side=False
                 )
-                for conn in connections:
-                    result.append(self._connection_to_layer_path(conn, params))
+            )
 
         return result
 
@@ -254,40 +239,95 @@ class SkirtGenerator:
 
         meshes = []
 
-        if params.is_outer:
-            skirt_ring = self._generate_skirt_ring(
-                contour.outer, 5.0, True, path_offset
+        if params.outer_enabled:
+            meshes.extend(
+                self._generate_contour_side_meshes(
+                    contour, params, path_offset, generate_outer_side=True
+                )
             )
-            if skirt_ring:
-                mesh = SkirtMesh()
-                mesh.add_ring(skirt_ring, params.height)
 
-                connections = self._generate_connections(
-                    contour.outer, skirt_ring, 15.0, True
+        if params.inner_enabled:
+            meshes.extend(
+                self._generate_contour_side_meshes(
+                    contour, params, path_offset, generate_outer_side=False
                 )
-                for conn in connections:
-                    mesh.add_connection(conn, params.height)
-
-                meshes.append(mesh)
-
-            # 内孔裙边
-            for hole in contour.holes:
-                hole_ring = self._generate_skirt_ring(
-                    hole, 5.0, False, path_offset
-                )
-                if hole_ring:
-                    hole_mesh = SkirtMesh()
-                    hole_mesh.add_ring(hole_ring, params.height)
-
-                    hole_connections = self._generate_connections(
-                        hole, hole_ring, 15.0, False
-                    )
-                    for conn in hole_connections:
-                        hole_mesh.add_connection(conn, params.height)
-
-                    meshes.append(hole_mesh)
+            )
 
         return meshes
+
+    def _generate_contour_side_paths(
+        self,
+        contour: Contour,
+        params: SkirtParams,
+        path_offset: 'PathOffset',
+        generate_outer_side: bool,
+    ) -> List[LayerPath]:
+        result: List[LayerPath] = []
+
+        for wall_path, offset_outward in self._iter_boundary_modes(
+            contour, generate_outer_side
+        ):
+            skirt_ring = self._generate_skirt_ring(
+                wall_path, 5.0, offset_outward, path_offset
+            )
+            if skirt_ring:
+                result.append(self._path_to_layer_path(skirt_ring, params))
+
+            connections = self._generate_connections(
+                wall_path, skirt_ring, 15.0, offset_outward
+            )
+            for conn in connections:
+                result.append(self._connection_to_layer_path(conn, params))
+
+        return result
+
+    def _generate_contour_side_meshes(
+        self,
+        contour: Contour,
+        params: SkirtParams,
+        path_offset: 'PathOffset',
+        generate_outer_side: bool,
+    ) -> List['SkirtMesh']:
+        meshes: List['SkirtMesh'] = []
+
+        for wall_path, offset_outward in self._iter_boundary_modes(
+            contour, generate_outer_side
+        ):
+            skirt_ring = self._generate_skirt_ring(
+                wall_path, 5.0, offset_outward, path_offset
+            )
+            if not skirt_ring:
+                continue
+
+            mesh = SkirtMesh()
+            mesh.add_ring(skirt_ring, params.height)
+
+            connections = self._generate_connections(
+                wall_path, skirt_ring, 15.0, offset_outward
+            )
+            for conn in connections:
+                mesh.add_connection(conn, params.height)
+
+            meshes.append(mesh)
+
+        return meshes
+
+    def _iter_boundary_modes(
+        self,
+        contour: Contour,
+        generate_outer_side: bool,
+    ) -> List[Tuple[Path, bool]]:
+        boundaries: List[Tuple[Path, bool]] = []
+
+        # generate_outer_side=True:
+        #   outer contour -> outward, holes -> inward
+        # generate_outer_side=False:
+        #   outer contour -> inward, holes -> outward
+        boundaries.append((contour.outer, generate_outer_side))
+        for hole in contour.holes:
+            boundaries.append((hole, not generate_outer_side))
+
+        return boundaries
 
     def _generate_skirt_ring(
         self,
