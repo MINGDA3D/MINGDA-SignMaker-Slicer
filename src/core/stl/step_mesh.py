@@ -10,6 +10,7 @@ from typing import List, Optional, Dict
 
 import trimesh
 from shapely.geometry import Polygon as ShapelyPolygon
+from shapely.ops import unary_union
 from shapely.validation import make_valid
 
 from ..types import Contour, SliceResult, SliceParams, Point, Layer, LayerPath, PathRole
@@ -197,31 +198,11 @@ class StepMeshBuilder:
             台阶网格
         """
         try:
-            # 外边缘坐标
-            outer_ring_coords = wall_inner_coords
-
-            # 计算内边缘（向内偏移step_width）
-            outer_path = CorePath(points=[Point(c[0], c[1]) for c in wall_inner_coords[:-1]])
-
-            # pyclipper规范化后的路径都是逆时针（正面积）
-            # 外轮廓：负偏移向内收缩（向字壳中心）
-            # 内孔：正偏移向外扩展（向孔外，远离孔中心）
-            if is_hole:
-                offset_dist = step_width
-            else:
-                offset_dist = -step_width
-
-            inner_results = self.path_offset.offset(outer_path, offset_dist)
-
-            inner_ring_coords = [(p.x, p.y) for p in inner_results[0].points]
-            if inner_ring_coords[0] != inner_ring_coords[-1]:
-                inner_ring_coords.append(inner_ring_coords[0])
-
-            # 创建环形多边形
-            ring_polygon = ShapelyPolygon(outer_ring_coords, [inner_ring_coords])
-
-            if not ring_polygon.is_valid:
-                ring_polygon = make_valid(ring_polygon)
+            ring_polygon = self._build_step_ring_geometry(
+                wall_inner_coords,
+                step_width=step_width,
+                is_hole=is_hole
+            )
 
             if ring_polygon.is_empty or ring_polygon.area < 1e-6:
                 return None
@@ -250,6 +231,58 @@ class StepMeshBuilder:
         except Exception as e:
             print(f"警告：创建台阶网格失败: {e}")
             return None
+
+    def _build_step_ring_geometry(self, wall_inner_coords: list,
+                                  step_width: float,
+                                  is_hole: bool = False):
+        """构建台阶环形区域，正确处理内缩后分裂成多个岛的情况。"""
+        if not wall_inner_coords or len(wall_inner_coords) < 4:
+            return None
+
+        outer_ring_coords = wall_inner_coords
+        if outer_ring_coords[0] != outer_ring_coords[-1]:
+            outer_ring_coords = outer_ring_coords + [outer_ring_coords[0]]
+
+        base_polygon = ShapelyPolygon(outer_ring_coords)
+        if not base_polygon.is_valid:
+            base_polygon = make_valid(base_polygon)
+
+        if base_polygon.is_empty or base_polygon.area < 1e-6:
+            return None
+
+        outer_path = CorePath(points=[Point(c[0], c[1]) for c in outer_ring_coords[:-1]])
+        offset_dist = step_width if is_hole else -step_width
+        inner_results = self.path_offset.offset(outer_path, offset_dist)
+
+        offset_polygons = []
+        for result in inner_results:
+            inner_ring_coords = [(p.x, p.y) for p in result.points]
+            if len(inner_ring_coords) < 3:
+                continue
+            if inner_ring_coords[0] != inner_ring_coords[-1]:
+                inner_ring_coords.append(inner_ring_coords[0])
+
+            inner_polygon = ShapelyPolygon(inner_ring_coords)
+            if not inner_polygon.is_valid:
+                inner_polygon = make_valid(inner_polygon)
+            if inner_polygon.is_empty or inner_polygon.area < 1e-6:
+                continue
+            offset_polygons.append(inner_polygon)
+
+        if not offset_polygons:
+            return base_polygon if not is_hole else None
+
+        offset_region = unary_union(offset_polygons)
+        ring_polygon = (
+            offset_region.difference(base_polygon)
+            if is_hole
+            else base_polygon.difference(offset_region)
+        )
+
+        if not ring_polygon.is_valid:
+            ring_polygon = make_valid(ring_polygon)
+
+        return ring_polygon
 
     def _extract_wall_positions_at_step_layers(
         self, result: SliceResult, params: SliceParams, total_height: float, contours: List[Contour]

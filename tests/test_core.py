@@ -11,6 +11,10 @@ MINGDA SignMaker - 单元测试
 import pytest
 import sys
 import os
+from pathlib import Path as FilePath
+
+from shapely.geometry import Polygon as ShapelyPolygon
+from shapely.ops import unary_union
 
 # 添加项目根目录到路径
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -24,6 +28,8 @@ from src.core.path_offset import PathOffset, JoinType
 from src.core.slice_engine import SliceEngine
 from src.core.gcode_writer import GCodeWriter, GCodeParams
 from src.core.step_generator import StepGenerator
+from src.core.svg_parser import SVGParser
+from src.core.stl.step_mesh import StepMeshBuilder
 
 
 class TestPoint:
@@ -767,6 +773,108 @@ class TestSliceEngineWithSteps:
 
         assert baseplate_layer_found, "底板台阶层应该有WALL路径"
         assert panel_layer_found, "面板台阶层应该有WALL路径"
+
+
+class TestStepMeshBuilder:
+    """StepMeshBuilder类测试"""
+
+    @pytest.fixture
+    def step_mesh_builder(self):
+        return StepMeshBuilder(PathOffset())
+
+    def test_split_inset_step_ring_preserves_all_holes(self, step_mesh_builder):
+        """回归测试：狭窄连接处台阶内缩分裂时，不应错误闭合区域"""
+        svg_path = FilePath(__file__).resolve().parent.parent / "Debug" / "LOGO-08.svg"
+        contours = SVGParser().parse(str(svg_path))
+
+        for contour in contours:
+            for point in contour.outer.points:
+                point.x *= 4
+                point.y *= 4
+            for hole in contour.holes:
+                for point in hole.points:
+                    point.x *= 4
+                    point.y *= 4
+
+        target_coords = None
+        inset_results = None
+
+        for contour in contours:
+            inner_wall_results = step_mesh_builder.path_offset.offset(contour.outer, -1.2)
+            if not inner_wall_results:
+                continue
+
+            candidate_insets = step_mesh_builder.path_offset.offset(inner_wall_results[0], -3.0)
+            if len(candidate_insets) > 1:
+                target_coords = [(p.x, p.y) for p in inner_wall_results[0].points]
+                if target_coords[0] != target_coords[-1]:
+                    target_coords.append(target_coords[0])
+                inset_results = candidate_insets
+                break
+
+        assert target_coords is not None, "应该找到会被3mm台阶切分的狭窄轮廓"
+        assert inset_results is not None and len(inset_results) > 1
+
+        ring_geometry = step_mesh_builder._build_step_ring_geometry(
+            target_coords,
+            step_width=3.0,
+            is_hole=False
+        )
+
+        assert ring_geometry is not None
+        assert ring_geometry.geom_type == "Polygon"
+        assert len(ring_geometry.interiors) == len(inset_results)
+
+        legacy_hole = [(p.x, p.y) for p in inset_results[0].points]
+        if legacy_hole[0] != legacy_hole[-1]:
+            legacy_hole.append(legacy_hole[0])
+        legacy_geometry = ShapelyPolygon(target_coords, [legacy_hole])
+
+        assert ring_geometry.area < legacy_geometry.area
+
+        mesh = step_mesh_builder._create_thin_step_ring(
+            target_coords,
+            step_width=3.0,
+            step_thickness=0.4,
+            z_position=10.0,
+            is_hole=False
+        )
+
+        assert mesh is not None
+        assert abs(mesh.volume) == pytest.approx(ring_geometry.area * 0.4, rel=1e-3)
+
+    def test_hole_step_ring_uses_expanded_region(self, step_mesh_builder):
+        """内孔台阶应使用外扩区域减去原孔，不依赖无效多边形修复"""
+        hole_coords = [
+            (0.0, 0.0),
+            (20.0, 0.0),
+            (20.0, 20.0),
+            (0.0, 20.0),
+            (0.0, 0.0),
+        ]
+
+        ring_geometry = step_mesh_builder._build_step_ring_geometry(
+            hole_coords,
+            step_width=3.0,
+            is_hole=True
+        )
+
+        assert ring_geometry is not None
+        assert ring_geometry.is_valid
+
+        hole_path = Path(points=[
+            Point(0.0, 0.0),
+            Point(20.0, 0.0),
+            Point(20.0, 20.0),
+            Point(0.0, 20.0),
+        ], is_closed=True)
+        expanded_paths = step_mesh_builder.path_offset.offset(hole_path, 3.0)
+        expected_region = unary_union([
+            ShapelyPolygon([(p.x, p.y) for p in path.points])
+            for path in expanded_paths
+        ]).difference(ShapelyPolygon(hole_coords))
+
+        assert ring_geometry.area == pytest.approx(expected_region.area, rel=1e-6)
 
 
 class TestSTLExport:
