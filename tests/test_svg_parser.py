@@ -120,7 +120,7 @@ class TestSVGParser:
         assert len(contours[0].outer.points) >= 4
 
     def test_parse_nested_shapes(self, parser):
-        """测试嵌套形状（外轮廓+内孔）"""
+        """测试独立 SVG 元素嵌套时不自动形成 hole"""
         svg_content = '''<?xml version="1.0" encoding="UTF-8"?>
         <svg xmlns="http://www.w3.org/2000/svg">
             <rect x="0" y="0" width="100" height="100" fill="black"/>
@@ -129,9 +129,78 @@ class TestSVGParser:
 
         contours = parser.parse_from_string(svg_content)
 
+        assert len(contours) == 2
+        assert all(len(contour.holes) == 0 for contour in contours)
+
+    def test_parse_compound_path_evenodd(self, parser):
+        """测试同一填充上下文下 evenodd 形成 hole"""
+        svg_content = '''<?xml version="1.0" encoding="UTF-8"?>
+        <svg xmlns="http://www.w3.org/2000/svg">
+            <path fill="black" fill-rule="evenodd"
+                  d="M 0 0 L 100 0 L 100 100 L 0 100 Z
+                     M 20 20 L 80 20 L 80 80 L 20 80 Z" />
+        </svg>'''
+
+        contours = parser.parse_from_string(svg_content)
+
         assert len(contours) == 1
-        assert contours[0].outer is not None
         assert len(contours[0].holes) == 1
+
+    def test_parse_compound_path_nonzero_same_direction(self, parser):
+        """测试同一方向的 nonzero 子路径不会形成 hole"""
+        svg_content = '''<?xml version="1.0" encoding="UTF-8"?>
+        <svg xmlns="http://www.w3.org/2000/svg">
+            <path fill="black" fill-rule="nonzero"
+                  d="M 0 0 L 100 0 L 100 100 L 0 100 Z
+                     M 20 20 L 80 20 L 80 80 L 20 80 Z" />
+        </svg>'''
+
+        contours = parser.parse_from_string(svg_content)
+
+        assert len(contours) == 1
+        assert len(contours[0].holes) == 0
+
+    def test_parse_compound_path_nonzero_opposite_direction(self, parser):
+        """测试相反方向的 nonzero 子路径形成 hole"""
+        svg_content = '''<?xml version="1.0" encoding="UTF-8"?>
+        <svg xmlns="http://www.w3.org/2000/svg">
+            <path fill="black" fill-rule="nonzero"
+                  d="M 0 0 L 100 0 L 100 100 L 0 100 Z
+                     M 20 20 L 20 80 L 80 80 L 80 20 Z" />
+        </svg>'''
+
+        contours = parser.parse_from_string(svg_content)
+
+        assert len(contours) == 1
+        assert len(contours[0].holes) == 1
+
+    def test_parse_group_fill_rule_inheritance(self, parser):
+        """测试组级 fill-rule 会继承到子路径"""
+        svg_content = '''<?xml version="1.0" encoding="UTF-8"?>
+        <svg xmlns="http://www.w3.org/2000/svg">
+            <g fill-rule="evenodd">
+                <path fill="black"
+                      d="M 0 0 L 100 0 L 100 100 L 0 100 Z
+                         M 20 20 L 80 20 L 80 80 L 20 80 Z" />
+            </g>
+        </svg>'''
+
+        contours = parser.parse_from_string(svg_content)
+
+        assert len(contours) == 1
+        assert len(contours[0].holes) == 1
+
+    def test_parse_duplicate_filled_shapes_deduplicates_contours(self, parser):
+        """测试重复的相同填充元素不会产生重复 contour"""
+        svg_content = '''<?xml version="1.0" encoding="UTF-8"?>
+        <svg xmlns="http://www.w3.org/2000/svg">
+            <rect x="0" y="0" width="100" height="100" fill="black"/>
+            <rect x="0" y="0" width="100" height="100" fill="black"/>
+        </svg>'''
+
+        contours = parser.parse_from_string(svg_content)
+
+        assert len(contours) == 1
 
     def test_color_parsing_hex(self, parser):
         """测试十六进制颜色解析"""

@@ -260,7 +260,7 @@ def normalize_path(path: Path) -> Path:
     Returns:
         归一化后的路径
     """
-    from .types import PathType
+    from src.core.types import PathType
 
     if path.path_type == PathType.OUTER:
         # 外轮廓应该逆时针

@@ -13,15 +13,21 @@ import math
 import re
 from typing import List, Tuple, Optional, Dict
 from pathlib import Path as FilePath
+import xml.etree.ElementTree as ET
 
 import svgpathtools
 from svgpathtools import svg2paths2, parse_path, Path as SVGPath
 
+from .contour_classifier import classify_paths_by_fill_rule, classify_paths_by_nesting
 from .types import Point, Path, Contour, PathType
 
 
 class SVGParser:
     """SVG文件解析器（使用svgpathtools库）"""
+
+    SHAPE_TAGS = {
+        'path', 'rect', 'circle', 'ellipse', 'polygon', 'polyline', 'line',
+    }
 
     # 标准RGB颜色映射（用于识别特殊路径）
     COLOR_MAP: Dict[Tuple[int, int, int], PathType] = {
@@ -70,17 +76,37 @@ class SVGParser:
         """
         # 使用svgpathtools解析SVG
         paths, attributes, svg_attributes = svg2paths2(file_path)
+        attributes = self._resolve_effective_attributes(file_path, attributes)
 
         # 计算单位转换的缩放因子
         self._scale_factor = self._calculate_scale_factor(svg_attributes)
 
-        # 提取所有路径
-        parsed_paths = self._extract_all_paths(paths, attributes)
+        contexts, special_paths = self._extract_path_contexts(paths, attributes)
 
-        # 分类并分组路径
-        contours = self._classify_and_group_paths(parsed_paths)
+        all_paths = list(special_paths)
+        for context in contexts:
+            all_paths.extend(context["paths"])
+        self._flip_y_axis(all_paths)
 
-        return contours
+        connected_frames = [path for path in special_paths if path.path_type == PathType.CONNECTED]
+        patterns = [path for path in special_paths if path.path_type == PathType.PATTERN]
+
+        contours: List[Contour] = []
+        for context in contexts:
+            if context["filled"]:
+                context_contours = classify_paths_by_fill_rule(
+                    context["paths"],
+                    context["fill_rule"],
+                )
+            else:
+                context_contours = classify_paths_by_nesting(context["paths"])
+
+            for contour in context_contours:
+                contour.connected_frames = list(connected_frames)
+                contour.patterns = list(patterns)
+                contours.append(contour)
+
+        return self._deduplicate_contours(contours)
 
     def _calculate_scale_factor(self, svg_attributes: dict) -> float:
         """
@@ -199,10 +225,109 @@ class SVGParser:
         finally:
             os.unlink(temp_path)
 
-    def _extract_all_paths(self, svg_paths: List[SVGPath],
-                           attributes: List[dict]) -> List[Path]:
-        """提取SVG中的所有路径，自动分割子路径"""
-        paths = []
+    def _resolve_effective_attributes(self, file_path: str,
+                                      attributes: List[dict]) -> List[dict]:
+        root = ET.parse(file_path).getroot()
+        collected: List[Tuple[dict, dict]] = []
+        self._collect_effective_attributes(root, {}, {}, collected)
+
+        effective_by_signature: Dict[Tuple[Tuple[str, str], ...], List[dict]] = {}
+        for raw_attrs, effective_attrs in collected:
+            signature = self._attribute_signature(raw_attrs)
+            effective_by_signature.setdefault(signature, []).append(effective_attrs)
+
+        resolved_attributes: List[dict] = []
+        for attrs in attributes:
+            signature = self._attribute_signature(attrs)
+            matches = effective_by_signature.get(signature)
+            if matches:
+                resolved_attributes.append(matches.pop(0))
+            else:
+                resolved_attributes.append(attrs)
+
+        return resolved_attributes
+
+    def _collect_effective_attributes(self, element, inherited_attrs: Dict[str, str],
+                                      inherited_style: Dict[str, str],
+                                      collected: List[Tuple[dict, dict]]) -> None:
+        tag = element.tag.rsplit('}', 1)[-1]
+        current_attrs = dict(inherited_attrs)
+        current_style = dict(inherited_style)
+
+        style_str = element.attrib.get('style', '')
+        if style_str:
+            current_style.update(self._parse_style(style_str))
+
+        for key, value in element.attrib.items():
+            if key == 'style':
+                continue
+            if key == 'transform' and current_attrs.get('transform'):
+                current_attrs['transform'] = f"{current_attrs['transform']} {value}".strip()
+            else:
+                current_attrs[key] = value
+
+        if current_style:
+            current_attrs['style'] = '; '.join(
+                f"{name}:{value}" for name, value in current_style.items()
+            )
+
+        if tag in self.SHAPE_TAGS:
+            collected.append((dict(element.attrib), current_attrs))
+
+        for child in list(element):
+            self._collect_effective_attributes(child, current_attrs, current_style, collected)
+
+    def _attribute_signature(self, attrs: dict) -> Tuple[Tuple[str, str], ...]:
+        signature_keys = (
+            'd', 'x', 'y', 'width', 'height', 'rx', 'ry',
+            'cx', 'cy', 'r', 'x1', 'y1', 'x2', 'y2',
+            'points', 'transform', 'class',
+        )
+        return tuple(
+            (key, attrs.get(key, ''))
+            for key in signature_keys
+            if key in attrs
+        )
+
+    def _parse_style(self, style_str: str) -> Dict[str, str]:
+        style_map: Dict[str, str] = {}
+        for declaration in style_str.split(';'):
+            if ':' not in declaration:
+                continue
+            name, value = declaration.split(':', 1)
+            name = name.strip()
+            value = value.strip()
+            if name and value:
+                style_map[name] = value
+        return style_map
+
+    def _deduplicate_contours(self, contours: List[Contour]) -> List[Contour]:
+        unique_contours: List[Contour] = []
+        seen_signatures = set()
+
+        for contour in contours:
+            signature = (
+                self._path_signature(contour.outer),
+                tuple(sorted(self._path_signature(hole) for hole in contour.holes)),
+            )
+            if signature in seen_signatures:
+                continue
+            seen_signatures.add(signature)
+            unique_contours.append(contour)
+
+        return unique_contours
+
+    def _path_signature(self, path: Path) -> Tuple[Tuple[float, float], ...]:
+        return tuple(
+            (round(point.x, 6), round(point.y, 6))
+            for point in path.points
+        )
+
+    def _extract_path_contexts(self, svg_paths: List[SVGPath],
+                               attributes: List[dict]) -> Tuple[List[dict], List[Path]]:
+        """提取 SVG 填充上下文与特殊路径。"""
+        contexts: List[dict] = []
+        special_paths: List[Path] = []
 
         for svg_path, attrs in zip(svg_paths, attributes):
             if not svg_path:
@@ -219,9 +344,11 @@ class SVGParser:
 
             # 检查是否有fill属性（用于判断开放路径是否应视为闭合）
             has_fill = self._has_fill(attrs)
+            fill_rule = self._get_fill_rule(attrs)
 
             # 分割子路径（检测不连续点）
             subpaths = self._split_subpaths(svg_path)
+            context_paths: List[Path] = []
 
             for subpath in subpaths:
                 # 将SVG子路径转换为点列表
@@ -240,13 +367,35 @@ class SVGParser:
                     color=color,
                     is_closed=is_closed
                 )
-                paths.append(path)
+                if path_type in (PathType.CONNECTED, PathType.HOLE, PathType.PATTERN):
+                    special_paths.append(path)
+                elif is_closed:
+                    context_paths.append(path)
 
-        # SVG坐标系Y轴向下，需要翻转为Y轴向上（与DXF/CAD坐标系一致）
-        # 使用实际边界框进行翻转，保持坐标为正值
-        self._flip_y_axis(paths)
+            if context_paths:
+                contexts.append({
+                    "paths": context_paths,
+                    "filled": has_fill,
+                    "fill_rule": fill_rule,
+                })
 
-        return paths
+        return contexts, special_paths
+
+    def _get_fill_rule(self, attrs: dict) -> str:
+        """Get effective fill-rule for one SVG element."""
+        fill_rule = attrs.get('fill-rule', '').strip().lower()
+        if fill_rule in ('evenodd', 'nonzero'):
+            return fill_rule
+
+        style = attrs.get('style', '')
+        if style:
+            match = re.search(r'fill-rule\s*:\s*([^;]+)', style, re.IGNORECASE)
+            if match:
+                fill_rule = match.group(1).strip().lower()
+                if fill_rule in ('evenodd', 'nonzero'):
+                    return fill_rule
+
+        return 'nonzero'
 
     def _flip_y_axis(self, paths: List[Path]) -> None:
         """

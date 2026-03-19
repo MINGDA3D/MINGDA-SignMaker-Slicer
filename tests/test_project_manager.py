@@ -178,6 +178,62 @@ class TestProjectFormat:
             assert abs(p.x - 0.123456789012345) < 1e-14
             assert abs(p.y - 0.987654321098765) < 1e-14
 
+    def test_load_project_repairs_wrong_hole_assignment(self):
+        """测试加载时将不被包含的 hole 提升为独立 contour"""
+        contour = Contour(
+            outer=Path(
+                points=[Point(0, 0), Point(100, 0), Point(100, 100), Point(0, 100)],
+                path_type=PathType.OUTER,
+            ),
+            holes=[
+                Path(
+                    points=[Point(150, 150), Point(180, 150), Point(180, 180), Point(150, 180)],
+                    path_type=PathType.INNER,
+                )
+            ],
+            name="修正测试",
+        )
+
+        project = Project(
+            meta=ProjectMeta(name="修正测试项目"),
+            contours=[contour],
+        )
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            file_path = os.path.join(tmpdir, "repair.smp")
+            save_project(project, file_path)
+            loaded = load_project(file_path)
+
+            assert len(loaded.contours) == 2
+            assert all(len(c.holes) == 0 for c in loaded.contours)
+
+    def test_load_project_normalizes_loop_orientation(self):
+        """测试加载时统一 outer/hole 绕向"""
+        contour = Contour(
+            outer=Path(
+                points=[Point(0, 0), Point(0, 100), Point(100, 100), Point(100, 0)],
+                path_type=PathType.OUTER,
+            ),
+            holes=[
+                Path(
+                    points=[Point(20, 20), Point(20, 80), Point(80, 80), Point(80, 20)],
+                    path_type=PathType.INNER,
+                )
+            ],
+        )
+
+        project = Project(meta=ProjectMeta(name="方向修正"), contours=[contour])
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            file_path = os.path.join(tmpdir, "orientation.smp")
+            save_project(project, file_path)
+            loaded = load_project(file_path)
+
+            assert len(loaded.contours) == 1
+            assert loaded.contours[0].outer.area > 0
+            assert len(loaded.contours[0].holes) == 1
+            assert loaded.contours[0].holes[0].area < 0
+
 
 class TestProjectManager:
     """项目管理器测试"""

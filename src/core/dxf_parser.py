@@ -14,12 +14,21 @@ from pathlib import Path as FilePath
 
 import ezdxf
 from ezdxf.entities import DXFEntity
+from ezdxf.entities.boundary_paths import PolylinePath as HatchPolylinePath, flatten_to_polyline_path
 
+from .contour_classifier import classify_paths_by_nesting, path_contains_path
 from .types import Point, Path, Contour, PathType
 
 
 class DXFParser:
     """DXF文件解析器"""
+
+    HATCH_FLAG_EXTERNAL = 1
+    HATCH_FLAG_POLYLINE = 2
+    HATCH_FLAG_DERIVED = 4
+    HATCH_FLAG_TEXTBOX = 8
+    HATCH_FLAG_OUTERMOST = 16
+    HATCH_SHELL_FLAGS = HATCH_FLAG_EXTERNAL | HATCH_FLAG_OUTERMOST
 
     # 标准RGB颜色映射（用于识别特殊路径）
     COLOR_MAP: Dict[Tuple[int, int, int], PathType] = {
@@ -123,13 +132,7 @@ class DXFParser:
         doc = ezdxf.readfile(file_path)
         msp = doc.modelspace()
 
-        # 1. 提取所有路径实体
-        paths = self._extract_all_paths(msp)
-
-        # 2. 分类路径（外轮廓、内孔、特殊路径）
-        contours = self._classify_and_group_paths(paths)
-
-        return contours
+        return self._parse_modelspace(msp)
 
     def parse_from_bytes(self, data: bytes) -> List[Contour]:
         """
@@ -146,8 +149,39 @@ class DXFParser:
         doc = ezdxf.read(stream)
         msp = doc.modelspace()
 
-        paths = self._extract_all_paths(msp)
-        contours = self._classify_and_group_paths(paths)
+        return self._parse_modelspace(msp)
+
+    def _parse_modelspace(self, msp) -> List[Contour]:
+        normal_paths: List[Path] = []
+        special_paths: Dict[PathType, List[Path]] = {
+            PathType.CONNECTED: [],
+            PathType.HOLE: [],
+            PathType.PATTERN: [],
+        }
+        contours: List[Contour] = []
+
+        for entity in msp:
+            entity_type = entity.dxftype()
+            if entity_type in ('HATCH', 'MPOLYGON'):
+                contours.extend(self._parse_hatch_entity(entity))
+                continue
+
+            path = self._parse_entity(entity)
+            if not path or len(path.points) < 3:
+                continue
+
+            if path.path_type in special_paths:
+                special_paths[path.path_type].append(path)
+            elif path.is_closed:
+                normal_paths.append(path)
+
+        contours.extend(classify_paths_by_nesting(normal_paths))
+
+        connected_frames = special_paths[PathType.CONNECTED]
+        patterns = special_paths[PathType.PATTERN]
+        for contour in contours:
+            contour.connected_frames = list(connected_frames)
+            contour.patterns = list(patterns)
 
         return contours
 
@@ -161,6 +195,124 @@ class DXFParser:
                 paths.append(path)
 
         return paths
+
+    def _parse_hatch_entity(self, entity) -> List[Contour]:
+        """Parse HATCH/MPOLYGON loops, preferring explicit shell flags when present."""
+        loop_entries = self._extract_hatch_loops(entity)
+        if not loop_entries:
+            return []
+
+        shell_indices = [
+            index for index, (_, flags) in enumerate(loop_entries)
+            if flags & self.HATCH_SHELL_FLAGS
+        ]
+        if not shell_indices:
+            return classify_paths_by_nesting([path for path, _ in loop_entries])
+
+        grouped_paths: Dict[int, List[Path]] = {
+            index: [loop_entries[index][0]] for index in shell_indices
+        }
+        remaining_paths: List[Path] = []
+
+        for index, (path, _) in enumerate(loop_entries):
+            if index in grouped_paths:
+                continue
+
+            parent_shell = self._find_nearest_shell(path, shell_indices, loop_entries)
+            if parent_shell is None:
+                remaining_paths.append(path)
+                continue
+
+            grouped_paths[parent_shell].append(path)
+
+        contours: List[Contour] = []
+        for shell_index in shell_indices:
+            contours.extend(classify_paths_by_nesting(grouped_paths[shell_index]))
+
+        if remaining_paths:
+            contours.extend(classify_paths_by_nesting(remaining_paths))
+
+        return contours
+
+    def _extract_hatch_loops(self, entity) -> List[Tuple[Path, int]]:
+        color = self._get_entity_color(entity)
+        loop_entries: List[Tuple[Path, int]] = []
+
+        for boundary_path in entity.paths:
+            path = self._boundary_path_to_path(boundary_path, color)
+            if path is None:
+                continue
+
+            flags = int(getattr(boundary_path, 'path_type_flags', 0) or 0)
+            loop_entries.append((path, flags))
+
+        return loop_entries
+
+    def _find_nearest_shell(self, path: Path, shell_indices: List[int],
+                            loop_entries: List[Tuple[Path, int]]) -> Optional[int]:
+        parent_shell: Optional[int] = None
+        parent_area: Optional[float] = None
+
+        for shell_index in shell_indices:
+            shell_path, _ = loop_entries[shell_index]
+            if not path_contains_path(shell_path, path):
+                continue
+
+            shell_area = abs(shell_path.area)
+            if parent_area is None or shell_area < parent_area:
+                parent_area = shell_area
+                parent_shell = shell_index
+
+        return parent_shell
+
+    def _boundary_path_to_path(self, boundary_path,
+                               color: Tuple[int, int, int]) -> Optional[Path]:
+        if isinstance(boundary_path, HatchPolylinePath):
+            polyline_path = boundary_path
+        else:
+            polyline_path = flatten_to_polyline_path(
+                boundary_path,
+                self.chord_error,
+                self.MIN_SEGMENTS_PER_ARC,
+            )
+
+        return self._polyline_boundary_to_path(polyline_path, color)
+
+    def _polyline_boundary_to_path(self, boundary_path: HatchPolylinePath,
+                                   color: Tuple[int, int, int]) -> Optional[Path]:
+        vertices = list(boundary_path.vertices)
+        if not vertices:
+            return None
+
+        points: List[Point] = []
+        for i, (x, y, bulge) in enumerate(vertices):
+            points.append(Point(x, y))
+
+            if bulge != 0 and i < len(vertices) - 1:
+                next_x, next_y, _ = vertices[i + 1]
+                arc_points = self._bulge_to_arc_points(
+                    Point(x, y), Point(next_x, next_y), bulge
+                )
+                points.extend(arc_points[1:-1])
+
+        if boundary_path.is_closed and vertices:
+            last_x, last_y, bulge = vertices[-1]
+            first_x, first_y, _ = vertices[0]
+            if bulge != 0:
+                arc_points = self._bulge_to_arc_points(
+                    Point(last_x, last_y), Point(first_x, first_y), bulge
+                )
+                points.extend(arc_points[1:-1])
+
+        if len(points) < 3:
+            return None
+
+        return Path(
+            points=points,
+            path_type=PathType.OUTER,
+            color=color,
+            is_closed=True,
+        )
 
     def _parse_entity(self, entity: DXFEntity) -> Optional[Path]:
         """解析单个实体"""

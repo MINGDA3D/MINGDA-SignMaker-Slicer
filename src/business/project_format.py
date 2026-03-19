@@ -20,6 +20,7 @@ from datetime import datetime
 from typing import Optional, List, BinaryIO
 from pathlib import Path
 
+from src.core.contour_classifier import repair_contours
 from src.core.types import (
     Project, ProjectMeta, Contour, SliceParams,
     Point, Path as ContourPath, PathType,
@@ -115,7 +116,7 @@ def load_project(file_path: str) -> Project:
 
         # 3. 读取轮廓
         contours_bin = zf.read(CONTOURS_FILE)
-        contours = _deserialize_contours(contours_bin)
+        contours = repair_contours(_deserialize_contours(contours_bin))
 
         # 构建项目
         project_info = manifest.get('project', {})
