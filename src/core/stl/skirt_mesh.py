@@ -1,80 +1,153 @@
 """
-MINGDA SignMaker - 裙边网格生成器 v3
+MINGDA SignMaker - Skirt mesh builder
 
-新设计：
-- 外轮廓向外偏移5mm生成裙边环
-- 内孔向内偏移5mm生成裙边环
-- 每隔15mm生成连接线
+Build skirt STL geometry from the same 2D skirt paths used by slicing.
+The paths are buffered into solid 2D regions first, unioned, then extruded.
+This avoids cracks caused by concatenating separately-built ring and connector
+meshes that only touch at edges.
 """
 
 from __future__ import annotations
-from typing import List, Optional
+
 from copy import copy
+from typing import List, Optional
 
-import numpy as np
 import trimesh
+from shapely.geometry import GeometryCollection, LineString, LinearRing, Polygon
+from shapely.ops import unary_union
+from shapely.validation import make_valid
 
-from ..types import Contour, SliceParams, Point, Path
 from ..path_offset import PathOffset
 from ..skirt_generator import SkirtGenerator
+from ..types import Contour, Path, SliceParams
 from .mesh_utils import MeshUtils
 
 
 class SkirtMeshBuilder:
-    """防翘裙边网格生成器 v3"""
+    """Build anti-warping skirt meshes."""
 
     def __init__(self, path_offset: PathOffset):
         self.path_offset = path_offset
         self.mesh_utils = MeshUtils()
         self.skirt_generator = SkirtGenerator()
 
-    def build(self, contours: List[Contour],
-              params: SliceParams) -> Optional[trimesh.Trimesh]:
-        """构建防翘裙边网格（新设计：环+连接线）"""
-        if not contours:
+    def build(
+        self,
+        contours: List[Contour],
+        params: SliceParams,
+        source_contours: Optional[List[Contour]] = None,
+    ) -> Optional[trimesh.Trimesh]:
+        if not contours or not params.skirt.enabled:
             return None
 
-        skirt_params = params.skirt
-        skirt_height = skirt_params.height
-        meshes = []
+        skirt_polygons = []
+        all_contours = source_contours if source_contours is not None else contours
 
         for contour in contours:
             try:
-                # 外轮廓裙边
-                skirt_meshes = self.skirt_generator.generate_skirt_3d_clipped(
+                outer_paths = self.skirt_generator.generate_skirt_clipped(
                     contour=contour,
-                    all_contours=contours,
-                    params=skirt_params,
+                    all_contours=all_contours,
+                    params=params.skirt,
                     wall_thickness=params.shell.wall_thickness,
-                    path_offset=self.path_offset
+                    path_offset=self.path_offset,
                 )
+                skirt_polygons.extend(self._paths_to_polygons(outer_paths))
 
-                for skirt_mesh in skirt_meshes:
-                    for tri in skirt_mesh.get_triangles():
-                        mesh = trimesh.Trimesh(vertices=tri, faces=[[0, 1, 2]])
-                        meshes.append(mesh)
-
-                # 内孔裙边
-                for hole in contour.holes:
-                    hole_skirt_params = copy(skirt_params)
-                    hole_skirt_params.is_outer = False
-                    hole_contour = Contour(outer=hole, holes=[])
-
-                    hole_meshes = self.skirt_generator.generate_skirt_3d_clipped(
-                        contour=hole_contour,
-                        all_contours=contours,
-                        params=hole_skirt_params,
+                if contour.holes:
+                    hole_params = copy(params.skirt)
+                    hole_params.is_outer = False
+                    hole_paths = self.skirt_generator.generate_skirt_clipped(
+                        contour=contour,
+                        all_contours=all_contours,
+                        params=hole_params,
                         wall_thickness=params.shell.wall_thickness,
-                        path_offset=self.path_offset
+                        path_offset=self.path_offset,
                     )
-
-                    for skirt_mesh in hole_meshes:
-                        for tri in skirt_mesh.get_triangles():
-                            mesh = trimesh.Trimesh(vertices=tri, faces=[[0, 1, 2]])
-                            meshes.append(mesh)
-
-            except Exception as e:
-                print(f"Warning: Failed to process contour skirt: {e}")
+                    skirt_polygons.extend(self._paths_to_polygons(hole_paths))
+            except Exception as exc:
+                print(f"Warning: Failed to process contour skirt: {exc}")
                 continue
 
+        if not skirt_polygons:
+            return None
+
+        unioned = unary_union(skirt_polygons)
+        meshes = self._extrude_geometry(unioned, params.skirt.height)
         return MeshUtils.merge_meshes(meshes)
+
+    def _paths_to_polygons(self, skirt_paths: List) -> List[Polygon]:
+        polygons: List[Polygon] = []
+
+        for skirt_path in skirt_paths:
+            polygon = self._buffer_path(
+                Path(points=skirt_path.points, is_closed=skirt_path.is_closed),
+                skirt_path.line_width,
+            )
+            if polygon is None:
+                continue
+            polygons.extend(self._collect_polygons(polygon))
+
+        return polygons
+
+    def _buffer_path(self, path: Path, line_width: float) -> Optional[Polygon]:
+        if len(path.points) < 2 or line_width <= 0:
+            return None
+
+        coords = [(point.x, point.y) for point in path.points]
+        radius = line_width / 2.0
+
+        try:
+            if path.is_closed and len(coords) >= 3:
+                geometry = LinearRing(coords).buffer(
+                    radius, cap_style="round", join_style="round"
+                )
+            else:
+                geometry = LineString(coords).buffer(
+                    radius, cap_style="round", join_style="round"
+                )
+        except Exception:
+            return None
+
+        if not geometry.is_valid:
+            geometry = make_valid(geometry)
+
+        if geometry.is_empty:
+            return None
+
+        return geometry
+
+    def _collect_polygons(self, geometry) -> List[Polygon]:
+        if geometry.is_empty:
+            return []
+
+        if isinstance(geometry, Polygon):
+            return [geometry] if geometry.area > 1e-6 else []
+
+        if hasattr(geometry, "geoms"):
+            polygons: List[Polygon] = []
+            for geom in geometry.geoms:
+                polygons.extend(self._collect_polygons(geom))
+            return polygons
+
+        return []
+
+    def _extrude_geometry(self, geometry, height: float) -> List[trimesh.Trimesh]:
+        meshes: List[trimesh.Trimesh] = []
+
+        if isinstance(geometry, Polygon):
+            mesh = self.mesh_utils.extrude_polygon(geometry, height, 0.0)
+            if mesh is not None:
+                meshes.append(mesh)
+            return meshes
+
+        if isinstance(geometry, (GeometryCollection,)):
+            for geom in geometry.geoms:
+                meshes.extend(self._extrude_geometry(geom, height))
+            return meshes
+
+        if hasattr(geometry, "geoms"):
+            for geom in geometry.geoms:
+                meshes.extend(self._extrude_geometry(geom, height))
+
+        return meshes

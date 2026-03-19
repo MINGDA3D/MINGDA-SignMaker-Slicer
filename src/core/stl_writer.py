@@ -136,9 +136,20 @@ class STLWriter:
                 if outline_mesh is not None:
                     meshes.append(outline_mesh)
 
+            # 预先计算底部变换后的轮廓（z=0），用于需要与底部墙体严格对齐的功能
+            bottom_contours = []
+            for c in contours:
+                bc = temp_engine._apply_edge_profile(c, 0, params.shell)
+                if bc:
+                    bottom_contours.append(bc)
+
             # 5. 构建防翘裙边网格
             if params.skirt.enabled:
-                skirt_mesh = self.skirt_builder.build(contours, params)
+                skirt_mesh = self.skirt_builder.build(
+                    bottom_contours if bottom_contours else contours,
+                    params,
+                    source_contours=bottom_contours if bottom_contours else contours
+                )
                 if skirt_mesh is not None:
                     meshes.append(skirt_mesh)
 
@@ -150,13 +161,6 @@ class STLWriter:
 
             # 7. 构建底面封闭网格
             if params.bottom_face.enabled:
-                # 计算底部变换后的轮廓（z=0处）
-                bottom_contours = []
-                for c in contours:
-                    bc = temp_engine._apply_edge_profile(c, 0, params.shell)
-                    if bc:
-                        bottom_contours.append(bc)
-
                 bottom_face_mesh = self.bottom_face_builder.build(
                     bottom_contours if bottom_contours else contours, params
                 )
