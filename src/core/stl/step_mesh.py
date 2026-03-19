@@ -65,8 +65,8 @@ class StepMeshBuilder:
         total_height = params.shell.height
         wall_thickness = params.shell.wall_thickness
 
-        # 台阶厚度（使用层高）
-        step_thickness = params.shell.layer_height
+        # 台阶厚度 = 层高 + 0.1mm
+        step_thickness = params.shell.layer_height + 0.1
 
         # 从切片结果中提取台阶层的壁位置
         contour_wall_positions = self._extract_wall_positions_at_step_layers(
