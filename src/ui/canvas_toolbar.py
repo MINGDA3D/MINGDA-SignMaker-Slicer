@@ -104,20 +104,20 @@ class CanvasToolbar(QWidget):
         self.btn_text.clicked.connect(self.text_clicked.emit)
         layout.addWidget(self.btn_text)
 
-        layout.addWidget(self._create_separator())
+        # layout.addWidget(self._create_separator())
 
-        # ========== 起始点/顺序 ==========
-        self.btn_start_point = self._create_icon_button("start_point.png", self.tr("Start Point"))
-        layout.addWidget(self.btn_start_point)
-
-        self.btn_order = self._create_icon_button("print_order.png", self.tr("Print Order"))
-        layout.addWidget(self.btn_order)
-
-        layout.addWidget(self._create_separator())
-
-        # ========== 视图居中 ==========
-        self.btn_center = self._create_icon_button("center_view.png", self.tr("Center View"))
-        layout.addWidget(self.btn_center)
+        # ========== 起始点/顺序/视图居中 ==========
+        # 临时隐藏以下按钮，保留代码便于后续恢复：
+        # self.btn_start_point = self._create_icon_button("start_point.png", self.tr("Start Point"))
+        # layout.addWidget(self.btn_start_point)
+        #
+        # self.btn_order = self._create_icon_button("print_order.png", self.tr("Print Order"))
+        # layout.addWidget(self.btn_order)
+        #
+        # layout.addWidget(self._create_separator())
+        #
+        # self.btn_center = self._create_icon_button("center_view.png", self.tr("Center View"))
+        # layout.addWidget(self.btn_center)
 
         # ========== 右侧弹性空间（居中用）==========
         layout.addStretch(1)
