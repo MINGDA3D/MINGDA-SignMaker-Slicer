@@ -59,6 +59,9 @@ class Preview3DWidget(QOpenGLWidget):
     """3D预览 OpenGL 组件"""
 
     layer_changed = Signal(int)  # 当前显示层变化
+    DEFAULT_FOV = 45.0
+    MIN_ZOOM = 0.1
+    MAX_ZOOM = 50.0
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -106,6 +109,7 @@ class Preview3DWidget(QOpenGLWidget):
         self.current_layer = len(layers) - 1 if layers else 0
         # 计算模型边界框用于居中显示
         self._calculate_bounds()
+        self._clamp_zoom_in_place()
         self.update()
 
     def _calculate_bounds(self):
@@ -154,6 +158,7 @@ class Preview3DWidget(QOpenGLWidget):
         self.bed_width = width
         self.bed_depth = depth
         self.bed_height = height
+        self._clamp_zoom_in_place()
         self.update()
 
     def reset_view(self):
@@ -163,7 +168,107 @@ class Preview3DWidget(QOpenGLWidget):
         self.zoom = 1.0
         self.pan_x = 0.0
         self.pan_y = 0.0
+        self._clamp_zoom_in_place()
         self.update()
+
+    def _get_focus_center(self) -> Tuple[float, float, float]:
+        """获取当前相机焦点。存在模型时优先对准模型，而不是平台中心。"""
+        if self.layers:
+            return self.model_center
+        return (self.bed_width / 2, self.bed_depth / 2, self.bed_height / 2)
+
+    def _get_focus_radius(self) -> float:
+        """获取焦点附近需要保持可见的安全半径。"""
+        if not self.layers:
+            return 50.0
+        return max(self.model_size * 0.75, 10.0)
+
+    def _get_scene_radius(self, focus_center: Tuple[float, float, float]) -> float:
+        """估算从焦点到整个平台和模型的最大距离，用于投影和默认观察距离。"""
+        fx, fy, fz = focus_center
+        corners = (
+            (0.0, 0.0, 0.0),
+            (self.bed_width, 0.0, 0.0),
+            (0.0, self.bed_depth, 0.0),
+            (self.bed_width, self.bed_depth, 0.0),
+            (0.0, 0.0, self.bed_height),
+            (self.bed_width, 0.0, self.bed_height),
+            (0.0, self.bed_depth, self.bed_height),
+            (self.bed_width, self.bed_depth, self.bed_height),
+        )
+
+        platform_radius = max(
+            math.sqrt((x - fx) ** 2 + (y - fy) ** 2 + (z - fz) ** 2)
+            for x, y, z in corners
+        )
+        return max(platform_radius, self._get_focus_radius())
+
+    def _get_base_view_distance(self) -> float:
+        """根据当前场景尺寸计算默认观察距离。"""
+        scene_radius = self._get_scene_radius(self._get_focus_center())
+        half_fov = math.radians(self.DEFAULT_FOV / 2.0)
+        return max(100.0, scene_radius / math.tan(half_fov) * 1.15)
+
+    def _get_zoom_limits(self) -> Tuple[float, float]:
+        """根据模型尺寸给缩放设置动态上限，避免相机贴到空场景后只剩黑屏。"""
+        base_distance = self._get_base_view_distance()
+        focus_radius = self._get_focus_radius()
+        half_fov = math.radians(self.DEFAULT_FOV / 2.0)
+        min_view_distance = max(10.0, focus_radius * 0.35 / math.tan(half_fov))
+        max_zoom = max(1.0, min(self.MAX_ZOOM, base_distance / min_view_distance))
+        return (self.MIN_ZOOM, max_zoom)
+
+    def _clamp_zoom_value(self, zoom: float) -> float:
+        min_zoom, max_zoom = self._get_zoom_limits()
+        return max(min_zoom, min(max_zoom, zoom))
+
+    def _clamp_zoom_in_place(self):
+        self.zoom = self._clamp_zoom_value(self.zoom)
+
+    def _get_camera_distance(self) -> float:
+        """获取应用缩放限制后的观察距离。"""
+        self._clamp_zoom_in_place()
+        return self._get_base_view_distance() / self.zoom
+
+    def _get_camera_up_vector(
+        self,
+        camera_pos: Tuple[float, float, float],
+        focus_center: Tuple[float, float, float],
+    ) -> Tuple[float, float, float]:
+        """为 gluLookAt 计算稳定的 up 向量，避免顶视/底视时和视线共线。"""
+        cam_x, cam_y, cam_z = camera_pos
+        cx, cy, cz = focus_center
+
+        forward_x = cx - cam_x
+        forward_y = cy - cam_y
+        forward_z = cz - cam_z
+        forward_len = math.sqrt(forward_x ** 2 + forward_y ** 2 + forward_z ** 2)
+        if forward_len <= 1e-9:
+            return (0.0, 1.0, 0.0)
+
+        forward_x /= forward_len
+        forward_y /= forward_len
+        forward_z /= forward_len
+
+        ref_up = (0.0, 0.0, 1.0)
+        if abs(forward_z) > 0.98:
+            ref_up = (0.0, 1.0, 0.0)
+
+        side_x = forward_y * ref_up[2] - forward_z * ref_up[1]
+        side_y = forward_z * ref_up[0] - forward_x * ref_up[2]
+        side_z = forward_x * ref_up[1] - forward_y * ref_up[0]
+        side_len = math.sqrt(side_x ** 2 + side_y ** 2 + side_z ** 2)
+        if side_len <= 1e-9:
+            return (0.0, 1.0, 0.0)
+
+        side_x /= side_len
+        side_y /= side_len
+        side_z /= side_len
+
+        up_x = side_y * forward_z - side_z * forward_y
+        up_y = side_z * forward_x - side_x * forward_z
+        up_z = side_x * forward_y - side_y * forward_x
+        return (up_x, up_y, up_z)
 
     def set_view_preset(self, preset: str):
         """设置预设视角"""
@@ -229,17 +334,9 @@ class Preview3DWidget(QOpenGLWidget):
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
 
-        # 计算观察距离和中心点
-        # 使用打印平台中心作为观察点，而不是模型中心
-        platform_center_x = self.bed_width / 2
-        platform_center_y = self.bed_depth / 2
-        platform_center_z = self.bed_height / 2
-
-        # 观察距离基于平台尺寸
-        platform_diagonal = math.sqrt(self.bed_width**2 + self.bed_depth**2 + self.bed_height**2)
-        view_distance = platform_diagonal * 1.5 / self.zoom
-
-        cx, cy, cz = platform_center_x, platform_center_y, platform_center_z
+        # 计算观察距离和焦点
+        cx, cy, cz = self._get_focus_center()
+        view_distance = self._get_camera_distance()
 
         # 设置相机位置（使用简化的视角计算）
         # 将角度转换为弧度
@@ -250,11 +347,12 @@ class Preview3DWidget(QOpenGLWidget):
         cam_x = cx + view_distance * math.cos(pitch) * math.sin(yaw)
         cam_y = cy - view_distance * math.cos(pitch) * math.cos(yaw)
         cam_z = cz + view_distance * math.sin(pitch)
+        up_x, up_y, up_z = self._get_camera_up_vector((cam_x, cam_y, cam_z), (cx, cy, cz))
 
         gluLookAt(
             cam_x, cam_y, cam_z,  # 相机位置
             cx, cy, cz,           # 观察点（模型中心）
-            0, 0, 1               # 上方向
+            up_x, up_y, up_z      # 上方向
         )
 
         # 应用平移
@@ -285,9 +383,13 @@ class Preview3DWidget(QOpenGLWidget):
             height = 1
 
         aspect = width / height
-        fov = 45.0
-        near = 1.0
-        far = 50000.0  # 增大远裁剪面以适应大坐标
+        fov = self.DEFAULT_FOV
+        view_distance = self._get_camera_distance()
+        scene_radius = self._get_scene_radius(self._get_focus_center())
+
+        # 近远裁剪面跟随相机距离，避免近距离放大时深度精度过差或整屏被裁掉。
+        near = max(0.5, view_distance * 0.02)
+        far = max(near + 100.0, view_distance + scene_radius * 2.5)
 
         gluPerspective(fov, aspect, near, far)
 
@@ -521,7 +623,7 @@ class Preview3DWidget(QOpenGLWidget):
         elif self._mouse_button == Qt.MouseButton.RightButton:
             # 右键拖拽：缩放
             self.zoom *= 1.0 + dy * 0.005
-            self.zoom = max(0.1, min(10.0, self.zoom))
+            self._clamp_zoom_in_place()
             self.update()
 
         self._last_pos = pos
@@ -535,7 +637,7 @@ class Preview3DWidget(QOpenGLWidget):
         delta = event.angleDelta().y()
         factor = 1.1 if delta > 0 else 0.9
         self.zoom *= factor
-        self.zoom = max(0.1, min(10.0, self.zoom))
+        self._clamp_zoom_in_place()
         self.update()
 
 
