@@ -4,7 +4,7 @@ Text Generator - Convert text to contours using FreeType
 from typing import List, Tuple
 import freetype
 from .types import Point, Path, Contour, PathType
-from src.utils.geometry import normalize_path
+from .contour_classifier import classify_paths_by_nesting
 import math
 
 
@@ -72,32 +72,7 @@ class TextGenerator:
             # Convert outline to paths
             paths = self._outline_to_paths(outline, x_offset)
 
-            if paths:
-                # Separate outer and holes using signed area
-                # FreeType: outer contours are typically the largest area
-                outer_path = None
-                holes = []
-
-                # Find the path with largest absolute area as outer
-                for path in paths:
-                    abs_area = abs(path.area)
-                    if outer_path is None or abs_area > abs(outer_path.area):
-                        if outer_path:
-                            holes.append(outer_path)
-                        outer_path = path
-                    else:
-                        holes.append(path)
-
-                if outer_path:
-                    contour = Contour(
-                        outer=self._normalize_text_path(outer_path, PathType.OUTER),
-                        holes=[
-                            self._normalize_text_path(hole, PathType.INNER)
-                            for hole in holes
-                        ],
-                        name=char
-                    )
-                    contours.append(contour)
+            contours.extend(self._build_contours_from_paths(paths, char))
 
             # Advance to next character (convert 26.6 format to mm)
             x_offset += face.glyph.advance.x / 64.0 * 25.4 / 72 + spacing
@@ -196,11 +171,9 @@ class TextGenerator:
         return paths
 
     @staticmethod
-    def _normalize_text_path(path: Path, path_type: PathType) -> Path:
-        normalized = Path(
-            points=[Point(point.x, point.y) for point in path.points],
-            path_type=path_type,
-            color=path.color,
-            is_closed=path.is_closed,
-        )
-        return normalize_path(normalized)
+    def _build_contours_from_paths(paths: List[Path], char: str) -> List[Contour]:
+        """Classify one glyph's raw loops into contours using nesting depth."""
+        contours = classify_paths_by_nesting(paths)
+        for contour in contours:
+            contour.name = char
+        return contours
