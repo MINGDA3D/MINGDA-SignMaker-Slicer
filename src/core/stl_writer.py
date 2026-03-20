@@ -94,6 +94,9 @@ class STLWriter:
             # 计算台阶高度处经过边缘变换后的轮廓
             from .slice_engine import SliceEngine
             temp_engine = SliceEngine()
+            top_contours = self._get_transformed_contours_at_z(
+                contours, params.shell.height, temp_engine, params
+            )
 
             panel_contours = []
             baseplate_contours = []
@@ -123,7 +126,7 @@ class STLWriter:
             # 3. 构建包边网格
             if params.edge_wrap.wrap_enabled:
                 edge_wrap_mesh = self.edge_wrap_builder.build_wrap(
-                    contours, result, params
+                    top_contours if top_contours else contours, result, params
                 )
                 if edge_wrap_mesh is not None:
                     meshes.append(edge_wrap_mesh)
@@ -131,7 +134,7 @@ class STLWriter:
             # 4. 构建勾边网格
             if params.edge_wrap.outline_enabled:
                 outline_mesh = self.edge_wrap_builder.build_outline(
-                    contours, result, params
+                    top_contours if top_contours else contours, result, params
                 )
                 if outline_mesh is not None:
                     meshes.append(outline_mesh)
@@ -169,13 +172,6 @@ class STLWriter:
 
             # 8. 构建顶面封闭网格
             if params.top_face.enabled:
-                # 计算顶部变换后的轮廓（z=total_height处）
-                top_contours = []
-                for c in contours:
-                    tc = temp_engine._apply_edge_profile(c, params.shell.height, params.shell)
-                    if tc:
-                        top_contours.append(tc)
-
                 top_face_mesh = self.top_face_builder.build(
                     top_contours if top_contours else contours, params
                 )
@@ -193,6 +189,17 @@ class STLWriter:
             combined_mesh.export(output_path, file_type='stl')
         else:
             combined_mesh.export(output_path, file_type='stl_ascii')
+
+    @staticmethod
+    def _get_transformed_contours_at_z(contours: List[Contour], z: float,
+                                       temp_engine, params: SliceParams) -> List[Contour]:
+        """在指定高度应用边缘轮廓变换，供 STL 附加特征与真实壁位对齐。"""
+        transformed_contours = []
+        for contour in contours:
+            transformed = temp_engine._apply_edge_profile(contour, z, params.shell)
+            if transformed:
+                transformed_contours.append(transformed)
+        return transformed_contours
 
 
 def write_stl(result: SliceResult, output_path: str,

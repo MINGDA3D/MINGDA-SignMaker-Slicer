@@ -154,42 +154,12 @@ class EdgeWrapMeshBuilder:
                 # 处理内孔的包边
                 for hole in contour.holes:
                     try:
-                        if wrap_direction == EdgeDirection.INNER:
-                            # 内孔内部包边：从内孔的内壁向孔内延伸
-                            hole_inner_wall_results = self.path_offset.offset(
-                                hole, self.wall_thickness
-                            )
-                            if not hole_inner_wall_results:
-                                continue
-
-                            hole_inner_ring = [(p.x, p.y) for p in hole_inner_wall_results[0].points]
-                            if hole_inner_ring[0] != hole_inner_ring[-1]:
-                                hole_inner_ring.append(hole_inner_ring[0])
-
-                            hole_wrap_results = self.path_offset.offset(
-                                CorePath(points=[Point(x, y) for x, y in hole_inner_ring[:-1]]),
-                                wrap_width
-                            )
-                            if not hole_wrap_results:
-                                continue
-
-                            hole_outer_ring = [(p.x, p.y) for p in hole_wrap_results[0].points]
-                            if hole_outer_ring[0] != hole_outer_ring[-1]:
-                                hole_outer_ring.append(hole_outer_ring[0])
-
-                        else:
-                            # 内孔外部包边：从内孔轮廓向外延伸
-                            hole_outer_ring = [(p.x, p.y) for p in hole.points]
-                            if hole_outer_ring[0] != hole_outer_ring[-1]:
-                                hole_outer_ring.append(hole_outer_ring[0])
-
-                            hole_wrap_results = self.path_offset.offset(hole, -wrap_width)
-                            if not hole_wrap_results:
-                                continue
-
-                            hole_inner_ring = [(p.x, p.y) for p in hole_wrap_results[0].points]
-                            if hole_inner_ring[0] != hole_inner_ring[-1]:
-                                hole_inner_ring.append(hole_inner_ring[0])
+                        hole_rings = self._build_hole_wrap_rings(
+                            hole, wrap_width, wrap_direction
+                        )
+                        if not hole_rings:
+                            continue
+                        hole_outer_ring, hole_inner_ring = hole_rings
 
                         hole_wrap_polygon = ShapelyPolygon(hole_outer_ring, [hole_inner_ring])
 
@@ -303,14 +273,9 @@ class EdgeWrapMeshBuilder:
 
                 # 处理内孔的勾边
                 for hole in contour.holes:
-                    if outline_direction == EdgeDirection.INNER:
-                        # 内孔内部勾边：从内孔内壁向孔内延伸
-                        hole_offset_bottom = self.wall_thickness + outline_offset + outline_width
-                        hole_offset_top = self.wall_thickness + outline_offset
-                    else:
-                        # 内孔外部勾边：从内孔外壁向字壳内部延伸
-                        hole_offset_bottom = -(outline_offset + outline_width)
-                        hole_offset_top = -outline_offset
+                    hole_offset_bottom, hole_offset_top = self._get_hole_outline_offsets(
+                        outline_width, outline_offset, outline_direction
+                    )
 
                     hole_outline_mesh = self._build_sloped_ring(
                         hole,
@@ -451,3 +416,47 @@ class EdgeWrapMeshBuilder:
         except Exception as e:
             print(f"警告：创建实心斜坡楔形失败: {e}")
             return None
+
+    def _build_hole_wrap_rings(self, hole: CorePath, wrap_width: float,
+                               wrap_direction: EdgeDirection):
+        """计算内孔包边的外环/内环坐标。内孔方向语义与外轮廓相反。"""
+        if wrap_direction == EdgeDirection.INNER:
+            inner_ring = self._closed_coords(hole)
+            wrap_results = self.path_offset.offset(hole, wrap_width)
+            if not wrap_results:
+                return None
+            outer_ring = self._closed_coords(wrap_results[0])
+            return outer_ring, inner_ring
+
+        hole_wall_results = self.path_offset.offset(hole, -self.wall_thickness)
+        if not hole_wall_results:
+            return None
+
+        hole_wall = hole_wall_results[0]
+        outer_ring = self._closed_coords(hole_wall)
+        wrap_results = self.path_offset.offset(hole_wall, -wrap_width)
+        if not wrap_results:
+            return None
+        inner_ring = self._closed_coords(wrap_results[0])
+        return outer_ring, inner_ring
+
+    def _get_hole_outline_offsets(self, outline_width: float,
+                                  outline_offset: float,
+                                  outline_direction: EdgeDirection) -> tuple[float, float]:
+        """计算内孔勾边底部/顶部偏移。内孔方向语义与外轮廓相反。"""
+        if outline_direction == EdgeDirection.INNER:
+            return (
+                outline_offset + outline_width,
+                outline_offset,
+            )
+        return (
+            -(self.wall_thickness + outline_offset + outline_width),
+            -(self.wall_thickness + outline_offset),
+        )
+
+    @staticmethod
+    def _closed_coords(path: CorePath) -> List[tuple[float, float]]:
+        coords = [(p.x, p.y) for p in path.points]
+        if coords and coords[0] != coords[-1]:
+            coords.append(coords[0])
+        return coords

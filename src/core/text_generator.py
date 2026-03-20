@@ -4,6 +4,7 @@ Text Generator - Convert text to contours using FreeType
 from typing import List, Tuple
 import freetype
 from .types import Point, Path, Contour, PathType
+from src.utils.geometry import normalize_path
 import math
 
 
@@ -89,8 +90,11 @@ class TextGenerator:
 
                 if outer_path:
                     contour = Contour(
-                        outer=outer_path,
-                        holes=holes,
+                        outer=self._normalize_text_path(outer_path, PathType.OUTER),
+                        holes=[
+                            self._normalize_text_path(hole, PathType.INNER)
+                            for hole in holes
+                        ],
                         name=char
                     )
                     contours.append(contour)
@@ -190,3 +194,13 @@ class TextGenerator:
             start = end
 
         return paths
+
+    @staticmethod
+    def _normalize_text_path(path: Path, path_type: PathType) -> Path:
+        normalized = Path(
+            points=[Point(point.x, point.y) for point in path.points],
+            path_type=path_type,
+            color=path.color,
+            is_closed=path.is_closed,
+        )
+        return normalize_path(normalized)
