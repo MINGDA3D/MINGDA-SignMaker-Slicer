@@ -19,7 +19,10 @@ from PySide6.QtGui import (
     QWheelEvent, QMouseEvent, QKeyEvent, QTransform, QKeySequence
 )
 
+from src.core.contour_classifier import classify_paths_by_nesting
+from src.core.path_offset import PathOffset
 from src.core.types import Point, Path, Contour, PathType
+from src.utils.geometry import normalize_path
 from .theme import COLORS
 
 
@@ -67,6 +70,7 @@ class Canvas2D(QWidget):
         self.contours: List[Contour] = []
         self.selected_indices: List[int] = []
         self.slice_result = None
+        self._path_offset = PathOffset()
 
         # 交互状态
         self.current_tool = "select"  # 当前工具: select, move, rotate, scale
@@ -435,23 +439,230 @@ class Canvas2D(QWidget):
 
     def boolean_intersection(self):
         """布尔交集"""
-        # TODO: 实现布尔交集
-        pass
+        result = self.build_boolean_intersection_result()
+        if result is None:
+            return
+        selected, result_contours = result
+        self._replace_selected_contours(selected, result_contours)
 
     def boolean_difference(self):
         """布尔差集"""
-        # TODO: 实现布尔差集
-        pass
+        result = self.build_boolean_difference_result()
+        if result is None:
+            return
+        selected, result_contours = result
+        self._replace_selected_contours(selected, result_contours)
+
+    def build_boolean_intersection_result(
+        self,
+    ) -> Optional[Tuple[List[int], List[Contour]]]:
+        """计算交集结果，但不直接修改当前轮廓。"""
+        selected = self._get_valid_selected_indices()
+        if len(selected) < 2:
+            return None
+
+        result_paths = self._contour_to_boolean_paths(self.contours[selected[0]])
+        for idx in selected[1:]:
+            clip_paths = self._contour_to_boolean_paths(self.contours[idx])
+            result_paths = self._path_offset.boolean_intersection_multi(
+                result_paths,
+                clip_paths,
+            )
+            if not result_paths:
+                break
+
+        result_contours = self._boolean_paths_to_contours(
+            result_paths,
+            self.contours[selected[0]],
+        )
+        return selected, result_contours
+
+    def build_boolean_difference_result(
+        self,
+    ) -> Optional[Tuple[List[int], List[Contour]]]:
+        """计算差集结果，但不直接修改当前轮廓。"""
+        selected = self._get_valid_selected_indices()
+        if len(selected) < 2:
+            return None
+
+        subject_paths = self._contour_to_boolean_paths(self.contours[selected[0]])
+        clip_paths: List[Path] = []
+        for idx in selected[1:]:
+            clip_paths.extend(self._contour_to_boolean_paths(self.contours[idx]))
+
+        result_paths = self._path_offset.boolean_difference_multi(
+            subject_paths,
+            clip_paths,
+        )
+        result_contours = self._boolean_paths_to_contours(
+            result_paths,
+            self.contours[selected[0]],
+        )
+        return selected, result_contours
 
     def group_selected(self):
         """组合选中的轮廓"""
-        # TODO: 实现组合功能
-        pass
+        selected = self.get_group_target_indices()
+        if len(selected) < 2:
+            return
+
+        group_id = self._generate_group_id()
+        for idx in selected:
+            self.contours[idx].group_id = group_id
+
+        self.selected_indices = selected
+        self.contours_modified.emit()
+        self.update()
 
     def ungroup_selected(self):
         """打散选中的轮廓"""
-        # TODO: 实现打散功能
-        pass
+        selected = self.get_ungroup_target_indices()
+        if not selected:
+            return
+
+        for idx in selected:
+            self.contours[idx].group_id = ""
+
+        self.selected_indices = selected
+        self.contours_modified.emit()
+        self.update()
+
+    def _get_valid_selected_indices(self) -> List[int]:
+        """返回仍然存在的选中索引，保持当前选择顺序。"""
+        return [
+            idx for idx in self.selected_indices
+            if 0 <= idx < len(self.contours)
+        ]
+
+    def get_group_target_indices(self) -> List[int]:
+        """返回当前选中对象及其所在组的完整索引集合。"""
+        return self.expand_indices_to_groups(self._get_valid_selected_indices())
+
+    def get_ungroup_target_indices(self) -> List[int]:
+        """返回当前选中且属于某个组的完整索引集合。"""
+        expanded = self.expand_indices_to_groups(self._get_valid_selected_indices())
+        return [
+            idx for idx in expanded
+            if self._get_group_id(self.contours[idx])
+        ]
+
+    def expand_indices_to_groups(self, indices: List[int]) -> List[int]:
+        """将索引扩展为完整的组选中集合。"""
+        expanded: List[int] = []
+        seen = set()
+
+        for idx in indices:
+            if not (0 <= idx < len(self.contours)):
+                continue
+
+            related = self._get_group_member_indices_for_index(idx)
+            for related_idx in related:
+                if related_idx not in seen:
+                    seen.add(related_idx)
+                    expanded.append(related_idx)
+
+        return expanded
+
+    def _contour_to_boolean_paths(self, contour: Contour) -> List[Path]:
+        """将轮廓转换为布尔运算用的闭合 loop 列表。"""
+        paths = [
+            normalize_path(self._clone_path(contour.outer, PathType.OUTER))
+        ]
+        for hole in contour.holes:
+            paths.append(normalize_path(self._clone_path(hole, PathType.INNER)))
+        return paths
+
+    def _boolean_paths_to_contours(
+        self,
+        paths: List[Path],
+        template: Optional[Contour] = None,
+    ) -> List[Contour]:
+        """将布尔运算返回的 loop 重建为轮廓。"""
+        contours = classify_paths_by_nesting(paths)
+        if template is None:
+            return contours
+
+        if len(contours) == 1:
+            contours[0].name = template.name
+            contours[0].start_point_index = template.start_point_index
+            contours[0].print_order = template.print_order
+        elif template.name:
+            for i, contour in enumerate(contours, start=1):
+                contour.name = f"{template.name}-{i}"
+
+        return contours
+
+    def _replace_selected_contours(
+        self,
+        selected: List[int],
+        new_contours: List[Contour],
+    ):
+        """用布尔运算结果替换原选中轮廓。"""
+        if not selected:
+            return
+
+        selected_set = set(selected)
+        insert_at = min(selected)
+        updated = [
+            contour for i, contour in enumerate(self.contours)
+            if i not in selected_set
+        ]
+        updated[insert_at:insert_at] = new_contours
+        self.contours[:] = updated
+
+        if new_contours:
+            self.selected_indices = list(range(insert_at, insert_at + len(new_contours)))
+            if len(self.selected_indices) == 1:
+                self.contour_selected.emit(self.selected_indices[0])
+            else:
+                self.selection_cleared.emit()
+        else:
+            self.selected_indices = []
+            self.selection_cleared.emit()
+
+        self.contours_modified.emit()
+        self.update()
+
+    def _clone_path(self, path: Path, path_type: PathType) -> Path:
+        """复制路径并设置布尔运算所需的类型。"""
+        return Path(
+            points=[Point(p.x, p.y) for p in path.points],
+            path_type=path_type,
+            color=path.color,
+            is_closed=path.is_closed,
+        )
+
+    def _get_group_id(self, contour: Contour) -> str:
+        """获取轮廓的 group id。"""
+        return getattr(contour, "group_id", "")
+
+    def _get_group_member_indices(self, group_id: str) -> List[int]:
+        """获取组内所有成员索引。"""
+        if not group_id:
+            return []
+
+        return [
+            i for i, contour in enumerate(self.contours)
+            if self._get_group_id(contour) == group_id
+        ]
+
+    def _get_group_member_indices_for_index(self, index: int) -> List[int]:
+        """获取某个轮廓对应的完整组选中集合。"""
+        if not (0 <= index < len(self.contours)):
+            return []
+
+        group_id = self._get_group_id(self.contours[index])
+        if not group_id:
+            return [index]
+
+        members = self._get_group_member_indices(group_id)
+        return members if members else [index]
+
+    def _generate_group_id(self) -> str:
+        """生成新的组 id。"""
+        import uuid
+
+        return uuid.uuid4().hex
 
     # =========================================================================
     # 绘制
@@ -1363,16 +1574,24 @@ class Canvas2D(QWidget):
             # 选择面积最小的轮廓（最内层的）
             candidates.sort(key=lambda x: x[1])
             selected_idx = candidates[0][0]
+            target_indices = self._get_group_member_indices_for_index(selected_idx)
 
             if Qt.KeyboardModifier.ControlModifier in QApplication.keyboardModifiers():
                 # Ctrl+点击：切换选择
-                if selected_idx in self.selected_indices:
-                    self.selected_indices.remove(selected_idx)
+                if all(idx in self.selected_indices for idx in target_indices):
+                    self.selected_indices = [
+                        idx for idx in self.selected_indices
+                        if idx not in target_indices
+                    ]
                 else:
-                    self.selected_indices.append(selected_idx)
+                    existing = set(self.selected_indices)
+                    self.selected_indices.extend(
+                        idx for idx in target_indices
+                        if idx not in existing
+                    )
             else:
                 # 普通点击：单选
-                self.selected_indices = [selected_idx]
+                self.selected_indices = list(target_indices)
 
             self.contour_selected.emit(selected_idx)
             self.update()

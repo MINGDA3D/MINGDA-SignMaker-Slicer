@@ -14,6 +14,7 @@ from .undo_manager import (
     UndoManager, Command, CompositeCommand,
     MoveCommand, RotateCommand, ScaleCommand, MirrorCommand,
     DeleteCommand, AddContoursCommand, ReplaceContoursCommand,
+    ReplaceSelectedContoursCommand,
     TransformCommand
 )
 
@@ -23,5 +24,6 @@ __all__ = [
     'UndoManager', 'Command', 'CompositeCommand',
     'MoveCommand', 'RotateCommand', 'ScaleCommand', 'MirrorCommand',
     'DeleteCommand', 'AddContoursCommand', 'ReplaceContoursCommand',
+    'ReplaceSelectedContoursCommand',
     'TransformCommand'
 ]

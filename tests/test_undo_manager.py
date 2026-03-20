@@ -10,6 +10,7 @@ from src.business.undo_manager import (
     UndoManager, Command, CompositeCommand,
     MoveCommand, RotateCommand, ScaleCommand, MirrorCommand,
     DeleteCommand, AddContoursCommand, ReplaceContoursCommand,
+    ReplaceSelectedContoursCommand,
     TransformCommand
 )
 
@@ -335,6 +336,65 @@ class TestReplaceContoursCommand:
 
         assert len(contours) == 1
         assert abs(contours[0].outer.points[0].x - original_x) < 0.001
+
+
+class TestReplaceSelectedContoursCommand:
+    """替换选中轮廓命令测试"""
+
+    def test_replace_selected_and_undo(self):
+        """测试局部替换轮廓并支持撤销"""
+        contours = [
+            create_test_contour(0, 0),
+            create_test_contour(200, 0),
+            create_test_contour(400, 0),
+        ]
+        original_middle = contours[1]
+        new_contours = [create_test_contour(250, 0)]
+        selections = []
+
+        cmd = ReplaceSelectedContoursCommand(
+            contours,
+            [1],
+            new_contours,
+            selection_callback=lambda indices: selections.append(list(indices)),
+        )
+
+        cmd.execute()
+        assert len(contours) == 3
+        assert contours[1].outer.points[0].x == 250
+        assert selections[-1] == [1]
+
+        cmd.undo()
+        assert len(contours) == 3
+        assert contours[1] is original_middle
+        assert contours[1].outer.points[0].x == 200
+        assert selections[-1] == [1]
+
+    def test_replace_multiple_with_empty_result(self):
+        """测试用空结果替换多个轮廓"""
+        contours = [
+            create_test_contour(0, 0),
+            create_test_contour(200, 0),
+            create_test_contour(400, 0),
+        ]
+        selections = []
+
+        cmd = ReplaceSelectedContoursCommand(
+            contours,
+            [0, 1],
+            [],
+            selection_callback=lambda indices: selections.append(list(indices)),
+        )
+
+        cmd.execute()
+        assert len(contours) == 1
+        assert contours[0].outer.points[0].x == 400
+        assert selections[-1] == []
+
+        cmd.undo()
+        assert len(contours) == 3
+        assert [c.outer.points[0].x for c in contours] == [0, 200, 400]
+        assert selections[-1] == [0, 1]
 
 
 if __name__ == "__main__":

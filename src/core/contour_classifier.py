@@ -111,6 +111,7 @@ def repair_contours(contours: List[Contour]) -> List[Contour]:
             rebuilt_contour.connected_frames = list(contour.connected_frames)
             rebuilt_contour.patterns = list(contour.patterns)
             rebuilt_contour.name = contour.name
+            rebuilt_contour.group_id = contour.group_id
             rebuilt_contour.start_point_index = contour.start_point_index
             rebuilt_contour.print_order = contour.print_order
             repaired.append(rebuilt_contour)
@@ -216,6 +217,7 @@ def _normalize_existing_contour(contour: Contour) -> Contour:
         connected_frames=list(contour.connected_frames),
         patterns=list(contour.patterns),
         name=contour.name,
+        group_id=contour.group_id,
         start_point_index=contour.start_point_index,
         print_order=contour.print_order,
     )

@@ -4,7 +4,9 @@ MINGDA SignMaker - 设置管理器单元测试
 
 import json
 import os
-import tempfile
+import shutil
+import builtins
+import uuid
 import pytest
 from pathlib import Path
 
@@ -154,8 +156,14 @@ class TestSettingsManagerWithQt:
     @pytest.fixture
     def temp_config_dir(self):
         """创建临时配置目录"""
-        with tempfile.TemporaryDirectory() as tmpdir:
-            yield tmpdir
+        base_dir = Path.cwd() / ".tmp_pytest_settings"
+        base_dir.mkdir(parents=True, exist_ok=True)
+        tmpdir = base_dir / f"case_{uuid.uuid4().hex}"
+        tmpdir.mkdir(parents=True, exist_ok=True)
+        try:
+            yield str(tmpdir)
+        finally:
+            shutil.rmtree(tmpdir, ignore_errors=True)
 
     def test_init_settings_manager(self, qapp, temp_config_dir):
         """测试初始化设置管理器"""
@@ -212,6 +220,41 @@ class TestSettingsManagerWithQt:
         with open(params_file, 'r', encoding='utf-8') as f:
             data = json.load(f)
         assert data["params"]["shell"]["height"] == 45.0
+
+    def test_set_last_params_returns_false_on_write_error(self, qapp, temp_config_dir, monkeypatch):
+        """测试保存参数失败时返回 False，而不是抛异常"""
+        from src.business.settings_manager import SettingsManager
+        sm = SettingsManager(temp_config_dir)
+        params = SliceParams()
+
+        real_open = builtins.open
+
+        def failing_open(path, *args, **kwargs):
+            if Path(path) == Path(temp_config_dir) / "slice_params.json":
+                raise PermissionError("denied")
+            return real_open(path, *args, **kwargs)
+
+        monkeypatch.setattr(builtins, "open", failing_open)
+
+        assert sm.set_last_params(params) is False
+
+    def test_get_last_params_returns_none_on_read_error(self, qapp, temp_config_dir, monkeypatch):
+        """测试读取损坏或无权限的参数文件时返回 None"""
+        from src.business.settings_manager import SettingsManager
+        sm = SettingsManager(temp_config_dir)
+        params_file = Path(temp_config_dir) / "slice_params.json"
+        params_file.write_text("{}", encoding="utf-8")
+
+        real_open = builtins.open
+
+        def failing_open(path, *args, **kwargs):
+            if Path(path) == params_file:
+                raise PermissionError("denied")
+            return real_open(path, *args, **kwargs)
+
+        monkeypatch.setattr(builtins, "open", failing_open)
+
+        assert sm.get_last_params() is None
 
     def test_language_uses_qsettings(self, qapp, temp_config_dir):
         """测试语言设置使用 QSettings"""

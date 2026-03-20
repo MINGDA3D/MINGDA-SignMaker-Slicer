@@ -411,6 +411,7 @@ class Contour:
     connected_frames: List[Path] = field(default_factory=list)  # 连襟框
     patterns: List[Path] = field(default_factory=list)          # 面板花纹
     name: str = ""
+    group_id: str = ""
     # 用户设置的属性
     start_point_index: int = 0  # 起始点索引
     print_order: int = 0        # 打印顺序

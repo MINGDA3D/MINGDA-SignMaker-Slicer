@@ -65,11 +65,11 @@ class SettingsManager:
             params_data = data.get("params")
             if params_data:
                 return deserialize_params(params_data)
-        except Exception as e:
-            print(f"[SettingsManager] 加载参数失败: {e}")
+        except Exception:
+            return None
         return None
 
-    def set_last_params(self, params: SliceParams):
+    def set_last_params(self, params: SliceParams) -> bool:
         """保存最后使用的切片参数"""
         try:
             self._config_dir.mkdir(parents=True, exist_ok=True)
@@ -82,13 +82,17 @@ class SettingsManager:
 
             with open(self._params_file, 'w', encoding='utf-8') as f:
                 json.dump(data, f, ensure_ascii=False, indent=2)
-        except Exception as e:
-            print(f"[SettingsManager] 保存参数失败: {e}")
+            return True
+        except Exception:
+            return False
 
     def clear_last_params(self):
         """清除保存的切片参数"""
-        if self._params_file.exists():
-            self._params_file.unlink()
+        try:
+            if self._params_file.exists():
+                self._params_file.unlink()
+        except Exception:
+            pass
 
     # =========================================================================
     # 语言设置（使用 QSettings）

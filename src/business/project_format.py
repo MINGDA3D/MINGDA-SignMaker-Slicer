@@ -36,7 +36,7 @@ CONTOURS_FILE = "contours.bin"
 
 # 二进制格式
 BINARY_MAGIC = b'SMPC'  # SignMaker Project Contours
-BINARY_VERSION = 1
+BINARY_VERSION = 2
 
 
 class ProjectFormatError(Exception):
@@ -139,6 +139,7 @@ def _serialize_contours(contours: List[Contour]) -> bytes:
         Header: magic(4) + version(4) + count(4)
         Each Contour:
             name_len(2) + name(var) + start_idx(4) + print_order(4)
+            group_len(2) + group(var)
             outer_path + hole_count(4) + holes[]
             cf_count(4) + connected_frames[]
             pattern_count(4) + patterns[]
@@ -160,6 +161,9 @@ def _serialize_contours(contours: List[Contour]) -> bytes:
 
         # Properties
         buf.write(struct.pack('<ii', contour.start_point_index, contour.print_order))
+        group_bytes = contour.group_id.encode('utf-8')
+        buf.write(struct.pack('<H', len(group_bytes)))
+        buf.write(group_bytes)
 
         # Outer path
         _write_path(buf, contour.outer)
@@ -224,6 +228,10 @@ def _deserialize_contours(data: bytes) -> List[Contour]:
 
         # Properties
         start_idx, print_order = struct.unpack('<ii', buf.read(8))
+        group_id = ""
+        if version >= 2:
+            group_len = struct.unpack('<H', buf.read(2))[0]
+            group_id = buf.read(group_len).decode('utf-8')
 
         # Outer
         outer = _read_path(buf)
@@ -243,7 +251,8 @@ def _deserialize_contours(data: bytes) -> List[Contour]:
         contours.append(Contour(
             outer=outer, holes=holes,
             connected_frames=connected_frames, patterns=patterns,
-            name=name, start_point_index=start_idx, print_order=print_order
+            name=name, group_id=group_id,
+            start_point_index=start_idx, print_order=print_order
         ))
 
     return contours

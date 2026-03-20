@@ -48,3 +48,9 @@ nul
 # User config (slice parameters)
 config/slice_params.json
 Debug
+.tmp
+.tmp_o_matrix
+.tmp_o_matrix_combo
+.tmp_pytest_stl_writer
+.tmp_pytest_text_generator
+

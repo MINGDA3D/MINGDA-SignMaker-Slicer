@@ -47,6 +47,7 @@ from src.core.stl_writer import STLWriter
 from src.business.undo_manager import (
     UndoManager, Command, MoveCommand, RotateCommand, ScaleCommand,
     MirrorCommand, DeleteCommand, AddContoursCommand, ReplaceContoursCommand,
+    ReplaceSelectedContoursCommand,
     TransformCommand
 )
 from src.business.settings_manager import (
@@ -840,6 +841,20 @@ class MainWindow(QMainWindow):
         """当选择被清除时隐藏面板"""
         self._current_selected_id = None
         self._close_transform_panel()
+
+    def _apply_contour_selection(self, indices: List[int]):
+        """同步画布和项目面板的选中状态。"""
+        valid_indices = self.canvas.expand_indices_to_groups(indices)
+        self.canvas.selected_indices = valid_indices
+
+        if len(valid_indices) == 1:
+            self.project_panel.set_selected(valid_indices[0])
+            self.canvas.contour_selected.emit(valid_indices[0])
+        else:
+            self.project_panel.clear_selection()
+            self.canvas.selection_cleared.emit()
+
+        self.canvas.update()
 
     # =========================================================================
     # 事件处理
@@ -1670,19 +1685,113 @@ class MainWindow(QMainWindow):
 
     def _on_intersection(self):
         """交集"""
-        self.canvas.boolean_intersection()
+        if len(self.canvas.selected_indices) < 2:
+            QMessageBox.information(
+                self,
+                self.tr("Info"),
+                self.tr("Please select at least two contours"),
+            )
+            return
+
+        result = self.canvas.build_boolean_intersection_result()
+        if result is None:
+            return
+
+        selected, result_contours = result
+        insert_at = min(selected)
+        new_selection = list(range(insert_at, insert_at + len(result_contours)))
+        cmd = ReplaceSelectedContoursCommand(
+            self.contours,
+            selected,
+            result_contours,
+            description=self.tr("Intersection"),
+            selection_callback=self._apply_contour_selection,
+            old_selection=selected,
+            new_selection=new_selection,
+        )
+        self.undo_manager.push(cmd)
+        self.project_panel.update_contours(self.contours)
 
     def _on_difference(self):
         """差集"""
-        self.canvas.boolean_difference()
+        if len(self.canvas.selected_indices) < 2:
+            QMessageBox.information(
+                self,
+                self.tr("Info"),
+                self.tr("Please select at least two contours"),
+            )
+            return
+
+        result = self.canvas.build_boolean_difference_result()
+        if result is None:
+            return
+
+        selected, result_contours = result
+        insert_at = min(selected)
+        new_selection = list(range(insert_at, insert_at + len(result_contours)))
+        cmd = ReplaceSelectedContoursCommand(
+            self.contours,
+            selected,
+            result_contours,
+            description=self.tr("Difference"),
+            selection_callback=self._apply_contour_selection,
+            old_selection=selected,
+            new_selection=new_selection,
+        )
+        self.undo_manager.push(cmd)
+        self.project_panel.update_contours(self.contours)
 
     def _on_group(self):
         """组合"""
-        self.canvas.group_selected()
+        selected = self.canvas.get_group_target_indices()
+        if len(selected) < 2:
+            QMessageBox.information(
+                self,
+                self.tr("Info"),
+                self.tr("Please select at least two contours"),
+            )
+            return
+
+        existing_group_ids = {
+            self.contours[idx].group_id
+            for idx in selected
+            if self.contours[idx].group_id
+        }
+        if len(existing_group_ids) == 1 and len(selected) == len(self.canvas._get_group_member_indices(next(iter(existing_group_ids)))):
+            self._update_status(self.tr("Already grouped"))
+            return
+
+        cmd = TransformCommand(self.contours, selected, self.tr("Group"))
+        group_id = self.canvas._generate_group_id()
+        for idx in selected:
+            self.contours[idx].group_id = group_id
+        cmd.capture_after()
+        self.undo_manager.push(cmd, execute=False)
+        self.canvas.selected_indices = selected
+        self.canvas.contour_selected.emit(selected[0])
+        self.canvas.update()
+        self.project_panel.update_contours(self.contours)
 
     def _on_ungroup(self):
         """打散"""
-        self.canvas.ungroup_selected()
+        selected = self.canvas.get_ungroup_target_indices()
+        if not selected:
+            QMessageBox.information(
+                self,
+                self.tr("Info"),
+                self.tr("Please select a grouped contour first"),
+            )
+            return
+
+        cmd = TransformCommand(self.contours, selected, self.tr("Ungroup"))
+        for idx in selected:
+            self.contours[idx].group_id = ""
+        cmd.capture_after()
+        self.undo_manager.push(cmd, execute=False)
+        self.canvas.selected_indices = selected
+        self.canvas.contour_selected.emit(selected[0])
+        self.canvas.update()
+        self.project_panel.update_contours(self.contours)
 
     def _on_text(self):
         """文字生成"""
@@ -1769,9 +1878,10 @@ class MainWindow(QMainWindow):
         if self.settings_manager and hasattr(self, 'param_panel') and self.param_panel:
             try:
                 current_params = self.param_panel.get_params()
-                self.settings_manager.set_last_params(current_params)
-            except Exception as e:
-                print(f"[MainWindow] 保存参数失败: {e}")
+                return self.settings_manager.set_last_params(current_params)
+            except Exception:
+                return False
+        return False
 
     def _save_window_state(self):
         """保存窗口状态（使用 QSettings）"""

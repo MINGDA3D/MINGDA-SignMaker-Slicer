@@ -620,6 +620,74 @@ class ReplaceContoursCommand(Command):
         return True
 
 
+class ReplaceSelectedContoursCommand(Command):
+    """替换选中轮廓命令（用于布尔运算等局部编辑）"""
+
+    def __init__(
+        self,
+        contours: List['Contour'],
+        indices: List[int],
+        new_contours: List['Contour'],
+        description: str = "替换轮廓",
+        selection_callback: Optional[Callable[[List[int]], None]] = None,
+        old_selection: Optional[List[int]] = None,
+        new_selection: Optional[List[int]] = None,
+    ):
+        super().__init__(description)
+        self.contours = contours
+        self.indices = sorted(
+            idx for idx in set(indices)
+            if 0 <= idx < len(contours)
+        )
+        self.insert_at = self.indices[0] if self.indices else len(contours)
+        self._old_contours = [contours[idx] for idx in self.indices]
+        self._new_contours = [deepcopy(contour) for contour in new_contours]
+        self._selection_callback = selection_callback
+        self._old_selection = list(old_selection or self.indices)
+        if new_selection is None:
+            self._new_selection = list(
+                range(self.insert_at, self.insert_at + len(self._new_contours))
+            )
+        else:
+            self._new_selection = list(new_selection)
+
+    def execute(self) -> bool:
+        self._remove_old_contours()
+        self._insert_new_contours()
+        self._apply_selection(self._new_selection)
+        self._is_executed = True
+        return True
+
+    def undo(self) -> bool:
+        self._remove_new_contours()
+        self._restore_old_contours()
+        self._apply_selection(self._old_selection)
+        self._is_executed = False
+        return True
+
+    def _remove_old_contours(self):
+        for idx in reversed(self.indices):
+            if 0 <= idx < len(self.contours):
+                del self.contours[idx]
+
+    def _insert_new_contours(self):
+        for offset, contour in enumerate(self._new_contours):
+            self.contours.insert(self.insert_at + offset, contour)
+
+    def _remove_new_contours(self):
+        for _ in range(len(self._new_contours)):
+            if self.insert_at < len(self.contours):
+                del self.contours[self.insert_at]
+
+    def _restore_old_contours(self):
+        for idx, contour in zip(self.indices, self._old_contours):
+            self.contours.insert(idx, contour)
+
+    def _apply_selection(self, indices: List[int]):
+        if self._selection_callback is not None:
+            self._selection_callback(indices)
+
+
 class TransformCommand(Command):
     """通用变换命令（保存快照方式）"""
 

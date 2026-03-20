@@ -63,6 +63,7 @@ class TestProjectFormat:
                 )
             ],
             name="测试轮廓",
+            group_id="group-1",
             start_point_index=2,
             print_order=5
         )
@@ -80,6 +81,7 @@ class TestProjectFormat:
             assert len(loaded.contours) == 1
             c = loaded.contours[0]
             assert c.name == "测试轮廓"
+            assert c.group_id == "group-1"
             assert c.start_point_index == 2
             assert c.print_order == 5
             assert len(c.outer.points) == 4
