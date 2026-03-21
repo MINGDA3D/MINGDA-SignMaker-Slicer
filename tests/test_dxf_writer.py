@@ -52,21 +52,35 @@ def assert_bounds(path, expected_bounds, tolerance=1e-3):
         )
 
 
-def read_lwpolyline_bounds(file_path):
-    """Read all LWPolyline bounds from a DXF file."""
+def read_polyline_bounds(file_path):
+    """Read all exported polyline bounds from a DXF file."""
     doc = ezdxf.readfile(file_path)
     msp = doc.modelspace()
     bounds = []
 
     for entity in msp:
-        if entity.dxftype() != "LWPOLYLINE":
+        if entity.dxftype() == "LWPOLYLINE":
+            points = [(point[0], point[1]) for point in entity.get_points()]
+        elif entity.dxftype() == "POLYLINE":
+            points = [
+                (vertex.dxf.location.x, vertex.dxf.location.y)
+                for vertex in entity.vertices
+            ]
+        else:
             continue
-        points = [(point[0], point[1]) for point in entity.get_points()]
         xs = [p[0] for p in points]
         ys = [p[1] for p in points]
         bounds.append((min(xs), min(ys), max(xs), max(ys)))
 
     return sorted(bounds)
+
+
+def read_export_metadata(file_path):
+    """Read DXF version, layers, and entity types from a DXF file."""
+    doc = ezdxf.readfile(file_path)
+    layers = sorted(layer.dxf.name for layer in doc.layers)
+    entities = [entity.dxftype() for entity in doc.modelspace()]
+    return doc.dxfversion, layers, entities
 
 
 def test_baseplate_contour_uses_inner_wall_and_default_extra_shrink():
@@ -90,8 +104,12 @@ def test_baseplate_contour_uses_inner_wall_and_default_extra_shrink():
     try:
         success = export_baseplate_dxf([contour], output_path, params)
         assert success is True
-        bounds = read_lwpolyline_bounds(output_path)
+        bounds = read_polyline_bounds(output_path)
         assert bounds == [(2.2, 2.2, 97.8, 97.8), (32.8, 32.8, 67.2, 67.2)]
+        version, layers, entities = read_export_metadata(output_path)
+        assert version == "AC1009"
+        assert "BASEPLATE" in layers
+        assert entities == ["POLYLINE", "POLYLINE"]
     finally:
         if os.path.exists(output_path):
             os.unlink(output_path)
@@ -119,8 +137,12 @@ def test_panel_contour_uses_top_inner_wall_and_default_extra_shrink():
     try:
         success = export_panel_dxf([contour], output_path, params)
         assert success is True
-        bounds = read_lwpolyline_bounds(output_path)
+        bounds = read_polyline_bounds(output_path)
         assert bounds == [(2.2, 2.2, 97.8, 97.8), (32.8, 32.8, 67.2, 67.2)]
+        version, layers, entities = read_export_metadata(output_path)
+        assert version == "AC1009"
+        assert "PANEL" in layers
+        assert entities == ["POLYLINE", "POLYLINE"]
     finally:
         if os.path.exists(output_path):
             os.unlink(output_path)
@@ -184,7 +206,7 @@ def test_export_uses_independent_clearance_and_kerf_settings():
     try:
         success = export_baseplate_dxf([contour], output_path, params)
         assert success is True
-        bounds = read_lwpolyline_bounds(output_path)
+        bounds = read_polyline_bounds(output_path)
         assert bounds == [(1.8, 1.8, 98.2, 98.2), (32.2, 32.2, 67.8, 67.8)]
     finally:
         if os.path.exists(output_path):

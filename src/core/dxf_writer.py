@@ -22,6 +22,9 @@ from .path_offset import PathOffset
 class DXFWriter:
     """DXF文件写入器"""
 
+    DXF_VERSION = "R12"
+    ASCII_ENCODING = "cp1252"
+
     def __init__(self):
         """初始化写入器"""
         self.path_offset = PathOffset()
@@ -59,7 +62,7 @@ class DXFWriter:
         )
 
         # 写入DXF
-        return self._write_dxf(baseplate_contours, file_path, "底板")
+        return self._write_dxf(baseplate_contours, file_path, "BASEPLATE")
 
     def export_panel(
         self,
@@ -94,7 +97,7 @@ class DXFWriter:
         )
 
         # 写入DXF
-        return self._write_dxf(panel_contours, file_path, "面板")
+        return self._write_dxf(panel_contours, file_path, "PANEL")
 
     def _get_baseplate_contours(
         self,
@@ -375,7 +378,7 @@ class DXFWriter:
         """
         try:
             # 创建新的DXF文档
-            doc = ezdxf.new(dxfversion='R2010')
+            doc = ezdxf.new(dxfversion=self.DXF_VERSION)
             msp = doc.modelspace()
 
             # 创建图层
@@ -391,7 +394,7 @@ class DXFWriter:
                     self._write_polyline(msp, hole, layer_name)
 
             # 保存文件
-            doc.saveas(file_path)
+            doc.saveas(file_path, encoding=self.ASCII_ENCODING, fmt="asc")
             return True
 
         except Exception as e:
@@ -419,7 +422,7 @@ class DXFWriter:
         points = [(p.x, p.y) for p in path.points]
 
         # 创建多段线
-        msp.add_lwpolyline(
+        msp.add_polyline2d(
             points,
             close=path.is_closed,
             dxfattribs={'layer': layer_name}
