@@ -1240,17 +1240,17 @@ class MainWindow(QMainWindow):
             try:
                 # 获取当前参数
                 params = self.param_panel.get_params()
-                # 默认对齐补偿 -0.4mm
-                alignment_compensation = -0.4
                 success = export_baseplate_dxf(
-                    self.contours, file_path, params, alignment_compensation
+                    self.contours, file_path, params
                 )
                 if success:
                     self._update_status(self.tr("Baseplate DXF exported: ") + Path(file_path).name)
                     QMessageBox.information(
                         self, self.tr("Export Success"),
                         self.tr("Baseplate DXF saved to:") + f"\n{file_path}\n\n" +
-                        self.tr("Alignment compensation: ") + f"{alignment_compensation}mm"
+                        self.tr("Outer clearance: ") + f"{params.shell.dxf_outer_clearance}mm\n" +
+                        self.tr("Hole clearance: ") + f"{params.shell.dxf_hole_clearance}mm\n" +
+                        self.tr("Laser kerf: ") + f"{params.shell.dxf_laser_kerf}mm"
                     )
                 else:
                     QMessageBox.warning(self, self.tr("Export Failed"), self.tr("Failed to generate baseplate contour"))
@@ -1274,17 +1274,17 @@ class MainWindow(QMainWindow):
             try:
                 # 获取当前参数
                 params = self.param_panel.get_params()
-                # 默认对齐补偿 0mm
-                alignment_compensation = 0.0
                 success = export_panel_dxf(
-                    self.contours, file_path, params, alignment_compensation
+                    self.contours, file_path, params
                 )
                 if success:
                     self._update_status(self.tr("Panel DXF exported: ") + Path(file_path).name)
                     QMessageBox.information(
                         self, self.tr("Export Success"),
                         self.tr("Panel DXF saved to:") + f"\n{file_path}\n\n" +
-                        self.tr("Alignment compensation: ") + f"{alignment_compensation}mm"
+                        self.tr("Outer clearance: ") + f"{params.shell.dxf_outer_clearance}mm\n" +
+                        self.tr("Hole clearance: ") + f"{params.shell.dxf_hole_clearance}mm\n" +
+                        self.tr("Laser kerf: ") + f"{params.shell.dxf_laser_kerf}mm"
                     )
                 else:
                     QMessageBox.warning(self, self.tr("Export Failed"), self.tr("Failed to generate panel contour"))

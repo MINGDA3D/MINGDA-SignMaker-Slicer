@@ -971,6 +971,21 @@
         <source>Processing failed</source>
         <translation>Processamento falhou</translation>
     </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1251"/>
+        <source>Outer clearance: </source>
+        <translation>Folga externa: </translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1252"/>
+        <source>Hole clearance: </source>
+        <translation>Folga dos furos: </translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1253"/>
+        <source>Laser kerf: </source>
+        <translation>Kerf do laser: </translation>
+    </message>
 </context>
 <context>
     <name>ParamPanel</name>
@@ -1370,6 +1385,26 @@ Pontos de controle: {points}</translation>
         <location filename="../src/ui/param_panel.py" line="1201"/>
         <source> ({count} points)</source>
         <translation> ({count} pontos)</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="248"/>
+        <source>DXF Export</source>
+        <translation>Exportacao DXF</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="258"/>
+        <source>Outer Clearance:</source>
+        <translation>Folga externa:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="266"/>
+        <source>Hole Clearance:</source>
+        <translation>Folga dos furos:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="274"/>
+        <source>Laser Kerf:</source>
+        <translation>Kerf do laser:</translation>
     </message>
 </context>
 <context>

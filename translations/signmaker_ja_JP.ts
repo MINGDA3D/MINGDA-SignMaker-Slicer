@@ -971,6 +971,21 @@
         <source>Processing failed</source>
         <translation>処理失敗</translation>
     </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1251"/>
+        <source>Outer clearance: </source>
+        <translation>外形クリアランス: </translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1252"/>
+        <source>Hole clearance: </source>
+        <translation>穴クリアランス: </translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1253"/>
+        <source>Laser kerf: </source>
+        <translation>レーザーカーフ: </translation>
+    </message>
 </context>
 <context>
     <name>ParamPanel</name>
@@ -1370,6 +1385,26 @@ Control points: {points}</source>
         <location filename="../src/ui/param_panel.py" line="1201"/>
         <source> ({count} points)</source>
         <translation> ({count}点)</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="248"/>
+        <source>DXF Export</source>
+        <translation>DXF書き出し</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="258"/>
+        <source>Outer Clearance:</source>
+        <translation>外形クリアランス:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="266"/>
+        <source>Hole Clearance:</source>
+        <translation>穴クリアランス:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="274"/>
+        <source>Laser Kerf:</source>
+        <translation>レーザーカーフ:</translation>
     </message>
 </context>
 <context>

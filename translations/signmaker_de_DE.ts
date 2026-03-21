@@ -971,6 +971,21 @@
         <source>Processing failed</source>
         <translation>Verarbeitung fehlgeschlagen</translation>
     </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1251"/>
+        <source>Outer clearance: </source>
+        <translation>Aussenkontur-Spiel: </translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1252"/>
+        <source>Hole clearance: </source>
+        <translation>Loch-Spiel: </translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1253"/>
+        <source>Laser kerf: </source>
+        <translation>Laser-Schnittfuge: </translation>
+    </message>
 </context>
 <context>
     <name>ParamPanel</name>
@@ -1370,6 +1385,26 @@ Kontrollpunkte: {points}</translation>
         <location filename="../src/ui/param_panel.py" line="1201"/>
         <source> ({count} points)</source>
         <translation> ({count} Punkte)</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="248"/>
+        <source>DXF Export</source>
+        <translation>DXF-Export</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="258"/>
+        <source>Outer Clearance:</source>
+        <translation>Aussenkontur-Spiel:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="266"/>
+        <source>Hole Clearance:</source>
+        <translation>Loch-Spiel:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="274"/>
+        <source>Laser Kerf:</source>
+        <translation>Laser-Schnittfuge:</translation>
     </message>
 </context>
 <context>

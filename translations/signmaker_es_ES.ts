@@ -971,6 +971,21 @@
         <source>Processing failed</source>
         <translation>Procesamiento fallido</translation>
     </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1251"/>
+        <source>Outer clearance: </source>
+        <translation>Holgura exterior: </translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1252"/>
+        <source>Hole clearance: </source>
+        <translation>Holgura de agujero: </translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1253"/>
+        <source>Laser kerf: </source>
+        <translation>Ancho de corte laser: </translation>
+    </message>
 </context>
 <context>
     <name>ParamPanel</name>
@@ -1370,6 +1385,26 @@ Puntos de control: {points}</translation>
         <location filename="../src/ui/param_panel.py" line="1201"/>
         <source> ({count} points)</source>
         <translation> ({count} puntos)</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="248"/>
+        <source>DXF Export</source>
+        <translation>Exportacion DXF</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="258"/>
+        <source>Outer Clearance:</source>
+        <translation>Holgura exterior:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="266"/>
+        <source>Hole Clearance:</source>
+        <translation>Holgura de agujero:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="274"/>
+        <source>Laser Kerf:</source>
+        <translation>Ancho de corte laser:</translation>
     </message>
 </context>
 <context>

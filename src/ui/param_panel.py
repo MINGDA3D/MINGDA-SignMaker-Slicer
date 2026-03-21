@@ -81,6 +81,7 @@ class ParamPanel(QWidget):
         # 添加参数分组
         content_layout.addWidget(self._create_shell_group())
         content_layout.addWidget(self._create_edge_group())
+        content_layout.addWidget(self._create_dxf_export_group())
         content_layout.addWidget(self._create_bottom_face_group())  # 底面封闭
         content_layout.addWidget(self._create_top_face_group())  # 顶面封闭
 
@@ -239,6 +240,38 @@ class ParamPanel(QWidget):
 
         layout.addWidget(self.custom_edge_widget)
         self.custom_edge_widget.setVisible(False)
+
+        return group
+
+    def _create_dxf_export_group(self) -> QGroupBox:
+        """创建 DXF 导出补偿参数组"""
+        group = QGroupBox(self.tr("DXF Export"))
+        layout = QFormLayout(group)
+        layout.setSpacing(8)
+
+        self.dxf_outer_clearance_spin = PlusMinusSpinBox()
+        self.dxf_outer_clearance_spin.setRange(0, 10)
+        self.dxf_outer_clearance_spin.setValue(1.0)
+        self.dxf_outer_clearance_spin.setSingleStep(0.1)
+        self.dxf_outer_clearance_spin.setSuffix("mm")
+        self.dxf_outer_clearance_spin.valueChanged.connect(self._on_param_changed)
+        layout.addRow(self.tr("Outer Clearance:"), self.dxf_outer_clearance_spin)
+
+        self.dxf_hole_clearance_spin = PlusMinusSpinBox()
+        self.dxf_hole_clearance_spin.setRange(0, 10)
+        self.dxf_hole_clearance_spin.setValue(1.0)
+        self.dxf_hole_clearance_spin.setSingleStep(0.1)
+        self.dxf_hole_clearance_spin.setSuffix("mm")
+        self.dxf_hole_clearance_spin.valueChanged.connect(self._on_param_changed)
+        layout.addRow(self.tr("Hole Clearance:"), self.dxf_hole_clearance_spin)
+
+        self.dxf_laser_kerf_spin = PlusMinusSpinBox()
+        self.dxf_laser_kerf_spin.setRange(0, 2)
+        self.dxf_laser_kerf_spin.setValue(0.0)
+        self.dxf_laser_kerf_spin.setSingleStep(0.01)
+        self.dxf_laser_kerf_spin.setSuffix("mm")
+        self.dxf_laser_kerf_spin.valueChanged.connect(self._on_param_changed)
+        layout.addRow(self.tr("Laser Kerf:"), self.dxf_laser_kerf_spin)
 
         return group
 
@@ -903,6 +936,9 @@ class ParamPanel(QWidget):
         self._params.shell.bevel_direction = self.bevel_direction_combo.currentData()
         self._params.shell.baseplate_thickness = self.baseplate_spin.value()
         self._params.shell.panel_thickness = self.panel_thickness_spin.value()
+        self._params.shell.dxf_outer_clearance = self.dxf_outer_clearance_spin.value()
+        self._params.shell.dxf_hole_clearance = self.dxf_hole_clearance_spin.value()
+        self._params.shell.dxf_laser_kerf = self.dxf_laser_kerf_spin.value()
 
         # 根据边缘类型设置轮廓
         if self._params.shell.edge_type == EdgeType.CUSTOM:
@@ -1024,6 +1060,7 @@ class ParamPanel(QWidget):
             self.height_spin, self.layer_height_spin, self.wall_thickness_spin,
             self.wall_count_spin, self.edge_type_combo, self.bevel_direction_combo,
             self.bevel_width_spin, self.baseplate_spin, self.panel_thickness_spin,
+            self.dxf_outer_clearance_spin, self.dxf_hole_clearance_spin, self.dxf_laser_kerf_spin,
             self.print_speed, self.travel_speed, self.first_layer_speed,
             self.skirt_enabled, self.skirt_width, self.skirt_height,
             self.skirt_interval, self.skirt_offset,
@@ -1063,6 +1100,9 @@ class ParamPanel(QWidget):
         self.bevel_width_spin.setValue(params.shell.bevel_width)
         self.baseplate_spin.setValue(params.shell.baseplate_thickness)
         self.panel_thickness_spin.setValue(params.shell.panel_thickness)
+        self.dxf_outer_clearance_spin.setValue(params.shell.dxf_outer_clearance)
+        self.dxf_hole_clearance_spin.setValue(params.shell.dxf_hole_clearance)
+        self.dxf_laser_kerf_spin.setValue(params.shell.dxf_laser_kerf)
 
         # 速度参数
         self.print_speed.setValue(int(params.speed.print_speed))

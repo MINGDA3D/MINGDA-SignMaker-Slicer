@@ -971,6 +971,21 @@
         <source>Processing failed</source>
         <translation>Échec du traitement</translation>
     </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1251"/>
+        <source>Outer clearance: </source>
+        <translation>Jeu du contour exterieur : </translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1252"/>
+        <source>Hole clearance: </source>
+        <translation>Jeu des trous : </translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1253"/>
+        <source>Laser kerf: </source>
+        <translation>Trait de coupe laser : </translation>
+    </message>
 </context>
 <context>
     <name>ParamPanel</name>
@@ -1370,6 +1385,26 @@ Points de contrôle : {points}</translation>
         <location filename="../src/ui/param_panel.py" line="1201"/>
         <source> ({count} points)</source>
         <translation> ({count} points)</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="248"/>
+        <source>DXF Export</source>
+        <translation>Export DXF</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="258"/>
+        <source>Outer Clearance:</source>
+        <translation>Jeu du contour exterieur :</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="266"/>
+        <source>Hole Clearance:</source>
+        <translation>Jeu des trous :</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="274"/>
+        <source>Laser Kerf:</source>
+        <translation>Trait de coupe laser :</translation>
     </message>
 </context>
 <context>

@@ -294,6 +294,9 @@ class PresetManager:
             params.shell.bevel_width = shell_data.get("bevel_width", 5.0)
             params.shell.baseplate_thickness = shell_data.get("baseplate_thickness", 10.0)
             params.shell.panel_thickness = shell_data.get("panel_thickness", 3.0)
+            params.shell.dxf_outer_clearance = shell_data.get("dxf_outer_clearance", 1.0)
+            params.shell.dxf_hole_clearance = shell_data.get("dxf_hole_clearance", 1.0)
+            params.shell.dxf_laser_kerf = shell_data.get("dxf_laser_kerf", 0.0)
 
             edge_type_str = shell_data.get("edge_type", "STRAIGHT")
             try:
@@ -329,7 +332,10 @@ class PresetManager:
             "bevel_width": shell.bevel_width,
             "bevel_direction": shell.bevel_direction.name,
             "baseplate_thickness": shell.baseplate_thickness,
-            "panel_thickness": shell.panel_thickness
+            "panel_thickness": shell.panel_thickness,
+            "dxf_outer_clearance": shell.dxf_outer_clearance,
+            "dxf_hole_clearance": shell.dxf_hole_clearance,
+            "dxf_laser_kerf": shell.dxf_laser_kerf,
         }
 
     def export_preset(self, name: str, file_path: str) -> None:

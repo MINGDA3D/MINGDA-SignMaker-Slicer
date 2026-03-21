@@ -480,6 +480,11 @@ class ShellParams:
     baseplate_thickness: float = 10.0  # 底板厚度 (mm) - 底部直边区域高度
     panel_thickness: float = 3.0       # 面板厚度 (mm) - 顶部直边区域高度
 
+    # DXF 导出补偿
+    dxf_outer_clearance: float = 1.0   # 外轮廓安装公差：向内缩 (mm)
+    dxf_hole_clearance: float = 1.0    # 内孔安装公差：向外扩 (mm)
+    dxf_laser_kerf: float = 0.0        # 激光切缝宽度 (mm)，按半径补偿
+
     # 异形边轮廓
     edge_profile: Optional[EdgeProfile] = None
 
@@ -958,6 +963,9 @@ def deserialize_params(data: dict) -> SliceParams:
         )
         params.shell.baseplate_thickness = shell_data.get("baseplate_thickness", 10.0)
         params.shell.panel_thickness = shell_data.get("panel_thickness", 3.0)
+        params.shell.dxf_outer_clearance = shell_data.get("dxf_outer_clearance", 1.0)
+        params.shell.dxf_hole_clearance = shell_data.get("dxf_hole_clearance", 1.0)
+        params.shell.dxf_laser_kerf = shell_data.get("dxf_laser_kerf", 0.0)
         params.shell.safety_line_count = shell_data.get("safety_line_count", 0)
         params.shell.safety_line_offset = shell_data.get("safety_line_offset", 5.0)
 
