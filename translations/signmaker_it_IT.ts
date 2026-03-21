@@ -1060,6 +1060,10 @@
         <translation>Direzione smusso:</translation>
     </message>
     <message>
+        <location filename="../src/ui/param_panel.py" line="181"/>
+        <source>Original contour is always based on the bottom face (z=0).</source>
+        <translation>Il contorno originale si basa sempre sulla faccia inferiore (z=0).</translation>
+    </message>    <message>
         <location filename="../src/ui/param_panel.py" line="186"/>
         <source>Bevel Width:</source>
         <translation>Larghezza smusso:</translation>

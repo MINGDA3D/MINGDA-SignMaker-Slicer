@@ -1060,6 +1060,10 @@
         <translation>Direccion del bisel:</translation>
     </message>
     <message>
+        <location filename="../src/ui/param_panel.py" line="181"/>
+        <source>Original contour is always based on the bottom face (z=0).</source>
+        <translation>El contorno original siempre se basa en la cara inferior (z=0).</translation>
+    </message>    <message>
         <location filename="../src/ui/param_panel.py" line="186"/>
         <source>Bevel Width:</source>
         <translation>Ancho del bisel:</translation>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
 <TS version="2.1" language="zh-CN">
 <context>
@@ -1040,6 +1040,10 @@
         <translation>斜边方向:</translation>
     </message>
     <message>
+        <location filename="../src/ui/param_panel.py" line="181"/>
+        <source>Original contour is always based on the bottom face (z=0).</source>
+        <translation>原始轮廓始终以底面 (z=0) 为基准。</translation>
+    </message>    <message>
         <location filename="../src/ui/param_panel.py" line="186"/>
         <source>Bevel Width:</source>
         <translation>斜边宽度:</translation>
@@ -1726,3 +1730,4 @@ Control points: {points}</source>
     </message>
 </context>
 </TS>
+

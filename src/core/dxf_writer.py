@@ -218,14 +218,14 @@ class DXFWriter:
         panel_bottom = shell.height - shell.panel_thickness
 
         if z < baseplate_top:
-            return -shell.bevel_width
+            return 0.0
         if z < panel_bottom:
             bevel_height = panel_bottom - baseplate_top
             if bevel_height <= 0:
                 return 0.0
             progress = (z - baseplate_top) / bevel_height
-            return -shell.bevel_width * (1 - progress)
-        return 0.0
+            return progress * shell.bevel_width
+        return shell.bevel_width
 
     def _get_bottom_offset(self, shell) -> float:
         """

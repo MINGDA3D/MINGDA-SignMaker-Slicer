@@ -157,7 +157,7 @@ class ConnectedMeshBuilder:
         panel_bottom = total_height - panel_thickness
 
         if shell.bevel_direction == BevelDirection.TOP_SMALL:
-            # 上小下大：底部不收缩，向上逐渐收缩
+            # 上小下大：底面保持原始轮廓，向上逐渐内缩
             if z < baseplate_top:
                 return 0
             elif z < panel_bottom:
@@ -169,17 +169,17 @@ class ConnectedMeshBuilder:
             else:
                 return -bevel_width
         else:
-            # 上大下小：底部收缩，向上逐渐扩展
+            # 上大下小：底面保持原始轮廓，向上逐渐外扩
             if z < baseplate_top:
-                return -bevel_width
+                return 0
             elif z < panel_bottom:
                 bevel_height = panel_bottom - baseplate_top
                 if bevel_height > 0:
                     progress = (z - baseplate_top) / bevel_height
-                    return -bevel_width * (1 - progress)
+                    return progress * bevel_width
                 return 0
             else:
-                return 0
+                return bevel_width
 
     def _calculate_custom_edge_offset_at_z(self, z: float, shell) -> float:
         """

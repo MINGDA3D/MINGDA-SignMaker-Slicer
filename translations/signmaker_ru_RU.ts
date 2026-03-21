@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
 <TS version="2.1" language="ru-RU">
 <context>
@@ -1060,6 +1060,10 @@
         <translation>Направление скоса:</translation>
     </message>
     <message>
+        <location filename="../src/ui/param_panel.py" line="181"/>
+        <source>Original contour is always based on the bottom face (z=0).</source>
+        <translation>Исходный контур всегда привязан к нижней плоскости (z=0).</translation>
+    </message>    <message>
         <location filename="../src/ui/param_panel.py" line="186"/>
         <source>Bevel Width:</source>
         <translation>Ширина скоса:</translation>
@@ -1746,3 +1750,4 @@ Control points: {points}</source>
     </message>
 </context>
 </TS>
+

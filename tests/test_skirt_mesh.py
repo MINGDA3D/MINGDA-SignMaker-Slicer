@@ -30,7 +30,7 @@ def test_skirt_mesh_is_watertight_for_short_connectors():
     assert mesh.is_watertight
 
 
-def test_skirt_mesh_follows_bottom_contour_for_top_large_bevel():
+def test_skirt_mesh_uses_bottom_reference_for_top_large_bevel():
     contour = Contour(
         outer=Path(
             points=[
@@ -63,5 +63,4 @@ def test_skirt_mesh_follows_bottom_contour_for_top_large_bevel():
 
     assert straight_mesh is not None
     assert beveled_mesh is not None
-    assert beveled_mesh.bounds[0][0] > straight_mesh.bounds[0][0]
-    assert beveled_mesh.bounds[1][0] < straight_mesh.bounds[1][0]
+    assert tuple(map(tuple, beveled_mesh.bounds)) == tuple(map(tuple, straight_mesh.bounds))

@@ -68,8 +68,8 @@ class InterpolationType(Enum):
 
 class BevelDirection(Enum):
     """斜边方向"""
-    TOP_SMALL = auto()  # 上小下大（底部大，顶部小）
-    TOP_LARGE = auto()  # 上大下小（底部小，顶部大）
+    TOP_SMALL = auto()  # 上小下大（底面保持原始尺寸，顶部缩小）
+    TOP_LARGE = auto()  # 上大下小（底面保持原始尺寸，顶部放大）
 
 
 class ExtruderType(Enum):

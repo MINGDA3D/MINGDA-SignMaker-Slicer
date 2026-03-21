@@ -178,6 +178,13 @@ class ParamPanel(QWidget):
         self.bevel_direction_combo.currentIndexChanged.connect(self._on_param_changed)
         bevel_layout.addRow(self.tr("Bevel Direction:"), self.bevel_direction_combo)
 
+        self.bevel_direction_hint = QLabel(
+            self.tr("Original contour is always based on the bottom face (z=0).")
+        )
+        self.bevel_direction_hint.setWordWrap(True)
+        self.bevel_direction_hint.setStyleSheet("color: #8B949E; font-size: 12px;")
+        bevel_layout.addRow("", self.bevel_direction_hint)
+
         # 斜边宽度
         self.bevel_width_spin = PlusMinusSpinBox()
         self.bevel_width_spin.setRange(0, 50)

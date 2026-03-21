@@ -1060,6 +1060,10 @@
         <translation>اتجاه الشطف:</translation>
     </message>
     <message>
+        <location filename="../src/ui/param_panel.py" line="181"/>
+        <source>Original contour is always based on the bottom face (z=0).</source>
+        <translation>المخطط الأصلي يعتمد دائمًا على الوجه السفلي (z=0).</translation>
+    </message>    <message>
         <location filename="../src/ui/param_panel.py" line="186"/>
         <source>Bevel Width:</source>
         <translation>عرض الشطف:</translation>

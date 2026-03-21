@@ -144,6 +144,30 @@ def test_panel_beveled_export_scales_holes_in_same_direction():
     assert_bounds(panel_contours[0].holes[0], (38.8, 38.8, 61.2, 61.2))
 
 
+def test_top_large_panel_uses_bottom_reference_and_expands_outward():
+    """Top-large beveled panel export should keep z=0 as reference and enlarge the top contour."""
+    contour = create_test_contour()
+    params = SliceParams()
+    params.shell.edge_type = EdgeType.BEVELED
+    params.shell.bevel_direction = BevelDirection.TOP_LARGE
+    params.shell.bevel_width = 5.0
+    params.shell.baseplate_thickness = 10.0
+    params.shell.panel_thickness = 3.0
+    params.shell.height = 30.0
+    params.shell.wall_thickness = 1.2
+    writer = DXFWriter()
+
+    baseplate_contours = writer._get_baseplate_contours([contour], params)
+    panel_contours = writer._get_panel_contours([contour], params)
+
+    assert len(baseplate_contours) == 1
+    assert_bounds(baseplate_contours[0].outer, (1.2, 1.2, 98.8, 98.8))
+    assert len(panel_contours) == 1
+    assert_bounds(panel_contours[0].outer, (-3.8, -3.8, 103.8, 103.8))
+    assert len(panel_contours[0].holes) == 1
+    assert_bounds(panel_contours[0].holes[0], (28.8, 28.8, 71.2, 71.2))
+
+
 def test_export_uses_independent_clearance_and_kerf_settings():
     """DXF export should apply outer clearance, hole clearance, and kerf independently."""
     contour = create_test_contour()
@@ -171,5 +195,6 @@ if __name__ == "__main__":
     test_baseplate_contour_uses_inner_wall_and_default_extra_shrink()
     test_panel_contour_uses_top_inner_wall_and_default_extra_shrink()
     test_panel_beveled_export_scales_holes_in_same_direction()
+    test_top_large_panel_uses_bottom_reference_and_expands_outward()
     test_export_uses_independent_clearance_and_kerf_settings()
     print("All DXF writer tests passed.")

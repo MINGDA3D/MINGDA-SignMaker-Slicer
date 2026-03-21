@@ -1060,6 +1060,10 @@
         <translation>Schraegrichtung:</translation>
     </message>
     <message>
+        <location filename="../src/ui/param_panel.py" line="181"/>
+        <source>Original contour is always based on the bottom face (z=0).</source>
+        <translation>Die Originalkontur bezieht sich immer auf die Unterseite (z=0).</translation>
+    </message>    <message>
         <location filename="../src/ui/param_panel.py" line="186"/>
         <source>Bevel Width:</source>
         <translation>Schraegbreite:</translation>

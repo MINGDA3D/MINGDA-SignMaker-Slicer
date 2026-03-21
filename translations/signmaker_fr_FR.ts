@@ -1060,6 +1060,10 @@
         <translation>Direction du biseau :</translation>
     </message>
     <message>
+        <location filename="../src/ui/param_panel.py" line="181"/>
+        <source>Original contour is always based on the bottom face (z=0).</source>
+        <translation>Le contour d'origine est toujours basé sur la face inférieure (z=0).</translation>
+    </message>    <message>
         <location filename="../src/ui/param_panel.py" line="186"/>
         <source>Bevel Width:</source>
         <translation>Largeur du biseau :</translation>

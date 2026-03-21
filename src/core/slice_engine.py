@@ -330,7 +330,9 @@ class SliceEngine:
         总高度 = 底板厚度 + 斜边高度 + 面板厚度
         斜边高度 = 总高度 - 底板厚度 - 面板厚度
 
-        上小下大 (TOP_SMALL)：底部大，顶部小
+        原始轮廓始终以底面 z=0 为基准。
+
+        上小下大 (TOP_SMALL)：底面保持原始尺寸，顶部小
         ┌───────┐  ← 面板区域（最小，收缩 bevel_width）
         │╲     ╱│
         │ ╲   ╱ │  ← 斜边区域（线性收缩）
@@ -338,12 +340,12 @@ class SliceEngine:
         │   │   │  ← 底板区域（最大，不收缩）
         └───┴───┘
 
-        上大下小 (TOP_LARGE)：底部小，顶部大
-        ┌───┬───┐  ← 面板区域（最大，不收缩）
-        │  ╱ ╲  │
-        │ ╱   ╲ │  ← 斜边区域（线性扩展）
-        │╱     ╲│
-        │───────│  ← 底板区域（最小，收缩 bevel_width）
+        上大下小 (TOP_LARGE)：底面保持原始尺寸，顶部大
+        ┌─────────┐  ← 面板区域（最大，外扩 bevel_width）
+        │ ╱     ╲ │
+        │╱       ╲│  ← 斜边区域（线性外扩）
+        │    │    │
+        │    │    │  ← 底板区域（基准尺寸，不偏移）
         └───────┘
         """
         total_height = params.height
@@ -359,7 +361,7 @@ class SliceEngine:
         # 注意：如果底板+面板厚度超过总高度，则没有斜边区域
 
         if params.bevel_direction == BevelDirection.TOP_SMALL:
-            # 上小下大：底部不收缩，向上逐渐收缩
+            # 上小下大：底面保持原始轮廓，向上逐渐内缩
             if z < baseplate_top:
                 # 底板区域：不收缩
                 offset = 0
@@ -375,21 +377,21 @@ class SliceEngine:
                 # 面板区域：最大收缩
                 offset = -bevel_width
         else:
-            # 上大下小：底部收缩，向上逐渐扩展
+            # 上大下小：底面保持原始轮廓，向上逐渐外扩
             if z < baseplate_top:
-                # 底板区域：最大收缩
-                offset = -bevel_width
+                # 底板区域：保持基准尺寸
+                offset = 0
             elif z < panel_bottom:
-                # 斜边区域：从最大收缩线性恢复
+                # 斜边区域：从基准尺寸线性放大
                 bevel_height = panel_bottom - baseplate_top
                 if bevel_height > 0:
                     progress = (z - baseplate_top) / bevel_height
-                    offset = -bevel_width * (1 - progress)
+                    offset = progress * bevel_width
                 else:
                     offset = 0
             else:
-                # 面板区域：不收缩
-                offset = 0
+                # 面板区域：保持最大外扩
+                offset = bevel_width
 
         if abs(offset) < 0.001:
             return contour

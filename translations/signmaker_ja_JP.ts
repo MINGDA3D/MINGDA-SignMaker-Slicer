@@ -1060,6 +1060,10 @@
         <translation>斜め方向:</translation>
     </message>
     <message>
+        <location filename="../src/ui/param_panel.py" line="181"/>
+        <source>Original contour is always based on the bottom face (z=0).</source>
+        <translation>元の輪郭は常に底面 (z=0) を基準にします。</translation>
+    </message>    <message>
         <location filename="../src/ui/param_panel.py" line="186"/>
         <source>Bevel Width:</source>
         <translation>斜め幅:</translation>

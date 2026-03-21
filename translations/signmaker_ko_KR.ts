@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
 <TS version="2.1" language="ko-KR">
 <context>
@@ -1060,6 +1060,10 @@
         <translation>베벨 방향:</translation>
     </message>
     <message>
+        <location filename="../src/ui/param_panel.py" line="181"/>
+        <source>Original contour is always based on the bottom face (z=0).</source>
+        <translation>원본 윤곽은 항상 바닥면(z=0)을 기준으로 합니다.</translation>
+    </message>    <message>
         <location filename="../src/ui/param_panel.py" line="186"/>
         <source>Bevel Width:</source>
         <translation>베벨 너비:</translation>
@@ -1746,3 +1750,4 @@ Control points: {points}</source>
     </message>
 </context>
 </TS>
+

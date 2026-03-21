@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
 <TS version="2.1" language="tr-TR">
 <context>
@@ -1060,6 +1060,10 @@
         <translation>Egim Yonu:</translation>
     </message>
     <message>
+        <location filename="../src/ui/param_panel.py" line="181"/>
+        <source>Original contour is always based on the bottom face (z=0).</source>
+        <translation>Orijinal kontur her zaman alt yüzeye (z=0) göre alınır.</translation>
+    </message>    <message>
         <location filename="../src/ui/param_panel.py" line="186"/>
         <source>Bevel Width:</source>
         <translation>Egim Genisligi:</translation>
@@ -1746,3 +1750,4 @@ Kontrol noktalari: {points}</translation>
     </message>
 </context>
 </TS>
+

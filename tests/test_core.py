@@ -257,6 +257,24 @@ class TestSliceEngine:
         # 验证反向斜边生成了正确的层数
         assert result.total_layers == 100  # 30 / 0.3
 
+    def test_top_large_bevel_keeps_bottom_profile_as_reference(self, engine, simple_contour):
+        """上大下小模式下，原始轮廓始终对应底面，顶部向外扩展。"""
+        params = SliceParams()
+        params.shell.height = 30
+        params.shell.edge_type = EdgeType.BEVELED
+        params.shell.bevel_direction = BevelDirection.TOP_LARGE
+        params.shell.bevel_width = 5
+        params.shell.baseplate_thickness = 10
+        params.shell.panel_thickness = 3
+
+        bottom_contour = engine._apply_edge_profile(simple_contour, 0, params.shell)
+        top_contour = engine._apply_edge_profile(simple_contour, params.shell.height, params.shell)
+
+        assert bottom_contour is not None
+        assert top_contour is not None
+        assert bottom_contour.outer.bounds == (0, 0, 100, 100)
+        assert top_contour.outer.bounds == (-5, -5, 105, 105)
+
     def test_slice_with_safety_lines(self, engine, simple_contour):
         """测试带安全线切片"""
         params = SliceParams()
