@@ -27,12 +27,20 @@ from .path_offset import PathOffset, JoinType
 from .step_generator import StepGenerator
 from .edge_profile_generator import EdgeProfileGenerator
 from .skirt_generator import SkirtGenerator
+from .connected_generator import ConnectedGenerator, ConnectionBridge
 
 
 @dataclass
 class BevelProfile:
     """斜边轮廓缓存"""
     z_to_offset: Dict[float, float] = field(default_factory=dict)
+
+
+@dataclass
+class ConnectedPreviewContext:
+    """Precomputed connected-letter data reused across preview layers."""
+    contours: List[Contour] = field(default_factory=list)
+    bridges: List[ConnectionBridge] = field(default_factory=list)
 
 
 class SliceEngine:
@@ -43,6 +51,7 @@ class SliceEngine:
         self.step_generator = StepGenerator(self.path_offset)
         self.edge_profile_generator = EdgeProfileGenerator()
         self.skirt_generator = SkirtGenerator()
+        self.connected_generator = ConnectedGenerator(self.path_offset)
 
     def slice(self, contours: List[Contour], params: SliceParams) -> SliceResult:
         """
@@ -66,11 +75,12 @@ class SliceEngine:
 
         # 1. 计算层规划
         layer_infos = self._plan_layers(params)
+        connected_context = self._build_connected_preview_context(contours, params)
 
         # 2. 逐层生成
         layers = []
         for info in layer_infos:
-            layer = self._generate_layer(contours, info, params)
+            layer = self._generate_layer(contours, info, params, connected_context)
             if layer.paths:  # 只添加有路径的层
                 layers.append(layer)
 
@@ -195,7 +205,8 @@ class SliceEngine:
 
     def _generate_layer(self, contours: List[Contour],
                         info: LayerInfo,
-                        params: SliceParams) -> Layer:
+                        params: SliceParams,
+                        connected_context: Optional[ConnectedPreviewContext] = None) -> Layer:
         """
         生成单层
 
@@ -286,7 +297,67 @@ class SliceEngine:
             skirt_paths = self._generate_all_skirt_paths(contours, params)
             layer.paths.extend(skirt_paths)
 
+        # 8. 生成连襟结构（用于 3D 预览与切片导出）
+        if connected_context is not None:
+            connected_paths = self._generate_connected_paths_for_layer(
+                connected_context, info.z_height, params
+            )
+            layer.paths.extend(connected_paths)
+
         return layer
+
+    def _build_connected_preview_context(
+        self,
+        contours: List[Contour],
+        params: SliceParams,
+    ) -> Optional[ConnectedPreviewContext]:
+        """Precompute connected-letter bridges once per slice."""
+        if not params.connected.enabled or not contours:
+            return None
+
+        connected_contours: List[Contour] = []
+        for contour in contours:
+            base_contour = self._apply_edge_profile(contour, 0.0, params.shell)
+            if base_contour is not None:
+                connected_contours.append(base_contour)
+
+        if not connected_contours:
+            return None
+
+        context = ConnectedPreviewContext(contours=connected_contours)
+
+        if params.connected.auto_detect:
+            context.bridges = self.connected_generator.find_connection_bridges(
+                connected_contours,
+                params.connected,
+            )
+
+        return context
+
+    def _generate_connected_paths_for_layer(
+        self,
+        context: ConnectedPreviewContext,
+        z_height: float,
+        params: SliceParams,
+    ) -> List[LayerPath]:
+        """Generate connected-letter preview paths using cached bridge data."""
+        if not params.connected.enabled:
+            return []
+
+        if params.connected.auto_detect:
+            if not context.bridges:
+                return []
+            return self.connected_generator.generate_connected_layer(
+                context.bridges,
+                z_height,
+                params.connected,
+            )
+
+        return self.connected_generator.generate_connected(
+            context.contours,
+            z_height,
+            params.connected,
+        )
 
     def _apply_edge_profile(self, contour: Contour, z: float,
                              params: ShellParams) -> Optional[Contour]:

@@ -160,6 +160,38 @@ class TestConnectedGenerator:
 class TestConnectedSTLExport:
     """连襟STL导出测试"""
 
+    def test_slice_engine_includes_connected_preview_paths(self):
+        """切片结果应包含 3D 预览可见的连襟路径。"""
+        contour1 = Contour(
+            outer=Path(points=[
+                Point(0, 0), Point(20, 0), Point(20, 20), Point(0, 20)
+            ])
+        )
+        contour2 = Contour(
+            outer=Path(points=[
+                Point(30, 0), Point(50, 0), Point(50, 20), Point(30, 20)
+            ])
+        )
+
+        params = SliceParams(
+            shell=ShellParams(height=10.0, layer_height=1.0, wall_thickness=1.2),
+            connected=ConnectedParams(
+                enabled=True,
+                type="triangle",
+                width=15.0,
+                height=5.0,
+                base_height=5.0
+            )
+        )
+
+        result = SliceEngine().slice([contour1, contour2], params)
+
+        assert any(
+            path.role == PathRole.CONNECTED
+            for layer in result.layers
+            for path in layer.paths
+        ), "切片结果中应该包含 CONNECTED 路径供 3D 预览显示"
+
     def test_stl_export_with_connected(self):
         """测试带连襟的STL导出"""
         # 创建两个轮廓

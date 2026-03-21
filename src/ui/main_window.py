@@ -22,7 +22,7 @@ from PySide6.QtWidgets import (
     QMessageBox, QSizePolicy, QDoubleSpinBox, QSpinBox, QStackedWidget,
     QGraphicsDropShadowEffect, QCheckBox
 )
-from PySide6.QtCore import Qt, Signal, QSize, QPoint
+from PySide6.QtCore import Qt, Signal, QSize, QPoint, QTimer
 from PySide6.QtGui import QAction, QIcon, QKeySequence, QPixmap, QFont, QColor
 
 from .theme import get_stylesheet, COLORS, LAYOUT
@@ -32,11 +32,11 @@ from .param_panel import ParamPanel
 # 导入 Qt 资源文件
 from resources import rc_resources  # noqa: F401
 from .project_panel import ProjectPanel
-from .preview_3d import Preview3D
+from .preview_3d import Preview3D, Preview3DWidget
 from .title_bar import TitleBar
 from .canvas_toolbar import CanvasToolbar
 from .home_page import HomePage
-from .busy_dialog import run_async
+from .busy_dialog import run_async, WorkerThread
 
 from src.core import (
     DXFParser, SVGParser, SliceEngine, GCodeWriter,
@@ -80,6 +80,8 @@ class MainWindow(QMainWindow):
         self.contours: List[Contour] = []
         self.slice_params = SliceParams()
         self.slice_result: Optional[SliceResult] = None
+        self._preview_mesh_worker: Optional[WorkerThread] = None
+        self._preview_mesh_loading_key = None
         self.current_file: Optional[str] = None
 
         # 核心组件
@@ -860,6 +862,89 @@ class MainWindow(QMainWindow):
     # 事件处理
     # =========================================================================
 
+    def _reset_preview_loading_state(self):
+        """Clear any pending non-blocking preview load indicator/state."""
+        self._preview_mesh_loading_key = None
+        self._preview_mesh_worker = None
+        if hasattr(self, "preview_3d"):
+            self.preview_3d.set_loading(False)
+            self.preview_3d.clear_scene()
+
+    def _prepare_preview_3d(self):
+        """Ensure the 3D preview scene is ready without blocking the UI."""
+        if not self.slice_result or not self.slice_result.layers:
+            return
+
+        machine = self.slice_params.machine
+        self.preview_3d.set_bed_size(
+            machine.bed_width,
+            machine.bed_depth,
+            machine.bed_height,
+        )
+
+        target_result = self.slice_result
+        target_contours = list(self.contours)
+        target_params = self.slice_params
+        loading_key = Preview3DWidget._get_mesh_cache_key(
+            target_result,
+            target_contours,
+            target_params,
+        )
+
+        if self.preview_3d.has_cached_mesh_parts(target_result, target_contours, target_params):
+            self.preview_3d.set_loading(False)
+            return
+
+        # Avoid synchronous layer processing on first open; show the page immediately.
+        self.preview_3d.clear_scene()
+        self.preview_3d.set_layer_count(len(target_result.layers))
+
+        if self._preview_mesh_loading_key == loading_key:
+            self.preview_3d.set_loading(True, self.tr("Loading 3D preview..."))
+            return
+
+        def build_preview_mesh():
+            return Preview3DWidget.build_mesh_parts_for_result(
+                target_result,
+                target_contours,
+                target_params,
+            )
+
+        worker = WorkerThread(build_preview_mesh, self)
+        self._preview_mesh_worker = worker
+        self._preview_mesh_loading_key = loading_key
+        self.preview_3d.set_loading(True, self.tr("Loading 3D preview..."))
+
+        def on_success(mesh_parts):
+            if self._preview_mesh_loading_key != loading_key:
+                return
+            self.preview_3d.set_prebuilt_mesh_parts(
+                target_result,
+                mesh_parts,
+                target_contours,
+                target_params,
+            )
+            self.preview_3d.set_loading(False)
+            self._preview_mesh_loading_key = None
+            self._preview_mesh_worker = None
+
+        def on_error(err):
+            if self._preview_mesh_loading_key != loading_key:
+                return
+            self.preview_3d.set_loading(False)
+            self._preview_mesh_loading_key = None
+            self._preview_mesh_worker = None
+            self._update_status(self.tr("3D preview loading failed"))
+            QMessageBox.warning(
+                self,
+                self.tr("3D Preview"),
+                self.tr("Failed to prepare 3D preview:") + f"\n{err}",
+            )
+
+        worker.finished_result.connect(on_success)
+        worker.error_occurred.connect(on_error)
+        worker.start()
+
     def _on_nav_changed(self, nav: str):
         """处理标题栏导航切换"""
         if nav == "home":
@@ -880,15 +965,7 @@ class MainWindow(QMainWindow):
             self.current_main_view = "editor"
             self.view_stack.setCurrentIndex(1)
             self.current_view = "3d"
-            # 如果有切片结果，更新3D预览
-            if self.slice_result and self.slice_result.layers:
-                self.preview_3d.set_layers(self.slice_result.layers)
-                machine = self.slice_params.machine
-                self.preview_3d.set_bed_size(
-                    machine.bed_width,
-                    machine.bed_depth,
-                    machine.bed_height
-                )
+            QTimer.singleShot(0, self._prepare_preview_3d)
             self._update_status(self.tr("3D Preview"))
 
     def _on_menu_action(self, action: str):
@@ -927,6 +1004,7 @@ class MainWindow(QMainWindow):
 
         self.contours = []
         self.slice_result = None
+        self._reset_preview_loading_state()
         self.current_file = None
         self._contour_transforms.clear()
         self._current_selected_id = None
@@ -1032,6 +1110,7 @@ class MainWindow(QMainWindow):
             self.contours.extend(project.contours)
             self.slice_params = project.params
             self.slice_result = None
+            self._reset_preview_loading_state()
             self.current_file = file_path
             self._contour_transforms.clear()
             self._current_selected_id = None
@@ -1323,16 +1402,10 @@ class MainWindow(QMainWindow):
 
         def on_success(result):
             self.slice_result = result
-
-            # 更新3D预览
-            if self.slice_result and self.slice_result.layers:
-                self.preview_3d.set_layers(self.slice_result.layers)
-                machine = params.machine
-                self.preview_3d.set_bed_size(
-                    machine.bed_width,
-                    machine.bed_depth,
-                    machine.bed_height
-                )
+            self.slice_params = params
+            self._reset_preview_loading_state()
+            if self.current_view == "3d":
+                QTimer.singleShot(0, self._prepare_preview_3d)
 
             # 更新状态
             msg = self.tr("Processing complete: {layers} layers, estimated time: {time:.1f} minutes").format(
@@ -1362,16 +1435,7 @@ class MainWindow(QMainWindow):
         else:
             self.view_stack.setCurrentIndex(1)
             self.current_view = "3d"
-            # 如果有切片结果，更新3D预览
-            if self.slice_result and self.slice_result.layers:
-                self.preview_3d.set_layers(self.slice_result.layers)
-                # 更新打印平台尺寸
-                machine = self.slice_params.machine
-                self.preview_3d.set_bed_size(
-                    machine.bed_width,
-                    machine.bed_depth,
-                    machine.bed_height
-                )
+            QTimer.singleShot(0, self._prepare_preview_3d)
         self._update_status(self.tr("Switched to {view} view").format(view=view_type.upper()))
 
     def _on_zoom_fit(self):

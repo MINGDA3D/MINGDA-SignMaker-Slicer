@@ -1,0 +1,177 @@
+{
+  "version": "1.1",
+  "last_modified": "2026-03-20T20:00:08.070067",
+  "params": {
+    "shell": {
+      "height": 30.0,
+      "layer_height": 0.3,
+      "wall_thickness": 1.2,
+      "wall_count": 1,
+      "wall_offset": 0.0,
+      "edge_type": "STRAIGHT",
+      "bevel_width": 5.0,
+      "bevel_direction": "TOP_SMALL",
+      "baseplate_thickness": 10.0,
+      "panel_thickness": 3.0,
+      "edge_profile": null,
+      "safety_line_count": 0,
+      "safety_line_offset": 5.0
+    },
+    "color": {
+      "enabled": false,
+      "layers": []
+    },
+    "step": {
+      "enabled": false,
+      "panel_step_enabled": false,
+      "panel_step_height": 28.0,
+      "panel_step_width": 3.0,
+      "panel_step_is_v_groove": false,
+      "baseplate_step_enabled": false,
+      "baseplate_step_height": 3.0,
+      "baseplate_step_width": 3.0,
+      "baseplate_step_is_v_groove": false,
+      "steps": [],
+      "top_step_enabled": false,
+      "top_step_height": 2.0,
+      "top_step_width": 3.0,
+      "bottom_groove_enabled": false,
+      "bottom_groove_height": 2.0,
+      "bottom_groove_depth": 3.0,
+      "step_thickness": 0.3,
+      "extrusion_width": 1.2,
+      "print_speed": 30.0,
+      "horizontal_offset": 0.0
+    },
+    "skirt": {
+      "enabled": false,
+      "width": 5.0,
+      "height": 0.3,
+      "offset": 0.0,
+      "interval": 10.0,
+      "outer_enabled": true,
+      "inner_enabled": false,
+      "is_outer": true,
+      "extrusion_width": 1.2,
+      "length": 10.0,
+      "v_opening": 5.0,
+      "line_width": 1.2
+    },
+    "connected": {
+      "enabled": false,
+      "type": "triangle",
+      "width": 5.0,
+      "height": 5.0,
+      "base_height": 5.0,
+      "support_offset": 2.5,
+      "auto_detect": true,
+      "bridge_width": 10.0,
+      "bridge_height": 5.0
+    },
+    "edge_wrap": {
+      "wrap_enabled": false,
+      "wrap_width": 2.0,
+      "wrap_height": 3.0,
+      "wrap_direction": "INNER",
+      "outline_enabled": false,
+      "outline_width": 1.0,
+      "outline_height": 1.0,
+      "outline_offset": 0.0,
+      "outline_direction": "INNER"
+    },
+    "panel": {
+      "enabled": false,
+      "fill_config": {
+        "spacing": 5.0,
+        "spacing2": 3.0,
+        "angle": 45.0,
+        "boundary_distance": 1.0
+      },
+      "front_layer": {
+        "extrusion_width": 0.4,
+        "extruder": null
+      },
+      "back_layer": {
+        "extrusion_width": 0.4,
+        "extruder": null
+      },
+      "pattern_enabled": false,
+      "pattern_paths": []
+    },
+    "baseplate": {
+      "enabled": false,
+      "thickness": 10.0,
+      "fill_config": {
+        "spacing": 5.0,
+        "spacing2": 3.0,
+        "angle": 45.0,
+        "boundary_distance": 1.0
+      },
+      "layer": {
+        "extrusion_width": 0.4,
+        "extruder": null
+      }
+    },
+    "grid": {
+      "enabled": false,
+      "fill_config": {
+        "spacing": 5.0,
+        "spacing2": 3.0,
+        "angle": 45.0,
+        "boundary_distance": 1.0
+      },
+      "layer": {
+        "extrusion_width": 0.4,
+        "extruder": null
+      }
+    },
+    "bottom_face": {
+      "enabled": false,
+      "thickness": 1.0
+    },
+    "top_face": {
+      "enabled": false,
+      "thickness": 1.0
+    },
+    "layout": {
+      "auto_arrange": true,
+      "spacing": 10.0,
+      "margin": 20.0
+    },
+    "speed": {
+      "print_speed": 50.0,
+      "travel_speed": 150.0,
+      "first_layer_speed": 20.0,
+      "wall_speed": 40.0,
+      "fill_speed": 60.0
+    },
+    "gcode": {
+      "machine_type": "MINGDA",
+      "extruder1_temp": 220,
+      "extruder2_temp": 220,
+      "extruder3_temp": 0,
+      "bed_temp": 60,
+      "retract_length": 2.0,
+      "retract_speed": 40.0,
+      "color_change_retract": 30.0,
+      "color_change_prime": 35.0,
+      "z_hop_height1": 0.5,
+      "z_hop_height2": 5.0,
+      "distance_threshold": 100.0,
+      "prime_length": 5.0,
+      "filament_diameter": 1.75,
+      "print_speed": 50.0,
+      "travel_speed": 150.0,
+      "first_layer_speed": 20.0,
+      "end_z_position": 100.0
+    },
+    "machine": {
+      "name": "MINGDA",
+      "bed_width": 800.0,
+      "bed_depth": 1200.0,
+      "bed_height": 100.0,
+      "nozzle_diameter": 0.8,
+      "extruder_count": 2
+    }
+  }
+}

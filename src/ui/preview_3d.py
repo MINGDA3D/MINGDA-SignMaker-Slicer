@@ -11,14 +11,17 @@
 
 from __future__ import annotations
 import math
+from dataclasses import dataclass
 from typing import List, Optional, Tuple
 
+import numpy as np
 from PySide6.QtCore import Qt, Signal, QPoint, QTimer
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QSlider, QLabel,
     QPushButton, QFrame, QSizePolicy, QCheckBox
 )
 from PySide6.QtGui import QMouseEvent, QWheelEvent, QPainter, QPen, QColor
+from .busy_dialog import SpinnerWidget
 
 try:
     from PySide6.QtOpenGLWidgets import QOpenGLWidget
@@ -29,7 +32,26 @@ except ImportError:
     OPENGL_AVAILABLE = False
     QOpenGLWidget = QWidget  # Fallback
 
-from src.core.types import Layer, LayerPath, PathRole, ExtruderType
+from src.core.path_offset import PathOffset
+from src.core.slice_engine import SliceEngine
+from src.core.stl import (
+    ShellMeshBuilder,
+    StepMeshBuilder,
+    SkirtMeshBuilder,
+    ConnectedMeshBuilder,
+    EdgeWrapMeshBuilder,
+    BottomFaceMeshBuilder,
+    TopFaceMeshBuilder,
+)
+from src.core.types import (
+    Contour,
+    Layer,
+    LayerPath,
+    PathRole,
+    ExtruderType,
+    SliceParams,
+    SliceResult,
+)
 
 
 # 颜色定义（根据挤出机类型）
@@ -39,20 +61,75 @@ EXTRUDER_COLORS = {
     ExtruderType.EXTRUDER_3: (0.961, 0.620, 0.043, 1.0),  # 橙色 #F59E0B
 }
 
+WALL_COLOR = (0.357, 0.702, 0.980, 1.0)                  # 统一墙体蓝
+STEP_COLOR = (1.000, 0.471, 0.180, 0.98)                 # 台阶亮橙
+V_GROOVE_COLOR = (1.000, 0.320, 0.120, 0.98)             # V槽偏红橙
+CONNECTED_COLOR = (0.100, 0.960, 0.960, 1.0)             # 连字亮青
+SKIRT_COLOR = (1.000, 0.671, 0.122, 0.95)                # 裙边亮琥珀
+
+WALL_LIKE_ROLES = {
+    PathRole.WALL,
+    PathRole.FILL_PANEL,
+    PathRole.FILL_GRID,
+    PathRole.FILL_BASEPLATE,
+    PathRole.FILL_BOTTOM_FACE,
+    PathRole.FILL_TOP_FACE,
+}
+
 # 路径角色颜色
 ROLE_COLORS = {
-    PathRole.WALL: (0.231, 0.510, 0.965, 1.0),           # 蓝色
-    PathRole.SAFETY_LINE: (0.5, 0.5, 0.5, 0.8),          # 灰色
-    PathRole.SKIRT: (0.0, 0.8, 0.4, 0.9),                # 绿色
-    PathRole.STEP: (0.8, 0.6, 0.2, 1.0),                 # 棕色
-    PathRole.V_GROOVE: (0.8, 0.4, 0.2, 1.0),             # 深棕色
-    PathRole.FILL_PANEL: (0.4, 0.6, 0.9, 0.6),           # 浅蓝色半透明
-    PathRole.FILL_GRID: (0.4, 0.9, 0.6, 0.6),            # 浅绿色半透明
-    PathRole.FILL_BASEPLATE: (0.6, 0.6, 0.6, 0.6),       # 灰色半透明
-    PathRole.EDGE_WRAP: (0.9, 0.4, 0.4, 1.0),            # 红色
-    PathRole.OUTLINE: (0.9, 0.9, 0.2, 1.0),              # 黄色
-    PathRole.CONNECTED: (0.0, 0.9, 0.9, 1.0),            # 青色
+    PathRole.WALL: WALL_COLOR,
+    PathRole.SAFETY_LINE: (0.650, 0.710, 0.780, 0.75),   # 冷灰
+    PathRole.SKIRT: SKIRT_COLOR,
+    PathRole.STEP: STEP_COLOR,
+    PathRole.V_GROOVE: V_GROOVE_COLOR,
+    PathRole.FILL_PANEL: WALL_COLOR,
+    PathRole.FILL_GRID: WALL_COLOR,
+    PathRole.FILL_BASEPLATE: WALL_COLOR,
+    PathRole.FILL_BOTTOM_FACE: WALL_COLOR,
+    PathRole.FILL_TOP_FACE: WALL_COLOR,
+    PathRole.EDGE_WRAP: WALL_COLOR,
+    PathRole.OUTLINE: WALL_COLOR,
+    PathRole.CONNECTED: CONNECTED_COLOR,
 }
+
+RIBBON_ROLES = {
+    PathRole.SKIRT,
+    PathRole.STEP,
+    PathRole.V_GROOVE,
+    PathRole.CONNECTED,
+}
+
+ROLE_Z_LIFTS = {
+    PathRole.WALL: 0.020,
+    PathRole.SAFETY_LINE: 0.025,
+    PathRole.FILL_PANEL: 0.030,
+    PathRole.FILL_GRID: 0.030,
+    PathRole.FILL_BASEPLATE: 0.030,
+    PathRole.FILL_BOTTOM_FACE: 0.030,
+    PathRole.FILL_TOP_FACE: 0.030,
+    PathRole.STEP: 0.055,
+    PathRole.V_GROOVE: 0.060,
+    PathRole.CONNECTED: 0.075,
+    PathRole.SKIRT: 0.080,
+    PathRole.EDGE_WRAP: 0.040,
+    PathRole.OUTLINE: 0.040,
+}
+
+
+@dataclass
+class PreviewMeshPart:
+    """Prepared mesh part for OpenGL preview rendering."""
+    name: str
+    color: Tuple[float, float, float, float]
+    vertices: np.ndarray
+    vertex_normals: np.ndarray
+    faces: np.ndarray
+    face_min_z: np.ndarray
+    face_max_z: np.ndarray
+    sorted_face_min_z: np.ndarray
+    sorted_face_indices_flat: np.ndarray
+    all_face_indices_flat: np.ndarray
 
 
 class Preview3DWidget(QOpenGLWidget):
@@ -70,6 +147,8 @@ class Preview3DWidget(QOpenGLWidget):
         self.layers: List[Layer] = []
         self.current_layer: int = 0
         self.show_all_layers: bool = True  # 显示所有层还是只显示当前层
+        self.mesh_parts: List[PreviewMeshPart] = []
+        self._mesh_cache_key: Optional[Tuple[int, int, int]] = None
 
         # 视图参数
         self.rotation_x: float = 30.0   # X轴旋转（俯仰）
@@ -106,21 +185,239 @@ class Preview3DWidget(QOpenGLWidget):
     def set_layers(self, layers: List[Layer]):
         """设置切片层数据"""
         self.layers = layers
+        self.mesh_parts = []
+        self._mesh_cache_key = None
         self.current_layer = len(layers) - 1 if layers else 0
         # 计算模型边界框用于居中显示
         self._calculate_bounds()
         self._clamp_zoom_in_place()
         self.update()
 
+    def clear_scene(self):
+        """Clear preview content while keeping the widget ready for async loading."""
+        self.layers = []
+        self.mesh_parts = []
+        self._mesh_cache_key = None
+        self.current_layer = 0
+        self._calculate_bounds()
+        self._clamp_zoom_in_place()
+        self.update()
+
+    def set_slice_result(
+        self,
+        result: SliceResult,
+        contours: Optional[List[Contour]] = None,
+        params: Optional[SliceParams] = None,
+    ):
+        """Set sliced layers and, when possible, build solid preview meshes."""
+        self.layers = result.layers if result else []
+        self.current_layer = len(self.layers) - 1 if self.layers else 0
+        cache_key = self._get_mesh_cache_key(result, contours, params)
+        if self._mesh_cache_key != cache_key:
+            self.mesh_parts = self.build_mesh_parts_for_result(result, contours, params)
+            self._mesh_cache_key = cache_key
+        self._calculate_bounds()
+        self._clamp_zoom_in_place()
+        self.update()
+
+    def set_prebuilt_mesh_parts(
+        self,
+        result: SliceResult,
+        mesh_parts: List[PreviewMeshPart],
+        contours: Optional[List[Contour]] = None,
+        params: Optional[SliceParams] = None,
+    ):
+        """Apply mesh parts built off the UI thread."""
+        self.layers = result.layers if result else []
+        self.current_layer = len(self.layers) - 1 if self.layers else 0
+        self.mesh_parts = mesh_parts
+        self._mesh_cache_key = self._get_mesh_cache_key(result, contours, params)
+        self._calculate_bounds()
+        self._clamp_zoom_in_place()
+        self.update()
+
+    def has_cached_mesh_parts(
+        self,
+        result: Optional[SliceResult],
+        contours: Optional[List[Contour]],
+        params: Optional[SliceParams],
+    ) -> bool:
+        """Return whether the solid preview for this scene is already cached."""
+        return self._mesh_cache_key == self._get_mesh_cache_key(result, contours, params)
+
+    @staticmethod
+    def _get_mesh_cache_key(
+        result: Optional[SliceResult],
+        contours: Optional[List[Contour]],
+        params: Optional[SliceParams],
+    ) -> Tuple[int, Tuple[int, ...], int]:
+        """Build a stable cache key for solid preview meshes."""
+        contour_ids = tuple(id(contour) for contour in contours) if contours else ()
+        return (id(result), contour_ids, id(params))
+
+    @staticmethod
+    def build_mesh_parts_for_result(
+        result: Optional[SliceResult],
+        contours: Optional[List[Contour]],
+        params: Optional[SliceParams],
+    ) -> List[PreviewMeshPart]:
+        """Build solid component meshes for wall/step/connected/skirt preview."""
+        if result is None or not result.layers or not contours or params is None:
+            return []
+
+        path_offset = PathOffset()
+        shell_builder = ShellMeshBuilder(path_offset, params.shell.wall_thickness)
+        step_builder = StepMeshBuilder(path_offset)
+        skirt_builder = SkirtMeshBuilder(path_offset)
+        connected_builder = ConnectedMeshBuilder(path_offset)
+        edge_wrap_builder = EdgeWrapMeshBuilder(path_offset, params.shell.wall_thickness)
+        bottom_face_builder = BottomFaceMeshBuilder(path_offset)
+        top_face_builder = TopFaceMeshBuilder(path_offset)
+        temp_engine = SliceEngine()
+
+        parts: List[PreviewMeshPart] = []
+
+        shell_mesh = shell_builder.build(result.layers)
+        Preview3DWidget._append_mesh_part(parts, "wall", shell_mesh, WALL_COLOR)
+
+        top_contours = Preview3DWidget._get_transformed_contours_at_z(
+            contours, params.shell.height, temp_engine, params
+        )
+
+        panel_contours: List[Contour] = []
+        baseplate_contours: List[Contour] = []
+        if params.step.panel_step_enabled or params.step.baseplate_step_enabled:
+            panel_z = params.step.panel_step_height
+            baseplate_z = params.step.baseplate_step_height
+            for contour in contours:
+                if params.step.panel_step_enabled:
+                    panel_contour = temp_engine._apply_edge_profile(contour, panel_z, params.shell)
+                    if panel_contour is not None:
+                        panel_contours.append(panel_contour)
+                if params.step.baseplate_step_enabled:
+                    baseplate_contour = temp_engine._apply_edge_profile(contour, baseplate_z, params.shell)
+                    if baseplate_contour is not None:
+                        baseplate_contours.append(baseplate_contour)
+
+        if params.step.panel_step_enabled or params.step.baseplate_step_enabled:
+            step_mesh = step_builder.build(
+                contours,
+                result,
+                params,
+                panel_contours=panel_contours,
+                baseplate_contours=baseplate_contours,
+            )
+            Preview3DWidget._append_mesh_part(parts, "step", step_mesh, STEP_COLOR)
+
+        bottom_contours = Preview3DWidget._get_transformed_contours_at_z(
+            contours, 0.0, temp_engine, params
+        )
+        source_bottom_contours = bottom_contours if bottom_contours else contours
+
+        if params.skirt.enabled:
+            skirt_mesh = skirt_builder.build(
+                source_bottom_contours,
+                params,
+                source_contours=source_bottom_contours,
+            )
+            Preview3DWidget._append_mesh_part(parts, "skirt", skirt_mesh, SKIRT_COLOR)
+
+        if params.connected.enabled:
+            connected_mesh = connected_builder.build(contours, params)
+            Preview3DWidget._append_mesh_part(parts, "connected", connected_mesh, CONNECTED_COLOR)
+
+        if params.bottom_face.enabled:
+            bottom_face_mesh = bottom_face_builder.build(source_bottom_contours, params)
+            Preview3DWidget._append_mesh_part(parts, "bottom_face", bottom_face_mesh, WALL_COLOR)
+
+        if params.top_face.enabled:
+            top_face_mesh = top_face_builder.build(top_contours if top_contours else contours, params)
+            Preview3DWidget._append_mesh_part(parts, "top_face", top_face_mesh, WALL_COLOR)
+
+        if params.edge_wrap.wrap_enabled:
+            wrap_mesh = edge_wrap_builder.build_wrap(
+                top_contours if top_contours else contours,
+                result,
+                params,
+            )
+            Preview3DWidget._append_mesh_part(parts, "wrap", wrap_mesh, WALL_COLOR)
+
+        if params.edge_wrap.outline_enabled:
+            outline_mesh = edge_wrap_builder.build_outline(
+                top_contours if top_contours else contours,
+                result,
+                params,
+            )
+            Preview3DWidget._append_mesh_part(parts, "outline", outline_mesh, WALL_COLOR)
+
+        return parts
+
+    @staticmethod
+    def _append_mesh_part(
+        parts: List[PreviewMeshPart],
+        name: str,
+        mesh,
+        color: Tuple[float, float, float, float],
+    ):
+        """Convert trimesh geometry into OpenGL-ready arrays."""
+        if mesh is None or getattr(mesh, "faces", None) is None or len(mesh.faces) == 0:
+            return
+
+        vertices = np.ascontiguousarray(np.asarray(mesh.vertices, dtype=np.float32))
+        vertex_normals = np.ascontiguousarray(np.asarray(mesh.vertex_normals, dtype=np.float32))
+        faces = np.ascontiguousarray(np.asarray(mesh.faces, dtype=np.uint32))
+        face_vertices_z = vertices[faces][:, :, 2]
+        sort_order = np.argsort(face_vertices_z.min(axis=1), kind="stable")
+
+        parts.append(
+            PreviewMeshPart(
+                name=name,
+                color=color,
+                vertices=vertices,
+                vertex_normals=vertex_normals,
+                faces=faces,
+                face_min_z=face_vertices_z.min(axis=1),
+                face_max_z=face_vertices_z.max(axis=1),
+                sorted_face_min_z=np.ascontiguousarray(face_vertices_z.min(axis=1)[sort_order]),
+                sorted_face_indices_flat=np.ascontiguousarray(faces[sort_order].reshape(-1)),
+                all_face_indices_flat=np.ascontiguousarray(faces.reshape(-1)),
+            )
+        )
+
+    @staticmethod
+    def _get_transformed_contours_at_z(
+        contours: List[Contour],
+        z: float,
+        temp_engine: SliceEngine,
+        params: SliceParams,
+    ) -> List[Contour]:
+        """Apply edge transforms at a target height to match STL mesh logic."""
+        transformed_contours: List[Contour] = []
+        for contour in contours:
+            transformed = temp_engine._apply_edge_profile(contour, z, params.shell)
+            if transformed is not None:
+                transformed_contours.append(transformed)
+        return transformed_contours
+
     def _calculate_bounds(self):
         """计算模型边界框"""
-        if not self.layers:
+        if not self.layers and not self.mesh_parts:
             self.model_center = (0, 0, 0)
             self.model_size = 100
             return
 
         min_x, min_y, min_z = float('inf'), float('inf'), float('inf')
         max_x, max_y, max_z = float('-inf'), float('-inf'), float('-inf')
+
+        for part in self.mesh_parts:
+            if part.vertices.size == 0:
+                continue
+            min_x = min(min_x, float(np.min(part.vertices[:, 0])))
+            max_x = max(max_x, float(np.max(part.vertices[:, 0])))
+            min_y = min(min_y, float(np.min(part.vertices[:, 1])))
+            max_y = max(max_y, float(np.max(part.vertices[:, 1])))
+            min_z = min(min_z, float(np.min(part.vertices[:, 2])))
+            max_z = max(max_z, float(np.max(part.vertices[:, 2])))
 
         for layer in self.layers:
             z = layer.z_height
@@ -300,6 +597,7 @@ class Preview3DWidget(QOpenGLWidget):
         # 启用深度测试
         glEnable(GL_DEPTH_TEST)
         glDepthFunc(GL_LEQUAL)
+        glEnable(GL_NORMALIZE)
 
         # 启用线条平滑
         glEnable(GL_LINE_SMOOTH)
@@ -360,17 +658,26 @@ class Preview3DWidget(QOpenGLWidget):
 
         # 绘制场景 - 平台从原点开始，不居中
         if self.show_platform:
+            glDisable(GL_LIGHTING)
             self._draw_platform()
 
         if self.show_grid:
+            glDisable(GL_LIGHTING)
             self._draw_grid()
 
         if self.show_axes:
             # 坐标轴在原点显示
+            glDisable(GL_LIGHTING)
             self._draw_axes_at(0, 0, 0)
 
-        # 绘制切片层
-        self._draw_layers()
+        if self.mesh_parts:
+            self._configure_lighting(cam_x, cam_y, cam_z, cx, cy, cz)
+            self._draw_mesh_parts()
+            glDisable(GL_LIGHTING)
+        else:
+            # 绘制切片层
+            glDisable(GL_LIGHTING)
+            self._draw_layers()
 
     def _setup_projection(self):
         """设置投影矩阵"""
@@ -498,6 +805,147 @@ class Preview3DWidget(QOpenGLWidget):
         glEnd()
         glLineWidth(self.line_width)
 
+    def _configure_lighting(
+        self,
+        cam_x: float,
+        cam_y: float,
+        cam_z: float,
+        cx: float,
+        cy: float,
+        cz: float,
+    ):
+        """Configure basic directional lighting for solid mesh preview."""
+        glEnable(GL_LIGHTING)
+        glEnable(GL_LIGHT0)
+        glEnable(GL_LIGHT1)
+        glEnable(GL_COLOR_MATERIAL)
+        glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE)
+        glShadeModel(GL_SMOOTH)
+
+        glLightModelfv(GL_LIGHT_MODEL_AMBIENT, (0.28, 0.30, 0.34, 1.0))
+
+        key_light_pos = (cam_x + 180.0, cam_y - 220.0, cam_z + 260.0, 1.0)
+        fill_light_pos = (cx - 260.0, cy + 180.0, cz + 220.0, 1.0)
+
+        glLightfv(GL_LIGHT0, GL_POSITION, key_light_pos)
+        glLightfv(GL_LIGHT0, GL_DIFFUSE, (0.92, 0.92, 0.92, 1.0))
+        glLightfv(GL_LIGHT0, GL_SPECULAR, (0.12, 0.12, 0.12, 1.0))
+
+        glLightfv(GL_LIGHT1, GL_POSITION, fill_light_pos)
+        glLightfv(GL_LIGHT1, GL_DIFFUSE, (0.45, 0.48, 0.52, 1.0))
+        glLightfv(GL_LIGHT1, GL_SPECULAR, (0.0, 0.0, 0.0, 1.0))
+
+    def _get_mesh_clip_range(self) -> Tuple[float, float]:
+        """Translate the layer slider into a visible Z range for solid meshes."""
+        if not self.layers:
+            return (0.0, float("inf"))
+
+        current = self.layers[self.current_layer]
+        layer_bottom = current.z_height
+        layer_top = current.z_height + current.layer_height
+
+        if self.show_all_layers:
+            return (0.0, layer_top)
+        return (layer_bottom, layer_top)
+
+    def _draw_mesh_parts(self):
+        """Render real 3D meshes for shell, steps, connected letters and skirt."""
+        if not self.mesh_parts:
+            return
+
+        clip_bottom, clip_top = self._get_mesh_clip_range()
+        glEnableClientState(GL_VERTEX_ARRAY)
+        glEnableClientState(GL_NORMAL_ARRAY)
+
+        try:
+            for part in self.mesh_parts:
+                if self.show_all_layers:
+                    face_count = np.searchsorted(
+                        part.sorted_face_min_z,
+                        clip_top + 1e-6,
+                        side="right",
+                    )
+                    if face_count <= 0:
+                        continue
+                    if face_count >= len(part.faces):
+                        indices = part.all_face_indices_flat
+                    else:
+                        indices = part.sorted_face_indices_flat[:face_count * 3]
+                else:
+                    visible_mask = (
+                        (part.face_max_z >= clip_bottom - 1e-6) &
+                        (part.face_min_z <= clip_top + 1e-6)
+                    )
+                    if not np.any(visible_mask):
+                        continue
+                    indices = np.ascontiguousarray(part.faces[visible_mask].reshape(-1))
+
+                glColor4f(*part.color)
+                glVertexPointer(3, GL_FLOAT, 0, part.vertices)
+                glNormalPointer(GL_FLOAT, 0, part.vertex_normals)
+                glDrawElements(GL_TRIANGLES, int(indices.size), GL_UNSIGNED_INT, indices)
+        finally:
+            glDisableClientState(GL_NORMAL_ARRAY)
+            glDisableClientState(GL_VERTEX_ARRAY)
+
+    def _should_draw_ribbon(self, path: LayerPath) -> bool:
+        """Render wider special structures as flat bands so they stay visible."""
+        return path.role in RIBBON_ROLES and path.line_width > 0.0
+
+    def _get_render_z(self, layer_z: float, layer_height: float, path: LayerPath) -> float:
+        """Lift paths slightly above the platform/layer plane to avoid z-fighting."""
+        max_lift = max(layer_height * 0.45, 0.02)
+        return layer_z + min(ROLE_Z_LIFTS.get(path.role, 0.03), max_lift)
+
+    def _get_outline_width(self, path: LayerPath) -> float:
+        """Scale outline width from real path width while keeping walls readable."""
+        return max(1.6, min(6.0, 1.25 + path.line_width * 0.30))
+
+    def _get_fill_color(self, path: LayerPath, alpha_mult: float) -> Tuple[float, float, float, float]:
+        """Use a softer fill below the crisp outline for emphasis roles."""
+        r, g, b, a = self._get_path_color(path, alpha_mult)
+        return (r, g, b, min(0.70, max(0.22, a * 0.45)))
+
+    def _draw_path_outline(self, path: LayerPath, z: float):
+        """Draw the centerline outline for a path."""
+        if path.is_closed:
+            glBegin(GL_LINE_LOOP)
+        else:
+            glBegin(GL_LINE_STRIP)
+
+        for point in path.points:
+            glVertex3f(point.x, point.y, z)
+
+        glEnd()
+
+    def _draw_path_ribbon(self, path: LayerPath, z: float):
+        """Approximate wide paths with XY-plane quads so inner steps remain visible."""
+        if len(path.points) < 2:
+            return
+
+        half_width = max(path.line_width * 0.5, 0.2)
+        segment_count = len(path.points) if path.is_closed else len(path.points) - 1
+
+        glBegin(GL_QUADS)
+        for i in range(segment_count):
+            p1 = path.points[i]
+            p2 = path.points[(i + 1) % len(path.points)] if path.is_closed else path.points[i + 1]
+
+            dx = p2.x - p1.x
+            dy = p2.y - p1.y
+            length = math.sqrt(dx * dx + dy * dy)
+            if length <= 1e-9:
+                continue
+
+            nx = -dy / length * half_width
+            ny = dx / length * half_width
+
+            glVertex3f(p1.x + nx, p1.y + ny, z)
+            glVertex3f(p1.x - nx, p1.y - ny, z)
+            glVertex3f(p2.x - nx, p2.y - ny, z)
+            glVertex3f(p2.x + nx, p2.y + ny, z)
+        glEnd()
+
     def _draw_layers(self):
         """绘制切片层"""
         if not self.layers:
@@ -525,20 +973,17 @@ class Preview3DWidget(QOpenGLWidget):
                 if not path.points:
                     continue
 
-                # 获取颜色
-                color = self._get_path_color(path, alpha_mult)
-                glColor4f(*color)
+                render_z = self._get_render_z(z, layer.layer_height, path)
 
-                # 绘制路径
-                if path.is_closed:
-                    glBegin(GL_LINE_LOOP)
-                else:
-                    glBegin(GL_LINE_STRIP)
+                if self._should_draw_ribbon(path):
+                    glColor4f(*self._get_fill_color(path, alpha_mult))
+                    self._draw_path_ribbon(path, render_z)
 
-                for point in path.points:
-                    glVertex3f(point.x, point.y, z)
+                glColor4f(*self._get_path_color(path, alpha_mult))
+                glLineWidth(self._get_outline_width(path))
+                self._draw_path_outline(path, render_z)
 
-                glEnd()
+        glLineWidth(self.line_width)
 
     def _draw_test_cube(self):
         """绘制测试立方体（当没有切片数据时）"""
@@ -663,9 +1108,54 @@ class Preview3D(QWidget):
         self.gl_widget.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         layout.addWidget(self.gl_widget, 1)
 
+        self._loading_overlay = QFrame(self)
+        self._loading_overlay.setStyleSheet("""
+            QFrame {
+                background-color: rgba(13, 17, 23, 210);
+                border: 1px solid #30363D;
+                border-radius: 12px;
+            }
+            QLabel {
+                color: #C9D1D9;
+                font-size: 13px;
+            }
+        """)
+        overlay_layout = QVBoxLayout(self._loading_overlay)
+        overlay_layout.setContentsMargins(20, 18, 20, 18)
+        overlay_layout.setSpacing(12)
+        self._loading_spinner = SpinnerWidget(36, self._loading_overlay)
+        overlay_layout.addWidget(self._loading_spinner, alignment=Qt.AlignmentFlag.AlignCenter)
+        self._loading_label = QLabel(self.tr("Loading 3D preview..."))
+        self._loading_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        overlay_layout.addWidget(self._loading_label)
+        self._loading_overlay.hide()
+        self._loading_overlay.raise_()
+
         # 底部控制栏
         control_bar = self._create_control_bar()
         layout.addWidget(control_bar)
+
+    def resizeEvent(self, event):
+        """Keep the loading overlay centered above the preview area."""
+        super().resizeEvent(event)
+        width = 240
+        height = 120
+        x = max(0, (self.width() - width) // 2)
+        y = max(0, (self.height() - height) // 2)
+        self._loading_overlay.setGeometry(x, y, width, height)
+        self._loading_overlay.raise_()
+
+    def set_loading(self, loading: bool, message: Optional[str] = None):
+        """Show or hide a non-blocking loading indicator on top of the preview."""
+        if message:
+            self._loading_label.setText(message)
+
+        if loading:
+            self._loading_overlay.show()
+            self._loading_overlay.raise_()
+            self._loading_spinner.show()
+        else:
+            self._loading_overlay.hide()
 
     def _create_top_toolbar(self) -> QFrame:
         """创建顶部工具栏（显示选项）"""
@@ -933,6 +1423,66 @@ class Preview3D(QWidget):
             self.layer_total_label.setText("100.0%")
         else:
             self.layer_total_label.setText("0.0%")
+
+    def clear_scene(self):
+        """Clear current preview content before async loading a new scene."""
+        self.gl_widget.clear_scene()
+        self.set_layer_count(0)
+
+    def set_layer_count(self, total: int):
+        """Update layer controls without forcing synchronous scene processing."""
+        self.layer_slider.setMaximum(max(0, total - 1))
+        self.layer_slider.setValue(max(0, total - 1))
+        self.layer_current_label.setText(str(total))
+        self.layer_total_label.setText("100.0%" if total > 0 else "0.0%")
+
+    def set_slice_result(
+        self,
+        result: SliceResult,
+        contours: Optional[List[Contour]] = None,
+        params: Optional[SliceParams] = None,
+    ):
+        """Set sliced data and optional solid meshes for the 3D preview."""
+        self.gl_widget.set_slice_result(result, contours, params)
+
+        total = len(self.gl_widget.layers)
+        self.layer_slider.setMaximum(max(0, total - 1))
+        self.layer_slider.setValue(max(0, total - 1))
+
+        self.layer_current_label.setText(str(total))
+        if total > 0:
+            self.layer_total_label.setText("100.0%")
+        else:
+            self.layer_total_label.setText("0.0%")
+
+    def set_prebuilt_mesh_parts(
+        self,
+        result: SliceResult,
+        mesh_parts: List[PreviewMeshPart],
+        contours: Optional[List[Contour]] = None,
+        params: Optional[SliceParams] = None,
+    ):
+        """Apply mesh parts prepared in a worker thread."""
+        self.gl_widget.set_prebuilt_mesh_parts(result, mesh_parts, contours, params)
+
+        total = len(self.gl_widget.layers)
+        self.layer_slider.setMaximum(max(0, total - 1))
+        self.layer_slider.setValue(max(0, total - 1))
+
+        self.layer_current_label.setText(str(total))
+        if total > 0:
+            self.layer_total_label.setText("100.0%")
+        else:
+            self.layer_total_label.setText("0.0%")
+
+    def has_cached_mesh_parts(
+        self,
+        result: Optional[SliceResult],
+        contours: Optional[List[Contour]],
+        params: Optional[SliceParams],
+    ) -> bool:
+        """Return whether the current preview mesh cache matches the scene."""
+        return self.gl_widget.has_cached_mesh_parts(result, contours, params)
 
     def set_bed_size(self, width: float, depth: float, height: float):
         """设置打印平台尺寸"""
