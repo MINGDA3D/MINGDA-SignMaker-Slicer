@@ -1100,8 +1100,7 @@ class Preview3D(QWidget):
         layout.setSpacing(0)
 
         # 顶部工具栏（显示选项）
-        top_toolbar = self._create_top_toolbar()
-        layout.addWidget(top_toolbar)
+        # Temporarily disable the non-functional top preview toolbar.
 
         # 3D预览组件（直接占满中间区域）
         self.gl_widget = Preview3DWidget(self)
@@ -1362,13 +1361,14 @@ class Preview3D(QWidget):
         layer_info_layout.setContentsMargins(8, 0, 0, 0)
         layer_info_layout.setSpacing(2)
 
-        self.layer_current_label = QLabel("1")
+        self.layer_current_label = QLabel("0")
         self.layer_current_label.setStyleSheet("color: #58A6FF; font-size: 16px; font-weight: bold;")
         layer_info_layout.addWidget(self.layer_current_label)
 
-        self.layer_total_label = QLabel("24.7%")
+        self.layer_total_label = QLabel("0")
         self.layer_total_label.setStyleSheet("color: #8B949E; font-size: 10px;")
         layer_info_layout.addWidget(self.layer_total_label)
+        self._layer_count_hint = 0
 
         layout.addWidget(layer_info_widget)
 
@@ -1396,7 +1396,9 @@ class Preview3D(QWidget):
     def _on_layer_changed(self, value: int):
         """层数滑块变化"""
         self.gl_widget.set_current_layer(value)
-        total = len(self.gl_widget.layers)
+        total = len(self.gl_widget.layers) or self._layer_count_hint
+        self._update_layer_info(total, value)
+        return
 
         # 更新层数显示
         self.layer_current_label.setText(str(value + 1))
@@ -1414,6 +1416,8 @@ class Preview3D(QWidget):
 
         # 更新滑块范围
         total = len(layers)
+        self._sync_layer_controls(total, total - 1)
+        return
         self.layer_slider.setMaximum(max(0, total - 1))
         self.layer_slider.setValue(max(0, total - 1))
 
@@ -1429,8 +1433,12 @@ class Preview3D(QWidget):
         self.gl_widget.clear_scene()
         self.set_layer_count(0)
 
-    def set_layer_count(self, total: int):
+    def set_layer_count(self, total: int, layers: Optional[List[Layer]] = None):
         """Update layer controls without forcing synchronous scene processing."""
+        if layers is not None:
+            total = len(layers)
+        self._sync_layer_controls(total, total - 1)
+        return
         self.layer_slider.setMaximum(max(0, total - 1))
         self.layer_slider.setValue(max(0, total - 1))
         self.layer_current_label.setText(str(total))
@@ -1446,6 +1454,8 @@ class Preview3D(QWidget):
         self.gl_widget.set_slice_result(result, contours, params)
 
         total = len(self.gl_widget.layers)
+        self._sync_layer_controls(total, total - 1)
+        return
         self.layer_slider.setMaximum(max(0, total - 1))
         self.layer_slider.setValue(max(0, total - 1))
 
@@ -1466,6 +1476,8 @@ class Preview3D(QWidget):
         self.gl_widget.set_prebuilt_mesh_parts(result, mesh_parts, contours, params)
 
         total = len(self.gl_widget.layers)
+        self._sync_layer_controls(total, total - 1)
+        return
         self.layer_slider.setMaximum(max(0, total - 1))
         self.layer_slider.setValue(max(0, total - 1))
 
@@ -1487,3 +1499,76 @@ class Preview3D(QWidget):
     def set_bed_size(self, width: float, depth: float, height: float):
         """设置打印平台尺寸"""
         self.gl_widget.set_bed_size(width, depth, height)
+
+    def _update_layer_info(self, total: int, current_index: int):
+        """Refresh current/total layer labels."""
+        if total > 0:
+            current_index = max(0, min(current_index, total - 1))
+            self.layer_current_label.setText(str(current_index + 1))
+        else:
+            self.layer_current_label.setText("0")
+
+        self.layer_total_label.setText(str(max(0, total)))
+
+    def _sync_layer_controls(
+        self,
+        total: int,
+        current_index: int,
+        layers: Optional[List[Layer]] = None,
+    ):
+        """Synchronize slider state with the current layer summary."""
+        if layers is not None:
+            total = len(layers)
+
+        current_index = max(0, min(current_index, total - 1)) if total > 0 else 0
+        self._layer_count_hint = total
+
+        self.layer_slider.blockSignals(True)
+        try:
+            self.layer_slider.setMaximum(max(0, total - 1))
+            self.layer_slider.setValue(current_index)
+        finally:
+            self.layer_slider.blockSignals(False)
+
+        self._update_layer_info(total, current_index)
+
+    def _on_layer_changed(self, value: int):
+        """å±‚æ•°æ»‘å—å˜åŒ–"""
+        self.gl_widget.set_current_layer(value)
+        total = len(self.gl_widget.layers) or self._layer_count_hint
+        self._update_layer_info(total, value)
+
+    def set_layers(self, layers: List[Layer]):
+        """è®¾ç½®åˆ‡ç‰‡å±‚æ•°æ®"""
+        self.gl_widget.set_layers(layers)
+        total = len(layers)
+        self._sync_layer_controls(total, total - 1)
+
+    def set_layer_count(self, total: int, layers: Optional[List[Layer]] = None):
+        """Update layer controls without forcing synchronous scene processing."""
+        if layers is not None:
+            total = len(layers)
+        self._sync_layer_controls(total, total - 1)
+
+    def set_slice_result(
+        self,
+        result: SliceResult,
+        contours: Optional[List[Contour]] = None,
+        params: Optional[SliceParams] = None,
+    ):
+        """Set sliced data and optional solid meshes for the 3D preview."""
+        self.gl_widget.set_slice_result(result, contours, params)
+        total = len(self.gl_widget.layers)
+        self._sync_layer_controls(total, total - 1)
+
+    def set_prebuilt_mesh_parts(
+        self,
+        result: SliceResult,
+        mesh_parts: List[PreviewMeshPart],
+        contours: Optional[List[Contour]] = None,
+        params: Optional[SliceParams] = None,
+    ):
+        """Apply mesh parts prepared in a worker thread."""
+        self.gl_widget.set_prebuilt_mesh_parts(result, mesh_parts, contours, params)
+        total = len(self.gl_widget.layers)
+        self._sync_layer_controls(total, total - 1)

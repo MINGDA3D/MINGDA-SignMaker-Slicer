@@ -601,6 +601,7 @@ class MainWindow(QMainWindow):
         self.current_main_view = "home"
 
         self.setCentralWidget(self.main_stack)
+        self._sync_canvas_toolbar_visibility()
 
         # 连接画布工具栏信号
         self._connect_canvas_toolbar_signals()
@@ -897,7 +898,7 @@ class MainWindow(QMainWindow):
 
         # Avoid synchronous layer processing on first open; show the page immediately.
         self.preview_3d.clear_scene()
-        self.preview_3d.set_layer_count(len(target_result.layers))
+        self.preview_3d.set_layer_count(len(target_result.layers), target_result.layers)
 
         if self._preview_mesh_loading_key == loading_key:
             self.preview_3d.set_loading(True, self.tr("Loading 3D preview..."))
@@ -945,6 +946,13 @@ class MainWindow(QMainWindow):
         worker.error_occurred.connect(on_error)
         worker.start()
 
+    def _sync_canvas_toolbar_visibility(self):
+        """Show the canvas toolbar only in the 2D project editor."""
+        if hasattr(self, "canvas_toolbar"):
+            self.canvas_toolbar.setVisible(
+                self.current_main_view == "editor" and self.current_view == "2d"
+            )
+
     def _on_nav_changed(self, nav: str):
         """处理标题栏导航切换"""
         if nav == "home":
@@ -967,6 +975,7 @@ class MainWindow(QMainWindow):
             self.current_view = "3d"
             QTimer.singleShot(0, self._prepare_preview_3d)
             self._update_status(self.tr("3D Preview"))
+        self._sync_canvas_toolbar_visibility()
 
     def _on_menu_action(self, action: str):
         """处理标题栏菜单动作"""
@@ -1089,6 +1098,7 @@ class MainWindow(QMainWindow):
         self.current_main_view = "editor"
         self.view_stack.setCurrentIndex(0)
         self.current_view = "2d"
+        self._sync_canvas_toolbar_visibility()
         # 更新标题栏导航状态
         if hasattr(self, 'title_bar'):
             self.title_bar.set_nav("project")
@@ -1126,6 +1136,7 @@ class MainWindow(QMainWindow):
             self.current_main_view = "editor"
             self.view_stack.setCurrentIndex(0)
             self.current_view = "2d"
+            self._sync_canvas_toolbar_visibility()
             # 更新标题栏导航状态
             if hasattr(self, 'title_bar'):
                 self.title_bar.set_nav("project")
@@ -1436,6 +1447,7 @@ class MainWindow(QMainWindow):
             self.view_stack.setCurrentIndex(1)
             self.current_view = "3d"
             QTimer.singleShot(0, self._prepare_preview_3d)
+        self._sync_canvas_toolbar_visibility()
         self._update_status(self.tr("Switched to {view} view").format(view=view_type.upper()))
 
     def _on_zoom_fit(self):
