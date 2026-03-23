@@ -12,7 +12,7 @@ from pathlib import Path
 from typing import Optional, Dict, Callable, List
 import sys
 
-from PySide6.QtCore import QObject, Signal, QTranslator, QLocale, QCoreApplication, QSettings
+from PySide6.QtCore import QObject, Signal, QTranslator, QLocale, QSettings
 from PySide6.QtWidgets import QApplication
 
 
@@ -49,12 +49,12 @@ class TranslationManager(QObject):
 
     # 语言变更信号
     language_changed = Signal(str)
+    DEFAULT_LANGUAGE = "en_US"
 
     def __init__(self, app: QApplication, parent: Optional[QObject] = None):
         super().__init__(parent)
 
         self._app = app
-        self._current_language = "zh_CN"
         self._translator: Optional[QTranslator] = None
         self._qt_translator: Optional[QTranslator] = None
 
@@ -69,6 +69,7 @@ class TranslationManager(QObject):
 
         # 使用 QSettings 保存语言偏好（与 SettingsManager 使用相同的组织/应用名称）
         self._settings = QSettings("MINGDA", "SignMaker")
+        self._current_language = self._detect_system_language()
 
         # 语言变更回调列表
         self._callbacks: List[Callable[[], None]] = []
@@ -76,15 +77,74 @@ class TranslationManager(QObject):
         # 加载保存的语言偏好
         self._load_saved_language()
 
+    @classmethod
+    def _match_supported_language(cls, lang_code: str) -> Optional[str]:
+        """将系统语言代码映射到当前应用支持的语言代码。"""
+        if not lang_code:
+            return None
+
+        normalized = QLocale(lang_code).name()
+        if normalized in SUPPORTED_LANGUAGES:
+            return normalized
+
+        language_prefix = normalized.split("_", 1)[0]
+        for supported_lang in SUPPORTED_LANGUAGES:
+            if supported_lang.split("_", 1)[0] == language_prefix:
+                return supported_lang
+
+        return None
+
+    @classmethod
+    def _detect_system_language(cls) -> str:
+        """检测系统语言，匹配不到时回退到英语。"""
+        system_locale = QLocale.system()
+        candidates: List[str] = []
+
+        for lang_code in system_locale.uiLanguages():
+            if lang_code and lang_code not in candidates:
+                candidates.append(lang_code)
+
+        system_name = system_locale.name()
+        if system_name and system_name not in candidates:
+            candidates.append(system_name)
+
+        for lang_code in candidates:
+            matched = cls._match_supported_language(lang_code)
+            if matched:
+                return matched
+
+        return cls.DEFAULT_LANGUAGE
+
     def _load_saved_language(self):
         """加载保存的语言偏好"""
-        saved_lang = self._settings.value("language", "zh_CN", type=str)
+        if not self._settings.contains("language"):
+            return
+
+        saved_lang = self._settings.value("language", "", type=str)
         if saved_lang in SUPPORTED_LANGUAGES:
             self._current_language = saved_lang
 
     def _save_language_preference(self, lang_code: str):
         """保存语言偏好"""
         self._settings.setValue("language", lang_code)
+
+    def _get_translation_qm_file(self, lang_code: str) -> Path:
+        """获取指定语言对应的 qm 翻译文件路径。"""
+        return self._translations_dir / f"signmaker_{lang_code}.qm"
+
+    def has_language_resources(self, lang_code: str) -> bool:
+        """检查指定语言的翻译资源是否可用。"""
+        if lang_code not in SUPPORTED_LANGUAGES:
+            return False
+        return self._get_translation_qm_file(lang_code).exists()
+
+    def set_language_preference(self, lang_code: str) -> bool:
+        """保存语言偏好，等待下次启动时统一生效。"""
+        if not self.has_language_resources(lang_code):
+            return False
+
+        self._save_language_preference(lang_code)
+        return True
 
     def get_current_language(self) -> str:
         """获取当前语言代码"""
@@ -132,7 +192,7 @@ class TranslationManager(QObject):
             self._qt_translator = None
 
         # 中文需要加载翻译文件（因为源代码使用英文）
-        qm_file = self._translations_dir / f"signmaker_{lang_code}.qm"
+        qm_file = self._get_translation_qm_file(lang_code)
 
         if not qm_file.exists():
             # 尝试从 .ts 文件编译（开发模式）

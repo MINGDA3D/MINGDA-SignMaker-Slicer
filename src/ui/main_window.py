@@ -1916,7 +1916,7 @@ class MainWindow(QMainWindow):
         """切换语言"""
         translation_manager = get_translation_manager()
         if translation_manager:
-            if translation_manager.load_language(lang_code):
+            if translation_manager.set_language_preference(lang_code):
                 # 提示用户需要重启应用
                 QMessageBox.information(
                     self,
