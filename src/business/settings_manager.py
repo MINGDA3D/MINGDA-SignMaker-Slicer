@@ -2,18 +2,19 @@
 MINGDA SignMaker - 设置管理器
 
 架构设计：
-- JSON文件 (config/settings.json): 只保存切片参数（复杂结构，便于备份迁移）
+- JSON文件（用户配置目录下的 slice_params.json）: 只保存切片参数（复杂结构，便于备份迁移）
 - QSettings (平台原生): 语言、窗口状态、UI设置、最近文件等
 
 这样避免了多个模块同时写入同一个文件导致的冲突。
 """
 
 import json
+import sys
 from pathlib import Path
 from typing import Optional, List, Dict, Any
 from datetime import datetime
 
-from PySide6.QtCore import QSettings
+from PySide6.QtCore import QSettings, QStandardPaths
 from PySide6.QtWidgets import QMainWindow
 
 from src.core.types import SliceParams, serialize_params, deserialize_params
@@ -42,13 +43,78 @@ class SettingsManager:
         # JSON 配置文件路径（只用于切片参数）
         if config_dir:
             self._config_dir = Path(config_dir)
+            self._legacy_params_files: List[Path] = []
+            self._qsettings = QSettings(
+                str(self._config_dir / "ui_settings.ini"),
+                QSettings.Format.IniFormat
+            )
         else:
-            self._config_dir = Path(__file__).parent.parent.parent / "config"
+            self._config_dir = self._get_default_config_dir()
+            self._qsettings = QSettings(self.ORGANIZATION, self.APPLICATION)
 
         self._params_file = self._config_dir / "slice_params.json"
+        if not config_dir:
+            self._legacy_params_files = self._get_legacy_params_files()
 
-        # QSettings 用于其他所有设置
-        self._qsettings = QSettings(self.ORGANIZATION, self.APPLICATION)
+    @classmethod
+    def _get_default_config_dir(cls) -> Path:
+        """获取默认配置目录。
+
+        打包后的程序不能依赖应用目录可写，因此默认落到平台的用户配置目录。
+        """
+        config_root = QStandardPaths.writableLocation(
+            QStandardPaths.StandardLocation.GenericConfigLocation
+        )
+        if config_root:
+            return Path(config_root) / cls.ORGANIZATION / cls.APPLICATION
+
+        return Path.home() / ".config" / cls.ORGANIZATION / cls.APPLICATION
+
+    def _get_legacy_params_files(self) -> List[Path]:
+        """返回旧版本可能使用过的参数文件位置。
+
+        旧逻辑把参数固定写到项目/应用目录下的 config 目录。
+        新版本优先使用用户配置目录，但仍尝试迁移旧文件。
+        """
+        legacy_dirs = [
+            Path(__file__).resolve().parent.parent.parent / "config",
+        ]
+        if getattr(sys, "frozen", False):
+            legacy_dirs.append(Path(sys.executable).resolve().parent / "config")
+
+        legacy_files: List[Path] = []
+        seen = set()
+        current_target = str(self._params_file.resolve(strict=False))
+
+        for config_dir in legacy_dirs:
+            params_file = config_dir / "slice_params.json"
+            resolved = str(params_file.resolve(strict=False))
+            if resolved == current_target or resolved in seen:
+                continue
+            seen.add(resolved)
+            legacy_files.append(params_file)
+
+        return legacy_files
+
+    def _migrate_legacy_params_file(self) -> bool:
+        """将旧位置的参数文件迁移到用户配置目录。"""
+        if self._params_file.exists():
+            return True
+
+        for legacy_file in self._legacy_params_files:
+            if not legacy_file.exists():
+                continue
+
+            try:
+                import shutil
+
+                self._config_dir.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(legacy_file, self._params_file)
+                return True
+            except Exception:
+                continue
+
+        return False
 
     # =========================================================================
     # 切片参数（使用 JSON 文件）
@@ -56,6 +122,8 @@ class SettingsManager:
 
     def get_last_params(self) -> Optional[SliceParams]:
         """获取最后使用的切片参数"""
+        if not self._params_file.exists():
+            self._migrate_legacy_params_file()
         if not self._params_file.exists():
             return None
 

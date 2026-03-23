@@ -38,6 +38,25 @@ dist/SignMaker/
 └── 其他依赖库文件
 ```
 
+## 配置与参数保存位置
+
+### Windows 打包版默认位置
+
+- 切片参数 JSON：`%LOCALAPPDATA%\MINGDA\SignMaker\slice_params.json`
+- 其他 UI、语言、最近文件等设置：使用 Qt `QSettings` 的平台存储
+
+### 重要说明
+
+- 不要依赖 exe 同目录或项目根目录下的 `config/` 作为运行时可写目录
+- 打包版安装在 `Program Files` 等目录时，应用目录通常不可写
+- 当前实现已改为优先使用用户配置目录，避免打包后参数修改后重启丢失
+
+### 旧版本迁移
+
+- 如果旧版本曾把参数写到应用目录下的 `config/slice_params.json`
+- 新版本启动读取参数时会自动尝试迁移到用户配置目录
+- 迁移成功后，后续保存与读取都以用户配置目录为准
+
 ## 手动打包
 
 如果自动打包脚本有问题，可以手动执行：
@@ -84,6 +103,20 @@ pyinstaller build.spec
 - `resources/rc_resources.py` 是否存在
 - `translations/*.qm` 文件是否存在
 - `docs/images/` 目录是否有所需图标
+
+### 4. 打包后修改参数但重启后丢失
+
+**可能原因：**
+- 旧版本将 `slice_params.json` 写入应用目录下的 `config/`
+- 应用安装目录无写权限，或 PyInstaller 运行环境不是稳定可写目录
+
+**当前行为：**
+- 新版本默认将参数保存到 `%LOCALAPPDATA%\MINGDA\SignMaker\slice_params.json`
+- 启动时会尝试迁移旧的 `config/slice_params.json`
+
+**排查建议：**
+- 检查 `%LOCALAPPDATA%\MINGDA\SignMaker\slice_params.json` 是否生成
+- 如果旧安装目录里仍有 `config/slice_params.json`，确认首次启动后是否已迁移
 
 ## 创建安装程序（可选）
 

@@ -256,6 +256,52 @@ class TestSettingsManagerWithQt:
 
         assert sm.get_last_params() is None
 
+    def test_default_config_dir_uses_platform_app_config_location(self, qapp, temp_config_dir, monkeypatch):
+        """测试未显式传入目录时使用平台用户配置目录"""
+        from src.business.settings_manager import SettingsManager
+
+        expected_root = Path(temp_config_dir) / "app_config_root"
+        monkeypatch.setattr(
+            "src.business.settings_manager.QStandardPaths.writableLocation",
+            lambda *_: str(expected_root)
+        )
+
+        sm = SettingsManager()
+
+        expected_dir = expected_root / SettingsManager.ORGANIZATION / SettingsManager.APPLICATION
+        assert sm._config_dir == expected_dir
+        assert sm._params_file == expected_dir / "slice_params.json"
+
+    def test_get_last_params_migrates_legacy_file(self, qapp, temp_config_dir):
+        """测试会从旧的应用目录配置文件迁移到新目录"""
+        from src.business.settings_manager import SettingsManager
+
+        base_dir = Path(temp_config_dir)
+        target_dir = base_dir / "new_config"
+        legacy_dir = base_dir / "legacy_config"
+        legacy_dir.mkdir(parents=True, exist_ok=True)
+
+        legacy_file = legacy_dir / "slice_params.json"
+        params = SliceParams()
+        params.shell.height = 66.0
+        legacy_file.write_text(
+            json.dumps({
+                "version": "1.1",
+                "last_modified": "2026-03-22T00:00:00",
+                "params": serialize_params(params),
+            }, ensure_ascii=False, indent=2),
+            encoding="utf-8"
+        )
+
+        sm = SettingsManager(str(target_dir))
+        sm._legacy_params_files = [legacy_file]
+
+        restored = sm.get_last_params()
+
+        assert restored is not None
+        assert restored.shell.height == 66.0
+        assert (target_dir / "slice_params.json").exists()
+
     def test_language_uses_qsettings(self, qapp, temp_config_dir):
         """测试语言设置使用 QSettings"""
         from src.business.settings_manager import SettingsManager
@@ -299,8 +345,14 @@ class TestPresetManagerFull:
     @pytest.fixture
     def temp_presets_dir(self):
         """创建临时预设目录"""
-        with tempfile.TemporaryDirectory() as tmpdir:
-            yield tmpdir
+        base_dir = Path.cwd() / ".tmp_pytest_presets"
+        base_dir.mkdir(parents=True, exist_ok=True)
+        tmpdir = base_dir / f"case_{uuid.uuid4().hex}"
+        tmpdir.mkdir(parents=True, exist_ok=True)
+        try:
+            yield str(tmpdir)
+        finally:
+            shutil.rmtree(tmpdir, ignore_errors=True)
 
     def test_load_builtin_preset(self, temp_presets_dir):
         """测试加载内置预设"""
