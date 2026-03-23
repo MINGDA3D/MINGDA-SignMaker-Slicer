@@ -3,7 +3,7 @@ MINGDA SignMaker - 包边/勾边网格生成器
 
 生成包边和勾边的3D网格：
 - 包边：矩形截面，围绕字壳轮廓的环形带
-- 勾边：斜坡/楔形截面，下大上小
+- 勾边：斜坡/楔形截面，下窄上宽
 """
 
 from __future__ import annotations
@@ -43,7 +43,7 @@ class EdgeWrapMeshBuilder:
         构建包边网格
 
         包边结构：
-        - 位置：字壳顶部（从 total_height - wrap_height 到 total_height）
+        - 位置：字壳底板区域（从 z=0 到 wrap_height）
         - 形状：围绕字壳轮廓的环形带，矩形截面（上下宽度相同）
         - 不增加模型总高度
 
@@ -67,11 +67,8 @@ class EdgeWrapMeshBuilder:
         wrap_height = edge_wrap.wrap_height
         wrap_direction = edge_wrap.wrap_direction
 
-        # 获取字壳总高度
-        total_height = params.shell.height
-
-        # 包边的z起始位置
-        wrap_z_start = total_height - wrap_height
+        # 包边固定生成在底板区域，直接从 z=0 向上生长
+        wrap_z_start = 0.0
 
         meshes = []
 
@@ -201,23 +198,21 @@ class EdgeWrapMeshBuilder:
 
         勾边与包边的区别：
         - 包边：矩形截面，上下宽度相同
-        - 勾边：斜坡/楔形截面，下大上小
+        - 勾边：斜坡/楔形截面，下窄上宽
 
         方向选择：
         - 内部（INNER）：从内壁向内延伸
         - 外部（OUTER）：从外壁向外延伸
 
-        勾边的3D结构（侧视图）- 下大上小：
+        勾边的3D结构（侧视图）- 下窄上宽：
 
-        z=30mm  ──────┬────────┬──────  ← 模型顶部（勾边与壁齐平）
-                      │        │
-        z=27mm  ────╱─┤        ├─╲────  ← 勾边底部（向外/内延伸）
-                   ╱  │   壁   │  ╲
-                  ╱   │        │   ╲
-        z=0mm   ──────┴────────┴──────  ← 模型底部
+        z=outline_height ──╱──┤        ├──╲  ← 勾边顶部（向外/内放宽）
+                         ╱  │   壁   │  ╲
+                        ╱   │        │   ╲
+        z=0            ────┴────────┴────  ← 勾边底部（贴墙起步）
 
-        底部：延伸 outline_width
-        顶部：与壁边缘齐平
+        底部：与壁边缘齐平
+        顶部：延伸 outline_width
 
         Args:
             contours: 轮廓列表
@@ -236,12 +231,9 @@ class EdgeWrapMeshBuilder:
         outline_offset = edge_wrap.outline_offset
         outline_direction = edge_wrap.outline_direction
 
-        # 获取字壳总高度
-        total_height = params.shell.height
-
-        # 勾边的z高度范围
-        z_bottom = total_height - outline_height  # 勾边底部
-        z_top = total_height                       # 勾边顶部
+        # 勾边固定生成在底板区域，顶部与底板包边高度一致
+        z_bottom = 0.0
+        z_top = outline_height
 
         meshes = []
 
@@ -253,13 +245,13 @@ class EdgeWrapMeshBuilder:
 
                 # 计算外轮廓的勾边偏移
                 if outline_direction == EdgeDirection.INNER:
-                    # 内部勾边：从内壁边缘开始
-                    offset_bottom = -(self.wall_thickness + outline_offset + outline_width)
-                    offset_top = -(self.wall_thickness + outline_offset)
+                    # 内部勾边：底部贴内壁，向上逐渐向内放宽
+                    offset_bottom = -(self.wall_thickness + outline_offset)
+                    offset_top = -(self.wall_thickness + outline_offset + outline_width)
                 else:
-                    # 外部勾边：从外壁边缘开始
-                    offset_bottom = outline_offset + outline_width
-                    offset_top = outline_offset
+                    # 外部勾边：底部贴外壁，向上逐渐向外放宽
+                    offset_bottom = outline_offset
+                    offset_top = outline_offset + outline_width
 
                 outline_mesh = self._build_sloped_ring(
                     contour.outer,
@@ -302,19 +294,19 @@ class EdgeWrapMeshBuilder:
 
         使用分层挤出方法：将斜坡分成多个薄层，每层使用Shapely环形多边形挤出。
 
-        关键：内边缘固定在壁的位置（offset_top），只有外边缘逐渐变化。
+        关键：基准边缘固定在底部贴墙位置（offset_bottom），只有外扩边缘逐渐变化。
         这样形成的是一个实心的楔形，而不是空心的壳。
 
         楔形截面示意：
-            内边缘（固定）
-               ↓
-            ┌──┐ ← 顶部
-            │   ╲
-            │    ╲  ← 斜坡（外边缘逐渐变化）
-            │     ╲
-            └──────╲ ← 底部
-               ↑
             外边缘（最宽）
+               ↑
+            ┌──────╱ ← 顶部
+            │     ╱
+            │    ╱  ← 斜坡（外边缘逐渐变化）
+            │   ╱
+            └──┘ ← 底部
+               ↓
+            基准边缘（固定）
 
         Args:
             path: 原始轮廓路径（壁边缘位置）
@@ -333,57 +325,72 @@ class EdgeWrapMeshBuilder:
         try:
             meshes = []
 
-            # 分层数量 - 每层0.05mm，斜坡更光滑
+            # 分层数量同时受高度和横向扩张量约束：
+            # 这样可以让底部更贴墙，避免首层就出现明显外扩。
             height_diff = abs(z_top - z_bottom)
-            num_slices = max(4, min(200, int(height_diff / 0.05) + 1))
+            offset_diff = abs(offset_top - offset_bottom)
+            num_slices = max(
+                4,
+                min(400, int(max(height_diff / 0.02, offset_diff / 0.02)) + 1)
+            )
             slice_height = height_diff / num_slices
 
-            # ====== 关键：内边缘固定在壁的位置 ======
-            if abs(offset_top) < 0.001:
-                inner_coords = [(p.x, p.y) for p in path.points]
+            # ====== 关键：底部贴墙的基准边缘固定不动 ======
+            if abs(offset_bottom) < 0.001:
+                base_coords = [(p.x, p.y) for p in path.points]
             else:
-                inner_results = self.path_offset.offset(path, offset_top)
-                if not inner_results:
+                base_results = self.path_offset.offset(path, offset_bottom)
+                if not base_results:
                     return None
-                inner_coords = [(p.x, p.y) for p in inner_results[0].points]
+                base_coords = [(p.x, p.y) for p in base_results[0].points]
 
             # 确保闭合
-            if inner_coords[0] != inner_coords[-1]:
-                inner_coords.append(inner_coords[0])
+            if base_coords[0] != base_coords[-1]:
+                base_coords.append(base_coords[0])
 
             # 对每一层生成环形挤出
             for i in range(num_slices):
                 z_low = z_bottom + i * slice_height
 
-                # 外边缘从 offset_bottom 逐渐变化到 offset_top
-                t = i / num_slices
+                # 外扩边缘从底部基准逐渐变化到顶部最终宽度。
+                # 使用上边界插值，确保最顶层能达到完整 outline_width。
+                t = (i + 1) / num_slices
                 offset_outer = offset_bottom + t * (offset_top - offset_bottom)
 
-                # 获取外边缘坐标
+                # 获取变化边缘坐标
                 if abs(offset_outer) < 0.001:
-                    outer_coords = [(p.x, p.y) for p in path.points]
+                    current_coords = [(p.x, p.y) for p in path.points]
                 else:
-                    outer_results = self.path_offset.offset(path, offset_outer)
-                    if not outer_results:
+                    current_results = self.path_offset.offset(path, offset_outer)
+                    if not current_results:
                         continue
-                    outer_coords = [(p.x, p.y) for p in outer_results[0].points]
+                    current_coords = [(p.x, p.y) for p in current_results[0].points]
 
                 # 确保闭合
-                if outer_coords[0] != outer_coords[-1]:
-                    outer_coords.append(outer_coords[0])
+                if current_coords[0] != current_coords[-1]:
+                    current_coords.append(current_coords[0])
 
-                # 检查外边缘和内边缘是否有足够的差异
-                if abs(offset_outer - offset_top) < 0.01:
+                # 检查变化边缘和基准边缘是否有足够的差异
+                if abs(offset_outer - offset_bottom) < 1e-4:
                     continue
 
                 # 创建环形多边形
                 try:
-                    if is_outer:
-                        # 外轮廓：外边缘是边界，内边缘是孔
-                        ring_polygon = ShapelyPolygon(outer_coords, [inner_coords])
+                    base_polygon = ShapelyPolygon(base_coords)
+                    current_polygon = ShapelyPolygon(current_coords)
+
+                    if not base_polygon.is_valid:
+                        base_polygon = make_valid(base_polygon)
+                    if not current_polygon.is_valid:
+                        current_polygon = make_valid(current_polygon)
+
+                    if base_polygon.is_empty or current_polygon.is_empty:
+                        continue
+
+                    if base_polygon.area >= current_polygon.area:
+                        ring_polygon = base_polygon.difference(current_polygon)
                     else:
-                        # 内轮廓（孔）：内边缘是边界，外边缘是孔
-                        ring_polygon = ShapelyPolygon(inner_coords, [outer_coords])
+                        ring_polygon = current_polygon.difference(base_polygon)
 
                     if not ring_polygon.is_valid:
                         ring_polygon = make_valid(ring_polygon)
@@ -446,12 +453,12 @@ class EdgeWrapMeshBuilder:
         """计算内孔勾边底部/顶部偏移。内孔方向语义与外轮廓相反。"""
         if outline_direction == EdgeDirection.INNER:
             return (
-                outline_offset + outline_width,
                 outline_offset,
+                outline_offset + outline_width,
             )
         return (
-            -(self.wall_thickness + outline_offset + outline_width),
             -(self.wall_thickness + outline_offset),
+            -(self.wall_thickness + outline_offset + outline_width),
         )
 
     @staticmethod

@@ -562,6 +562,10 @@ QRadioButton {{
     color: {c.text_secondary};
 }}
 
+QRadioButton:disabled {{
+    color: {c.text_muted};
+}}
+
 QRadioButton:hover {{
     color: {c.text_primary};
 }}
@@ -581,6 +585,16 @@ QRadioButton::indicator:hover {{
 QRadioButton::indicator:checked {{
     background-color: {c.accent_primary};
     border-color: {c.accent_primary};
+}}
+
+QRadioButton::indicator:disabled {{
+    border-color: {c.border_default};
+    background-color: {c.bg_secondary};
+}}
+
+QRadioButton::indicator:checked:disabled {{
+    background-color: {c.text_muted};
+    border-color: {c.text_muted};
 }}
 
 /* ============================================ */

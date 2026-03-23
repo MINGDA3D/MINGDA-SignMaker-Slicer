@@ -2,11 +2,15 @@ import pytest
 
 from src.core.slice_engine import SliceEngine
 from src.core.types import (
+    BevelDirection,
     Contour,
+    EdgeDirection,
+    EdgeType,
     Layer,
     LayerPath,
     Path,
     PathRole,
+    PathType,
     Point,
     SliceParams,
 )
@@ -174,3 +178,51 @@ def test_preview_builds_solid_mesh_parts_for_step_and_connected(qapp):
     assert "step" in names
     assert "connected" in names
     assert "skirt" in names
+
+
+def test_preview_builds_wrap_and_outline_on_bottom_reference(qapp):
+    contour = Contour(
+        outer=Path(
+            points=[
+                Point(0.0, 0.0),
+                Point(100.0, 0.0),
+                Point(100.0, 100.0),
+                Point(0.0, 100.0),
+            ],
+            path_type=PathType.OUTER,
+            is_closed=True,
+        )
+    )
+
+    params = SliceParams()
+    params.shell.height = 30.0
+    params.shell.layer_height = 1.0
+    params.shell.edge_type = EdgeType.BEVELED
+    params.shell.bevel_direction = BevelDirection.TOP_SMALL
+    params.shell.bevel_width = 5.0
+    params.shell.baseplate_thickness = 5.0
+    params.shell.panel_thickness = 5.0
+    params.edge_wrap.wrap_enabled = True
+    params.edge_wrap.wrap_width = 2.0
+    params.edge_wrap.wrap_height = 3.0
+    params.edge_wrap.wrap_direction = EdgeDirection.OUTER
+    params.edge_wrap.outline_enabled = True
+    params.edge_wrap.outline_width = 1.0
+    params.edge_wrap.outline_height = 2.0
+    params.edge_wrap.outline_direction = EdgeDirection.OUTER
+
+    result = SliceEngine().slice([contour], params)
+
+    parts = Preview3DWidget.build_mesh_parts_for_result(result, [contour], params)
+    part_map = {part.name: part for part in parts}
+
+    assert "wrap" in part_map
+    assert "outline" in part_map
+    assert part_map["wrap"].vertices[:, 0].min() == pytest.approx(-2.0, abs=1e-6)
+    assert part_map["wrap"].vertices[:, 0].max() == pytest.approx(102.0, abs=1e-6)
+    assert part_map["wrap"].vertices[:, 2].min() == pytest.approx(0.0, abs=1e-6)
+    assert part_map["wrap"].vertices[:, 2].max() == pytest.approx(3.0, abs=1e-6)
+    assert part_map["outline"].vertices[:, 0].min() == pytest.approx(-1.0, abs=1e-6)
+    assert part_map["outline"].vertices[:, 0].max() == pytest.approx(101.0, abs=1e-6)
+    assert part_map["outline"].vertices[:, 2].min() == pytest.approx(0.0, abs=1e-6)
+    assert part_map["outline"].vertices[:, 2].max() == pytest.approx(2.0, abs=1e-6)

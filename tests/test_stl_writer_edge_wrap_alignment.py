@@ -41,7 +41,7 @@ def _make_contour() -> Contour:
     return Contour(outer=outer, holes=[hole])
 
 
-def test_beveled_top_contours_are_used_for_wrap_and_outline():
+def test_beveled_bottom_contours_are_used_for_wrap_and_outline():
     contour = _make_contour()
     params = SliceParams()
     params.shell.height = 30.0
@@ -84,7 +84,7 @@ def test_beveled_top_contours_are_used_for_wrap_and_outline():
     wrap_outer_bounds = captured["wrap"][0].outer.bounds
     wrap_hole_bounds = captured["wrap"][0].holes[0].bounds
 
-    assert wrap_outer_bounds == (5.0, 5.0, 95.0, 95.0)
-    assert wrap_hole_bounds == (35.0, 35.0, 65.0, 65.0)
+    assert wrap_outer_bounds == (0.0, 0.0, 100.0, 100.0)
+    assert wrap_hole_bounds == (30.0, 30.0, 70.0, 70.0)
     assert captured["outline"][0].outer.bounds == wrap_outer_bounds
     assert captured["outline"][0].holes[0].bounds == wrap_hole_bounds

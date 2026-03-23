@@ -726,6 +726,21 @@ class ParamPanel(QWidget):
         self.connected_base_height.setEnabled(enabled)
         self.connected_support_offset.setEnabled(enabled)
 
+    def _toggle_wrap_controls(self, enabled: bool):
+        """Toggle edge wrap controls."""
+        self.wrap_width.setEnabled(enabled)
+        self.wrap_height.setEnabled(enabled)
+        self.wrap_dir_inner.setEnabled(enabled)
+        self.wrap_dir_outer.setEnabled(enabled)
+
+    def _toggle_outline_controls(self, enabled: bool):
+        """Toggle outline controls."""
+        self.outline_width.setEnabled(enabled)
+        self.outline_height.setEnabled(enabled)
+        self.outline_offset.setEnabled(enabled)
+        self.outline_dir_inner.setEnabled(enabled)
+        self.outline_dir_outer.setEnabled(enabled)
+
     def _create_edge_wrap_group(self) -> QGroupBox:
         """创建包边/勾边参数组"""
         group = QGroupBox(self.tr("Edge Wrap/Outline"))
@@ -775,16 +790,7 @@ class ParamPanel(QWidget):
         layout.addLayout(wrap_form)
 
         self.wrap_enabled.stateChanged.connect(
-            lambda: self.wrap_width.setEnabled(self.wrap_enabled.isChecked())
-        )
-        self.wrap_enabled.stateChanged.connect(
-            lambda: self.wrap_height.setEnabled(self.wrap_enabled.isChecked())
-        )
-        self.wrap_enabled.stateChanged.connect(
-            lambda: self.wrap_dir_inner.setEnabled(self.wrap_enabled.isChecked())
-        )
-        self.wrap_enabled.stateChanged.connect(
-            lambda: self.wrap_dir_outer.setEnabled(self.wrap_enabled.isChecked())
+            lambda: self._toggle_wrap_controls(self.wrap_enabled.isChecked())
         )
 
         # 分隔线
@@ -844,19 +850,7 @@ class ParamPanel(QWidget):
         layout.addLayout(outline_form)
 
         self.outline_enabled.stateChanged.connect(
-            lambda: self.outline_width.setEnabled(self.outline_enabled.isChecked())
-        )
-        self.outline_enabled.stateChanged.connect(
-            lambda: self.outline_height.setEnabled(self.outline_enabled.isChecked())
-        )
-        self.outline_enabled.stateChanged.connect(
-            lambda: self.outline_offset.setEnabled(self.outline_enabled.isChecked())
-        )
-        self.outline_enabled.stateChanged.connect(
-            lambda: self.outline_dir_inner.setEnabled(self.outline_enabled.isChecked())
-        )
-        self.outline_enabled.stateChanged.connect(
-            lambda: self.outline_dir_outer.setEnabled(self.outline_enabled.isChecked())
+            lambda: self._toggle_outline_controls(self.outline_enabled.isChecked())
         )
 
         # 包边和勾边互斥
@@ -925,10 +919,12 @@ class ParamPanel(QWidget):
             self.outline_enabled.blockSignals(True)
             self.outline_enabled.setChecked(False)
             self.outline_enabled.blockSignals(False)
+            self._toggle_outline_controls(False)
         elif sender == self.outline_enabled and self.outline_enabled.isChecked():
             self.wrap_enabled.blockSignals(True)
             self.wrap_enabled.setChecked(False)
             self.wrap_enabled.blockSignals(False)
+            self._toggle_wrap_controls(False)
 
     def _update_params(self):
         """更新内部参数"""
@@ -1196,6 +1192,8 @@ class ParamPanel(QWidget):
 
         self._toggle_skirt_controls(params.skirt.enabled)
         self._toggle_connected_controls(params.connected.enabled)
+        self._toggle_wrap_controls(params.edge_wrap.wrap_enabled)
+        self._toggle_outline_controls(params.edge_wrap.outline_enabled)
         self._toggle_panel_step_controls(params.step.panel_step_enabled)
         self._toggle_baseplate_step_controls(params.step.baseplate_step_enabled)
         self.color1_height.setEnabled(params.color.enabled)

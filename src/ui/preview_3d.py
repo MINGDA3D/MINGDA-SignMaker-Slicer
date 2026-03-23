@@ -283,6 +283,10 @@ class Preview3DWidget(QOpenGLWidget):
         top_contours = Preview3DWidget._get_transformed_contours_at_z(
             contours, params.shell.height, temp_engine, params
         )
+        bottom_contours = Preview3DWidget._get_transformed_contours_at_z(
+            contours, 0.0, temp_engine, params
+        )
+        source_bottom_contours = bottom_contours if bottom_contours else contours
 
         panel_contours: List[Contour] = []
         baseplate_contours: List[Contour] = []
@@ -309,11 +313,6 @@ class Preview3DWidget(QOpenGLWidget):
             )
             Preview3DWidget._append_mesh_part(parts, "step", step_mesh, STEP_COLOR)
 
-        bottom_contours = Preview3DWidget._get_transformed_contours_at_z(
-            contours, 0.0, temp_engine, params
-        )
-        source_bottom_contours = bottom_contours if bottom_contours else contours
-
         if params.skirt.enabled:
             skirt_mesh = skirt_builder.build(
                 source_bottom_contours,
@@ -336,7 +335,7 @@ class Preview3DWidget(QOpenGLWidget):
 
         if params.edge_wrap.wrap_enabled:
             wrap_mesh = edge_wrap_builder.build_wrap(
-                top_contours if top_contours else contours,
+                source_bottom_contours,
                 result,
                 params,
             )
@@ -344,7 +343,7 @@ class Preview3DWidget(QOpenGLWidget):
 
         if params.edge_wrap.outline_enabled:
             outline_mesh = edge_wrap_builder.build_outline(
-                top_contours if top_contours else contours,
+                source_bottom_contours,
                 result,
                 params,
             )

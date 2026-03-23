@@ -11,7 +11,7 @@ STL生成算法（空心字壳）：
 5. 合并所有层的网格并输出为STL文件
 
 包边功能：
-- 包边是在字壳顶部添加的一圈边框
+- 包边/勾边固定在字壳底板区域生成
 - 向内包边：在字壳内侧，围绕字壳的内轮廓
 - 向外包边：在字壳外侧，围绕字壳的外轮廓
 
@@ -97,6 +97,10 @@ class STLWriter:
             top_contours = self._get_transformed_contours_at_z(
                 contours, params.shell.height, temp_engine, params
             )
+            bottom_contours = self._get_transformed_contours_at_z(
+                contours, 0.0, temp_engine, params
+            )
+            source_bottom_contours = bottom_contours if bottom_contours else contours
 
             panel_contours = []
             baseplate_contours = []
@@ -126,7 +130,7 @@ class STLWriter:
             # 3. 构建包边网格
             if params.edge_wrap.wrap_enabled:
                 edge_wrap_mesh = self.edge_wrap_builder.build_wrap(
-                    top_contours if top_contours else contours, result, params
+                    source_bottom_contours, result, params
                 )
                 if edge_wrap_mesh is not None:
                     meshes.append(edge_wrap_mesh)
@@ -134,24 +138,17 @@ class STLWriter:
             # 4. 构建勾边网格
             if params.edge_wrap.outline_enabled:
                 outline_mesh = self.edge_wrap_builder.build_outline(
-                    top_contours if top_contours else contours, result, params
+                    source_bottom_contours, result, params
                 )
                 if outline_mesh is not None:
                     meshes.append(outline_mesh)
 
-            # 预先计算底部变换后的轮廓（z=0），用于需要与底部墙体严格对齐的功能
-            bottom_contours = []
-            for c in contours:
-                bc = temp_engine._apply_edge_profile(c, 0, params.shell)
-                if bc:
-                    bottom_contours.append(bc)
-
             # 5. 构建防翘裙边网格
             if params.skirt.enabled:
                 skirt_mesh = self.skirt_builder.build(
-                    bottom_contours if bottom_contours else contours,
+                    source_bottom_contours,
                     params,
-                    source_contours=bottom_contours if bottom_contours else contours
+                    source_contours=source_bottom_contours
                 )
                 if skirt_mesh is not None:
                     meshes.append(skirt_mesh)
@@ -165,7 +162,7 @@ class STLWriter:
             # 7. 构建底面封闭网格
             if params.bottom_face.enabled:
                 bottom_face_mesh = self.bottom_face_builder.build(
-                    bottom_contours if bottom_contours else contours, params
+                    source_bottom_contours, params
                 )
                 if bottom_face_mesh is not None:
                     meshes.append(bottom_face_mesh)
