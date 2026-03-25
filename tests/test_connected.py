@@ -268,13 +268,44 @@ class TestConnectedSTLExport:
         )
 
         writer = STLWriter()
-        mesh = writer._build_connected_mesh([contour1, contour2], params)
+        mesh = writer.connected_builder.build([contour1, contour2], params)
 
         assert mesh is not None
         assert len(mesh.vertices) > 0
         assert len(mesh.faces) > 0
 
         print(f"Connected mesh: {len(mesh.vertices)} vertices, {len(mesh.faces)} faces")
+
+    def test_connected_mesh_uses_shell_layer_height_for_z_slices(self):
+        """测试连接字网格分层跟随 shell.layer_height，而不是固定 0.3。"""
+        contour1 = Contour(
+            outer=Path(points=[
+                Point(0, 0), Point(20, 0), Point(20, 20), Point(0, 20)
+            ])
+        )
+        contour2 = Contour(
+            outer=Path(points=[
+                Point(30, 0), Point(50, 0), Point(50, 20), Point(30, 20)
+            ])
+        )
+
+        params = SliceParams(
+            shell=ShellParams(height=10.0, layer_height=1.0),
+            connected=ConnectedParams(
+                enabled=True,
+                type="triangle",
+                width=15.0,
+                height=2.0,
+                base_height=2.0,
+            )
+        )
+
+        writer = STLWriter()
+        mesh = writer.connected_builder.build([contour1, contour2], params)
+
+        assert mesh is not None
+        unique_z = sorted({round(float(z), 6) for z in mesh.vertices[:, 2]})
+        assert unique_z == [0.0, 1.0, 2.0, 3.0, 4.0]
 
 
 class TestConnectedPanel:

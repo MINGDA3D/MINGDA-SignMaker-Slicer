@@ -623,7 +623,7 @@ class ConnectedParams:
     support_offset: float = 2.5         # 支撑偏移 (mm) - 与字壳边缘的距离
     auto_detect: bool = True            # 自动检测连接点
 
-    # 保留旧字段用于兼容
+    # 旧运行时别名，禁止序列化与反序列化
     bridge_width: float = 10.0          # 旧参数，同width
     bridge_height: float = 5.0          # 旧参数，同height
 
@@ -887,6 +887,34 @@ def _deserialize_enum(enum_class, value):
     return value
 
 
+def _height_to_layers(height_mm: float, layer_height: float, minimum: int = 1) -> int:
+    """Convert a mm height into a stored layer count."""
+    if layer_height <= 0:
+        return minimum
+    return max(minimum, int(round(height_mm / layer_height)))
+
+
+def _layers_to_height(layers: float, layer_height: float) -> float:
+    """Convert a stored layer count back into mm."""
+    if layer_height <= 0:
+        return 0.0
+    return max(0.0, float(layers)) * layer_height
+
+
+def _reject_legacy_key(section_name: str, section_data: dict, legacy_key: str, replacement_key: str) -> None:
+    """Reject legacy storage keys once a new schema is enabled."""
+    if legacy_key in section_data:
+        raise ValueError(
+            f"Legacy field '{section_name}.{legacy_key}' is no longer supported; "
+            f"use '{section_name}.{replacement_key}' instead."
+        )
+
+
+def _reject_legacy_layer_key(section_name: str, section_data: dict, legacy_key: str, layer_key: str) -> None:
+    """Reject legacy height-based storage keys once layer-count storage is enabled."""
+    _reject_legacy_key(section_name, section_data, legacy_key, layer_key)
+
+
 def serialize_params(params: SliceParams) -> dict:
     """将 SliceParams 序列化为字典
 
@@ -931,7 +959,7 @@ def serialize_params(params: SliceParams) -> dict:
             }
         return value
 
-    return {
+    data = {
         "shell": serialize_value(params.shell),
         "color": serialize_value(params.color),
         "step": serialize_value(params.step),
@@ -949,6 +977,65 @@ def serialize_params(params: SliceParams) -> dict:
         "gcode": serialize_value(params.gcode),
         "machine": serialize_value(params.machine),
     }
+
+    layer_height = max(params.shell.layer_height, 0.001)
+
+    data["shell"]["height_layers"] = _height_to_layers(params.shell.height, layer_height)
+    data["shell"].pop("height", None)
+
+    data["step"]["panel_step_layers"] = _height_to_layers(
+        params.step.panel_step_height,
+        layer_height,
+    )
+    data["step"]["baseplate_step_layers"] = _height_to_layers(
+        params.step.baseplate_step_height,
+        layer_height,
+    )
+    data["step"]["top_step_layers"] = _height_to_layers(
+        params.step.top_step_height,
+        layer_height,
+    )
+    data["step"]["bottom_groove_layers"] = _height_to_layers(
+        params.step.bottom_groove_height,
+        layer_height,
+    )
+    data["step"].pop("panel_step_height", None)
+    data["step"].pop("baseplate_step_height", None)
+    data["step"].pop("top_step_height", None)
+    data["step"].pop("bottom_groove_height", None)
+
+    data["connected"]["height_layers"] = _height_to_layers(
+        params.connected.height,
+        layer_height,
+    )
+    data["connected"]["base_height_layers"] = _height_to_layers(
+        params.connected.base_height,
+        layer_height,
+    )
+    data["connected"].pop("height", None)
+    data["connected"].pop("base_height", None)
+    data["connected"].pop("bridge_width", None)
+    data["connected"].pop("bridge_height", None)
+
+    data["bottom_face"]["thickness_layers"] = _height_to_layers(
+        params.bottom_face.thickness,
+        layer_height,
+    )
+    data["bottom_face"].pop("thickness", None)
+
+    data["light_slot"]["depth_layers"] = _height_to_layers(
+        params.light_slot.depth,
+        layer_height,
+    )
+    data["light_slot"].pop("depth", None)
+
+    data["top_face"]["thickness_layers"] = _height_to_layers(
+        params.top_face.thickness,
+        layer_height,
+    )
+    data["top_face"].pop("thickness", None)
+
+    return data
 
 
 def deserialize_params(data: dict) -> SliceParams:
@@ -968,8 +1055,13 @@ def deserialize_params(data: dict) -> SliceParams:
     # Shell 参数
     if "shell" in data:
         shell_data = data["shell"]
-        params.shell.height = shell_data.get("height", 30.0)
+        _reject_legacy_layer_key("shell", shell_data, "height", "height_layers")
         params.shell.layer_height = shell_data.get("layer_height", 0.3)
+        if "height_layers" in shell_data:
+            params.shell.height = _layers_to_height(
+                shell_data["height_layers"],
+                params.shell.layer_height,
+            )
         params.shell.wall_thickness = shell_data.get("wall_thickness", 1.2)
         params.shell.wall_count = shell_data.get("wall_count", 1)
         params.shell.wall_offset = shell_data.get("wall_offset", 0.0)
@@ -1006,15 +1098,51 @@ def deserialize_params(data: dict) -> SliceParams:
     # Step 参数
     if "step" in data:
         step_data = data["step"]
+        _reject_legacy_layer_key("step", step_data, "panel_step_height", "panel_step_layers")
+        _reject_legacy_layer_key("step", step_data, "baseplate_step_height", "baseplate_step_layers")
+        _reject_legacy_layer_key("step", step_data, "top_step_height", "top_step_layers")
+        _reject_legacy_layer_key("step", step_data, "bottom_groove_height", "bottom_groove_layers")
         params.step.enabled = step_data.get("enabled", False)
         params.step.panel_step_enabled = step_data.get("panel_step_enabled", False)
-        params.step.panel_step_height = step_data.get("panel_step_height", 3.0)
+        panel_step_layers = step_data.get("panel_step_layers")
+        if panel_step_layers is not None:
+            params.step.panel_step_height = _layers_to_height(
+                panel_step_layers,
+                params.shell.layer_height,
+            )
         params.step.panel_step_width = step_data.get("panel_step_width", 3.0)
         params.step.panel_step_is_v_groove = step_data.get("panel_step_is_v_groove", False)
         params.step.baseplate_step_enabled = step_data.get("baseplate_step_enabled", False)
-        params.step.baseplate_step_height = step_data.get("baseplate_step_height", 3.0)
+        baseplate_step_layers = step_data.get("baseplate_step_layers")
+        if baseplate_step_layers is not None:
+            params.step.baseplate_step_height = _layers_to_height(
+                baseplate_step_layers,
+                params.shell.layer_height,
+            )
         params.step.baseplate_step_width = step_data.get("baseplate_step_width", 3.0)
         params.step.baseplate_step_is_v_groove = step_data.get("baseplate_step_is_v_groove", False)
+        params.step.top_step_enabled = step_data.get("top_step_enabled", params.step.panel_step_enabled)
+        top_step_layers = step_data.get("top_step_layers", panel_step_layers)
+        if top_step_layers is not None:
+            params.step.top_step_height = _layers_to_height(
+                top_step_layers,
+                params.shell.layer_height,
+            )
+        params.step.top_step_width = step_data.get("top_step_width", params.step.panel_step_width)
+        params.step.bottom_groove_enabled = step_data.get(
+            "bottom_groove_enabled",
+            params.step.baseplate_step_enabled,
+        )
+        bottom_groove_layers = step_data.get("bottom_groove_layers", baseplate_step_layers)
+        if bottom_groove_layers is not None:
+            params.step.bottom_groove_height = _layers_to_height(
+                bottom_groove_layers,
+                params.shell.layer_height,
+            )
+        params.step.bottom_groove_depth = step_data.get(
+            "bottom_groove_depth",
+            params.step.baseplate_step_width,
+        )
         params.step.step_thickness = step_data.get("step_thickness", 0.3)
         params.step.extrusion_width = step_data.get("extrusion_width", 1.2)
         params.step.print_speed = step_data.get("print_speed", 30.0)
@@ -1037,13 +1165,27 @@ def deserialize_params(data: dict) -> SliceParams:
     # Connected 参数
     if "connected" in data:
         conn_data = data["connected"]
+        _reject_legacy_layer_key("connected", conn_data, "height", "height_layers")
+        _reject_legacy_layer_key("connected", conn_data, "base_height", "base_height_layers")
+        _reject_legacy_key("connected", conn_data, "bridge_width", "width")
+        _reject_legacy_key("connected", conn_data, "bridge_height", "height_layers")
         params.connected.enabled = conn_data.get("enabled", False)
         params.connected.type = conn_data.get("type", "triangle")
         params.connected.width = conn_data.get("width", 15.0)
-        params.connected.height = conn_data.get("height", 5.0)
-        params.connected.base_height = conn_data.get("base_height", 5.0)
+        if "height_layers" in conn_data:
+            params.connected.height = _layers_to_height(
+                conn_data["height_layers"],
+                params.shell.layer_height,
+            )
+        if "base_height_layers" in conn_data:
+            params.connected.base_height = _layers_to_height(
+                conn_data["base_height_layers"],
+                params.shell.layer_height,
+            )
         params.connected.support_offset = conn_data.get("support_offset", 2.5)
         params.connected.auto_detect = conn_data.get("auto_detect", True)
+        params.connected.bridge_width = params.connected.width
+        params.connected.bridge_height = params.connected.height
 
     # EdgeWrap 参数
     if "edge_wrap" in data:
@@ -1100,15 +1242,25 @@ def deserialize_params(data: dict) -> SliceParams:
     # BottomFace 参数
     if "bottom_face" in data:
         bf_data = data["bottom_face"]
+        _reject_legacy_layer_key("bottom_face", bf_data, "thickness", "thickness_layers")
         params.bottom_face.enabled = bf_data.get("enabled", False)
-        params.bottom_face.thickness = bf_data.get("thickness", 1.0)
+        if "thickness_layers" in bf_data:
+            params.bottom_face.thickness = _layers_to_height(
+                bf_data["thickness_layers"],
+                params.shell.layer_height,
+            )
 
     # LightSlot 参数
     if "light_slot" in data:
         light_slot_data = data["light_slot"]
+        _reject_legacy_layer_key("light_slot", light_slot_data, "depth", "depth_layers")
         params.light_slot.enabled = light_slot_data.get("enabled", False)
         params.light_slot.width = light_slot_data.get("width", 8.0)
-        params.light_slot.depth = light_slot_data.get("depth", 3.0)
+        if "depth_layers" in light_slot_data:
+            params.light_slot.depth = _layers_to_height(
+                light_slot_data["depth_layers"],
+                params.shell.layer_height,
+            )
         params.light_slot.floor_layers = light_slot_data.get("floor_layers", 2)
         params.light_slot.wall_gap = light_slot_data.get("wall_gap", 0.0)
         params.light_slot.outer_enabled = light_slot_data.get("outer_enabled", True)
@@ -1119,8 +1271,13 @@ def deserialize_params(data: dict) -> SliceParams:
     # TopFace 参数
     if "top_face" in data:
         tf_data = data["top_face"]
+        _reject_legacy_layer_key("top_face", tf_data, "thickness", "thickness_layers")
         params.top_face.enabled = tf_data.get("enabled", False)
-        params.top_face.thickness = tf_data.get("thickness", 1.0)
+        if "thickness_layers" in tf_data:
+            params.top_face.thickness = _layers_to_height(
+                tf_data["thickness_layers"],
+                params.shell.layer_height,
+            )
 
     # Layout 参数
     if "layout" in data:

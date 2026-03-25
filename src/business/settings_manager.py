@@ -29,7 +29,7 @@ class SettingsManager:
     """
 
     # 配置文件版本
-    CONFIG_VERSION = "1.1"
+    CONFIG_VERSION = "3.0"
 
     # 最近文件列表的最大数量
     MAX_RECENT_FILES = 10

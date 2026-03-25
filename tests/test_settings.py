@@ -29,12 +29,14 @@ class TestSerializeParams:
         assert "speed" in data
         assert "gcode" in data
         assert "machine" in data
-        assert data["shell"]["height"] == 30.0
+        assert data["shell"]["height_layers"] == 100
+        assert "height" not in data["shell"]
         assert data["shell"]["edge_type"] == "STRAIGHT"
 
     def test_serialize_custom_params(self):
         """测试序列化自定义参数"""
         params = SliceParams()
+        params.shell.layer_height = 0.5
         params.shell.height = 50.0
         params.shell.edge_type = EdgeType.BEVELED
         params.shell.bevel_direction = BevelDirection.TOP_LARGE
@@ -43,7 +45,8 @@ class TestSerializeParams:
 
         data = serialize_params(params)
 
-        assert data["shell"]["height"] == 50.0
+        assert data["shell"]["height_layers"] == 100
+        assert "height" not in data["shell"]
         assert data["shell"]["edge_type"] == "BEVELED"
         assert data["shell"]["bevel_direction"] == "TOP_LARGE"
         assert data["skirt"]["enabled"] is True
@@ -103,8 +106,11 @@ class TestSerializeParams:
         params.light_slot.auto_skip_small_holes = False
         params.light_slot.min_hole_span = 16.0
 
-        restored = deserialize_params(serialize_params(params))
+        data = serialize_params(params)
+        restored = deserialize_params(data)
 
+        assert data["light_slot"]["depth_layers"] == 14
+        assert "depth" not in data["light_slot"]
         assert restored.light_slot.enabled is True
         assert restored.light_slot.width == 9.5
         assert restored.light_slot.depth == 4.2
@@ -115,11 +121,37 @@ class TestSerializeParams:
         assert restored.light_slot.auto_skip_small_holes is False
         assert restored.light_slot.min_hole_span == 16.0
 
+    def test_serialize_and_deserialize_connected_params(self):
+        """测试连接字高度参数以层数字段往返序列化"""
+        params = SliceParams()
+        params.shell.layer_height = 0.5
+        params.connected.enabled = True
+        params.connected.width = 12.0
+        params.connected.height = 3.0
+        params.connected.base_height = 2.0
+        params.connected.support_offset = 1.5
+
+        data = serialize_params(params)
+        restored = deserialize_params(data)
+
+        assert data["connected"]["height_layers"] == 6
+        assert data["connected"]["base_height_layers"] == 4
+        assert "height" not in data["connected"]
+        assert "base_height" not in data["connected"]
+        assert "bridge_width" not in data["connected"]
+        assert "bridge_height" not in data["connected"]
+        assert restored.connected.enabled is True
+        assert restored.connected.width == 12.0
+        assert restored.connected.height == 3.0
+        assert restored.connected.base_height == 2.0
+        assert restored.connected.support_offset == 1.5
+
     def test_roundtrip_all_params(self):
         """测试完整参数的往返序列化"""
         params = SliceParams()
 
         # 修改各种参数
+        params.shell.layer_height = 0.5
         params.shell.height = 35.0
         params.shell.wall_thickness = 1.5
         params.color.enabled = True
@@ -157,7 +189,7 @@ class TestSerializeParams:
     def test_deserialize_partial_data(self):
         """测试反序列化部分数据"""
         data = {
-            "shell": {"height": 45.0},
+            "shell": {"height_layers": 150},
             "speed": {"print_speed": 70.0}
         }
         restored = deserialize_params(data)
@@ -166,6 +198,50 @@ class TestSerializeParams:
         assert restored.speed.print_speed == 70.0
         # 其他参数应使用默认值
         assert restored.skirt.enabled is False
+
+    def test_deserialize_rejects_legacy_layer_height_fields(self):
+        """测试旧的高度字段不再兼容"""
+        with pytest.raises(ValueError, match="shell.height"):
+            deserialize_params({
+                "shell": {
+                    "height": 30.0,
+                    "layer_height": 0.3,
+                }
+            })
+
+    def test_deserialize_rejects_legacy_connected_height_fields(self):
+        """测试连接字旧高度字段不再兼容"""
+        with pytest.raises(ValueError, match="connected.height"):
+            deserialize_params({
+                "shell": {
+                    "layer_height": 0.5,
+                },
+                "connected": {
+                    "height": 3.0,
+                },
+            })
+
+    def test_deserialize_rejects_legacy_connected_bridge_fields(self):
+        """测试连接字旧桥接字段不再兼容"""
+        with pytest.raises(ValueError, match="connected.bridge_width"):
+            deserialize_params({
+                "shell": {
+                    "layer_height": 0.5,
+                },
+                "connected": {
+                    "bridge_width": 12.0,
+                },
+            })
+
+        with pytest.raises(ValueError, match="connected.bridge_height"):
+            deserialize_params({
+                "shell": {
+                    "layer_height": 0.5,
+                },
+                "connected": {
+                    "bridge_height": 3.0,
+                },
+            })
 
 
 class TestSettingsManagerWithQt:
@@ -206,6 +282,7 @@ class TestSettingsManagerWithQt:
         sm = SettingsManager(temp_config_dir)
 
         params = SliceParams()
+        params.shell.layer_height = 0.5
         params.shell.height = 55.0
         params.skirt.enabled = True
 
@@ -246,7 +323,9 @@ class TestSettingsManagerWithQt:
         # 验证文件内容
         with open(params_file, 'r', encoding='utf-8') as f:
             data = json.load(f)
-        assert data["params"]["shell"]["height"] == 45.0
+        assert data["version"] == SettingsManager.CONFIG_VERSION
+        assert data["params"]["shell"]["height_layers"] == 150
+        assert "height" not in data["params"]["shell"]
 
     def test_set_last_params_returns_false_on_write_error(self, qapp, temp_config_dir, monkeypatch):
         """测试保存参数失败时返回 False，而不是抛异常"""
@@ -313,7 +392,7 @@ class TestSettingsManagerWithQt:
         params.shell.height = 66.0
         legacy_file.write_text(
             json.dumps({
-                "version": "1.1",
+                "version": SettingsManager.CONFIG_VERSION,
                 "last_modified": "2026-03-22T00:00:00",
                 "params": serialize_params(params),
             }, ensure_ascii=False, indent=2),
@@ -394,6 +473,7 @@ class TestPresetManagerFull:
         pm = PresetManager(temp_presets_dir)
 
         params = SliceParams()
+        params.shell.layer_height = 0.5
         params.shell.height = 40.0
         params.skirt.enabled = True
         params.skirt.width = 8.0
@@ -410,6 +490,28 @@ class TestPresetManagerFull:
         assert loaded.skirt.width == 8.0
         assert loaded.step.panel_step_enabled is True
         assert loaded.speed.print_speed == 60.0
+
+        with open(Path(temp_presets_dir) / "测试预设.preset", "r", encoding="utf-8") as f:
+            saved = json.load(f)
+        assert saved["version"] == PresetManager.PRESET_VERSION
+        assert saved["shell"]["height_layers"] == 80
+        assert "height" not in saved["shell"]
+
+    def test_save_shell_only_preset_uses_layer_count_fields(self, temp_presets_dir):
+        """测试仅 shell 预设也写入层数字段"""
+        pm = PresetManager(temp_presets_dir)
+        params = SliceParams()
+        params.shell.layer_height = 0.5
+        params.shell.height = 36.0
+
+        pm.save_preset("仅壳体预设", params, full_params=False)
+
+        with open(Path(temp_presets_dir) / "仅壳体预设.preset", "r", encoding="utf-8") as f:
+            saved = json.load(f)
+
+        assert saved["version"] == PresetManager.PRESET_VERSION
+        assert saved["shell"]["height_layers"] == 72
+        assert "height" not in saved["shell"]
 
     def test_preset_info(self, temp_presets_dir):
         """测试获取预设信息"""
@@ -458,6 +560,7 @@ class TestPresetManagerFull:
 
         # 创建预设
         params = SliceParams()
+        params.shell.layer_height = 0.5
         params.shell.height = 38.0
         pm.save_preset_full("导出测试", params)
 

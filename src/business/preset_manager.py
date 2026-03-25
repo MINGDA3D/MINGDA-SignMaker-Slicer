@@ -8,10 +8,9 @@
 import json
 import os
 from typing import Dict, List, Optional
-from dataclasses import asdict, fields
 
 from src.core.types import (
-    SliceParams, ShellParams, EdgeType,
+    SliceParams,
     serialize_params, deserialize_params
 )
 
@@ -26,15 +25,15 @@ class PresetManager:
     """
 
     # 预设文件版本
-    PRESET_VERSION = "2.0"
+    PRESET_VERSION = "4.0"
 
     # 内置预设（简化版，仅包含核心参数）
     BUILTIN_PRESETS = {
         "标准直边字": {
-            "version": "2.0",
+            "version": "4.0",
             "description": "适用于40cm以下的直边发光字",
             "shell": {
-                "height": 30.0,
+                "height_layers": 100,
                 "edge_type": "STRAIGHT",
                 "wall_thickness": 1.2,
                 "layer_height": 0.3,
@@ -42,10 +41,10 @@ class PresetManager:
             }
         },
         "标准斜边字": {
-            "version": "2.0",
+            "version": "4.0",
             "description": "适用于40cm以下的斜边发光字",
             "shell": {
-                "height": 30.0,
+                "height_layers": 100,
                 "edge_type": "BEVELED",
                 "wall_thickness": 1.2,
                 "layer_height": 0.3,
@@ -56,10 +55,10 @@ class PresetManager:
             }
         },
         "大字直边": {
-            "version": "2.0",
+            "version": "4.0",
             "description": "适用于40cm以上的大型直边发光字",
             "shell": {
-                "height": 35.0,
+                "height_layers": 117,
                 "edge_type": "STRAIGHT",
                 "wall_thickness": 1.3,
                 "layer_height": 0.3,
@@ -67,10 +66,10 @@ class PresetManager:
             }
         },
         "大字斜边": {
-            "version": "2.0",
+            "version": "4.0",
             "description": "适用于40cm以上的大型斜边发光字",
             "shell": {
-                "height": 35.0,
+                "height_layers": 117,
                 "edge_type": "BEVELED",
                 "wall_thickness": 1.3,
                 "layer_height": 0.3,
@@ -152,7 +151,7 @@ class PresetManager:
             preset_data["version"] = self.PRESET_VERSION
             preset_data["description"] = description
         else:
-            # 仅保存 shell 参数（向后兼容）
+            # 仅保存 shell 参数
             preset_data = {
                 "version": self.PRESET_VERSION,
                 "description": description,
@@ -262,60 +261,21 @@ class PresetManager:
     def _create_params_from_preset(self, preset_data: dict) -> SliceParams:
         """从预设数据创建SliceParams
 
-        支持两种格式：
-        - v2.0: 完整参数格式（使用 deserialize_params）
-        - v1.0: 旧格式（仅 shell 参数）
-
         Args:
             preset_data: 预设数据字典
 
         Returns:
             SliceParams 对象
         """
-        version = preset_data.get("version", "1.0")
+        params_data = {
+            key: value
+            for key, value in preset_data.items()
+            if key not in ["version", "description", "name"]
+        }
+        return deserialize_params(params_data)
 
-        # v2.0 格式：使用完整反序列化
-        if version >= "2.0" and any(key in preset_data for key in
-                                     ["step", "skirt", "connected", "speed", "gcode"]):
-            # 移除非参数字段
-            params_data = {k: v for k, v in preset_data.items()
-                          if k not in ["version", "description", "name"]}
-            return deserialize_params(params_data)
-
-        # v1.0 格式：手动解析 shell 参数
-        params = SliceParams()
-
-        if "shell" in preset_data:
-            shell_data = preset_data["shell"]
-            params.shell.height = shell_data.get("height", 30.0)
-            params.shell.wall_thickness = shell_data.get("wall_thickness", 1.2)
-            params.shell.layer_height = shell_data.get("layer_height", 0.3)
-            params.shell.wall_count = shell_data.get("wall_count", 1)
-            params.shell.bevel_width = shell_data.get("bevel_width", 5.0)
-            params.shell.baseplate_thickness = shell_data.get("baseplate_thickness", 10.0)
-            params.shell.panel_thickness = shell_data.get("panel_thickness", 3.0)
-            params.shell.dxf_outer_clearance = shell_data.get("dxf_outer_clearance", 1.0)
-            params.shell.dxf_hole_clearance = shell_data.get("dxf_hole_clearance", 1.0)
-            params.shell.dxf_laser_kerf = shell_data.get("dxf_laser_kerf", 0.0)
-
-            edge_type_str = shell_data.get("edge_type", "STRAIGHT")
-            try:
-                params.shell.edge_type = EdgeType[edge_type_str]
-            except KeyError:
-                params.shell.edge_type = EdgeType.STRAIGHT
-
-            # v1.0 也支持 bevel_direction
-            bevel_dir_str = shell_data.get("bevel_direction", "TOP_SMALL")
-            try:
-                from src.core.types import BevelDirection
-                params.shell.bevel_direction = BevelDirection[bevel_dir_str]
-            except (KeyError, ImportError):
-                pass
-
-        return params
-
-    def _serialize_shell_params(self, shell: ShellParams) -> dict:
-        """序列化ShellParams（向后兼容）
+    def _serialize_shell_params(self, shell) -> dict:
+        """序列化 shell 参数为当前层数格式。
 
         Args:
             shell: ShellParams 对象
@@ -323,20 +283,9 @@ class PresetManager:
         Returns:
             序列化后的字典
         """
-        return {
-            "height": shell.height,
-            "edge_type": shell.edge_type.name,
-            "wall_thickness": shell.wall_thickness,
-            "layer_height": shell.layer_height,
-            "wall_count": shell.wall_count,
-            "bevel_width": shell.bevel_width,
-            "bevel_direction": shell.bevel_direction.name,
-            "baseplate_thickness": shell.baseplate_thickness,
-            "panel_thickness": shell.panel_thickness,
-            "dxf_outer_clearance": shell.dxf_outer_clearance,
-            "dxf_hole_clearance": shell.dxf_hole_clearance,
-            "dxf_laser_kerf": shell.dxf_laser_kerf,
-        }
+        params = SliceParams()
+        params.shell = shell
+        return serialize_params(params)["shell"]
 
     def export_preset(self, name: str, file_path: str) -> None:
         """导出预设到指定文件

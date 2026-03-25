@@ -87,7 +87,11 @@ class ConnectedMeshBuilder:
         meshes = []
 
         for bridge in bridges:
-            bridge_mesh = self._create_bridge_mesh(bridge, connected_params)
+            bridge_mesh = self._create_bridge_mesh(
+                bridge,
+                connected_params,
+                max(params.shell.layer_height, 0.001),
+            )
             if bridge_mesh is not None:
                 meshes.append(bridge_mesh)
 
@@ -244,8 +248,12 @@ class ConnectedMeshBuilder:
             name=contour.name
         )
 
-    def _create_bridge_mesh(self, bridge: ConnectionBridge,
-                            params: ConnectedParams) -> Optional[trimesh.Trimesh]:
+    def _create_bridge_mesh(
+        self,
+        bridge: ConnectionBridge,
+        params: ConnectedParams,
+        layer_height: float,
+    ) -> Optional[trimesh.Trimesh]:
         """
         为单个连接桥创建3D网格
 
@@ -256,6 +264,7 @@ class ConnectedMeshBuilder:
         Args:
             bridge: 连接桥数据
             params: 连襟参数
+            layer_height: 使用当前字壳层高切分桥体高度
 
         Returns:
             连接桥网格
@@ -264,9 +273,6 @@ class ConnectedMeshBuilder:
             return None
 
         try:
-            # 获取连襟尺寸参数
-            base_height = params.base_height  # 底座高度
-            bevel_height = params.height       # 斜边高度
             total_height = self.connected_generator.get_total_height(params)
 
             # 连接桥的两个端点
@@ -292,8 +298,7 @@ class ConnectedMeshBuilder:
             meshes = []
 
             # 分层生成网格
-            layer_height = 0.3  # 每层高度
-            num_layers = max(1, int(total_height / layer_height))
+            num_layers = max(1, math.ceil(total_height / layer_height))
 
             for i in range(num_layers):
                 z_bottom = i * layer_height

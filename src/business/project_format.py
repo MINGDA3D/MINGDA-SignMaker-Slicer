@@ -29,7 +29,7 @@ from src.core.types import (
 
 
 # 格式常量
-FORMAT_VERSION = "2.0"
+FORMAT_VERSION = "4.0"
 MANIFEST_FILE = "manifest.json"
 PARAMS_FILE = "params.json"
 CONTOURS_FILE = "contours.bin"

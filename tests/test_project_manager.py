@@ -100,6 +100,12 @@ class TestProjectFormat:
         with tempfile.TemporaryDirectory() as tmpdir:
             file_path = os.path.join(tmpdir, "test.smp")
             save_project(project, file_path)
+
+            with zipfile.ZipFile(file_path, 'r') as zf:
+                params_data = json.loads(zf.read(PARAMS_FILE).decode('utf-8'))
+            assert params_data["shell"]["height_layers"] == 182
+            assert "height" not in params_data["shell"]
+
             loaded = load_project(file_path)
 
             assert loaded.params.shell.height == 45.5
