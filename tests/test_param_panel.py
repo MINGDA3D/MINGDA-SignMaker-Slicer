@@ -90,6 +90,7 @@ def test_wrap_outline_mutual_exclusive_updates_control_enabled_state(qapp):
             (
                 "light_slot_width",
                 "light_slot_depth",
+                "light_slot_floor_layers",
                 "light_slot_wall_gap",
                 "light_slot_outer_enabled",
                 "light_slot_hole_enabled",
@@ -140,3 +141,15 @@ def test_light_slot_and_bottom_face_can_coexist(qapp):
     assert panel.light_slot_enabled.isChecked() is True
     assert panel.bottom_face_thickness.isEnabled() is True
     assert panel.light_slot_width.isEnabled() is True
+
+
+def test_set_params_restores_light_slot_floor_layers_value(qapp):
+    panel = ParamPanel()
+    params = SliceParams()
+    params.light_slot.enabled = True
+    params.light_slot.floor_layers = 4
+
+    panel.set_params(params)
+
+    assert panel.light_slot_floor_layers.isEnabled() is True
+    assert panel.light_slot_floor_layers.value() == 4

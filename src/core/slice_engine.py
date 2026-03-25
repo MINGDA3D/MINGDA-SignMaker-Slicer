@@ -745,7 +745,10 @@ class SliceEngine:
             if free_edge_path.points
         ]
 
-        floor_thickness = min(params.shell.layer_height, slot_params.depth)
+        floor_thickness = min(
+            params.shell.layer_height * max(0, slot_params.floor_layers),
+            slot_params.depth,
+        )
         if info.z_height < floor_thickness:
             paths.extend(
                 self._generate_fill_paths_for_polygons(

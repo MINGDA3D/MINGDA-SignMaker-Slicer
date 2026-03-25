@@ -705,6 +705,7 @@ class LightSlotParams:
     enabled: bool = False
     width: float = 8.0
     depth: float = 3.0
+    floor_layers: int = 2
     wall_gap: float = 0.0
     outer_enabled: bool = True
     hole_enabled: bool = True
@@ -1108,6 +1109,7 @@ def deserialize_params(data: dict) -> SliceParams:
         params.light_slot.enabled = light_slot_data.get("enabled", False)
         params.light_slot.width = light_slot_data.get("width", 8.0)
         params.light_slot.depth = light_slot_data.get("depth", 3.0)
+        params.light_slot.floor_layers = light_slot_data.get("floor_layers", 2)
         params.light_slot.wall_gap = light_slot_data.get("wall_gap", 0.0)
         params.light_slot.outer_enabled = light_slot_data.get("outer_enabled", True)
         params.light_slot.hole_enabled = light_slot_data.get("hole_enabled", True)

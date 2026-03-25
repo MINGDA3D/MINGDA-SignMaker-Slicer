@@ -44,6 +44,7 @@ def _default_params():
     params.light_slot.enabled = True
     params.light_slot.width = 8.0
     params.light_slot.depth = 3.0
+    params.light_slot.floor_layers = 2
     params.light_slot.wall_gap = 0.0
     params.light_slot.outer_enabled = True
     params.light_slot.hole_enabled = True
@@ -110,13 +111,27 @@ def test_slice_generates_light_slot_only_on_bottom_layers():
 
     assert [z for z, paths in light_slot_by_layer if paths] == pytest.approx([0.0, 1.0, 2.0])
 
-    first_layer_paths = light_slot_by_layer[0][1]
-    assert any(path.is_closed for path in first_layer_paths)
-    assert any(not path.is_closed for path in first_layer_paths)
+    for _, layer_paths in light_slot_by_layer[:2]:
+        assert any(path.is_closed for path in layer_paths)
+        assert any(not path.is_closed for path in layer_paths)
 
-    for _, layer_paths in light_slot_by_layer[1:3]:
-        assert layer_paths
-        assert all(path.is_closed for path in layer_paths)
+    third_layer_paths = light_slot_by_layer[2][1]
+    assert third_layer_paths
+    assert all(path.is_closed for path in third_layer_paths)
+
+
+def test_light_slot_floor_layers_one_matches_single_layer_height():
+    contour = _build_outer_with_hole()
+    params = _default_params()
+    params.light_slot.floor_layers = 1
+    result = SliceEngine().slice([contour], params)
+
+    first_layer_paths = [path for path in result.layers[0].paths if path.role == PathRole.LIGHT_SLOT]
+    second_layer_paths = [path for path in result.layers[1].paths if path.role == PathRole.LIGHT_SLOT]
+
+    assert any(not path.is_closed for path in first_layer_paths)
+    assert second_layer_paths
+    assert all(path.is_closed for path in second_layer_paths)
 
 
 def test_bottom_face_and_light_slot_coexist_without_covering_slot_band():

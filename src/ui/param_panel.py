@@ -380,6 +380,14 @@ class ParamPanel(QWidget):
         self.light_slot_depth.valueChanged.connect(self._on_param_changed)
         form.addRow(self.tr("Slot Depth:"), self.light_slot_depth)
 
+        self.light_slot_floor_layers = PlusMinusIntSpinBox()
+        self.light_slot_floor_layers.setRange(1, 100)
+        self.light_slot_floor_layers.setValue(2)
+        self.light_slot_floor_layers.setSingleStep(1)
+        self.light_slot_floor_layers.setEnabled(False)
+        self.light_slot_floor_layers.valueChanged.connect(self._on_param_changed)
+        form.addRow(self.tr("Floor Layers:"), self.light_slot_floor_layers)
+
         self.light_slot_wall_gap = PlusMinusSpinBox()
         self.light_slot_wall_gap.setRange(0.0, 20.0)
         self.light_slot_wall_gap.setValue(0.0)
@@ -445,6 +453,7 @@ class ParamPanel(QWidget):
         """切换灯槽控件的启用状态。"""
         self.light_slot_width.setEnabled(enabled)
         self.light_slot_depth.setEnabled(enabled)
+        self.light_slot_floor_layers.setEnabled(enabled)
         self.light_slot_wall_gap.setEnabled(enabled)
         self.light_slot_outer_enabled.setEnabled(enabled)
         self.light_slot_hole_enabled.setEnabled(enabled)
@@ -1151,6 +1160,7 @@ class ParamPanel(QWidget):
         self._params.light_slot.enabled = self.light_slot_enabled.isChecked()
         self._params.light_slot.width = self.light_slot_width.value()
         self._params.light_slot.depth = self.light_slot_depth.value()
+        self._params.light_slot.floor_layers = self.light_slot_floor_layers.value()
         self._params.light_slot.wall_gap = self.light_slot_wall_gap.value()
         self._params.light_slot.outer_enabled = self.light_slot_outer_enabled.isChecked()
         self._params.light_slot.hole_enabled = self.light_slot_hole_enabled.isChecked()
@@ -1205,6 +1215,7 @@ class ParamPanel(QWidget):
             self.bottom_face_enabled, self.bottom_face_thickness,
             # 灯槽控件
             self.light_slot_enabled, self.light_slot_width, self.light_slot_depth,
+            self.light_slot_floor_layers,
             self.light_slot_wall_gap, self.light_slot_outer_enabled,
             self.light_slot_hole_enabled, self.light_slot_auto_skip_small_holes,
             self.light_slot_min_hole_span,
@@ -1299,6 +1310,7 @@ class ParamPanel(QWidget):
         self.light_slot_enabled.setChecked(params.light_slot.enabled)
         self.light_slot_width.setValue(params.light_slot.width)
         self.light_slot_depth.setValue(params.light_slot.depth)
+        self.light_slot_floor_layers.setValue(params.light_slot.floor_layers)
         self.light_slot_wall_gap.setValue(params.light_slot.wall_gap)
         self.light_slot_outer_enabled.setChecked(params.light_slot.outer_enabled)
         self.light_slot_hole_enabled.setChecked(params.light_slot.hole_enabled)

@@ -96,6 +96,7 @@ class TestSerializeParams:
         params.light_slot.enabled = True
         params.light_slot.width = 9.5
         params.light_slot.depth = 4.2
+        params.light_slot.floor_layers = 3
         params.light_slot.wall_gap = 0.8
         params.light_slot.outer_enabled = True
         params.light_slot.hole_enabled = False
@@ -107,6 +108,7 @@ class TestSerializeParams:
         assert restored.light_slot.enabled is True
         assert restored.light_slot.width == 9.5
         assert restored.light_slot.depth == 4.2
+        assert restored.light_slot.floor_layers == 3
         assert restored.light_slot.wall_gap == 0.8
         assert restored.light_slot.outer_enabled is True
         assert restored.light_slot.hole_enabled is False

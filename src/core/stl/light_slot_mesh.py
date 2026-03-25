@@ -37,7 +37,10 @@ class LightSlotMeshBuilder:
             return None
 
         meshes = []
-        floor_thickness = min(params.shell.layer_height, slot_params.depth)
+        floor_thickness = min(
+            params.shell.layer_height * max(0, slot_params.floor_layers),
+            slot_params.depth,
+        )
         wall_thickness = params.shell.wall_thickness
 
         for contour in contours:
