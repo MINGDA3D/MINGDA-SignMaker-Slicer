@@ -83,6 +83,7 @@ class ParamPanel(QWidget):
         content_layout.addWidget(self._create_edge_group())
         content_layout.addWidget(self._create_dxf_export_group())
         content_layout.addWidget(self._create_bottom_face_group())  # 底面封闭
+        content_layout.addWidget(self._create_light_slot_group())  # 灯槽
         content_layout.addWidget(self._create_top_face_group())  # 顶面封闭
 
         # 暂时隐藏换色层设置
@@ -328,7 +329,7 @@ class ParamPanel(QWidget):
                 self._on_param_changed()
 
     def _on_baseplate_step_toggled(self):
-        """底板台阶启用时，自动关闭底面封闭（互斥）"""
+        """底板台阶启用时，自动关闭冲突的底部结构。"""
         if self.baseplate_step_enabled.isChecked() and hasattr(self, 'bottom_face_enabled'):
             if self.bottom_face_enabled.isChecked():
                 self.bottom_face_enabled.blockSignals(True)
@@ -336,10 +337,121 @@ class ParamPanel(QWidget):
                 self.bottom_face_thickness.setEnabled(False)
                 self.bottom_face_enabled.blockSignals(False)
                 self._on_param_changed()
+        if self.baseplate_step_enabled.isChecked() and hasattr(self, 'light_slot_enabled'):
+            if self.light_slot_enabled.isChecked():
+                self.light_slot_enabled.blockSignals(True)
+                self.light_slot_enabled.setChecked(False)
+                self._toggle_light_slot_controls(False)
+                self.light_slot_enabled.blockSignals(False)
+                self._on_param_changed()
 
     def _toggle_bottom_face_controls(self, enabled: bool):
         """切换底面封闭控件的启用状态"""
         self.bottom_face_thickness.setEnabled(enabled)
+
+    def _create_light_slot_group(self) -> QGroupBox:
+        """创建灯槽参数组"""
+        group = QGroupBox(self.tr("Light Slot"))
+        layout = QVBoxLayout(group)
+        layout.setSpacing(8)
+
+        self.light_slot_enabled = QCheckBox(self.tr("Enable Light Slot"))
+        self.light_slot_enabled.stateChanged.connect(self._on_param_changed)
+        layout.addWidget(self.light_slot_enabled)
+
+        form = QFormLayout()
+        form.setSpacing(8)
+
+        self.light_slot_width = PlusMinusSpinBox()
+        self.light_slot_width.setRange(0.5, 50.0)
+        self.light_slot_width.setValue(8.0)
+        self.light_slot_width.setSingleStep(0.5)
+        self.light_slot_width.setSuffix("mm")
+        self.light_slot_width.setEnabled(False)
+        self.light_slot_width.valueChanged.connect(self._on_param_changed)
+        form.addRow(self.tr("Slot Width:"), self.light_slot_width)
+
+        self.light_slot_depth = PlusMinusSpinBox()
+        self.light_slot_depth.setRange(0.3, 20.0)
+        self.light_slot_depth.setValue(3.0)
+        self.light_slot_depth.setSingleStep(0.1)
+        self.light_slot_depth.setSuffix("mm")
+        self.light_slot_depth.setEnabled(False)
+        self.light_slot_depth.valueChanged.connect(self._on_param_changed)
+        form.addRow(self.tr("Slot Depth:"), self.light_slot_depth)
+
+        self.light_slot_wall_gap = PlusMinusSpinBox()
+        self.light_slot_wall_gap.setRange(0.0, 20.0)
+        self.light_slot_wall_gap.setValue(0.0)
+        self.light_slot_wall_gap.setSingleStep(0.1)
+        self.light_slot_wall_gap.setSuffix("mm")
+        self.light_slot_wall_gap.setEnabled(False)
+        self.light_slot_wall_gap.valueChanged.connect(self._on_param_changed)
+        form.addRow(self.tr("Wall Gap:"), self.light_slot_wall_gap)
+
+        layout.addLayout(form)
+
+        self.light_slot_outer_enabled = QCheckBox(self.tr("Outer Slot"))
+        self.light_slot_outer_enabled.setChecked(True)
+        self.light_slot_outer_enabled.setEnabled(False)
+        self.light_slot_outer_enabled.stateChanged.connect(self._on_param_changed)
+        layout.addWidget(self.light_slot_outer_enabled)
+
+        self.light_slot_hole_enabled = QCheckBox(self.tr("Hole Slot"))
+        self.light_slot_hole_enabled.setChecked(True)
+        self.light_slot_hole_enabled.setEnabled(False)
+        self.light_slot_hole_enabled.stateChanged.connect(self._on_param_changed)
+        layout.addWidget(self.light_slot_hole_enabled)
+
+        self.light_slot_auto_skip_small_holes = QCheckBox(self.tr("Auto Skip Small Holes"))
+        self.light_slot_auto_skip_small_holes.setChecked(True)
+        self.light_slot_auto_skip_small_holes.setEnabled(False)
+        self.light_slot_auto_skip_small_holes.stateChanged.connect(self._on_param_changed)
+        self.light_slot_auto_skip_small_holes.stateChanged.connect(
+            lambda: self._toggle_light_slot_controls(self.light_slot_enabled.isChecked())
+        )
+        layout.addWidget(self.light_slot_auto_skip_small_holes)
+
+        min_hole_span_form = QFormLayout()
+        min_hole_span_form.setSpacing(8)
+        self.light_slot_min_hole_span = PlusMinusSpinBox()
+        self.light_slot_min_hole_span.setRange(1.0, 100.0)
+        self.light_slot_min_hole_span.setValue(12.0)
+        self.light_slot_min_hole_span.setSingleStep(0.5)
+        self.light_slot_min_hole_span.setSuffix("mm")
+        self.light_slot_min_hole_span.setEnabled(False)
+        self.light_slot_min_hole_span.valueChanged.connect(self._on_param_changed)
+        min_hole_span_form.addRow(self.tr("Min Hole Span:"), self.light_slot_min_hole_span)
+        layout.addLayout(min_hole_span_form)
+
+        self.light_slot_enabled.stateChanged.connect(
+            lambda: self._toggle_light_slot_controls(self.light_slot_enabled.isChecked())
+        )
+        self.light_slot_enabled.stateChanged.connect(self._on_light_slot_toggled)
+
+        return group
+
+    def _on_light_slot_toggled(self):
+        """灯槽启用时自动关闭底板台阶（互斥）。"""
+        if self.light_slot_enabled.isChecked() and hasattr(self, 'baseplate_step_enabled'):
+            if self.baseplate_step_enabled.isChecked():
+                self.baseplate_step_enabled.blockSignals(True)
+                self.baseplate_step_enabled.setChecked(False)
+                self._toggle_baseplate_step_controls(False)
+                self.baseplate_step_enabled.blockSignals(False)
+                self._on_param_changed()
+
+    def _toggle_light_slot_controls(self, enabled: bool):
+        """切换灯槽控件的启用状态。"""
+        self.light_slot_width.setEnabled(enabled)
+        self.light_slot_depth.setEnabled(enabled)
+        self.light_slot_wall_gap.setEnabled(enabled)
+        self.light_slot_outer_enabled.setEnabled(enabled)
+        self.light_slot_hole_enabled.setEnabled(enabled)
+        self.light_slot_auto_skip_small_holes.setEnabled(enabled)
+        self.light_slot_min_hole_span.setEnabled(
+            enabled and self.light_slot_auto_skip_small_holes.isChecked()
+        )
 
     def _create_top_face_group(self) -> QGroupBox:
         """创建顶面封闭参数组"""
@@ -1035,6 +1147,16 @@ class ParamPanel(QWidget):
         self._params.bottom_face.enabled = self.bottom_face_enabled.isChecked()
         self._params.bottom_face.thickness = self.bottom_face_thickness.value()
 
+        # 灯槽参数
+        self._params.light_slot.enabled = self.light_slot_enabled.isChecked()
+        self._params.light_slot.width = self.light_slot_width.value()
+        self._params.light_slot.depth = self.light_slot_depth.value()
+        self._params.light_slot.wall_gap = self.light_slot_wall_gap.value()
+        self._params.light_slot.outer_enabled = self.light_slot_outer_enabled.isChecked()
+        self._params.light_slot.hole_enabled = self.light_slot_hole_enabled.isChecked()
+        self._params.light_slot.auto_skip_small_holes = self.light_slot_auto_skip_small_holes.isChecked()
+        self._params.light_slot.min_hole_span = self.light_slot_min_hole_span.value()
+
         # 顶面封闭参数
         self._params.top_face.enabled = self.top_face_enabled.isChecked()
         self._params.top_face.thickness = self.top_face_thickness.value()
@@ -1081,6 +1203,11 @@ class ParamPanel(QWidget):
             self.baseplate_step_height, self.baseplate_step_width, self.baseplate_step_v_groove,
             # 底面封闭控件
             self.bottom_face_enabled, self.bottom_face_thickness,
+            # 灯槽控件
+            self.light_slot_enabled, self.light_slot_width, self.light_slot_depth,
+            self.light_slot_wall_gap, self.light_slot_outer_enabled,
+            self.light_slot_hole_enabled, self.light_slot_auto_skip_small_holes,
+            self.light_slot_min_hole_span,
             # 顶面封闭控件
             self.top_face_enabled, self.top_face_thickness
         ]
@@ -1168,6 +1295,16 @@ class ParamPanel(QWidget):
         self.bottom_face_enabled.setChecked(params.bottom_face.enabled)
         self.bottom_face_thickness.setValue(params.bottom_face.thickness)
 
+        # 灯槽参数
+        self.light_slot_enabled.setChecked(params.light_slot.enabled)
+        self.light_slot_width.setValue(params.light_slot.width)
+        self.light_slot_depth.setValue(params.light_slot.depth)
+        self.light_slot_wall_gap.setValue(params.light_slot.wall_gap)
+        self.light_slot_outer_enabled.setChecked(params.light_slot.outer_enabled)
+        self.light_slot_hole_enabled.setChecked(params.light_slot.hole_enabled)
+        self.light_slot_auto_skip_small_holes.setChecked(params.light_slot.auto_skip_small_holes)
+        self.light_slot_min_hole_span.setValue(params.light_slot.min_hole_span)
+
         # 顶面封闭参数
         self.top_face_enabled.setChecked(params.top_face.enabled)
         self.top_face_thickness.setValue(params.top_face.thickness)
@@ -1199,6 +1336,7 @@ class ParamPanel(QWidget):
         self.color1_height.setEnabled(params.color.enabled)
         self.color2_height.setEnabled(params.color.enabled)
         self._toggle_bottom_face_controls(params.bottom_face.enabled)
+        self._toggle_light_slot_controls(params.light_slot.enabled)
         self._toggle_top_face_controls(params.top_face.enabled)
         self._update_step_ranges()
 

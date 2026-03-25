@@ -41,6 +41,7 @@ from src.core.stl import (
     ConnectedMeshBuilder,
     EdgeWrapMeshBuilder,
     BottomFaceMeshBuilder,
+    LightSlotMeshBuilder,
     TopFaceMeshBuilder,
 )
 from src.core.types import (
@@ -66,6 +67,7 @@ STEP_COLOR = (1.000, 0.471, 0.180, 0.98)                 # 台阶亮橙
 V_GROOVE_COLOR = (1.000, 0.320, 0.120, 0.98)             # V槽偏红橙
 CONNECTED_COLOR = (0.100, 0.960, 0.960, 1.0)             # 连字亮青
 SKIRT_COLOR = (1.000, 0.671, 0.122, 0.95)                # 裙边亮琥珀
+LIGHT_SLOT_COLOR = (0.969, 0.741, 0.247, 0.98)           # 灯槽暖金
 
 WALL_LIKE_ROLES = {
     PathRole.WALL,
@@ -87,6 +89,7 @@ ROLE_COLORS = {
     PathRole.FILL_GRID: WALL_COLOR,
     PathRole.FILL_BASEPLATE: WALL_COLOR,
     PathRole.FILL_BOTTOM_FACE: WALL_COLOR,
+    PathRole.LIGHT_SLOT: LIGHT_SLOT_COLOR,
     PathRole.FILL_TOP_FACE: WALL_COLOR,
     PathRole.EDGE_WRAP: WALL_COLOR,
     PathRole.OUTLINE: WALL_COLOR,
@@ -107,6 +110,7 @@ ROLE_Z_LIFTS = {
     PathRole.FILL_GRID: 0.030,
     PathRole.FILL_BASEPLATE: 0.030,
     PathRole.FILL_BOTTOM_FACE: 0.030,
+    PathRole.LIGHT_SLOT: 0.045,
     PathRole.FILL_TOP_FACE: 0.030,
     PathRole.STEP: 0.055,
     PathRole.V_GROOVE: 0.060,
@@ -272,6 +276,7 @@ class Preview3DWidget(QOpenGLWidget):
         connected_builder = ConnectedMeshBuilder(path_offset)
         edge_wrap_builder = EdgeWrapMeshBuilder(path_offset, params.shell.wall_thickness)
         bottom_face_builder = BottomFaceMeshBuilder(path_offset)
+        light_slot_builder = LightSlotMeshBuilder(path_offset)
         top_face_builder = TopFaceMeshBuilder(path_offset)
         temp_engine = SliceEngine()
 
@@ -328,6 +333,10 @@ class Preview3DWidget(QOpenGLWidget):
         if params.bottom_face.enabled:
             bottom_face_mesh = bottom_face_builder.build(source_bottom_contours, params)
             Preview3DWidget._append_mesh_part(parts, "bottom_face", bottom_face_mesh, WALL_COLOR)
+
+        if params.light_slot.enabled:
+            light_slot_mesh = light_slot_builder.build(source_bottom_contours, params)
+            Preview3DWidget._append_mesh_part(parts, "light_slot", light_slot_mesh, LIGHT_SLOT_COLOR)
 
         if params.top_face.enabled:
             top_face_mesh = top_face_builder.build(top_contours if top_contours else contours, params)

@@ -28,6 +28,7 @@ from .step_generator import StepGenerator
 from .edge_profile_generator import EdgeProfileGenerator
 from .skirt_generator import SkirtGenerator
 from .connected_generator import ConnectedGenerator, ConnectionBridge
+from .light_slot_geometry import LightSlotGeometry, LightSlotGeometryBuilder
 
 
 @dataclass
@@ -52,6 +53,7 @@ class SliceEngine:
         self.edge_profile_generator = EdgeProfileGenerator()
         self.skirt_generator = SkirtGenerator()
         self.connected_generator = ConnectedGenerator(self.path_offset)
+        self.light_slot_geometry_builder = LightSlotGeometryBuilder(self.path_offset)
 
     def slice(self, contours: List[Contour], params: SliceParams) -> SliceResult:
         """
@@ -239,21 +241,49 @@ class SliceEngine:
             )
             layer.paths.extend(wall_paths)
 
-            # 3. 生成底面填充（如需要）
+            bottom_reference_contour = modified_contour
+            light_slot_geometry = None
+            needs_bottom_reference = (
+                params.light_slot.enabled and (
+                    info.z_height < params.light_slot.depth or info.has_bottom_face
+                )
+            )
+            if needs_bottom_reference:
+                bottom_reference_contour = self._apply_edge_profile(
+                    contour, 0.0, params.shell
+                ) or modified_contour
+                light_slot_geometry = self.light_slot_geometry_builder.build(
+                    bottom_reference_contour,
+                    params,
+                )
+
+            # 3. 生成灯槽（如需要）
+            if light_slot_geometry is not None:
+                light_slot_paths = self._generate_light_slot_paths(
+                    light_slot_geometry,
+                    info,
+                    params,
+                )
+                layer.paths.extend(light_slot_paths)
+
+            # 4. 生成底面填充（如需要）
             if info.has_bottom_face:
                 bottom_face_paths = self._generate_bottom_face_paths(
-                    modified_contour, info, params
+                    bottom_reference_contour,
+                    info,
+                    params,
+                    light_slot_geometry=light_slot_geometry,
                 )
                 layer.paths.extend(bottom_face_paths)
 
-            # 3.5. 生成顶面填充（如需要）
+            # 4.5. 生成顶面填充（如需要）
             if info.has_top_face:
                 top_face_paths = self._generate_top_face_paths(
                     modified_contour, info, params
                 )
                 layer.paths.extend(top_face_paths)
 
-            # 4. 生成自定义台阶（如需要）
+            # 5. 生成自定义台阶（如需要）
             if info.is_step_layer and info.step_config:
                 step_paths = self.step_generator.generate_step_for_layer(
                     modified_contour,
@@ -266,7 +296,7 @@ class SliceEngine:
                 )
                 layer.paths.extend(step_paths)
 
-            # 5. 生成面板台阶（顶部台阶）
+            # 6. 生成面板台阶（顶部台阶）
             if params.step.panel_step_enabled:
                 panel_step_paths = self.step_generator.generate_panel_step_for_layer(
                     modified_contour,
@@ -279,7 +309,7 @@ class SliceEngine:
                 )
                 layer.paths.extend(panel_step_paths)
 
-            # 6. 生成底板台阶（底部台阶）
+            # 7. 生成底板台阶（底部台阶）
             if params.step.baseplate_step_enabled:
                 baseplate_step_paths = self.step_generator.generate_baseplate_step_for_layer(
                     modified_contour,
@@ -292,12 +322,12 @@ class SliceEngine:
                 )
                 layer.paths.extend(baseplate_step_paths)
 
-        # 7. 生成防翘裙边（仅首层，在所有轮廓处理完后统一生成）
+        # 8. 生成防翘裙边（仅首层，在所有轮廓处理完后统一生成）
         if info.has_skirt:
             skirt_paths = self._generate_all_skirt_paths(contours, params)
             layer.paths.extend(skirt_paths)
 
-        # 8. 生成连襟结构（用于 3D 预览与切片导出）
+        # 9. 生成连襟结构（用于 3D 预览与切片导出）
         if connected_context is not None:
             connected_paths = self._generate_connected_paths_for_layer(
                 connected_context, info.z_height, params
@@ -687,9 +717,115 @@ class SliceEngine:
 
         return paths
 
+    def _generate_light_slot_paths(
+        self,
+        geometry: LightSlotGeometry,
+        info: LayerInfo,
+        params: SliceParams,
+    ) -> List[LayerPath]:
+        """Generate bottom light-slot floor fill and free-edge wall paths."""
+        slot_params = params.light_slot
+        if (
+            not slot_params.enabled
+            or slot_params.width <= 0.0
+            or slot_params.depth <= 0.0
+            or info.z_height >= slot_params.depth
+        ):
+            return []
+
+        paths = [
+            LayerPath(
+                points=[Point(point.x, point.y) for point in free_edge_path.points],
+                role=PathRole.LIGHT_SLOT,
+                extruder=info.extruder,
+                line_width=params.shell.wall_thickness,
+                is_closed=free_edge_path.is_closed,
+            )
+            for free_edge_path in geometry.slot_free_edge_paths
+            if free_edge_path.points
+        ]
+
+        floor_thickness = min(params.shell.layer_height, slot_params.depth)
+        if info.z_height < floor_thickness:
+            paths.extend(
+                self._generate_fill_paths_for_polygons(
+                    geometry.slot_band_polygons,
+                    info,
+                    params.shell.wall_thickness,
+                    PathRole.LIGHT_SLOT,
+                )
+            )
+
+        return paths
+
+    def _generate_fill_paths_for_polygons(
+        self,
+        polygons,
+        info: LayerInfo,
+        line_width: float,
+        role: PathRole,
+    ) -> List[LayerPath]:
+        """Generate 100% line fill for a list of shapely polygons."""
+        if not polygons or line_width <= 0.0:
+            return []
+
+        fill_spacing = line_width
+        layer_index = int(info.z_height / info.layer_height) if info.layer_height > 0 else 0
+        fill_angle = 45.0 + (layer_index * 90.0)
+
+        paths: List[LayerPath] = []
+        for polygon in polygons:
+            contour = self._polygon_to_contour(polygon)
+            if contour is None:
+                continue
+
+            fill_paths = self._generate_line_fill(
+                contour,
+                fill_spacing,
+                fill_angle,
+                line_width,
+                info.extruder,
+            )
+            for path in fill_paths:
+                path.role = role
+            paths.extend(fill_paths)
+
+        return paths
+
+    def _polygon_to_contour(self, polygon) -> Optional[Contour]:
+        """Convert a shapely polygon into a Contour for fill clipping."""
+        if polygon is None or polygon.is_empty or polygon.area < 1e-6:
+            return None
+
+        exterior_coords = list(polygon.exterior.coords)
+        if len(exterior_coords) < 4:
+            return None
+
+        outer = Path(
+            points=[Point(x, y) for x, y in exterior_coords[:-1]],
+            path_type=PathType.OUTER,
+            is_closed=True,
+        )
+
+        holes = []
+        for interior in polygon.interiors:
+            hole_coords = list(interior.coords)
+            if len(hole_coords) < 4:
+                continue
+            holes.append(
+                Path(
+                    points=[Point(x, y) for x, y in hole_coords[:-1]],
+                    path_type=PathType.HOLE,
+                    is_closed=True,
+                )
+            )
+
+        return Contour(outer=outer, holes=holes)
+
     def _generate_bottom_face_paths(self, contour: Contour,
                                      info: LayerInfo,
-                                     params: SliceParams) -> List[LayerPath]:
+                                     params: SliceParams,
+                                     light_slot_geometry: Optional[LightSlotGeometry] = None) -> List[LayerPath]:
         """
         生成底面填充路径
 
@@ -709,6 +845,15 @@ class SliceEngine:
 
         if not bottom_params.enabled:
             return paths
+
+        if params.light_slot.enabled:
+            geometry = light_slot_geometry or self.light_slot_geometry_builder.build(contour, params)
+            return self._generate_fill_paths_for_polygons(
+                geometry.center_fill_polygons,
+                info,
+                params.shell.wall_thickness,
+                PathRole.FILL_BOTTOM_FACE,
+            )
 
         # 固定填充参数
         fill_line_width = params.shell.wall_thickness  # 使用壁厚作为填充线宽

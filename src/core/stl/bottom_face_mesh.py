@@ -12,6 +12,7 @@ import trimesh
 from shapely.geometry import Polygon as ShapelyPolygon
 from shapely.validation import make_valid
 
+from ..light_slot_geometry import LightSlotGeometryBuilder
 from ..types import Contour, SliceParams, EdgeType, BevelDirection
 from ..path_offset import PathOffset
 from .mesh_utils import MeshUtils
@@ -29,6 +30,7 @@ class BottomFaceMeshBuilder:
         """
         self.path_offset = path_offset
         self.mesh_utils = MeshUtils()
+        self.light_slot_geometry_builder = LightSlotGeometryBuilder(path_offset)
 
     def build(self, contours: List[Contour],
               params: SliceParams) -> Optional[trimesh.Trimesh]:
@@ -54,6 +56,20 @@ class BottomFaceMeshBuilder:
 
         meshes = []
         thickness = bottom_face.thickness
+
+        if params.light_slot.enabled:
+            for contour in contours:
+                try:
+                    geometry = self.light_slot_geometry_builder.build(contour, params)
+                    for polygon in geometry.center_fill_polygons:
+                        mesh = self.mesh_utils.extrude_polygon(polygon, thickness, z_offset=0)
+                        if mesh is not None:
+                            meshes.append(mesh)
+                except Exception as e:
+                    print(f"警告：处理灯槽共存底面失败: {e}")
+                    continue
+
+            return MeshUtils.merge_meshes(meshes)
 
         # 计算内缩距离（所有壁的总宽度）
         wall_thickness = params.shell.wall_thickness

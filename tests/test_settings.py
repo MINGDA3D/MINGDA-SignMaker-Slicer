@@ -90,6 +90,29 @@ class TestSerializeParams:
         assert restored.skirt.outer_enabled is False
         assert restored.skirt.inner_enabled is True
 
+    def test_serialize_and_deserialize_light_slot_params(self):
+        """测试灯槽参数可完整往返序列化"""
+        params = SliceParams()
+        params.light_slot.enabled = True
+        params.light_slot.width = 9.5
+        params.light_slot.depth = 4.2
+        params.light_slot.wall_gap = 0.8
+        params.light_slot.outer_enabled = True
+        params.light_slot.hole_enabled = False
+        params.light_slot.auto_skip_small_holes = False
+        params.light_slot.min_hole_span = 16.0
+
+        restored = deserialize_params(serialize_params(params))
+
+        assert restored.light_slot.enabled is True
+        assert restored.light_slot.width == 9.5
+        assert restored.light_slot.depth == 4.2
+        assert restored.light_slot.wall_gap == 0.8
+        assert restored.light_slot.outer_enabled is True
+        assert restored.light_slot.hole_enabled is False
+        assert restored.light_slot.auto_skip_small_holes is False
+        assert restored.light_slot.min_hole_span == 16.0
+
     def test_roundtrip_all_params(self):
         """测试完整参数的往返序列化"""
         params = SliceParams()
@@ -103,6 +126,7 @@ class TestSerializeParams:
         params.connected.enabled = True
         params.edge_wrap.wrap_enabled = True
         params.bottom_face.enabled = True
+        params.light_slot.enabled = True
         params.top_face.enabled = True
         params.gcode.extruder1_temp = 230
         params.machine.bed_width = 500.0
@@ -118,6 +142,7 @@ class TestSerializeParams:
         assert restored.connected.enabled is True
         assert restored.edge_wrap.wrap_enabled is True
         assert restored.bottom_face.enabled is True
+        assert restored.light_slot.enabled is True
         assert restored.top_face.enabled is True
         assert restored.gcode.extruder1_temp == 230
         assert restored.machine.bed_width == 500.0

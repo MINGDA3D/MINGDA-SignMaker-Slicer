@@ -86,6 +86,17 @@ def test_wrap_outline_mutual_exclusive_updates_control_enabled_state(qapp):
             ("bottom_face_thickness",),
         ),
         (
+            lambda p: setattr(p.light_slot, "enabled", True),
+            (
+                "light_slot_width",
+                "light_slot_depth",
+                "light_slot_wall_gap",
+                "light_slot_outer_enabled",
+                "light_slot_hole_enabled",
+                "light_slot_auto_skip_small_holes",
+            ),
+        ),
+        (
             lambda p: setattr(p.top_face, "enabled", True),
             ("top_face_thickness",),
         ),
@@ -104,3 +115,28 @@ def test_set_params_restores_enabled_state_for_other_toggle_groups(qapp, configu
 
     for control_name in control_names:
         assert getattr(panel, control_name).isEnabled() is True
+
+
+def test_light_slot_and_baseplate_step_are_mutually_exclusive(qapp):
+    panel = ParamPanel()
+
+    panel.light_slot_enabled.setChecked(True)
+    assert panel.light_slot_width.isEnabled() is True
+
+    panel.baseplate_step_enabled.setChecked(True)
+
+    assert panel.baseplate_step_enabled.isChecked() is True
+    assert panel.light_slot_enabled.isChecked() is False
+    assert panel.light_slot_width.isEnabled() is False
+
+
+def test_light_slot_and_bottom_face_can_coexist(qapp):
+    panel = ParamPanel()
+
+    panel.bottom_face_enabled.setChecked(True)
+    panel.light_slot_enabled.setChecked(True)
+
+    assert panel.bottom_face_enabled.isChecked() is True
+    assert panel.light_slot_enabled.isChecked() is True
+    assert panel.bottom_face_thickness.isEnabled() is True
+    assert panel.light_slot_width.isEnabled() is True

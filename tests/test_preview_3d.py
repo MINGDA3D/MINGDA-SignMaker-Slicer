@@ -226,3 +226,46 @@ def test_preview_builds_wrap_and_outline_on_bottom_reference(qapp):
     assert part_map["outline"].vertices[:, 0].max() == pytest.approx(101.0, abs=1e-6)
     assert part_map["outline"].vertices[:, 2].min() == pytest.approx(0.0, abs=1e-6)
     assert part_map["outline"].vertices[:, 2].max() == pytest.approx(2.0, abs=1e-6)
+
+
+def test_preview_builds_light_slot_mesh_part(qapp):
+    contour = Contour(
+        outer=Path(
+            points=[
+                Point(0.0, 0.0),
+                Point(100.0, 0.0),
+                Point(100.0, 100.0),
+                Point(0.0, 100.0),
+            ],
+            path_type=PathType.OUTER,
+            is_closed=True,
+        ),
+        holes=[
+            Path(
+                points=[
+                    Point(30.0, 30.0),
+                    Point(70.0, 30.0),
+                    Point(70.0, 70.0),
+                    Point(30.0, 70.0),
+                ],
+                path_type=PathType.HOLE,
+                is_closed=True,
+            )
+        ],
+    )
+
+    params = SliceParams()
+    params.shell.height = 10.0
+    params.shell.layer_height = 1.0
+    params.light_slot.enabled = True
+    params.light_slot.width = 8.0
+    params.light_slot.depth = 3.0
+
+    result = SliceEngine().slice([contour], params)
+
+    parts = Preview3DWidget.build_mesh_parts_for_result(result, [contour], params)
+    part_map = {part.name: part for part in parts}
+
+    assert "light_slot" in part_map
+    assert part_map["light_slot"].vertices[:, 2].min() == pytest.approx(0.0, abs=1e-6)
+    assert part_map["light_slot"].vertices[:, 2].max() == pytest.approx(3.0, abs=1e-6)

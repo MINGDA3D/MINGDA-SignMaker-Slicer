@@ -38,6 +38,7 @@ class PathRole(Enum):
     FILL_GRID = auto()      # 网格填充
     FILL_BASEPLATE = auto() # 底板填充
     FILL_BOTTOM_FACE = auto()  # 底面封闭填充
+    LIGHT_SLOT = auto()     # 灯槽
     FILL_TOP_FACE = auto()     # 顶面封闭填充
     EDGE_WRAP = auto()      # 包边
     OUTLINE = auto()        # 勾边
@@ -699,6 +700,19 @@ class BottomFaceParams:
 
 
 @dataclass
+class LightSlotParams:
+    """底部灯槽参数"""
+    enabled: bool = False
+    width: float = 8.0
+    depth: float = 3.0
+    wall_gap: float = 0.0
+    outer_enabled: bool = True
+    hole_enabled: bool = True
+    auto_skip_small_holes: bool = True
+    min_hole_span: float = 12.0
+
+
+@dataclass
 class TopFaceParams:
     """顶面封闭参数
 
@@ -790,6 +804,7 @@ class SliceParams:
     baseplate: BaseplateParams = field(default_factory=BaseplateParams)
     grid: GridParams = field(default_factory=GridParams)
     bottom_face: BottomFaceParams = field(default_factory=BottomFaceParams)  # 底面封闭
+    light_slot: LightSlotParams = field(default_factory=LightSlotParams)  # 灯槽
     top_face: TopFaceParams = field(default_factory=TopFaceParams)  # 顶面封闭
     layout: LayoutParams = field(default_factory=LayoutParams)
     speed: SpeedParams = field(default_factory=SpeedParams)
@@ -926,6 +941,7 @@ def serialize_params(params: SliceParams) -> dict:
         "baseplate": serialize_value(params.baseplate),
         "grid": serialize_value(params.grid),
         "bottom_face": serialize_value(params.bottom_face),
+        "light_slot": serialize_value(params.light_slot),
         "top_face": serialize_value(params.top_face),
         "layout": serialize_value(params.layout),
         "speed": serialize_value(params.speed),
@@ -1085,6 +1101,18 @@ def deserialize_params(data: dict) -> SliceParams:
         bf_data = data["bottom_face"]
         params.bottom_face.enabled = bf_data.get("enabled", False)
         params.bottom_face.thickness = bf_data.get("thickness", 1.0)
+
+    # LightSlot 参数
+    if "light_slot" in data:
+        light_slot_data = data["light_slot"]
+        params.light_slot.enabled = light_slot_data.get("enabled", False)
+        params.light_slot.width = light_slot_data.get("width", 8.0)
+        params.light_slot.depth = light_slot_data.get("depth", 3.0)
+        params.light_slot.wall_gap = light_slot_data.get("wall_gap", 0.0)
+        params.light_slot.outer_enabled = light_slot_data.get("outer_enabled", True)
+        params.light_slot.hole_enabled = light_slot_data.get("hole_enabled", True)
+        params.light_slot.auto_skip_small_holes = light_slot_data.get("auto_skip_small_holes", True)
+        params.light_slot.min_hole_span = light_slot_data.get("min_hole_span", 12.0)
 
     # TopFace 参数
     if "top_face" in data:
