@@ -79,23 +79,38 @@ class ParamPanel(QWidget):
         content_layout.setContentsMargins(12, 12, 12, 12)
         content_layout.setSpacing(12)
 
-        # 添加参数分组
-        content_layout.addWidget(self._create_shell_group())
-        content_layout.addWidget(self._create_edge_group())
-        content_layout.addWidget(self._create_dxf_export_group())
-        content_layout.addWidget(self._create_bottom_face_group())  # 底面封闭
-        content_layout.addWidget(self._create_light_slot_group())  # 灯槽
-        content_layout.addWidget(self._create_top_face_group())  # 顶面封闭
+        # 添加一级参数分组
+        self.shell_group = self._create_shell_group()
+        self.edge_group = self._create_edge_group()
+        self.edge_wrap_group = self._create_edge_wrap_group()
+        self.step_group = self._create_step_group()
+        self.skirt_group = self._create_skirt_group()
+        self.top_face_group = self._create_top_face_group()
+        self.bottom_face_group = self._create_bottom_face_group()
+        self.connected_group = self._create_connected_group()
+        self.light_slot_group = self._create_light_slot_group()
+        self.dxf_export_group = self._create_dxf_export_group()
+
+        self._primary_groups = [
+            self.shell_group,
+            self.edge_group,
+            self.edge_wrap_group,
+            self.step_group,
+            self.skirt_group,
+            self.top_face_group,
+            self.bottom_face_group,
+            self.connected_group,
+            self.light_slot_group,
+            self.dxf_export_group,
+        ]
+
+        for group in self._primary_groups:
+            content_layout.addWidget(group)
 
         # 暂时隐藏换色层设置
         color_group = self._create_color_group()
         color_group.setVisible(False)
         content_layout.addWidget(color_group)
-
-        content_layout.addWidget(self._create_step_group())
-        content_layout.addWidget(self._create_skirt_group())
-        content_layout.addWidget(self._create_connected_group())
-        content_layout.addWidget(self._create_edge_wrap_group())
 
         # 暂时隐藏速度设置
         speed_group = self._create_speed_group()

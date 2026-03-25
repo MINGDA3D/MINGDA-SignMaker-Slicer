@@ -14,6 +14,40 @@ def qapp():
     yield app
 
 
+def _owning_group(widget):
+    current = widget.parentWidget()
+    while current is not None and not isinstance(current, ParamPanel):
+        if current.__class__.__name__ == "QGroupBox":
+            return current
+        current = current.parentWidget()
+    return None
+
+
+def test_primary_groups_follow_requested_order(qapp):
+    panel = ParamPanel()
+
+    assert [group.title() for group in panel._primary_groups] == [
+        "Shell Settings",
+        "Edge Type",
+        "Edge Wrap/Outline",
+        "Step/V-Groove",
+        "Anti-Warping Skirt",
+        "Top Face",
+        "Bottom Face",
+        "Connected Letters",
+        "Light Slot",
+        "DXF Export",
+    ]
+
+
+def test_step_controls_share_single_primary_group(qapp):
+    panel = ParamPanel()
+
+    assert panel.step_group.title() == "Step/V-Groove"
+    assert _owning_group(panel.panel_step_enabled) is panel.step_group
+    assert _owning_group(panel.baseplate_step_enabled) is panel.step_group
+
+
 def test_set_params_restores_wrap_controls_enabled_state(qapp):
     panel = ParamPanel()
     params = SliceParams()
