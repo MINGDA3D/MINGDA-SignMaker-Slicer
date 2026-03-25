@@ -92,6 +92,7 @@ def extract_strings():
         cmd = [
             get_tool_path("lupdate"),
             *py_files,
+            "-no-obsolete",
             "-ts", str(ts_file)
         ]
 

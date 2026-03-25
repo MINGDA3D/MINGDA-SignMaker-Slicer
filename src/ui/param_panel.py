@@ -134,7 +134,7 @@ class ParamPanel(QWidget):
         """Initialize a layer-count spinbox with a consistent suffix/tooltip."""
         spinbox.setRange(minimum, maximum)
         spinbox.setValue(value)
-        spinbox.setSuffix("layers")
+        spinbox.setSuffix(self.tr("layers"))
         spinbox.setEnabled(enabled)
         spinbox.setToolTip(
             self.tr("Height is derived from layer count * layer height.")

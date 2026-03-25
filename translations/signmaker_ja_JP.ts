@@ -4,37 +4,37 @@
 <context>
     <name>Canvas2D</name>
     <message>
-        <location filename="../src/ui/canvas_2d.py" line="1263"/>
+        <location filename="../src/ui/canvas_2d.py" line="1474"/>
         <source>Delete</source>
         <translation>削除</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_2d.py" line="1271"/>
+        <location filename="../src/ui/canvas_2d.py" line="1482"/>
         <source>Mirror</source>
         <translation>ミラー</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_2d.py" line="1272"/>
+        <location filename="../src/ui/canvas_2d.py" line="1483"/>
         <source>Mirror X</source>
         <translation>X軸ミラー</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_2d.py" line="1274"/>
+        <location filename="../src/ui/canvas_2d.py" line="1485"/>
         <source>Mirror Y</source>
         <translation>Y軸ミラー</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_2d.py" line="1281"/>
+        <location filename="../src/ui/canvas_2d.py" line="1492"/>
         <source>Select All</source>
         <translation>すべて選択</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_2d.py" line="1289"/>
+        <location filename="../src/ui/canvas_2d.py" line="1500"/>
         <source>Fit View</source>
         <translation>ビューに合わせる</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_2d.py" line="1294"/>
+        <location filename="../src/ui/canvas_2d.py" line="1505"/>
         <source>Reset View</source>
         <translation>ビューをリセット</translation>
     </message>
@@ -91,192 +91,6 @@
         <source>Text</source>
         <translation>テキスト</translation>
     </message>
-    <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="110"/>
-        <source>Start Point</source>
-        <translation>開始点</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="113"/>
-        <source>Print Order</source>
-        <translation>印刷順序</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="119"/>
-        <source>Center View</source>
-        <translation>表示を中央に</translation>
-    </message>
-</context>
-<context>
-    <name>EdgePresets</name>
-    <message>
-        <source>Zigzag</source>
-        <translation type="vanished">ジグザグ</translation>
-    </message>
-    <message>
-        <source>Wave</source>
-        <translation type="vanished">ウェーブ</translation>
-    </message>
-    <message>
-        <source>Arc</source>
-        <translation type="vanished">アーク</translation>
-    </message>
-    <message>
-        <source>Step</source>
-        <translation type="vanished">ステップ</translation>
-    </message>
-    <message>
-        <source>Mixed</source>
-        <translation type="vanished">ミックス</translation>
-    </message>
-    <message>
-        <source>Bevel</source>
-        <translation type="vanished">ベベル</translation>
-    </message>
-    <message>
-        <source>4-Tooth Zigzag</source>
-        <translation type="vanished">4歯ジグザグ</translation>
-    </message>
-    <message>
-        <source>4 sharp zigzag teeth, highly decorative</source>
-        <translation type="vanished">4つの鋭いジグザグ歯、装飾性が高い</translation>
-    </message>
-    <message>
-        <source>3-Tooth Zigzag</source>
-        <translation type="vanished">3歯ジグザグ</translation>
-    </message>
-    <message>
-        <source>3 zigzag teeth, medium decoration</source>
-        <translation type="vanished">3つのジグザグ歯、中程度の装飾</translation>
-    </message>
-    <message>
-        <source>2-Tooth Zigzag</source>
-        <translation type="vanished">2歯ジグザグ</translation>
-    </message>
-    <message>
-        <source>2 zigzag teeth, simple and clean</source>
-        <translation type="vanished">2つのジグザグ歯、シンプルでクリーン</translation>
-    </message>
-    <message>
-        <source>5-Tooth Zigzag</source>
-        <translation type="vanished">5歯ジグザグ</translation>
-    </message>
-    <message>
-        <source>5 zigzag teeth, complex decoration</source>
-        <translation type="vanished">5つのジグザグ歯、複雑な装飾</translation>
-    </message>
-    <message>
-        <source>3-Wave</source>
-        <translation type="vanished">3ウェーブ</translation>
-    </message>
-    <message>
-        <source>3 smooth S-shaped waves</source>
-        <translation type="vanished">3つの滑らかなS字波</translation>
-    </message>
-    <message>
-        <source>3-Wave B</source>
-        <translation type="vanished">3ウェーブB</translation>
-    </message>
-    <message>
-        <source>3 smooth waves (variant)</source>
-        <translation type="vanished">3つの滑らかな波（バリエーション）</translation>
-    </message>
-    <message>
-        <source>2-Wave</source>
-        <translation type="vanished">2ウェーブ</translation>
-    </message>
-    <message>
-        <source>2 smooth waves</source>
-        <translation type="vanished">2つの滑らかな波</translation>
-    </message>
-    <message>
-        <source>Single Bump</source>
-        <translation type="vanished">シングルバンプ</translation>
-    </message>
-    <message>
-        <source>Single arc bump in the middle</source>
-        <translation type="vanished">中央に単一のアーチ状の突起</translation>
-    </message>
-    <message>
-        <source>Large Arc</source>
-        <translation type="vanished">大きなアーク</translation>
-    </message>
-    <message>
-        <source>Large radius arc transition</source>
-        <translation type="vanished">大きな半径のアーク遷移</translation>
-    </message>
-    <message>
-        <source>Arc with Platform</source>
-        <translation type="vanished">プラットフォーム付きアーク</translation>
-    </message>
-    <message>
-        <source>Arc transition with top/bottom platforms</source>
-        <translation type="vanished">上下プラットフォーム付きアーク遷移</translation>
-    </message>
-    <message>
-        <source>Arc with Platform B</source>
-        <translation type="vanished">プラットフォーム付きアークB</translation>
-    </message>
-    <message>
-        <source>Arc with platform (variant)</source>
-        <translation type="vanished">プラットフォーム付きアーク（バリエーション）</translation>
-    </message>
-    <message>
-        <source>Small Step</source>
-        <translation type="vanished">小さなステップ</translation>
-    </message>
-    <message>
-        <source>Single small step</source>
-        <translation type="vanished">1つの小さなステップ</translation>
-    </message>
-    <message>
-        <source>Double Step</source>
-        <translation type="vanished">ダブルステップ</translation>
-    </message>
-    <message>
-        <source>Two-level step</source>
-        <translation type="vanished">2段ステップ</translation>
-    </message>
-    <message>
-        <source>Step + Arc</source>
-        <translation type="vanished">ステップ + アーク</translation>
-    </message>
-    <message>
-        <source>Combination of step and arc</source>
-        <translation type="vanished">ステップとアークの組み合わせ</translation>
-    </message>
-    <message>
-        <source>Complex Mixed</source>
-        <translation type="vanished">複合ミックス</translation>
-    </message>
-    <message>
-        <source>Double arc + step complex combination</source>
-        <translation type="vanished">ダブルアーク + ステップの複雑な組み合わせ</translation>
-    </message>
-    <message>
-        <source>Simple Bevel</source>
-        <translation type="vanished">シンプルベベル</translation>
-    </message>
-    <message>
-        <source>Linear bevel transition</source>
-        <translation type="vanished">リニアベベル遷移</translation>
-    </message>
-    <message>
-        <source>Large Bevel</source>
-        <translation type="vanished">大きなベベル</translation>
-    </message>
-    <message>
-        <source>Large angle bevel transition</source>
-        <translation type="vanished">大角度ベベル遷移</translation>
-    </message>
-    <message>
-        <source>Steep Bevel</source>
-        <translation type="vanished">急なベベル</translation>
-    </message>
-    <message>
-        <source>Steep bevel (large width)</source>
-        <translation type="vanished">急なベベル（大幅）</translation>
-    </message>
 </context>
 <context>
     <name>HomePage</name>
@@ -304,685 +118,678 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../src/ui/main_window.py" line="111"/>
+        <location filename="../src/ui/main_window.py" line="114"/>
         <source>MINGDA SignMaker - LED Sign Letter Slicer</source>
         <translation>MINGDA SignMaker - LED看板文字スライサー</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="123"/>
+        <location filename="../src/ui/main_window.py" line="126"/>
         <source>Title Bar</source>
         <translation>タイトルバー</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="158"/>
+        <location filename="../src/ui/main_window.py" line="161"/>
         <source>File(&amp;F)</source>
         <translation>ファイル(&amp;F)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="161"/>
-        <location filename="../src/ui/main_window.py" line="920"/>
+        <location filename="../src/ui/main_window.py" line="164"/>
+        <location filename="../src/ui/main_window.py" line="1022"/>
         <source>New Project</source>
         <translation>新規プロジェクト</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="167"/>
+        <location filename="../src/ui/main_window.py" line="170"/>
         <source>Open DXF/SVG...</source>
         <translation>DXF/SVGを開く...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="175"/>
-        <location filename="../src/ui/main_window.py" line="1066"/>
+        <location filename="../src/ui/main_window.py" line="178"/>
+        <location filename="../src/ui/main_window.py" line="1171"/>
         <source>Save Project</source>
         <translation>プロジェクトを保存</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="181"/>
+        <location filename="../src/ui/main_window.py" line="184"/>
         <source>Save As...</source>
         <translation>名前を付けて保存...</translation>
     </message>
     <message>
-        <source>Export G-code...</source>
-        <translation type="vanished">G-codeをエクスポート...</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.py" line="195"/>
-        <location filename="../src/ui/main_window.py" line="1139"/>
+        <location filename="../src/ui/main_window.py" line="198"/>
+        <location filename="../src/ui/main_window.py" line="1244"/>
         <source>Export STL...</source>
         <translation>STLをエクスポート...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="203"/>
+        <location filename="../src/ui/main_window.py" line="206"/>
         <source>Exit</source>
         <translation>終了</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="209"/>
+        <location filename="../src/ui/main_window.py" line="212"/>
         <source>Edit(&amp;E)</source>
         <translation>編集(&amp;E)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="211"/>
+        <location filename="../src/ui/main_window.py" line="214"/>
         <source>Undo</source>
         <translation>元に戻す</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="216"/>
+        <location filename="../src/ui/main_window.py" line="219"/>
         <source>Redo</source>
         <translation>やり直し</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="223"/>
+        <location filename="../src/ui/main_window.py" line="226"/>
         <source>Select All</source>
         <translation>すべて選択</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="227"/>
+        <location filename="../src/ui/main_window.py" line="230"/>
         <source>Delete</source>
         <translation>削除</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="232"/>
+        <location filename="../src/ui/main_window.py" line="235"/>
         <source>View(&amp;V)</source>
         <translation>表示(&amp;V)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="234"/>
+        <location filename="../src/ui/main_window.py" line="237"/>
         <source>2D View</source>
         <translation>2Dビュー</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="239"/>
+        <location filename="../src/ui/main_window.py" line="242"/>
         <source>3D View</source>
         <translation>3Dビュー</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="246"/>
+        <location filename="../src/ui/main_window.py" line="249"/>
         <source>Fit to Window</source>
         <translation>ウィンドウに合わせる</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="251"/>
+        <location filename="../src/ui/main_window.py" line="254"/>
         <source>Zoom In</source>
         <translation>拡大</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="255"/>
+        <location filename="../src/ui/main_window.py" line="258"/>
         <source>Zoom Out</source>
         <translation>縮小</translation>
     </message>
     <message>
-        <source>Slice(&amp;S)</source>
-        <translation type="vanished">スライス(&amp;S)</translation>
-    </message>
-    <message>
-        <source>Start Slicing</source>
-        <translation type="vanished">スライス開始</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.py" line="267"/>
+        <location filename="../src/ui/main_window.py" line="270"/>
         <source>Preview G-code</source>
         <translation>G-codeプレビュー</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="272"/>
+        <location filename="../src/ui/main_window.py" line="275"/>
         <source>Help(&amp;H)</source>
         <translation>ヘルプ(&amp;H)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="274"/>
+        <location filename="../src/ui/main_window.py" line="277"/>
         <source>About</source>
         <translation>について</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="399"/>
-        <location filename="../src/ui/main_window.py" line="1406"/>
+        <location filename="../src/ui/main_window.py" line="402"/>
+        <location filename="../src/ui/main_window.py" line="1497"/>
         <source>Scale</source>
         <translation type="unfinished">拡大縮小</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="518"/>
-        <location filename="../src/ui/main_window.py" line="824"/>
-        <location filename="../src/ui/main_window.py" line="1398"/>
+        <location filename="../src/ui/main_window.py" line="521"/>
+        <location filename="../src/ui/main_window.py" line="828"/>
+        <location filename="../src/ui/main_window.py" line="1489"/>
         <source>Arrow keys: 1mm, Shift+Arrow: 10mm</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="627"/>
-        <location filename="../src/ui/main_window.py" line="1641"/>
+        <location filename="../src/ui/main_window.py" line="631"/>
+        <location filename="../src/ui/main_window.py" line="1732"/>
         <source>Ready</source>
         <translation>準備完了</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="658"/>
+        <location filename="../src/ui/main_window.py" line="662"/>
         <source>Executed: </source>
         <translation>実行: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="661"/>
+        <location filename="../src/ui/main_window.py" line="665"/>
         <source>Undone: </source>
         <translation>取り消し: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="664"/>
+        <location filename="../src/ui/main_window.py" line="668"/>
         <source>Redone: </source>
         <translation>やり直し: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="819"/>
-        <location filename="../src/ui/main_window.py" line="1394"/>
+        <location filename="../src/ui/main_window.py" line="823"/>
+        <location filename="../src/ui/main_window.py" line="1485"/>
         <source>Position</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="854"/>
-        <source>Home</source>
-        <translation>ホーム</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.py" line="861"/>
-        <source>Project Edit</source>
-        <translation>プロジェクト編集</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.py" line="877"/>
-        <source>3D Preview</source>
-        <translation>3Dプレビュー</translation>
-    </message>
-    <message>
         <location filename="../src/ui/main_window.py" line="904"/>
-        <source>Settings feature under development...</source>
-        <translation>設定機能は開発中です...</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.py" line="906"/>
-        <source>Help feature under development...</source>
-        <translation>ヘルプ機能は開発中です...</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.py" line="919"/>
-        <source>MINGDA SignMaker - New Project</source>
-        <translation>MINGDA SignMaker - 新規プロジェクト</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.py" line="930"/>
-        <source>Open File</source>
-        <translation>ファイルを開く</translation>
-    </message>
-    <message>
-        <source>Supported Files (*.dxf *.svg);;DXF Files (*.dxf);;SVG Files (*.svg);;All Files (*)</source>
-        <translation type="vanished">サポートファイル (*.dxf *.svg);;DXFファイル (*.dxf);;SVGファイル (*.svg);;すべてのファイル (*)</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.py" line="964"/>
-        <source>Unsupported Format</source>
-        <translation>サポートされていない形式</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.py" line="964"/>
-        <source>Format not supported: </source>
-        <translation>サポートされていない形式: </translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.py" line="983"/>
-        <source>Load </source>
-        <translation>読み込み </translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.py" line="1004"/>
-        <source>Loaded: {file}, {count} contours</source>
-        <translation>読み込み完了: {file}, {count} 個の輪郭</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.py" line="973"/>
-        <location filename="../src/ui/main_window.py" line="1048"/>
-        <source>Load Failed</source>
-        <translation>読み込み失敗</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.py" line="974"/>
-        <source>Failed to load file:</source>
-        <translation>ファイルの読み込みに失敗:</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.py" line="944"/>
-        <location filename="../src/ui/main_window.py" line="1068"/>
-        <source>SignMaker Project (*.smp);;All Files (*)</source>
-        <translation>SignMakerプロジェクト (*.smp);;すべてのファイル (*)</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.py" line="260"/>
-        <source>Process(&amp;P)</source>
+        <location filename="../src/ui/main_window.py" line="917"/>
+        <source>Loading 3D preview...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="932"/>
-        <source>Supported Files (*.dxf *.svg *.smp);;SignMaker Project (*.smp);;DXF Files (*.dxf);;SVG Files (*.svg);;All Files (*)</source>
+        <location filename="../src/ui/main_window.py" line="938"/>
+        <source>3D preview loading failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="942"/>
+        <source>Failed to prepare 3D preview:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="962"/>
+        <source>Home</source>
+        <translation>ホーム</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="969"/>
+        <source>Project Edit</source>
+        <translation>プロジェクト編集</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="941"/>
+        <location filename="../src/ui/main_window.py" line="977"/>
+        <source>3D Preview</source>
+        <translation>3Dプレビュー</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1005"/>
+        <source>Settings feature under development...</source>
+        <translation>設定機能は開発中です...</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1007"/>
+        <source>Help feature under development...</source>
+        <translation>ヘルプ機能は開発中です...</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1021"/>
+        <source>MINGDA SignMaker - New Project</source>
+        <translation>MINGDA SignMaker - 新規プロジェクト</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1032"/>
+        <source>Open File</source>
+        <translation>ファイルを開く</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1066"/>
+        <source>Unsupported Format</source>
+        <translation>サポートされていない形式</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1066"/>
+        <source>Format not supported: </source>
+        <translation>サポートされていない形式: </translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1085"/>
+        <source>Load </source>
+        <translation>読み込み </translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1107"/>
+        <source>Loaded: {file}, {count} contours</source>
+        <translation>読み込み完了: {file}, {count} 個の輪郭</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1075"/>
+        <location filename="../src/ui/main_window.py" line="1153"/>
+        <source>Load Failed</source>
+        <translation>読み込み失敗</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1076"/>
+        <source>Failed to load file:</source>
+        <translation>ファイルの読み込みに失敗:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1046"/>
+        <location filename="../src/ui/main_window.py" line="1173"/>
+        <source>SignMaker Project (*.smp);;All Files (*)</source>
+        <translation>SignMakerプロジェクト (*.smp);;すべてのファイル (*)</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="263"/>
+        <source>Process(&amp;P)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1034"/>
+        <source>Supported Files (*.dxf *.svg *.smp);;SignMaker Project (*.smp);;DXF Files (*.dxf);;SVG Files (*.svg);;All Files (*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1044"/>
         <source>Open Project</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1041"/>
+        <location filename="../src/ui/main_window.py" line="1146"/>
         <source>Project loaded: {name}, {count} contours</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1048"/>
+        <location filename="../src/ui/main_window.py" line="1153"/>
         <source>Failed to load project:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1100"/>
+        <location filename="../src/ui/main_window.py" line="1205"/>
         <source>Project saved: </source>
         <translation>プロジェクト保存完了: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1107"/>
+        <location filename="../src/ui/main_window.py" line="1212"/>
         <source>Save Failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1107"/>
+        <location filename="../src/ui/main_window.py" line="1212"/>
         <source>Failed to save project:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1141"/>
+        <location filename="../src/ui/main_window.py" line="1246"/>
         <source>Export Baseplate DXF...</source>
         <translation>ベースプレートDXFをエクスポート...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1142"/>
+        <location filename="../src/ui/main_window.py" line="1247"/>
         <source>Export Panel DXF...</source>
         <translation>パネルDXFをエクスポート...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1173"/>
-        <location filename="../src/ui/main_window.py" line="1214"/>
-        <location filename="../src/ui/main_window.py" line="1248"/>
-        <location filename="../src/ui/main_window.py" line="1300"/>
-        <location filename="../src/ui/main_window.py" line="1653"/>
+        <location filename="../src/ui/main_window.py" line="1278"/>
+        <location filename="../src/ui/main_window.py" line="1319"/>
+        <location filename="../src/ui/main_window.py" line="1353"/>
+        <location filename="../src/ui/main_window.py" line="1405"/>
+        <location filename="../src/ui/main_window.py" line="1744"/>
+        <location filename="../src/ui/main_window.py" line="1767"/>
+        <location filename="../src/ui/main_window.py" line="1796"/>
+        <location filename="../src/ui/main_window.py" line="1826"/>
+        <location filename="../src/ui/main_window.py" line="1857"/>
         <source>Info</source>
         <translation>情報</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1173"/>
+        <location filename="../src/ui/main_window.py" line="1278"/>
         <source>Please process first</source>
         <translation>先に処理を実行してください</translation>
     </message>
     <message>
-        <source>Export G-code</source>
-        <translation type="vanished">G-codeをエクスポート</translation>
-    </message>
-    <message>
-        <source>G-code Files (*.gcode);;All Files (*)</source>
-        <translation type="vanished">G-codeファイル (*.gcode);;すべてのファイル (*)</translation>
-    </message>
-    <message>
-        <source>G-code exported: </source>
-        <translation type="vanished">G-codeエクスポート完了: </translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.py" line="1198"/>
-        <location filename="../src/ui/main_window.py" line="1236"/>
-        <location filename="../src/ui/main_window.py" line="1270"/>
+        <location filename="../src/ui/main_window.py" line="1303"/>
+        <location filename="../src/ui/main_window.py" line="1339"/>
+        <location filename="../src/ui/main_window.py" line="1373"/>
         <source>Export Success</source>
         <translation>エクスポート成功</translation>
     </message>
     <message>
-        <source>G-code saved to:</source>
-        <translation type="vanished">G-code保存先:</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.py" line="1201"/>
-        <location filename="../src/ui/main_window.py" line="1241"/>
-        <location filename="../src/ui/main_window.py" line="1243"/>
-        <location filename="../src/ui/main_window.py" line="1275"/>
-        <location filename="../src/ui/main_window.py" line="1277"/>
+        <location filename="../src/ui/main_window.py" line="1306"/>
+        <location filename="../src/ui/main_window.py" line="1346"/>
+        <location filename="../src/ui/main_window.py" line="1348"/>
+        <location filename="../src/ui/main_window.py" line="1380"/>
+        <location filename="../src/ui/main_window.py" line="1382"/>
         <source>Export Failed</source>
         <translation>エクスポート失敗</translation>
     </message>
     <message>
-        <source>Failed to export G-code:</source>
-        <translation type="vanished">G-codeのエクスポートに失敗:</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.py" line="1178"/>
+        <location filename="../src/ui/main_window.py" line="1283"/>
         <source>Export STL</source>
         <translation>STLをエクスポート</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1180"/>
+        <location filename="../src/ui/main_window.py" line="1285"/>
         <source>STL Files (*.stl);;All Files (*)</source>
         <translation>STLファイル (*.stl);;すべてのファイル (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1197"/>
+        <location filename="../src/ui/main_window.py" line="1302"/>
         <source>STL exported: </source>
         <translation>STLエクスポート完了: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1198"/>
+        <location filename="../src/ui/main_window.py" line="1303"/>
         <source>STL saved to:</source>
         <translation>STL保存先:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1201"/>
+        <location filename="../src/ui/main_window.py" line="1306"/>
         <source>Failed to export STL:</source>
         <translation>STLのエクスポートに失敗:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1214"/>
-        <location filename="../src/ui/main_window.py" line="1248"/>
-        <location filename="../src/ui/main_window.py" line="1300"/>
+        <location filename="../src/ui/main_window.py" line="1319"/>
+        <location filename="../src/ui/main_window.py" line="1353"/>
+        <location filename="../src/ui/main_window.py" line="1405"/>
         <source>Please import a DXF file first</source>
         <translation>先にDXFファイルをインポートしてください</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1219"/>
+        <location filename="../src/ui/main_window.py" line="1324"/>
         <source>Export Baseplate DXF</source>
         <translation>ベースプレートDXFをエクスポート</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1221"/>
-        <location filename="../src/ui/main_window.py" line="1255"/>
+        <location filename="../src/ui/main_window.py" line="1326"/>
+        <location filename="../src/ui/main_window.py" line="1360"/>
         <source>DXF Files (*.dxf);;All Files (*)</source>
         <translation>DXFファイル (*.dxf);;すべてのファイル (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1234"/>
+        <location filename="../src/ui/main_window.py" line="1337"/>
         <source>Baseplate DXF exported: </source>
         <translation>ベースプレートDXFエクスポート完了: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1237"/>
+        <location filename="../src/ui/main_window.py" line="1340"/>
         <source>Baseplate DXF saved to:</source>
         <translation>ベースプレートDXF保存先:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1238"/>
-        <location filename="../src/ui/main_window.py" line="1272"/>
-        <source>Alignment compensation: </source>
-        <translation>位置合わせ補正: </translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.py" line="1241"/>
+        <location filename="../src/ui/main_window.py" line="1346"/>
         <source>Failed to generate baseplate contour</source>
         <translation>ベースプレート輪郭の生成に失敗</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1243"/>
+        <location filename="../src/ui/main_window.py" line="1348"/>
         <source>Failed to export baseplate DXF:</source>
         <translation>ベースプレートDXFのエクスポートに失敗:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1253"/>
+        <location filename="../src/ui/main_window.py" line="1358"/>
         <source>Export Panel DXF</source>
         <translation>パネルDXFをエクスポート</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1268"/>
+        <location filename="../src/ui/main_window.py" line="1371"/>
         <source>Panel DXF exported: </source>
         <translation>パネルDXFエクスポート完了: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1271"/>
+        <location filename="../src/ui/main_window.py" line="1374"/>
         <source>Panel DXF saved to:</source>
         <translation>パネルDXF保存先:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1275"/>
+        <location filename="../src/ui/main_window.py" line="1380"/>
         <source>Failed to generate panel contour</source>
         <translation>パネル輪郭の生成に失敗</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1277"/>
+        <location filename="../src/ui/main_window.py" line="1382"/>
         <source>Failed to export panel DXF:</source>
         <translation>パネルDXFのエクスポートに失敗:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1286"/>
+        <location filename="../src/ui/main_window.py" line="1391"/>
         <source>Nothing to undo</source>
         <translation>取り消す操作がありません</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1295"/>
+        <location filename="../src/ui/main_window.py" line="1400"/>
         <source>Nothing to redo</source>
         <translation>やり直す操作がありません</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1755"/>
+        <location filename="../src/ui/main_window.py" line="1950"/>
         <source>Loaded saved parameters</source>
         <translation>保存されたパラメータを読み込みました</translation>
     </message>
     <message>
-        <source>Slicing...</source>
-        <translation type="vanished">スライス中...</translation>
-    </message>
-    <message>
-        <source>Slicing complete: {layers} layers, estimated time: {time:.1f} minutes</source>
-        <translation type="vanished">スライス完了: {layers} 層, 推定時間: {time:.1f} 分</translation>
-    </message>
-    <message>
-        <source>Slicing Complete</source>
-        <translation type="vanished">スライス完了</translation>
-    </message>
-    <message>
-        <source>Export G-code now?</source>
-        <translation type="vanished">今すぐG-codeをエクスポートしますか？</translation>
-    </message>
-    <message>
-        <source>Slicing Failed</source>
-        <translation type="vanished">スライス失敗</translation>
-    </message>
-    <message>
-        <source>Error during slicing:</source>
-        <translation type="vanished">スライス中にエラーが発生:</translation>
-    </message>
-    <message>
-        <source>Slicing failed</source>
-        <translation type="vanished">スライス失敗</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.py" line="1360"/>
+        <location filename="../src/ui/main_window.py" line="1451"/>
         <source>Switched to {view} view</source>
         <translation>{view}ビューに切り替えました</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1400"/>
+        <location filename="../src/ui/main_window.py" line="1491"/>
         <source>Rotation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1419"/>
+        <location filename="../src/ui/main_window.py" line="1510"/>
         <source>Tool: </source>
         <translation>ツール: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1483"/>
+        <location filename="../src/ui/main_window.py" line="1574"/>
         <source>Move to: X={x:.2f}, Y={y:.2f}</source>
         <translation>移動先: X={x:.2f}, Y={y:.2f}</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1493"/>
+        <location filename="../src/ui/main_window.py" line="1584"/>
         <source>Rotation: {angle:.2f}°</source>
         <translation>回転: {angle:.2f}°</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1569"/>
-        <location filename="../src/ui/main_window.py" line="1607"/>
-        <location filename="../src/ui/main_window.py" line="1630"/>
+        <location filename="../src/ui/main_window.py" line="1660"/>
+        <location filename="../src/ui/main_window.py" line="1698"/>
+        <location filename="../src/ui/main_window.py" line="1721"/>
         <source>Scale: {px:.1f}% x {py:.1f}%</source>
         <translation>スケール: {px:.1f}% x {py:.1f}%</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1653"/>
+        <location filename="../src/ui/main_window.py" line="1744"/>
         <source>Please select a contour first</source>
         <translation>先に輪郭を選択してください</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1669"/>
+        <location filename="../src/ui/main_window.py" line="1760"/>
         <source>Mirror {axis} complete</source>
         <translation>{axis}ミラーリング完了</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1700"/>
+        <location filename="../src/ui/main_window.py" line="1768"/>
+        <location filename="../src/ui/main_window.py" line="1797"/>
+        <location filename="../src/ui/main_window.py" line="1827"/>
+        <source>Please select at least two contours</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1783"/>
+        <source>Intersection</source>
+        <translation type="unfinished">交差</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1812"/>
+        <source>Difference</source>
+        <translation type="unfinished">差分</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1837"/>
+        <source>Already grouped</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1840"/>
+        <source>Group</source>
+        <translation type="unfinished">グループ化</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1858"/>
+        <source>Please select a grouped contour first</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1862"/>
+        <source>Ungroup</source>
+        <translation type="unfinished">グループ解除</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1887"/>
+        <source>Text added</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1889"/>
+        <source>Error</source>
+        <translation type="unfinished">エラー</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1895"/>
         <source>About MINGDA SignMaker</source>
         <translation>MINGDA SignMakerについて</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1702"/>
+        <location filename="../src/ui/main_window.py" line="1897"/>
         <source>Professional LED Sign Letter 3D Printing Slicer</source>
         <translation>プロフェッショナルLED看板文字3Dプリントスライサー</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1703"/>
+        <location filename="../src/ui/main_window.py" line="1898"/>
         <source>Version: 0.1.7 (Development)</source>
         <translation>バージョン: 0.1.6 (開発版)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1705"/>
+        <location filename="../src/ui/main_window.py" line="1900"/>
         <source>Features:</source>
         <translation>機能:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1707"/>
+        <location filename="../src/ui/main_window.py" line="1902"/>
         <source>DXF/SVG file import</source>
         <translation>DXF/SVGファイルインポート</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1708"/>
+        <location filename="../src/ui/main_window.py" line="1903"/>
         <source>Straight/Bevel/Custom edges</source>
         <translation>直線/斜め/カスタムエッジ</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1709"/>
+        <location filename="../src/ui/main_window.py" line="1904"/>
         <source>Multi-color printing support</source>
         <translation>マルチカラー印刷対応</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1710"/>
+        <location filename="../src/ui/main_window.py" line="1905"/>
         <source>Step/V-groove</source>
         <translation>ステップ/V溝</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1711"/>
+        <location filename="../src/ui/main_window.py" line="1906"/>
         <source>Anti-warping skirt</source>
         <translation>反り防止スカート</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1712"/>
+        <location filename="../src/ui/main_window.py" line="1907"/>
         <source>Connected letters</source>
         <translation>連結文字</translation>
     </message>
     <message>
-        <source>Language</source>
-        <translation type="vanished">言語</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.py" line="1728"/>
+        <location filename="../src/ui/main_window.py" line="1923"/>
         <source>Language Changed</source>
         <translation>言語が変更されました</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1729"/>
+        <location filename="../src/ui/main_window.py" line="1924"/>
         <source>Language has been changed to {lang}. Please restart the application for full effect.</source>
         <translation>言語が{lang}に変更されました。完全に反映するにはアプリケーションを再起動してください。</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1736"/>
+        <location filename="../src/ui/main_window.py" line="1931"/>
         <source>Language Change Failed</source>
         <translation>言語変更失敗</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1737"/>
+        <location filename="../src/ui/main_window.py" line="1932"/>
         <source>Translation file for {lang} is not available yet.</source>
         <translation>{lang}の翻訳ファイルはまだ利用できません。</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="374"/>
+        <location filename="../src/ui/main_window.py" line="377"/>
         <source>Angle</source>
         <translation>角度</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1404"/>
+        <location filename="../src/ui/main_window.py" line="1495"/>
         <source>Drag grabber on ring to rotate</source>
         <translation>リング上のハンドルをドラッグして回転</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="438"/>
+        <location filename="../src/ui/main_window.py" line="441"/>
         <source>Size</source>
         <translation>サイズ</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="481"/>
+        <location filename="../src/ui/main_window.py" line="484"/>
         <source>Uniform Scale</source>
         <translation>均一スケール</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1410"/>
+        <location filename="../src/ui/main_window.py" line="1501"/>
         <source>Drag to scale, input exact values above</source>
         <translation>ドラッグしてスケール、上に正確な値を入力</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="969"/>
+        <location filename="../src/ui/main_window.py" line="1071"/>
         <source>Loading file...</source>
         <translation>ファイルを読み込み中...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1205"/>
+        <location filename="../src/ui/main_window.py" line="1310"/>
         <source>Exporting STL...</source>
         <translation>STLをエクスポート中...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="262"/>
+        <location filename="../src/ui/main_window.py" line="265"/>
         <source>Start Processing</source>
         <translation>処理開始</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1336"/>
+        <location filename="../src/ui/main_window.py" line="1435"/>
         <source>Processing...</source>
         <translation>処理中...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1323"/>
+        <location filename="../src/ui/main_window.py" line="1422"/>
         <source>Processing complete: {layers} layers, estimated time: {time:.1f} minutes</source>
         <translation>処理完了: {layers} 層, 推定時間: {time:.1f} 分</translation>
     </message>
     <message>
-        <source>Processing Complete</source>
-        <translation type="vanished">処理完了</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.py" line="1331"/>
+        <location filename="../src/ui/main_window.py" line="1430"/>
         <source>Processing Failed</source>
         <translation>処理失敗</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1331"/>
+        <location filename="../src/ui/main_window.py" line="1430"/>
         <source>Error during processing:</source>
         <translation>処理中にエラーが発生:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1332"/>
+        <location filename="../src/ui/main_window.py" line="1431"/>
         <source>Processing failed</source>
         <translation>処理失敗</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1251"/>
+        <location filename="../src/ui/main_window.py" line="1341"/>
+        <location filename="../src/ui/main_window.py" line="1375"/>
         <source>Outer clearance: </source>
         <translation>外形クリアランス: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1252"/>
+        <location filename="../src/ui/main_window.py" line="1342"/>
+        <location filename="../src/ui/main_window.py" line="1376"/>
         <source>Hole clearance: </source>
         <translation>穴クリアランス: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1253"/>
+        <location filename="../src/ui/main_window.py" line="1343"/>
+        <location filename="../src/ui/main_window.py" line="1377"/>
         <source>Laser kerf: </source>
         <translation>レーザーカーフ: </translation>
     </message>
@@ -990,382 +797,450 @@
 <context>
     <name>ParamPanel</name>
     <message>
-        <location filename="../src/ui/param_panel.py" line="57"/>
+        <location filename="../src/ui/param_panel.py" line="58"/>
         <source>Parameters</source>
         <translation>パラメータ設定</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="108"/>
+        <location filename="../src/ui/param_panel.py" line="137"/>
+        <source>layers</source>
+        <translation>層</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="140"/>
+        <source>Height is derived from layer count * layer height.</source>
+        <translation>高さは層数 * 層高で計算されます。</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="223"/>
         <source>Shell Settings</source>
         <translation>シェル設定</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="119"/>
+        <location filename="../src/ui/param_panel.py" line="233"/>
         <source>Shell Height:</source>
         <translation>シェル高さ:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="128"/>
+        <location filename="../src/ui/param_panel.py" line="245"/>
         <source>Layer Height:</source>
         <translation>層高さ:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="137"/>
+        <location filename="../src/ui/param_panel.py" line="254"/>
         <source>Wall Thickness:</source>
         <translation>壁厚:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="144"/>
+        <location filename="../src/ui/param_panel.py" line="261"/>
         <source>Wall Count:</source>
         <translation>壁数:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="150"/>
+        <location filename="../src/ui/param_panel.py" line="267"/>
         <source>Edge Type</source>
         <translation>エッジタイプ</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="159"/>
+        <location filename="../src/ui/param_panel.py" line="276"/>
         <source>Straight</source>
         <translation>直線</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="160"/>
+        <location filename="../src/ui/param_panel.py" line="277"/>
         <source>Beveled</source>
         <translation>斜め</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="161"/>
+        <location filename="../src/ui/param_panel.py" line="278"/>
         <source>Custom</source>
         <translation>カスタム</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="163"/>
+        <location filename="../src/ui/param_panel.py" line="280"/>
         <source>Edge Type:</source>
         <translation>エッジタイプ:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="175"/>
+        <location filename="../src/ui/param_panel.py" line="292"/>
         <source>Top Small</source>
         <translation>上部が小さい</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="176"/>
+        <location filename="../src/ui/param_panel.py" line="293"/>
         <source>Top Large</source>
         <translation>上部が大きい</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="178"/>
+        <location filename="../src/ui/param_panel.py" line="295"/>
         <source>Bevel Direction:</source>
         <translation>斜め方向:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="181"/>
+        <location filename="../src/ui/param_panel.py" line="298"/>
         <source>Original contour is always based on the bottom face (z=0).</source>
         <translation>元の輪郭は常に底面 (z=0) を基準にします。</translation>
-    </message>    <message>
-        <location filename="../src/ui/param_panel.py" line="186"/>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="310"/>
         <source>Bevel Width:</source>
         <translation>斜め幅:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="194"/>
+        <location filename="../src/ui/param_panel.py" line="318"/>
         <source>Baseplate Thickness:</source>
         <translation>ベースプレート厚さ:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="202"/>
+        <location filename="../src/ui/param_panel.py" line="326"/>
         <source>Panel Thickness:</source>
         <translation>パネル厚さ:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="214"/>
+        <location filename="../src/ui/param_panel.py" line="338"/>
         <source>Preset Templates:</source>
         <translation>プリセットテンプレート:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="226"/>
+        <location filename="../src/ui/param_panel.py" line="350"/>
         <source>Import DXF...</source>
         <translation>DXFをインポート...</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="227"/>
+        <location filename="../src/ui/param_panel.py" line="351"/>
         <source>Import custom edge profile from DXF file</source>
         <translation>DXFファイルからカスタムエッジプロファイルをインポート</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="235"/>
-        <location filename="../src/ui/param_panel.py" line="1205"/>
+        <location filename="../src/ui/param_panel.py" line="359"/>
+        <location filename="../src/ui/param_panel.py" line="1568"/>
         <source>No profile selected</source>
         <translation>プロファイル未選択</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="237"/>
+        <location filename="../src/ui/param_panel.py" line="361"/>
         <source>Current Profile:</source>
         <translation>現在のプロファイル:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="247"/>
+        <location filename="../src/ui/param_panel.py" line="403"/>
         <source>Bottom Face</source>
         <translation>底面</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="252"/>
+        <location filename="../src/ui/param_panel.py" line="408"/>
         <source>Enable Bottom Face</source>
         <translation>底面を有効にする</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="267"/>
+        <location filename="../src/ui/param_panel.py" line="420"/>
         <source>Bottom Thickness:</source>
         <translation>底面厚さ:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="306"/>
+        <location filename="../src/ui/param_panel.py" line="471"/>
+        <source>Light Slot</source>
+        <translation>ライトスロット</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="475"/>
+        <source>Enable Light Slot</source>
+        <translation>ライトスロットを有効にする</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="489"/>
+        <source>Slot Width:</source>
+        <translation>スロット幅:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="495"/>
+        <source>Slot Depth:</source>
+        <translation>スロット深さ:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="508"/>
+        <source>Floor Layers:</source>
+        <translation>底面層数:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="517"/>
+        <source>Wall Gap:</source>
+        <translation>壁との隙間:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="521"/>
+        <source>Outer Slot</source>
+        <translation>外側スロット</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="527"/>
+        <source>Hole Slot</source>
+        <translation>穴スロット</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="533"/>
+        <source>Auto Skip Small Holes</source>
+        <translation>小さい穴を自動スキップ</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="551"/>
+        <source>Min Hole Span:</source>
+        <translation>最小穴スパン:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="586"/>
         <source>Top Face</source>
         <translation>上面</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="311"/>
+        <location filename="../src/ui/param_panel.py" line="591"/>
         <source>Enable Top Face</source>
         <translation>上面を有効にする</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="326"/>
+        <location filename="../src/ui/param_panel.py" line="603"/>
         <source>Top Thickness:</source>
         <translation>上面厚さ:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="365"/>
+        <location filename="../src/ui/param_panel.py" line="647"/>
         <source>Color Layer Settings</source>
         <translation>カラーレイヤー設定</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="370"/>
+        <location filename="../src/ui/param_panel.py" line="652"/>
         <source>Enable Color Layers</source>
         <translation>カラーレイヤーを有効にする</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="383"/>
+        <location filename="../src/ui/param_panel.py" line="665"/>
         <source>Color 1 Height:</source>
         <translation>カラー1高さ:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="390"/>
+        <location filename="../src/ui/param_panel.py" line="672"/>
         <source>Color 2 Height:</source>
         <translation>カラー2高さ:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="405"/>
+        <location filename="../src/ui/param_panel.py" line="687"/>
         <source>Step/V-Groove</source>
         <translation>ステップ/V溝</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="410"/>
+        <location filename="../src/ui/param_panel.py" line="692"/>
         <source>Enable Panel Step (Top)</source>
         <translation>パネルステップを有効にする（上部）</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="421"/>
-        <location filename="../src/ui/param_panel.py" line="462"/>
+        <location filename="../src/ui/param_panel.py" line="701"/>
+        <location filename="../src/ui/param_panel.py" line="745"/>
         <source>Step Height:</source>
         <translation>ステップ高さ:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="429"/>
-        <location filename="../src/ui/param_panel.py" line="470"/>
+        <location filename="../src/ui/param_panel.py" line="714"/>
+        <location filename="../src/ui/param_panel.py" line="758"/>
         <source>Step Width:</source>
         <translation>ステップ幅:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="431"/>
-        <location filename="../src/ui/param_panel.py" line="472"/>
+        <location filename="../src/ui/param_panel.py" line="716"/>
+        <location filename="../src/ui/param_panel.py" line="760"/>
         <source>V-Groove</source>
         <translation>V溝</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="451"/>
+        <location filename="../src/ui/param_panel.py" line="736"/>
         <source>Enable Baseplate Step (Bottom)</source>
         <translation>ベースプレートステップを有効にする（下部）</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="531"/>
+        <location filename="../src/ui/param_panel.py" line="820"/>
         <source>Anti-Warping Skirt</source>
         <translation>反り防止スカート</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="536"/>
+        <location filename="../src/ui/param_panel.py" line="825"/>
         <source>Enable Anti-Warping Skirt</source>
         <translation>反り防止スカートを有効にする</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="549"/>
+        <location filename="../src/ui/param_panel.py" line="838"/>
         <source>Skirt Width:</source>
         <translation>スカート幅:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="558"/>
+        <location filename="../src/ui/param_panel.py" line="847"/>
         <source>Skirt Height:</source>
         <translation>スカート高さ:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="566"/>
+        <location filename="../src/ui/param_panel.py" line="855"/>
         <source>Trapezoid Interval:</source>
         <translation>台形間隔:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="574"/>
+        <location filename="../src/ui/param_panel.py" line="863"/>
         <source>Skirt Offset:</source>
         <translation>スカートオフセット:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="593"/>
+        <location filename="../src/ui/param_panel.py" line="877"/>
+        <source>Skirt Sides:</source>
+        <translation>スカート方向:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="898"/>
         <source>Connected Letters</source>
         <translation>連結文字</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="598"/>
+        <location filename="../src/ui/param_panel.py" line="903"/>
         <source>Enable Connected Letters</source>
         <translation>連結文字を有効にする</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="607"/>
+        <location filename="../src/ui/param_panel.py" line="912"/>
         <source>Triangle</source>
         <translation>三角形</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="608"/>
+        <location filename="../src/ui/param_panel.py" line="913"/>
         <source>Diamond</source>
         <translation>ダイヤモンド</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="611"/>
+        <location filename="../src/ui/param_panel.py" line="916"/>
         <source>Connection Type:</source>
         <translation>接続タイプ:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="614"/>
+        <location filename="../src/ui/param_panel.py" line="919"/>
         <source>Auto Detect Connection Points</source>
         <translation>接続点を自動検出</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="627"/>
+        <location filename="../src/ui/param_panel.py" line="932"/>
         <source>Connection Width:</source>
         <translation>接続幅:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="636"/>
+        <location filename="../src/ui/param_panel.py" line="945"/>
         <source>Bevel Height:</source>
         <translation>斜め高さ:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="645"/>
+        <location filename="../src/ui/param_panel.py" line="963"/>
         <source>Base Height:</source>
         <translation>ベース高さ:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="654"/>
+        <location filename="../src/ui/param_panel.py" line="977"/>
         <source>Support Offset:</source>
         <translation>サポートオフセット:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="675"/>
+        <location filename="../src/ui/param_panel.py" line="1013"/>
         <source>Edge Wrap/Outline</source>
         <translation>エッジラップ/アウトライン</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="680"/>
+        <location filename="../src/ui/param_panel.py" line="1018"/>
         <source>Enable Edge Wrap</source>
         <translation>エッジラップを有効にする</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="689"/>
-        <location filename="../src/ui/param_panel.py" line="750"/>
+        <location filename="../src/ui/param_panel.py" line="872"/>
+        <location filename="../src/ui/param_panel.py" line="1027"/>
+        <location filename="../src/ui/param_panel.py" line="1079"/>
         <source>Inner</source>
         <translation>内側</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="690"/>
-        <location filename="../src/ui/param_panel.py" line="751"/>
+        <location filename="../src/ui/param_panel.py" line="867"/>
+        <location filename="../src/ui/param_panel.py" line="1028"/>
+        <location filename="../src/ui/param_panel.py" line="1080"/>
         <source>Outer</source>
         <translation>外側</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="701"/>
+        <location filename="../src/ui/param_panel.py" line="1039"/>
         <source>Wrap Direction:</source>
         <translation>ラップ方向:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="709"/>
+        <location filename="../src/ui/param_panel.py" line="1047"/>
         <source>Wrap Width:</source>
         <translation>ラップ幅:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="717"/>
+        <location filename="../src/ui/param_panel.py" line="1055"/>
         <source>Wrap Height:</source>
         <translation>ラップ高さ:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="741"/>
+        <location filename="../src/ui/param_panel.py" line="1070"/>
         <source>Enable Outline</source>
         <translation>アウトラインを有効にする</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="762"/>
+        <location filename="../src/ui/param_panel.py" line="1091"/>
         <source>Outline Direction:</source>
         <translation>アウトライン方向:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="770"/>
+        <location filename="../src/ui/param_panel.py" line="1099"/>
         <source>Outline Width:</source>
         <translation>アウトライン幅:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="778"/>
+        <location filename="../src/ui/param_panel.py" line="1107"/>
         <source>Outline Height:</source>
         <translation>アウトライン高さ:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="786"/>
+        <location filename="../src/ui/param_panel.py" line="1115"/>
         <source>Outline Offset:</source>
         <translation>アウトラインオフセット:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="814"/>
+        <location filename="../src/ui/param_panel.py" line="1131"/>
         <source>Speed Settings</source>
         <translation>速度設定</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="824"/>
+        <location filename="../src/ui/param_panel.py" line="1141"/>
         <source>Print Speed:</source>
         <translation>印刷速度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="832"/>
+        <location filename="../src/ui/param_panel.py" line="1149"/>
         <source>Travel Speed:</source>
         <translation>移動速度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="840"/>
+        <location filename="../src/ui/param_panel.py" line="1157"/>
         <source>First Layer Speed:</source>
         <translation>第1層速度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1159"/>
+        <location filename="../src/ui/param_panel.py" line="1522"/>
         <source>Import Custom Edge DXF</source>
         <translation>カスタムエッジDXFをインポート</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1161"/>
+        <location filename="../src/ui/param_panel.py" line="1524"/>
         <source>DXF Files (*.dxf);;All Files (*.*)</source>
         <translation>DXFファイル (*.dxf);;すべてのファイル (*.*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1177"/>
+        <location filename="../src/ui/param_panel.py" line="1540"/>
         <source>Import Success</source>
         <translation>インポート成功</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1178"/>
+        <location filename="../src/ui/param_panel.py" line="1541"/>
         <source>Imported custom edge profile: {name}
 Size: {width:.1f} x {height:.1f} mm
 Control points: {points}</source>
@@ -1374,154 +1249,112 @@ Control points: {points}</source>
 制御点: {points} 個</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1189"/>
+        <location filename="../src/ui/param_panel.py" line="1552"/>
         <source>Import Failed</source>
         <translation>インポート失敗</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1190"/>
+        <location filename="../src/ui/param_panel.py" line="1553"/>
         <source>Failed to import DXF file:
 {error}</source>
         <translation>DXFファイルのインポートに失敗:
 {error}</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1201"/>
+        <location filename="../src/ui/param_panel.py" line="1564"/>
         <source> ({count} points)</source>
         <translation> ({count}点)</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="248"/>
+        <location filename="../src/ui/param_panel.py" line="371"/>
         <source>DXF Export</source>
         <translation>DXF書き出し</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="258"/>
+        <location filename="../src/ui/param_panel.py" line="381"/>
         <source>Outer Clearance:</source>
         <translation>外形クリアランス:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="266"/>
+        <location filename="../src/ui/param_panel.py" line="389"/>
         <source>Hole Clearance:</source>
         <translation>穴クリアランス:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="274"/>
+        <location filename="../src/ui/param_panel.py" line="397"/>
         <source>Laser Kerf:</source>
         <translation>レーザーカーフ:</translation>
     </message>
 </context>
 <context>
-    <name>PresetThumbnail</name>
-    <message>
-        <source>Width</source>
-        <translation type="vanished">幅</translation>
-    </message>
-</context>
-<context>
     <name>Preview3D</name>
     <message>
-        <source>View:</source>
-        <translation type="vanished">視点:</translation>
+        <location filename="../src/ui/preview_3d.py" line="1135"/>
+        <source>Loading 3D preview...</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Top</source>
-        <translation type="vanished">上面</translation>
-    </message>
-    <message>
-        <source>Front</source>
-        <translation type="vanished">正面</translation>
-    </message>
-    <message>
-        <source>Side</source>
-        <translation type="vanished">側面</translation>
-    </message>
-    <message>
-        <source>Isometric</source>
-        <translation type="vanished">等角</translation>
-    </message>
-    <message>
-        <source>Reset</source>
-        <translation type="vanished">リセット</translation>
-    </message>
-    <message>
-        <source>Layer: 0/0</source>
-        <translation type="vanished">層: 0/0</translation>
-    </message>
-    <message>
-        <source>Layer: {current}/{total}</source>
-        <translation type="vanished">層: {current}/{total}</translation>
-    </message>
-    <message>
-        <source>Show All</source>
-        <translation type="vanished">すべて表示</translation>
-    </message>
-    <message>
-        <source>Single Layer</source>
-        <translation type="vanished">単一層表示</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/preview_3d.py" line="602"/>
+        <location filename="../src/ui/preview_3d.py" line="1201"/>
         <source>外壳</source>
         <translation>外殻</translation>
     </message>
     <message>
-        <location filename="../src/ui/preview_3d.py" line="607"/>
+        <location filename="../src/ui/preview_3d.py" line="1206"/>
         <source>内壳</source>
         <translation>内殻</translation>
     </message>
     <message>
-        <location filename="../src/ui/preview_3d.py" line="612"/>
+        <location filename="../src/ui/preview_3d.py" line="1211"/>
         <source>填充</source>
         <translation>塗りつぶし</translation>
     </message>
     <message>
-        <location filename="../src/ui/preview_3d.py" line="617"/>
+        <location filename="../src/ui/preview_3d.py" line="1216"/>
         <source>实边</source>
         <translation>ソリッドエッジ</translation>
     </message>
     <message>
-        <location filename="../src/ui/preview_3d.py" line="622"/>
+        <location filename="../src/ui/preview_3d.py" line="1221"/>
         <source>换色</source>
         <translation>色変更</translation>
     </message>
     <message>
-        <location filename="../src/ui/preview_3d.py" line="627"/>
+        <location filename="../src/ui/preview_3d.py" line="1226"/>
         <source>底面</source>
         <translation>底面</translation>
     </message>
     <message>
-        <location filename="../src/ui/preview_3d.py" line="632"/>
+        <location filename="../src/ui/preview_3d.py" line="1231"/>
         <source>顶面</source>
         <translation>上面</translation>
     </message>
     <message>
-        <location filename="../src/ui/preview_3d.py" line="640"/>
+        <location filename="../src/ui/preview_3d.py" line="1239"/>
         <source>图层编辑</source>
         <translation>レイヤー編集</translation>
     </message>
     <message>
-        <location filename="../src/ui/preview_3d.py" line="656"/>
+        <location filename="../src/ui/preview_3d.py" line="1255"/>
         <source>层数编辑</source>
         <translation>レイヤー数編集</translation>
     </message>
     <message>
-        <location filename="../src/ui/preview_3d.py" line="720"/>
+        <location filename="../src/ui/preview_3d.py" line="1319"/>
         <source>正</source>
         <translation>正面</translation>
     </message>
     <message>
-        <location filename="../src/ui/preview_3d.py" line="725"/>
+        <location filename="../src/ui/preview_3d.py" line="1324"/>
         <source>俯</source>
         <translation>上面</translation>
     </message>
     <message>
-        <location filename="../src/ui/preview_3d.py" line="730"/>
+        <location filename="../src/ui/preview_3d.py" line="1329"/>
         <source>侧</source>
         <translation>側面</translation>
     </message>
     <message>
-        <location filename="../src/ui/preview_3d.py" line="735"/>
+        <location filename="../src/ui/preview_3d.py" line="1334"/>
         <source>透</source>
         <translation>アイソメ</translation>
     </message>
@@ -1547,10 +1380,6 @@ Control points: {points}</source>
 <context>
     <name>ShellPanel</name>
     <message>
-        <source>points</source>
-        <translation type="vanished">点</translation>
-    </message>
-    <message>
         <location filename="../src/ui/panels/shell_panel.py" line="339"/>
         <source>No profile selected</source>
         <translation>プロファイルが選択されていません</translation>
@@ -1559,58 +1388,58 @@ Control points: {points}</source>
 <context>
     <name>TextDialog</name>
     <message>
-        <location filename="../src/ui/text_dialog.py" line="28"/>
+        <location filename="../src/ui/text_dialog.py" line="29"/>
         <source>Generate Text</source>
         <translation>テキストを生成</translation>
     </message>
     <message>
-        <location filename="../src/ui/text_dialog.py" line="36"/>
+        <location filename="../src/ui/text_dialog.py" line="37"/>
         <source>Font:</source>
         <translation>フォント：</translation>
     </message>
     <message>
-        <location filename="../src/ui/text_dialog.py" line="44"/>
+        <location filename="../src/ui/text_dialog.py" line="45"/>
         <source>Text:</source>
         <translation>テキスト：</translation>
     </message>
     <message>
-        <location filename="../src/ui/text_dialog.py" line="51"/>
+        <location filename="../src/ui/text_dialog.py" line="52"/>
         <source>Font Size (mm):</source>
         <translation>フォントサイズ (mm)：</translation>
     </message>
     <message>
-        <location filename="../src/ui/text_dialog.py" line="61"/>
+        <location filename="../src/ui/text_dialog.py" line="62"/>
         <source>Character Spacing (mm):</source>
         <translation>文字間隔 (mm)：</translation>
     </message>
     <message>
-        <location filename="../src/ui/text_dialog.py" line="73"/>
+        <location filename="../src/ui/text_dialog.py" line="77"/>
         <source>Cancel</source>
         <translation>キャンセル</translation>
     </message>
     <message>
-        <location filename="../src/ui/text_dialog.py" line="76"/>
+        <location filename="../src/ui/text_dialog.py" line="80"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../src/ui/text_dialog.py" line="86"/>
-        <location filename="../src/ui/text_dialog.py" line="92"/>
+        <location filename="../src/ui/text_dialog.py" line="117"/>
+        <location filename="../src/ui/text_dialog.py" line="123"/>
         <source>Warning</source>
         <translation>警告</translation>
     </message>
     <message>
-        <location filename="../src/ui/text_dialog.py" line="86"/>
+        <location filename="../src/ui/text_dialog.py" line="117"/>
         <source>Please enter text</source>
         <translation>テキストを入力してください</translation>
     </message>
     <message>
-        <location filename="../src/ui/text_dialog.py" line="92"/>
+        <location filename="../src/ui/text_dialog.py" line="123"/>
         <source>Font not found</source>
         <translation>フォントが見つかりません</translation>
     </message>
     <message>
-        <location filename="../src/ui/text_dialog.py" line="104"/>
+        <location filename="../src/ui/text_dialog.py" line="136"/>
         <source>Error</source>
         <translation>エラー</translation>
     </message>
@@ -1621,18 +1450,6 @@ Control points: {points}</source>
         <location filename="../src/ui/title_bar.py" line="53"/>
         <source>Menu</source>
         <translation>メニュー</translation>
-    </message>
-    <message>
-        <source>Open</source>
-        <translation>開く</translation>
-    </message>
-    <message>
-        <source>Save</source>
-        <translation>保存</translation>
-    </message>
-    <message>
-        <source>Export</source>
-        <translation type="vanished">エクスポート</translation>
     </message>
     <message>
         <location filename="../src/ui/title_bar.py" line="111"/>
@@ -1665,10 +1482,6 @@ Control points: {points}</source>
         <translation>処理</translation>
     </message>
     <message>
-        <source>Export Gcode</source>
-        <translation type="vanished">Gcodeエクスポート</translation>
-    </message>
-    <message>
         <location filename="../src/ui/title_bar.py" line="322"/>
         <source>New Project</source>
         <translation>新規プロジェクト</translation>
@@ -1683,10 +1496,6 @@ Control points: {points}</source>
         <location filename="../src/ui/title_bar.py" line="326"/>
         <source>Save Project</source>
         <translation>プロジェクトを保存</translation>
-    </message>
-    <message>
-        <source>Export G-code...</source>
-        <translation type="vanished">G-codeをエクスポート...</translation>
     </message>
     <message>
         <location filename="../src/ui/title_bar.py" line="331"/>

@@ -4,37 +4,37 @@
 <context>
     <name>Canvas2D</name>
     <message>
-        <location filename="../src/ui/canvas_2d.py" line="1263"/>
+        <location filename="../src/ui/canvas_2d.py" line="1474"/>
         <source>Delete</source>
         <translation>מחק</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_2d.py" line="1271"/>
+        <location filename="../src/ui/canvas_2d.py" line="1482"/>
         <source>Mirror</source>
         <translation>שיקוף</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_2d.py" line="1272"/>
+        <location filename="../src/ui/canvas_2d.py" line="1483"/>
         <source>Mirror X</source>
         <translation>שיקוף X</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_2d.py" line="1274"/>
+        <location filename="../src/ui/canvas_2d.py" line="1485"/>
         <source>Mirror Y</source>
         <translation>שיקוף Y</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_2d.py" line="1281"/>
+        <location filename="../src/ui/canvas_2d.py" line="1492"/>
         <source>Select All</source>
         <translation>בחר הכל</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_2d.py" line="1289"/>
+        <location filename="../src/ui/canvas_2d.py" line="1500"/>
         <source>Fit View</source>
         <translation>התאם תצוגה</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_2d.py" line="1294"/>
+        <location filename="../src/ui/canvas_2d.py" line="1505"/>
         <source>Reset View</source>
         <translation>אפס תצוגה</translation>
     </message>
@@ -91,192 +91,6 @@
         <source>Text</source>
         <translation>טקסט</translation>
     </message>
-    <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="110"/>
-        <source>Start Point</source>
-        <translation>נקודת התחלה</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="113"/>
-        <source>Print Order</source>
-        <translation>סדר הדפסה</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="119"/>
-        <source>Center View</source>
-        <translation>מרכז תצוגה</translation>
-    </message>
-</context>
-<context>
-    <name>EdgePresets</name>
-    <message>
-        <source>Zigzag</source>
-        <translation type="vanished">זיגזג</translation>
-    </message>
-    <message>
-        <source>Wave</source>
-        <translation type="vanished">גל</translation>
-    </message>
-    <message>
-        <source>Arc</source>
-        <translation type="vanished">קשת</translation>
-    </message>
-    <message>
-        <source>Step</source>
-        <translation type="vanished">מדרגה</translation>
-    </message>
-    <message>
-        <source>Mixed</source>
-        <translation type="vanished">מעורב</translation>
-    </message>
-    <message>
-        <source>Bevel</source>
-        <translation type="vanished">שיפוע</translation>
-    </message>
-    <message>
-        <source>4-Tooth Zigzag</source>
-        <translation type="vanished">זיגזג 4 שיניים</translation>
-    </message>
-    <message>
-        <source>4 sharp zigzag teeth, highly decorative</source>
-        <translation type="vanished">4 שיני זיגזג חדות, מאוד דקורטיבי</translation>
-    </message>
-    <message>
-        <source>3-Tooth Zigzag</source>
-        <translation type="vanished">זיגזג 3 שיניים</translation>
-    </message>
-    <message>
-        <source>3 zigzag teeth, medium decoration</source>
-        <translation type="vanished">3 שיני זיגזג, קישוט בינוני</translation>
-    </message>
-    <message>
-        <source>2-Tooth Zigzag</source>
-        <translation type="vanished">זיגזג 2 שיניים</translation>
-    </message>
-    <message>
-        <source>2 zigzag teeth, simple and clean</source>
-        <translation type="vanished">2 שיני זיגזג, פשוט ונקי</translation>
-    </message>
-    <message>
-        <source>5-Tooth Zigzag</source>
-        <translation type="vanished">זיגזג 5 שיניים</translation>
-    </message>
-    <message>
-        <source>5 zigzag teeth, complex decoration</source>
-        <translation type="vanished">5 שיני זיגזג, קישוט מורכב</translation>
-    </message>
-    <message>
-        <source>3-Wave</source>
-        <translation type="vanished">3 גלים</translation>
-    </message>
-    <message>
-        <source>3 smooth S-shaped waves</source>
-        <translation type="vanished">3 גלים חלקים בצורת S</translation>
-    </message>
-    <message>
-        <source>3-Wave B</source>
-        <translation type="vanished">3 גלים B</translation>
-    </message>
-    <message>
-        <source>3 smooth waves (variant)</source>
-        <translation type="vanished">3 גלים חלקים (גרסה)</translation>
-    </message>
-    <message>
-        <source>2-Wave</source>
-        <translation type="vanished">2 גלים</translation>
-    </message>
-    <message>
-        <source>2 smooth waves</source>
-        <translation type="vanished">2 גלים חלקים</translation>
-    </message>
-    <message>
-        <source>Single Bump</source>
-        <translation type="vanished">בליטה בודדת</translation>
-    </message>
-    <message>
-        <source>Single arc bump in the middle</source>
-        <translation type="vanished">בליטת קשת בודדת באמצע</translation>
-    </message>
-    <message>
-        <source>Large Arc</source>
-        <translation type="vanished">קשת גדולה</translation>
-    </message>
-    <message>
-        <source>Large radius arc transition</source>
-        <translation type="vanished">מעבר קשת ברדיוס גדול</translation>
-    </message>
-    <message>
-        <source>Arc with Platform</source>
-        <translation type="vanished">קשת עם פלטפורמה</translation>
-    </message>
-    <message>
-        <source>Arc transition with top/bottom platforms</source>
-        <translation type="vanished">מעבר קשת עם פלטפורמות עליון/תחתון</translation>
-    </message>
-    <message>
-        <source>Arc with Platform B</source>
-        <translation type="vanished">קשת עם פלטפורמה B</translation>
-    </message>
-    <message>
-        <source>Arc with platform (variant)</source>
-        <translation type="vanished">קשת עם פלטפורמה (גרסה)</translation>
-    </message>
-    <message>
-        <source>Small Step</source>
-        <translation type="vanished">מדרגה קטנה</translation>
-    </message>
-    <message>
-        <source>Single small step</source>
-        <translation type="vanished">מדרגה קטנה אחת</translation>
-    </message>
-    <message>
-        <source>Double Step</source>
-        <translation type="vanished">מדרגה כפולה</translation>
-    </message>
-    <message>
-        <source>Two-level step</source>
-        <translation type="vanished">מדרגה דו-רמתית</translation>
-    </message>
-    <message>
-        <source>Step + Arc</source>
-        <translation type="vanished">מדרגה + קשת</translation>
-    </message>
-    <message>
-        <source>Combination of step and arc</source>
-        <translation type="vanished">שילוב של מדרגה וקשת</translation>
-    </message>
-    <message>
-        <source>Complex Mixed</source>
-        <translation type="vanished">מעורב מורכב</translation>
-    </message>
-    <message>
-        <source>Double arc + step complex combination</source>
-        <translation type="vanished">קשת כפולה + מדרגה, שילוב מורכב</translation>
-    </message>
-    <message>
-        <source>Simple Bevel</source>
-        <translation type="vanished">שיפוע פשוט</translation>
-    </message>
-    <message>
-        <source>Linear bevel transition</source>
-        <translation type="vanished">מעבר שיפוע לינארי</translation>
-    </message>
-    <message>
-        <source>Large Bevel</source>
-        <translation type="vanished">שיפוע גדול</translation>
-    </message>
-    <message>
-        <source>Large angle bevel transition</source>
-        <translation type="vanished">מעבר שיפוע בזווית גדולה</translation>
-    </message>
-    <message>
-        <source>Steep Bevel</source>
-        <translation type="vanished">שיפוע תלול</translation>
-    </message>
-    <message>
-        <source>Steep bevel (large width)</source>
-        <translation type="vanished">שיפוע תלול (רוחב גדול)</translation>
-    </message>
 </context>
 <context>
     <name>HomePage</name>
@@ -304,685 +118,678 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../src/ui/main_window.py" line="111"/>
+        <location filename="../src/ui/main_window.py" line="114"/>
         <source>MINGDA SignMaker - LED Sign Letter Slicer</source>
         <translation>MINGDA SignMaker - פורס אותיות שילוט LED</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="123"/>
+        <location filename="../src/ui/main_window.py" line="126"/>
         <source>Title Bar</source>
         <translation>שורת כותרת</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="158"/>
+        <location filename="../src/ui/main_window.py" line="161"/>
         <source>File(&amp;F)</source>
         <translation>קובץ(&amp;F)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="161"/>
-        <location filename="../src/ui/main_window.py" line="920"/>
+        <location filename="../src/ui/main_window.py" line="164"/>
+        <location filename="../src/ui/main_window.py" line="1022"/>
         <source>New Project</source>
         <translation>פרויקט חדש</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="167"/>
+        <location filename="../src/ui/main_window.py" line="170"/>
         <source>Open DXF/SVG...</source>
         <translation>פתח DXF/SVG...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="175"/>
-        <location filename="../src/ui/main_window.py" line="1066"/>
+        <location filename="../src/ui/main_window.py" line="178"/>
+        <location filename="../src/ui/main_window.py" line="1171"/>
         <source>Save Project</source>
         <translation>שמור פרויקט</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="181"/>
+        <location filename="../src/ui/main_window.py" line="184"/>
         <source>Save As...</source>
         <translation>שמור בשם...</translation>
     </message>
     <message>
-        <source>Export G-code...</source>
-        <translation type="vanished">ייצא G-code...</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.py" line="195"/>
-        <location filename="../src/ui/main_window.py" line="1139"/>
+        <location filename="../src/ui/main_window.py" line="198"/>
+        <location filename="../src/ui/main_window.py" line="1244"/>
         <source>Export STL...</source>
         <translation>ייצא STL...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="203"/>
+        <location filename="../src/ui/main_window.py" line="206"/>
         <source>Exit</source>
         <translation>יציאה</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="209"/>
+        <location filename="../src/ui/main_window.py" line="212"/>
         <source>Edit(&amp;E)</source>
         <translation>עריכה(&amp;E)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="211"/>
+        <location filename="../src/ui/main_window.py" line="214"/>
         <source>Undo</source>
         <translation>בטל</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="216"/>
+        <location filename="../src/ui/main_window.py" line="219"/>
         <source>Redo</source>
         <translation>בצע שוב</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="223"/>
+        <location filename="../src/ui/main_window.py" line="226"/>
         <source>Select All</source>
         <translation>בחר הכל</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="227"/>
+        <location filename="../src/ui/main_window.py" line="230"/>
         <source>Delete</source>
         <translation>מחק</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="232"/>
+        <location filename="../src/ui/main_window.py" line="235"/>
         <source>View(&amp;V)</source>
         <translation>תצוגה(&amp;V)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="234"/>
+        <location filename="../src/ui/main_window.py" line="237"/>
         <source>2D View</source>
         <translation>תצוגת 2D</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="239"/>
+        <location filename="../src/ui/main_window.py" line="242"/>
         <source>3D View</source>
         <translation>תצוגת 3D</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="246"/>
+        <location filename="../src/ui/main_window.py" line="249"/>
         <source>Fit to Window</source>
         <translation>התאם לחלון</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="251"/>
+        <location filename="../src/ui/main_window.py" line="254"/>
         <source>Zoom In</source>
         <translation>הגדל</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="255"/>
+        <location filename="../src/ui/main_window.py" line="258"/>
         <source>Zoom Out</source>
         <translation>הקטן</translation>
     </message>
     <message>
-        <source>Slice(&amp;S)</source>
-        <translation type="vanished">פריסה(&amp;S)</translation>
-    </message>
-    <message>
-        <source>Start Slicing</source>
-        <translation type="vanished">התחל פריסה</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.py" line="267"/>
+        <location filename="../src/ui/main_window.py" line="270"/>
         <source>Preview G-code</source>
         <translation>תצוגה מקדימה G-code</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="272"/>
+        <location filename="../src/ui/main_window.py" line="275"/>
         <source>Help(&amp;H)</source>
         <translation>עזרה(&amp;H)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="274"/>
+        <location filename="../src/ui/main_window.py" line="277"/>
         <source>About</source>
         <translation>אודות</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="399"/>
-        <location filename="../src/ui/main_window.py" line="1406"/>
+        <location filename="../src/ui/main_window.py" line="402"/>
+        <location filename="../src/ui/main_window.py" line="1497"/>
         <source>Scale</source>
         <translation type="unfinished">שנה קנה מידה</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="518"/>
-        <location filename="../src/ui/main_window.py" line="824"/>
-        <location filename="../src/ui/main_window.py" line="1398"/>
+        <location filename="../src/ui/main_window.py" line="521"/>
+        <location filename="../src/ui/main_window.py" line="828"/>
+        <location filename="../src/ui/main_window.py" line="1489"/>
         <source>Arrow keys: 1mm, Shift+Arrow: 10mm</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="627"/>
-        <location filename="../src/ui/main_window.py" line="1641"/>
+        <location filename="../src/ui/main_window.py" line="631"/>
+        <location filename="../src/ui/main_window.py" line="1732"/>
         <source>Ready</source>
         <translation>מוכן</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="658"/>
+        <location filename="../src/ui/main_window.py" line="662"/>
         <source>Executed: </source>
         <translation>בוצע: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="661"/>
+        <location filename="../src/ui/main_window.py" line="665"/>
         <source>Undone: </source>
         <translation>בוטל: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="664"/>
+        <location filename="../src/ui/main_window.py" line="668"/>
         <source>Redone: </source>
         <translation>בוצע שוב: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="819"/>
-        <location filename="../src/ui/main_window.py" line="1394"/>
+        <location filename="../src/ui/main_window.py" line="823"/>
+        <location filename="../src/ui/main_window.py" line="1485"/>
         <source>Position</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="854"/>
-        <source>Home</source>
-        <translation>דף הבית</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.py" line="861"/>
-        <source>Project Edit</source>
-        <translation>עריכת פרויקט</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.py" line="877"/>
-        <source>3D Preview</source>
-        <translation>תצוגה מקדימה 3D</translation>
-    </message>
-    <message>
         <location filename="../src/ui/main_window.py" line="904"/>
-        <source>Settings feature under development...</source>
-        <translation>תכונת הגדרות בפיתוח...</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.py" line="906"/>
-        <source>Help feature under development...</source>
-        <translation>תכונת עזרה בפיתוח...</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.py" line="919"/>
-        <source>MINGDA SignMaker - New Project</source>
-        <translation>MINGDA SignMaker - פרויקט חדש</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.py" line="930"/>
-        <source>Open File</source>
-        <translation>פתח קובץ</translation>
-    </message>
-    <message>
-        <source>Supported Files (*.dxf *.svg);;DXF Files (*.dxf);;SVG Files (*.svg);;All Files (*)</source>
-        <translation type="vanished">קבצים נתמכים (*.dxf *.svg);;קבצי DXF (*.dxf);;קבצי SVG (*.svg);;כל הקבצים (*)</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.py" line="964"/>
-        <source>Unsupported Format</source>
-        <translation>פורמט לא נתמך</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.py" line="964"/>
-        <source>Format not supported: </source>
-        <translation>פורמט לא נתמך: </translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.py" line="983"/>
-        <source>Load </source>
-        <translation>טען </translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.py" line="1004"/>
-        <source>Loaded: {file}, {count} contours</source>
-        <translation>נטען: {file}, {count} קווי מתאר</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.py" line="973"/>
-        <location filename="../src/ui/main_window.py" line="1048"/>
-        <source>Load Failed</source>
-        <translation>הטעינה נכשלה</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.py" line="974"/>
-        <source>Failed to load file:</source>
-        <translation>טעינת הקובץ נכשלה:</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.py" line="944"/>
-        <location filename="../src/ui/main_window.py" line="1068"/>
-        <source>SignMaker Project (*.smp);;All Files (*)</source>
-        <translation>פרויקט SignMaker (*.smp);;כל הקבצים (*)</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.py" line="260"/>
-        <source>Process(&amp;P)</source>
+        <location filename="../src/ui/main_window.py" line="917"/>
+        <source>Loading 3D preview...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="932"/>
-        <source>Supported Files (*.dxf *.svg *.smp);;SignMaker Project (*.smp);;DXF Files (*.dxf);;SVG Files (*.svg);;All Files (*)</source>
+        <location filename="../src/ui/main_window.py" line="938"/>
+        <source>3D preview loading failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="942"/>
+        <source>Failed to prepare 3D preview:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="962"/>
+        <source>Home</source>
+        <translation>דף הבית</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="969"/>
+        <source>Project Edit</source>
+        <translation>עריכת פרויקט</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="941"/>
+        <location filename="../src/ui/main_window.py" line="977"/>
+        <source>3D Preview</source>
+        <translation>תצוגה מקדימה 3D</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1005"/>
+        <source>Settings feature under development...</source>
+        <translation>תכונת הגדרות בפיתוח...</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1007"/>
+        <source>Help feature under development...</source>
+        <translation>תכונת עזרה בפיתוח...</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1021"/>
+        <source>MINGDA SignMaker - New Project</source>
+        <translation>MINGDA SignMaker - פרויקט חדש</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1032"/>
+        <source>Open File</source>
+        <translation>פתח קובץ</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1066"/>
+        <source>Unsupported Format</source>
+        <translation>פורמט לא נתמך</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1066"/>
+        <source>Format not supported: </source>
+        <translation>פורמט לא נתמך: </translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1085"/>
+        <source>Load </source>
+        <translation>טען </translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1107"/>
+        <source>Loaded: {file}, {count} contours</source>
+        <translation>נטען: {file}, {count} קווי מתאר</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1075"/>
+        <location filename="../src/ui/main_window.py" line="1153"/>
+        <source>Load Failed</source>
+        <translation>הטעינה נכשלה</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1076"/>
+        <source>Failed to load file:</source>
+        <translation>טעינת הקובץ נכשלה:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1046"/>
+        <location filename="../src/ui/main_window.py" line="1173"/>
+        <source>SignMaker Project (*.smp);;All Files (*)</source>
+        <translation>פרויקט SignMaker (*.smp);;כל הקבצים (*)</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="263"/>
+        <source>Process(&amp;P)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1034"/>
+        <source>Supported Files (*.dxf *.svg *.smp);;SignMaker Project (*.smp);;DXF Files (*.dxf);;SVG Files (*.svg);;All Files (*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1044"/>
         <source>Open Project</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1041"/>
+        <location filename="../src/ui/main_window.py" line="1146"/>
         <source>Project loaded: {name}, {count} contours</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1048"/>
+        <location filename="../src/ui/main_window.py" line="1153"/>
         <source>Failed to load project:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1100"/>
+        <location filename="../src/ui/main_window.py" line="1205"/>
         <source>Project saved: </source>
         <translation>פרויקט נשמר: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1107"/>
+        <location filename="../src/ui/main_window.py" line="1212"/>
         <source>Save Failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1107"/>
+        <location filename="../src/ui/main_window.py" line="1212"/>
         <source>Failed to save project:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1141"/>
+        <location filename="../src/ui/main_window.py" line="1246"/>
         <source>Export Baseplate DXF...</source>
         <translation>ייצא DXF בסיס...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1142"/>
+        <location filename="../src/ui/main_window.py" line="1247"/>
         <source>Export Panel DXF...</source>
         <translation>ייצא DXF פאנל...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1173"/>
-        <location filename="../src/ui/main_window.py" line="1214"/>
-        <location filename="../src/ui/main_window.py" line="1248"/>
-        <location filename="../src/ui/main_window.py" line="1300"/>
-        <location filename="../src/ui/main_window.py" line="1653"/>
+        <location filename="../src/ui/main_window.py" line="1278"/>
+        <location filename="../src/ui/main_window.py" line="1319"/>
+        <location filename="../src/ui/main_window.py" line="1353"/>
+        <location filename="../src/ui/main_window.py" line="1405"/>
+        <location filename="../src/ui/main_window.py" line="1744"/>
+        <location filename="../src/ui/main_window.py" line="1767"/>
+        <location filename="../src/ui/main_window.py" line="1796"/>
+        <location filename="../src/ui/main_window.py" line="1826"/>
+        <location filename="../src/ui/main_window.py" line="1857"/>
         <source>Info</source>
         <translation>מידע</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1173"/>
+        <location filename="../src/ui/main_window.py" line="1278"/>
         <source>Please process first</source>
         <translation>נא לבצע עיבוד תחילה</translation>
     </message>
     <message>
-        <source>Export G-code</source>
-        <translation type="vanished">ייצא G-code</translation>
-    </message>
-    <message>
-        <source>G-code Files (*.gcode);;All Files (*)</source>
-        <translation type="vanished">קבצי G-code (*.gcode);;כל הקבצים (*)</translation>
-    </message>
-    <message>
-        <source>G-code exported: </source>
-        <translation type="vanished">G-code יוצא: </translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.py" line="1198"/>
-        <location filename="../src/ui/main_window.py" line="1236"/>
-        <location filename="../src/ui/main_window.py" line="1270"/>
+        <location filename="../src/ui/main_window.py" line="1303"/>
+        <location filename="../src/ui/main_window.py" line="1339"/>
+        <location filename="../src/ui/main_window.py" line="1373"/>
         <source>Export Success</source>
         <translation>הייצוא הצליח</translation>
     </message>
     <message>
-        <source>G-code saved to:</source>
-        <translation type="vanished">G-code נשמר ב:</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.py" line="1201"/>
-        <location filename="../src/ui/main_window.py" line="1241"/>
-        <location filename="../src/ui/main_window.py" line="1243"/>
-        <location filename="../src/ui/main_window.py" line="1275"/>
-        <location filename="../src/ui/main_window.py" line="1277"/>
+        <location filename="../src/ui/main_window.py" line="1306"/>
+        <location filename="../src/ui/main_window.py" line="1346"/>
+        <location filename="../src/ui/main_window.py" line="1348"/>
+        <location filename="../src/ui/main_window.py" line="1380"/>
+        <location filename="../src/ui/main_window.py" line="1382"/>
         <source>Export Failed</source>
         <translation>הייצוא נכשל</translation>
     </message>
     <message>
-        <source>Failed to export G-code:</source>
-        <translation type="vanished">ייצוא G-code נכשל:</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.py" line="1178"/>
+        <location filename="../src/ui/main_window.py" line="1283"/>
         <source>Export STL</source>
         <translation>ייצא STL</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1180"/>
+        <location filename="../src/ui/main_window.py" line="1285"/>
         <source>STL Files (*.stl);;All Files (*)</source>
         <translation>קבצי STL (*.stl);;כל הקבצים (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1197"/>
+        <location filename="../src/ui/main_window.py" line="1302"/>
         <source>STL exported: </source>
         <translation>STL יוצא: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1198"/>
+        <location filename="../src/ui/main_window.py" line="1303"/>
         <source>STL saved to:</source>
         <translation>STL נשמר ב:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1201"/>
+        <location filename="../src/ui/main_window.py" line="1306"/>
         <source>Failed to export STL:</source>
         <translation>ייצוא STL נכשל:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1214"/>
-        <location filename="../src/ui/main_window.py" line="1248"/>
-        <location filename="../src/ui/main_window.py" line="1300"/>
+        <location filename="../src/ui/main_window.py" line="1319"/>
+        <location filename="../src/ui/main_window.py" line="1353"/>
+        <location filename="../src/ui/main_window.py" line="1405"/>
         <source>Please import a DXF file first</source>
         <translation>נא לייבא קובץ DXF תחילה</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1219"/>
+        <location filename="../src/ui/main_window.py" line="1324"/>
         <source>Export Baseplate DXF</source>
         <translation>ייצא DXF לוח תחתון</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1221"/>
-        <location filename="../src/ui/main_window.py" line="1255"/>
+        <location filename="../src/ui/main_window.py" line="1326"/>
+        <location filename="../src/ui/main_window.py" line="1360"/>
         <source>DXF Files (*.dxf);;All Files (*)</source>
         <translation>קבצי DXF (*.dxf);;כל הקבצים (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1234"/>
+        <location filename="../src/ui/main_window.py" line="1337"/>
         <source>Baseplate DXF exported: </source>
         <translation>DXF לוח תחתון יוצא: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1237"/>
+        <location filename="../src/ui/main_window.py" line="1340"/>
         <source>Baseplate DXF saved to:</source>
         <translation>DXF לוח תחתון נשמר ב:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1238"/>
-        <location filename="../src/ui/main_window.py" line="1272"/>
-        <source>Alignment compensation: </source>
-        <translation>פיצוי יישור: </translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.py" line="1241"/>
+        <location filename="../src/ui/main_window.py" line="1346"/>
         <source>Failed to generate baseplate contour</source>
         <translation>יצירת קו מתאר לוח תחתון נכשלה</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1243"/>
+        <location filename="../src/ui/main_window.py" line="1348"/>
         <source>Failed to export baseplate DXF:</source>
         <translation>ייצוא DXF לוח תחתון נכשל:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1253"/>
+        <location filename="../src/ui/main_window.py" line="1358"/>
         <source>Export Panel DXF</source>
         <translation>ייצא DXF פאנל</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1268"/>
+        <location filename="../src/ui/main_window.py" line="1371"/>
         <source>Panel DXF exported: </source>
         <translation>DXF פאנל יוצא: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1271"/>
+        <location filename="../src/ui/main_window.py" line="1374"/>
         <source>Panel DXF saved to:</source>
         <translation>DXF פאנל נשמר ב:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1275"/>
+        <location filename="../src/ui/main_window.py" line="1380"/>
         <source>Failed to generate panel contour</source>
         <translation>יצירת קו מתאר פאנל נכשלה</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1277"/>
+        <location filename="../src/ui/main_window.py" line="1382"/>
         <source>Failed to export panel DXF:</source>
         <translation>ייצוא DXF פאנל נכשל:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1286"/>
+        <location filename="../src/ui/main_window.py" line="1391"/>
         <source>Nothing to undo</source>
         <translation>אין מה לבטל</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1295"/>
+        <location filename="../src/ui/main_window.py" line="1400"/>
         <source>Nothing to redo</source>
         <translation>אין מה לבצע שוב</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1755"/>
+        <location filename="../src/ui/main_window.py" line="1950"/>
         <source>Loaded saved parameters</source>
         <translation>פרמטרים שמורים נטענו</translation>
     </message>
     <message>
-        <source>Slicing...</source>
-        <translation type="vanished">פורס...</translation>
-    </message>
-    <message>
-        <source>Slicing complete: {layers} layers, estimated time: {time:.1f} minutes</source>
-        <translation type="vanished">הפריסה הושלמה: {layers} שכבות, זמן משוער: {time:.1f} דקות</translation>
-    </message>
-    <message>
-        <source>Slicing Complete</source>
-        <translation type="vanished">הפריסה הושלמה</translation>
-    </message>
-    <message>
-        <source>Export G-code now?</source>
-        <translation type="vanished">לייצא G-code עכשיו?</translation>
-    </message>
-    <message>
-        <source>Slicing Failed</source>
-        <translation type="vanished">הפריסה נכשלה</translation>
-    </message>
-    <message>
-        <source>Error during slicing:</source>
-        <translation type="vanished">שגיאה במהלך הפריסה:</translation>
-    </message>
-    <message>
-        <source>Slicing failed</source>
-        <translation type="vanished">הפריסה נכשלה</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.py" line="1360"/>
+        <location filename="../src/ui/main_window.py" line="1451"/>
         <source>Switched to {view} view</source>
         <translation>עבר לתצוגת {view}</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1400"/>
+        <location filename="../src/ui/main_window.py" line="1491"/>
         <source>Rotation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1419"/>
+        <location filename="../src/ui/main_window.py" line="1510"/>
         <source>Tool: </source>
         <translation>כלי: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1483"/>
+        <location filename="../src/ui/main_window.py" line="1574"/>
         <source>Move to: X={x:.2f}, Y={y:.2f}</source>
         <translation>הזז ל: X={x:.2f}, Y={y:.2f}</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1493"/>
+        <location filename="../src/ui/main_window.py" line="1584"/>
         <source>Rotation: {angle:.2f}°</source>
         <translation>סיבוב: {angle:.2f}°</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1569"/>
-        <location filename="../src/ui/main_window.py" line="1607"/>
-        <location filename="../src/ui/main_window.py" line="1630"/>
+        <location filename="../src/ui/main_window.py" line="1660"/>
+        <location filename="../src/ui/main_window.py" line="1698"/>
+        <location filename="../src/ui/main_window.py" line="1721"/>
         <source>Scale: {px:.1f}% x {py:.1f}%</source>
         <translation>קנה מידה: {px:.1f}% x {py:.1f}%</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1653"/>
+        <location filename="../src/ui/main_window.py" line="1744"/>
         <source>Please select a contour first</source>
         <translation>נא לבחור קו מתאר תחילה</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1669"/>
+        <location filename="../src/ui/main_window.py" line="1760"/>
         <source>Mirror {axis} complete</source>
         <translation>שיקוף {axis} הושלם</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1700"/>
+        <location filename="../src/ui/main_window.py" line="1768"/>
+        <location filename="../src/ui/main_window.py" line="1797"/>
+        <location filename="../src/ui/main_window.py" line="1827"/>
+        <source>Please select at least two contours</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1783"/>
+        <source>Intersection</source>
+        <translation type="unfinished">חיתוך</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1812"/>
+        <source>Difference</source>
+        <translation type="unfinished">הפרש</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1837"/>
+        <source>Already grouped</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1840"/>
+        <source>Group</source>
+        <translation type="unfinished">קבץ</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1858"/>
+        <source>Please select a grouped contour first</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1862"/>
+        <source>Ungroup</source>
+        <translation type="unfinished">בטל קיבוץ</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1887"/>
+        <source>Text added</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1889"/>
+        <source>Error</source>
+        <translation type="unfinished">שגיאה</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1895"/>
         <source>About MINGDA SignMaker</source>
         <translation>אודות MINGDA SignMaker</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1702"/>
+        <location filename="../src/ui/main_window.py" line="1897"/>
         <source>Professional LED Sign Letter 3D Printing Slicer</source>
         <translation>פורס מקצועי להדפסת 3D של אותיות שילוט LED</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1703"/>
+        <location filename="../src/ui/main_window.py" line="1898"/>
         <source>Version: 0.1.7 (Development)</source>
         <translation>גרסה: 0.1.6 (פיתוח)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1705"/>
+        <location filename="../src/ui/main_window.py" line="1900"/>
         <source>Features:</source>
         <translation>תכונות:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1707"/>
+        <location filename="../src/ui/main_window.py" line="1902"/>
         <source>DXF/SVG file import</source>
         <translation>ייבוא קבצי DXF/SVG</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1708"/>
+        <location filename="../src/ui/main_window.py" line="1903"/>
         <source>Straight/Bevel/Custom edges</source>
         <translation>קצוות ישרים/משופעים/מותאמים אישית</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1709"/>
+        <location filename="../src/ui/main_window.py" line="1904"/>
         <source>Multi-color printing support</source>
         <translation>תמיכה בהדפסה רב-צבעית</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1710"/>
+        <location filename="../src/ui/main_window.py" line="1905"/>
         <source>Step/V-groove</source>
         <translation>מדרגה/חריץ V</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1711"/>
+        <location filename="../src/ui/main_window.py" line="1906"/>
         <source>Anti-warping skirt</source>
         <translation>חצאית נגד עיוות</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1712"/>
+        <location filename="../src/ui/main_window.py" line="1907"/>
         <source>Connected letters</source>
         <translation>אותיות מחוברות</translation>
     </message>
     <message>
-        <source>Language</source>
-        <translation type="vanished">שפה</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.py" line="1728"/>
+        <location filename="../src/ui/main_window.py" line="1923"/>
         <source>Language Changed</source>
         <translation>השפה שונתה</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1729"/>
+        <location filename="../src/ui/main_window.py" line="1924"/>
         <source>Language has been changed to {lang}. Please restart the application for full effect.</source>
         <translation>השפה שונתה ל-{lang}. נא להפעיל מחדש את היישום לתוצאה מלאה.</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1736"/>
+        <location filename="../src/ui/main_window.py" line="1931"/>
         <source>Language Change Failed</source>
         <translation>שינוי השפה נכשל</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1737"/>
+        <location filename="../src/ui/main_window.py" line="1932"/>
         <source>Translation file for {lang} is not available yet.</source>
         <translation>קובץ התרגום עבור {lang} אינו זמין עדיין.</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="374"/>
+        <location filename="../src/ui/main_window.py" line="377"/>
         <source>Angle</source>
         <translation>זווית</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1404"/>
+        <location filename="../src/ui/main_window.py" line="1495"/>
         <source>Drag grabber on ring to rotate</source>
         <translation>גרור את הידית על הטבעת כדי לסובב</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="438"/>
+        <location filename="../src/ui/main_window.py" line="441"/>
         <source>Size</source>
         <translation>גודל</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="481"/>
+        <location filename="../src/ui/main_window.py" line="484"/>
         <source>Uniform Scale</source>
         <translation>קנה מידה אחיד</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1410"/>
+        <location filename="../src/ui/main_window.py" line="1501"/>
         <source>Drag to scale, input exact values above</source>
         <translation>גרור לשינוי קנה מידה, הזן ערכים מדויקים למעלה</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="969"/>
+        <location filename="../src/ui/main_window.py" line="1071"/>
         <source>Loading file...</source>
         <translation>טוען קובץ...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1205"/>
+        <location filename="../src/ui/main_window.py" line="1310"/>
         <source>Exporting STL...</source>
         <translation>מייצא STL...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="262"/>
+        <location filename="../src/ui/main_window.py" line="265"/>
         <source>Start Processing</source>
         <translation>התחל עיבוד</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1336"/>
+        <location filename="../src/ui/main_window.py" line="1435"/>
         <source>Processing...</source>
         <translation>מעבד...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1323"/>
+        <location filename="../src/ui/main_window.py" line="1422"/>
         <source>Processing complete: {layers} layers, estimated time: {time:.1f} minutes</source>
         <translation>עיבוד הושלם: {layers} שכבות, זמן משוער: {time:.1f} דקות</translation>
     </message>
     <message>
-        <source>Processing Complete</source>
-        <translation type="vanished">עיבוד הושלם</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.py" line="1331"/>
+        <location filename="../src/ui/main_window.py" line="1430"/>
         <source>Processing Failed</source>
         <translation>עיבוד נכשל</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1331"/>
+        <location filename="../src/ui/main_window.py" line="1430"/>
         <source>Error during processing:</source>
         <translation>שגיאה במהלך העיבוד:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1332"/>
+        <location filename="../src/ui/main_window.py" line="1431"/>
         <source>Processing failed</source>
         <translation>עיבוד נכשל</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1251"/>
+        <location filename="../src/ui/main_window.py" line="1341"/>
+        <location filename="../src/ui/main_window.py" line="1375"/>
         <source>Outer clearance: </source>
         <translation>מרווח חיצוני: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1252"/>
+        <location filename="../src/ui/main_window.py" line="1342"/>
+        <location filename="../src/ui/main_window.py" line="1376"/>
         <source>Hole clearance: </source>
         <translation>מרווח חורים: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1253"/>
+        <location filename="../src/ui/main_window.py" line="1343"/>
+        <location filename="../src/ui/main_window.py" line="1377"/>
         <source>Laser kerf: </source>
         <translation>רוחב חיתוך לייזר: </translation>
     </message>
@@ -990,382 +797,450 @@
 <context>
     <name>ParamPanel</name>
     <message>
-        <location filename="../src/ui/param_panel.py" line="57"/>
+        <location filename="../src/ui/param_panel.py" line="58"/>
         <source>Parameters</source>
         <translation>פרמטרים</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="108"/>
+        <location filename="../src/ui/param_panel.py" line="137"/>
+        <source>layers</source>
+        <translation>שכבות</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="140"/>
+        <source>Height is derived from layer count * layer height.</source>
+        <translation>הגובה מחושב כמספר השכבות * גובה השכבה.</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="223"/>
         <source>Shell Settings</source>
         <translation>הגדרות מעטפת</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="119"/>
+        <location filename="../src/ui/param_panel.py" line="233"/>
         <source>Shell Height:</source>
         <translation>גובה מעטפת:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="128"/>
+        <location filename="../src/ui/param_panel.py" line="245"/>
         <source>Layer Height:</source>
         <translation>גובה שכבה:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="137"/>
+        <location filename="../src/ui/param_panel.py" line="254"/>
         <source>Wall Thickness:</source>
         <translation>עובי קיר:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="144"/>
+        <location filename="../src/ui/param_panel.py" line="261"/>
         <source>Wall Count:</source>
         <translation>מספר קירות:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="150"/>
+        <location filename="../src/ui/param_panel.py" line="267"/>
         <source>Edge Type</source>
         <translation>סוג קצה</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="159"/>
+        <location filename="../src/ui/param_panel.py" line="276"/>
         <source>Straight</source>
         <translation>ישר</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="160"/>
+        <location filename="../src/ui/param_panel.py" line="277"/>
         <source>Beveled</source>
         <translation>משופע</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="161"/>
+        <location filename="../src/ui/param_panel.py" line="278"/>
         <source>Custom</source>
         <translation>מותאם אישית</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="163"/>
+        <location filename="../src/ui/param_panel.py" line="280"/>
         <source>Edge Type:</source>
         <translation>סוג קצה:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="175"/>
+        <location filename="../src/ui/param_panel.py" line="292"/>
         <source>Top Small</source>
         <translation>עליון קטן</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="176"/>
+        <location filename="../src/ui/param_panel.py" line="293"/>
         <source>Top Large</source>
         <translation>עליון גדול</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="178"/>
+        <location filename="../src/ui/param_panel.py" line="295"/>
         <source>Bevel Direction:</source>
         <translation>כיוון שיפוע:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="181"/>
+        <location filename="../src/ui/param_panel.py" line="298"/>
         <source>Original contour is always based on the bottom face (z=0).</source>
         <translation>קו המתאר המקורי תמיד מבוסס על הפאה התחתונה (z=0).</translation>
-    </message>    <message>
-        <location filename="../src/ui/param_panel.py" line="186"/>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="310"/>
         <source>Bevel Width:</source>
         <translation>רוחב שיפוע:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="194"/>
+        <location filename="../src/ui/param_panel.py" line="318"/>
         <source>Baseplate Thickness:</source>
         <translation>עובי לוח תחתון:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="202"/>
+        <location filename="../src/ui/param_panel.py" line="326"/>
         <source>Panel Thickness:</source>
         <translation>עובי פאנל:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="214"/>
+        <location filename="../src/ui/param_panel.py" line="338"/>
         <source>Preset Templates:</source>
         <translation>תבניות מוגדרות מראש:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="226"/>
+        <location filename="../src/ui/param_panel.py" line="350"/>
         <source>Import DXF...</source>
         <translation>ייבא DXF...</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="227"/>
+        <location filename="../src/ui/param_panel.py" line="351"/>
         <source>Import custom edge profile from DXF file</source>
         <translation>ייבא פרופיל קצה מותאם אישית מקובץ DXF</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="235"/>
-        <location filename="../src/ui/param_panel.py" line="1205"/>
+        <location filename="../src/ui/param_panel.py" line="359"/>
+        <location filename="../src/ui/param_panel.py" line="1568"/>
         <source>No profile selected</source>
         <translation>לא נבחר פרופיל</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="237"/>
+        <location filename="../src/ui/param_panel.py" line="361"/>
         <source>Current Profile:</source>
         <translation>פרופיל נוכחי:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="247"/>
+        <location filename="../src/ui/param_panel.py" line="403"/>
         <source>Bottom Face</source>
         <translation>פנים תחתון</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="252"/>
+        <location filename="../src/ui/param_panel.py" line="408"/>
         <source>Enable Bottom Face</source>
         <translation>אפשר פנים תחתון</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="267"/>
+        <location filename="../src/ui/param_panel.py" line="420"/>
         <source>Bottom Thickness:</source>
         <translation>עובי תחתון:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="306"/>
+        <location filename="../src/ui/param_panel.py" line="471"/>
+        <source>Light Slot</source>
+        <translation>חריץ תאורה</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="475"/>
+        <source>Enable Light Slot</source>
+        <translation>הפעל חריץ תאורה</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="489"/>
+        <source>Slot Width:</source>
+        <translation>רוחב החריץ:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="495"/>
+        <source>Slot Depth:</source>
+        <translation>עומק החריץ:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="508"/>
+        <source>Floor Layers:</source>
+        <translation>שכבות תחתית:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="517"/>
+        <source>Wall Gap:</source>
+        <translation>מרווח מהדופן:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="521"/>
+        <source>Outer Slot</source>
+        <translation>חריץ חיצוני</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="527"/>
+        <source>Hole Slot</source>
+        <translation>חריץ חורים</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="533"/>
+        <source>Auto Skip Small Holes</source>
+        <translation>דלג אוטומטית על חורים קטנים</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="551"/>
+        <source>Min Hole Span:</source>
+        <translation>מפתח חור מינימלי:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="586"/>
         <source>Top Face</source>
         <translation>פנים עליון</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="311"/>
+        <location filename="../src/ui/param_panel.py" line="591"/>
         <source>Enable Top Face</source>
         <translation>אפשר פנים עליון</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="326"/>
+        <location filename="../src/ui/param_panel.py" line="603"/>
         <source>Top Thickness:</source>
         <translation>עובי עליון:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="365"/>
+        <location filename="../src/ui/param_panel.py" line="647"/>
         <source>Color Layer Settings</source>
         <translation>הגדרות שכבת צבע</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="370"/>
+        <location filename="../src/ui/param_panel.py" line="652"/>
         <source>Enable Color Layers</source>
         <translation>אפשר שכבות צבע</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="383"/>
+        <location filename="../src/ui/param_panel.py" line="665"/>
         <source>Color 1 Height:</source>
         <translation>גובה צבע 1:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="390"/>
+        <location filename="../src/ui/param_panel.py" line="672"/>
         <source>Color 2 Height:</source>
         <translation>גובה צבע 2:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="405"/>
+        <location filename="../src/ui/param_panel.py" line="687"/>
         <source>Step/V-Groove</source>
         <translation>מדרגה/חריץ V</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="410"/>
+        <location filename="../src/ui/param_panel.py" line="692"/>
         <source>Enable Panel Step (Top)</source>
         <translation>אפשר מדרגת פאנל (עליון)</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="421"/>
-        <location filename="../src/ui/param_panel.py" line="462"/>
+        <location filename="../src/ui/param_panel.py" line="701"/>
+        <location filename="../src/ui/param_panel.py" line="745"/>
         <source>Step Height:</source>
         <translation>גובה מדרגה:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="429"/>
-        <location filename="../src/ui/param_panel.py" line="470"/>
+        <location filename="../src/ui/param_panel.py" line="714"/>
+        <location filename="../src/ui/param_panel.py" line="758"/>
         <source>Step Width:</source>
         <translation>רוחב מדרגה:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="431"/>
-        <location filename="../src/ui/param_panel.py" line="472"/>
+        <location filename="../src/ui/param_panel.py" line="716"/>
+        <location filename="../src/ui/param_panel.py" line="760"/>
         <source>V-Groove</source>
         <translation>חריץ V</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="451"/>
+        <location filename="../src/ui/param_panel.py" line="736"/>
         <source>Enable Baseplate Step (Bottom)</source>
         <translation>אפשר מדרגת לוח תחתון (תחתון)</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="531"/>
+        <location filename="../src/ui/param_panel.py" line="820"/>
         <source>Anti-Warping Skirt</source>
         <translation>חצאית נגד עיוות</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="536"/>
+        <location filename="../src/ui/param_panel.py" line="825"/>
         <source>Enable Anti-Warping Skirt</source>
         <translation>אפשר חצאית נגד עיוות</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="549"/>
+        <location filename="../src/ui/param_panel.py" line="838"/>
         <source>Skirt Width:</source>
         <translation>רוחב חצאית:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="558"/>
+        <location filename="../src/ui/param_panel.py" line="847"/>
         <source>Skirt Height:</source>
         <translation>גובה חצאית:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="566"/>
+        <location filename="../src/ui/param_panel.py" line="855"/>
         <source>Trapezoid Interval:</source>
         <translation>מרווח טרפז:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="574"/>
+        <location filename="../src/ui/param_panel.py" line="863"/>
         <source>Skirt Offset:</source>
         <translation>היסט חצאית:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="593"/>
+        <location filename="../src/ui/param_panel.py" line="877"/>
+        <source>Skirt Sides:</source>
+        <translation>צדדי החצאית:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="898"/>
         <source>Connected Letters</source>
         <translation>אותיות מחוברות</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="598"/>
+        <location filename="../src/ui/param_panel.py" line="903"/>
         <source>Enable Connected Letters</source>
         <translation>אפשר אותיות מחוברות</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="607"/>
+        <location filename="../src/ui/param_panel.py" line="912"/>
         <source>Triangle</source>
         <translation>משולש</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="608"/>
+        <location filename="../src/ui/param_panel.py" line="913"/>
         <source>Diamond</source>
         <translation>מעוין</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="611"/>
+        <location filename="../src/ui/param_panel.py" line="916"/>
         <source>Connection Type:</source>
         <translation>סוג חיבור:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="614"/>
+        <location filename="../src/ui/param_panel.py" line="919"/>
         <source>Auto Detect Connection Points</source>
         <translation>זיהוי אוטומטי של נקודות חיבור</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="627"/>
+        <location filename="../src/ui/param_panel.py" line="932"/>
         <source>Connection Width:</source>
         <translation>רוחב חיבור:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="636"/>
+        <location filename="../src/ui/param_panel.py" line="945"/>
         <source>Bevel Height:</source>
         <translation>גובה שיפוע:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="645"/>
+        <location filename="../src/ui/param_panel.py" line="963"/>
         <source>Base Height:</source>
         <translation>גובה בסיס:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="654"/>
+        <location filename="../src/ui/param_panel.py" line="977"/>
         <source>Support Offset:</source>
         <translation>היסט תמיכה:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="675"/>
+        <location filename="../src/ui/param_panel.py" line="1013"/>
         <source>Edge Wrap/Outline</source>
         <translation>עטיפת קצה/קו מתאר</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="680"/>
+        <location filename="../src/ui/param_panel.py" line="1018"/>
         <source>Enable Edge Wrap</source>
         <translation>אפשר עטיפת קצה</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="689"/>
-        <location filename="../src/ui/param_panel.py" line="750"/>
+        <location filename="../src/ui/param_panel.py" line="872"/>
+        <location filename="../src/ui/param_panel.py" line="1027"/>
+        <location filename="../src/ui/param_panel.py" line="1079"/>
         <source>Inner</source>
         <translation>פנימי</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="690"/>
-        <location filename="../src/ui/param_panel.py" line="751"/>
+        <location filename="../src/ui/param_panel.py" line="867"/>
+        <location filename="../src/ui/param_panel.py" line="1028"/>
+        <location filename="../src/ui/param_panel.py" line="1080"/>
         <source>Outer</source>
         <translation>חיצוני</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="701"/>
+        <location filename="../src/ui/param_panel.py" line="1039"/>
         <source>Wrap Direction:</source>
         <translation>כיוון עטיפה:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="709"/>
+        <location filename="../src/ui/param_panel.py" line="1047"/>
         <source>Wrap Width:</source>
         <translation>רוחב עטיפה:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="717"/>
+        <location filename="../src/ui/param_panel.py" line="1055"/>
         <source>Wrap Height:</source>
         <translation>גובה עטיפה:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="741"/>
+        <location filename="../src/ui/param_panel.py" line="1070"/>
         <source>Enable Outline</source>
         <translation>אפשר קו מתאר</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="762"/>
+        <location filename="../src/ui/param_panel.py" line="1091"/>
         <source>Outline Direction:</source>
         <translation>כיוון קו מתאר:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="770"/>
+        <location filename="../src/ui/param_panel.py" line="1099"/>
         <source>Outline Width:</source>
         <translation>רוחב קו מתאר:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="778"/>
+        <location filename="../src/ui/param_panel.py" line="1107"/>
         <source>Outline Height:</source>
         <translation>גובה קו מתאר:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="786"/>
+        <location filename="../src/ui/param_panel.py" line="1115"/>
         <source>Outline Offset:</source>
         <translation>היסט קו מתאר:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="814"/>
+        <location filename="../src/ui/param_panel.py" line="1131"/>
         <source>Speed Settings</source>
         <translation>הגדרות מהירות</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="824"/>
+        <location filename="../src/ui/param_panel.py" line="1141"/>
         <source>Print Speed:</source>
         <translation>מהירות הדפסה:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="832"/>
+        <location filename="../src/ui/param_panel.py" line="1149"/>
         <source>Travel Speed:</source>
         <translation>מהירות נסיעה:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="840"/>
+        <location filename="../src/ui/param_panel.py" line="1157"/>
         <source>First Layer Speed:</source>
         <translation>מהירות שכבה ראשונה:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1159"/>
+        <location filename="../src/ui/param_panel.py" line="1522"/>
         <source>Import Custom Edge DXF</source>
         <translation>ייבא DXF קצה מותאם אישית</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1161"/>
+        <location filename="../src/ui/param_panel.py" line="1524"/>
         <source>DXF Files (*.dxf);;All Files (*.*)</source>
         <translation>קבצי DXF (*.dxf);;כל הקבצים (*.*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1177"/>
+        <location filename="../src/ui/param_panel.py" line="1540"/>
         <source>Import Success</source>
         <translation>הייבוא הצליח</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1178"/>
+        <location filename="../src/ui/param_panel.py" line="1541"/>
         <source>Imported custom edge profile: {name}
 Size: {width:.1f} x {height:.1f} mm
 Control points: {points}</source>
@@ -1374,154 +1249,112 @@ Control points: {points}</source>
 נקודות בקרה: {points}</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1189"/>
+        <location filename="../src/ui/param_panel.py" line="1552"/>
         <source>Import Failed</source>
         <translation>הייבוא נכשל</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1190"/>
+        <location filename="../src/ui/param_panel.py" line="1553"/>
         <source>Failed to import DXF file:
 {error}</source>
         <translation>ייבוא קובץ DXF נכשל:
 {error}</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1201"/>
+        <location filename="../src/ui/param_panel.py" line="1564"/>
         <source> ({count} points)</source>
         <translation> ({count} נקודות)</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="248"/>
+        <location filename="../src/ui/param_panel.py" line="371"/>
         <source>DXF Export</source>
         <translation>ייצוא DXF</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="258"/>
+        <location filename="../src/ui/param_panel.py" line="381"/>
         <source>Outer Clearance:</source>
         <translation>מרווח חיצוני:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="266"/>
+        <location filename="../src/ui/param_panel.py" line="389"/>
         <source>Hole Clearance:</source>
         <translation>מרווח חורים:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="274"/>
+        <location filename="../src/ui/param_panel.py" line="397"/>
         <source>Laser Kerf:</source>
         <translation>רוחב חיתוך לייזר:</translation>
     </message>
 </context>
 <context>
-    <name>PresetThumbnail</name>
-    <message>
-        <source>Width</source>
-        <translation type="vanished">רוחב</translation>
-    </message>
-</context>
-<context>
     <name>Preview3D</name>
     <message>
-        <source>View:</source>
-        <translation type="vanished">תצוגה:</translation>
+        <location filename="../src/ui/preview_3d.py" line="1135"/>
+        <source>Loading 3D preview...</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Top</source>
-        <translation type="vanished">עליון</translation>
-    </message>
-    <message>
-        <source>Front</source>
-        <translation type="vanished">קדמי</translation>
-    </message>
-    <message>
-        <source>Side</source>
-        <translation type="vanished">צד</translation>
-    </message>
-    <message>
-        <source>Isometric</source>
-        <translation type="vanished">איזומטרי</translation>
-    </message>
-    <message>
-        <source>Reset</source>
-        <translation type="vanished">אפס</translation>
-    </message>
-    <message>
-        <source>Layer: 0/0</source>
-        <translation type="vanished">שכבה: 0/0</translation>
-    </message>
-    <message>
-        <source>Layer: {current}/{total}</source>
-        <translation type="vanished">שכבה: {current}/{total}</translation>
-    </message>
-    <message>
-        <source>Show All</source>
-        <translation type="vanished">הצג הכל</translation>
-    </message>
-    <message>
-        <source>Single Layer</source>
-        <translation type="vanished">שכבה בודדת</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/preview_3d.py" line="602"/>
+        <location filename="../src/ui/preview_3d.py" line="1201"/>
         <source>外壳</source>
         <translation>מעטפת חיצונית</translation>
     </message>
     <message>
-        <location filename="../src/ui/preview_3d.py" line="607"/>
+        <location filename="../src/ui/preview_3d.py" line="1206"/>
         <source>内壳</source>
         <translation>מעטפת פנימית</translation>
     </message>
     <message>
-        <location filename="../src/ui/preview_3d.py" line="612"/>
+        <location filename="../src/ui/preview_3d.py" line="1211"/>
         <source>填充</source>
         <translation>מילוי</translation>
     </message>
     <message>
-        <location filename="../src/ui/preview_3d.py" line="617"/>
+        <location filename="../src/ui/preview_3d.py" line="1216"/>
         <source>实边</source>
         <translation>קצה מוצק</translation>
     </message>
     <message>
-        <location filename="../src/ui/preview_3d.py" line="622"/>
+        <location filename="../src/ui/preview_3d.py" line="1221"/>
         <source>换色</source>
         <translation>החלפת צבע</translation>
     </message>
     <message>
-        <location filename="../src/ui/preview_3d.py" line="627"/>
+        <location filename="../src/ui/preview_3d.py" line="1226"/>
         <source>底面</source>
         <translation>פנים תחתונות</translation>
     </message>
     <message>
-        <location filename="../src/ui/preview_3d.py" line="632"/>
+        <location filename="../src/ui/preview_3d.py" line="1231"/>
         <source>顶面</source>
         <translation>פנים עליונות</translation>
     </message>
     <message>
-        <location filename="../src/ui/preview_3d.py" line="640"/>
+        <location filename="../src/ui/preview_3d.py" line="1239"/>
         <source>图层编辑</source>
         <translation>עריכת שכבה</translation>
     </message>
     <message>
-        <location filename="../src/ui/preview_3d.py" line="656"/>
+        <location filename="../src/ui/preview_3d.py" line="1255"/>
         <source>层数编辑</source>
         <translation>עריכת מספר שכבות</translation>
     </message>
     <message>
-        <location filename="../src/ui/preview_3d.py" line="720"/>
+        <location filename="../src/ui/preview_3d.py" line="1319"/>
         <source>正</source>
         <translation>קדמי</translation>
     </message>
     <message>
-        <location filename="../src/ui/preview_3d.py" line="725"/>
+        <location filename="../src/ui/preview_3d.py" line="1324"/>
         <source>俯</source>
         <translation>עליון</translation>
     </message>
     <message>
-        <location filename="../src/ui/preview_3d.py" line="730"/>
+        <location filename="../src/ui/preview_3d.py" line="1329"/>
         <source>侧</source>
         <translation>צדדי</translation>
     </message>
     <message>
-        <location filename="../src/ui/preview_3d.py" line="735"/>
+        <location filename="../src/ui/preview_3d.py" line="1334"/>
         <source>透</source>
         <translation>איזומטרי</translation>
     </message>
@@ -1547,10 +1380,6 @@ Control points: {points}</source>
 <context>
     <name>ShellPanel</name>
     <message>
-        <source>points</source>
-        <translation type="vanished"> נקודות</translation>
-    </message>
-    <message>
         <location filename="../src/ui/panels/shell_panel.py" line="339"/>
         <source>No profile selected</source>
         <translation>לא נבחר פרופיל</translation>
@@ -1559,58 +1388,58 @@ Control points: {points}</source>
 <context>
     <name>TextDialog</name>
     <message>
-        <location filename="../src/ui/text_dialog.py" line="28"/>
+        <location filename="../src/ui/text_dialog.py" line="29"/>
         <source>Generate Text</source>
         <translation>צור טקסט</translation>
     </message>
     <message>
-        <location filename="../src/ui/text_dialog.py" line="36"/>
+        <location filename="../src/ui/text_dialog.py" line="37"/>
         <source>Font:</source>
         <translation>גופן:</translation>
     </message>
     <message>
-        <location filename="../src/ui/text_dialog.py" line="44"/>
+        <location filename="../src/ui/text_dialog.py" line="45"/>
         <source>Text:</source>
         <translation>טקסט:</translation>
     </message>
     <message>
-        <location filename="../src/ui/text_dialog.py" line="51"/>
+        <location filename="../src/ui/text_dialog.py" line="52"/>
         <source>Font Size (mm):</source>
-        <translation>גודל גופן (מ"מ):</translation>
+        <translation>גודל גופן (מ&quot;מ):</translation>
     </message>
     <message>
-        <location filename="../src/ui/text_dialog.py" line="61"/>
+        <location filename="../src/ui/text_dialog.py" line="62"/>
         <source>Character Spacing (mm):</source>
-        <translation>מרווח תווים (מ"מ):</translation>
+        <translation>מרווח תווים (מ&quot;מ):</translation>
     </message>
     <message>
-        <location filename="../src/ui/text_dialog.py" line="73"/>
+        <location filename="../src/ui/text_dialog.py" line="77"/>
         <source>Cancel</source>
         <translation>ביטול</translation>
     </message>
     <message>
-        <location filename="../src/ui/text_dialog.py" line="76"/>
+        <location filename="../src/ui/text_dialog.py" line="80"/>
         <source>OK</source>
         <translation>אישור</translation>
     </message>
     <message>
-        <location filename="../src/ui/text_dialog.py" line="86"/>
-        <location filename="../src/ui/text_dialog.py" line="92"/>
+        <location filename="../src/ui/text_dialog.py" line="117"/>
+        <location filename="../src/ui/text_dialog.py" line="123"/>
         <source>Warning</source>
         <translation>אזהרה</translation>
     </message>
     <message>
-        <location filename="../src/ui/text_dialog.py" line="86"/>
+        <location filename="../src/ui/text_dialog.py" line="117"/>
         <source>Please enter text</source>
         <translation>נא להזין טקסט</translation>
     </message>
     <message>
-        <location filename="../src/ui/text_dialog.py" line="92"/>
+        <location filename="../src/ui/text_dialog.py" line="123"/>
         <source>Font not found</source>
         <translation>הגופן לא נמצא</translation>
     </message>
     <message>
-        <location filename="../src/ui/text_dialog.py" line="104"/>
+        <location filename="../src/ui/text_dialog.py" line="136"/>
         <source>Error</source>
         <translation>שגיאה</translation>
     </message>
@@ -1621,18 +1450,6 @@ Control points: {points}</source>
         <location filename="../src/ui/title_bar.py" line="53"/>
         <source>Menu</source>
         <translation>תפריט</translation>
-    </message>
-    <message>
-        <source>Open</source>
-        <translation>פתח</translation>
-    </message>
-    <message>
-        <source>Save</source>
-        <translation>שמור</translation>
-    </message>
-    <message>
-        <source>Export</source>
-        <translation type="vanished">ייצא</translation>
     </message>
     <message>
         <location filename="../src/ui/title_bar.py" line="111"/>
@@ -1665,10 +1482,6 @@ Control points: {points}</source>
         <translation>עיבוד</translation>
     </message>
     <message>
-        <source>Export Gcode</source>
-        <translation type="vanished">ייצא Gcode</translation>
-    </message>
-    <message>
         <location filename="../src/ui/title_bar.py" line="322"/>
         <source>New Project</source>
         <translation>פרויקט חדש</translation>
@@ -1683,10 +1496,6 @@ Control points: {points}</source>
         <location filename="../src/ui/title_bar.py" line="326"/>
         <source>Save Project</source>
         <translation>שמור פרויקט</translation>
-    </message>
-    <message>
-        <source>Export G-code...</source>
-        <translation type="vanished">ייצא G-code...</translation>
     </message>
     <message>
         <location filename="../src/ui/title_bar.py" line="331"/>
