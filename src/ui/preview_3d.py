@@ -52,6 +52,7 @@ from src.core.types import (
     ExtruderType,
     SliceParams,
     SliceResult,
+    resolve_shell_wall_thickness,
 )
 
 
@@ -270,11 +271,17 @@ class Preview3DWidget(QOpenGLWidget):
             return []
 
         path_offset = PathOffset()
-        shell_builder = ShellMeshBuilder(path_offset, params.shell.wall_thickness)
+        wall_thickness = resolve_shell_wall_thickness(
+            params.shell.line_width,
+            params.shell.wall_count,
+            params.shell.layer_height,
+            wall_thickness=params.shell.wall_thickness,
+        )
+        shell_builder = ShellMeshBuilder(path_offset, wall_thickness)
         step_builder = StepMeshBuilder(path_offset)
         skirt_builder = SkirtMeshBuilder(path_offset)
         connected_builder = ConnectedMeshBuilder(path_offset)
-        edge_wrap_builder = EdgeWrapMeshBuilder(path_offset, params.shell.wall_thickness)
+        edge_wrap_builder = EdgeWrapMeshBuilder(path_offset, wall_thickness)
         bottom_face_builder = BottomFaceMeshBuilder(path_offset)
         light_slot_builder = LightSlotMeshBuilder(path_offset)
         top_face_builder = TopFaceMeshBuilder(path_offset)

@@ -415,8 +415,32 @@ class TestIntegration:
         assert wall_paths
         assert wall_paths[0].line_width == pytest.approx(0.8)
 
-    def test_shell_mesh_builder_keeps_wall_geometry_based_on_wall_thickness(self):
-        """测试壳体 STL 仍按 wall_thickness 生成几何厚度。"""
+    def test_slice_engine_derives_multi_wall_offsets_from_line_width(self):
+        """测试多道壁偏移按 line_width 推导，而不是直接读取旧 wall_thickness。"""
+        outer = Path(points=[
+            Point(0, 0), Point(20, 0), Point(20, 20), Point(0, 20)
+        ], is_closed=True)
+        contour = Contour(outer=outer)
+
+        params = SliceParams()
+        params.shell.height = 1.0
+        params.shell.layer_height = 0.5
+        params.shell.line_width = 0.8
+        params.shell.wall_count = 2
+        params.shell.wall_thickness = 9.9
+
+        engine = SliceEngine()
+        result = engine.slice([contour], params)
+
+        wall_paths = [path for path in result.layers[0].paths if path.role == PathRole.WALL]
+        min_x_values = sorted(min(point.x for point in path.points) for path in wall_paths)
+
+        assert len(wall_paths) == 2
+        assert min_x_values[0] == pytest.approx(0.4)
+        assert min_x_values[1] == pytest.approx(1.2)
+
+    def test_shell_mesh_builder_prefers_wall_path_line_width(self):
+        """测试壳体 STL 优先按 WALL 路径自身的 line_width 生成几何厚度。"""
         builder = ShellMeshBuilder(PathOffset(), wall_thickness=1.2)
         layer = Layer(
             z_height=0.0,
@@ -438,8 +462,44 @@ class TestIntegration:
         mesh = builder.build([layer])
 
         assert mesh is not None
-        assert mesh.bounds[0][0] == pytest.approx(-0.6)
-        assert mesh.bounds[1][0] == pytest.approx(10.6)
+        assert mesh.bounds[0][0] == pytest.approx(-0.3)
+        assert mesh.bounds[1][0] == pytest.approx(10.3)
+
+    def test_shell_mesh_builder_multi_wall_does_not_expand_from_total_thickness(self):
+        """测试多道 WALL 中心线建模时，不会再按总壁厚重复扩粗。"""
+        builder = ShellMeshBuilder(PathOffset(), wall_thickness=1.6)
+        layer = Layer(
+            z_height=0.0,
+            layer_height=0.5,
+            extruder=ExtruderType.EXTRUDER_1,
+            paths=[
+                LayerPath(
+                    points=[
+                        Point(0.4, 0.4), Point(19.6, 0.4), Point(19.6, 19.6), Point(0.4, 19.6)
+                    ],
+                    role=PathRole.WALL,
+                    extruder=ExtruderType.EXTRUDER_1,
+                    line_width=0.8,
+                    is_closed=True,
+                ),
+                LayerPath(
+                    points=[
+                        Point(1.2, 1.2), Point(18.8, 1.2), Point(18.8, 18.8), Point(1.2, 18.8)
+                    ],
+                    role=PathRole.WALL,
+                    extruder=ExtruderType.EXTRUDER_1,
+                    line_width=0.8,
+                    is_closed=True,
+                ),
+            ],
+        )
+
+        mesh = builder.build([layer])
+
+        assert mesh is not None
+        assert mesh.bounds[0][0] == pytest.approx(0.0)
+        assert mesh.bounds[1][0] == pytest.approx(20.0)
+        assert mesh.volume == pytest.approx(58.88)
 
 
 class TestStepGenerator:

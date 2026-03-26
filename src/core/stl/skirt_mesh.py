@@ -18,7 +18,7 @@ from shapely.validation import make_valid
 
 from ..path_offset import PathOffset
 from ..skirt_generator import SkirtGenerator
-from ..types import Contour, Path, SliceParams
+from ..types import Contour, Path, SliceParams, resolve_shell_wall_thickness
 from .mesh_utils import MeshUtils
 
 
@@ -48,7 +48,12 @@ class SkirtMeshBuilder:
                     contour=contour,
                     all_contours=all_contours,
                     params=params.skirt,
-                    wall_thickness=params.shell.wall_thickness,
+                    wall_thickness=resolve_shell_wall_thickness(
+                        params.shell.line_width,
+                        params.shell.wall_count,
+                        params.shell.layer_height,
+                        wall_thickness=params.shell.wall_thickness,
+                    ),
                     path_offset=self.path_offset,
                 )
                 skirt_polygons.extend(self._paths_to_polygons(outer_paths))

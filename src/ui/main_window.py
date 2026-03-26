@@ -43,6 +43,7 @@ from src.core import (
     Contour, SliceParams, SliceResult,
     DXFWriter, export_baseplate_dxf, export_panel_dxf
 )
+from src.core.types import resolve_shell_wall_thickness
 from src.core.stl_writer import STLWriter
 from src.business.undo_manager import (
     UndoManager, Command, MoveCommand, RotateCommand, ScaleCommand,
@@ -1301,7 +1302,14 @@ class MainWindow(QMainWindow):
             contours = self.contours
 
             def do_export():
-                writer = STLWriter(wall_thickness=params.shell.wall_thickness)
+                writer = STLWriter(
+                    wall_thickness=resolve_shell_wall_thickness(
+                        params.shell.line_width,
+                        params.shell.wall_count,
+                        params.shell.layer_height,
+                        wall_thickness=params.shell.wall_thickness,
+                    )
+                )
                 writer.write(
                     slice_result, file_path,
                     contours=contours, params=params

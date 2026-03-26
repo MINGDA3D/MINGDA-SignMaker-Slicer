@@ -35,7 +35,7 @@ class PresetManager:
             "shell": {
                 "height_layers": 100,
                 "edge_type": "STRAIGHT",
-                "wall_thickness": 1.2,
+                "line_width": 1.2,
                 "layer_height": 0.3,
                 "wall_count": 1
             }
@@ -46,8 +46,9 @@ class PresetManager:
             "shell": {
                 "height_layers": 100,
                 "edge_type": "BEVELED",
-                "wall_thickness": 1.2,
+                "line_width": 1.2,
                 "layer_height": 0.3,
+                "wall_count": 1,
                 "bevel_width": 5.0,
                 "bevel_direction": "TOP_SMALL",
                 "baseplate_thickness": 10.0,
@@ -60,7 +61,7 @@ class PresetManager:
             "shell": {
                 "height_layers": 117,
                 "edge_type": "STRAIGHT",
-                "wall_thickness": 1.3,
+                "line_width": 1.3,
                 "layer_height": 0.3,
                 "wall_count": 1
             }
@@ -71,8 +72,9 @@ class PresetManager:
             "shell": {
                 "height_layers": 117,
                 "edge_type": "BEVELED",
-                "wall_thickness": 1.3,
+                "line_width": 1.3,
                 "layer_height": 0.3,
+                "wall_count": 1,
                 "bevel_width": 8.0,
                 "bevel_direction": "TOP_SMALL",
                 "baseplate_thickness": 12.0,

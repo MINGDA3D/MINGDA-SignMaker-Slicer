@@ -14,7 +14,7 @@ import ezdxf
 
 from .types import (
     Point, Path as ContourPath, Contour, SliceParams,
-    EdgeType, BevelDirection, JoinType
+    EdgeType, BevelDirection, JoinType, resolve_shell_wall_thickness
 )
 from .path_offset import PathOffset
 
@@ -154,7 +154,15 @@ class DXFWriter:
         - 外轮廓向内缩一个壁厚
         - 内孔向孔外扩一个壁厚
         """
-        wall_thickness = max(params.shell.wall_thickness, 0.0)
+        wall_thickness = max(
+            resolve_shell_wall_thickness(
+                params.shell.line_width,
+                params.shell.wall_count,
+                params.shell.layer_height,
+                wall_thickness=params.shell.wall_thickness,
+            ),
+            0.0,
+        )
         if wall_thickness < 0.001:
             return [self._copy_contour(contour) for contour in contours]
 

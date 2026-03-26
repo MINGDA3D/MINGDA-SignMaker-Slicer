@@ -13,7 +13,16 @@ from shapely.geometry import Polygon as ShapelyPolygon
 from shapely.ops import unary_union
 from shapely.validation import make_valid
 
-from ..types import Contour, SliceResult, SliceParams, Point, Layer, LayerPath, PathRole
+from ..types import (
+    Contour,
+    SliceResult,
+    SliceParams,
+    Point,
+    Layer,
+    LayerPath,
+    PathRole,
+    resolve_shell_wall_thickness,
+)
 from ..types import Path as CorePath
 from ..path_offset import PathOffset
 from .mesh_utils import MeshUtils
@@ -60,7 +69,12 @@ class StepMeshBuilder:
         """Build ordinary flat step meshes with the original thin-ring behavior."""
         meshes = []
         total_height = params.shell.height
-        wall_thickness = params.shell.wall_thickness
+        wall_thickness = resolve_shell_wall_thickness(
+            params.shell.line_width,
+            params.shell.wall_count,
+            params.shell.layer_height,
+            wall_thickness=params.shell.wall_thickness,
+        )
         step_thickness = params.shell.layer_height + 0.1
 
         panel_contours_to_use = panel_contours if panel_contours else contours
@@ -192,7 +206,7 @@ class StepMeshBuilder:
 
                 wall_inner_coords = self._calculate_inner_wall_from_path(
                     wall_path,
-                    params.shell.wall_thickness,
+                    wall_path.line_width if wall_path.line_width > 0.0 else params.shell.line_width,
                 )
                 mesh = self._create_thin_step_ring(
                     wall_inner_coords,

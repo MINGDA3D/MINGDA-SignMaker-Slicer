@@ -114,6 +114,33 @@ def test_set_params_restores_explicit_shell_line_width(qapp):
     assert panel.width_line_spin.value() == pytest.approx(1.3)
 
 
+def test_wall_thickness_is_derived_from_width_line_and_wall_count(qapp):
+    panel = ParamPanel()
+
+    panel.width_line_spin.setValue(0.8)
+    panel.wall_count_spin.setValue(3)
+
+    params = panel.get_params()
+
+    assert not hasattr(panel, "wall_thickness_spin")
+    assert params.shell.wall_thickness == pytest.approx(2.4)
+
+
+def test_set_params_recomputes_wall_thickness_from_line_width_and_wall_count(qapp):
+    panel = ParamPanel()
+    params = SliceParams()
+    params.shell.layer_height = 0.5
+    params.shell.line_width = 1.1
+    params.shell.wall_count = 2
+    params.shell.wall_thickness = 9.9
+
+    panel.set_params(params)
+    restored = panel.get_params()
+
+    assert panel.width_line_spin.value() == pytest.approx(1.1)
+    assert restored.shell.wall_thickness == pytest.approx(2.2)
+
+
 def test_set_params_restores_outline_controls_enabled_state(qapp):
     panel = ParamPanel()
     params = SliceParams()
@@ -259,12 +286,11 @@ def test_set_params_converts_layer_based_heights_to_layer_counts(qapp):
     panel.set_params(params)
 
     assert panel.height_spin.value() == pytest.approx(40.0)
-    assert panel.panel_step_height.value() == 50
+    assert panel.panel_step_height.value() == pytest.approx(25.0)
     assert panel.baseplate_step_height.value() == 4
     assert panel.bottom_face_thickness.value() == 2
     assert panel.light_slot_depth.value() == 6
-    assert panel.top_face_thickness.value() == 3
-    assert panel.light_slot_depth_value_label.secondaryText() == "3.00 mm"
+    assert panel.top_face_thickness.value() == pytest.approx(1.5)
 
 
 def test_set_params_converts_connected_heights_to_layer_counts(qapp):
@@ -277,10 +303,8 @@ def test_set_params_converts_connected_heights_to_layer_counts(qapp):
 
     panel.set_params(params)
 
-    assert panel.connected_height.value() == 6
+    assert panel.connected_height.value() == pytest.approx(3.0)
     assert panel.connected_base_height.value() == 4
-    assert panel.connected_height_value_label.secondaryText() == "3.00 mm"
-    assert panel.connected_base_height_value_label.secondaryText() == "2.00 mm"
 
 
 def test_get_params_uses_layer_counts_to_derive_mm_heights(qapp):
@@ -293,7 +317,7 @@ def test_get_params_uses_layer_counts_to_derive_mm_heights(qapp):
     panel.light_slot_enabled.setChecked(True)
     panel.light_slot_depth.setValue(10)
     panel.top_face_enabled.setChecked(True)
-    panel.top_face_thickness.setValue(6)
+    panel.top_face_thickness.setValue(1.5)
 
     params = panel.get_params()
 
@@ -309,7 +333,7 @@ def test_get_params_uses_layer_counts_for_step_heights(qapp):
     panel.layer_height_spin.setValue(0.25)
     panel.height_spin.setValue(30.0)
     panel.panel_step_enabled.setChecked(True)
-    panel.panel_step_height.setValue(64)
+    panel.panel_step_height.setValue(16.0)
     panel.baseplate_step_enabled.setChecked(True)
     panel.baseplate_step_height.setValue(8)
 
@@ -319,12 +343,30 @@ def test_get_params_uses_layer_counts_for_step_heights(qapp):
     assert params.step.baseplate_step_height == pytest.approx(2.0)
 
 
+def test_get_params_commits_pending_step_height_text_edits(qapp):
+    panel = ParamPanel()
+
+    panel.layer_height_spin.lineEdit().setText("0.25")
+    panel.height_spin.lineEdit().setText("40")
+    panel.panel_step_enabled.setChecked(True)
+    panel.panel_step_height.lineEdit().setText("24")
+    panel.baseplate_step_enabled.setChecked(True)
+    panel.baseplate_step_height.lineEdit().setText("8")
+
+    params = panel.get_params()
+
+    assert params.shell.layer_height == pytest.approx(0.25)
+    assert params.shell.height == pytest.approx(40.0)
+    assert params.step.panel_step_height == pytest.approx(24.0)
+    assert params.step.baseplate_step_height == pytest.approx(2.0)
+
+
 def test_get_params_uses_layer_counts_for_connected_heights(qapp):
     panel = ParamPanel()
 
     panel.layer_height_spin.setValue(0.25)
     panel.connected_enabled.setChecked(True)
-    panel.connected_height.setValue(12)
+    panel.connected_height.setValue(3.0)
     panel.connected_base_height.setValue(8)
 
     params = panel.get_params()

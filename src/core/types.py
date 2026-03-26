@@ -467,7 +467,7 @@ class ShellParams:
     height: float = 30.0              # 字壳高度 (mm)
     layer_height: float = 0.3         # 层高 (mm)
     line_width: float = 0.0           # 线宽 (mm), <= 0 时自动使用 layer_height * 2
-    wall_thickness: float = 1.2       # 壁厚 (mm)
+    wall_thickness: float = 0.0       # 总壁厚 (mm), 由 wall_count * line_width 推导
     wall_count: int = 1               # 壁数量（走线次数）
     wall_offset: float = 0.0          # 壁偏移
 
@@ -907,11 +907,38 @@ def default_shell_line_width(layer_height: float) -> float:
     return round(max(layer_height, 0.001) * 2.0, 3)
 
 
-def resolve_shell_line_width(line_width: float, layer_height: float) -> float:
-    """Resolve the effective shell line width."""
+def resolve_shell_line_width(
+    line_width: float,
+    layer_height: float,
+    wall_thickness: float = 0.0,
+    wall_count: int = 1,
+) -> float:
+    """Resolve the effective single-wall line width."""
     if line_width > 0:
         return line_width
+    effective_wall_count = max(1, int(wall_count))
+    if wall_thickness > 0:
+        return wall_thickness / effective_wall_count
     return default_shell_line_width(layer_height)
+
+
+def resolve_shell_wall_thickness(
+    line_width: float,
+    wall_count: int,
+    layer_height: float,
+    wall_thickness: float = 0.0,
+) -> float:
+    """Resolve the effective total shell wall thickness."""
+    effective_wall_count = max(1, int(wall_count))
+    return (
+        resolve_shell_line_width(
+            line_width,
+            layer_height,
+            wall_thickness=wall_thickness,
+            wall_count=effective_wall_count,
+        )
+        * effective_wall_count
+    )
 
 
 def _reject_legacy_key(section_name: str, section_data: dict, legacy_key: str, replacement_key: str) -> None:
@@ -997,7 +1024,11 @@ def serialize_params(params: SliceParams) -> dict:
     data["shell"]["line_width"] = resolve_shell_line_width(
         params.shell.line_width,
         params.shell.layer_height,
+        wall_thickness=params.shell.wall_thickness,
+        wall_count=params.shell.wall_count,
     )
+    data["shell"]["wall_count"] = max(1, int(params.shell.wall_count))
+    data["shell"].pop("wall_thickness", None)
     data["shell"].pop("height", None)
 
     data["step"]["panel_step_layers"] = _height_to_layers(
@@ -1067,6 +1098,18 @@ def deserialize_params(data: dict) -> SliceParams:
     params = SliceParams()
 
     if not data:
+        params.shell.line_width = resolve_shell_line_width(
+            params.shell.line_width,
+            params.shell.layer_height,
+            wall_thickness=params.shell.wall_thickness,
+            wall_count=params.shell.wall_count,
+        )
+        params.shell.wall_thickness = resolve_shell_wall_thickness(
+            params.shell.line_width,
+            params.shell.wall_count,
+            params.shell.layer_height,
+            wall_thickness=params.shell.wall_thickness,
+        )
         return params
 
     # Shell 参数
@@ -1074,17 +1117,24 @@ def deserialize_params(data: dict) -> SliceParams:
         shell_data = data["shell"]
         _reject_legacy_layer_key("shell", shell_data, "height", "height_layers")
         params.shell.layer_height = shell_data.get("layer_height", 0.3)
+        params.shell.wall_count = max(1, int(shell_data.get("wall_count", 1)))
         params.shell.line_width = resolve_shell_line_width(
             shell_data.get("line_width", 0.0),
             params.shell.layer_height,
+            wall_thickness=shell_data.get("wall_thickness", 0.0),
+            wall_count=params.shell.wall_count,
         )
         if "height_layers" in shell_data:
             params.shell.height = _layers_to_height(
                 shell_data["height_layers"],
                 params.shell.layer_height,
             )
-        params.shell.wall_thickness = shell_data.get("wall_thickness", 1.2)
-        params.shell.wall_count = shell_data.get("wall_count", 1)
+        params.shell.wall_thickness = resolve_shell_wall_thickness(
+            params.shell.line_width,
+            params.shell.wall_count,
+            params.shell.layer_height,
+            wall_thickness=shell_data.get("wall_thickness", 0.0),
+        )
         params.shell.wall_offset = shell_data.get("wall_offset", 0.0)
         params.shell.edge_type = _deserialize_enum(EdgeType, shell_data.get("edge_type", "STRAIGHT"))
         params.shell.bevel_width = shell_data.get("bevel_width", 5.0)

@@ -26,7 +26,7 @@ class ShellMeshBuilder:
 
         Args:
             path_offset: 路径偏移工具
-            wall_thickness: 壁厚（mm）
+            wall_thickness: 单道壁宽回退值（mm），优先使用 WALL 路径自身的 line_width
         """
         self.path_offset = path_offset
         self.wall_thickness = wall_thickness
@@ -51,8 +51,6 @@ class ShellMeshBuilder:
         if not layers:
             return None
 
-        # 收集所有层信息
-        wall_thickness = self.wall_thickness
         meshes = []
 
         for layer in layers:
@@ -63,9 +61,10 @@ class ShellMeshBuilder:
             z_bottom = layer.z_height
             layer_height = layer.layer_height
 
-            half_wall = wall_thickness / 2
-
             for path in wall_paths:
+                wall_thickness = path.line_width if path.line_width > 0.0 else self.wall_thickness
+                half_wall = wall_thickness / 2
+
                 # 将路径转换为Path对象用于偏移
                 core_path = CorePath(points=path.points)
 

@@ -31,6 +31,7 @@ class TestSerializeParams:
         assert "machine" in data
         assert data["shell"]["height_layers"] == 100
         assert data["shell"]["line_width"] == pytest.approx(0.6)
+        assert "wall_thickness" not in data["shell"]
         assert "height" not in data["shell"]
         assert data["shell"]["edge_type"] == "STRAIGHT"
 
@@ -49,6 +50,7 @@ class TestSerializeParams:
 
         assert data["shell"]["height_layers"] == 100
         assert data["shell"]["line_width"] == pytest.approx(0.9)
+        assert "wall_thickness" not in data["shell"]
         assert "height" not in data["shell"]
         assert data["shell"]["edge_type"] == "BEVELED"
         assert data["shell"]["bevel_direction"] == "TOP_LARGE"
@@ -63,6 +65,7 @@ class TestSerializeParams:
 
         assert restored.shell.height == 30.0
         assert restored.shell.line_width == pytest.approx(0.6)
+        assert restored.shell.wall_thickness == pytest.approx(0.6)
         assert restored.shell.edge_type == EdgeType.STRAIGHT
         assert restored.skirt.enabled is False
 
@@ -97,6 +100,21 @@ class TestSerializeParams:
 
         assert restored.shell.height == pytest.approx(45.0)
         assert restored.shell.line_width == pytest.approx(0.9)
+        assert restored.shell.wall_thickness == pytest.approx(0.9)
+
+    def test_deserialize_legacy_wall_thickness_migrates_to_line_width(self):
+        """测试旧 shell 数据仅保存 wall_thickness 时会迁移为 line_width * wall_count。"""
+        restored = deserialize_params({
+            "shell": {
+                "layer_height": 0.4,
+                "height_layers": 100,
+                "wall_count": 3,
+                "wall_thickness": 2.4,
+            }
+        })
+
+        assert restored.shell.line_width == pytest.approx(0.8)
+        assert restored.shell.wall_thickness == pytest.approx(2.4)
 
     def test_deserialize_legacy_skirt_side_flag(self):
         """测试旧版 skirt is_outer 参数兼容"""
@@ -172,7 +190,8 @@ class TestSerializeParams:
         params.shell.layer_height = 0.5
         params.shell.line_width = 1.1
         params.shell.height = 35.0
-        params.shell.wall_thickness = 1.5
+        params.shell.wall_count = 2
+        params.shell.wall_thickness = 9.9
         params.color.enabled = True
         params.step.panel_step_enabled = True
         params.skirt.enabled = True
@@ -189,7 +208,8 @@ class TestSerializeParams:
 
         assert restored.shell.height == 35.0
         assert restored.shell.line_width == pytest.approx(1.1)
-        assert restored.shell.wall_thickness == 1.5
+        assert "wall_thickness" not in data["shell"]
+        assert restored.shell.wall_thickness == pytest.approx(2.2)
         assert restored.color.enabled is True
         assert restored.step.panel_step_enabled is True
         assert restored.skirt.enabled is True
@@ -205,6 +225,8 @@ class TestSerializeParams:
         """测试反序列化空字典"""
         restored = deserialize_params({})
         assert restored.shell.height == 30.0  # 默认值
+        assert restored.shell.line_width == pytest.approx(0.6)
+        assert restored.shell.wall_thickness == pytest.approx(0.6)
 
     def test_deserialize_partial_data(self):
         """测试反序列化部分数据"""

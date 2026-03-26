@@ -21,7 +21,8 @@ from .types import (
     Point, Path, Contour, Layer, LayerPath, LayerInfo,
     PathType, PathRole, EdgeType, ExtruderType, BevelDirection,
     SliceParams, ShellParams, StepConfig, BottomFaceParams,
-    SliceResult, EdgeProfile, InterpolationType, resolve_shell_line_width
+    SliceResult, EdgeProfile, InterpolationType, resolve_shell_line_width,
+    resolve_shell_wall_thickness,
 )
 from .path_offset import PathOffset, JoinType
 from .step_generator import StepGenerator
@@ -291,7 +292,12 @@ class SliceEngine:
                     info.layer_height,
                     info.step_config,
                     params.step,
-                    params.shell.wall_thickness,
+                    resolve_shell_wall_thickness(
+                        params.shell.line_width,
+                        params.shell.wall_count,
+                        params.shell.layer_height,
+                        wall_thickness=params.shell.wall_thickness,
+                    ),
                     info.extruder
                 )
                 layer.paths.extend(step_paths)
@@ -304,7 +310,12 @@ class SliceEngine:
                     info.layer_height,
                     params.shell.height,
                     params.step,
-                    params.shell.wall_thickness,
+                    resolve_shell_wall_thickness(
+                        params.shell.line_width,
+                        params.shell.wall_count,
+                        params.shell.layer_height,
+                        wall_thickness=params.shell.wall_thickness,
+                    ),
                     info.extruder
                 )
                 layer.paths.extend(panel_step_paths)
@@ -317,7 +328,12 @@ class SliceEngine:
                     info.layer_height,
                     params.shell.height,
                     params.step,
-                    params.shell.wall_thickness,
+                    resolve_shell_wall_thickness(
+                        params.shell.line_width,
+                        params.shell.wall_count,
+                        params.shell.layer_height,
+                        wall_thickness=params.shell.wall_thickness,
+                    ),
                     info.extruder
                 )
                 layer.paths.extend(baseplate_step_paths)
@@ -610,16 +626,20 @@ class SliceEngine:
         支持多层壁（走线次数）
         """
         paths = []
-        wall_thickness = params.wall_thickness
-        line_width = resolve_shell_line_width(params.line_width, params.layer_height)
+        line_width = resolve_shell_line_width(
+            params.line_width,
+            params.layer_height,
+            wall_thickness=params.wall_thickness,
+            wall_count=params.wall_count,
+        )
         wall_count = params.wall_count
-        wall_offset = params.wall_offset if params.wall_offset > 0 else wall_thickness
+        wall_offset = params.wall_offset if params.wall_offset > 0 else line_width
 
         for i in range(wall_count):
             # 计算当前壁的偏移距离
-            # 第一壁偏移 wall_thickness/2（让壁中心线在原轮廓上）
+            # 第一壁偏移 line_width/2（让壁中心线在原轮廓上）
             # 后续壁依次向内偏移
-            offset_distance = -(wall_thickness / 2 + i * wall_offset)
+            offset_distance = -(line_width / 2 + i * wall_offset)
 
             # 偏移外轮廓
             offset_results = self.path_offset.offset(
@@ -673,7 +693,12 @@ class SliceEngine:
         if not skirt_params.enabled:
             return paths
 
-        wall_thickness = params.shell.wall_thickness
+        wall_thickness = resolve_shell_wall_thickness(
+            params.shell.line_width,
+            params.shell.wall_count,
+            params.shell.layer_height,
+            wall_thickness=params.shell.wall_thickness,
+        )
 
         for contour in contours:
             contour_skirt_paths = self.skirt_generator.generate_skirt_clipped(
@@ -861,7 +886,12 @@ class SliceEngine:
             return self._generate_fill_paths_for_polygons(
                 geometry.center_fill_polygons,
                 info,
-                params.shell.wall_thickness,
+                resolve_shell_wall_thickness(
+                    params.shell.line_width,
+                    params.shell.wall_count,
+                    params.shell.layer_height,
+                    wall_thickness=params.shell.wall_thickness,
+                ),
                 PathRole.FILL_BOTTOM_FACE,
             )
 
@@ -869,13 +899,18 @@ class SliceEngine:
         fill_line_width = resolve_shell_line_width(
             params.shell.line_width,
             params.shell.layer_height,
+            wall_thickness=params.shell.wall_thickness,
+            wall_count=params.shell.wall_count,
         )
         fill_spacing = fill_line_width  # 100%密度：间距等于线宽
 
         # 计算填充区域（内缩壁厚）
-        wall_thickness = params.shell.wall_thickness
-        wall_count = params.shell.wall_count
-        inset_distance = wall_thickness * wall_count
+        inset_distance = resolve_shell_wall_thickness(
+            params.shell.line_width,
+            params.shell.wall_count,
+            params.shell.layer_height,
+            wall_thickness=params.shell.wall_thickness,
+        )
 
         # 计算填充角度（每层交替90度）
         layer_index = int(info.z_height / info.layer_height)
@@ -930,13 +965,18 @@ class SliceEngine:
         fill_line_width = resolve_shell_line_width(
             params.shell.line_width,
             params.shell.layer_height,
+            wall_thickness=params.shell.wall_thickness,
+            wall_count=params.shell.wall_count,
         )
         fill_spacing = fill_line_width  # 100%密度：间距等于线宽
 
         # 计算填充区域（内缩壁厚）
-        wall_thickness = params.shell.wall_thickness
-        wall_count = params.shell.wall_count
-        inset_distance = wall_thickness * wall_count
+        inset_distance = resolve_shell_wall_thickness(
+            params.shell.line_width,
+            params.shell.wall_count,
+            params.shell.layer_height,
+            wall_thickness=params.shell.wall_thickness,
+        )
 
         # 计算填充角度（每层交替90度）
         layer_index = int(info.z_height / info.layer_height)
@@ -1229,7 +1269,12 @@ class SliceEngine:
 
             for contour in contours:
                 # 向外偏移
-                offset_distance = offset + i * params.shell.wall_thickness
+                offset_distance = offset + i * resolve_shell_wall_thickness(
+                    params.shell.line_width,
+                    params.shell.wall_count,
+                    params.shell.layer_height,
+                    wall_thickness=params.shell.wall_thickness,
+                )
                 offset_paths = self.path_offset.offset(
                     contour.outer, offset_distance, JoinType.MITER
                 )

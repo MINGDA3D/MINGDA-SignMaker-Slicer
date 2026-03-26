@@ -8,7 +8,7 @@ from shapely.ops import unary_union
 from shapely.validation import make_valid
 
 from .path_offset import PathOffset
-from .types import Contour, Path, PathType, Point, SliceParams
+from .types import Contour, Path, PathType, Point, SliceParams, resolve_shell_wall_thickness
 
 
 @dataclass
@@ -81,7 +81,12 @@ class LightSlotGeometryBuilder:
         contour: Contour,
         params: SliceParams,
     ) -> Optional[ShapelyPolygon | MultiPolygon]:
-        inset_distance = params.shell.wall_thickness * params.shell.wall_count
+        inset_distance = resolve_shell_wall_thickness(
+            params.shell.line_width,
+            params.shell.wall_count,
+            params.shell.layer_height,
+            wall_thickness=params.shell.wall_thickness,
+        )
         if inset_distance > 0.0:
             outer_paths = self.path_offset.offset(contour.outer, -inset_distance)
         else:

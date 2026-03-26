@@ -189,8 +189,8 @@ class PlusMinusSpinBox(QWidget):
             self._line_edit.setTextMargins(8, 0, 8, 0)
             self._line_edit.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-    def _update_display(self):
-        """更新显示"""
+    def _display_text(self) -> str:
+        """Return the canonical text rendered in the line edit."""
         if self._decimals > 0:
             text = f"{self._value:.{self._decimals}f}"
         else:
@@ -198,8 +198,11 @@ class PlusMinusSpinBox(QWidget):
 
         if self._suffix:
             text += f" {self._suffix}"
+        return text
 
-        self._line_edit.setText(text)
+    def _update_display(self):
+        """更新显示"""
+        self._line_edit.setText(self._display_text())
         self._update_secondary_display()
 
         # 更新按钮状态
@@ -224,6 +227,14 @@ class PlusMinusSpinBox(QWidget):
 
     def _on_editing_finished(self):
         """输入完成"""
+        self.commit_pending_edit()
+
+    def has_pending_edit(self) -> bool:
+        """Return whether the line edit contains an uncommitted value."""
+        return self._line_edit.text().strip() != self._display_text()
+
+    def commit_pending_edit(self, emit_signal: bool = True):
+        """Commit the current line-edit text into the stored value."""
         text = self._line_edit.text()
 
         # 移除后缀
@@ -237,7 +248,8 @@ class PlusMinusSpinBox(QWidget):
             if value != self._value:
                 self._value = value
                 self._update_display()
-                self.valueChanged.emit(self._value)
+                if emit_signal:
+                    self.valueChanged.emit(self._value)
             else:
                 self._update_display()  # 恢复格式
         except ValueError:
@@ -347,6 +359,10 @@ class PlusMinusIntSpinBox(PlusMinusSpinBox):
 
     def _on_editing_finished(self):
         """输入完成 - 整数版本"""
+        self.commit_pending_edit()
+
+    def commit_pending_edit(self, emit_signal: bool = True):
+        """Commit the current line-edit text into the stored integer value."""
         text = self._line_edit.text()
 
         if self._suffix and text.endswith(self._suffix):
@@ -359,7 +375,8 @@ class PlusMinusIntSpinBox(PlusMinusSpinBox):
             if value != self._value:
                 self._value = float(value)
                 self._update_display()
-                self.valueChanged.emit(int(self._value))
+                if emit_signal:
+                    self.valueChanged.emit(int(self._value))
             else:
                 self._update_display()
         except ValueError:

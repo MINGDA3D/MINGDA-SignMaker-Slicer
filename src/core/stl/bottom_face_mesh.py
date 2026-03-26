@@ -13,7 +13,13 @@ from shapely.geometry import Polygon as ShapelyPolygon
 from shapely.validation import make_valid
 
 from ..light_slot_geometry import LightSlotGeometryBuilder
-from ..types import Contour, SliceParams, EdgeType, BevelDirection
+from ..types import (
+    Contour,
+    SliceParams,
+    EdgeType,
+    BevelDirection,
+    resolve_shell_wall_thickness,
+)
 from ..path_offset import PathOffset
 from .mesh_utils import MeshUtils
 
@@ -72,9 +78,12 @@ class BottomFaceMeshBuilder:
             return MeshUtils.merge_meshes(meshes)
 
         # 计算内缩距离（所有壁的总宽度）
-        wall_thickness = params.shell.wall_thickness
-        wall_count = params.shell.wall_count
-        inset_distance = wall_thickness * wall_count
+        inset_distance = resolve_shell_wall_thickness(
+            params.shell.line_width,
+            params.shell.wall_count,
+            params.shell.layer_height,
+            wall_thickness=params.shell.wall_thickness,
+        )
 
         for contour in contours:
             try:
