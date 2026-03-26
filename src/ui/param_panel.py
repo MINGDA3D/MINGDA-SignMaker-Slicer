@@ -136,20 +136,10 @@ class ParamPanel(QWidget):
         self._sync_layer_based_controls()
 
     def _create_layer_count_editor(self, spinbox: PlusMinusIntSpinBox, label_attr: str) -> QWidget:
-        """Wrap a layer-count input with a live mm summary label."""
-        summary = QLabel()
-        summary.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
-        summary.setMinimumWidth(78)
-        summary.setStyleSheet("color: #8B949E; font-size: 12px;")
-        setattr(self, label_attr, summary)
-
-        container = QWidget()
-        layout = QHBoxLayout(container)
-        layout.setContentsMargins(0, 0, 0, 0)
-        layout.setSpacing(8)
-        layout.addWidget(spinbox)
-        layout.addWidget(summary)
-        return container
+        """Render a layer-count input with its mm helper text inside the input box."""
+        spinbox.setSecondaryText("0.00 mm")
+        setattr(self, label_attr, spinbox)
+        return spinbox
 
     def _configure_layer_count_spin(
         self,
@@ -192,9 +182,9 @@ class ParamPanel(QWidget):
             return minimum
         return max(minimum, int(round(height_mm / layer_height)))
 
-    def _set_layer_summary(self, label: QLabel, layers: int) -> None:
-        """Update a mm summary label for a layer-count control."""
-        label.setText(f"{self._layers_to_mm(layers):.2f} mm")
+    def _set_layer_summary(self, spinbox: PlusMinusIntSpinBox, layers: int) -> None:
+        """Update the mm helper text rendered inside a layer-count control."""
+        spinbox.setSecondaryText(f"{self._layers_to_mm(layers):.2f} mm")
 
     def _sync_layer_based_controls(self):
         """Refresh limits and derived mm labels for layer-count parameters."""

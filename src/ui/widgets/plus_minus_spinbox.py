@@ -8,7 +8,7 @@ MINGDA SignMaker - Plus/Minus SpinBox Widget
 import os
 from typing import Union
 from PySide6.QtWidgets import (
-    QWidget, QHBoxLayout, QLineEdit, QPushButton, QSizePolicy
+    QWidget, QHBoxLayout, QLineEdit, QPushButton, QSizePolicy, QLabel
 )
 from PySide6.QtCore import Signal, Qt, QSize
 from PySide6.QtGui import QDoubleValidator, QIntValidator, QIcon
@@ -37,6 +37,7 @@ class PlusMinusSpinBox(QWidget):
         self._single_step = 1.0
         self._decimals = 2
         self._suffix = ""
+        self._secondary_text = ""
 
         self._init_ui()
         self._apply_style()
@@ -67,6 +68,16 @@ class PlusMinusSpinBox(QWidget):
         self._line_edit.setFixedHeight(28)
         self._line_edit.editingFinished.connect(self._on_editing_finished)
         layout.addWidget(self._line_edit)
+
+        self._secondary_label = QLabel(self._line_edit)
+        self._secondary_label.setAlignment(
+            Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter
+        )
+        self._secondary_label.setAttribute(
+            Qt.WidgetAttribute.WA_TransparentForMouseEvents,
+            True,
+        )
+        self._secondary_label.hide()
 
         # 加号按钮 - 使用 SVG 图标
         self._plus_btn = QPushButton()
@@ -149,6 +160,35 @@ class PlusMinusSpinBox(QWidget):
             }}
         """)
 
+        self._secondary_label.setStyleSheet(f"""
+            QLabel {{
+                color: {COLORS.text_muted};
+                background: transparent;
+                padding-right: 8px;
+                font-size: 11px;
+            }}
+        """)
+
+    def _update_secondary_display(self):
+        """Update helper text rendered inside the input box."""
+        if self._secondary_text:
+            self._secondary_label.setText(self._secondary_text)
+            self._secondary_label.show()
+            reserve = self._secondary_label.fontMetrics().horizontalAdvance(
+                self._secondary_text
+            ) + 18
+            self._line_edit.setTextMargins(8, 0, reserve, 0)
+            self._line_edit.setAlignment(
+                Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter
+            )
+            self._secondary_label.setGeometry(
+                0, 0, self._line_edit.width(), self._line_edit.height()
+            )
+        else:
+            self._secondary_label.hide()
+            self._line_edit.setTextMargins(8, 0, 8, 0)
+            self._line_edit.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
     def _update_display(self):
         """更新显示"""
         if self._decimals > 0:
@@ -160,6 +200,7 @@ class PlusMinusSpinBox(QWidget):
             text += f" {self._suffix}"
 
         self._line_edit.setText(text)
+        self._update_secondary_display()
 
         # 更新按钮状态
         self._minus_btn.setEnabled(self._value > self._minimum and self.isEnabled())
@@ -265,12 +306,27 @@ class PlusMinusSpinBox(QWidget):
         self._suffix = suffix.strip()
         self._update_display()
 
+    def secondaryText(self) -> str:
+        """Get helper text rendered inside the input box."""
+        return self._secondary_text
+
+    def setSecondaryText(self, text: str):
+        """Set helper text rendered inside the input box."""
+        self._secondary_text = text.strip()
+        self._update_secondary_display()
+
     def setEnabled(self, enabled: bool):
         """设置启用状态"""
         super().setEnabled(enabled)
         self._minus_btn.setEnabled(enabled and self._value > self._minimum)
         self._plus_btn.setEnabled(enabled and self._value < self._maximum)
         self._line_edit.setEnabled(enabled)
+        self._secondary_label.setEnabled(enabled)
+
+    def resizeEvent(self, event):
+        """Keep helper text aligned when the widget is resized."""
+        super().resizeEvent(event)
+        self._update_secondary_display()
 
 
 class PlusMinusIntSpinBox(PlusMinusSpinBox):

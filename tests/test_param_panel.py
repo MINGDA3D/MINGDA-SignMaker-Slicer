@@ -264,7 +264,7 @@ def test_set_params_converts_layer_based_heights_to_layer_counts(qapp):
     assert panel.bottom_face_thickness.value() == 2
     assert panel.light_slot_depth.value() == 6
     assert panel.top_face_thickness.value() == 3
-    assert panel.light_slot_depth_value_label.text() == "3.00 mm"
+    assert panel.light_slot_depth_value_label.secondaryText() == "3.00 mm"
 
 
 def test_set_params_converts_connected_heights_to_layer_counts(qapp):
@@ -279,8 +279,8 @@ def test_set_params_converts_connected_heights_to_layer_counts(qapp):
 
     assert panel.connected_height.value() == 6
     assert panel.connected_base_height.value() == 4
-    assert panel.connected_height_value_label.text() == "3.00 mm"
-    assert panel.connected_base_height_value_label.text() == "2.00 mm"
+    assert panel.connected_height_value_label.secondaryText() == "3.00 mm"
+    assert panel.connected_base_height_value_label.secondaryText() == "2.00 mm"
 
 
 def test_get_params_uses_layer_counts_to_derive_mm_heights(qapp):
