@@ -21,7 +21,7 @@ from .types import (
     Point, Path, Contour, Layer, LayerPath, LayerInfo,
     PathType, PathRole, EdgeType, ExtruderType, BevelDirection,
     SliceParams, ShellParams, StepConfig, BottomFaceParams,
-    SliceResult, EdgeProfile, InterpolationType
+    SliceResult, EdgeProfile, InterpolationType, resolve_shell_line_width
 )
 from .path_offset import PathOffset, JoinType
 from .step_generator import StepGenerator
@@ -611,6 +611,7 @@ class SliceEngine:
         """
         paths = []
         wall_thickness = params.wall_thickness
+        line_width = resolve_shell_line_width(params.line_width, params.layer_height)
         wall_count = params.wall_count
         wall_offset = params.wall_offset if params.wall_offset > 0 else wall_thickness
 
@@ -630,7 +631,7 @@ class SliceEngine:
                     points=offset_path.points,
                     role=PathRole.WALL,
                     extruder=info.extruder,
-                    line_width=wall_thickness,
+                    line_width=line_width,
                     is_closed=True
                 )
                 paths.append(layer_path)
@@ -645,7 +646,7 @@ class SliceEngine:
                         points=offset_hole.points,
                         role=PathRole.WALL,
                         extruder=info.extruder,
-                        line_width=wall_thickness,
+                        line_width=line_width,
                         is_closed=True
                     )
                     paths.append(layer_path)
@@ -738,7 +739,10 @@ class SliceEngine:
                 points=[Point(point.x, point.y) for point in free_edge_path.points],
                 role=PathRole.LIGHT_SLOT,
                 extruder=info.extruder,
-                line_width=params.shell.wall_thickness,
+                line_width=resolve_shell_line_width(
+                    params.shell.line_width,
+                    params.shell.layer_height,
+                ),
                 is_closed=free_edge_path.is_closed,
             )
             for free_edge_path in geometry.slot_free_edge_paths
@@ -754,7 +758,10 @@ class SliceEngine:
                 self._generate_fill_paths_for_polygons(
                     geometry.slot_band_polygons,
                     info,
-                    params.shell.wall_thickness,
+                    resolve_shell_line_width(
+                        params.shell.line_width,
+                        params.shell.layer_height,
+                    ),
                     PathRole.LIGHT_SLOT,
                 )
             )
@@ -859,7 +866,10 @@ class SliceEngine:
             )
 
         # 固定填充参数
-        fill_line_width = params.shell.wall_thickness  # 使用壁厚作为填充线宽
+        fill_line_width = resolve_shell_line_width(
+            params.shell.line_width,
+            params.shell.layer_height,
+        )
         fill_spacing = fill_line_width  # 100%密度：间距等于线宽
 
         # 计算填充区域（内缩壁厚）
@@ -917,7 +927,10 @@ class SliceEngine:
             return paths
 
         # 固定填充参数
-        fill_line_width = params.shell.wall_thickness  # 使用壁厚作为填充线宽
+        fill_line_width = resolve_shell_line_width(
+            params.shell.line_width,
+            params.shell.layer_height,
+        )
         fill_spacing = fill_line_width  # 100%密度：间距等于线宽
 
         # 计算填充区域（内缩壁厚）
@@ -1226,7 +1239,10 @@ class SliceEngine:
                         points=path.points,
                         role=PathRole.SAFETY_LINE,
                         extruder=ExtruderType.EXTRUDER_1,
-                        line_width=params.shell.wall_thickness,
+                        line_width=resolve_shell_line_width(
+                            params.shell.line_width,
+                            params.shell.layer_height,
+                        ),
                         is_closed=True
                     )
                     layer.paths.append(layer_path)
@@ -1260,7 +1276,10 @@ class SliceEngine:
         estimated_time = total_distance / avg_speed
 
         # 将距离转换为线材长度（考虑截面积）
-        line_width = params.shell.wall_thickness
+        line_width = resolve_shell_line_width(
+            params.shell.line_width,
+            params.shell.layer_height,
+        )
         layer_height = params.shell.layer_height
         filament_diameter = params.gcode.filament_diameter
 

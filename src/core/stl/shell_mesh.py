@@ -63,10 +63,6 @@ class ShellMeshBuilder:
             z_bottom = layer.z_height
             layer_height = layer.layer_height
 
-            # 获取壁厚
-            if wall_paths[0].line_width > 0:
-                wall_thickness = wall_paths[0].line_width
-
             half_wall = wall_thickness / 2
 
             for path in wall_paths:

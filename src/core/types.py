@@ -466,6 +466,7 @@ class ShellParams:
     """字壳工艺参数"""
     height: float = 30.0              # 字壳高度 (mm)
     layer_height: float = 0.3         # 层高 (mm)
+    line_width: float = 0.0           # 线宽 (mm), <= 0 时自动使用 layer_height * 2
     wall_thickness: float = 1.2       # 壁厚 (mm)
     wall_count: int = 1               # 壁数量（走线次数）
     wall_offset: float = 0.0          # 壁偏移
@@ -901,6 +902,18 @@ def _layers_to_height(layers: float, layer_height: float) -> float:
     return max(0.0, float(layers)) * layer_height
 
 
+def default_shell_line_width(layer_height: float) -> float:
+    """Return the default shell line width derived from layer height."""
+    return round(max(layer_height, 0.001) * 2.0, 3)
+
+
+def resolve_shell_line_width(line_width: float, layer_height: float) -> float:
+    """Resolve the effective shell line width."""
+    if line_width > 0:
+        return line_width
+    return default_shell_line_width(layer_height)
+
+
 def _reject_legacy_key(section_name: str, section_data: dict, legacy_key: str, replacement_key: str) -> None:
     """Reject legacy storage keys once a new schema is enabled."""
     if legacy_key in section_data:
@@ -981,6 +994,10 @@ def serialize_params(params: SliceParams) -> dict:
     layer_height = max(params.shell.layer_height, 0.001)
 
     data["shell"]["height_layers"] = _height_to_layers(params.shell.height, layer_height)
+    data["shell"]["line_width"] = resolve_shell_line_width(
+        params.shell.line_width,
+        params.shell.layer_height,
+    )
     data["shell"].pop("height", None)
 
     data["step"]["panel_step_layers"] = _height_to_layers(
@@ -1057,6 +1074,10 @@ def deserialize_params(data: dict) -> SliceParams:
         shell_data = data["shell"]
         _reject_legacy_layer_key("shell", shell_data, "height", "height_layers")
         params.shell.layer_height = shell_data.get("layer_height", 0.3)
+        params.shell.line_width = resolve_shell_line_width(
+            shell_data.get("line_width", 0.0),
+            params.shell.layer_height,
+        )
         if "height_layers" in shell_data:
             params.shell.height = _layers_to_height(
                 shell_data["height_layers"],

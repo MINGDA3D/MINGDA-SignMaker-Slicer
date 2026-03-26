@@ -22,7 +22,7 @@ from PySide6.QtCore import Qt, Signal, QCoreApplication
 
 from src.core.types import (
     SliceParams, ShellParams, EdgeType, ExtruderType, EdgeDirection, BevelDirection,
-    ConnectedParams, EdgeProfile, TopFaceParams
+    ConnectedParams, EdgeProfile, TopFaceParams, default_shell_line_width, resolve_shell_line_width
 )
 from src.core.edge_presets import EdgePresetManager, ProfileCategory
 from src.ui.widgets.edge_preset_selector import EdgePresetSelector
@@ -175,6 +175,12 @@ class ParamPanel(QWidget):
             return max(self.layer_height_spin.value(), 0.001)
         return 0.3
 
+    def _derived_width_line(self, layer_height: Optional[float] = None) -> float:
+        """Return the default width line for the given layer height."""
+        return default_shell_line_width(
+            self._current_layer_height() if layer_height is None else layer_height
+        )
+
     def _layers_to_mm(self, layers: int) -> float:
         """Convert layer count to mm using the active layer height."""
         return max(0, layers) * self._current_layer_height()
@@ -246,6 +252,15 @@ class ParamPanel(QWidget):
                 self.connected_base_height.value(),
             )
 
+    def _on_layer_height_changed(self, value: float):
+        """Keep Width Line synced to the current Layer Height."""
+        if hasattr(self, "width_line_spin"):
+            self.width_line_spin.blockSignals(True)
+            self.width_line_spin.setValue(self._derived_width_line(value))
+            self.width_line_spin.blockSignals(False)
+        self._sync_layer_based_controls()
+        self._on_param_changed()
+
     def _create_shell_group(self) -> QGroupBox:
         """创建字壳工艺参数组"""
         group = QGroupBox(self.tr("Shell Settings"))
@@ -268,9 +283,17 @@ class ParamPanel(QWidget):
         self.layer_height_spin.setValue(0.3)
         self.layer_height_spin.setSingleStep(0.05)
         self.layer_height_spin.setSuffix("mm")
-        self.layer_height_spin.valueChanged.connect(self._on_param_changed)
-        self.layer_height_spin.valueChanged.connect(self._sync_layer_based_controls)
+        self.layer_height_spin.valueChanged.connect(self._on_layer_height_changed)
         layout.addRow(self.tr("Layer Height:"), self.layer_height_spin)
+
+        # 线宽
+        self.width_line_spin = PlusMinusSpinBox()
+        self.width_line_spin.setRange(0.1, 3.0)
+        self.width_line_spin.setValue(self._derived_width_line())
+        self.width_line_spin.setSingleStep(0.05)
+        self.width_line_spin.setSuffix("mm")
+        self.width_line_spin.valueChanged.connect(self._on_param_changed)
+        layout.addRow(self.tr("Width Line:"), self.width_line_spin)
 
         # 壁厚
         self.wall_thickness_spin = PlusMinusSpinBox()
@@ -1226,6 +1249,7 @@ class ParamPanel(QWidget):
         # 字壳参数
         self._params.shell.height = self._layers_to_mm(self.height_spin.value())
         self._params.shell.layer_height = self.layer_height_spin.value()
+        self._params.shell.line_width = self.width_line_spin.value()
         self._params.shell.wall_thickness = self.wall_thickness_spin.value()
         self._params.shell.wall_count = self.wall_count_spin.value()
 
@@ -1366,7 +1390,7 @@ class ParamPanel(QWidget):
 
         # 阻止各控件信号，防止设置值时触发 _on_param_changed
         widgets = [
-            self.height_spin, self.layer_height_spin, self.wall_thickness_spin,
+            self.height_spin, self.layer_height_spin, self.width_line_spin, self.wall_thickness_spin,
             self.wall_count_spin, self.edge_type_combo, self.bevel_direction_combo,
             self.bevel_width_spin, self.baseplate_spin, self.panel_thickness_spin,
             self.dxf_outer_clearance_spin, self.dxf_hole_clearance_spin, self.dxf_laser_kerf_spin,
@@ -1401,6 +1425,12 @@ class ParamPanel(QWidget):
 
         # 更新UI
         self.layer_height_spin.setValue(params.shell.layer_height)
+        self.width_line_spin.setValue(
+            resolve_shell_line_width(
+                params.shell.line_width,
+                params.shell.layer_height,
+            )
+        )
         self.height_spin.setValue(self._height_to_layers(params.shell.height))
         self.wall_thickness_spin.setValue(params.shell.wall_thickness)
         self.wall_count_spin.setValue(params.shell.wall_count)

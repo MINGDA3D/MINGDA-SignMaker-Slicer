@@ -63,6 +63,38 @@ def test_set_params_restores_wrap_controls_enabled_state(qapp):
     assert panel.wrap_dir_outer.isEnabled() is True
 
 
+def test_width_line_defaults_to_twice_layer_height_and_updates_with_layer_height(qapp):
+    panel = ParamPanel()
+
+    assert panel.width_line_spin.value() == pytest.approx(0.6)
+
+    panel.layer_height_spin.setValue(0.4)
+
+    assert panel.width_line_spin.value() == pytest.approx(0.8)
+
+
+def test_width_line_can_be_manually_overridden_and_layer_height_change_recomputes_it(qapp):
+    panel = ParamPanel()
+
+    panel.width_line_spin.setValue(1.1)
+    assert panel.get_params().shell.line_width == pytest.approx(1.1)
+
+    panel.layer_height_spin.setValue(0.25)
+
+    assert panel.width_line_spin.value() == pytest.approx(0.5)
+
+
+def test_set_params_restores_explicit_shell_line_width(qapp):
+    panel = ParamPanel()
+    params = SliceParams()
+    params.shell.layer_height = 0.5
+    params.shell.line_width = 1.3
+
+    panel.set_params(params)
+
+    assert panel.width_line_spin.value() == pytest.approx(1.3)
+
+
 def test_set_params_restores_outline_controls_enabled_state(qapp):
     panel = ParamPanel()
     params = SliceParams()

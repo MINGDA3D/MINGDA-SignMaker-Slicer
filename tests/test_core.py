@@ -20,7 +20,7 @@ from shapely.ops import unary_union
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from src.core.types import (
-    Point, Point3D, Path, Contour,
+    Point, Point3D, Path, Contour, Layer, LayerPath,
     PathType, PathRole, EdgeType, ExtruderType, BevelDirection,
     SliceParams, ShellParams, StepParams, StepConfig
 )
@@ -29,6 +29,7 @@ from src.core.slice_engine import SliceEngine
 from src.core.gcode_writer import GCodeWriter, GCodeParams
 from src.core.step_generator import StepGenerator
 from src.core.svg_parser import SVGParser
+from src.core.stl import ShellMeshBuilder
 from src.core.stl.step_mesh import StepMeshBuilder
 
 
@@ -392,6 +393,53 @@ class TestIntegration:
 
         assert len(lines) > 100  # 应该有大量G-code
         assert any("Layer" in line for line in lines)
+
+    def test_slice_engine_uses_shell_line_width_for_wall_paths(self):
+        """测试 WALL 路径线宽跟随 shell.line_width，而不是 wall_thickness。"""
+        outer = Path(points=[
+            Point(0, 0), Point(20, 0), Point(20, 20), Point(0, 20)
+        ], is_closed=True)
+        contour = Contour(outer=outer)
+
+        params = SliceParams()
+        params.shell.height = 1.0
+        params.shell.layer_height = 0.5
+        params.shell.wall_thickness = 1.2
+        params.shell.line_width = 0.8
+
+        engine = SliceEngine()
+        result = engine.slice([contour], params)
+
+        wall_paths = [path for path in result.layers[0].paths if path.role == PathRole.WALL]
+
+        assert wall_paths
+        assert wall_paths[0].line_width == pytest.approx(0.8)
+
+    def test_shell_mesh_builder_keeps_wall_geometry_based_on_wall_thickness(self):
+        """测试壳体 STL 仍按 wall_thickness 生成几何厚度。"""
+        builder = ShellMeshBuilder(PathOffset(), wall_thickness=1.2)
+        layer = Layer(
+            z_height=0.0,
+            layer_height=0.3,
+            extruder=ExtruderType.EXTRUDER_1,
+            paths=[
+                LayerPath(
+                    points=[
+                        Point(0, 0), Point(10, 0), Point(10, 10), Point(0, 10)
+                    ],
+                    role=PathRole.WALL,
+                    extruder=ExtruderType.EXTRUDER_1,
+                    line_width=0.6,
+                    is_closed=True,
+                )
+            ],
+        )
+
+        mesh = builder.build([layer])
+
+        assert mesh is not None
+        assert mesh.bounds[0][0] == pytest.approx(-0.6)
+        assert mesh.bounds[1][0] == pytest.approx(10.6)
 
 
 class TestStepGenerator:

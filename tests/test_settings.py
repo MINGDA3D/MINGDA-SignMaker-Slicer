@@ -30,6 +30,7 @@ class TestSerializeParams:
         assert "gcode" in data
         assert "machine" in data
         assert data["shell"]["height_layers"] == 100
+        assert data["shell"]["line_width"] == pytest.approx(0.6)
         assert "height" not in data["shell"]
         assert data["shell"]["edge_type"] == "STRAIGHT"
 
@@ -37,6 +38,7 @@ class TestSerializeParams:
         """测试序列化自定义参数"""
         params = SliceParams()
         params.shell.layer_height = 0.5
+        params.shell.line_width = 0.9
         params.shell.height = 50.0
         params.shell.edge_type = EdgeType.BEVELED
         params.shell.bevel_direction = BevelDirection.TOP_LARGE
@@ -46,6 +48,7 @@ class TestSerializeParams:
         data = serialize_params(params)
 
         assert data["shell"]["height_layers"] == 100
+        assert data["shell"]["line_width"] == pytest.approx(0.9)
         assert "height" not in data["shell"]
         assert data["shell"]["edge_type"] == "BEVELED"
         assert data["shell"]["bevel_direction"] == "TOP_LARGE"
@@ -59,6 +62,7 @@ class TestSerializeParams:
         restored = deserialize_params(data)
 
         assert restored.shell.height == 30.0
+        assert restored.shell.line_width == pytest.approx(0.6)
         assert restored.shell.edge_type == EdgeType.STRAIGHT
         assert restored.skirt.enabled is False
 
@@ -66,6 +70,7 @@ class TestSerializeParams:
         """测试反序列化自定义参数"""
         params = SliceParams()
         params.shell.height = 42.0
+        params.shell.line_width = 1.1
         params.shell.edge_type = EdgeType.BEVELED
         params.step.enabled = True
         params.step.panel_step_enabled = True
@@ -75,10 +80,23 @@ class TestSerializeParams:
         restored = deserialize_params(data)
 
         assert restored.shell.height == 42.0
+        assert restored.shell.line_width == pytest.approx(1.1)
         assert restored.shell.edge_type == EdgeType.BEVELED
         assert restored.step.enabled is True
         assert restored.step.panel_step_enabled is True
         assert restored.speed.print_speed == 80.0
+
+    def test_deserialize_shell_line_width_defaults_to_layer_height_double_when_missing(self):
+        """测试旧 shell 数据缺少 line_width 时自动按层高两倍补齐"""
+        restored = deserialize_params({
+            "shell": {
+                "layer_height": 0.45,
+                "height_layers": 100,
+            }
+        })
+
+        assert restored.shell.height == pytest.approx(45.0)
+        assert restored.shell.line_width == pytest.approx(0.9)
 
     def test_deserialize_legacy_skirt_side_flag(self):
         """测试旧版 skirt is_outer 参数兼容"""
@@ -152,6 +170,7 @@ class TestSerializeParams:
 
         # 修改各种参数
         params.shell.layer_height = 0.5
+        params.shell.line_width = 1.1
         params.shell.height = 35.0
         params.shell.wall_thickness = 1.5
         params.color.enabled = True
@@ -169,6 +188,7 @@ class TestSerializeParams:
         restored = deserialize_params(data)
 
         assert restored.shell.height == 35.0
+        assert restored.shell.line_width == pytest.approx(1.1)
         assert restored.shell.wall_thickness == 1.5
         assert restored.color.enabled is True
         assert restored.step.panel_step_enabled is True
