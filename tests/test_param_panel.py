@@ -84,6 +84,25 @@ def test_width_line_can_be_manually_overridden_and_layer_height_change_recompute
     assert panel.width_line_spin.value() == pytest.approx(0.5)
 
 
+def test_shell_height_does_not_change_when_layer_height_changes(qapp):
+    panel = ParamPanel()
+
+    panel.height_spin.setValue(30.0)
+    panel.layer_height_spin.setValue(0.5)
+
+    assert panel.height_spin.value() == pytest.approx(30.0)
+    assert panel.get_params().shell.height == pytest.approx(30.0)
+
+
+def test_shell_height_is_clamped_to_100mm(qapp):
+    panel = ParamPanel()
+
+    panel.height_spin.setValue(120.0)
+
+    assert panel.height_spin.value() == pytest.approx(100.0)
+    assert panel.get_params().shell.height == pytest.approx(100.0)
+
+
 def test_set_params_restores_explicit_shell_line_width(qapp):
     panel = ParamPanel()
     params = SliceParams()
@@ -239,13 +258,12 @@ def test_set_params_converts_layer_based_heights_to_layer_counts(qapp):
 
     panel.set_params(params)
 
-    assert panel.height_spin.value() == 80
+    assert panel.height_spin.value() == pytest.approx(40.0)
     assert panel.panel_step_height.value() == 50
     assert panel.baseplate_step_height.value() == 4
     assert panel.bottom_face_thickness.value() == 2
     assert panel.light_slot_depth.value() == 6
     assert panel.top_face_thickness.value() == 3
-    assert panel.height_value_label.text() == "40.00 mm"
     assert panel.light_slot_depth_value_label.text() == "3.00 mm"
 
 
@@ -269,7 +287,7 @@ def test_get_params_uses_layer_counts_to_derive_mm_heights(qapp):
     panel = ParamPanel()
 
     panel.layer_height_spin.setValue(0.25)
-    panel.height_spin.setValue(120)
+    panel.height_spin.setValue(30.0)
     panel.bottom_face_enabled.setChecked(True)
     panel.bottom_face_thickness.setValue(4)
     panel.light_slot_enabled.setChecked(True)
@@ -289,7 +307,7 @@ def test_get_params_uses_layer_counts_for_step_heights(qapp):
     panel = ParamPanel()
 
     panel.layer_height_spin.setValue(0.25)
-    panel.height_spin.setValue(120)
+    panel.height_spin.setValue(30.0)
     panel.panel_step_enabled.setChecked(True)
     panel.panel_step_height.setValue(64)
     panel.baseplate_step_enabled.setChecked(True)

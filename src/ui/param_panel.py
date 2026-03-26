@@ -198,14 +198,10 @@ class ParamPanel(QWidget):
 
     def _sync_layer_based_controls(self):
         """Refresh limits and derived mm labels for layer-count parameters."""
-        if not hasattr(self, "height_spin") or not hasattr(self, "layer_height_spin"):
+        if not hasattr(self, "layer_height_spin"):
             return
 
         layer_height = self._current_layer_height()
-
-        shell_max_layers = max(1, math.ceil(500 / layer_height))
-        self.height_spin.setMaximum(shell_max_layers)
-        self._set_layer_summary(self.height_value_label, self.height_spin.value())
 
         if hasattr(self, "bottom_face_thickness"):
             self.bottom_face_thickness.setMaximum(max(1, math.ceil(10.0 / layer_height)))
@@ -268,14 +264,14 @@ class ParamPanel(QWidget):
         layout.setSpacing(8)
 
         # 字壳高度
-        self.height_spin = PlusMinusIntSpinBox()
-        self._configure_layer_count_spin(self.height_spin, 1, 5000, 100)
+        self.height_spin = PlusMinusSpinBox()
+        self.height_spin.setRange(0.1, 100.0)
+        self.height_spin.setValue(30.0)
+        self.height_spin.setSingleStep(0.1)
+        self.height_spin.setSuffix("mm")
         self.height_spin.valueChanged.connect(self._on_param_changed)
         self.height_spin.valueChanged.connect(self._update_step_ranges)
-        layout.addRow(
-            self.tr("Shell Height:"),
-            self._create_layer_count_editor(self.height_spin, "height_value_label"),
-        )
+        layout.addRow(self.tr("Shell Height:"), self.height_spin)
 
         # 层高
         self.layer_height_spin = PlusMinusSpinBox()
@@ -840,7 +836,7 @@ class ParamPanel(QWidget):
         if not hasattr(self, 'panel_step_height') or not hasattr(self, 'baseplate_step_height'):
             return
 
-        shell_layers = self.height_spin.value()
+        shell_layers = self._height_to_layers(self.height_spin.value())
         half_min = max(1, (shell_layers + 1) // 2)
         half_max = max(1, shell_layers // 2)
 
@@ -1247,7 +1243,7 @@ class ParamPanel(QWidget):
     def _update_params(self):
         """更新内部参数"""
         # 字壳参数
-        self._params.shell.height = self._layers_to_mm(self.height_spin.value())
+        self._params.shell.height = self.height_spin.value()
         self._params.shell.layer_height = self.layer_height_spin.value()
         self._params.shell.line_width = self.width_line_spin.value()
         self._params.shell.wall_thickness = self.wall_thickness_spin.value()
@@ -1431,7 +1427,7 @@ class ParamPanel(QWidget):
                 params.shell.layer_height,
             )
         )
-        self.height_spin.setValue(self._height_to_layers(params.shell.height))
+        self.height_spin.setValue(params.shell.height)
         self.wall_thickness_spin.setValue(params.shell.wall_thickness)
         self.wall_count_spin.setValue(params.shell.wall_count)
 
