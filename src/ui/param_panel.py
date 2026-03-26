@@ -37,6 +37,7 @@ class ParamPanel(QWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.setObjectName("paramPanel")
 
         # 参数
         self._params = SliceParams()
@@ -58,9 +59,10 @@ class ParamPanel(QWidget):
         title = QLabel(self.tr("Parameters"))
         title.setProperty("heading", True)
         title.setStyleSheet(f"""
-            padding: 12px;
-            background-color: {COLORS.bg_secondary};
-            border-bottom: 1px solid {COLORS.border_default};
+            padding: 12px 12px 12px 14px;
+            background-color: {COLORS.editor_sidebar_left_header_bg};
+            border-bottom: 1px solid {COLORS.editor_sidebar_left_accent};
+            border-left: 4px solid {COLORS.editor_sidebar_left_accent};
             font-size: 14px;
             font-weight: bold;
         """)
@@ -70,11 +72,22 @@ class ParamPanel(QWidget):
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
         scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        scroll.setStyleSheet("QScrollArea { border: none; }")
+        scroll.setStyleSheet(f"""
+            QScrollArea {{
+                background-color: {COLORS.editor_sidebar_left_bg};
+                border: none;
+            }}
+            QScrollArea > QWidget > QWidget {{
+                background-color: {COLORS.editor_sidebar_left_bg};
+            }}
+        """)
         layout.addWidget(scroll)
 
         # 滚动内容
         content = QWidget()
+        content.setStyleSheet(
+            f"background-color: {COLORS.editor_sidebar_left_bg};"
+        )
         content_layout = QVBoxLayout(content)
         content_layout.setContentsMargins(12, 12, 12, 12)
         content_layout.setSpacing(12)

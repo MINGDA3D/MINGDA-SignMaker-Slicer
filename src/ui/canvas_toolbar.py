@@ -12,6 +12,8 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QIcon
 
+from .theme import COLORS
+
 
 class CanvasToolbar(QWidget):
     """画布工具栏"""
@@ -152,58 +154,65 @@ class CanvasToolbar(QWidget):
 
     def _apply_styles(self):
         """应用样式"""
-        self.setStyleSheet("""
-            CanvasToolbar {
-                background-color: #161B22;
-                border: 1px solid #30363D;
-                border-radius: 4px;
-            }
+        self.setStyleSheet(f"""
+            CanvasToolbar {{
+                background-color: {COLORS.editor_canvas_toolbar_bg};
+                border-top: 1px solid {COLORS.editor_canvas_toolbar_accent};
+                border-bottom: 1px solid {COLORS.editor_canvas_frame};
+                border-left: 1px solid {COLORS.editor_canvas_frame};
+                border-right: 1px solid {COLORS.editor_canvas_frame};
+                border-radius: 0;
+            }}
 
             /* 图标按钮 */
-            QPushButton#iconButton {
+            QPushButton#iconButton {{
                 background-color: transparent;
-                border: none;
+                border: 1px solid transparent;
                 border-radius: 4px;
                 min-width: 40px;
                 max-width: 40px;
                 min-height: 40px;
                 max-height: 40px;
                 padding: 2px;
-            }
-            QPushButton#iconButton:hover {
-                background-color: #21262D;
-            }
-            QPushButton#iconButton:pressed {
+            }}
+            QPushButton#iconButton:hover {{
+                background-color: {COLORS.editor_canvas_bg};
+                border-color: {COLORS.editor_canvas_toolbar_accent};
+            }}
+            QPushButton#iconButton:pressed {{
                 background-color: #30363D;
-            }
-            QPushButton#iconButton:checked {
+            }}
+            QPushButton#iconButton:checked {{
                 background-color: #1F6FEB;
-            }
+                border-color: {COLORS.editor_canvas_toolbar_accent};
+            }}
 
             /* 文字按钮 */
-            QPushButton#textButton {
+            QPushButton#textButton {{
                 background-color: transparent;
                 color: #8B949E;
-                border: none;
+                border: 1px solid transparent;
                 border-radius: 4px;
                 padding: 4px 10px;
                 font-size: 12px;
                 font-weight: 500;
-            }
-            QPushButton#textButton:hover {
-                background-color: #21262D;
+            }}
+            QPushButton#textButton:hover {{
+                background-color: {COLORS.editor_canvas_bg};
+                border-color: {COLORS.editor_canvas_toolbar_accent};
                 color: #C9D1D9;
-            }
-            QPushButton#textButton:checked {
+            }}
+            QPushButton#textButton:checked {{
                 background-color: #1F6FEB;
+                border-color: {COLORS.editor_canvas_toolbar_accent};
                 color: #FFFFFF;
-            }
+            }}
 
             /* 分隔符 */
-            QFrame#separator {
-                background-color: #30363D;
+            QFrame#separator {{
+                background-color: {COLORS.editor_canvas_toolbar_accent};
                 margin: 8px 8px;
-            }
+            }}
         """)
 
     def _on_move_clicked(self):

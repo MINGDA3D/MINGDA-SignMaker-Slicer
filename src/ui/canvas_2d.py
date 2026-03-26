@@ -55,6 +55,7 @@ class Canvas2D(QWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.setObjectName("canvas")
 
         # 视图状态
         self.view_offset = QPointF(0, 0)  # 视图偏移
@@ -106,13 +107,15 @@ class Canvas2D(QWidget):
         self._cumulative_angle = 0.0
 
         # 样式
-        self.bg_color = QColor(COLORS.bg_primary)
-        self.grid_color = QColor(40, 50, 60)  # 细网格颜色
-        self.grid_major_color = QColor(50, 65, 80)  # 主网格颜色
-        self.platform_border_color = QColor(80, 100, 120)  # 平台边框颜色
-        self.ruler_bg_color = QColor(20, 28, 35)  # 标尺背景色
+        self.bg_color = QColor(COLORS.editor_canvas_bg)
+        self.platform_bg_color = QColor(COLORS.editor_canvas_platform_bg)
+        self.frame_color = QColor(COLORS.editor_canvas_frame)
+        self.grid_color = QColor(36, 47, 59)  # 细网格颜色
+        self.grid_major_color = QColor(50, 64, 79)  # 主网格颜色
+        self.platform_border_color = QColor(92, 115, 138)  # 平台边框颜色
+        self.ruler_bg_color = QColor(16, 24, 33)  # 标尺背景色
         self.ruler_text_color = QColor(120, 140, 160)  # 标尺文字颜色
-        self.ruler_tick_color = QColor(80, 100, 120)  # 标尺刻度颜色
+        self.ruler_tick_color = QColor(92, 115, 138)  # 标尺刻度颜色
         self.contour_color = QColor(COLORS.path_shell)
         self.hole_color = QColor(COLORS.accent_warning)
         self.selected_color = QColor(COLORS.accent_primary)
@@ -702,6 +705,9 @@ class Canvas2D(QWidget):
     def _draw_background(self, painter: QPainter):
         """绘制背景"""
         painter.fillRect(self.rect(), self.bg_color)
+        painter.setPen(QPen(self.frame_color, 1))
+        painter.setBrush(Qt.BrushStyle.NoBrush)
+        painter.drawRect(self.rect().adjusted(0, 0, -1, -1))
 
     def _draw_platform(self, painter: QPainter):
         """绘制平台区域和网格"""
@@ -718,7 +724,7 @@ class Canvas2D(QWidget):
         platform_rect = QRectF(platform_left, platform_top,
                                platform_right - platform_left,
                                platform_bottom - platform_top)
-        painter.fillRect(platform_rect, QColor(15, 22, 30))
+        painter.fillRect(platform_rect, self.platform_bg_color)
 
         # 计算网格间距（屏幕像素）
         grid_screen_spacing = self.grid_spacing * self.view_scale

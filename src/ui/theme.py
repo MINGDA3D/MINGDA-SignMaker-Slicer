@@ -16,6 +16,20 @@ class Colors:
     bg_panel: str = "#21262D"         # 面板背景
     bg_hover: str = "#30363D"         # 悬浮背景
     bg_selected: str = "#388BFD26"    # 选中背景（带透明）
+    editor_toolbar_bg: str = "#15202E"
+    editor_toolbar_border: str = "#425A76"
+    editor_sidebar_left_bg: str = "#121923"
+    editor_sidebar_left_header_bg: str = "#22354C"
+    editor_sidebar_left_accent: str = "#5D82B8"
+    editor_sidebar_right_bg: str = "#101720"
+    editor_sidebar_right_header_bg: str = "#23372F"
+    editor_sidebar_right_accent: str = "#5F907C"
+    editor_list_item_bg: str = "#18222E"
+    editor_canvas_bg: str = "#0B1118"
+    editor_canvas_toolbar_bg: str = "#182A42"
+    editor_canvas_toolbar_accent: str = "#5E8FD0"
+    editor_canvas_frame: str = "#3E5879"
+    editor_canvas_platform_bg: str = "#111A23"
 
     # 文字
     text_primary: str = "#F0F6FC"     # 主文字
@@ -775,18 +789,20 @@ QDockWidget::close-button:hover, QDockWidget::float-button:hover {{
 
 /* 画布背景 */
 QWidget#canvas {{
-    background-color: #1A1D21;
-    border: 1px solid {c.border_default};
+    background-color: {c.editor_canvas_bg};
+    border: 1px solid {c.editor_canvas_frame};
 }}
 
 /* 参数面板 */
 QWidget#paramPanel {{
-    background-color: {c.bg_secondary};
+    background-color: {c.editor_sidebar_left_bg};
+    border-right: 1px solid {c.editor_sidebar_left_accent};
 }}
 
 /* 项目面板 */
 QWidget#projectPanel {{
-    background-color: {c.bg_secondary};
+    background-color: {c.editor_sidebar_right_bg};
+    border-left: 1px solid {c.editor_sidebar_right_accent};
 }}
 """
 
@@ -808,6 +824,18 @@ def get_color_dict() -> Dict[str, str]:
         "text_primary": COLORS.text_primary,
         "text_secondary": COLORS.text_secondary,
         "text_muted": COLORS.text_muted,
+        "editor_toolbar_bg": COLORS.editor_toolbar_bg,
+        "editor_toolbar_border": COLORS.editor_toolbar_border,
+        "editor_sidebar_left_bg": COLORS.editor_sidebar_left_bg,
+        "editor_sidebar_left_header_bg": COLORS.editor_sidebar_left_header_bg,
+        "editor_sidebar_left_accent": COLORS.editor_sidebar_left_accent,
+        "editor_sidebar_right_bg": COLORS.editor_sidebar_right_bg,
+        "editor_sidebar_right_header_bg": COLORS.editor_sidebar_right_header_bg,
+        "editor_sidebar_right_accent": COLORS.editor_sidebar_right_accent,
+        "editor_canvas_bg": COLORS.editor_canvas_bg,
+        "editor_canvas_toolbar_bg": COLORS.editor_canvas_toolbar_bg,
+        "editor_canvas_toolbar_accent": COLORS.editor_canvas_toolbar_accent,
+        "editor_canvas_frame": COLORS.editor_canvas_frame,
         "accent_primary": COLORS.accent_primary,
         "accent_success": COLORS.accent_success,
         "accent_warning": COLORS.accent_warning,

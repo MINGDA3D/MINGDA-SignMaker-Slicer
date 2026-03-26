@@ -13,6 +13,8 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt, Signal, QSize
 from PySide6.QtGui import QIcon
 
+from .theme import COLORS
+
 
 class TitleBar(QWidget):
     """导航栏"""
@@ -183,84 +185,88 @@ class TitleBar(QWidget):
         """创建分隔符"""
         sep = QFrame()
         sep.setFrameShape(QFrame.Shape.VLine)
-        sep.setStyleSheet("background-color: #30363D; margin: 8px 8px;")
+        sep.setStyleSheet(
+            f"background-color: {COLORS.editor_toolbar_border}; margin: 8px 8px;"
+        )
         sep.setFixedWidth(1)
         return sep
 
     def _apply_styles(self):
         """应用样式"""
-        self.setStyleSheet("""
-            TitleBar {
-                background-color: #0D1117;
-                border-bottom: 1px solid #21262D;
-            }
+        self.setStyleSheet(f"""
+            TitleBar {{
+                background-color: {COLORS.editor_toolbar_bg};
+                border-bottom: 1px solid {COLORS.editor_toolbar_border};
+            }}
 
             /* 导航按钮 - 普通状态 */
-            QPushButton#navButton {
+            QPushButton#navButton {{
                 background-color: transparent;
                 color: #8B949E;
-                border: none;
+                border: 1px solid transparent;
                 border-radius: 4px;
                 padding: 5px 16px;
                 font-size: 12px;
                 font-weight: 500;
-            }
-            QPushButton#navButton:hover {
-                background-color: #21262D;
+            }}
+            QPushButton#navButton:hover {{
+                background-color: {COLORS.editor_canvas_toolbar_bg};
+                border-color: {COLORS.editor_toolbar_border};
                 color: #C9D1D9;
-            }
+            }}
 
             /* 导航按钮 - 激活状态 */
-            QPushButton#navButtonActive {
+            QPushButton#navButtonActive {{
                 background-color: #1F6FEB;
                 color: #FFFFFF;
-                border: none;
+                border: 1px solid {COLORS.editor_canvas_toolbar_accent};
                 border-radius: 4px;
                 padding: 5px 16px;
                 font-size: 12px;
                 font-weight: 500;
-            }
-            QPushButton#navButtonActive:hover {
+            }}
+            QPushButton#navButtonActive:hover {{
                 background-color: #388BFD;
-            }
+            }}
 
             /* 图标按钮 */
-            QPushButton#iconButton {
+            QPushButton#iconButton {{
                 background-color: transparent;
                 color: #8B949E;
-                border: none;
+                border: 1px solid transparent;
                 border-radius: 4px;
                 min-width: 36px;
                 max-width: 36px;
                 min-height: 36px;
                 max-height: 36px;
                 padding: 2px;
-            }
-            QPushButton#iconButton:hover {
-                background-color: #21262D;
+            }}
+            QPushButton#iconButton:hover {{
+                background-color: {COLORS.editor_canvas_toolbar_bg};
+                border-color: {COLORS.editor_toolbar_border};
                 color: #C9D1D9;
-            }
+            }}
 
             /* 操作按钮 */
-            QPushButton#actionButton {
-                background-color: #21262D;
+            QPushButton#actionButton {{
+                background-color: {COLORS.editor_canvas_toolbar_bg};
                 color: #C9D1D9;
-                border: 1px solid #30363D;
+                border: 1px solid {COLORS.editor_toolbar_border};
                 border-radius: 4px;
                 padding: 6px 16px;
                 font-size: 12px;
                 font-weight: 500;
-            }
-            QPushButton#actionButton:hover {
+            }}
+            QPushButton#actionButton:hover {{
                 background-color: #30363D;
                 border-color: #8B949E;
-            }
-            QPushButton#actionButton:pressed {
-                background-color: #161B22;
-            }
+            }}
+            QPushButton#actionButton:pressed {{
+                background-color: {COLORS.bg_secondary};
+            }}
 
             /* 主要按钮 */
-            QPushButton#primaryButton {
+            QPushButton#primaryButton {{
                 background-color: #238636;
                 color: #FFFFFF;
                 border: none;
@@ -268,13 +274,13 @@ class TitleBar(QWidget):
                 padding: 6px 16px;
                 font-size: 12px;
                 font-weight: 500;
-            }
-            QPushButton#primaryButton:hover {
+            }}
+            QPushButton#primaryButton:hover {{
                 background-color: #2EA043;
-            }
-            QPushButton#primaryButton:pressed {
+            }}
+            QPushButton#primaryButton:pressed {{
                 background-color: #196C2E;
-            }
+            }}
         """)
 
     def _on_nav_click(self, nav: str):

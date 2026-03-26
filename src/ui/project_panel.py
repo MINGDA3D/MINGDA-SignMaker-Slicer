@@ -101,7 +101,7 @@ class ShapeListItem(QFrame):
         if self._selected:
             self.setStyleSheet(f"""
                 ShapeListItem {{
-                    background-color: {COLORS.bg_secondary};
+                    background-color: {COLORS.editor_list_item_bg};
                     border: 1px solid #1F6FEB;
                     border-radius: 4px;
                     margin: 2px 4px;
@@ -110,12 +110,13 @@ class ShapeListItem(QFrame):
         else:
             self.setStyleSheet(f"""
                 ShapeListItem {{
-                    background-color: {COLORS.bg_secondary};
+                    background-color: {COLORS.editor_list_item_bg};
                     border: 1px solid {COLORS.border_default};
                     border-radius: 4px;
                     margin: 2px 4px;
                 }}
                 ShapeListItem:hover {{
+                    background-color: {COLORS.bg_panel};
                     border-color: {COLORS.border_hover};
                 }}
             """)
@@ -146,6 +147,7 @@ class ProjectPanel(QWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.setObjectName("projectPanel")
 
         self._contours: List[Contour] = []
         self._items: List[ShapeListItem] = []
@@ -162,10 +164,13 @@ class ProjectPanel(QWidget):
         # 标题
         title = QLabel(self.tr("Shape List"))
         title.setStyleSheet(f"""
-            padding: 12px;
-            background-color: {COLORS.bg_primary};
+            padding: 12px 14px 12px 12px;
+            background-color: {COLORS.editor_sidebar_right_header_bg};
             color: {COLORS.text_primary};
             font-size: 13px;
+            font-weight: 600;
+            border-bottom: 1px solid {COLORS.editor_sidebar_right_accent};
+            border-right: 4px solid {COLORS.editor_sidebar_right_accent};
         """)
         layout.addWidget(title)
 
@@ -175,11 +180,11 @@ class ProjectPanel(QWidget):
         scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         scroll_area.setStyleSheet(f"""
             QScrollArea {{
-                background-color: {COLORS.bg_primary};
+                background-color: {COLORS.editor_sidebar_right_bg};
                 border: none;
             }}
             QScrollBar:vertical {{
-                background-color: {COLORS.bg_primary};
+                background-color: {COLORS.editor_sidebar_right_bg};
                 width: 8px;
             }}
             QScrollBar::handle:vertical {{
@@ -197,7 +202,9 @@ class ProjectPanel(QWidget):
 
         # 列表容器
         self.list_container = QWidget()
-        self.list_container.setStyleSheet(f"background-color: {COLORS.bg_primary};")
+        self.list_container.setStyleSheet(
+            f"background-color: {COLORS.editor_sidebar_right_bg};"
+        )
         self.list_layout = QVBoxLayout(self.list_container)
         self.list_layout.setContentsMargins(4, 4, 4, 4)
         self.list_layout.setSpacing(0)
@@ -212,15 +219,15 @@ class ProjectPanel(QWidget):
         import_btn.setFixedHeight(52)
         import_btn.setStyleSheet(f"""
             QPushButton {{
-                background-color: {COLORS.bg_secondary};
+                background-color: {COLORS.editor_list_item_bg};
                 color: {COLORS.text_secondary};
-                border: 1px solid {COLORS.border_default};
+                border: 1px solid {COLORS.editor_toolbar_border};
                 border-radius: 4px;
                 margin: 8px;
                 font-size: 13px;
             }}
             QPushButton:hover {{
-                background-color: {COLORS.bg_hover};
+                background-color: {COLORS.bg_panel};
                 border-color: {COLORS.border_hover};
                 color: {COLORS.text_primary};
             }}

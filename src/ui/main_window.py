@@ -127,14 +127,14 @@ class MainWindow(QMainWindow):
         title_toolbar.setObjectName("titleToolbar")
         title_toolbar.setMovable(False)
         title_toolbar.setFloatable(False)
-        title_toolbar.setStyleSheet("""
-            QToolBar#titleToolbar {
-                background-color: #0D1117;
+        title_toolbar.setStyleSheet(f"""
+            QToolBar#titleToolbar {{
+                background-color: {COLORS.editor_toolbar_bg};
                 border: none;
-                border-bottom: 1px solid #21262D;
+                border-bottom: 1px solid {COLORS.editor_toolbar_border};
                 spacing: 0;
                 padding: 0;
-            }
+            }}
         """)
         title_toolbar.addWidget(self.title_bar)
         self.addToolBar(Qt.ToolBarArea.TopToolBarArea, title_toolbar)
@@ -557,6 +557,14 @@ class MainWindow(QMainWindow):
 
         # === 中央视图区域（工具栏 + 2D/3D视图）===
         center_container = QWidget()
+        center_container.setObjectName("editorCenterContainer")
+        center_container.setStyleSheet(f"""
+            QWidget#editorCenterContainer {{
+                background-color: {COLORS.editor_canvas_bg};
+                border-left: 1px solid {COLORS.editor_canvas_frame};
+                border-right: 1px solid {COLORS.editor_canvas_frame};
+            }}
+        """)
         center_layout = QVBoxLayout(center_container)
         center_layout.setContentsMargins(0, 0, 0, 0)
         center_layout.setSpacing(0)
