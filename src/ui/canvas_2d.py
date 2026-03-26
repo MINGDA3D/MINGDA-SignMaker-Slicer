@@ -182,8 +182,38 @@ class Canvas2D(QWidget):
         if center_on_platform and contours:
             self._center_contours_on_platform(contours)
         self.contours = contours
-        self.selected_indices = []
+        self.set_selected_indices([], update_view=False)
         self.update()
+
+    def _normalize_selected_indices(self, indices: List[int]) -> List[int]:
+        """过滤非法索引并去重，保持现有顺序。"""
+        normalized: List[int] = []
+        seen = set()
+        for idx in indices:
+            if 0 <= idx < len(self.contours) and idx not in seen:
+                normalized.append(idx)
+                seen.add(idx)
+        return normalized
+
+    def set_selected_indices(
+        self,
+        indices: List[int],
+        active_index: Optional[int] = None,
+        update_view: bool = True,
+    ):
+        """统一更新选中状态，并发出对应信号。"""
+        self.selected_indices = self._normalize_selected_indices(indices)
+
+        if self.selected_indices:
+            emit_index = active_index
+            if emit_index not in self.selected_indices:
+                emit_index = self.selected_indices[0]
+            self.contour_selected.emit(emit_index)
+        else:
+            self.selection_cleared.emit()
+
+        if update_view:
+            self.update()
 
     def _center_contours_on_platform(self, contours: List[Contour]):
         """将轮廓居中到平台中心"""
@@ -513,7 +543,7 @@ class Canvas2D(QWidget):
         for idx in selected:
             self.contours[idx].group_id = group_id
 
-        self.selected_indices = selected
+        self.set_selected_indices(selected, active_index=selected[0], update_view=False)
         self.contours_modified.emit()
         self.update()
 
@@ -526,7 +556,7 @@ class Canvas2D(QWidget):
         for idx in selected:
             self.contours[idx].group_id = ""
 
-        self.selected_indices = selected
+        self.set_selected_indices(selected, active_index=selected[0], update_view=False)
         self.contours_modified.emit()
         self.update()
 
@@ -614,14 +644,13 @@ class Canvas2D(QWidget):
         self.contours[:] = updated
 
         if new_contours:
-            self.selected_indices = list(range(insert_at, insert_at + len(new_contours)))
-            if len(self.selected_indices) == 1:
-                self.contour_selected.emit(self.selected_indices[0])
-            else:
-                self.selection_cleared.emit()
+            self.set_selected_indices(
+                list(range(insert_at, insert_at + len(new_contours))),
+                active_index=insert_at,
+                update_view=False,
+            )
         else:
-            self.selected_indices = []
-            self.selection_cleared.emit()
+            self.set_selected_indices([], update_view=False)
 
         self.contours_modified.emit()
         self.update()
@@ -1515,8 +1544,7 @@ class Canvas2D(QWidget):
 
     def _select_all(self):
         """全选所有轮廓"""
-        self.selected_indices = list(range(len(self.contours)))
-        self.update()
+        self.set_selected_indices(list(range(len(self.contours))))
 
     def _set_tool_cursor(self):
         """根据当前工具设置光标"""
@@ -1536,13 +1564,10 @@ class Canvas2D(QWidget):
                 self.delete_requested.emit(list(self.selected_indices))
         elif event.key() == Qt.Key.Key_Escape:
             # 取消选择
-            self.selected_indices = []
-            self.selection_cleared.emit()
-            self.update()
+            self.set_selected_indices([])
         elif event.key() == Qt.Key.Key_A and event.modifiers() == Qt.KeyboardModifier.ControlModifier:
             # 全选
-            self.selected_indices = list(range(len(self.contours)))
-            self.update()
+            self._select_all()
         elif event.key() in (Qt.Key.Key_Left, Qt.Key.Key_Right, Qt.Key.Key_Up, Qt.Key.Key_Down):
             # 方向键移动选中的轮廓
             if self.selected_indices:
@@ -1599,15 +1624,15 @@ class Canvas2D(QWidget):
                 # 普通点击：单选
                 self.selected_indices = list(target_indices)
 
-            self.contour_selected.emit(selected_idx)
-            self.update()
+            self.set_selected_indices(
+                self.selected_indices,
+                active_index=selected_idx,
+            )
             return
 
         # 点击空白区域：取消选择
         if Qt.KeyboardModifier.ControlModifier not in QApplication.keyboardModifiers():
-            self.selected_indices = []
-            self.selection_cleared.emit()
-            self.update()
+            self.set_selected_indices([])
 
     def _point_in_contour(self, pos: QPointF, contour: Contour) -> bool:
         """判断点是否在轮廓内"""

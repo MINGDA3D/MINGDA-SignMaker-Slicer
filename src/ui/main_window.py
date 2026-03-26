@@ -597,6 +597,9 @@ class MainWindow(QMainWindow):
         self.project_panel.setMaximumWidth(300)
         self.project_panel.import_clicked.connect(self._on_open_file)
         self.project_panel.contour_deleted.connect(self._on_contour_deleted)
+        self.project_panel.selection_changed.connect(
+            self._on_project_panel_selection_changed
+        )
         self.editor_splitter.addWidget(self.project_panel)
 
         # 设置分割比例
@@ -754,8 +757,7 @@ class MainWindow(QMainWindow):
         self.undo_manager.push(cmd)
 
         # 清除选择
-        self.canvas.selected_indices = []
-        self.canvas.update()
+        self.canvas.set_selected_indices([])
         self.project_panel.update_contours(self.contours)
 
     def _on_contour_deleted(self, index: int):
@@ -817,6 +819,7 @@ class MainWindow(QMainWindow):
     def _on_contour_selected(self, index: int):
         """当选中轮廓时显示位置面板"""
         if self.canvas.selected_indices:
+            self.project_panel.set_selected_indices(self.canvas.selected_indices)
             # 恢复新选中轮廓的变换状态
             new_id = self._get_selected_contour_id()
             self._restore_contour_transform(new_id)
@@ -838,6 +841,7 @@ class MainWindow(QMainWindow):
                 self._show_transform_panel()
         else:
             # 取消选择时隐藏面板
+            self.project_panel.clear_selection()
             self._close_transform_panel()
 
     def _on_contours_modified(self):
@@ -850,22 +854,19 @@ class MainWindow(QMainWindow):
 
     def _on_selection_cleared(self):
         """当选择被清除时隐藏面板"""
+        self.project_panel.clear_selection()
         self._current_selected_id = None
         self._close_transform_panel()
+
+    def _on_project_panel_selection_changed(self, indices: List[int]):
+        """当右侧图形列表变化时同步到画布。"""
+        self._apply_contour_selection(indices)
 
     def _apply_contour_selection(self, indices: List[int]):
         """同步画布和项目面板的选中状态。"""
         valid_indices = self.canvas.expand_indices_to_groups(indices)
-        self.canvas.selected_indices = valid_indices
-
-        if len(valid_indices) == 1:
-            self.project_panel.set_selected(valid_indices[0])
-            self.canvas.contour_selected.emit(valid_indices[0])
-        else:
-            self.project_panel.clear_selection()
-            self.canvas.selection_cleared.emit()
-
-        self.canvas.update()
+        active_index = valid_indices[0] if valid_indices else None
+        self.canvas.set_selected_indices(valid_indices, active_index=active_index)
 
     # =========================================================================
     # 事件处理
@@ -1851,9 +1852,7 @@ class MainWindow(QMainWindow):
             self.contours[idx].group_id = group_id
         cmd.capture_after()
         self.undo_manager.push(cmd, execute=False)
-        self.canvas.selected_indices = selected
-        self.canvas.contour_selected.emit(selected[0])
-        self.canvas.update()
+        self._apply_contour_selection(selected)
         self.project_panel.update_contours(self.contours)
 
     def _on_ungroup(self):
@@ -1872,9 +1871,7 @@ class MainWindow(QMainWindow):
             self.contours[idx].group_id = ""
         cmd.capture_after()
         self.undo_manager.push(cmd, execute=False)
-        self.canvas.selected_indices = selected
-        self.canvas.contour_selected.emit(selected[0])
-        self.canvas.update()
+        self._apply_contour_selection(selected)
         self.project_panel.update_contours(self.contours)
 
     def _on_text(self):

@@ -11,7 +11,7 @@ from __future__ import annotations
 from typing import List
 
 from PySide6.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QLabel,
+    QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel,
     QScrollArea, QPushButton, QFrame
 )
 from PySide6.QtCore import Qt, Signal, QSize
@@ -141,6 +141,7 @@ class ProjectPanel(QWidget):
     """项目面板"""
 
     contour_selected = Signal(int)  # 轮廓选中信号
+    selection_changed = Signal(list)  # 选中列表变化信号
     contour_deleted = Signal(int)  # 轮廓删除信号
     import_clicked = Signal()  # 导入点击信号
     order_changed = Signal(list)  # 顺序变化信号
@@ -151,7 +152,7 @@ class ProjectPanel(QWidget):
 
         self._contours: List[Contour] = []
         self._items: List[ShapeListItem] = []
-        self._selected_index: int = -1
+        self._selected_indices: List[int] = []
 
         self._init_ui()
 
@@ -262,22 +263,31 @@ class ProjectPanel(QWidget):
         # 添加stretch
         self.list_layout.addStretch()
 
-        # 更新选中状态
-        if self._selected_index >= 0 and self._selected_index < len(self._items):
-            self._items[self._selected_index].set_selected(True)
+        self._selected_indices = self._normalize_selected_indices(
+            self._selected_indices,
+            len(self._items),
+        )
+        self._refresh_selection_styles()
 
     def _on_item_clicked(self, index: int):
         """项目点击"""
-        # 取消之前的选中
-        if self._selected_index >= 0 and self._selected_index < len(self._items):
-            self._items[self._selected_index].set_selected(False)
+        if Qt.KeyboardModifier.ControlModifier in QApplication.keyboardModifiers():
+            selected = list(self._selected_indices)
+            if index in selected:
+                selected = [idx for idx in selected if idx != index]
+            else:
+                selected.append(index)
+        else:
+            selected = [index]
 
-        # 选中新项
-        self._selected_index = index
-        if index >= 0 and index < len(self._items):
-            self._items[index].set_selected(True)
-
-        self.contour_selected.emit(index)
+        self._selected_indices = self._normalize_selected_indices(
+            selected,
+            len(self._items),
+        )
+        self._refresh_selection_styles()
+        self.selection_changed.emit(list(self._selected_indices))
+        if index in self._selected_indices:
+            self.contour_selected.emit(index)
 
     def _on_item_delete(self, index: int):
         """删除项目"""
@@ -285,23 +295,41 @@ class ProjectPanel(QWidget):
 
     def get_selected_indices(self) -> List[int]:
         """获取选中的索引"""
-        if self._selected_index >= 0:
-            return [self._selected_index]
-        return []
+        return self._normalize_selected_indices(self._selected_indices, len(self._items))
+
+    @staticmethod
+    def _normalize_selected_indices(indices: List[int], upper_bound: int) -> List[int]:
+        """去重并过滤非法索引，保持原有顺序。"""
+        normalized: List[int] = []
+        seen = set()
+        for idx in indices:
+            if 0 <= idx < upper_bound and idx not in seen:
+                normalized.append(idx)
+                seen.add(idx)
+        return normalized
+
+    def _refresh_selection_styles(self):
+        """刷新列表项选中样式。"""
+        selected = set(self.get_selected_indices())
+        for idx, item in enumerate(self._items):
+            item.set_selected(idx in selected)
+
+    def set_selected_indices(self, indices: List[int]):
+        """程序化设置选中项，不触发 selection_changed。"""
+        normalized: List[int] = []
+        seen = set()
+        for idx in indices:
+            if idx >= 0 and idx not in seen:
+                normalized.append(idx)
+                seen.add(idx)
+
+        self._selected_indices = normalized
+        self._refresh_selection_styles()
 
     def set_selected(self, index: int):
         """设置选中项"""
-        # 取消之前的选中
-        if self._selected_index >= 0 and self._selected_index < len(self._items):
-            self._items[self._selected_index].set_selected(False)
-
-        # 选中新项
-        self._selected_index = index
-        if index >= 0 and index < len(self._items):
-            self._items[index].set_selected(True)
+        self.set_selected_indices([index])
 
     def clear_selection(self):
         """清除选择"""
-        if self._selected_index >= 0 and self._selected_index < len(self._items):
-            self._items[self._selected_index].set_selected(False)
-        self._selected_index = -1
+        self.set_selected_indices([])

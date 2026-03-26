@@ -51,6 +51,44 @@ def test_canvas_click_selects_entire_group(qapp):
     assert canvas.selected_indices == [0, 1]
 
 
+def test_canvas_selection_syncs_project_panel(qapp):
+    window = MainWindow()
+    window.contours = [
+        _rect_contour(0, 0, 10, 10, "A"),
+        _rect_contour(20, 0, 30, 10, "B"),
+        _rect_contour(40, 0, 50, 10, "C"),
+    ]
+    window.contours[0].group_id = "g1"
+    window.contours[1].group_id = "g1"
+    window.canvas.set_contours(window.contours, center_on_platform=False)
+    window.project_panel.update_contours(window.contours)
+
+    window.canvas._handle_selection(window.canvas._world_to_screen(QPointF(1, 1)))
+
+    assert window.canvas.selected_indices == [0, 1]
+    assert window.project_panel.get_selected_indices() == [0, 1]
+
+    window.close()
+
+
+def test_project_panel_selection_syncs_canvas(qapp):
+    window = MainWindow()
+    window.contours = [
+        _rect_contour(0, 0, 10, 10, "A"),
+        _rect_contour(20, 0, 30, 10, "B"),
+        _rect_contour(40, 0, 50, 10, "C"),
+    ]
+    window.canvas.set_contours(window.contours, center_on_platform=False)
+    window.project_panel.update_contours(window.contours)
+
+    window.project_panel._on_item_clicked(1)
+
+    assert window.project_panel.get_selected_indices() == [1]
+    assert window.canvas.selected_indices == [1]
+
+    window.close()
+
+
 def test_main_window_group_and_ungroup_support_undo(qapp):
     window = MainWindow()
     window.contours = [
