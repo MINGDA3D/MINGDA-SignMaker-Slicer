@@ -201,6 +201,12 @@ class ParamPanel(QWidget):
 
         layer_height = self._current_layer_height()
 
+        if hasattr(self, "baseplate_spin"):
+            self.baseplate_spin.setMaximum(max(0, math.ceil(50.0 / layer_height)))
+
+        if hasattr(self, "panel_thickness_spin"):
+            self.panel_thickness_spin.setMaximum(max(0, math.ceil(20.0 / layer_height)))
+
         if hasattr(self, "bottom_face_thickness"):
             self.bottom_face_thickness.setMaximum(max(1, math.ceil(10.0 / layer_height)))
 
@@ -208,14 +214,14 @@ class ParamPanel(QWidget):
             self.light_slot_depth.setMaximum(max(1, math.ceil(20.0 / layer_height)))
 
         if hasattr(self, "top_face_thickness"):
-            self.top_face_thickness.setMaximum(10.0)
+            self.top_face_thickness.setMaximum(max(1, math.ceil(10.0 / layer_height)))
 
         if hasattr(self, "panel_step_height") and hasattr(self, "baseplate_step_height"):
             self._update_step_ranges()
 
         if hasattr(self, "connected_height") and hasattr(self, "connected_base_height"):
             max_connected_layers = max(1, math.ceil(20.0 / layer_height))
-            self.connected_height.setMaximum(20.0)
+            self.connected_height.setMaximum(max_connected_layers)
             self.connected_base_height.setMaximum(max_connected_layers)
 
     def _on_layer_height_changed(self, value: float):
@@ -318,18 +324,24 @@ class ParamPanel(QWidget):
         bevel_layout.addRow(self.tr("Bevel Width:"), self.bevel_width_spin)
 
         # 底板厚度
-        self.baseplate_spin = self._create_double_spinbox()
-        self.baseplate_spin.setRange(0, 50)
-        self.baseplate_spin.setValue(10)
-        self.baseplate_spin.setSuffix(" mm")
+        self.baseplate_spin = self._create_int_spinbox()
+        self._configure_layer_count_spin(
+            self.baseplate_spin,
+            0,
+            max(0, self._height_to_layers(50.0, minimum=0)),
+            self._height_to_layers(10.0, minimum=0),
+        )
         self.baseplate_spin.valueChanged.connect(self._on_param_changed)
         bevel_layout.addRow(self.tr("Baseplate Thickness:"), self.baseplate_spin)
 
         # 面板厚度
-        self.panel_thickness_spin = self._create_double_spinbox()
-        self.panel_thickness_spin.setRange(0, 20)
-        self.panel_thickness_spin.setValue(3)
-        self.panel_thickness_spin.setSuffix(" mm")
+        self.panel_thickness_spin = self._create_int_spinbox()
+        self._configure_layer_count_spin(
+            self.panel_thickness_spin,
+            0,
+            max(0, self._height_to_layers(20.0, minimum=0)),
+            self._height_to_layers(3.0, minimum=0),
+        )
         self.panel_thickness_spin.valueChanged.connect(self._on_param_changed)
         bevel_layout.addRow(self.tr("Panel Thickness:"), self.panel_thickness_spin)
 
@@ -593,12 +605,14 @@ class ParamPanel(QWidget):
         form.setSpacing(8)
 
         # 顶面厚度
-        self.top_face_thickness = self._create_double_spinbox()
-        self.top_face_thickness.setRange(0.1, 10.0)
-        self.top_face_thickness.setValue(1.0)
-        self.top_face_thickness.setSingleStep(0.1)
-        self.top_face_thickness.setSuffix(" mm")
-        self.top_face_thickness.setEnabled(False)
+        self.top_face_thickness = self._create_int_spinbox()
+        self._configure_layer_count_spin(
+            self.top_face_thickness,
+            1,
+            self._height_to_layers(10.0),
+            self._height_to_layers(1.0),
+            enabled=False,
+        )
         self.top_face_thickness.valueChanged.connect(self._on_param_changed)
         form.addRow(self.tr("Top Thickness:"), self.top_face_thickness)
 
@@ -926,12 +940,14 @@ class ParamPanel(QWidget):
         form.addRow(self.tr("Connection Width:"), self.connected_width)
 
         # 斜边高度
-        self.connected_height = self._create_double_spinbox()
-        self.connected_height.setRange(0.1, 20.0)
-        self.connected_height.setValue(5.0)
-        self.connected_height.setSingleStep(0.1)
-        self.connected_height.setSuffix(" mm")
-        self.connected_height.setEnabled(False)
+        self.connected_height = self._create_int_spinbox()
+        self._configure_layer_count_spin(
+            self.connected_height,
+            1,
+            self._height_to_layers(20.0),
+            self._height_to_layers(5.0),
+            enabled=False,
+        )
         self.connected_height.valueChanged.connect(self._on_param_changed)
         form.addRow(self.tr("Bevel Height:"), self.connected_height)
 
@@ -1270,8 +1286,8 @@ class ParamPanel(QWidget):
         # 边缘参数
         self._params.shell.edge_type = self.edge_type_combo.currentData()
         self._params.shell.bevel_direction = self.bevel_direction_combo.currentData()
-        self._params.shell.baseplate_thickness = self.baseplate_spin.value()
-        self._params.shell.panel_thickness = self.panel_thickness_spin.value()
+        self._params.shell.baseplate_thickness = self._layers_to_mm(self.baseplate_spin.value())
+        self._params.shell.panel_thickness = self._layers_to_mm(self.panel_thickness_spin.value())
         self._params.shell.dxf_outer_clearance = self.dxf_outer_clearance_spin.value()
         self._params.shell.dxf_hole_clearance = self.dxf_hole_clearance_spin.value()
         self._params.shell.dxf_laser_kerf = self.dxf_laser_kerf_spin.value()
@@ -1333,7 +1349,7 @@ class ParamPanel(QWidget):
         self._params.connected.type = self.connected_type.currentData()
         self._params.connected.auto_detect = self.connected_auto_detect.isChecked()
         self._params.connected.width = self.connected_width.value()
-        self._params.connected.height = self.connected_height.value()
+        self._params.connected.height = self._layers_to_mm(self.connected_height.value())
         self._params.connected.base_height = self._layers_to_mm(self.connected_base_height.value())
         self._params.connected.support_offset = self.connected_support_offset.value()
 
@@ -1381,7 +1397,7 @@ class ParamPanel(QWidget):
 
         # 顶面封闭参数
         self._params.top_face.enabled = self.top_face_enabled.isChecked()
-        self._params.top_face.thickness = self.top_face_thickness.value()
+        self._params.top_face.thickness = self._layers_to_mm(self.top_face_thickness.value())
 
     def get_params(self) -> SliceParams:
         """获取当前参数"""
@@ -1471,8 +1487,8 @@ class ParamPanel(QWidget):
         if bevel_dir_index >= 0:
             self.bevel_direction_combo.setCurrentIndex(bevel_dir_index)
         self.bevel_width_spin.setValue(params.shell.bevel_width)
-        self.baseplate_spin.setValue(params.shell.baseplate_thickness)
-        self.panel_thickness_spin.setValue(params.shell.panel_thickness)
+        self.baseplate_spin.setValue(self._height_to_layers(params.shell.baseplate_thickness, minimum=0))
+        self.panel_thickness_spin.setValue(self._height_to_layers(params.shell.panel_thickness, minimum=0))
         self.dxf_outer_clearance_spin.setValue(params.shell.dxf_outer_clearance)
         self.dxf_hole_clearance_spin.setValue(params.shell.dxf_hole_clearance)
         self.dxf_laser_kerf_spin.setValue(params.shell.dxf_laser_kerf)
@@ -1497,7 +1513,7 @@ class ParamPanel(QWidget):
             self.connected_type.setCurrentIndex(connected_type_index)
         self.connected_auto_detect.setChecked(params.connected.auto_detect)
         self.connected_width.setValue(params.connected.width)
-        self.connected_height.setValue(params.connected.height)
+        self.connected_height.setValue(self._height_to_layers(params.connected.height))
         self.connected_base_height.setValue(self._height_to_layers(params.connected.base_height))
         self.connected_support_offset.setValue(params.connected.support_offset)
         self.connected_enabled.setChecked(params.connected.enabled)
@@ -1551,7 +1567,7 @@ class ParamPanel(QWidget):
 
         # 顶面封闭参数
         self.top_face_enabled.setChecked(params.top_face.enabled)
-        self.top_face_thickness.setValue(params.top_face.thickness)
+        self.top_face_thickness.setValue(self._height_to_layers(params.top_face.thickness))
 
         # 恢复信号
         for w in widgets:

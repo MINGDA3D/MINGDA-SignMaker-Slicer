@@ -272,6 +272,8 @@ def test_set_params_converts_layer_based_heights_to_layer_counts(qapp):
     params = SliceParams()
     params.shell.layer_height = 0.5
     params.shell.height = 40.0
+    params.shell.baseplate_thickness = 10.0
+    params.shell.panel_thickness = 3.0
     params.step.panel_step_enabled = True
     params.step.panel_step_height = 25.0
     params.step.baseplate_step_enabled = True
@@ -286,11 +288,13 @@ def test_set_params_converts_layer_based_heights_to_layer_counts(qapp):
     panel.set_params(params)
 
     assert panel.height_spin.value() == pytest.approx(40.0)
+    assert panel.baseplate_spin.value() == 20
+    assert panel.panel_thickness_spin.value() == 6
     assert panel.panel_step_height.value() == pytest.approx(25.0)
     assert panel.baseplate_step_height.value() == 4
     assert panel.bottom_face_thickness.value() == 2
     assert panel.light_slot_depth.value() == 6
-    assert panel.top_face_thickness.value() == pytest.approx(1.5)
+    assert panel.top_face_thickness.value() == 3
 
 
 def test_set_params_converts_connected_heights_to_layer_counts(qapp):
@@ -303,7 +307,7 @@ def test_set_params_converts_connected_heights_to_layer_counts(qapp):
 
     panel.set_params(params)
 
-    assert panel.connected_height.value() == pytest.approx(3.0)
+    assert panel.connected_height.value() == 6
     assert panel.connected_base_height.value() == 4
 
 
@@ -312,19 +316,23 @@ def test_get_params_uses_layer_counts_to_derive_mm_heights(qapp):
 
     panel.layer_height_spin.setValue(0.25)
     panel.height_spin.setValue(30.0)
+    panel.baseplate_spin.setValue(20)
+    panel.panel_thickness_spin.setValue(8)
     panel.bottom_face_enabled.setChecked(True)
     panel.bottom_face_thickness.setValue(4)
     panel.light_slot_enabled.setChecked(True)
     panel.light_slot_depth.setValue(10)
     panel.top_face_enabled.setChecked(True)
-    panel.top_face_thickness.setValue(1.5)
+    panel.top_face_thickness.setValue(4)
 
     params = panel.get_params()
 
     assert params.shell.height == pytest.approx(30.0)
+    assert params.shell.baseplate_thickness == pytest.approx(5.0)
+    assert params.shell.panel_thickness == pytest.approx(2.0)
     assert params.bottom_face.thickness == pytest.approx(1.0)
     assert params.light_slot.depth == pytest.approx(2.5)
-    assert params.top_face.thickness == pytest.approx(1.5)
+    assert params.top_face.thickness == pytest.approx(1.0)
 
 
 def test_get_params_uses_layer_counts_for_step_heights(qapp):
@@ -366,7 +374,7 @@ def test_get_params_uses_layer_counts_for_connected_heights(qapp):
 
     panel.layer_height_spin.setValue(0.25)
     panel.connected_enabled.setChecked(True)
-    panel.connected_height.setValue(3.0)
+    panel.connected_height.setValue(12)
     panel.connected_base_height.setValue(8)
 
     params = panel.get_params()
