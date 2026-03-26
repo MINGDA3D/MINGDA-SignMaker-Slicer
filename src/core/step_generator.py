@@ -99,81 +99,135 @@ class StepGenerator:
         paths.extend(step_paths)
         return paths
 
+    def _create_step_paths_for_width(
+        self,
+        contour: Contour,
+        width: float,
+        role: PathRole,
+        wall_thickness: float,
+        extruder: ExtruderType,
+        speed_multiplier: float,
+    ) -> List[LayerPath]:
+        """Generate one closed ring with the requested effective width."""
+        if width <= 0.0:
+            return []
+
+        offset = -(wall_thickness / 2 + width / 2)
+        paths: List[LayerPath] = []
+
+        for offset_path in self.path_offset.offset(
+            contour.outer, offset, JoinType.MITER
+        ):
+            paths.append(
+                LayerPath(
+                    points=offset_path.points,
+                    role=role,
+                    extruder=extruder,
+                    line_width=width,
+                    is_closed=True,
+                    speed_multiplier=speed_multiplier,
+                )
+            )
+
+        for hole in contour.holes:
+            for hole_path in self.path_offset.offset(
+                hole, -offset, JoinType.MITER
+            ):
+                paths.append(
+                    LayerPath(
+                        points=hole_path.points,
+                        role=role,
+                        extruder=extruder,
+                        line_width=width,
+                        is_closed=True,
+                        speed_multiplier=speed_multiplier,
+                    )
+                )
+
+        return paths
+
+    def _compute_v_step_width(
+        self,
+        step_width: float,
+        step_height: float,
+        step_start: float,
+        layer_bottom: float,
+        layer_top: float,
+        layer_height: float,
+        full_width_at_end: bool = True,
+    ) -> float:
+        """Compute the effective width for one V-step layer.
+
+        V-groove uses a fixed 10-layer ramp. The ramp is anchored to the step
+        boundary where the ledge is widest, so the whole V-step occupies at most
+        10 layers instead of turning into a long full-width platform.
+        """
+        if step_width <= 0.0 or step_height <= 0.0:
+            return 0.0
+
+        ramp_height = min(step_height, max(layer_height, 0.0) * 10.0)
+        if ramp_height <= 0.0:
+            return step_width
+
+        step_end = step_start + step_height
+        if full_width_at_end:
+            ramp_start = max(step_start, step_end - ramp_height)
+            if layer_top <= ramp_start or layer_bottom >= step_end:
+                return 0.0
+            local_top = min(layer_top, step_end)
+            progress = (local_top - ramp_start) / ramp_height
+        else:
+            ramp_end = min(step_end, step_start + ramp_height)
+            if layer_top <= step_start or layer_bottom >= ramp_end:
+                return 0.0
+            local_bottom = max(layer_bottom, step_start)
+            progress = (ramp_end - local_bottom) / ramp_height
+
+        progress = max(0.0, min(1.0, progress))
+        return step_width * progress
+
     def _generate_v_step(self, contour: Contour,
                          step_config: StepConfig,
                          params: StepParams,
                          wall_thickness: float,
                          extrusion_width: float,
-                         extruder: ExtruderType) -> List[LayerPath]:
-        """
-        生成V型台阶
-
-        V型台阶结构：
-                    壁
-                   ┌─┐
-        step_end → │╲│  ← 台阶顶部（无偏移）
-                   │ ╲
-                   │  ╲ ← V槽斜面（逐层偏移）
-                   │   ╲
-        step_pos → │    ╲ ← 台阶底部（最大偏移）
-                   │    │
-                   └────┘
-
-        V型台阶需要多层偏移形成斜面
-        """
+                         extruder: ExtruderType,
+                         full_width_at_end: bool = True) -> List[LayerPath]:
+        """Generate all layer rings for a sloped V-step."""
         paths = []
 
         step_width = step_config.width
         step_height = step_config.height
         step_thickness = params.step_thickness
-
-        # 计算需要多少层形成V槽
         layers = max(int(step_height / step_thickness), 1)
+        layer_step_height = step_height / layers if layers > 0 else step_height
 
         for i in range(layers):
-            # 计算当前层的偏移量
-            # 从底部(i=0)最大偏移，到顶部(i=layers-1)最小偏移
-            progress = (i + 1) / layers
-            current_width = step_width * (1.0 - progress)
+            layer_bottom = i * layer_step_height
+            layer_top = (i + 1) * layer_step_height
+            current_width = self._compute_v_step_width(
+                step_width=step_width,
+                step_height=step_height,
+                step_start=0.0,
+                layer_bottom=layer_bottom,
+                layer_top=layer_top,
+                layer_height=layer_step_height,
+                full_width_at_end=full_width_at_end,
+            )
 
             if current_width < 0.1:
                 continue
 
-            # 从壁内侧向内偏移
-            # 壁的内边缘在 -wall_thickness/2 位置
-            offset = -(wall_thickness / 2 + current_width / 2)
-
-            # 偏移外轮廓
-            offset_paths = self.path_offset.offset(
-                contour.outer, offset, JoinType.MITER
-            )
-
-            for offset_path in offset_paths:
-                layer_path = LayerPath(
-                    points=offset_path.points,
+            paths.extend(
+                self._create_step_paths_for_width(
+                    contour=contour,
+                    width=current_width,
                     role=PathRole.V_GROOVE,
+                    wall_thickness=wall_thickness,
                     extruder=extruder,
-                    line_width=current_width,
-                    is_closed=True,
-                    speed_multiplier=0.7  # V槽打印稍慢
+                    speed_multiplier=0.7,
                 )
-                paths.append(layer_path)
-
-            # 偏移内孔（方向相反）
-            for hole in contour.holes:
-                hole_offset_paths = self.path_offset.offset(
-                    hole, -offset, JoinType.MITER
-                )
-                for hole_path in hole_offset_paths:
-                    layer_path = LayerPath(
-                        points=hole_path.points,
-                        role=PathRole.V_GROOVE,
-                        extruder=extruder,
-                        line_width=current_width,
-                        is_closed=True,
-                        speed_multiplier=0.7
-                    )
-                    paths.append(layer_path)
+            )
 
         return paths
 
@@ -182,61 +236,16 @@ class StepGenerator:
                             wall_thickness: float,
                             extrusion_width: float,
                             extruder: ExtruderType) -> List[LayerPath]:
-        """
-        生成平台阶
-
-        平台阶结构：
-                    壁
-                   ┌─┐
-                   │ │
-                   │ ├───── ← 平台阶（固定宽度水平延伸）
-                   │ │
-                   │ │
-                   └─┘
-
-        平台阶是水平的台阶面，宽度固定
-        """
-        paths = []
+        """Generate one constant-width step ring."""
         step_width = step_config.width
-
-        # 从壁内侧向内偏移
-        # 壁的内边缘在 -wall_thickness/2 位置
-        # 台阶中心线位置 = -wall_thickness/2 - step_width/2
-        offset = -(wall_thickness / 2 + step_width / 2)
-
-        # 偏移外轮廓生成台阶
-        offset_paths = self.path_offset.offset(
-            contour.outer, offset, JoinType.MITER
+        return self._create_step_paths_for_width(
+            contour=contour,
+            width=step_width,
+            role=PathRole.STEP,
+            wall_thickness=wall_thickness,
+            extruder=extruder,
+            speed_multiplier=0.8,
         )
-
-        for offset_path in offset_paths:
-            layer_path = LayerPath(
-                points=offset_path.points,
-                role=PathRole.STEP,
-                extruder=extruder,
-                line_width=step_width,
-                is_closed=True,
-                speed_multiplier=0.8  # 台阶打印稍慢
-            )
-            paths.append(layer_path)
-
-        # 内孔的平台阶（方向相反：向外延伸）
-        for hole in contour.holes:
-            hole_offset_paths = self.path_offset.offset(
-                hole, -offset, JoinType.MITER
-            )
-            for hole_path in hole_offset_paths:
-                layer_path = LayerPath(
-                    points=hole_path.points,
-                    role=PathRole.STEP,
-                    extruder=extruder,
-                    line_width=step_width,
-                    is_closed=True,
-                    speed_multiplier=0.8
-                )
-                paths.append(layer_path)
-
-        return paths
 
     def generate_step_for_layer(self, contour: Contour,
                                  z_height: float,
@@ -244,24 +253,9 @@ class StepGenerator:
                                  step_config: StepConfig,
                                  params: StepParams,
                                  wall_thickness: float = 1.2,
-                                 extruder: ExtruderType = ExtruderType.EXTRUDER_1) -> List[LayerPath]:
-        """
-        为指定层生成台阶路径（用于逐层切片）
-
-        根据当前层高度判断是否需要生成台阶，并计算正确的偏移量
-
-        Args:
-            contour: 轮廓
-            z_height: 当前层高度
-            layer_height: 层高
-            step_config: 台阶配置
-            params: 台阶参数
-            wall_thickness: 壁厚
-            extruder: 挤出机
-
-        Returns:
-            台阶路径列表
-        """
+                                 extruder: ExtruderType = ExtruderType.EXTRUDER_1,
+                                 full_width_at_end: bool = True) -> List[LayerPath]:
+        """Generate step paths for one sliced layer."""
         paths = []
 
         if not step_config.enabled:
@@ -272,75 +266,41 @@ class StepGenerator:
         step_width = step_config.width
         is_v_groove = step_config.is_v_groove
 
-        # 台阶的Z范围
         step_start = step_position
         step_end = step_position + max(step_height, layer_height)
-
-        # 当前层的Z范围
         layer_bottom = z_height
         layer_top = z_height + layer_height
 
-        # 检查当前层是否与台阶区域重叠
         if layer_top <= step_start or layer_bottom >= step_end:
             return paths
 
-        if is_v_groove and step_height > layer_height:
-            # V槽：根据层在V槽中的位置计算偏移
-            layer_center = z_height + layer_height / 2
-
-            # progress: 0=V槽底部（最大偏移），1=V槽顶部（无偏移）
-            if step_height > 0:
-                progress = (layer_center - step_start) / step_height
-                progress = max(0.0, min(1.0, progress))
-            else:
-                progress = 0.5
-
-            current_width = step_width * (1.0 - progress)
+        if is_v_groove and step_height > 0:
+            current_width = self._compute_v_step_width(
+                step_width=step_width,
+                step_height=step_height,
+                step_start=step_start,
+                layer_bottom=layer_bottom,
+                layer_top=layer_top,
+                layer_height=layer_height,
+                full_width_at_end=full_width_at_end,
+            )
 
             if current_width < 0.1:
                 return paths
 
-            # 生成V槽路径
-            offset = -(wall_thickness / 2 + current_width / 2)
-
-            offset_paths = self.path_offset.offset(
-                contour.outer, offset, JoinType.MITER
+            return self._create_step_paths_for_width(
+                contour=contour,
+                width=current_width,
+                role=PathRole.V_GROOVE,
+                wall_thickness=wall_thickness,
+                extruder=extruder,
+                speed_multiplier=0.7,
             )
 
-            for offset_path in offset_paths:
-                layer_path = LayerPath(
-                    points=offset_path.points,
-                    role=PathRole.V_GROOVE,
-                    extruder=extruder,
-                    line_width=current_width,
-                    is_closed=True,
-                    speed_multiplier=0.7
-                )
-                paths.append(layer_path)
-
-            # 内孔
-            for hole in contour.holes:
-                hole_offset_paths = self.path_offset.offset(
-                    hole, -offset, JoinType.MITER
-                )
-                for hole_path in hole_offset_paths:
-                    layer_path = LayerPath(
-                        points=hole_path.points,
-                        role=PathRole.V_GROOVE,
-                        extruder=extruder,
-                        line_width=current_width,
-                        is_closed=True,
-                        speed_multiplier=0.7
-                    )
-                    paths.append(layer_path)
-        else:
-            # 平台阶
-            paths = self._generate_flat_step(
-                contour, step_config,
-                wall_thickness, params.extrusion_width, extruder
-            )
-
-        return paths
+        return self._generate_flat_step(
+            contour, step_config,
+            wall_thickness, params.extrusion_width, extruder
+        )
 
     def get_step_layers(self, params: StepParams,
                         total_height: float,
@@ -559,7 +519,7 @@ class StepGenerator:
         为指定层生成面板台阶路径（顶部台阶）
 
         面板台阶位于字壳顶部，用于安装亚克力面板。
-        台阶从 (total_height - panel_step_height) 开始，到 total_height 结束。
+        普通台阶保持顶部区间逻辑；V槽使用固定10层斜坡区间。
 
         Args:
             contour: 轮廓
@@ -585,9 +545,15 @@ class StepGenerator:
         if step_height < min_step_height:
             step_height = min_step_height
 
-        # 台阶区域：从 (总高度 - 台阶高度) 到 总高度
-        step_start = total_height - step_height
-        step_end = total_height
+        if is_v_groove:
+            # V槽区间：从 min(panel_step_height - 10层高度, 0) 到 panel_step_height
+            step_start = min(step_height - layer_height * 10, 0)
+            step_end = step_height
+            step_height = step_end - step_start
+        else:
+            # 普通台阶保持原来的顶部区间逻辑
+            step_start = total_height - step_height
+            step_end = total_height
 
         # 当前层范围
         layer_bottom = z_height
@@ -609,7 +575,8 @@ class StepGenerator:
         return self.generate_step_for_layer(
             contour, z_height, layer_height,
             step_config, params,
-            wall_thickness, extruder
+            wall_thickness, extruder,
+            full_width_at_end=True
         )
 
     def generate_baseplate_step_for_layer(self, contour: Contour,
@@ -673,5 +640,6 @@ class StepGenerator:
         return self.generate_step_for_layer(
             contour, z_height, layer_height,
             step_config, params,
-            wall_thickness, extruder
+            wall_thickness, extruder,
+            full_width_at_end=True
         )

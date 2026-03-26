@@ -508,6 +508,111 @@ class TestStepGenerator:
         assert len(paths) > 0
         assert paths[0].role == PathRole.V_GROOVE
 
+    def test_panel_v_groove_grows_toward_configured_height(self, step_generator, simple_contour):
+        step_params = StepParams(
+            enabled=True,
+            panel_step_enabled=True,
+            panel_step_height=6.0,
+            panel_step_width=3.0,
+            panel_step_is_v_groove=True,
+            extrusion_width=1.2,
+        )
+
+        lower_paths = step_generator.generate_panel_step_for_layer(
+            simple_contour,
+            z_height=0.0,
+            layer_height=1.0,
+            total_height=10.0,
+            params=step_params,
+            wall_thickness=1.2,
+        )
+        upper_paths = step_generator.generate_panel_step_for_layer(
+            simple_contour,
+            z_height=5.0,
+            layer_height=1.0,
+            total_height=10.0,
+            params=step_params,
+            wall_thickness=1.2,
+        )
+
+        assert lower_paths
+        assert upper_paths
+        assert lower_paths[0].role == PathRole.V_GROOVE
+        assert lower_paths[0].line_width < upper_paths[0].line_width
+
+    def test_baseplate_v_groove_grows_toward_upper_boundary(self, step_generator, simple_contour):
+        step_params = StepParams(
+            enabled=True,
+            baseplate_step_enabled=True,
+            baseplate_step_height=4.0,
+            baseplate_step_width=3.0,
+            baseplate_step_is_v_groove=True,
+            extrusion_width=1.2,
+        )
+
+        lower_paths = step_generator.generate_baseplate_step_for_layer(
+            simple_contour,
+            z_height=0.0,
+            layer_height=1.0,
+            total_height=10.0,
+            params=step_params,
+            wall_thickness=1.2,
+        )
+        upper_paths = step_generator.generate_baseplate_step_for_layer(
+            simple_contour,
+            z_height=3.0,
+            layer_height=1.0,
+            total_height=10.0,
+            params=step_params,
+            wall_thickness=1.2,
+        )
+
+        assert lower_paths
+        assert upper_paths
+        assert lower_paths[0].role == PathRole.V_GROOVE
+        assert lower_paths[0].line_width < upper_paths[0].line_width
+
+    def test_v_groove_reaches_full_width_after_ten_layers(self, step_generator, simple_contour):
+        step_params = StepParams(
+            enabled=True,
+            baseplate_step_enabled=True,
+            baseplate_step_height=15.0,
+            baseplate_step_width=3.0,
+            baseplate_step_is_v_groove=True,
+            extrusion_width=1.2,
+        )
+
+        before_ramp_paths = step_generator.generate_baseplate_step_for_layer(
+            simple_contour,
+            z_height=0.0,
+            layer_height=1.0,
+            total_height=30.0,
+            params=step_params,
+            wall_thickness=1.2,
+        )
+        ramp_paths = step_generator.generate_baseplate_step_for_layer(
+            simple_contour,
+            z_height=9.0,
+            layer_height=1.0,
+            total_height=30.0,
+            params=step_params,
+            wall_thickness=1.2,
+        )
+        final_paths = step_generator.generate_baseplate_step_for_layer(
+            simple_contour,
+            z_height=14.0,
+            layer_height=1.0,
+            total_height=30.0,
+            params=step_params,
+            wall_thickness=1.2,
+        )
+
+        assert before_ramp_paths == []
+        assert ramp_paths
+        assert final_paths
+        assert ramp_paths[0].line_width < step_params.baseplate_step_width
+        assert final_paths[0].line_width == pytest.approx(step_params.baseplate_step_width)
+
     def test_step_with_hole(self, step_generator, contour_with_hole):
         """测试带内孔的台阶生成"""
         step_config = StepConfig(
@@ -757,7 +862,7 @@ class TestSliceEngineWithSteps:
         panel_step_found = False
         # 台阶应该在 (30 - 5) = 25mm 到 30mm 之间
         for layer in result.layers:
-            if layer.z_height >= 25.0:  # 顶部区域
+            if layer.z_height >= 25.0:
                 for path in layer.paths:
                     if path.role in (PathRole.STEP, PathRole.V_GROOVE):
                         panel_step_found = True
@@ -766,6 +871,29 @@ class TestSliceEngineWithSteps:
                 break
 
         assert panel_step_found, "应该在顶部找到面板台阶路径"
+
+    def test_slice_with_panel_v_groove_ends_at_configured_height(self, engine, simple_contour):
+        params = SliceParams()
+        params.shell.height = 10.0
+        params.shell.layer_height = 1.0
+        params.shell.wall_thickness = 1.2
+        params.step.enabled = True
+        params.step.panel_step_enabled = True
+        params.step.panel_step_height = 6.0
+        params.step.panel_step_width = 3.0
+        params.step.panel_step_is_v_groove = True
+
+        result = engine.slice([simple_contour], params)
+
+        v_layers = [
+            layer.z_height
+            for layer in result.layers
+            if any(path.role == PathRole.V_GROOVE for path in layer.paths)
+        ]
+
+        assert v_layers
+        assert min(v_layers) == pytest.approx(0.0)
+        assert max(v_layers) == pytest.approx(5.0)
 
     def test_slice_with_baseplate_step(self, engine, simple_contour):
         """测试带底板台阶的切片"""
@@ -941,6 +1069,57 @@ class TestStepMeshBuilder:
         ]).difference(ShapelyPolygon(hole_coords))
 
         assert ring_geometry.area == pytest.approx(expected_region.area, rel=1e-6)
+
+    def test_build_uses_sliced_v_groove_layers_for_sloped_mesh(self, step_mesh_builder):
+        contour = Contour(
+            outer=Path(points=[
+                Point(0.0, 0.0),
+                Point(40.0, 0.0),
+                Point(40.0, 40.0),
+                Point(0.0, 40.0),
+            ], is_closed=True)
+        )
+        params = SliceParams()
+        params.shell.height = 10.0
+        params.shell.layer_height = 1.0
+        params.shell.wall_thickness = 1.2
+        params.step.panel_step_enabled = True
+        params.step.panel_step_height = 6.0
+        params.step.panel_step_width = 3.0
+        params.step.panel_step_is_v_groove = True
+
+        result = SliceEngine().slice([contour], params)
+        mesh = step_mesh_builder.build([contour], result, params)
+
+        assert mesh is not None
+        assert mesh.bounds[0][2] == pytest.approx(0.0)
+        assert mesh.bounds[1][2] == pytest.approx(6.0)
+        assert abs(mesh.volume) > 0.0
+        assert abs(mesh.volume) < 5000.0
+
+    def test_build_keeps_flat_panel_step_as_single_thin_ring(self, step_mesh_builder):
+        contour = Contour(
+            outer=Path(points=[
+                Point(0.0, 0.0),
+                Point(40.0, 0.0),
+                Point(40.0, 40.0),
+                Point(0.0, 40.0),
+            ], is_closed=True)
+        )
+        params = SliceParams()
+        params.shell.height = 30.0
+        params.shell.layer_height = 1.0
+        params.shell.wall_thickness = 1.2
+        params.step.panel_step_enabled = True
+        params.step.panel_step_height = 20.0
+        params.step.panel_step_width = 3.0
+
+        result = SliceEngine().slice([contour], params)
+        mesh = step_mesh_builder.build([contour], result, params)
+
+        assert mesh is not None
+        assert mesh.bounds[0][2] == pytest.approx(20.0)
+        assert mesh.bounds[1][2] == pytest.approx(21.1)
 
 
 class TestSTLExport:

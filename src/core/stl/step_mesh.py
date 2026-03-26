@@ -36,143 +36,212 @@ class StepMeshBuilder:
               params: SliceParams,
               panel_contours: Optional[List[Contour]] = None,
               baseplate_contours: Optional[List[Contour]] = None) -> Optional[trimesh.Trimesh]:
-        """
-        构建台阶网格
+        """Build flat step meshes from contours and V-groove meshes from sliced layers."""
+        meshes = []
+        meshes.extend(
+            self._build_flat_step_meshes(
+                contours,
+                params,
+                panel_contours=panel_contours,
+                baseplate_contours=baseplate_contours,
+            )
+        )
+        meshes.extend(self._build_v_groove_meshes_from_slices(result, params))
 
-        台阶结构（截面图）：
-            ┌──────────────────────┐  ← 顶部 (total_height)
-            │                      │
-            │  ┌────────────────┐  │  ← 面板台阶位置 (total_height - panel_step_height)
-            │  │  ← 薄薄一层    │  │     面板放在这个平台上
-            │  │                │  │
-            │  │    空心部分    │  │  ← 字壳主体
-            │  │                │  │
-            │  │  ← 薄薄一层    │  │     底板放在这个平台上
-            │  └────────────────┘  │  ← 底板台阶位置 (baseplate_step_height)
-            │                      │
-            └──────────────────────┘  ← 底部 (0)
+        return MeshUtils.merge_meshes(meshes)
 
-        Args:
-            contours: 原始轮廓列表
-            result: 切片结果
-            params: 切片参数
-            panel_contours: 面板台阶高度处经过边缘变换后的轮廓
-            baseplate_contours: 底板台阶高度处经过边缘变换后的轮廓
-
-        Returns:
-            台阶网格
-        """
+    def _build_flat_step_meshes(
+        self,
+        contours: List[Contour],
+        params: SliceParams,
+        panel_contours: Optional[List[Contour]] = None,
+        baseplate_contours: Optional[List[Contour]] = None,
+    ) -> List[trimesh.Trimesh]:
+        """Build ordinary flat step meshes with the original thin-ring behavior."""
         meshes = []
         total_height = params.shell.height
         wall_thickness = params.shell.wall_thickness
-
-        # 台阶厚度 = 层高 + 0.1mm
         step_thickness = params.shell.layer_height + 0.1
 
-        # 从切片结果中提取台阶层的壁位置
-        contour_wall_positions = self._extract_wall_positions_at_step_layers(
-            result, params, total_height, contours
-        )
-
-        # 使用变换后的轮廓（如果提供）或原始轮廓
         panel_contours_to_use = panel_contours if panel_contours else contours
         baseplate_contours_to_use = baseplate_contours if baseplate_contours else contours
 
         for contour_idx, contour in enumerate(contours):
             try:
-                outer_points = contour.outer.points
-                if not outer_points:
+                if not contour.outer.points:
                     continue
 
-                # ===== 面板台阶（顶部）=====
-                if params.step.panel_step_enabled and contour_idx < len(panel_contours_to_use):
+                if (
+                    params.step.panel_step_enabled
+                    and not params.step.panel_step_is_v_groove
+                    and contour_idx < len(panel_contours_to_use)
+                ):
                     panel_z = params.step.panel_step_height
                     min_panel_z = total_height / 2
                     if panel_z < min_panel_z:
                         panel_z = min_panel_z
                     if 0 <= panel_z < total_height:
-                        # 使用变换后的轮廓
-                        transformed_contour = panel_contours_to_use[contour_idx]
-                        inner_wall_results = self.path_offset.offset(transformed_contour.outer, -wall_thickness)
-                        if inner_wall_results:
-                            inner_wall_coords = [(p.x, p.y) for p in inner_wall_results[0].points]
-                            if inner_wall_coords and inner_wall_coords[0] != inner_wall_coords[-1]:
-                                inner_wall_coords.append(inner_wall_coords[0])
-
-                            panel_mesh = self._create_thin_step_ring(
-                                inner_wall_coords,
+                        meshes.extend(
+                            self._build_flat_step_meshes_for_contour(
+                                panel_contours_to_use[contour_idx],
                                 step_width=params.step.panel_step_width,
                                 step_thickness=step_thickness,
                                 z_position=panel_z,
-                                is_hole=False
+                                wall_thickness=wall_thickness,
                             )
-                            if panel_mesh is not None:
-                                meshes.append(panel_mesh)
+                        )
 
-                        # 处理内孔
-                        for hole in transformed_contour.holes:
-                            # 内孔的壁内边缘就是变换后的孔本身
-                            hole_inner_coords = [(p.x, p.y) for p in hole.points]
-                            if hole_inner_coords and hole_inner_coords[0] != hole_inner_coords[-1]:
-                                hole_inner_coords.append(hole_inner_coords[0])
-
-                            hole_panel_mesh = self._create_thin_step_ring(
-                                hole_inner_coords,
-                                step_width=params.step.panel_step_width,
-                                step_thickness=step_thickness,
-                                z_position=panel_z,
-                                is_hole=True
-                            )
-                            if hole_panel_mesh is not None:
-                                meshes.append(hole_panel_mesh)
-
-                # ===== 底板台阶（底部）=====
-                if params.step.baseplate_step_enabled and contour_idx < len(baseplate_contours_to_use):
+                if (
+                    params.step.baseplate_step_enabled
+                    and not params.step.baseplate_step_is_v_groove
+                    and contour_idx < len(baseplate_contours_to_use)
+                ):
                     baseplate_z = params.step.baseplate_step_height
                     max_baseplate_z = total_height / 2
                     if baseplate_z > max_baseplate_z:
                         baseplate_z = max_baseplate_z
                     if 0 <= baseplate_z < total_height:
-                        # 使用变换后的轮廓
-                        transformed_contour = baseplate_contours_to_use[contour_idx]
-                        inner_wall_results = self.path_offset.offset(transformed_contour.outer, -wall_thickness)
-                        if inner_wall_results:
-                            inner_wall_coords = [(p.x, p.y) for p in inner_wall_results[0].points]
-                            if inner_wall_coords and inner_wall_coords[0] != inner_wall_coords[-1]:
-                                inner_wall_coords.append(inner_wall_coords[0])
-
-                            baseplate_mesh = self._create_thin_step_ring(
-                                inner_wall_coords,
+                        meshes.extend(
+                            self._build_flat_step_meshes_for_contour(
+                                baseplate_contours_to_use[contour_idx],
                                 step_width=params.step.baseplate_step_width,
                                 step_thickness=step_thickness,
                                 z_position=baseplate_z,
-                                is_hole=False
+                                wall_thickness=wall_thickness,
                             )
-                            if baseplate_mesh is not None:
-                                meshes.append(baseplate_mesh)
-
-                        # 处理内孔
-                        for hole in transformed_contour.holes:
-                            # 内孔的壁内边缘就是变换后的孔本身
-                            hole_inner_coords = [(p.x, p.y) for p in hole.points]
-                            if hole_inner_coords and hole_inner_coords[0] != hole_inner_coords[-1]:
-                                hole_inner_coords.append(hole_inner_coords[0])
-
-                            hole_baseplate_mesh = self._create_thin_step_ring(
-                                hole_inner_coords,
-                                step_width=params.step.baseplate_step_width,
-                                step_thickness=step_thickness,
-                                z_position=baseplate_z,
-                                is_hole=True
-                            )
-                            if hole_baseplate_mesh is not None:
-                                meshes.append(hole_baseplate_mesh)
+                        )
 
             except Exception as e:
                 print(f"警告：处理轮廓台阶失败: {e}")
                 continue
 
-        return MeshUtils.merge_meshes(meshes)
+        return meshes
+
+    def _build_flat_step_meshes_for_contour(
+        self,
+        contour: Contour,
+        step_width: float,
+        step_thickness: float,
+        z_position: float,
+        wall_thickness: float,
+    ) -> List[trimesh.Trimesh]:
+        """Build one contour's ordinary flat step meshes."""
+        meshes = []
+
+        inner_wall_results = self.path_offset.offset(contour.outer, -wall_thickness)
+        if inner_wall_results:
+            inner_wall_coords = [(p.x, p.y) for p in inner_wall_results[0].points]
+            if inner_wall_coords and inner_wall_coords[0] != inner_wall_coords[-1]:
+                inner_wall_coords.append(inner_wall_coords[0])
+
+            outer_mesh = self._create_thin_step_ring(
+                inner_wall_coords,
+                step_width=step_width,
+                step_thickness=step_thickness,
+                z_position=z_position,
+                is_hole=False,
+            )
+            if outer_mesh is not None:
+                meshes.append(outer_mesh)
+
+        for hole in contour.holes:
+            hole_inner_coords = [(p.x, p.y) for p in hole.points]
+            if hole_inner_coords and hole_inner_coords[0] != hole_inner_coords[-1]:
+                hole_inner_coords.append(hole_inner_coords[0])
+
+            hole_mesh = self._create_thin_step_ring(
+                hole_inner_coords,
+                step_width=step_width,
+                step_thickness=step_thickness,
+                z_position=z_position,
+                is_hole=True,
+            )
+            if hole_mesh is not None:
+                meshes.append(hole_mesh)
+
+        return meshes
+
+    def _build_v_groove_meshes_from_slices(
+        self,
+        result: SliceResult,
+        params: SliceParams,
+    ) -> List[trimesh.Trimesh]:
+        """Build V-groove meshes by matching sliced grooves to same-layer walls."""
+        meshes = []
+
+        for layer in result.layers:
+            wall_paths = [
+                path for path in layer.paths
+                if path.role == PathRole.WALL and path.is_closed and len(path.points) >= 3
+            ]
+            if not wall_paths:
+                continue
+
+            for path in layer.paths:
+                if (
+                    path.role != PathRole.V_GROOVE
+                    or not path.is_closed
+                    or len(path.points) < 3
+                    or path.line_width <= 0.0
+                ):
+                    continue
+
+                wall_path = self._match_step_to_wall_path(path, wall_paths)
+                if wall_path is None:
+                    continue
+
+                wall_inner_coords = self._calculate_inner_wall_from_path(
+                    wall_path,
+                    params.shell.wall_thickness,
+                )
+                mesh = self._create_thin_step_ring(
+                    wall_inner_coords,
+                    step_width=path.line_width,
+                    step_thickness=layer.layer_height,
+                    z_position=layer.z_height,
+                    is_hole=self._is_hole_step_path(path, wall_path),
+                )
+                if mesh is not None:
+                    meshes.append(mesh)
+
+        return meshes
+
+    def _match_step_to_wall_path(
+        self,
+        step_path: LayerPath,
+        wall_paths: List[LayerPath],
+    ) -> Optional[LayerPath]:
+        """Find the closest wall loop for one step/v-groove ring."""
+        if not wall_paths:
+            return None
+
+        step_centroid = self._calculate_centroid(step_path.points)
+        return min(
+            wall_paths,
+            key=lambda wall_path: self._distance_between_points(
+                step_centroid,
+                self._calculate_centroid(wall_path.points),
+            ),
+        )
+
+    def _is_hole_step_path(self, step_path: LayerPath, wall_path: LayerPath) -> bool:
+        """Hole steps expand away from the matched wall loop instead of shrinking inward."""
+        return self._polygon_area(step_path.points) > self._polygon_area(wall_path.points)
+
+    def _polygon_area(self, points: List[Point]) -> float:
+        """Compute the absolute polygon area for a closed path."""
+        if len(points) < 3:
+            return 0.0
+
+        area = 0.0
+        for i, point in enumerate(points):
+            next_point = points[(i + 1) % len(points)]
+            area += point.x * next_point.y - next_point.x * point.y
+        return abs(area) * 0.5
+
+    def _distance_between_points(self, p1: Point, p2: Point) -> float:
+        """Euclidean distance helper for path matching."""
+        return ((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2) ** 0.5
 
     def _create_thin_step_ring(self, wall_inner_coords: list,
                                step_width: float,
