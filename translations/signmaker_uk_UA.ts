@@ -652,8 +652,8 @@
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="1903"/>
-        <source>Version: 0.1.7 (Development)</source>
-        <translation>Версія: 0.1.6 (Розробка)</translation>
+        <source>Version: 0.1.8 (Development)</source>
+        <translation>Версія: 0.1.8 (Розробка)</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="1905"/>

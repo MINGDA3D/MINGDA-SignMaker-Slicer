@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
 <TS version="2.1" language="de-DE">
 <context>
@@ -652,8 +652,8 @@
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="1903"/>
-        <source>Version: 0.1.7 (Development)</source>
-        <translation>Version: 0.1.6 (Entwicklung)</translation>
+        <source>Version: 0.1.8 (Development)</source>
+        <translation>Version: 0.1.8 (Entwicklung)</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="1905"/>
