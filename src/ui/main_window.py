@@ -1023,6 +1023,14 @@ class MainWindow(QMainWindow):
                 self.current_main_view == "editor" and self.current_view == "2d"
             )
 
+    def _show_preview_view(self):
+        """Switch to the 3D preview view without preparing content yet."""
+        self.main_stack.setCurrentIndex(1)
+        self.current_main_view = "editor"
+        self.view_stack.setCurrentIndex(1)
+        self.current_view = "3d"
+        self._sync_canvas_toolbar_visibility()
+
     def _on_nav_changed(self, nav: str):
         """处理标题栏导航切换"""
         if nav == "home":
@@ -1038,11 +1046,13 @@ class MainWindow(QMainWindow):
             self.current_view = "2d"
             self._update_status(self.tr("Project Edit"))
         elif nav == "preview":
-            # 显示3D预览
-            self.main_stack.setCurrentIndex(1)
-            self.current_main_view = "editor"
-            self.view_stack.setCurrentIndex(1)
-            self.current_view = "3d"
+            # 显示3D预览；如果还未处理但已有图形，则自动先处理
+            self._show_preview_view()
+            if self.slice_result is None and self.contours:
+                self.preview_3d.set_loading(True, self.tr("Processing..."))
+                self._update_status(self.tr("Processing..."))
+                self._on_slice()
+                return
             QTimer.singleShot(0, self._prepare_preview_3d)
             self._update_status(self.tr("3D Preview"))
         self._sync_canvas_toolbar_visibility()

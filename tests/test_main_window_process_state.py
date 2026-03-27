@@ -97,3 +97,44 @@ def test_delete_invalidates_processed_result(qapp):
         assert window.title_bar.btn_export_stl.isEnabled() is True
     finally:
         window.close()
+
+
+def test_preview_auto_processes_when_contours_exist_and_result_missing(qapp, monkeypatch):
+    window = MainWindow()
+    calls = []
+
+    try:
+        window.contours = [_rect_contour(0, 0, 10, 10, "A")]
+        window.canvas.set_contours(window.contours, center_on_platform=False)
+
+        monkeypatch.setattr(window, "_on_slice", lambda: calls.append("slice"))
+
+        window._on_nav_changed("preview")
+
+        assert calls == ["slice"]
+        assert window.current_main_view == "editor"
+        assert window.current_view == "3d"
+    finally:
+        window.close()
+
+
+def test_preview_does_not_auto_process_without_contours(qapp, monkeypatch):
+    window = MainWindow()
+    calls = []
+    preview_prepared = []
+
+    try:
+        monkeypatch.setattr(window, "_on_slice", lambda: calls.append("slice"))
+        monkeypatch.setattr(
+            "src.ui.main_window.QTimer.singleShot",
+            lambda _delay, callback: preview_prepared.append(callback.__name__),
+        )
+
+        window._on_nav_changed("preview")
+
+        assert calls == []
+        assert preview_prepared == ["_prepare_preview_3d"]
+        assert window.current_main_view == "editor"
+        assert window.current_view == "3d"
+    finally:
+        window.close()
