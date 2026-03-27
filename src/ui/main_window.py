@@ -896,6 +896,23 @@ class MainWindow(QMainWindow):
             self._scale_original_h = None
         self._current_selected_id = contour_id
 
+    def _sync_active_transform_tool(self) -> None:
+        """Keep the toolbar and canvas tool in sync with the active transform mode."""
+        active_mode = (
+            self.current_transform_mode
+            if self.canvas.selected_indices
+            and self.current_transform_mode in {"move", "rotate", "scale"}
+            else None
+        )
+
+        if active_mode is None:
+            self.canvas_toolbar.clear_tool()
+            self.canvas.set_tool("select")
+            return
+
+        self.canvas_toolbar._set_tool_checked(active_mode)
+        self.canvas.set_tool(active_mode)
+
     def _on_contour_selected(self, index: int):
         """当选中轮廓时显示位置面板"""
         if self.canvas.selected_indices:
@@ -907,6 +924,7 @@ class MainWindow(QMainWindow):
                 if self.current_transform_mode == "scale" and self._scale_original_w is None:
                     self._capture_original_size()
                 # 保持当前工具模式不变
+                self._sync_active_transform_tool()
                 self._update_transform_panel_values()
                 self._show_transform_panel()
             else:
@@ -917,6 +935,7 @@ class MainWindow(QMainWindow):
                 self.rot_widget.setVisible(False)
                 self.scale_widget.setVisible(False)
                 self.transform_hint.setText(self.tr("Arrow keys: 1mm, Shift+Arrow: 10mm"))
+                self._sync_active_transform_tool()
                 self._update_transform_panel_values()
                 self._show_transform_panel()
         else:
@@ -1044,6 +1063,39 @@ class MainWindow(QMainWindow):
                 self.current_main_view == "editor" and self.current_view == "2d"
             )
 
+    def _sync_transform_panel_visibility(self):
+        """Show the transform panel only in the 2D project editor."""
+        if not hasattr(self, "transform_panel"):
+            return
+
+        should_show = (
+            self.current_main_view == "editor"
+            and self.current_view == "2d"
+            and bool(self.canvas.selected_indices)
+            and self.current_transform_mode in {"move", "rotate", "scale"}
+        )
+
+        if not should_show:
+            self.transform_panel.setVisible(False)
+            return
+
+        self._position_transform_panel()
+        self.transform_panel.adjustSize()
+        self.transform_panel.setVisible(True)
+        self.transform_panel.raise_()
+
+    def _position_transform_panel(self):
+        """Position the transform panel beneath the canvas toolbar."""
+        if hasattr(self, "canvas_toolbar"):
+            pos = self.canvas_toolbar.mapTo(self, self.canvas_toolbar.rect().bottomLeft())
+            panel_x = pos.x() + 10
+            panel_y = pos.y() + 5
+        else:
+            panel_x = 200
+            panel_y = 80
+
+        self.transform_panel.move(panel_x, panel_y)
+
     def _show_preview_view(self):
         """Switch to the 3D preview view without preparing content yet."""
         self.main_stack.setCurrentIndex(1)
@@ -1051,6 +1103,7 @@ class MainWindow(QMainWindow):
         self.view_stack.setCurrentIndex(1)
         self.current_view = "3d"
         self._sync_canvas_toolbar_visibility()
+        self._sync_transform_panel_visibility()
 
     def _on_nav_changed(self, nav: str):
         """处理标题栏导航切换"""
@@ -1077,6 +1130,7 @@ class MainWindow(QMainWindow):
             QTimer.singleShot(0, self._prepare_preview_3d)
             self._update_status(self.tr("3D Preview"))
         self._sync_canvas_toolbar_visibility()
+        self._sync_transform_panel_visibility()
 
     def _on_menu_action(self, action: str):
         """处理标题栏菜单动作"""
@@ -1367,6 +1421,7 @@ class MainWindow(QMainWindow):
         self.view_stack.setCurrentIndex(0)
         self.current_view = "2d"
         self._sync_canvas_toolbar_visibility()
+        self._sync_transform_panel_visibility()
         # 更新标题栏导航状态
         if hasattr(self, 'title_bar'):
             self.title_bar.set_nav("project")
@@ -1409,6 +1464,7 @@ class MainWindow(QMainWindow):
             self.view_stack.setCurrentIndex(0)
             self.current_view = "2d"
             self._sync_canvas_toolbar_visibility()
+            self._sync_transform_panel_visibility()
             # 更新标题栏导航状态
             if hasattr(self, 'title_bar'):
                 self.title_bar.set_nav("project")
@@ -1751,6 +1807,7 @@ class MainWindow(QMainWindow):
             self.current_view = "3d"
             QTimer.singleShot(0, self._prepare_preview_3d)
         self._sync_canvas_toolbar_visibility()
+        self._sync_transform_panel_visibility()
         self._update_status(self.tr("Switched to {view} view").format(view=view_type.upper()))
 
     def _on_zoom_fit(self):
@@ -1814,21 +1871,7 @@ class MainWindow(QMainWindow):
 
     def _show_transform_panel(self):
         """显示变换面板并定位到工具栏下方"""
-        # 获取画布工具栏的位置
-        if hasattr(self, 'canvas_toolbar'):
-            toolbar_rect = self.canvas_toolbar.geometry()
-            # 转换为主窗口坐标
-            pos = self.canvas_toolbar.mapTo(self, self.canvas_toolbar.rect().bottomLeft())
-            panel_x = pos.x() + 10
-            panel_y = pos.y() + 5
-        else:
-            panel_x = 200
-            panel_y = 80
-
-        self.transform_panel.move(panel_x, panel_y)
-        self.transform_panel.adjustSize()
-        self.transform_panel.setVisible(True)
-        self.transform_panel.raise_()
+        self._sync_transform_panel_visibility()
 
     def _update_transform_panel_values(self):
         """更新面板中显示的值"""

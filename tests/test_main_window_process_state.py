@@ -150,6 +150,10 @@ def test_import_contours_append_without_clearing_existing_canvas(qapp):
         assert imported_bounds != (0, 0, 40, 20)
         assert not _bounds_overlap(original_bounds, imported_bounds)
         assert window.canvas.selected_indices == [1]
+        assert window.current_transform_mode == "move"
+        assert window.canvas_toolbar.current_tool == "move"
+        assert window.canvas_toolbar.btn_move.isChecked() is True
+        assert window.canvas.current_tool == "move"
     finally:
         window.close()
 
@@ -184,6 +188,10 @@ def test_text_generation_appends_without_recentering_existing_canvas(qapp, monke
         assert text_bounds != (0, 0, 30, 10)
         assert not _bounds_overlap(original_bounds, text_bounds)
         assert window.canvas.selected_indices == [1]
+        assert window.current_transform_mode == "move"
+        assert window.canvas_toolbar.current_tool == "move"
+        assert window.canvas_toolbar.btn_move.isChecked() is True
+        assert window.canvas.current_tool == "move"
     finally:
         window.close()
 
@@ -216,6 +224,46 @@ def test_process_blocked_when_contour_exceeds_platform(qapp, monkeypatch):
         assert window.status_label.text() == window.tr(
             "Processing blocked: contours exceed platform size"
         )
+    finally:
+        window.close()
+
+
+def test_transform_panel_hidden_on_home_and_preview_pages(qapp, monkeypatch):
+    window = MainWindow()
+
+    try:
+        window.show()
+        qapp.processEvents()
+        window._on_nav_changed("project")
+        window.contours = [_rect_contour(0, 0, 10, 10, "A")]
+        window.canvas.set_contours(window.contours, center_on_platform=False)
+        window.project_panel.update_contours(window.contours)
+        window.canvas.set_selected_indices([0])
+        qapp.processEvents()
+
+        assert window.transform_panel.isVisible() is True
+
+        window._on_nav_changed("home")
+        qapp.processEvents()
+
+        assert window.current_main_view == "home"
+        assert window.transform_panel.isVisible() is False
+
+        window._on_nav_changed("project")
+        qapp.processEvents()
+
+        assert window.current_main_view == "editor"
+        assert window.current_view == "2d"
+        assert window.transform_panel.isVisible() is True
+
+        monkeypatch.setattr(window, "_on_slice", lambda: None)
+
+        window._on_nav_changed("preview")
+        qapp.processEvents()
+
+        assert window.current_main_view == "editor"
+        assert window.current_view == "3d"
+        assert window.transform_panel.isVisible() is False
     finally:
         window.close()
 
