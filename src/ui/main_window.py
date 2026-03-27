@@ -107,6 +107,9 @@ class MainWindow(QMainWindow):
         # 应用样式
         self.setStyleSheet(get_stylesheet())
 
+        # 初始没有可直接导出的处理结果
+        self._sync_export_stl_state()
+
         # 加载保存的参数
         self._load_saved_params()
 
@@ -554,6 +557,7 @@ class MainWindow(QMainWindow):
         self.param_panel = ParamPanel()
         self.param_panel.setMinimumWidth(280)
         self.param_panel.setMaximumWidth(400)
+        self.param_panel.params_changed.connect(self._on_params_changed)
         self.editor_splitter.addWidget(self.param_panel)
 
         # === 中央视图区域（工具栏 + 2D/3D视图）===
@@ -685,6 +689,51 @@ class MainWindow(QMainWindow):
         # 这里可以更新菜单项的启用/禁用状态和文本
         pass
 
+    def _sync_export_stl_state(self):
+        """根据当前处理结果同步导出 STL 按钮状态。"""
+        if hasattr(self, "title_bar") and hasattr(self.title_bar, "btn_export_stl"):
+            self.title_bar.btn_export_stl.setEnabled(True)
+
+    def _invalidate_processed_result(self):
+        """清除当前处理结果，要求重新点击 Process。"""
+        had_processed_output = (
+            self.slice_result is not None
+            or self._preview_mesh_loading_key is not None
+        )
+        self.slice_result = None
+        if had_processed_output:
+            self._reset_preview_loading_state()
+        self._sync_export_stl_state()
+
+    def _on_params_changed(self):
+        """参数变化后，当前处理结果失效。"""
+        self._invalidate_processed_result()
+
+    def _command_requires_reprocess(self, command: Optional[Command]) -> bool:
+        """判断撤销/重做的命令是否会影响导出的 STL。"""
+        if command is None:
+            return False
+
+        if isinstance(
+            command,
+            (
+                MoveCommand,
+                RotateCommand,
+                ScaleCommand,
+                MirrorCommand,
+                DeleteCommand,
+                AddContoursCommand,
+                ReplaceContoursCommand,
+                ReplaceSelectedContoursCommand,
+            ),
+        ):
+            return True
+
+        if isinstance(command, TransformCommand):
+            return command.description not in {self.tr("Group"), self.tr("Ungroup")}
+
+        return False
+
     def _on_transform_started(self, tool: str, indices: list):
         """变换开始时保存状态"""
         if indices:
@@ -738,6 +787,14 @@ class MainWindow(QMainWindow):
                 self._scale_pct_x *= delta['scale']
                 self._scale_pct_y *= delta['scale']
 
+            if (
+                abs(delta['dx']) > 0.001
+                or abs(delta['dy']) > 0.001
+                or abs(delta['angle']) > 0.001
+                or abs(delta['scale'] - 1.0) > 0.001
+            ):
+                self._invalidate_processed_result()
+
         self._pending_transform = None
 
     def _on_delete_requested(self, indices: list):
@@ -756,6 +813,7 @@ class MainWindow(QMainWindow):
         # 创建删除命令
         cmd = DeleteCommand(self.contours, indices)
         self.undo_manager.push(cmd)
+        self._invalidate_processed_result()
 
         # 清除选择
         self.canvas.set_selected_indices([])
@@ -847,6 +905,8 @@ class MainWindow(QMainWindow):
 
     def _on_contours_modified(self):
         """当轮廓被修改时更新面板"""
+        if self._pending_transform is None and not self.canvas.is_transforming:
+            self._invalidate_processed_result()
         if self.canvas.selected_indices and self.transform_panel.isVisible():
             # 拖拽旋转过程中不更新面板，等拖拽结束后再更新
             if self.canvas.is_transforming and self.current_transform_mode == "rotate":
@@ -1022,8 +1082,7 @@ class MainWindow(QMainWindow):
         self.undo_manager.clear()
 
         self.contours = []
-        self.slice_result = None
-        self._reset_preview_loading_state()
+        self._invalidate_processed_result()
         self.current_file = None
         self._contour_transforms.clear()
         self._current_selected_id = None
@@ -1095,6 +1154,7 @@ class MainWindow(QMainWindow):
             self.tr("Load ") + path.name
         )
         self.undo_manager.push(cmd)
+        self._invalidate_processed_result()
 
         self.current_file = str(path)
         self._contour_transforms.clear()
@@ -1129,8 +1189,7 @@ class MainWindow(QMainWindow):
             self.contours.clear()
             self.contours.extend(project.contours)
             self.slice_params = project.params
-            self.slice_result = None
-            self._reset_preview_loading_state()
+            self._invalidate_processed_result()
             self.current_file = file_path
             self._contour_transforms.clear()
             self._current_selected_id = None
@@ -1284,7 +1343,7 @@ class MainWindow(QMainWindow):
 
     def _on_export_stl(self):
         """导出STL（异步）"""
-        if not self.slice_result:
+        if self.slice_result is None:
             QMessageBox.information(self, self.tr("Info"), self.tr("Please process first"))
             return
 
@@ -1401,18 +1460,26 @@ class MainWindow(QMainWindow):
     def _on_undo(self):
         """撤销"""
         if self.undo_manager.can_undo:
-            self.undo_manager.undo()
-            self.canvas.update()
-            self.project_panel.update_contours(self.contours)
+            command = self.undo_manager._undo_stack[-1] if self.undo_manager._undo_stack else None
+            requires_reprocess = self._command_requires_reprocess(command)
+            if self.undo_manager.undo():
+                self.canvas.update()
+                self.project_panel.update_contours(self.contours)
+                if requires_reprocess:
+                    self._invalidate_processed_result()
         else:
             self._update_status(self.tr("Nothing to undo"))
 
     def _on_redo(self):
         """重做"""
         if self.undo_manager.can_redo:
-            self.undo_manager.redo()
-            self.canvas.update()
-            self.project_panel.update_contours(self.contours)
+            command = self.undo_manager._redo_stack[-1] if self.undo_manager._redo_stack else None
+            requires_reprocess = self._command_requires_reprocess(command)
+            if self.undo_manager.redo():
+                self.canvas.update()
+                self.project_panel.update_contours(self.contours)
+                if requires_reprocess:
+                    self._invalidate_processed_result()
         else:
             self._update_status(self.tr("Nothing to redo"))
 
@@ -1432,6 +1499,7 @@ class MainWindow(QMainWindow):
             self.slice_result = result
             self.slice_params = params
             self._reset_preview_loading_state()
+            self._sync_export_stl_state()
             if self.current_view == "3d":
                 QTimer.singleShot(0, self._prepare_preview_3d)
 
@@ -1772,6 +1840,7 @@ class MainWindow(QMainWindow):
             axis
         )
         self.undo_manager.push(cmd)
+        self._invalidate_processed_result()
 
         self.canvas.update()
         self._update_status(self.tr("Mirror {axis} complete").format(axis=axis.upper()))
@@ -1803,6 +1872,7 @@ class MainWindow(QMainWindow):
             new_selection=new_selection,
         )
         self.undo_manager.push(cmd)
+        self._invalidate_processed_result()
         self.project_panel.update_contours(self.contours)
 
     def _on_difference(self):
@@ -1832,6 +1902,7 @@ class MainWindow(QMainWindow):
             new_selection=new_selection,
         )
         self.undo_manager.push(cmd)
+        self._invalidate_processed_result()
         self.project_panel.update_contours(self.contours)
 
     def _on_group(self):
@@ -1893,6 +1964,7 @@ class MainWindow(QMainWindow):
                     # 使用撤销系统添加轮廓
                     cmd = AddContoursCommand(self.contours, contours)
                     self.undo_manager.push(cmd)
+                    self._invalidate_processed_result()
 
                     # 更新UI
                     self.canvas.set_contours(self.contours)
