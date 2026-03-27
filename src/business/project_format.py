@@ -33,6 +33,7 @@ FORMAT_VERSION = "4.0"
 MANIFEST_FILE = "manifest.json"
 PARAMS_FILE = "params.json"
 CONTOURS_FILE = "contours.bin"
+PREVIEW_FILE = "preview.png"
 
 # 二进制格式
 BINARY_MAGIC = b'SMPC'  # SignMaker Project Contours
@@ -44,7 +45,11 @@ class ProjectFormatError(Exception):
     pass
 
 
-def save_project(project: Project, file_path: str) -> None:
+def save_project(
+    project: Project,
+    file_path: str,
+    preview_png: Optional[bytes] = None,
+) -> None:
     """保存项目到 .smp 文件
 
     Args:
@@ -80,6 +85,9 @@ def save_project(project: Project, file_path: str) -> None:
         # 3. contours.bin - 几何数据（二进制）
         contours_bin = _serialize_contours(project.contours)
         zf.writestr(CONTOURS_FILE, contours_bin)
+
+        if preview_png:
+            zf.writestr(PREVIEW_FILE, preview_png)
 
 
 def load_project(file_path: str) -> Project:
@@ -291,3 +299,21 @@ def get_project_info(file_path: str) -> dict:
         info["modified_at"] = manifest.get("modified_at")
 
     return info
+
+
+def load_project_preview_png(file_path: str) -> Optional[bytes]:
+    """Load the embedded preview PNG from a project file if it exists."""
+    with zipfile.ZipFile(file_path, 'r') as zf:
+        if PREVIEW_FILE not in zf.namelist():
+            return None
+        return zf.read(PREVIEW_FILE)
+
+
+def load_project_contours(file_path: str) -> List[Contour]:
+    """Load only contour geometry from a project file."""
+    with zipfile.ZipFile(file_path, 'r') as zf:
+        names = zf.namelist()
+        if CONTOURS_FILE not in names:
+            raise ProjectFormatError(f"Missing {CONTOURS_FILE}")
+        contours_bin = zf.read(CONTOURS_FILE)
+        return repair_contours(_deserialize_contours(contours_bin))

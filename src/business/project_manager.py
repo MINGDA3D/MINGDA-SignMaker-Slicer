@@ -83,7 +83,11 @@ class ProjectManager(QObject):
         self.project_loaded.emit(project)
         return project
 
-    def save_project(self, file_path: Optional[str] = None) -> None:
+    def save_project(
+        self,
+        file_path: Optional[str] = None,
+        preview_png: Optional[bytes] = None,
+    ) -> None:
         """保存项目
 
         Args:
@@ -102,7 +106,7 @@ class ProjectManager(QObject):
         self.current_project.meta.modified_at = datetime.now().isoformat()
 
         # 保存
-        _save_project(self.current_project, file_path)
+        _save_project(self.current_project, file_path, preview_png=preview_png)
 
         self.current_path = file_path
         self.is_modified = False

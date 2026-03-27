@@ -1,6 +1,7 @@
 import os
 import shutil
 import uuid
+import zipfile
 from pathlib import Path
 
 import pytest
@@ -11,7 +12,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtTest import QTest
 from PySide6.QtWidgets import QApplication
 
-from src.business.project_format import save_project
+from src.business.project_format import PREVIEW_FILE, save_project
 from src.business.settings_manager import SettingsManager
 from src.core.types import Contour, Path as ContourPath, Point, Project, ProjectMeta
 from src.ui.main_window import MainWindow
@@ -49,9 +50,23 @@ def window(qapp, workspace_tmp_dir, monkeypatch):
         window.close()
 
 
-def _create_project_file(base_dir: Path, file_name: str, project_name: str) -> Path:
+def _create_project_file(
+    base_dir: Path,
+    file_name: str,
+    project_name: str,
+    *,
+    contours: list[Contour] | None = None,
+    preview_png: bytes | None = None,
+) -> Path:
     file_path = base_dir / file_name
-    save_project(Project(meta=ProjectMeta(name=project_name)), str(file_path))
+    save_project(
+        Project(
+            meta=ProjectMeta(name=project_name),
+            contours=list(contours or []),
+        ),
+        str(file_path),
+        preview_png=preview_png,
+    )
     return file_path
 
 
@@ -91,9 +106,14 @@ def test_save_project_updates_home_recent_projects(window, workspace_tmp_dir):
 
     assert window._save_project(str(file_path)) is True
 
+    with zipfile.ZipFile(file_path, "r") as zf:
+        assert PREVIEW_FILE in zf.namelist()
+
     assert window.settings_manager.get_recent_files()[0] == str(file_path.resolve())
     assert window.home_page._recent_projects[0]["path"] == str(file_path.resolve())
     assert window.home_page._recent_projects[0]["name"] == "saved_from_window"
+    assert window.home_page._recent_projects[0]["preview_pixmap"] is not None
+    assert window.home_page._cards[0].preview_pixmap is not None
 
 
 def test_open_project_moves_recent_project_to_front(window, workspace_tmp_dir):
@@ -126,6 +146,53 @@ def test_refresh_home_recent_projects_filters_missing_and_non_smp_entries(window
     assert [project["path"] for project in window.home_page._recent_projects] == [
         str(valid_project.resolve())
     ]
+
+
+def test_home_recent_projects_render_preview_for_legacy_project_without_embedded_thumbnail(
+    window,
+    workspace_tmp_dir,
+):
+    legacy_project = _create_project_file(
+        workspace_tmp_dir,
+        "legacy.smp",
+        "Legacy Project",
+        contours=[_rect_contour(0, 0, 20, 10, "L"), _rect_contour(30, 5, 45, 25, "G")],
+    )
+
+    with zipfile.ZipFile(legacy_project, "r") as zf:
+        assert PREVIEW_FILE not in zf.namelist()
+
+    window.settings_manager.add_recent_file(str(legacy_project))
+    window._refresh_home_recent_projects()
+
+    project = window.home_page._recent_projects[0]
+    assert project["path"] == str(legacy_project.resolve())
+    assert project["preview_pixmap"] is not None
+    assert window.home_page._cards[0].preview_pixmap is not None
+
+
+def test_home_recent_projects_fall_back_to_char_when_embedded_thumbnail_is_invalid(
+    window,
+    workspace_tmp_dir,
+):
+    broken_preview_project = _create_project_file(
+        workspace_tmp_dir,
+        "corrupt_preview.smp",
+        "Corrupt Preview",
+        contours=[_rect_contour(0, 0, 20, 10, "C")],
+        preview_png=b"not-a-valid-png",
+    )
+
+    window.settings_manager.add_recent_file(str(broken_preview_project))
+    window._refresh_home_recent_projects()
+
+    project = window.home_page._recent_projects[0]
+    card = window.home_page._cards[0]
+
+    assert project["preview_pixmap"] is None
+    assert card.preview_pixmap is None
+    assert project["char"] == "C"
+    assert card.preview_char == "C"
 
 
 def test_home_recent_project_card_opens_target_project(window, workspace_tmp_dir, qapp, monkeypatch):

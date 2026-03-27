@@ -37,6 +37,11 @@ from .preview_3d import Preview3D, Preview3DWidget
 from .title_bar import TitleBar
 from .canvas_toolbar import CanvasToolbar
 from .home_page import HomePage
+from .project_preview import (
+    preview_pixmap_from_png_bytes,
+    render_project_preview_pixmap,
+    render_project_preview_png,
+)
 from .busy_dialog import run_async, WorkerThread
 
 from src.core import (
@@ -56,7 +61,11 @@ from src.business.settings_manager import (
     SettingsManager, init_settings_manager, get_settings_manager
 )
 from src.business.project_manager import ProjectManager
-from src.business.project_format import get_project_info
+from src.business.project_format import (
+    get_project_info,
+    load_project_contours,
+    load_project_preview_png,
+)
 from src.i18n import (
     init_translation_manager, get_translation_manager,
     SUPPORTED_LANGUAGES, RTL_LANGUAGES
@@ -1147,6 +1156,20 @@ class MainWindow(QMainWindow):
                 return char.upper()
         return "S"
 
+    @staticmethod
+    def _load_recent_project_preview_pixmap(file_path: str) -> Optional[QPixmap]:
+        """Load the best available preview image for a recent project card."""
+        preview_png = load_project_preview_png(file_path)
+        if preview_png is not None:
+            return preview_pixmap_from_png_bytes(preview_png)
+
+        try:
+            contours = load_project_contours(file_path)
+        except Exception:
+            return None
+
+        return render_project_preview_pixmap(contours)
+
     def _refresh_home_recent_projects(self):
         """Refresh recent-project cards shown on the home page."""
         if not hasattr(self, "home_page"):
@@ -1173,10 +1196,17 @@ class MainWindow(QMainWindow):
                 continue
 
             project_name = info.get("name") or path.stem
+            preview_pixmap = None
+            try:
+                preview_pixmap = self._load_recent_project_preview_pixmap(resolved_path)
+            except Exception:
+                preview_pixmap = None
+
             recent_projects.append({
                 "name": project_name,
                 "date": self._format_recent_project_date(info.get("modified_at"), resolved_path),
                 "char": self._get_recent_project_preview_char(project_name),
+                "preview_pixmap": preview_pixmap,
                 "path": resolved_path,
             })
 
@@ -1651,7 +1681,8 @@ class MainWindow(QMainWindow):
             self.project_manager.current_project.params = current_params
 
             # 保存
-            self.project_manager.save_project(file_path)
+            preview_png = render_project_preview_png(self.contours)
+            self.project_manager.save_project(file_path, preview_png=preview_png)
 
             # 更新状态
             self.current_file = file_path

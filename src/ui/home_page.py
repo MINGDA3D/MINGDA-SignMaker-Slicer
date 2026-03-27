@@ -65,6 +65,7 @@ class ProjectCard(QFrame):
         date: str,
         preview_char: str = "字",
         file_path: str = "",
+        preview_pixmap: Optional[QPixmap] = None,
         parent=None
     ):
         super().__init__(parent)
@@ -72,6 +73,7 @@ class ProjectCard(QFrame):
         self.name = name
         self.date = date
         self.preview_char = preview_char
+        self.preview_pixmap = preview_pixmap if preview_pixmap and not preview_pixmap.isNull() else None
         self._hovered = False
 
         # 尺寸：card_size = 260, preview_size = 180
@@ -117,6 +119,19 @@ class ProjectCard(QFrame):
             painter.setBrush(Qt.BrushStyle.NoBrush)
             painter.drawRoundedRect(preview_rect, 10, 10)
 
+        preview_char = self.preview_char
+        if self.preview_pixmap is not None:
+            scaled_pixmap = self.preview_pixmap.scaled(
+                preview_size,
+                preview_size,
+                Qt.AspectRatioMode.KeepAspectRatio,
+                Qt.TransformationMode.SmoothTransformation,
+            )
+            paste_x = preview_x + (preview_size - scaled_pixmap.width()) // 2
+            paste_y = preview_y + (preview_size - scaled_pixmap.height()) // 2
+            painter.drawPixmap(paste_x, paste_y, scaled_pixmap)
+            preview_char = ""
+
         # 绘制预览字符（线框效果）
         icon_cx = preview_x + preview_size // 2
         icon_cy = preview_y + preview_size // 2
@@ -129,10 +144,10 @@ class ProjectCard(QFrame):
         # 绘制字符轮廓（线框效果）
         char_path = QPainterPath()
         fm = QFontMetrics(font)
-        char_rect = fm.boundingRect(self.preview_char)
+        char_rect = fm.boundingRect(preview_char)
         char_x = icon_cx - char_rect.width() / 2
         char_y = icon_cy + char_rect.height() / 4
-        char_path.addText(char_x, char_y, font, self.preview_char)
+        char_path.addText(char_x, char_y, font, preview_char)
 
         # 描边效果
         painter.setPen(QPen(hex_to_qcolor(COLORS["wire_color"]), 2))
@@ -416,6 +431,7 @@ class HomePage(QWidget):
                 date=project["date"],
                 preview_char=project.get("char", "S"),
                 file_path=project.get("path", ""),
+                preview_pixmap=project.get("preview_pixmap"),
                 parent=self
             )
             card.clicked.connect(self.recent_project_clicked.emit)
