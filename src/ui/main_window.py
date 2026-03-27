@@ -556,7 +556,24 @@ class MainWindow(QMainWindow):
         self.home_page.new_project_clicked.connect(self._on_new_project)
         self.home_page.open_file_clicked.connect(self._on_open_file)
         self.home_page.recent_project_clicked.connect(self._open_recent_project)
-        self.main_stack.addWidget(self.home_page)  # index 0
+
+        self.home_scroll = QScrollArea()
+        self.home_scroll.setObjectName("homeScrollArea")
+        self.home_scroll.setWidgetResizable(True)
+        self.home_scroll.setFrameShape(QFrame.Shape.NoFrame)
+        self.home_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.home_scroll.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+        self.home_scroll.setStyleSheet(f"""
+            QScrollArea#homeScrollArea {{
+                background-color: {COLORS.editor_canvas_bg};
+                border: none;
+            }}
+            QScrollArea#homeScrollArea > QWidget > QWidget {{
+                background-color: {COLORS.editor_canvas_bg};
+            }}
+        """)
+        self.home_scroll.setWidget(self.home_page)
+        self.main_stack.addWidget(self.home_scroll)  # index 0
 
         # === 编辑器视图（分割器）===
         self.editor_splitter = QSplitter(Qt.Orientation.Horizontal)

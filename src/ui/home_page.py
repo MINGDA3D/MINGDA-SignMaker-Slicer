@@ -329,6 +329,9 @@ class HomePage(QWidget):
         self.card_gap_y = 18
         self.card_max_columns = 5
         self.content_margin = 72
+        self.bottom_padding = 40
+        self.empty_state_height = 180
+        self._content_height = 720
 
         # 初始化
         self._load_demo_data()
@@ -351,6 +354,54 @@ class HomePage(QWidget):
             "content_y": content_y,
         }
 
+    def _get_card_layout(self) -> dict:
+        """计算最近项目卡片布局和所需内容高度。"""
+        metrics = self._get_layout_metrics()
+        card_size = 260
+        available_width = max(
+            card_size,
+            self.width() - self.content_margin * 2,
+        )
+        cols = max(
+            1,
+            min(
+                self.card_max_columns,
+                (available_width + self.card_gap_x) // (card_size + self.card_gap_x),
+            ),
+        )
+        total_width = cols * card_size + max(0, cols - 1) * self.card_gap_x
+        start_x = max(self.content_margin, (self.width() - total_width) // 2)
+
+        if self._recent_projects:
+            rows = (min(len(self._recent_projects), 10) + cols - 1) // cols
+            required_height = (
+                metrics["content_y"]
+                + rows * card_size
+                + max(0, rows - 1) * self.card_gap_y
+                + self.bottom_padding
+            )
+        else:
+            required_height = (
+                metrics["content_y"]
+                + self.empty_state_height
+                + self.bottom_padding
+            )
+
+        return {
+            "metrics": metrics,
+            "card_size": card_size,
+            "cols": cols,
+            "start_x": start_x,
+            "required_height": required_height,
+        }
+
+    def _sync_content_height(self):
+        """更新首页在滚动容器中的最小高度。"""
+        layout = self._get_card_layout()
+        self._content_height = max(720, layout["required_height"])
+        self.setMinimumHeight(self._content_height)
+        self.updateGeometry()
+
     def _create_cards(self):
         """创建卡片组件"""
         # 清除旧卡片
@@ -370,28 +421,21 @@ class HomePage(QWidget):
             card.clicked.connect(self.recent_project_clicked.emit)
             self._cards.append(card)
 
+        self._sync_content_height()
         self._position_cards()
 
     def _position_cards(self):
         """定位卡片"""
         if not self._cards:
+            self._sync_content_height()
             return
 
-        metrics = self._get_layout_metrics()
-        card_size = 260
-        available_width = max(
-            card_size,
-            self.width() - self.content_margin * 2,
-        )
-        cols = max(
-            1,
-            min(
-                self.card_max_columns,
-                (available_width + self.card_gap_x) // (card_size + self.card_gap_x),
-            ),
-        )
-        total_width = cols * card_size + max(0, cols - 1) * self.card_gap_x
-        start_x = max(self.content_margin, (self.width() - total_width) // 2)
+        layout = self._get_card_layout()
+        metrics = layout["metrics"]
+        card_size = layout["card_size"]
+        cols = layout["cols"]
+        start_x = layout["start_x"]
+        self._sync_content_height()
 
         for i, card in enumerate(self._cards):
             row = i // cols
@@ -406,6 +450,12 @@ class HomePage(QWidget):
         self._recent_projects = projects
         self._create_cards()
         self.update()
+
+    def sizeHint(self) -> QSize:
+        return QSize(max(1200, self.width()), self._content_height)
+
+    def minimumSizeHint(self) -> QSize:
+        return QSize(960, self._content_height)
 
     def paintEvent(self, event):
         """绘制整个首页"""

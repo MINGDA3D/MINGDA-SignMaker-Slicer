@@ -132,3 +132,21 @@ def test_home_recent_project_card_opens_target_project(window, workspace_tmp_dir
     qapp.processEvents()
 
     assert opened_paths == [str(project_path.resolve())]
+
+
+def test_home_recent_projects_enable_vertical_scroll_on_small_height(window, workspace_tmp_dir, qapp):
+    for index in range(6):
+        _create_project_file(
+            workspace_tmp_dir,
+            f"scroll_{index}.smp",
+            f"Scroll Project {index}",
+        )
+        window.settings_manager.add_recent_file(str(workspace_tmp_dir / f"scroll_{index}.smp"))
+
+    window._refresh_home_recent_projects()
+    window.resize(1280, 760)
+    window._on_nav_changed("home")
+    window.show()
+    qapp.processEvents()
+
+    assert window.home_scroll.verticalScrollBar().maximum() > 0
