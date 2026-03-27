@@ -628,7 +628,7 @@
         <location filename="../src/ui/main_window.py" line="2102"/>
         <location filename="../src/ui/main_window.py" line="2133"/>
         <source>Please select at least two contours</source>
-        <translation type="unfinished"></translation>
+        <translation>윤곽선 두 개 이상을 선택하세요</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="2087"/>

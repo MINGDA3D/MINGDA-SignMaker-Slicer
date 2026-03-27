@@ -628,7 +628,7 @@
         <location filename="../src/ui/main_window.py" line="2102"/>
         <location filename="../src/ui/main_window.py" line="2133"/>
         <source>Please select at least two contours</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecione pelo menos dois contornos</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="2087"/>
