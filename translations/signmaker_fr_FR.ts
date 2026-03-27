@@ -730,8 +730,8 @@
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="2329"/>
-        <source>Version: 0.1.8 (Development)</source>
-        <translation>Version : 0.1.8 (Développement)</translation>
+        <source>Version: 0.1.9 (Development)</source>
+        <translation>Version : 0.1.9 (Développement)</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="2331"/>
