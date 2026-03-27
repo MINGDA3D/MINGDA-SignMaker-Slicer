@@ -1,4 +1,5 @@
 import os
+from pathlib import Path as FsPath
 
 import pytest
 
@@ -30,6 +31,18 @@ def _rect_contour(x1: float, y1: float, x2: float, y2: float, name: str = "") ->
             is_closed=True,
         ),
         name=name,
+    )
+
+
+def _bounds_overlap(
+    first: tuple[float, float, float, float],
+    second: tuple[float, float, float, float],
+) -> bool:
+    return not (
+        first[2] <= second[0]
+        or first[0] >= second[2]
+        or first[3] <= second[1]
+        or first[1] >= second[3]
     )
 
 
@@ -95,6 +108,65 @@ def test_delete_invalidates_processed_result(qapp):
         assert window.contours == []
         assert window.slice_result is None
         assert window.title_bar.btn_export_stl.isEnabled() is True
+    finally:
+        window.close()
+
+
+def test_import_contours_append_without_clearing_existing_canvas(qapp):
+    window = MainWindow()
+
+    try:
+        window.contours = [_rect_contour(300, 300, 360, 360, "A")]
+        window.canvas.set_contours(window.contours, center_on_platform=False)
+        window.project_panel.update_contours(window.contours)
+        original_bounds = window.contours[0].outer.bounds
+
+        window._load_contours(
+            [_rect_contour(0, 0, 40, 20, "B")],
+            FsPath("import.svg"),
+        )
+
+        assert len(window.contours) == 2
+        assert window.contours[0].outer.bounds == original_bounds
+
+        imported_bounds = window.contours[1].outer.bounds
+        assert imported_bounds != (0, 0, 40, 20)
+        assert not _bounds_overlap(original_bounds, imported_bounds)
+        assert window.canvas.selected_indices == [1]
+    finally:
+        window.close()
+
+
+def test_text_generation_appends_without_recentering_existing_canvas(qapp, monkeypatch):
+    window = MainWindow()
+
+    class _FakeTextDialog:
+        def __init__(self, _parent=None):
+            self._contours = [_rect_contour(0, 0, 30, 10, "T")]
+
+        def exec(self):
+            return True
+
+        def get_contours(self):
+            return self._contours
+
+    try:
+        window.contours = [_rect_contour(200, 220, 260, 260, "A")]
+        window.canvas.set_contours(window.contours, center_on_platform=False)
+        window.project_panel.update_contours(window.contours)
+        original_bounds = window.contours[0].outer.bounds
+
+        monkeypatch.setattr("src.ui.text_dialog.TextDialog", _FakeTextDialog)
+
+        window._on_text()
+
+        assert len(window.contours) == 2
+        assert window.contours[0].outer.bounds == original_bounds
+
+        text_bounds = window.contours[1].outer.bounds
+        assert text_bounds != (0, 0, 30, 10)
+        assert not _bounds_overlap(original_bounds, text_bounds)
+        assert window.canvas.selected_indices == [1]
     finally:
         window.close()
 

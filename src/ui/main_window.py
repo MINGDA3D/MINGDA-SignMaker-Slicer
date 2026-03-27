@@ -1162,22 +1162,188 @@ class MainWindow(QMainWindow):
             ),
         )
 
-    def _load_contours(self, new_contours: List[Contour], path: Path):
-        """加载轮廓数据（从 DXF/SVG 导入）"""
-        # 创建替换轮廓命令（可撤销）
-        cmd = ReplaceContoursCommand(
-            self.contours, new_contours,
-            self.tr("Load ") + path.name
+    @staticmethod
+    def _get_contours_bounds(
+        contours: List[Contour],
+    ) -> Optional[tuple[float, float, float, float]]:
+        """获取一组轮廓的整体边界框。"""
+        if not contours:
+            return None
+
+        min_x = float("inf")
+        min_y = float("inf")
+        max_x = float("-inf")
+        max_y = float("-inf")
+
+        for contour in contours:
+            bounds = contour.outer.bounds
+            min_x = min(min_x, bounds[0])
+            min_y = min(min_y, bounds[1])
+            max_x = max(max_x, bounds[2])
+            max_y = max(max_y, bounds[3])
+
+        if min_x == float("inf"):
+            return None
+
+        return (min_x, min_y, max_x, max_y)
+
+    @staticmethod
+    def _translate_contours(contours: List[Contour], dx: float, dy: float) -> None:
+        """平移一组轮廓。"""
+        for contour in contours:
+            for path in [contour.outer, *contour.holes]:
+                for point in path.points:
+                    point.x += dx
+                    point.y += dy
+
+    @staticmethod
+    def _rectangles_overlap(
+        candidate: tuple[float, float, float, float],
+        existing: tuple[float, float, float, float],
+        spacing: float,
+    ) -> bool:
+        """判断两个矩形在给定间距下是否冲突。"""
+        return not (
+            candidate[2] <= existing[0] - spacing
+            or candidate[0] >= existing[2] + spacing
+            or candidate[3] <= existing[1] - spacing
+            or candidate[1] >= existing[3] + spacing
         )
+
+    def _center_contours_on_platform(self, contours: List[Contour]) -> None:
+        """将一组轮廓居中到平台中心。"""
+        bounds = self._get_contours_bounds(contours)
+        if bounds is None:
+            return
+
+        width = bounds[2] - bounds[0]
+        height = bounds[3] - bounds[1]
+        target_min_x = (self.canvas.platform_width - width) / 2
+        target_min_y = (self.canvas.platform_height - height) / 2
+        self._translate_contours(
+            contours,
+            target_min_x - bounds[0],
+            target_min_y - bounds[1],
+        )
+
+    def _can_place_contours(
+        self,
+        candidate: tuple[float, float, float, float],
+        occupied: List[tuple[float, float, float, float]],
+        spacing: float,
+        margin: float,
+    ) -> bool:
+        """判断给定区域是否可以放下新轮廓组。"""
+        if candidate[0] < margin or candidate[1] < margin:
+            return False
+        if candidate[2] > self.canvas.platform_width - margin:
+            return False
+        if candidate[3] > self.canvas.platform_height - margin:
+            return False
+
+        return not any(
+            self._rectangles_overlap(candidate, rect, spacing)
+            for rect in occupied
+        )
+
+    def _auto_arrange_contours(self, new_contours: List[Contour]) -> None:
+        """为新轮廓寻找一个不会覆盖现有内容的位置。"""
+        new_bounds = self._get_contours_bounds(new_contours)
+        if new_bounds is None:
+            return
+
+        if not self.contours:
+            self._center_contours_on_platform(new_contours)
+            return
+
+        spacing = max(float(self.slice_params.layout.spacing), 0.0)
+        margin = max(float(self.slice_params.layout.margin), 0.0)
+        new_width = new_bounds[2] - new_bounds[0]
+        new_height = new_bounds[3] - new_bounds[1]
+
+        occupied = [contour.outer.bounds for contour in self.contours]
+        overall_bounds = self._get_contours_bounds(self.contours)
+        if overall_bounds is None:
+            self._center_contours_on_platform(new_contours)
+            return
+
+        candidates: List[tuple[float, float]] = [
+            (overall_bounds[2] + spacing, overall_bounds[1]),
+            (max(margin, overall_bounds[0]), overall_bounds[3] + spacing),
+        ]
+
+        candidate_xs = {margin}
+        candidate_ys = {margin}
+        for rect in occupied:
+            candidate_xs.add(max(margin, rect[2] + spacing))
+            candidate_ys.add(max(margin, rect[3] + spacing))
+
+        for y in sorted(candidate_ys):
+            for x in sorted(candidate_xs):
+                candidates.append((x, y))
+
+        seen = set()
+        for min_x, min_y in candidates:
+            key = (round(min_x, 6), round(min_y, 6))
+            if key in seen:
+                continue
+            seen.add(key)
+
+            candidate = (min_x, min_y, min_x + new_width, min_y + new_height)
+            if self._can_place_contours(candidate, occupied, spacing, margin):
+                self._translate_contours(
+                    new_contours,
+                    min_x - new_bounds[0],
+                    min_y - new_bounds[1],
+                )
+                return
+
+        self._translate_contours(
+            new_contours,
+            overall_bounds[2] + spacing - new_bounds[0],
+            overall_bounds[1] - new_bounds[1],
+        )
+
+    def _append_contours(
+        self,
+        new_contours: List[Contour],
+        description: str,
+        *,
+        fit_view: bool = False,
+    ) -> List[int]:
+        """追加新轮廓并自动排列。"""
+        if not new_contours:
+            return []
+
+        self._auto_arrange_contours(new_contours)
+        insert_at = len(self.contours)
+
+        cmd = AddContoursCommand(self.contours, new_contours, description)
         self.undo_manager.push(cmd)
         self._invalidate_processed_result()
 
-        self.current_file = str(path)
-        self._contour_transforms.clear()
-        self._current_selected_id = None
-        self.canvas.set_contours(self.contours)
-        self.canvas.fit_view()
+        new_indices = list(range(insert_at, insert_at + len(new_contours)))
+        self.canvas.set_contours(self.contours, center_on_platform=False)
         self.project_panel.update_contours(self.contours)
+        self._apply_contour_selection(new_indices)
+
+        if fit_view:
+            self.canvas.fit_view()
+
+        return new_indices
+
+    def _load_contours(self, new_contours: List[Contour], path: Path):
+        """加载轮廓数据（从 DXF/SVG 导入）"""
+        # 创建替换轮廓命令（可撤销）
+        self._append_contours(
+            new_contours,
+            self.tr("Load ") + path.name,
+            fit_view=True,
+        )
+
+        if not self.current_file or not self.current_file.lower().endswith(".smp"):
+            self.current_file = str(path)
+            self.setWindowTitle(f"MINGDA SignMaker - {path.name}")
 
         # 切换到编辑器视图
         self.main_stack.setCurrentIndex(1)
@@ -1189,8 +1355,12 @@ class MainWindow(QMainWindow):
         if hasattr(self, 'title_bar'):
             self.title_bar.set_nav("project")
 
-        self.setWindowTitle(f"MINGDA SignMaker - {path.name}")
-        self._update_status(self.tr("Loaded: {file}, {count} contours").format(file=path.name, count=len(self.contours)))
+        self._update_status(
+            self.tr("Loaded: {file}, {count} contours").format(
+                file=path.name,
+                count=len(new_contours),
+            )
+        )
         self.project_loaded.emit(str(path))
 
     def _load_project(self, file_path: str):
@@ -1978,13 +2148,9 @@ class MainWindow(QMainWindow):
                 contours = dialog.get_contours()
                 if contours:
                     # 使用撤销系统添加轮廓
-                    cmd = AddContoursCommand(self.contours, contours)
-                    self.undo_manager.push(cmd)
-                    self._invalidate_processed_result()
+                    self._append_contours(contours, self.tr("Add Contours"))
 
                     # 更新UI
-                    self.canvas.set_contours(self.contours)
-                    self.project_panel.update_contours(self.contours)
                     self._update_status(self.tr("Text added"))
         except Exception as e:
             QMessageBox.critical(self, self.tr("Error"), f"{self.tr('Failed to open text dialog')}: {str(e)}")
