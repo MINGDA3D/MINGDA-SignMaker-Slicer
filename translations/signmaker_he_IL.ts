@@ -502,6 +502,11 @@
         <translation>נא לייבא קובץ DXF תחילה</translation>
     </message>
     <message>
+        <location filename="../src/ui/main_window.py" line="1618"/>
+        <source>Please import or create graphics before saving</source>
+        <translation>יש לייבא או ליצור גרפיקה לפני השמירה</translation>
+    </message>
+    <message>
         <location filename="../src/ui/main_window.py" line="1748"/>
         <source>Export Baseplate DXF</source>
         <translation>ייצא DXF לוח תחתון</translation>

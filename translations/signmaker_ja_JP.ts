@@ -502,6 +502,11 @@
         <translation>先にDXFファイルをインポートしてください</translation>
     </message>
     <message>
+        <location filename="../src/ui/main_window.py" line="1618"/>
+        <source>Please import or create graphics before saving</source>
+        <translation>保存する前に図形をインポートまたは作成してください</translation>
+    </message>
+    <message>
         <location filename="../src/ui/main_window.py" line="1748"/>
         <source>Export Baseplate DXF</source>
         <translation>ベースプレートDXFをエクスポート</translation>

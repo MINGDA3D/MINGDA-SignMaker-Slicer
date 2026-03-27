@@ -78,6 +78,31 @@ def test_export_requires_reprocess_after_param_change(qapp, monkeypatch):
         window.close()
 
 
+def test_save_project_blocked_when_canvas_has_no_graphics(qapp, monkeypatch):
+    window = MainWindow()
+    messages = []
+    save_as_calls = []
+
+    try:
+        monkeypatch.setattr(
+            "src.ui.main_window.QMessageBox.information",
+            lambda *args, **kwargs: messages.append((args, kwargs)) or 0,
+        )
+        monkeypatch.setattr(
+            window,
+            "_on_save_as",
+            lambda: save_as_calls.append(True),
+        )
+
+        window._on_save_project()
+
+        assert save_as_calls == []
+        assert messages
+        assert messages[-1][0][2] == window.tr("Please import or create graphics before saving")
+    finally:
+        window.close()
+
+
 def test_manual_contour_move_invalidates_processed_result(qapp):
     window = MainWindow()
 

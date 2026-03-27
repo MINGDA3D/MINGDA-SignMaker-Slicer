@@ -492,6 +492,11 @@
         <source>Please import a DXF file first</source>
         <translation>请先导入DXF文件</translation>
     </message>
+        <message>
+        <location filename="../src/ui/main_window.py" line="1618"/>
+        <source>Please import or create graphics before saving</source>
+        <translation>请先导入或创建图形后再保存</translation>
+    </message>
     <message>
         <location filename="../src/ui/main_window.py" line="1748"/>
         <source>Export Baseplate DXF</source>

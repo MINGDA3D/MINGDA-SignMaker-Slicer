@@ -13,7 +13,7 @@ from PySide6.QtWidgets import QApplication
 
 from src.business.project_format import save_project
 from src.business.settings_manager import SettingsManager
-from src.core.types import Project, ProjectMeta
+from src.core.types import Contour, Path as ContourPath, Point, Project, ProjectMeta
 from src.ui.main_window import MainWindow
 
 
@@ -55,6 +55,21 @@ def _create_project_file(base_dir: Path, file_name: str, project_name: str) -> P
     return file_path
 
 
+def _rect_contour(x1: float, y1: float, x2: float, y2: float, name: str = "") -> Contour:
+    return Contour(
+        outer=ContourPath(
+            points=[
+                Point(x1, y1),
+                Point(x2, y1),
+                Point(x2, y2),
+                Point(x1, y2),
+            ],
+            is_closed=True,
+        ),
+        name=name,
+    )
+
+
 def test_settings_manager_remove_recent_file_preserves_remaining_order(workspace_tmp_dir):
     sm = SettingsManager(str(workspace_tmp_dir / "config"))
 
@@ -72,8 +87,9 @@ def test_settings_manager_remove_recent_file_preserves_remaining_order(workspace
 
 def test_save_project_updates_home_recent_projects(window, workspace_tmp_dir):
     file_path = workspace_tmp_dir / "saved_from_window.smp"
+    window.contours = [_rect_contour(0, 0, 10, 10, "A")]
 
-    window._save_project(str(file_path))
+    assert window._save_project(str(file_path)) is True
 
     assert window.settings_manager.get_recent_files()[0] == str(file_path.resolve())
     assert window.home_page._recent_projects[0]["path"] == str(file_path.resolve())

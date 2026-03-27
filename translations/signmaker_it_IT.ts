@@ -502,6 +502,11 @@
         <translation>Prima importa un file DXF</translation>
     </message>
     <message>
+        <location filename="../src/ui/main_window.py" line="1618"/>
+        <source>Please import or create graphics before saving</source>
+        <translation>Importa o crea elementi grafici prima di salvare</translation>
+    </message>
+    <message>
         <location filename="../src/ui/main_window.py" line="1748"/>
         <source>Export Baseplate DXF</source>
         <translation>Esporta DXF piastra base</translation>

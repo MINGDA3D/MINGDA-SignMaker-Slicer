@@ -502,6 +502,11 @@
         <translation>Сначала импортируйте файл DXF</translation>
     </message>
     <message>
+        <location filename="../src/ui/main_window.py" line="1618"/>
+        <source>Please import or create graphics before saving</source>
+        <translation>Перед сохранением импортируйте или создайте графику</translation>
+    </message>
+    <message>
         <location filename="../src/ui/main_window.py" line="1748"/>
         <source>Export Baseplate DXF</source>
         <translation>Экспорт DXF подложки</translation>

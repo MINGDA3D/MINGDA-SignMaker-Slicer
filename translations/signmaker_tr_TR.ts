@@ -502,6 +502,11 @@
         <translation>Lutfen once bir DXF dosyasi iceri aktarin</translation>
     </message>
     <message>
+        <location filename="../src/ui/main_window.py" line="1618"/>
+        <source>Please import or create graphics before saving</source>
+        <translation>Kaydetmeden önce lütfen grafik içe aktarın veya oluşturun</translation>
+    </message>
+    <message>
         <location filename="../src/ui/main_window.py" line="1748"/>
         <source>Export Baseplate DXF</source>
         <translation>Taban Plakasi DXF Disa Aktar</translation>

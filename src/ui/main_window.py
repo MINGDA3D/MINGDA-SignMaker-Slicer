@@ -1587,6 +1587,9 @@ class MainWindow(QMainWindow):
 
     def _on_save_project(self):
         """保存项目"""
+        if not self._ensure_project_has_contours_for_save():
+            return
+
         if not self.current_file or not self.current_file.endswith('.smp'):
             self._on_save_as()
         else:
@@ -1594,6 +1597,9 @@ class MainWindow(QMainWindow):
 
     def _on_save_as(self):
         """另存为"""
+        if not self._ensure_project_has_contours_for_save():
+            return
+
         # 生成默认文件名
         default_name = ""
         if self.current_file:
@@ -1611,8 +1617,23 @@ class MainWindow(QMainWindow):
                 file_path += '.smp'
             self._save_project(file_path)
 
-    def _save_project(self, file_path: str):
+    def _ensure_project_has_contours_for_save(self) -> bool:
+        """确保保存前画布上存在图形"""
+        if self.contours:
+            return True
+
+        QMessageBox.information(
+            self,
+            self.tr("Info"),
+            self.tr("Please import or create graphics before saving"),
+        )
+        return False
+
+    def _save_project(self, file_path: str) -> bool:
         """保存项目到文件"""
+        if not self._ensure_project_has_contours_for_save():
+            return False
+
         try:
             # 获取当前参数
             current_params = self.param_panel.get_params()
@@ -1641,9 +1662,11 @@ class MainWindow(QMainWindow):
             if self.settings_manager:
                 self.settings_manager.add_recent_file(file_path)
             self._refresh_home_recent_projects()
+            return True
 
         except Exception as e:
             QMessageBox.critical(self, self.tr("Save Failed"), self.tr("Failed to save project:") + f"\n{e}")
+            return False
 
     def _on_show_export_menu(self):
         """显示导出菜单"""

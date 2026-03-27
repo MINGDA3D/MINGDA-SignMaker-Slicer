@@ -502,6 +502,11 @@
         <translation>يرجى استيراد ملف DXF أولاً</translation>
     </message>
     <message>
+        <location filename="../src/ui/main_window.py" line="1618"/>
+        <source>Please import or create graphics before saving</source>
+        <translation>يرجى استيراد الرسومات أو إنشاؤها قبل الحفظ</translation>
+    </message>
+    <message>
         <location filename="../src/ui/main_window.py" line="1748"/>
         <source>Export Baseplate DXF</source>
         <translation>تصدير DXF اللوحة السفلية</translation>
