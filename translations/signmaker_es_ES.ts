@@ -181,6 +181,26 @@
         <translation>Salir</translation>
     </message>
     <message>
+        <location filename="../src/ui/main_window.py" line="765"/>
+        <source>The current project has unsaved changes. Do you want to save before exiting?</source>
+        <translation>El proyecto actual tiene cambios sin guardar. ¿Desea guardar antes de salir?</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="772"/>
+        <source>Save</source>
+        <translation>Guardar</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="776"/>
+        <source>Discard</source>
+        <translation>Descartar</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="780"/>
+        <source>Cancel</source>
+        <translation>Cancelar</translation>
+    </message>
+    <message>
         <location filename="../src/ui/main_window.py" line="224"/>
         <source>Edit(&amp;E)</source>
         <translation>Editar(&amp;E)</translation>

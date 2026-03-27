@@ -181,6 +181,26 @@
         <translation>退出</translation>
     </message>
     <message>
+        <location filename="../src/ui/main_window.py" line="765"/>
+        <source>The current project has unsaved changes. Do you want to save before exiting?</source>
+        <translation>当前项目有未保存的更改，退出前是否保存？</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="772"/>
+        <source>Save</source>
+        <translation>保存</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="776"/>
+        <source>Discard</source>
+        <translation>丢弃</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="780"/>
+        <source>Cancel</source>
+        <translation>取消</translation>
+    </message>
+    <message>
         <location filename="../src/ui/main_window.py" line="224"/>
         <source>Edit(&amp;E)</source>
         <translation>编辑(&amp;E)</translation>

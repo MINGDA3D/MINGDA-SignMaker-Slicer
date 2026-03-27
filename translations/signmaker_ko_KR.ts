@@ -181,6 +181,26 @@
         <translation>종료</translation>
     </message>
     <message>
+        <location filename="../src/ui/main_window.py" line="765"/>
+        <source>The current project has unsaved changes. Do you want to save before exiting?</source>
+        <translation>현재 프로젝트에 저장되지 않은 변경 사항이 있습니다. 종료하기 전에 저장하시겠습니까?</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="772"/>
+        <source>Save</source>
+        <translation>저장</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="776"/>
+        <source>Discard</source>
+        <translation>버리기</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="780"/>
+        <source>Cancel</source>
+        <translation>취소</translation>
+    </message>
+    <message>
         <location filename="../src/ui/main_window.py" line="224"/>
         <source>Edit(&amp;E)</source>
         <translation>편집(&amp;E)</translation>

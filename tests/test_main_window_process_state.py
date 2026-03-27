@@ -1,4 +1,6 @@
 import os
+import shutil
+import uuid
 from pathlib import Path as FsPath
 
 import pytest
@@ -8,6 +10,7 @@ os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 from src.core.types import Contour, Path, Point
 from src.ui.canvas_2d import Canvas2D
 from src.ui.main_window import MainWindow, TUTORIAL_PLAYLIST_URL
+from PySide6.QtWidgets import QMessageBox
 
 
 @pytest.fixture
@@ -18,6 +21,16 @@ def qapp():
     if app is None:
         app = QApplication([])
     yield app
+
+
+@pytest.fixture
+def workspace_tmp_dir():
+    tmpdir = FsPath.cwd() / f".tmp_main_window_state_{uuid.uuid4().hex}"
+    tmpdir.mkdir(parents=True, exist_ok=True)
+    try:
+        yield tmpdir
+    finally:
+        shutil.rmtree(tmpdir, ignore_errors=True)
 
 
 def _rect_contour(x1: float, y1: float, x2: float, y2: float, name: str = "") -> Contour:
@@ -99,6 +112,138 @@ def test_save_project_blocked_when_canvas_has_no_graphics(qapp, monkeypatch):
         assert save_as_calls == []
         assert messages
         assert messages[-1][0][2] == window.tr("Please import or create graphics before saving")
+    finally:
+        window.close()
+
+
+def test_close_confirmation_uses_custom_translated_buttons(qapp, monkeypatch):
+    window = MainWindow()
+    captured = {}
+
+    try:
+        def _fake_exec(message_box):
+            captured["texts"] = {button.text() for button in message_box.buttons()}
+            captured["default"] = message_box.defaultButton().text()
+            captured["escape"] = message_box.escapeButton().text()
+            return 0
+
+        monkeypatch.setattr("src.ui.main_window.QMessageBox.exec", _fake_exec)
+
+        assert window._confirm_close_with_unsaved_changes() == QMessageBox.StandardButton.Cancel
+        assert captured["texts"] == {
+            window.tr("Save"),
+            window.tr("Discard"),
+            window.tr("Cancel"),
+        }
+        assert captured["default"] == window.tr("Save")
+        assert captured["escape"] == window.tr("Cancel")
+    finally:
+        window.close()
+
+
+def test_close_with_unsaved_changes_saves_current_project(qapp, monkeypatch, workspace_tmp_dir):
+    window = MainWindow()
+    saved_paths = []
+
+    try:
+        window.contours = [_rect_contour(0, 0, 10, 10, "A")]
+        window.param_panel.height_spin.setValue(window.param_panel.height_spin.value() + 1.0)
+        project_path = workspace_tmp_dir / "dirty_project.smp"
+        window.current_file = str(project_path)
+
+        monkeypatch.setattr(
+            window,
+            "_confirm_close_with_unsaved_changes",
+            lambda: QMessageBox.StandardButton.Save,
+        )
+
+        def _fake_save(file_path: str) -> bool:
+            saved_paths.append(file_path)
+            window._set_project_save_point()
+            return True
+
+        monkeypatch.setattr(window, "_save_project", _fake_save)
+
+        assert window._handle_unsaved_changes_before_close() is True
+        assert saved_paths == [str(project_path)]
+    finally:
+        window.close()
+
+
+def test_close_with_unsaved_changes_uses_save_as_for_non_project_path(qapp, monkeypatch):
+    window = MainWindow()
+    save_as_calls = []
+
+    try:
+        window.contours = [_rect_contour(0, 0, 10, 10, "A")]
+        window.param_panel.height_spin.setValue(window.param_panel.height_spin.value() + 1.0)
+        window.current_file = "import.svg"
+
+        monkeypatch.setattr(
+            window,
+            "_confirm_close_with_unsaved_changes",
+            lambda: QMessageBox.StandardButton.Save,
+        )
+
+        def _fake_save_as() -> None:
+            save_as_calls.append(True)
+            window._set_project_save_point()
+
+        monkeypatch.setattr(window, "_on_save_as", _fake_save_as)
+
+        assert window._handle_unsaved_changes_before_close() is True
+        assert save_as_calls == [True]
+    finally:
+        window.close()
+
+
+def test_close_with_unsaved_changes_can_cancel_exit(qapp, monkeypatch):
+    window = MainWindow()
+    save_calls = []
+
+    try:
+        window.contours = [_rect_contour(0, 0, 10, 10, "A")]
+        window.param_panel.height_spin.setValue(window.param_panel.height_spin.value() + 1.0)
+
+        monkeypatch.setattr(
+            window,
+            "_confirm_close_with_unsaved_changes",
+            lambda: QMessageBox.StandardButton.Cancel,
+        )
+        monkeypatch.setattr(
+            window,
+            "_save_project",
+            lambda *_args, **_kwargs: save_calls.append(True) or True,
+        )
+
+        assert window._handle_unsaved_changes_before_close() is False
+        assert save_calls == []
+    finally:
+        window._set_project_save_point()
+        window.close()
+
+
+def test_close_with_unsaved_changes_can_discard_exit(qapp, monkeypatch):
+    window = MainWindow()
+    save_calls = []
+
+    try:
+        window.contours = [_rect_contour(0, 0, 10, 10, "A")]
+        window.param_panel.height_spin.setValue(window.param_panel.height_spin.value() + 1.0)
+
+        monkeypatch.setattr(
+            window,
+            "_confirm_close_with_unsaved_changes",
+            lambda: QMessageBox.StandardButton.Discard,
+        )
+        monkeypatch.setattr(
+            window,
+            "_save_project",
+            lambda *_args, **_kwargs: save_calls.append(True) or True,
+        )
+
+        assert window._handle_unsaved_changes_before_close() is True
+        assert save_calls == []
     finally:
         window.close()
 

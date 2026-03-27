@@ -100,6 +100,7 @@ class MainWindow(QMainWindow):
         self._preview_mesh_worker: Optional[WorkerThread] = None
         self._preview_mesh_loading_key = None
         self.current_file: Optional[str] = None
+        self._params_modified = False
 
         # 核心组件
         self.dxf_parser = DXFParser()
@@ -744,7 +745,67 @@ class MainWindow(QMainWindow):
         self.slice_params = self.param_panel.get_params()
         self._sync_canvas_platform_size(self.slice_params)
         self._invalidate_processed_result()
+        if self.contours or self.current_file or self.project_manager.current_project is not None:
+            self._params_modified = True
         self.canvas.update()
+
+    def _has_unsaved_project_changes(self) -> bool:
+        """Return whether the current project has unsaved changes."""
+        return self.undo_manager.is_modified or self._params_modified
+
+    def _set_project_save_point(self) -> None:
+        """Mark the current project state as saved."""
+        self.undo_manager.set_save_point()
+        self._params_modified = False
+        self.project_manager.is_modified = False
+
+    def _confirm_close_with_unsaved_changes(self) -> QMessageBox.StandardButton:
+        """Ask the user how to handle unsaved changes before closing."""
+        message_box = QMessageBox(self)
+        message_box.setIcon(QMessageBox.Icon.Warning)
+        message_box.setWindowTitle(self.tr("Exit"))
+        message_box.setText(
+            self.tr("The current project has unsaved changes. Do you want to save before exiting?")
+        )
+        save_button = message_box.addButton(
+            self.tr("Save"),
+            QMessageBox.ButtonRole.AcceptRole,
+        )
+        discard_button = message_box.addButton(
+            self.tr("Discard"),
+            QMessageBox.ButtonRole.DestructiveRole,
+        )
+        cancel_button = message_box.addButton(
+            self.tr("Cancel"),
+            QMessageBox.ButtonRole.RejectRole,
+        )
+        message_box.setDefaultButton(save_button)
+        message_box.setEscapeButton(cancel_button)
+        message_box.exec()
+
+        clicked_button = message_box.clickedButton()
+        if clicked_button is save_button:
+            return QMessageBox.StandardButton.Save
+        if clicked_button is discard_button:
+            return QMessageBox.StandardButton.Discard
+        return QMessageBox.StandardButton.Cancel
+
+    def _handle_unsaved_changes_before_close(self) -> bool:
+        """Handle unsaved project changes before the window closes."""
+        if not self._has_unsaved_project_changes():
+            return True
+
+        choice = self._confirm_close_with_unsaved_changes()
+        if choice == QMessageBox.StandardButton.Cancel:
+            return False
+        if choice == QMessageBox.StandardButton.Discard:
+            return True
+
+        if self.current_file and self.current_file.lower().endswith(".smp"):
+            return self._save_project(self.current_file)
+
+        self._on_save_as()
+        return not self._has_unsaved_project_changes()
 
     def _sync_canvas_platform_size(self, params: Optional[SliceParams] = None) -> None:
         """å°†ç”»å¸ƒå¹³å°å°ºå¯¸åŒæ­¥åˆ°å½“å‰æœºå™¨å‚æ•°ã€‚"""
@@ -1305,6 +1366,7 @@ class MainWindow(QMainWindow):
         self.canvas.set_contours([])
         self.setWindowTitle(self.tr("MINGDA SignMaker - New Project"))
         self._update_status(self.tr("New Project"))
+        self._set_project_save_point()
 
         # 切换到项目页面
         self.title_bar.set_nav("project")
@@ -1607,6 +1669,7 @@ class MainWindow(QMainWindow):
             ))
             if self.settings_manager:
                 self.settings_manager.add_recent_file(file_path)
+            self._set_project_save_point()
             self._refresh_home_recent_projects()
             self.project_loaded.emit(file_path)
             return True
@@ -1692,6 +1755,7 @@ class MainWindow(QMainWindow):
             # 添加到最近文件列表
             if self.settings_manager:
                 self.settings_manager.add_recent_file(file_path)
+            self._set_project_save_point()
             self._refresh_home_recent_projects()
             return True
 
@@ -2485,6 +2549,9 @@ class MainWindow(QMainWindow):
     def closeEvent(self, event):
         """窗口关闭事件"""
         # 保存当前参数
+        if not self._handle_unsaved_changes_before_close():
+            event.ignore()
+            return
         self._save_current_params()
         # 保存窗口状态（使用 QSettings）
         self._save_window_state()

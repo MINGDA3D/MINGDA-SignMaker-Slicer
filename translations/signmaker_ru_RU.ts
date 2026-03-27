@@ -181,6 +181,26 @@
         <translation>Выход</translation>
     </message>
     <message>
+        <location filename="../src/ui/main_window.py" line="765"/>
+        <source>The current project has unsaved changes. Do you want to save before exiting?</source>
+        <translation>В текущем проекте есть несохранённые изменения. Сохранить перед выходом?</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="772"/>
+        <source>Save</source>
+        <translation>Сохранить</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="776"/>
+        <source>Discard</source>
+        <translation>Отбросить</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="780"/>
+        <source>Cancel</source>
+        <translation>Отмена</translation>
+    </message>
+    <message>
         <location filename="../src/ui/main_window.py" line="224"/>
         <source>Edit(&amp;E)</source>
         <translation>Редактирование(&amp;E)</translation>

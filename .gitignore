@@ -53,4 +53,5 @@ Debug
 .tmp_o_matrix_combo
 .tmp_pytest_stl_writer
 .tmp_pytest_text_generator
+.tmp_main_window_state_*/
 .tmp_recent_projects_*/
