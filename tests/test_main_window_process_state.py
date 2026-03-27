@@ -5,7 +5,7 @@ import pytest
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
 from src.core.types import Contour, Path, Point
-from src.ui.main_window import MainWindow
+from src.ui.main_window import MainWindow, TUTORIAL_PLAYLIST_URL
 
 
 @pytest.fixture
@@ -136,5 +136,22 @@ def test_preview_does_not_auto_process_without_contours(qapp, monkeypatch):
         assert preview_prepared == ["_prepare_preview_3d"]
         assert window.current_main_view == "editor"
         assert window.current_view == "3d"
+    finally:
+        window.close()
+
+
+def test_menu_tutorial_opens_default_browser(qapp, monkeypatch):
+    window = MainWindow()
+    opened_urls = []
+
+    try:
+        monkeypatch.setattr(
+            "src.ui.main_window.QDesktopServices.openUrl",
+            lambda url: opened_urls.append(url.toString()) or True,
+        )
+
+        window._on_menu_action("tutorial")
+
+        assert opened_urls == [TUTORIAL_PLAYLIST_URL]
     finally:
         window.close()

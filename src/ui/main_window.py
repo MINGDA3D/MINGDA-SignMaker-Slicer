@@ -22,8 +22,8 @@ from PySide6.QtWidgets import (
     QMessageBox, QSizePolicy, QDoubleSpinBox, QSpinBox, QStackedWidget,
     QGraphicsDropShadowEffect, QCheckBox
 )
-from PySide6.QtCore import Qt, Signal, QSize, QPoint, QTimer
-from PySide6.QtGui import QAction, QIcon, QKeySequence, QPixmap, QFont, QColor
+from PySide6.QtCore import Qt, Signal, QSize, QPoint, QTimer, QUrl
+from PySide6.QtGui import QAction, QDesktopServices, QIcon, QKeySequence, QPixmap, QFont, QColor
 
 from .theme import get_stylesheet, COLORS, LAYOUT
 from .canvas_2d import Canvas2D
@@ -58,6 +58,11 @@ from src.business.project_manager import ProjectManager
 from src.i18n import (
     init_translation_manager, get_translation_manager,
     SUPPORTED_LANGUAGES, RTL_LANGUAGES
+)
+
+TUTORIAL_PLAYLIST_URL = (
+    "https://youtube.com/playlist?list=PL1DS2s3xcuH3Nz3ZEUHmyzfmk7BfvvIt1"
+    "&si=pYUuSv80w7LlNJGJ"
 )
 
 
@@ -1069,6 +1074,7 @@ class MainWindow(QMainWindow):
             "export_stl": self._on_export_stl,
             "export_baseplate": self._on_export_baseplate,
             "export_panel": self._on_export_panel,
+            "tutorial": self._open_tutorial,
             "about": self._on_about,
             "quit": self.close,
         }
@@ -2006,6 +2012,15 @@ class MainWindow(QMainWindow):
     def _update_status(self, message: str):
         """更新状态栏"""
         self.status_label.setText(message)
+
+    def _open_tutorial(self):
+        """Open the tutorial playlist in the default browser."""
+        if not QDesktopServices.openUrl(QUrl(TUTORIAL_PLAYLIST_URL)):
+            QMessageBox.warning(
+                self,
+                self.tr("Open Tutorial Failed"),
+                self.tr("Failed to open the tutorial playlist in the default browser."),
+            )
 
     def _on_change_language(self, lang_code: str):
         """切换语言"""

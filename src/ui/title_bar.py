@@ -356,6 +356,7 @@ class TitleBar(QWidget):
         lang_menu.addAction("日本語", lambda: self.menu_action.emit("lang_ja_JP"))
         lang_menu.addAction("한국어", lambda: self.menu_action.emit("lang_ko_KR"))
         lang_menu.addAction("Türkçe", lambda: self.menu_action.emit("lang_tr_TR"))
+        menu.addAction(self.tr("Tutorial"), lambda: self.menu_action.emit("tutorial"))
         menu.addSeparator()
 
         menu.addAction(self.tr("About"), lambda: self.menu_action.emit("about"))
