@@ -11,6 +11,7 @@ MINGDA SignMaker - 主窗口
 """
 
 from __future__ import annotations
+from datetime import datetime
 import sys
 from pathlib import Path
 from typing import Optional, List
@@ -55,6 +56,7 @@ from src.business.settings_manager import (
     SettingsManager, init_settings_manager, get_settings_manager
 )
 from src.business.project_manager import ProjectManager
+from src.business.project_format import get_project_info
 from src.i18n import (
     init_translation_manager, get_translation_manager,
     SUPPORTED_LANGUAGES, RTL_LANGUAGES
@@ -117,6 +119,7 @@ class MainWindow(QMainWindow):
 
         # 加载保存的参数
         self._load_saved_params()
+        self._refresh_home_recent_projects()
 
     def _init_window(self):
         """初始化窗口属性"""
@@ -552,7 +555,7 @@ class MainWindow(QMainWindow):
         self.home_page = HomePage()
         self.home_page.new_project_clicked.connect(self._on_new_project)
         self.home_page.open_file_clicked.connect(self._on_open_file)
-        self.home_page.recent_project_clicked.connect(self._load_file)
+        self.home_page.recent_project_clicked.connect(self._open_recent_project)
         self.main_stack.addWidget(self.home_page)  # index 0
 
         # === 编辑器视图（分割器）===
@@ -1105,12 +1108,92 @@ class MainWindow(QMainWindow):
         self._sync_canvas_toolbar_visibility()
         self._sync_transform_panel_visibility()
 
+    @staticmethod
+    def _format_recent_project_date(date_value: Optional[str], file_path: str) -> str:
+        """Format a recent project timestamp for home-page cards."""
+        if date_value:
+            try:
+                return datetime.fromisoformat(date_value).strftime("%Y-%m-%d %H:%M")
+            except ValueError:
+                pass
+
+        try:
+            return datetime.fromtimestamp(Path(file_path).stat().st_mtime).strftime("%Y-%m-%d %H:%M")
+        except OSError:
+            return ""
+
+    @staticmethod
+    def _get_recent_project_preview_char(project_name: str) -> str:
+        """Return the display character for a recent project card."""
+        for char in project_name.strip():
+            if not char.isspace():
+                return char.upper()
+        return "S"
+
+    def _refresh_home_recent_projects(self):
+        """Refresh recent-project cards shown on the home page."""
+        if not hasattr(self, "home_page"):
+            return
+
+        if not self.settings_manager:
+            self.home_page.set_recent_projects([])
+            return
+
+        recent_projects = []
+        invalid_paths = []
+
+        for file_path in self.settings_manager.get_recent_files():
+            path = Path(file_path)
+            resolved_path = str(path.resolve())
+            if path.suffix.lower() != ".smp" or not path.exists():
+                invalid_paths.append(resolved_path)
+                continue
+
+            try:
+                info = get_project_info(resolved_path)
+            except Exception:
+                invalid_paths.append(resolved_path)
+                continue
+
+            project_name = info.get("name") or path.stem
+            recent_projects.append({
+                "name": project_name,
+                "date": self._format_recent_project_date(info.get("modified_at"), resolved_path),
+                "char": self._get_recent_project_preview_char(project_name),
+                "path": resolved_path,
+            })
+
+        for invalid_path in invalid_paths:
+            self.settings_manager.remove_recent_file(invalid_path)
+
+        self.home_page.set_recent_projects(recent_projects)
+
+    def _open_recent_project(self, file_path: str):
+        """Open a project from the home-page recent-project list."""
+        path = Path(file_path)
+        resolved_path = str(path.resolve())
+        if path.suffix.lower() != ".smp" or not path.exists():
+            if self.settings_manager:
+                self.settings_manager.remove_recent_file(resolved_path)
+            self._refresh_home_recent_projects()
+            QMessageBox.warning(
+                self,
+                self.tr("Open Project"),
+                self.tr("The selected recent project is no longer available and has been removed from the list."),
+            )
+            return
+
+        if not self._load_project(resolved_path) and self.settings_manager:
+            self.settings_manager.remove_recent_file(resolved_path)
+            self._refresh_home_recent_projects()
+
     def _on_nav_changed(self, nav: str):
         """处理标题栏导航切换"""
         if nav == "home":
             # 显示首页
             self.main_stack.setCurrentIndex(0)
             self.current_main_view = "home"
+            self._refresh_home_recent_projects()
             self._update_status(self.tr("Home"))
         elif nav == "project":
             # 显示项目编辑视图（2D）
@@ -1434,7 +1517,7 @@ class MainWindow(QMainWindow):
         )
         self.project_loaded.emit(str(path))
 
-    def _load_project(self, file_path: str):
+    def _load_project(self, file_path: str) -> bool:
         """加载项目文件（.smp）"""
         try:
             project = self.project_manager.open_project(file_path)
@@ -1475,10 +1558,15 @@ class MainWindow(QMainWindow):
                 name=project.meta.name,
                 count=len(self.contours)
             ))
+            if self.settings_manager:
+                self.settings_manager.add_recent_file(file_path)
+            self._refresh_home_recent_projects()
             self.project_loaded.emit(file_path)
+            return True
 
         except Exception as e:
             QMessageBox.critical(self, self.tr("Load Failed"), self.tr("Failed to load project:") + f"\n{e}")
+            return False
 
     def _on_save_project(self):
         """保存项目"""
@@ -1535,6 +1623,7 @@ class MainWindow(QMainWindow):
             # 添加到最近文件列表
             if self.settings_manager:
                 self.settings_manager.add_recent_file(file_path)
+            self._refresh_home_recent_projects()
 
         except Exception as e:
             QMessageBox.critical(self, self.tr("Save Failed"), self.tr("Failed to save project:") + f"\n{e}")

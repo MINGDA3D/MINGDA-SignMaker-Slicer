@@ -247,6 +247,14 @@ class SettingsManager:
         self._qsettings.endArray()
         return files
 
+    def _write_recent_files(self, files: List[str]):
+        """写回最近文件列表。"""
+        self._qsettings.beginWriteArray("RecentFiles")
+        for i, path in enumerate(files):
+            self._qsettings.setArrayIndex(i)
+            self._qsettings.setValue("path", path)
+        self._qsettings.endArray()
+
     def add_recent_file(self, file_path: str):
         """添加文件到最近文件列表"""
         file_path = str(Path(file_path).resolve())
@@ -263,16 +271,17 @@ class SettingsManager:
         recent = recent[:self.MAX_RECENT_FILES]
 
         # 保存
-        self._qsettings.beginWriteArray("RecentFiles")
-        for i, path in enumerate(recent):
-            self._qsettings.setArrayIndex(i)
-            self._qsettings.setValue("path", path)
-        self._qsettings.endArray()
+        self._write_recent_files(recent)
+
+    def remove_recent_file(self, file_path: str):
+        """从最近文件列表移除指定文件。"""
+        file_path = str(Path(file_path).resolve())
+        recent = [path for path in self.get_recent_files() if path != file_path]
+        self._write_recent_files(recent)
 
     def clear_recent_files(self):
         """清除最近文件列表"""
-        self._qsettings.beginWriteArray("RecentFiles")
-        self._qsettings.endArray()
+        self._write_recent_files([])
 
     # =========================================================================
     # 导出设置（使用 QSettings）

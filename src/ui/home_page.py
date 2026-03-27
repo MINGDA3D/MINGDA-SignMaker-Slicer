@@ -90,9 +90,19 @@ class ProjectCard(QFrame):
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
         painter.setRenderHint(QPainter.RenderHint.TextAntialiasing)
 
+        card_rect = QRectF(0, 0, self.card_width, self.card_height)
+        painter.setPen(Qt.PenStyle.NoPen)
+        painter.setBrush(hex_to_qcolor(COLORS["bg_card"]))
+        painter.drawRoundedRect(card_rect, 12, 12)
+
+        if self._hovered:
+            painter.setPen(QPen(hex_to_qcolor(COLORS["accent_primary"]), 1))
+            painter.setBrush(Qt.BrushStyle.NoBrush)
+            painter.drawRoundedRect(card_rect.adjusted(0.5, 0.5, -0.5, -0.5), 12, 12)
+
         # 预览区域位置
         preview_x = self.preview_margin
-        preview_y = 10
+        preview_y = 14
         preview_size = self.preview_size
 
         # 绘制预览背景 (圆角矩形)
@@ -135,7 +145,11 @@ class ProjectCard(QFrame):
         painter.setFont(font_name)
         painter.setPen(hex_to_qcolor(COLORS["text_primary"]))
 
-        display_name = self.name if len(self.name) <= 18 else self.name[:17] + "..."
+        display_name = QFontMetrics(font_name).elidedText(
+            self.name,
+            Qt.TextElideMode.ElideRight,
+            self.preview_size,
+        )
         painter.drawText(preview_x, int(text_y + 12), display_name)
 
         # 日���
@@ -302,61 +316,40 @@ class HomePage(QWidget):
         super().__init__(parent)
         self.setObjectName("homePage")
 
-        # 当前选中的标签（0=最近项目, 1=精选案例）
-        self._current_tab = 0
-
         # 数据
         self._recent_projects = []
-        self._featured_cases = []
+        self._cards = []
 
-        # 布局参数 (来自脚本)
-        self.hero_y = 140
-        self.btn_y = self.hero_y + 165
-        self.section_y = self.btn_y + 90
-        self.content_y = self.section_y + 50
+        # 布局参数
+        self.hero_top = 88
+        self.button_spacing = 20
+        self.section_gap = 92
+        self.section_title_gap = 54
+        self.card_gap_x = 20
+        self.card_gap_y = 18
+        self.card_max_columns = 5
+        self.content_margin = 72
 
         # 初始化
         self._load_demo_data()
 
     def _load_demo_data(self):
-        """加载演示数据 - 暂时屏蔽最近项目和精选案例"""
-        # 暂时清空数据
+        """初始化首页数据。"""
         self._recent_projects = []
-        self._featured_cases = []
         self._cards = []
-        return
 
-        # 以下为原始演示数据（已屏蔽）
-        self._recent_projects_disabled = [
-            {"name": "发光字-门头招牌.sms", "date": "2025-12-25 14:30:04", "char": "洋", "path": ""},
-            {"name": "连襟字-客户订单.sms", "date": "2025-12-24 16:45:22", "char": "明", "path": ""},
-            {"name": "包边字-测试样品.sms", "date": "2025-12-22 09:15:38", "char": "达", "path": ""},
-            {"name": "勾边字-展示样板.sms", "date": "2025-12-20 11:28:56", "char": "发", "path": ""},
-            {"name": "斜边字-商场招牌.sms", "date": "2025-12-18 15:42:11", "char": "光", "path": ""},
-            {"name": "直边字-店铺门头.sms", "date": "2025-12-15 08:33:45", "char": "字", "path": ""},
-            {"name": "双面字-广告牌.sms", "date": "2025-12-12 17:20:33", "char": "切", "path": ""},
-            {"name": "工厂字-车间标识.sms", "date": "2025-12-10 14:55:19", "char": "片", "path": ""},
-            {"name": "背打光-酒店标识.sms", "date": "2025-12-08 10:12:47", "char": "软", "path": ""},
-            {"name": "吸塑字-连锁店招.sms", "date": "2025-12-05 16:38:02", "char": "件", "path": ""},
-        ]
-
-        base_path = Path(__file__).parent.parent.parent / "docs" / "images"
-        self._featured_cases = [
-            {"brand": "TikTok", "style": "斜边字", "logo": str(base_path / "tiktok.png")},
-            {"brand": "ChatGPT", "style": "包边字", "logo": str(base_path / "ChatGPT_logo.png")},
-            {"brand": "奔驰", "style": "连襟字", "logo": str(base_path / "奔驰.png")},
-            {"brand": "宝马", "style": "勾边字", "logo": str(base_path / "宝马.png")},
-            {"brand": "特斯拉", "style": "工厂字", "logo": str(base_path / "特斯拉.png")},
-            {"brand": "星巴克", "style": "双面字", "logo": str(base_path / "星巴克.png")},
-            {"brand": "麦当劳", "style": "吸塑字", "logo": str(base_path / "麦当劳-01.png")},
-            {"brand": "耐克", "style": "背打光", "logo": str(base_path / "耐克.png")},
-            {"brand": "苹果", "style": "直边字", "logo": str(base_path / "apple.png")},
-            {"brand": "华为", "style": "斜边字", "logo": str(base_path / "huawei.png")},
-        ]
-
-        # 创建卡片
-        self._cards = []
-        self._create_cards()
+    def _get_layout_metrics(self) -> dict:
+        """根据当前窗口尺寸计算首页布局。"""
+        hero_y = max(72, min(110, self.height() // 8))
+        btn_y = hero_y + 160
+        section_y = btn_y + self.section_gap
+        content_y = section_y + self.section_title_gap
+        return {
+            "hero_y": hero_y,
+            "btn_y": btn_y,
+            "section_y": section_y,
+            "content_y": content_y,
+        }
 
     def _create_cards(self):
         """创建卡片组件"""
@@ -366,53 +359,53 @@ class HomePage(QWidget):
             card.deleteLater()
         self._cards = []
 
-        if self._current_tab == 0:
-            # 最近项目
-            for project in self._recent_projects[:10]:
-                card = ProjectCard(
-                    name=project["name"],
-                    date=project["date"],
-                    preview_char=project.get("char", "字"),
-                    file_path=project.get("path", ""),
-                    parent=self
-                )
-                card.clicked.connect(self.recent_project_clicked.emit)
-                self._cards.append(card)
-        else:
-            # 精选案例
-            for case in self._featured_cases[:10]:
-                card = CaseCard(
-                    brand=case["brand"],
-                    style=case["style"],
-                    logo_path=case.get("logo", ""),
-                    parent=self
-                )
-                self._cards.append(card)
+        for project in self._recent_projects[:10]:
+            card = ProjectCard(
+                name=project["name"],
+                date=project["date"],
+                preview_char=project.get("char", "S"),
+                file_path=project.get("path", ""),
+                parent=self
+            )
+            card.clicked.connect(self.recent_project_clicked.emit)
+            self._cards.append(card)
 
         self._position_cards()
 
     def _position_cards(self):
         """定位卡片"""
-        cols = 5
+        if not self._cards:
+            return
+
+        metrics = self._get_layout_metrics()
         card_size = 260
-        card_gap_x = 20
-        card_gap_y = 15 if self._current_tab == 0 else 20
-        start_x = 80
+        available_width = max(
+            card_size,
+            self.width() - self.content_margin * 2,
+        )
+        cols = max(
+            1,
+            min(
+                self.card_max_columns,
+                (available_width + self.card_gap_x) // (card_size + self.card_gap_x),
+            ),
+        )
+        total_width = cols * card_size + max(0, cols - 1) * self.card_gap_x
+        start_x = max(self.content_margin, (self.width() - total_width) // 2)
 
         for i, card in enumerate(self._cards):
             row = i // cols
             col = i % cols
-            cx = start_x + col * (card_size + card_gap_x)
-            cy = self.content_y + row * (card_size + card_gap_y)
+            cx = start_x + col * (card_size + self.card_gap_x)
+            cy = metrics["content_y"] + row * (card_size + self.card_gap_y)
             card.move(cx, cy)
             card.show()
 
     def set_recent_projects(self, projects: List[dict]):
         """设置最近项目列表"""
         self._recent_projects = projects
-        if self._current_tab == 0:
-            self._create_cards()
-            self.update()
+        self._create_cards()
+        self.update()
 
     def paintEvent(self, event):
         """绘制整个首页"""
@@ -422,14 +415,10 @@ class HomePage(QWidget):
 
         w = self.width()
         h = self.height()
-
-        # ============================================
-        # 动态计算垂直居中位置
-        # ============================================
-        # 内容总高度：标题(60) + 副标题(35) + 功能点(35) + 间距(30) + 按钮(48) = 208
-        content_height = 208
-        hero_y = (h - content_height) // 2
-        btn_y = hero_y + 160
+        metrics = self._get_layout_metrics()
+        hero_y = metrics["hero_y"]
+        btn_y = metrics["btn_y"]
+        section_y = metrics["section_y"]
 
         # ============================================
         # 背景：深邃渐变
@@ -519,9 +508,46 @@ class HomePage(QWidget):
         self._btn1_rect = btn1_rect
         self._btn2_rect = btn2_rect
 
-        # ============================================
-        # 标签栏和卡片区域 - 暂时屏蔽
-        # ============================================
+        # 最近项目区域
+        section_width = min(1400, w - self.content_margin * 2)
+        section_x = (w - section_width) // 2
+        section_title = self.tr("Recent Projects")
+
+        font_section = QFont("Microsoft YaHei UI", 14)
+        font_section.setWeight(QFont.Weight.DemiBold)
+        painter.setFont(font_section)
+        painter.setPen(hex_to_qcolor(COLORS["text_primary"]))
+        painter.drawText(section_x, section_y, section_title)
+
+        line_y = section_y + 16
+        painter.setPen(QPen(hex_to_qcolor(COLORS["border_subtle"]), 1))
+        painter.drawLine(section_x + 150, line_y, section_x + section_width, line_y)
+
+        if not self._recent_projects:
+            empty_rect = QRectF(section_x, metrics["content_y"] + 10, section_width, 170)
+            painter.setPen(QPen(hex_to_qcolor(COLORS["border_subtle"]), 1))
+            painter.setBrush(hex_to_qcolor(COLORS["bg_primary"]))
+            painter.drawRoundedRect(empty_rect, 16, 16)
+
+            empty_title_font = QFont("Microsoft YaHei UI", 13)
+            empty_title_font.setWeight(QFont.Weight.DemiBold)
+            painter.setFont(empty_title_font)
+            painter.setPen(hex_to_qcolor(COLORS["text_primary"]))
+            painter.drawText(
+                empty_rect,
+                Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignTop,
+                "\n" + self.tr("No recent projects yet"),
+            )
+
+            body_font = QFont("Microsoft YaHei UI", 10)
+            painter.setFont(body_font)
+            painter.setPen(hex_to_qcolor(COLORS["text_secondary"]))
+            body_rect = empty_rect.adjusted(40, 68, -40, -36)
+            painter.drawText(
+                body_rect,
+                Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignTop | Qt.TextFlag.TextWordWrap,
+                self.tr("Open or save a SignMaker project to see it here."),
+            )
 
     def _draw_soft_glow(self, painter: QPainter, cx: int, cy: int, radius: int, color: QColor, intensity: float):
         """绘制柔和光晕"""
@@ -560,21 +586,6 @@ class HomePage(QWidget):
 
         if hasattr(self, '_btn2_rect') and self._btn2_rect.contains(pos):
             self.open_file_clicked.emit()
-            return
-
-        # 检查标签点击
-        if hasattr(self, '_tab1_rect') and self._tab1_rect.contains(pos):
-            if self._current_tab != 0:
-                self._current_tab = 0
-                self._create_cards()
-                self.update()
-            return
-
-        if hasattr(self, '_tab2_rect') and self._tab2_rect.contains(pos):
-            if self._current_tab != 1:
-                self._current_tab = 1
-                self._create_cards()
-                self.update()
             return
 
         super().mousePressEvent(event)
