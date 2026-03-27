@@ -119,6 +119,7 @@ class Canvas2D(QWidget):
         self.contour_color = QColor(COLORS.path_shell)
         self.hole_color = QColor(COLORS.accent_warning)
         self.selected_color = QColor(COLORS.accent_primary)
+        self.out_of_bounds_color = QColor(COLORS.accent_error)
         self.start_point_color = QColor(COLORS.accent_success)
         self.transform_handle_color = QColor(COLORS.accent_primary)
         self.rotate_gizmo_color = QColor(88, 166, 255, 180)  # 旋转圆环颜色
@@ -916,13 +917,26 @@ class Canvas2D(QWidget):
         """绘制轮廓"""
         for i, contour in enumerate(self.contours):
             is_selected = i in self.selected_indices
+            is_out_of_bounds = self.is_contour_out_of_bounds(contour)
 
             # 绘制外轮廓
-            self._draw_path(painter, contour.outer, is_selected, is_hole=False)
+            self._draw_path(
+                painter,
+                contour.outer,
+                is_selected,
+                is_hole=False,
+                is_out_of_bounds=is_out_of_bounds,
+            )
 
             # 绘制内孔
             for hole in contour.holes:
-                self._draw_path(painter, hole, is_selected, is_hole=True)
+                self._draw_path(
+                    painter,
+                    hole,
+                    is_selected,
+                    is_hole=True,
+                    is_out_of_bounds=is_out_of_bounds,
+                )
 
             # 绘制起始点
             if contour.outer.points:
@@ -930,8 +944,51 @@ class Canvas2D(QWidget):
                 if 0 <= start_idx < len(contour.outer.points):
                     self._draw_start_point(painter, contour.outer.points[start_idx])
 
+    def is_contour_out_of_bounds(self, contour: Contour) -> bool:
+        """åˆ¤æ–­è½®å»“æ˜¯å¦è¶…å‡ºå¹³å°è¾¹ç•Œã€‚"""
+        bounds = contour.outer.bounds
+        return (
+            bounds[0] < 0
+            or bounds[1] < 0
+            or bounds[2] > self.platform_width
+            or bounds[3] > self.platform_height
+        )
+
+    def get_out_of_bounds_indices(self) -> List[int]:
+        """èŽ·å–è¶…å‡ºå¹³å°è¾¹ç•Œçš„è½®å»“ç´¢å¼•ã€‚"""
+        return [
+            i for i, contour in enumerate(self.contours)
+            if self.is_contour_out_of_bounds(contour)
+        ]
+
+    def _get_path_pen(
+        self,
+        is_selected: bool,
+        is_hole: bool,
+        is_out_of_bounds: bool,
+    ) -> QPen:
+        """æ ¹æ®è·¯å¾„çŠ¶æ€ç”Ÿæˆç”»ç¬”ã€‚"""
+        if is_out_of_bounds:
+            pen = QPen(self.out_of_bounds_color)
+            pen.setWidthF((2 if is_selected else 1.5) / self.view_scale)
+            return pen
+
+        if is_selected:
+            pen = QPen(self.selected_color)
+            pen.setWidthF(2 / self.view_scale)
+            return pen
+
+        if is_hole:
+            pen = QPen(self.hole_color)
+            pen.setWidthF(1.5 / self.view_scale)
+            return pen
+
+        pen = QPen(self.contour_color)
+        pen.setWidthF(1.5 / self.view_scale)
+        return pen
+
     def _draw_path(self, painter: QPainter, path: Path,
-                   is_selected: bool, is_hole: bool):
+                   is_selected: bool, is_hole: bool, is_out_of_bounds: bool = False):
         """绘制单个路径"""
         if not path.points:
             return
@@ -947,16 +1004,7 @@ class Canvas2D(QWidget):
             qpath.closeSubpath()
 
         # 设置画笔
-        if is_selected:
-            pen = QPen(self.selected_color)
-            pen.setWidthF(2 / self.view_scale)
-        elif is_hole:
-            pen = QPen(self.hole_color)
-            pen.setWidthF(1.5 / self.view_scale)
-        else:
-            pen = QPen(self.contour_color)
-            pen.setWidthF(1.5 / self.view_scale)
-
+        pen = self._get_path_pen(is_selected, is_hole, is_out_of_bounds)
         painter.setPen(pen)
         painter.setBrush(Qt.BrushStyle.NoBrush)
         painter.drawPath(qpath)

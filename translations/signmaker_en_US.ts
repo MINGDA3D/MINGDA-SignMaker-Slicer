@@ -4,37 +4,37 @@
 <context>
     <name>Canvas2D</name>
     <message>
-        <location filename="../src/ui/canvas_2d.py" line="1509"/>
+        <location filename="../src/ui/canvas_2d.py" line="1557"/>
         <source>Delete</source>
         <translation>Delete</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_2d.py" line="1517"/>
+        <location filename="../src/ui/canvas_2d.py" line="1565"/>
         <source>Mirror</source>
         <translation>Mirror</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_2d.py" line="1518"/>
+        <location filename="../src/ui/canvas_2d.py" line="1566"/>
         <source>Mirror X</source>
         <translation>Mirror X</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_2d.py" line="1520"/>
+        <location filename="../src/ui/canvas_2d.py" line="1568"/>
         <source>Mirror Y</source>
         <translation>Mirror Y</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_2d.py" line="1527"/>
+        <location filename="../src/ui/canvas_2d.py" line="1575"/>
         <source>Select All</source>
         <translation>Select All</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_2d.py" line="1535"/>
+        <location filename="../src/ui/canvas_2d.py" line="1583"/>
         <source>Fit View</source>
         <translation>Fit View</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_2d.py" line="1540"/>
+        <location filename="../src/ui/canvas_2d.py" line="1588"/>
         <source>Reset View</source>
         <translation>Reset View</translation>
     </message>
@@ -134,7 +134,7 @@
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="173"/>
-        <location filename="../src/ui/main_window.py" line="1107"/>
+        <location filename="../src/ui/main_window.py" line="1123"/>
         <source>New Project</source>
         <translation>New Project</translation>
     </message>
@@ -145,7 +145,7 @@
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="187"/>
-        <location filename="../src/ui/main_window.py" line="1256"/>
+        <location filename="../src/ui/main_window.py" line="1443"/>
         <source>Save Project</source>
         <translation>Save Project</translation>
     </message>
@@ -156,7 +156,7 @@
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="207"/>
-        <location filename="../src/ui/main_window.py" line="1329"/>
+        <location filename="../src/ui/main_window.py" line="1516"/>
         <source>Export STL...</source>
         <translation>Export STL...</translation>
     </message>
@@ -247,20 +247,20 @@
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="411"/>
-        <location filename="../src/ui/main_window.py" line="1598"/>
+        <location filename="../src/ui/main_window.py" line="1800"/>
         <source>Scale</source>
         <translation type="unfinished">Scale</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="530"/>
-        <location filename="../src/ui/main_window.py" line="903"/>
-        <location filename="../src/ui/main_window.py" line="1590"/>
+        <location filename="../src/ui/main_window.py" line="919"/>
+        <location filename="../src/ui/main_window.py" line="1792"/>
         <source>Arrow keys: 1mm, Shift+Arrow: 10mm</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="652"/>
-        <location filename="../src/ui/main_window.py" line="1833"/>
+        <location filename="../src/ui/main_window.py" line="2035"/>
         <source>Ready</source>
         <translation>Ready</translation>
     </message>
@@ -280,477 +280,497 @@
         <translation>Redone: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="898"/>
-        <location filename="../src/ui/main_window.py" line="1586"/>
+        <location filename="../src/ui/main_window.py" line="914"/>
+        <location filename="../src/ui/main_window.py" line="1788"/>
         <source>Position</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="979"/>
-        <location filename="../src/ui/main_window.py" line="992"/>
+        <location filename="../src/ui/main_window.py" line="995"/>
+        <location filename="../src/ui/main_window.py" line="1008"/>
         <source>Loading 3D preview...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1013"/>
+        <location filename="../src/ui/main_window.py" line="1029"/>
         <source>3D preview loading failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1017"/>
+        <location filename="../src/ui/main_window.py" line="1033"/>
         <source>Failed to prepare 3D preview:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1045"/>
+        <location filename="../src/ui/main_window.py" line="1061"/>
         <source>Home</source>
         <translation>Home</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1052"/>
+        <location filename="../src/ui/main_window.py" line="1068"/>
         <source>Project Edit</source>
         <translation>Project Edit</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1016"/>
-        <location filename="../src/ui/main_window.py" line="1062"/>
+        <location filename="../src/ui/main_window.py" line="1032"/>
+        <location filename="../src/ui/main_window.py" line="1078"/>
         <source>3D Preview</source>
         <translation>3D Preview</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1091"/>
+        <location filename="../src/ui/main_window.py" line="1107"/>
         <source>Settings feature under development...</source>
         <translation>Settings feature under development...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1093"/>
+        <location filename="../src/ui/main_window.py" line="1109"/>
         <source>Help feature under development...</source>
         <translation>Help feature under development...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1106"/>
+        <location filename="../src/ui/main_window.py" line="1122"/>
         <source>MINGDA SignMaker - New Project</source>
         <translation>MINGDA SignMaker - New Project</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1117"/>
+        <location filename="../src/ui/main_window.py" line="1133"/>
         <source>Open File</source>
         <translation>Open File</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1119"/>
+        <location filename="../src/ui/main_window.py" line="1135"/>
         <source>Supported Files (*.dxf *.svg *.smp);;SignMaker Project (*.smp);;DXF Files (*.dxf);;SVG Files (*.svg);;All Files (*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1129"/>
+        <location filename="../src/ui/main_window.py" line="1145"/>
         <source>Open Project</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1231"/>
+        <location filename="../src/ui/main_window.py" line="1418"/>
         <source>Project loaded: {name}, {count} contours</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1238"/>
+        <location filename="../src/ui/main_window.py" line="1425"/>
         <source>Failed to load project:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1297"/>
+        <location filename="../src/ui/main_window.py" line="1484"/>
         <source>Save Failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1297"/>
+        <location filename="../src/ui/main_window.py" line="1484"/>
         <source>Failed to save project:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2060"/>
+        <location filename="../src/ui/main_window.py" line="2259"/>
         <source>Loaded saved parameters</source>
         <translation>Loaded saved parameters</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1151"/>
+        <location filename="../src/ui/main_window.py" line="1167"/>
         <source>Unsupported Format</source>
         <translation>Unsupported Format</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1151"/>
+        <location filename="../src/ui/main_window.py" line="1167"/>
         <source>Format not supported: </source>
         <translation>Format not supported: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1170"/>
+        <location filename="../src/ui/main_window.py" line="1356"/>
         <source>Load </source>
         <translation>Load </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1193"/>
+        <location filename="../src/ui/main_window.py" line="1375"/>
         <source>Loaded: {file}, {count} contours</source>
         <translation>Loaded: {file}, {count} contours</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1160"/>
-        <location filename="../src/ui/main_window.py" line="1238"/>
+        <location filename="../src/ui/main_window.py" line="1176"/>
+        <location filename="../src/ui/main_window.py" line="1425"/>
         <source>Load Failed</source>
         <translation>Load Failed</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1161"/>
+        <location filename="../src/ui/main_window.py" line="1177"/>
         <source>Failed to load file:</source>
         <translation>Failed to load file:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1131"/>
-        <location filename="../src/ui/main_window.py" line="1258"/>
+        <location filename="../src/ui/main_window.py" line="1147"/>
+        <location filename="../src/ui/main_window.py" line="1445"/>
         <source>SignMaker Project (*.smp);;All Files (*)</source>
         <translation>SignMaker Project (*.smp);;All Files (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1290"/>
+        <location filename="../src/ui/main_window.py" line="1477"/>
         <source>Project saved: </source>
         <translation>Project saved: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1331"/>
+        <location filename="../src/ui/main_window.py" line="1518"/>
         <source>Export Baseplate DXF...</source>
         <translation>Export Baseplate DXF...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1332"/>
+        <location filename="../src/ui/main_window.py" line="1519"/>
         <source>Export Panel DXF...</source>
         <translation>Export Panel DXF...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1363"/>
-        <location filename="../src/ui/main_window.py" line="1411"/>
-        <location filename="../src/ui/main_window.py" line="1445"/>
-        <location filename="../src/ui/main_window.py" line="1505"/>
-        <location filename="../src/ui/main_window.py" line="1845"/>
-        <location filename="../src/ui/main_window.py" line="1869"/>
-        <location filename="../src/ui/main_window.py" line="1899"/>
-        <location filename="../src/ui/main_window.py" line="1930"/>
-        <location filename="../src/ui/main_window.py" line="1959"/>
+        <location filename="../src/ui/main_window.py" line="1550"/>
+        <location filename="../src/ui/main_window.py" line="1598"/>
+        <location filename="../src/ui/main_window.py" line="1632"/>
+        <location filename="../src/ui/main_window.py" line="1692"/>
+        <location filename="../src/ui/main_window.py" line="2047"/>
+        <location filename="../src/ui/main_window.py" line="2071"/>
+        <location filename="../src/ui/main_window.py" line="2101"/>
+        <location filename="../src/ui/main_window.py" line="2132"/>
+        <location filename="../src/ui/main_window.py" line="2161"/>
         <source>Info</source>
         <translation>Info</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1363"/>
+        <location filename="../src/ui/main_window.py" line="1550"/>
         <source>Please process first</source>
         <translation>Please process first</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1395"/>
-        <location filename="../src/ui/main_window.py" line="1431"/>
-        <location filename="../src/ui/main_window.py" line="1465"/>
+        <location filename="../src/ui/main_window.py" line="1582"/>
+        <location filename="../src/ui/main_window.py" line="1618"/>
+        <location filename="../src/ui/main_window.py" line="1652"/>
         <source>Export Success</source>
         <translation>Export Success</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1398"/>
-        <location filename="../src/ui/main_window.py" line="1438"/>
-        <location filename="../src/ui/main_window.py" line="1440"/>
-        <location filename="../src/ui/main_window.py" line="1472"/>
-        <location filename="../src/ui/main_window.py" line="1474"/>
+        <location filename="../src/ui/main_window.py" line="1585"/>
+        <location filename="../src/ui/main_window.py" line="1625"/>
+        <location filename="../src/ui/main_window.py" line="1627"/>
+        <location filename="../src/ui/main_window.py" line="1659"/>
+        <location filename="../src/ui/main_window.py" line="1661"/>
         <source>Export Failed</source>
         <translation>Export Failed</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1368"/>
+        <location filename="../src/ui/main_window.py" line="1555"/>
         <source>Export STL</source>
         <translation>Export STL</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1370"/>
+        <location filename="../src/ui/main_window.py" line="1557"/>
         <source>STL Files (*.stl);;All Files (*)</source>
         <translation>STL Files (*.stl);;All Files (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1394"/>
+        <location filename="../src/ui/main_window.py" line="1581"/>
         <source>STL exported: </source>
         <translation>STL exported: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1395"/>
+        <location filename="../src/ui/main_window.py" line="1582"/>
         <source>STL saved to:</source>
         <translation>STL saved to:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1398"/>
+        <location filename="../src/ui/main_window.py" line="1585"/>
         <source>Failed to export STL:</source>
         <translation>Failed to export STL:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1411"/>
-        <location filename="../src/ui/main_window.py" line="1445"/>
-        <location filename="../src/ui/main_window.py" line="1505"/>
+        <location filename="../src/ui/main_window.py" line="1598"/>
+        <location filename="../src/ui/main_window.py" line="1632"/>
+        <location filename="../src/ui/main_window.py" line="1692"/>
         <source>Please import a DXF file first</source>
         <translation>Please import a DXF file first</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1416"/>
+        <location filename="../src/ui/main_window.py" line="1603"/>
         <source>Export Baseplate DXF</source>
         <translation>Export Baseplate DXF</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1418"/>
-        <location filename="../src/ui/main_window.py" line="1452"/>
+        <location filename="../src/ui/main_window.py" line="1605"/>
+        <location filename="../src/ui/main_window.py" line="1639"/>
         <source>DXF Files (*.dxf);;All Files (*)</source>
         <translation>DXF Files (*.dxf);;All Files (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1429"/>
+        <location filename="../src/ui/main_window.py" line="1616"/>
         <source>Baseplate DXF exported: </source>
         <translation>Baseplate DXF exported: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1432"/>
+        <location filename="../src/ui/main_window.py" line="1619"/>
         <source>Baseplate DXF saved to:</source>
         <translation>Baseplate DXF saved to:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1438"/>
+        <location filename="../src/ui/main_window.py" line="1625"/>
         <source>Failed to generate baseplate contour</source>
         <translation>Failed to generate baseplate contour</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1440"/>
+        <location filename="../src/ui/main_window.py" line="1627"/>
         <source>Failed to export baseplate DXF:</source>
         <translation>Failed to export baseplate DXF:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1450"/>
+        <location filename="../src/ui/main_window.py" line="1637"/>
         <source>Export Panel DXF</source>
         <translation>Export Panel DXF</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1463"/>
+        <location filename="../src/ui/main_window.py" line="1650"/>
         <source>Panel DXF exported: </source>
         <translation>Panel DXF exported: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1466"/>
+        <location filename="../src/ui/main_window.py" line="1653"/>
         <source>Panel DXF saved to:</source>
         <translation>Panel DXF saved to:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1472"/>
+        <location filename="../src/ui/main_window.py" line="1659"/>
         <source>Failed to generate panel contour</source>
         <translation>Failed to generate panel contour</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1474"/>
+        <location filename="../src/ui/main_window.py" line="1661"/>
         <source>Failed to export panel DXF:</source>
         <translation>Failed to export panel DXF:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1487"/>
+        <location filename="../src/ui/main_window.py" line="1674"/>
         <source>Nothing to undo</source>
         <translation>Nothing to undo</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1500"/>
+        <location filename="../src/ui/main_window.py" line="1687"/>
         <source>Nothing to redo</source>
         <translation>Nothing to redo</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1057"/>
-        <location filename="../src/ui/main_window.py" line="1058"/>
-        <location filename="../src/ui/main_window.py" line="1536"/>
+        <location filename="../src/ui/main_window.py" line="1073"/>
+        <location filename="../src/ui/main_window.py" line="1074"/>
+        <location filename="../src/ui/main_window.py" line="1738"/>
         <source>Processing...</source>
         <translation>Processing...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1523"/>
+        <location filename="../src/ui/main_window.py" line="1725"/>
         <source>Processing complete: {layers} layers, estimated time: {time:.1f} minutes</source>
         <translation>Processing complete: {layers} layers, estimated time: {time:.1f} minutes</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1531"/>
+        <location filename="../src/ui/main_window.py" line="1733"/>
         <source>Processing Failed</source>
         <translation>Processing Failed</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1531"/>
+        <location filename="../src/ui/main_window.py" line="1733"/>
         <source>Error during processing:</source>
         <translation>Error during processing:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1532"/>
+        <location filename="../src/ui/main_window.py" line="1734"/>
         <source>Processing failed</source>
         <translation>Processing failed</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1552"/>
+        <location filename="../src/ui/main_window.py" line="1754"/>
         <source>Switched to {view} view</source>
         <translation>Switched to {view} view</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1592"/>
+        <location filename="../src/ui/main_window.py" line="1794"/>
         <source>Rotation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1611"/>
+        <location filename="../src/ui/main_window.py" line="1813"/>
         <source>Tool: </source>
         <translation>Tool: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1675"/>
+        <location filename="../src/ui/main_window.py" line="1877"/>
         <source>Move to: X={x:.2f}, Y={y:.2f}</source>
         <translation>Move to: X={x:.2f}, Y={y:.2f}</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1685"/>
+        <location filename="../src/ui/main_window.py" line="1887"/>
         <source>Rotation: {angle:.2f}°</source>
         <translation>Rotation: {angle:.2f}°</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1761"/>
-        <location filename="../src/ui/main_window.py" line="1799"/>
-        <location filename="../src/ui/main_window.py" line="1822"/>
+        <location filename="../src/ui/main_window.py" line="1963"/>
+        <location filename="../src/ui/main_window.py" line="2001"/>
+        <location filename="../src/ui/main_window.py" line="2024"/>
         <source>Scale: {px:.1f}% x {py:.1f}%</source>
         <translation>Scale: {px:.1f}% x {py:.1f}%</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1845"/>
+        <location filename="../src/ui/main_window.py" line="2047"/>
         <source>Please select a contour first</source>
         <translation>Please select a contour first</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1862"/>
+        <location filename="../src/ui/main_window.py" line="2064"/>
         <source>Mirror {axis} complete</source>
         <translation>Mirror {axis} complete</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1870"/>
-        <location filename="../src/ui/main_window.py" line="1900"/>
-        <location filename="../src/ui/main_window.py" line="1931"/>
+        <location filename="../src/ui/main_window.py" line="2072"/>
+        <location filename="../src/ui/main_window.py" line="2102"/>
+        <location filename="../src/ui/main_window.py" line="2133"/>
         <source>Please select at least two contours</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1885"/>
+        <location filename="../src/ui/main_window.py" line="2087"/>
         <source>Intersection</source>
         <translation type="unfinished">Intersection</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1915"/>
+        <location filename="../src/ui/main_window.py" line="2117"/>
         <source>Difference</source>
         <translation type="unfinished">Difference</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1941"/>
+        <location filename="../src/ui/main_window.py" line="2143"/>
         <source>Already grouped</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="738"/>
-        <location filename="../src/ui/main_window.py" line="1944"/>
+        <location filename="../src/ui/main_window.py" line="754"/>
+        <location filename="../src/ui/main_window.py" line="2146"/>
         <source>Group</source>
         <translation type="unfinished">Group</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1960"/>
+        <location filename="../src/ui/main_window.py" line="2162"/>
         <source>Please select a grouped contour first</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="738"/>
-        <location filename="../src/ui/main_window.py" line="1964"/>
+        <location filename="../src/ui/main_window.py" line="754"/>
+        <location filename="../src/ui/main_window.py" line="2166"/>
         <source>Ungroup</source>
         <translation type="unfinished">Ungroup</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1988"/>
+        <location filename="../src/ui/main_window.py" line="1703"/>
+        <source>Processing Blocked</source>
+        <translation>Processing Blocked</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1705"/>
+        <source>Some contours exceed the platform size. Please move or scale them back inside the platform before processing.</source>
+        <translation>Some contours exceed the platform size. Please move or scale them back inside the platform before processing.</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1709"/>
+        <source>Processing blocked: contours exceed platform size</source>
+        <translation>Processing blocked: contours exceed platform size</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2183"/>
+        <source>Add Contours</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2186"/>
         <source>Text added</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1990"/>
+        <location filename="../src/ui/main_window.py" line="2188"/>
         <source>Error</source>
         <translation type="unfinished">Error</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1996"/>
+        <location filename="../src/ui/main_window.py" line="2194"/>
         <source>About MINGDA SignMaker</source>
         <translation>About MINGDA SignMaker</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1998"/>
+        <location filename="../src/ui/main_window.py" line="2196"/>
         <source>Professional LED Sign Letter 3D Printing Slicer</source>
         <translation>Professional LED Sign Letter 3D Printing Slicer</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1999"/>
+        <location filename="../src/ui/main_window.py" line="2197"/>
         <source>Version: 0.1.8 (Development)</source>
         <translation>Version: 0.1.8 (Development)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2001"/>
+        <location filename="../src/ui/main_window.py" line="2199"/>
         <source>Features:</source>
         <translation>Features:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2003"/>
+        <location filename="../src/ui/main_window.py" line="2201"/>
         <source>DXF/SVG file import</source>
         <translation>DXF/SVG file import</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2004"/>
+        <location filename="../src/ui/main_window.py" line="2202"/>
         <source>Straight/Bevel/Custom edges</source>
         <translation>Straight/Bevel/Custom edges</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2005"/>
+        <location filename="../src/ui/main_window.py" line="2203"/>
         <source>Multi-color printing support</source>
         <translation>Multi-color printing support</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2006"/>
+        <location filename="../src/ui/main_window.py" line="2204"/>
         <source>Step/V-groove</source>
         <translation>Step/V-groove</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2007"/>
+        <location filename="../src/ui/main_window.py" line="2205"/>
         <source>Anti-warping skirt</source>
         <translation>Anti-warping skirt</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2008"/>
+        <location filename="../src/ui/main_window.py" line="2206"/>
         <source>Connected letters</source>
         <translation>Connected letters</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2021"/>
+        <location filename="../src/ui/main_window.py" line="2219"/>
         <source>Open Tutorial Failed</source>
         <translation>Open Tutorial Failed</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2022"/>
+        <location filename="../src/ui/main_window.py" line="2220"/>
         <source>Failed to open the tutorial playlist in the default browser.</source>
         <translation>Failed to open the tutorial playlist in the default browser.</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2033"/>
+        <location filename="../src/ui/main_window.py" line="2231"/>
         <source>Language Changed</source>
         <translation>Language Changed</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2034"/>
+        <location filename="../src/ui/main_window.py" line="2232"/>
         <source>Language has been changed to {lang}. Please restart the application for full effect.</source>
         <translation>Language has been changed to {lang}. Please restart the application for full effect.</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2041"/>
+        <location filename="../src/ui/main_window.py" line="2239"/>
         <source>Language Change Failed</source>
         <translation>Language Change Failed</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2042"/>
+        <location filename="../src/ui/main_window.py" line="2240"/>
         <source>Translation file for {lang} is not available yet.</source>
         <translation>Translation file for {lang} is not available yet.</translation>
     </message>
@@ -760,7 +780,7 @@
         <translation>Angle</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1596"/>
+        <location filename="../src/ui/main_window.py" line="1798"/>
         <source>Drag grabber on ring to rotate</source>
         <translation>Drag grabber on ring to rotate</translation>
     </message>
@@ -775,35 +795,35 @@
         <translation>Uniform Scale</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1602"/>
+        <location filename="../src/ui/main_window.py" line="1804"/>
         <source>Drag to scale, input exact values above</source>
         <translation>Drag to scale, input exact values above</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1156"/>
+        <location filename="../src/ui/main_window.py" line="1172"/>
         <source>Loading file...</source>
         <translation>Loading file...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1402"/>
+        <location filename="../src/ui/main_window.py" line="1589"/>
         <source>Exporting STL...</source>
         <translation>Exporting STL...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1433"/>
-        <location filename="../src/ui/main_window.py" line="1467"/>
+        <location filename="../src/ui/main_window.py" line="1620"/>
+        <location filename="../src/ui/main_window.py" line="1654"/>
         <source>Outer clearance: </source>
         <translation>Outer clearance: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1434"/>
-        <location filename="../src/ui/main_window.py" line="1468"/>
+        <location filename="../src/ui/main_window.py" line="1621"/>
+        <location filename="../src/ui/main_window.py" line="1655"/>
         <source>Hole clearance: </source>
         <translation>Hole clearance: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1435"/>
-        <location filename="../src/ui/main_window.py" line="1469"/>
+        <location filename="../src/ui/main_window.py" line="1622"/>
+        <location filename="../src/ui/main_window.py" line="1656"/>
         <source>Laser kerf: </source>
         <translation>Laser kerf: </translation>
     </message>

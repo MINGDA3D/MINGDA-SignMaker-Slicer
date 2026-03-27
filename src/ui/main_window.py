@@ -712,7 +712,23 @@ class MainWindow(QMainWindow):
 
     def _on_params_changed(self):
         """参数变化后，当前处理结果失效。"""
+        self.slice_params = self.param_panel.get_params()
+        self._sync_canvas_platform_size(self.slice_params)
         self._invalidate_processed_result()
+        self.canvas.update()
+
+    def _sync_canvas_platform_size(self, params: Optional[SliceParams] = None) -> None:
+        """å°†ç”»å¸ƒå¹³å°å°ºå¯¸åŒæ­¥åˆ°å½“å‰æœºå™¨å‚æ•°ã€‚"""
+        target_params = params or self.slice_params
+        machine = target_params.machine
+        width = float(machine.bed_width)
+        height = float(machine.bed_depth)
+
+        if (
+            abs(self.canvas.platform_width - width) > 1e-6
+            or abs(self.canvas.platform_height - height) > 1e-6
+        ):
+            self.canvas.set_platform_size(width, height, self.canvas.grid_spacing)
 
     def _command_requires_reprocess(self, command: Optional[Command]) -> bool:
         """判断撤销/重做的命令是否会影响导出的 STL。"""
@@ -1385,6 +1401,7 @@ class MainWindow(QMainWindow):
             self.canvas.fit_view()
             self.project_panel.update_contours(self.contours)
             self.param_panel.set_params(self.slice_params)
+            self._sync_canvas_platform_size(self.slice_params)
 
             # 切换到编辑器视图
             self.main_stack.setCurrentIndex(1)
@@ -1677,6 +1694,21 @@ class MainWindow(QMainWindow):
 
         # 获取参数
         params = self.param_panel.get_params()
+        self._sync_canvas_platform_size(params)
+
+        out_of_bounds_indices = self.canvas.get_out_of_bounds_indices()
+        if out_of_bounds_indices:
+            QMessageBox.warning(
+                self,
+                self.tr("Processing Blocked"),
+                self.tr(
+                    "Some contours exceed the platform size. Please move or scale them back inside the platform before processing."
+                ),
+            )
+            self._update_status(
+                self.tr("Processing blocked: contours exceed platform size")
+            )
+            return
 
         def do_slice():
             return self.slice_engine.slice(self.contours, params)
@@ -2223,6 +2255,7 @@ class MainWindow(QMainWindow):
                 # 更新参数面板
                 if hasattr(self, 'param_panel') and self.param_panel:
                     self.param_panel.set_params(saved_params)
+                self._sync_canvas_platform_size(saved_params)
                 self._update_status(self.tr("Loaded saved parameters"))
 
     def _save_current_params(self):

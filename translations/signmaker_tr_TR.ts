@@ -4,37 +4,37 @@
 <context>
     <name>Canvas2D</name>
     <message>
-        <location filename="../src/ui/canvas_2d.py" line="1509"/>
+        <location filename="../src/ui/canvas_2d.py" line="1557"/>
         <source>Delete</source>
         <translation>Sil</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_2d.py" line="1517"/>
+        <location filename="../src/ui/canvas_2d.py" line="1565"/>
         <source>Mirror</source>
         <translation>Aynala</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_2d.py" line="1518"/>
+        <location filename="../src/ui/canvas_2d.py" line="1566"/>
         <source>Mirror X</source>
         <translation>X Ekseninde Aynala</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_2d.py" line="1520"/>
+        <location filename="../src/ui/canvas_2d.py" line="1568"/>
         <source>Mirror Y</source>
         <translation>Y Ekseninde Aynala</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_2d.py" line="1527"/>
+        <location filename="../src/ui/canvas_2d.py" line="1575"/>
         <source>Select All</source>
         <translation>Tümünü Seç</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_2d.py" line="1535"/>
+        <location filename="../src/ui/canvas_2d.py" line="1583"/>
         <source>Fit View</source>
         <translation>Görünümü Sığdır</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_2d.py" line="1540"/>
+        <location filename="../src/ui/canvas_2d.py" line="1588"/>
         <source>Reset View</source>
         <translation>Görünümü Sıfırla</translation>
     </message>
@@ -134,7 +134,7 @@
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="173"/>
-        <location filename="../src/ui/main_window.py" line="1107"/>
+        <location filename="../src/ui/main_window.py" line="1123"/>
         <source>New Project</source>
         <translation>Yeni Proje</translation>
     </message>
@@ -145,7 +145,7 @@
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="187"/>
-        <location filename="../src/ui/main_window.py" line="1256"/>
+        <location filename="../src/ui/main_window.py" line="1443"/>
         <source>Save Project</source>
         <translation>Projeyi Kaydet</translation>
     </message>
@@ -156,7 +156,7 @@
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="207"/>
-        <location filename="../src/ui/main_window.py" line="1329"/>
+        <location filename="../src/ui/main_window.py" line="1516"/>
         <source>Export STL...</source>
         <translation>STL Disa Aktar...</translation>
     </message>
@@ -237,20 +237,20 @@
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="411"/>
-        <location filename="../src/ui/main_window.py" line="1598"/>
+        <location filename="../src/ui/main_window.py" line="1800"/>
         <source>Scale</source>
         <translation type="unfinished">Ölçekle</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="530"/>
-        <location filename="../src/ui/main_window.py" line="903"/>
-        <location filename="../src/ui/main_window.py" line="1590"/>
+        <location filename="../src/ui/main_window.py" line="919"/>
+        <location filename="../src/ui/main_window.py" line="1792"/>
         <source>Arrow keys: 1mm, Shift+Arrow: 10mm</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="652"/>
-        <location filename="../src/ui/main_window.py" line="1833"/>
+        <location filename="../src/ui/main_window.py" line="2035"/>
         <source>Ready</source>
         <translation>Hazir</translation>
     </message>
@@ -270,97 +270,97 @@
         <translation>Yinelendi: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="898"/>
-        <location filename="../src/ui/main_window.py" line="1586"/>
+        <location filename="../src/ui/main_window.py" line="914"/>
+        <location filename="../src/ui/main_window.py" line="1788"/>
         <source>Position</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="979"/>
-        <location filename="../src/ui/main_window.py" line="992"/>
+        <location filename="../src/ui/main_window.py" line="995"/>
+        <location filename="../src/ui/main_window.py" line="1008"/>
         <source>Loading 3D preview...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1013"/>
+        <location filename="../src/ui/main_window.py" line="1029"/>
         <source>3D preview loading failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1017"/>
+        <location filename="../src/ui/main_window.py" line="1033"/>
         <source>Failed to prepare 3D preview:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1045"/>
+        <location filename="../src/ui/main_window.py" line="1061"/>
         <source>Home</source>
         <translation>Ana Sayfa</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1052"/>
+        <location filename="../src/ui/main_window.py" line="1068"/>
         <source>Project Edit</source>
         <translation>Proje Duzenleme</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1016"/>
-        <location filename="../src/ui/main_window.py" line="1062"/>
+        <location filename="../src/ui/main_window.py" line="1032"/>
+        <location filename="../src/ui/main_window.py" line="1078"/>
         <source>3D Preview</source>
         <translation>3D Onizleme</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1091"/>
+        <location filename="../src/ui/main_window.py" line="1107"/>
         <source>Settings feature under development...</source>
         <translation>Ayarlar ozelligi gelistiriliyor...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1093"/>
+        <location filename="../src/ui/main_window.py" line="1109"/>
         <source>Help feature under development...</source>
         <translation>Yardim ozelligi gelistiriliyor...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1106"/>
+        <location filename="../src/ui/main_window.py" line="1122"/>
         <source>MINGDA SignMaker - New Project</source>
         <translation>MINGDA SignMaker - Yeni Proje</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1117"/>
+        <location filename="../src/ui/main_window.py" line="1133"/>
         <source>Open File</source>
         <translation>Dosya Ac</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1151"/>
+        <location filename="../src/ui/main_window.py" line="1167"/>
         <source>Unsupported Format</source>
         <translation>Desteklenmeyen Format</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1151"/>
+        <location filename="../src/ui/main_window.py" line="1167"/>
         <source>Format not supported: </source>
         <translation>Format desteklenmiyor: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1170"/>
+        <location filename="../src/ui/main_window.py" line="1356"/>
         <source>Load </source>
         <translation>Yukle </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1193"/>
+        <location filename="../src/ui/main_window.py" line="1375"/>
         <source>Loaded: {file}, {count} contours</source>
         <translation>Yuklendi: {file}, {count} kontur</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1160"/>
-        <location filename="../src/ui/main_window.py" line="1238"/>
+        <location filename="../src/ui/main_window.py" line="1176"/>
+        <location filename="../src/ui/main_window.py" line="1425"/>
         <source>Load Failed</source>
         <translation>Yukleme Basarisiz</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1161"/>
+        <location filename="../src/ui/main_window.py" line="1177"/>
         <source>Failed to load file:</source>
         <translation>Dosya yuklenemedi:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1131"/>
-        <location filename="../src/ui/main_window.py" line="1258"/>
+        <location filename="../src/ui/main_window.py" line="1147"/>
+        <location filename="../src/ui/main_window.py" line="1445"/>
         <source>SignMaker Project (*.smp);;All Files (*)</source>
         <translation>SignMaker Projesi (*.smp);;Tum Dosyalar (*)</translation>
     </message>
@@ -370,355 +370,375 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1119"/>
+        <location filename="../src/ui/main_window.py" line="1135"/>
         <source>Supported Files (*.dxf *.svg *.smp);;SignMaker Project (*.smp);;DXF Files (*.dxf);;SVG Files (*.svg);;All Files (*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1129"/>
+        <location filename="../src/ui/main_window.py" line="1145"/>
         <source>Open Project</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1231"/>
+        <location filename="../src/ui/main_window.py" line="1418"/>
         <source>Project loaded: {name}, {count} contours</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1238"/>
+        <location filename="../src/ui/main_window.py" line="1425"/>
         <source>Failed to load project:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1290"/>
+        <location filename="../src/ui/main_window.py" line="1477"/>
         <source>Project saved: </source>
         <translation>Proje kaydedildi: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1297"/>
+        <location filename="../src/ui/main_window.py" line="1484"/>
         <source>Save Failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1297"/>
+        <location filename="../src/ui/main_window.py" line="1484"/>
         <source>Failed to save project:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1331"/>
+        <location filename="../src/ui/main_window.py" line="1518"/>
         <source>Export Baseplate DXF...</source>
         <translation>Taban Plakası DXF Dışa Aktar...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1332"/>
+        <location filename="../src/ui/main_window.py" line="1519"/>
         <source>Export Panel DXF...</source>
         <translation>Panel DXF Dışa Aktar...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1363"/>
-        <location filename="../src/ui/main_window.py" line="1411"/>
-        <location filename="../src/ui/main_window.py" line="1445"/>
-        <location filename="../src/ui/main_window.py" line="1505"/>
-        <location filename="../src/ui/main_window.py" line="1845"/>
-        <location filename="../src/ui/main_window.py" line="1869"/>
-        <location filename="../src/ui/main_window.py" line="1899"/>
-        <location filename="../src/ui/main_window.py" line="1930"/>
-        <location filename="../src/ui/main_window.py" line="1959"/>
+        <location filename="../src/ui/main_window.py" line="1550"/>
+        <location filename="../src/ui/main_window.py" line="1598"/>
+        <location filename="../src/ui/main_window.py" line="1632"/>
+        <location filename="../src/ui/main_window.py" line="1692"/>
+        <location filename="../src/ui/main_window.py" line="2047"/>
+        <location filename="../src/ui/main_window.py" line="2071"/>
+        <location filename="../src/ui/main_window.py" line="2101"/>
+        <location filename="../src/ui/main_window.py" line="2132"/>
+        <location filename="../src/ui/main_window.py" line="2161"/>
         <source>Info</source>
         <translation>Bilgi</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1363"/>
+        <location filename="../src/ui/main_window.py" line="1550"/>
         <source>Please process first</source>
         <translation>Lutfen once isleme yapin</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1395"/>
-        <location filename="../src/ui/main_window.py" line="1431"/>
-        <location filename="../src/ui/main_window.py" line="1465"/>
+        <location filename="../src/ui/main_window.py" line="1582"/>
+        <location filename="../src/ui/main_window.py" line="1618"/>
+        <location filename="../src/ui/main_window.py" line="1652"/>
         <source>Export Success</source>
         <translation>Disa Aktarma Basarili</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1398"/>
-        <location filename="../src/ui/main_window.py" line="1438"/>
-        <location filename="../src/ui/main_window.py" line="1440"/>
-        <location filename="../src/ui/main_window.py" line="1472"/>
-        <location filename="../src/ui/main_window.py" line="1474"/>
+        <location filename="../src/ui/main_window.py" line="1585"/>
+        <location filename="../src/ui/main_window.py" line="1625"/>
+        <location filename="../src/ui/main_window.py" line="1627"/>
+        <location filename="../src/ui/main_window.py" line="1659"/>
+        <location filename="../src/ui/main_window.py" line="1661"/>
         <source>Export Failed</source>
         <translation>Disa Aktarma Basarisiz</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1368"/>
+        <location filename="../src/ui/main_window.py" line="1555"/>
         <source>Export STL</source>
         <translation>STL Disa Aktar</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1370"/>
+        <location filename="../src/ui/main_window.py" line="1557"/>
         <source>STL Files (*.stl);;All Files (*)</source>
         <translation>STL Dosyalari (*.stl);;Tum Dosyalar (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1394"/>
+        <location filename="../src/ui/main_window.py" line="1581"/>
         <source>STL exported: </source>
         <translation>STL disa aktarildi: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1395"/>
+        <location filename="../src/ui/main_window.py" line="1582"/>
         <source>STL saved to:</source>
         <translation>STL kaydedildi:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1398"/>
+        <location filename="../src/ui/main_window.py" line="1585"/>
         <source>Failed to export STL:</source>
         <translation>STL disa aktarilamadi:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1411"/>
-        <location filename="../src/ui/main_window.py" line="1445"/>
-        <location filename="../src/ui/main_window.py" line="1505"/>
+        <location filename="../src/ui/main_window.py" line="1598"/>
+        <location filename="../src/ui/main_window.py" line="1632"/>
+        <location filename="../src/ui/main_window.py" line="1692"/>
         <source>Please import a DXF file first</source>
         <translation>Lutfen once bir DXF dosyasi iceri aktarin</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1416"/>
+        <location filename="../src/ui/main_window.py" line="1603"/>
         <source>Export Baseplate DXF</source>
         <translation>Taban Plakasi DXF Disa Aktar</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1418"/>
-        <location filename="../src/ui/main_window.py" line="1452"/>
+        <location filename="../src/ui/main_window.py" line="1605"/>
+        <location filename="../src/ui/main_window.py" line="1639"/>
         <source>DXF Files (*.dxf);;All Files (*)</source>
         <translation>DXF Dosyalari (*.dxf);;Tum Dosyalar (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1429"/>
+        <location filename="../src/ui/main_window.py" line="1616"/>
         <source>Baseplate DXF exported: </source>
         <translation>Taban plakasi DXF disa aktarildi: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1432"/>
+        <location filename="../src/ui/main_window.py" line="1619"/>
         <source>Baseplate DXF saved to:</source>
         <translation>Taban plakasi DXF kaydedildi:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1438"/>
+        <location filename="../src/ui/main_window.py" line="1625"/>
         <source>Failed to generate baseplate contour</source>
         <translation>Taban plakasi konturu olusturulamadi</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1440"/>
+        <location filename="../src/ui/main_window.py" line="1627"/>
         <source>Failed to export baseplate DXF:</source>
         <translation>Taban plakasi DXF disa aktarilamadi:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1450"/>
+        <location filename="../src/ui/main_window.py" line="1637"/>
         <source>Export Panel DXF</source>
         <translation>Panel DXF Disa Aktar</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1463"/>
+        <location filename="../src/ui/main_window.py" line="1650"/>
         <source>Panel DXF exported: </source>
         <translation>Panel DXF disa aktarildi: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1466"/>
+        <location filename="../src/ui/main_window.py" line="1653"/>
         <source>Panel DXF saved to:</source>
         <translation>Panel DXF kaydedildi:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1472"/>
+        <location filename="../src/ui/main_window.py" line="1659"/>
         <source>Failed to generate panel contour</source>
         <translation>Panel konturu olusturulamadi</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1474"/>
+        <location filename="../src/ui/main_window.py" line="1661"/>
         <source>Failed to export panel DXF:</source>
         <translation>Panel DXF disa aktarilamadi:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1487"/>
+        <location filename="../src/ui/main_window.py" line="1674"/>
         <source>Nothing to undo</source>
         <translation>Geri alinacak islem yok</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1500"/>
+        <location filename="../src/ui/main_window.py" line="1687"/>
         <source>Nothing to redo</source>
         <translation>Yinelenecek islem yok</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2021"/>
+        <location filename="../src/ui/main_window.py" line="1703"/>
+        <source>Processing Blocked</source>
+        <translation>İşleme engellendi</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1705"/>
+        <source>Some contours exceed the platform size. Please move or scale them back inside the platform before processing.</source>
+        <translation>Bazı konturlar çalışma alanı boyutunu aşıyor. İşlemden önce lütfen bunları çalışma alanının içine gelecek şekilde taşıyın veya ölçeklendirin.</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1709"/>
+        <source>Processing blocked: contours exceed platform size</source>
+        <translation>İşleme engellendi: konturlar çalışma alanı boyutunu aşıyor</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2183"/>
+        <source>Add Contours</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2219"/>
         <source>Open Tutorial Failed</source>
         <translation>Eğitim açılamadı</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2022"/>
+        <location filename="../src/ui/main_window.py" line="2220"/>
         <source>Failed to open the tutorial playlist in the default browser.</source>
         <translation>Eğitim oynatma listesi varsayılan tarayıcıda açılamadı.</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2060"/>
+        <location filename="../src/ui/main_window.py" line="2259"/>
         <source>Loaded saved parameters</source>
         <translation>Kaydedilmiş parametreler yüklendi</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1552"/>
+        <location filename="../src/ui/main_window.py" line="1754"/>
         <source>Switched to {view} view</source>
         <translation>{view} gorunumune gecildi</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1592"/>
+        <location filename="../src/ui/main_window.py" line="1794"/>
         <source>Rotation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1611"/>
+        <location filename="../src/ui/main_window.py" line="1813"/>
         <source>Tool: </source>
         <translation>Arac: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1675"/>
+        <location filename="../src/ui/main_window.py" line="1877"/>
         <source>Move to: X={x:.2f}, Y={y:.2f}</source>
         <translation>Tasi: X={x:.2f}, Y={y:.2f}</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1685"/>
+        <location filename="../src/ui/main_window.py" line="1887"/>
         <source>Rotation: {angle:.2f}°</source>
         <translation>Döndürme: {angle:.2f}°</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1761"/>
-        <location filename="../src/ui/main_window.py" line="1799"/>
-        <location filename="../src/ui/main_window.py" line="1822"/>
+        <location filename="../src/ui/main_window.py" line="1963"/>
+        <location filename="../src/ui/main_window.py" line="2001"/>
+        <location filename="../src/ui/main_window.py" line="2024"/>
         <source>Scale: {px:.1f}% x {py:.1f}%</source>
         <translation>Ölçek: {px:.1f}% x {py:.1f}%</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1845"/>
+        <location filename="../src/ui/main_window.py" line="2047"/>
         <source>Please select a contour first</source>
         <translation>Lutfen once bir kontur secin</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1862"/>
+        <location filename="../src/ui/main_window.py" line="2064"/>
         <source>Mirror {axis} complete</source>
         <translation>{axis} aynalama tamamlandi</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1870"/>
-        <location filename="../src/ui/main_window.py" line="1900"/>
-        <location filename="../src/ui/main_window.py" line="1931"/>
+        <location filename="../src/ui/main_window.py" line="2072"/>
+        <location filename="../src/ui/main_window.py" line="2102"/>
+        <location filename="../src/ui/main_window.py" line="2133"/>
         <source>Please select at least two contours</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1885"/>
+        <location filename="../src/ui/main_window.py" line="2087"/>
         <source>Intersection</source>
         <translation type="unfinished">Kesişim</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1915"/>
+        <location filename="../src/ui/main_window.py" line="2117"/>
         <source>Difference</source>
         <translation type="unfinished">Fark</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1941"/>
+        <location filename="../src/ui/main_window.py" line="2143"/>
         <source>Already grouped</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="738"/>
-        <location filename="../src/ui/main_window.py" line="1944"/>
+        <location filename="../src/ui/main_window.py" line="754"/>
+        <location filename="../src/ui/main_window.py" line="2146"/>
         <source>Group</source>
         <translation type="unfinished">Grupla</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1960"/>
+        <location filename="../src/ui/main_window.py" line="2162"/>
         <source>Please select a grouped contour first</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="738"/>
-        <location filename="../src/ui/main_window.py" line="1964"/>
+        <location filename="../src/ui/main_window.py" line="754"/>
+        <location filename="../src/ui/main_window.py" line="2166"/>
         <source>Ungroup</source>
         <translation type="unfinished">Grubu Çöz</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1988"/>
+        <location filename="../src/ui/main_window.py" line="2186"/>
         <source>Text added</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1990"/>
+        <location filename="../src/ui/main_window.py" line="2188"/>
         <source>Error</source>
         <translation type="unfinished">Hata</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1996"/>
+        <location filename="../src/ui/main_window.py" line="2194"/>
         <source>About MINGDA SignMaker</source>
         <translation>MINGDA SignMaker Hakkinda</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1998"/>
+        <location filename="../src/ui/main_window.py" line="2196"/>
         <source>Professional LED Sign Letter 3D Printing Slicer</source>
         <translation>Profesyonel LED Isikli Harf 3D Baski Dilimleyici</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1999"/>
+        <location filename="../src/ui/main_window.py" line="2197"/>
         <source>Version: 0.1.8 (Development)</source>
         <translation>Sürüm: 0.1.8 (Geliştirme)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2001"/>
+        <location filename="../src/ui/main_window.py" line="2199"/>
         <source>Features:</source>
         <translation>Ozellikler:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2003"/>
+        <location filename="../src/ui/main_window.py" line="2201"/>
         <source>DXF/SVG file import</source>
         <translation>DXF/SVG dosya iceri aktarma</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2004"/>
+        <location filename="../src/ui/main_window.py" line="2202"/>
         <source>Straight/Bevel/Custom edges</source>
         <translation>Duz/Egimli/Ozel kenarlar</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2005"/>
+        <location filename="../src/ui/main_window.py" line="2203"/>
         <source>Multi-color printing support</source>
         <translation>Cok renkli baski destegi</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2006"/>
+        <location filename="../src/ui/main_window.py" line="2204"/>
         <source>Step/V-groove</source>
         <translation>Basamak/V-Oluk</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2007"/>
+        <location filename="../src/ui/main_window.py" line="2205"/>
         <source>Anti-warping skirt</source>
         <translation>Carpilma onleyici etek</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2008"/>
+        <location filename="../src/ui/main_window.py" line="2206"/>
         <source>Connected letters</source>
         <translation>Bagli harfler</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2033"/>
+        <location filename="../src/ui/main_window.py" line="2231"/>
         <source>Language Changed</source>
         <translation>Dil Degistirildi</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2034"/>
+        <location filename="../src/ui/main_window.py" line="2232"/>
         <source>Language has been changed to {lang}. Please restart the application for full effect.</source>
         <translation>Dil {lang} olarak degistirildi. Tam etki icin lutfen uygulamayi yeniden baslatin.</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2041"/>
+        <location filename="../src/ui/main_window.py" line="2239"/>
         <source>Language Change Failed</source>
         <translation>Dil Degisikligi Basarisiz</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2042"/>
+        <location filename="../src/ui/main_window.py" line="2240"/>
         <source>Translation file for {lang} is not available yet.</source>
         <translation>{lang} icin ceviri dosyasi henuz mevcut degil.</translation>
     </message>
@@ -728,7 +748,7 @@
         <translation>Açı</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1596"/>
+        <location filename="../src/ui/main_window.py" line="1798"/>
         <source>Drag grabber on ring to rotate</source>
         <translation>Döndürmek için halka üzerindeki tutamacı sürükleyin</translation>
     </message>
@@ -743,17 +763,17 @@
         <translation>Orantılı ölçekleme</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1602"/>
+        <location filename="../src/ui/main_window.py" line="1804"/>
         <source>Drag to scale, input exact values above</source>
         <translation>Ölçeklemek için sürükleyin, yukarıya kesin değerleri girin</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1156"/>
+        <location filename="../src/ui/main_window.py" line="1172"/>
         <source>Loading file...</source>
         <translation>Dosya yükleniyor...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1402"/>
+        <location filename="../src/ui/main_window.py" line="1589"/>
         <source>Exporting STL...</source>
         <translation>STL dışa aktarılıyor...</translation>
     </message>
@@ -763,47 +783,47 @@
         <translation>İşlemeyi başlat</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1057"/>
-        <location filename="../src/ui/main_window.py" line="1058"/>
-        <location filename="../src/ui/main_window.py" line="1536"/>
+        <location filename="../src/ui/main_window.py" line="1073"/>
+        <location filename="../src/ui/main_window.py" line="1074"/>
+        <location filename="../src/ui/main_window.py" line="1738"/>
         <source>Processing...</source>
         <translation>İşleniyor...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1523"/>
+        <location filename="../src/ui/main_window.py" line="1725"/>
         <source>Processing complete: {layers} layers, estimated time: {time:.1f} minutes</source>
         <translation>İşlem tamamlandı: {layers} katman, tahmini süre: {time:.1f} dakika</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1531"/>
+        <location filename="../src/ui/main_window.py" line="1733"/>
         <source>Processing Failed</source>
         <translation>İşlem başarısız</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1531"/>
+        <location filename="../src/ui/main_window.py" line="1733"/>
         <source>Error during processing:</source>
         <translation>İşlem sırasında hata:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1532"/>
+        <location filename="../src/ui/main_window.py" line="1734"/>
         <source>Processing failed</source>
         <translation>İşlem başarısız</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1433"/>
-        <location filename="../src/ui/main_window.py" line="1467"/>
+        <location filename="../src/ui/main_window.py" line="1620"/>
+        <location filename="../src/ui/main_window.py" line="1654"/>
         <source>Outer clearance: </source>
         <translation>Dis kontur boslugu: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1434"/>
-        <location filename="../src/ui/main_window.py" line="1468"/>
+        <location filename="../src/ui/main_window.py" line="1621"/>
+        <location filename="../src/ui/main_window.py" line="1655"/>
         <source>Hole clearance: </source>
         <translation>Delik boslugu: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1435"/>
-        <location filename="../src/ui/main_window.py" line="1469"/>
+        <location filename="../src/ui/main_window.py" line="1622"/>
+        <location filename="../src/ui/main_window.py" line="1656"/>
         <source>Laser kerf: </source>
         <translation>Lazer kesim payi: </translation>
     </message>
