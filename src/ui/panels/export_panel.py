@@ -2,6 +2,8 @@
 导出参数面板
 """
 
+from pathlib import Path
+
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QFormLayout, QGroupBox,
     QDoubleSpinBox, QCheckBox, QLineEdit, QPushButton,
@@ -9,6 +11,7 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Signal
 
+from src.business.settings_manager import get_settings_manager
 from src.core.types import GCodeParams
 
 
@@ -121,10 +124,14 @@ class ExportPanel(QWidget):
         self.no_retract_check.toggled.connect(self._emit_params)
 
     def _browse_file(self):
+        settings = get_settings_manager()
+        initial_dir = settings.get_last_save_dir() if settings else ""
         file_path, _ = QFileDialog.getSaveFileName(
-            self, "保存G-code文件", "", "G-code文件 (*.gcode)"
+            self, "保存G-code文件", initial_dir, "G-code文件 (*.gcode)"
         )
         if file_path:
+            if settings:
+                settings.set_last_save_dir(str(Path(file_path).expanduser().resolve(strict=False).parent))
             self.file_path_edit.setText(file_path)
 
     def _on_export(self):

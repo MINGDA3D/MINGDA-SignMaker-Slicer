@@ -5,6 +5,8 @@
 支持直边、斜边和异形边三种边缘类型。
 """
 
+from pathlib import Path
+
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QFormLayout,
     QGroupBox, QLabel, QDoubleSpinBox, QSpinBox,
@@ -13,6 +15,7 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Signal, QCoreApplication
 
+from src.business.settings_manager import get_settings_manager
 from src.core.types import ShellParams, EdgeType, BevelDirection, EdgeProfile
 from src.core.edge_presets import EdgePresetManager, ProfileCategory
 from src.ui.widgets.edge_preset_selector import EdgePresetSelector
@@ -292,15 +295,20 @@ class ShellPanel(QWidget):
 
     def _on_import_dxf(self):
         """导入DXF文件"""
+        settings = get_settings_manager()
+        initial_dir = settings.get_last_open_dir() if settings else ""
         file_path, _ = QFileDialog.getOpenFileName(
             self,
             "导入异形边DXF",
-            "",
+            initial_dir,
             "DXF文件 (*.dxf);;所有文件 (*.*)"
         )
 
         if not file_path:
             return
+
+        if settings:
+            settings.set_last_open_dir(str(Path(file_path).expanduser().resolve(strict=False).parent))
 
         try:
             from src.core.edge_profile_loader import EdgeProfileDXFLoader

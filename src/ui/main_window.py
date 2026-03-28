@@ -1402,11 +1402,12 @@ class MainWindow(QMainWindow):
         file_path, _ = QFileDialog.getOpenFileName(
             self,
             self.tr("Open File"),
-            "",
+            self._get_initial_open_dir(),
             self.tr("Supported Files (*.dxf *.svg *.smp);;SignMaker Project (*.smp);;DXF Files (*.dxf);;SVG Files (*.svg);;All Files (*)")
         )
 
         if file_path:
+            self._remember_last_open_path(file_path)
             self._load_file(file_path)
 
     def _on_open_project(self):
@@ -1414,12 +1415,71 @@ class MainWindow(QMainWindow):
         file_path, _ = QFileDialog.getOpenFileName(
             self,
             self.tr("Open Project"),
-            "",
+            self._get_initial_open_dir(),
             self.tr("SignMaker Project (*.smp);;All Files (*)")
         )
 
         if file_path:
+            self._remember_last_open_path(file_path)
             self._load_project(file_path)
+
+    @staticmethod
+    def _dialog_directory_from_path(file_path: str) -> Optional[str]:
+        """从文件路径中提取对话框目录。"""
+        if not file_path:
+            return None
+        try:
+            return str(Path(file_path).expanduser().resolve(strict=False).parent)
+        except OSError:
+            return None
+
+    @staticmethod
+    def _existing_dialog_directory(dir_path: Optional[str]) -> str:
+        """返回可用的对话框目录，不可用时返回空字符串。"""
+        if not dir_path:
+            return ""
+        try:
+            return dir_path if Path(dir_path).is_dir() else ""
+        except OSError:
+            return ""
+
+    def _get_initial_open_dir(self) -> str:
+        """获取打开对话框的初始目录。"""
+        if not self.settings_manager:
+            return ""
+        return self._existing_dialog_directory(self.settings_manager.get_last_open_dir())
+
+    def _get_initial_save_path(self, default_name: str = "") -> str:
+        """获取保存对话框的初始路径或文件名。"""
+        directory = ""
+        if self.settings_manager:
+            directory = self._existing_dialog_directory(self.settings_manager.get_last_save_dir())
+        if not directory and self.current_file:
+            directory = self._existing_dialog_directory(
+                self._dialog_directory_from_path(self.current_file)
+            )
+        if not directory and self.settings_manager:
+            directory = self._existing_dialog_directory(self.settings_manager.get_last_open_dir())
+
+        if directory and default_name:
+            return str(Path(directory) / default_name)
+        return directory or default_name
+
+    def _remember_last_open_path(self, file_path: str):
+        """记住最后一次打开文件的目录。"""
+        if not self.settings_manager:
+            return
+        directory = self._dialog_directory_from_path(file_path)
+        if directory:
+            self.settings_manager.set_last_open_dir(directory)
+
+    def _remember_last_save_path(self, file_path: str):
+        """记住最后一次保存文件的目录。"""
+        if not self.settings_manager:
+            return
+        directory = self._dialog_directory_from_path(file_path)
+        if directory:
+            self.settings_manager.set_last_save_dir(directory)
 
     def _load_file(self, file_path: str):
         """加载文件（异步）"""
@@ -1627,6 +1687,7 @@ class MainWindow(QMainWindow):
             self.tr("Load ") + path.name,
             fit_view=True,
         )
+        self._remember_last_open_path(str(path))
 
         if not self.current_file or not self.current_file.lower().endswith(".smp"):
             self.current_file = str(path)
@@ -1692,6 +1753,7 @@ class MainWindow(QMainWindow):
                 name=project.meta.name,
                 count=len(self.contours)
             ))
+            self._remember_last_open_path(file_path)
             if self.settings_manager:
                 self.settings_manager.add_recent_file(file_path)
             self._set_project_save_point()
@@ -1726,13 +1788,14 @@ class MainWindow(QMainWindow):
         file_path, _ = QFileDialog.getSaveFileName(
             self,
             self.tr("Save Project"),
-            default_name,
+            self._get_initial_save_path(default_name),
             self.tr("SignMaker Project (*.smp);;All Files (*)")
         )
         if file_path:
             # 确保扩展名
             if not file_path.lower().endswith('.smp'):
                 file_path += '.smp'
+            self._remember_last_save_path(file_path)
             self._save_project(file_path)
 
     def _ensure_project_has_contours_for_save(self) -> bool:
@@ -1771,6 +1834,7 @@ class MainWindow(QMainWindow):
             # 保存
             preview_png = render_project_preview_png(self.contours)
             self.project_manager.save_project(file_path, preview_png=preview_png)
+            self._remember_last_save_path(file_path)
 
             # 更新状态
             self.current_file = file_path
@@ -1858,11 +1922,12 @@ class MainWindow(QMainWindow):
         file_path, _ = QFileDialog.getSaveFileName(
             self,
             self.tr("Export STL"),
-            "",
+            self._get_initial_save_path(),
             self.tr("STL Files (*.stl);;All Files (*)")
         )
 
         if file_path:
+            self._remember_last_save_path(file_path)
             # 获取当前参数
             params = self.param_panel.get_params()
             slice_result = self.slice_result
@@ -1906,11 +1971,12 @@ class MainWindow(QMainWindow):
         file_path, _ = QFileDialog.getSaveFileName(
             self,
             self.tr("Export Baseplate DXF"),
-            "",
+            self._get_initial_save_path(),
             self.tr("DXF Files (*.dxf);;All Files (*)")
         )
 
         if file_path:
+            self._remember_last_save_path(file_path)
             try:
                 # 获取当前参数
                 params = self.param_panel.get_params()
@@ -1940,11 +2006,12 @@ class MainWindow(QMainWindow):
         file_path, _ = QFileDialog.getSaveFileName(
             self,
             self.tr("Export Panel DXF"),
-            "",
+            self._get_initial_save_path(),
             self.tr("DXF Files (*.dxf);;All Files (*)")
         )
 
         if file_path:
+            self._remember_last_save_path(file_path)
             try:
                 # 获取当前参数
                 params = self.param_panel.get_params()

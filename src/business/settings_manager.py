@@ -2,7 +2,7 @@
 MINGDA SignMaker - 设置管理器
 
 架构设计：
-- JSON文件（用户配置目录下的 slice_params.json）: 只保存切片参数（复杂结构，便于备份迁移）
+- JSON文件（用户配置目录下的 slice_params.json）: 保存切片参数（layout 除外，复杂结构便于备份迁移）
 - QSettings (平台原生): 语言、窗口状态、UI设置、最近文件等
 
 这样避免了多个模块同时写入同一个文件导致的冲突。
@@ -17,14 +17,14 @@ from datetime import datetime
 from PySide6.QtCore import QSettings, QStandardPaths
 from PySide6.QtWidgets import QMainWindow
 
-from src.core.types import SliceParams, serialize_params, deserialize_params
+from src.core.types import LayoutParams, SliceParams, serialize_params, deserialize_params
 
 
 class SettingsManager:
     """设置管理器
 
     混合架构：
-    - JSON 文件: 只保存切片参数（便于备份和迁移）
+    - JSON 文件: 保存切片参数（layout 除外，便于备份和迁移）
     - QSettings: 语言、窗口状态、UI设置等（平台原生存储）
     """
 
@@ -120,32 +120,81 @@ class SettingsManager:
     # 切片参数（使用 JSON 文件）
     # =========================================================================
 
+    def has_saved_layout_params(self) -> bool:
+        """判断是否已保存排版参数。"""
+        return any(
+            self._qsettings.contains(key)
+            for key in (
+                "Layout/auto_arrange",
+                "Layout/spacing",
+                "Layout/margin",
+            )
+        )
+
+    def get_layout_params(self) -> Optional[LayoutParams]:
+        """获取保存在 QSettings 中的排版参数。"""
+        if not self.has_saved_layout_params():
+            return None
+        return LayoutParams(
+            auto_arrange=self._qsettings.value("Layout/auto_arrange", True, type=bool),
+            spacing=self._qsettings.value("Layout/spacing", 10.0, type=float),
+            margin=self._qsettings.value("Layout/margin", 20.0, type=float),
+        )
+
+    def set_layout_params(self, layout: LayoutParams):
+        """将排版参数保存到 QSettings。"""
+        self._qsettings.setValue("Layout/auto_arrange", bool(layout.auto_arrange))
+        self._qsettings.setValue("Layout/spacing", float(layout.spacing))
+        self._qsettings.setValue("Layout/margin", float(layout.margin))
+
+    def clear_layout_params(self):
+        """清除保存在 QSettings 中的排版参数。"""
+        self._qsettings.remove("Layout")
+
+    def _merge_saved_layout(self, params: Optional[SliceParams]) -> Optional[SliceParams]:
+        """将 QSettings 中的排版参数合并到切片参数。"""
+        saved_layout = self.get_layout_params()
+        if params is None:
+            if saved_layout is None:
+                return None
+            params = SliceParams()
+        if saved_layout is not None:
+            params.layout = saved_layout
+        return params
+
     def get_last_params(self) -> Optional[SliceParams]:
         """获取最后使用的切片参数"""
         if not self._params_file.exists():
             self._migrate_legacy_params_file()
+        params: Optional[SliceParams] = None
         if not self._params_file.exists():
-            return None
+            return self._merge_saved_layout(None)
 
         try:
             with open(self._params_file, 'r', encoding='utf-8') as f:
                 data = json.load(f)
             params_data = data.get("params")
             if params_data:
-                return deserialize_params(params_data)
+                params = deserialize_params(params_data)
+                if not self.has_saved_layout_params():
+                    self.set_layout_params(params.layout)
         except Exception:
-            return None
-        return None
+            return self._merge_saved_layout(None)
+        return self._merge_saved_layout(params)
 
     def set_last_params(self, params: SliceParams) -> bool:
         """保存最后使用的切片参数"""
         try:
             self._config_dir.mkdir(parents=True, exist_ok=True)
+            self.set_layout_params(params.layout)
+
+            params_data = serialize_params(params)
+            params_data.pop("layout", None)
 
             data = {
                 "version": self.CONFIG_VERSION,
                 "last_modified": datetime.now().isoformat(),
-                "params": serialize_params(params)
+                "params": params_data
             }
 
             with open(self._params_file, 'w', encoding='utf-8') as f:
@@ -161,6 +210,7 @@ class SettingsManager:
                 self._params_file.unlink()
         except Exception:
             pass
+        self.clear_layout_params()
 
     # =========================================================================
     # 语言设置（使用 QSettings）
@@ -284,24 +334,65 @@ class SettingsManager:
         self._write_recent_files([])
 
     # =========================================================================
-    # 导出设置（使用 QSettings）
+    # 文件对话框目录（使用 QSettings）
     # =========================================================================
 
+    @staticmethod
+    def _normalize_dir_path(dir_path: str) -> Optional[str]:
+        """规范化目录路径。"""
+        if not dir_path:
+            return None
+        return str(Path(dir_path).expanduser().resolve(strict=False))
+
+    def _get_dialog_dir(self, key: str, *, legacy_key: Optional[str] = None) -> Optional[str]:
+        """读取记忆的对话框目录，并兼容旧键。"""
+        dir_path = self._qsettings.value(key, None, type=str)
+        if dir_path:
+            return dir_path
+        if legacy_key:
+            return self._qsettings.value(legacy_key, None, type=str)
+        return None
+
+    def _set_dialog_dir(self, key: str, dir_path: str, *, legacy_key: Optional[str] = None):
+        """写入记忆的对话框目录，并回写旧键保持兼容。"""
+        normalized = self._normalize_dir_path(dir_path)
+        if not normalized:
+            return
+        self._qsettings.setValue(key, normalized)
+        if legacy_key:
+            self._qsettings.setValue(legacy_key, normalized)
+
+    def get_last_open_dir(self) -> Optional[str]:
+        """获取最后一次打开文件使用的目录。"""
+        return self._get_dialog_dir("Dialog/last_open_dir", legacy_key="Import/last_dir")
+
+    def set_last_open_dir(self, dir_path: str):
+        """设置最后一次打开文件使用的目录。"""
+        self._set_dialog_dir("Dialog/last_open_dir", dir_path, legacy_key="Import/last_dir")
+
+    def get_last_save_dir(self) -> Optional[str]:
+        """获取最后一次保存文件使用的目录。"""
+        return self._get_dialog_dir("Dialog/last_save_dir", legacy_key="Export/last_dir")
+
+    def set_last_save_dir(self, dir_path: str):
+        """设置最后一次保存文件使用的目录。"""
+        self._set_dialog_dir("Dialog/last_save_dir", dir_path, legacy_key="Export/last_dir")
+
     def get_last_export_dir(self) -> Optional[str]:
-        """获取最后的导出目录"""
-        return self._qsettings.value("Export/last_dir", None, type=str)
+        """兼容旧名称：获取最后的导出目录。"""
+        return self.get_last_save_dir()
 
     def set_last_export_dir(self, dir_path: str):
-        """设置最后的导出目录"""
-        self._qsettings.setValue("Export/last_dir", str(Path(dir_path).resolve()))
+        """兼容旧名称：设置最后的导出目录。"""
+        self.set_last_save_dir(dir_path)
 
     def get_last_import_dir(self) -> Optional[str]:
-        """获取最后的导入目录"""
-        return self._qsettings.value("Import/last_dir", None, type=str)
+        """兼容旧名称：获取最后的导入目录。"""
+        return self.get_last_open_dir()
 
     def set_last_import_dir(self, dir_path: str):
-        """设置最后的导入目录"""
-        self._qsettings.setValue("Import/last_dir", str(Path(dir_path).resolve()))
+        """兼容旧名称：设置最后的导入目录。"""
+        self.set_last_open_dir(dir_path)
 
     # =========================================================================
     # 文字生成设置（使用 QSettings）

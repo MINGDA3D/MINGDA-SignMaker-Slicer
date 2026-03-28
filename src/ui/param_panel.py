@@ -10,6 +10,7 @@ MINGDA SignMaker - 参数面板组件
 
 from __future__ import annotations
 import math
+from pathlib import Path
 from typing import Optional
 
 from PySide6.QtWidgets import (
@@ -26,6 +27,7 @@ from src.core.types import (
     EdgeProfile, default_shell_line_width, resolve_shell_line_width,
     resolve_shell_wall_thickness,
 )
+from src.business.settings_manager import get_settings_manager
 from src.core.edge_presets import EdgePresetManager, ProfileCategory
 from src.ui.widgets.edge_preset_selector import EdgePresetSelector
 from .theme import COLORS, LAYOUT
@@ -1618,16 +1620,21 @@ class ParamPanel(QWidget):
     def _on_import_dxf(self):
         """导入DXF文件"""
         from PySide6.QtWidgets import QFileDialog, QMessageBox
+        settings = get_settings_manager()
+        initial_dir = settings.get_last_open_dir() if settings else ""
 
         file_path, _ = QFileDialog.getOpenFileName(
             self,
             self.tr("Import Custom Edge DXF"),
-            "",
+            initial_dir,
             self.tr("DXF Files (*.dxf);;All Files (*.*)")
         )
 
         if not file_path:
             return
+
+        if settings:
+            settings.set_last_open_dir(str(Path(file_path).expanduser().resolve(strict=False).parent))
 
         try:
             from src.core.edge_profile_loader import EdgeProfileDXFLoader

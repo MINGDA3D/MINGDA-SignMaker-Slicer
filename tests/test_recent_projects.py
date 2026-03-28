@@ -1,3 +1,4 @@
+import json
 import os
 import shutil
 import uuid
@@ -15,7 +16,15 @@ from PySide6.QtWidgets import QApplication
 
 from src.business.project_format import PREVIEW_FILE, save_project
 from src.business.settings_manager import SettingsManager
-from src.core.types import Contour, Path as ContourPath, Point, Project, ProjectMeta
+from src.core.types import (
+    Contour,
+    Path as ContourPath,
+    Point,
+    Project,
+    ProjectMeta,
+    SliceParams,
+    serialize_params,
+)
 from src.ui.main_window import MainWindow
 
 
@@ -101,6 +110,106 @@ def test_settings_manager_remove_recent_file_preserves_remaining_order(workspace
     ]
 
 
+def test_settings_manager_persists_last_open_and_save_dirs(workspace_tmp_dir):
+    settings_dir = workspace_tmp_dir / "settings"
+    open_dir = workspace_tmp_dir / "open_dir"
+    save_dir = workspace_tmp_dir / "save_dir"
+    open_dir.mkdir(parents=True, exist_ok=True)
+    save_dir.mkdir(parents=True, exist_ok=True)
+
+    sm = SettingsManager(str(settings_dir))
+    sm.set_last_open_dir(str(open_dir))
+    sm.set_last_save_dir(str(save_dir))
+
+    restored = SettingsManager(str(settings_dir))
+
+    assert restored.get_last_open_dir() == str(open_dir.resolve())
+    assert restored.get_last_save_dir() == str(save_dir.resolve())
+    assert restored.get_last_import_dir() == str(open_dir.resolve())
+    assert restored.get_last_export_dir() == str(save_dir.resolve())
+
+
+def test_settings_manager_last_dir_keys_fallback_to_legacy_values(workspace_tmp_dir):
+    settings_dir = workspace_tmp_dir / "settings"
+    open_dir = workspace_tmp_dir / "legacy_open"
+    save_dir = workspace_tmp_dir / "legacy_save"
+    open_dir.mkdir(parents=True, exist_ok=True)
+    save_dir.mkdir(parents=True, exist_ok=True)
+
+    sm = SettingsManager(str(settings_dir))
+    sm._qsettings.setValue("Import/last_dir", str(open_dir.resolve()))
+    sm._qsettings.setValue("Export/last_dir", str(save_dir.resolve()))
+
+    assert sm.get_last_open_dir() == str(open_dir.resolve())
+    assert sm.get_last_save_dir() == str(save_dir.resolve())
+
+
+def test_settings_manager_saves_layout_to_qsettings_not_last_params_json(workspace_tmp_dir):
+    settings_dir = workspace_tmp_dir / "settings"
+    sm = SettingsManager(str(settings_dir))
+
+    params = SliceParams()
+    params.shell.height = 42.0
+    params.layout.auto_arrange = False
+    params.layout.spacing = 36.5
+    params.layout.margin = 18.0
+
+    assert sm.set_last_params(params) is True
+
+    params_file = settings_dir / "slice_params.json"
+    data = json.loads(params_file.read_text(encoding="utf-8"))
+
+    assert "layout" not in data["params"]
+
+    restored = sm.get_last_params()
+
+    assert restored is not None
+    assert restored.shell.height == 42.0
+    assert restored.layout.auto_arrange is False
+    assert restored.layout.spacing == 36.5
+    assert restored.layout.margin == 18.0
+
+
+def test_settings_manager_migrates_layout_from_legacy_last_params_json(workspace_tmp_dir):
+    settings_dir = workspace_tmp_dir / "settings"
+    settings_dir.mkdir(parents=True, exist_ok=True)
+
+    params = SliceParams()
+    params.shell.height = 54.9
+    params.layout.auto_arrange = False
+    params.layout.spacing = 28.0
+    params.layout.margin = 12.0
+
+    (settings_dir / "slice_params.json").write_text(
+        json.dumps(
+            {
+                "version": SettingsManager.CONFIG_VERSION,
+                "last_modified": "2026-03-28T00:00:00",
+                "params": serialize_params(params),
+            },
+            ensure_ascii=False,
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+
+    sm = SettingsManager(str(settings_dir))
+    restored = sm.get_last_params()
+
+    assert restored is not None
+    assert restored.shell.height == pytest.approx(54.9)
+    assert restored.layout.auto_arrange is False
+    assert restored.layout.spacing == 28.0
+    assert restored.layout.margin == 12.0
+
+    saved_layout = sm.get_layout_params()
+
+    assert saved_layout is not None
+    assert saved_layout.auto_arrange is False
+    assert saved_layout.spacing == 28.0
+    assert saved_layout.margin == 12.0
+
+
 def test_save_project_updates_home_recent_projects(window, workspace_tmp_dir):
     file_path = workspace_tmp_dir / "saved_from_window.smp"
     window.contours = [_rect_contour(0, 0, 10, 10, "A")]
@@ -111,10 +220,67 @@ def test_save_project_updates_home_recent_projects(window, workspace_tmp_dir):
         assert PREVIEW_FILE in zf.namelist()
 
     assert window.settings_manager.get_recent_files()[0] == str(file_path.resolve())
+    assert window.settings_manager.get_last_save_dir() == str(workspace_tmp_dir.resolve())
     assert window.home_page._recent_projects[0]["path"] == str(file_path.resolve())
     assert window.home_page._recent_projects[0]["name"] == "saved_from_window"
     assert window.home_page._recent_projects[0]["preview_pixmap"] is not None
     assert window.home_page._cards[0].preview_pixmap is not None
+
+
+def test_open_file_dialog_uses_last_open_dir(window, workspace_tmp_dir, monkeypatch):
+    remembered_dir = workspace_tmp_dir / "remembered_open"
+    remembered_dir.mkdir(parents=True, exist_ok=True)
+    selected_path = remembered_dir / "selected.svg"
+    window.settings_manager.set_last_open_dir(str(remembered_dir))
+
+    captured = {}
+
+    def fake_get_open_file_name(*args):
+        captured["directory"] = args[2]
+        return str(selected_path), ""
+
+    monkeypatch.setattr("src.ui.main_window.QFileDialog.getOpenFileName", fake_get_open_file_name)
+
+    loaded = {}
+    monkeypatch.setattr(window, "_load_file", lambda path: loaded.setdefault("path", path))
+
+    window._on_open_file()
+
+    assert captured["directory"] == str(remembered_dir.resolve())
+    assert loaded["path"] == str(selected_path)
+    assert window.settings_manager.get_last_open_dir() == str(remembered_dir.resolve())
+
+
+def test_save_as_dialog_uses_last_save_dir(window, workspace_tmp_dir, monkeypatch):
+    initial_save_dir = workspace_tmp_dir / "remembered_save"
+    chosen_save_dir = workspace_tmp_dir / "chosen_save"
+    initial_save_dir.mkdir(parents=True, exist_ok=True)
+    chosen_save_dir.mkdir(parents=True, exist_ok=True)
+    window.settings_manager.set_last_save_dir(str(initial_save_dir))
+    window.current_file = str(workspace_tmp_dir / "source_graphic.dxf")
+    window.contours = [_rect_contour(0, 0, 10, 10, "A")]
+
+    captured = {}
+
+    def fake_get_save_file_name(*args):
+        captured["path"] = args[2]
+        return str(chosen_save_dir / "result_project.smp"), ""
+
+    monkeypatch.setattr("src.ui.main_window.QFileDialog.getSaveFileName", fake_get_save_file_name)
+
+    saved = {}
+
+    def fake_save_project(path):
+        saved["path"] = path
+        return True
+
+    monkeypatch.setattr(window, "_save_project", fake_save_project)
+
+    window._on_save_as()
+
+    assert captured["path"] == str((initial_save_dir / "source_graphic.smp").resolve())
+    assert saved["path"] == str((chosen_save_dir / "result_project.smp").resolve())
+    assert window.settings_manager.get_last_save_dir() == str(chosen_save_dir.resolve())
 
 
 def test_open_project_moves_recent_project_to_front(window, workspace_tmp_dir):
