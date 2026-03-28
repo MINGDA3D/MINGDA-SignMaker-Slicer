@@ -222,7 +222,7 @@ def test_save_project_updates_home_recent_projects(window, workspace_tmp_dir):
     assert window.settings_manager.get_recent_files()[0] == str(file_path.resolve())
     assert window.settings_manager.get_last_save_dir() == str(workspace_tmp_dir.resolve())
     assert window.home_page._recent_projects[0]["path"] == str(file_path.resolve())
-    assert window.home_page._recent_projects[0]["name"] == "saved_from_window"
+    assert window.home_page._recent_projects[0]["name"] == "saved_from_window.smp"
     assert window.home_page._recent_projects[0]["preview_pixmap"] is not None
     assert window.home_page._cards[0].preview_pixmap is not None
 
@@ -294,7 +294,7 @@ def test_open_project_moves_recent_project_to_front(window, workspace_tmp_dir):
 
     assert window.settings_manager.get_recent_files()[0] == str(newer_project.resolve())
     assert window.home_page._recent_projects[0]["path"] == str(newer_project.resolve())
-    assert window.home_page._recent_projects[0]["name"] == "Newer Project"
+    assert window.home_page._recent_projects[0]["name"] == "Newer Project.smp"
 
 
 def test_refresh_home_recent_projects_filters_missing_and_non_smp_entries(window, workspace_tmp_dir):

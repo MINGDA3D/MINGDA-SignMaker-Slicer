@@ -1260,6 +1260,7 @@ class MainWindow(QMainWindow):
                 continue
 
             project_name = info.get("name") or path.stem
+            display_name = self._format_recent_project_name(project_name)
             preview_pixmap = None
             try:
                 preview_pixmap = self._load_recent_project_preview_pixmap(resolved_path)
@@ -1267,7 +1268,7 @@ class MainWindow(QMainWindow):
                 preview_pixmap = None
 
             recent_projects.append({
-                "name": project_name,
+                "name": display_name,
                 "date": self._format_recent_project_date(info.get("modified_at"), resolved_path),
                 "char": self._get_recent_project_preview_char(project_name),
                 "preview_pixmap": preview_pixmap,
@@ -1278,6 +1279,13 @@ class MainWindow(QMainWindow):
             self.settings_manager.remove_recent_file(invalid_path)
 
         self.home_page.set_recent_projects(recent_projects)
+
+    @staticmethod
+    def _format_recent_project_name(project_name: str) -> str:
+        """Format a recent-project display name with the .smp suffix."""
+        if not project_name:
+            return ".smp"
+        return project_name if project_name.lower().endswith(".smp") else f"{project_name}.smp"
 
     def _open_recent_project(self, file_path: str):
         """Open a project from the home-page recent-project list."""
