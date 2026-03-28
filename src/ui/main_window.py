@@ -566,6 +566,7 @@ class MainWindow(QMainWindow):
         self.home_page.new_project_clicked.connect(self._on_new_project)
         self.home_page.open_file_clicked.connect(self._on_open_file)
         self.home_page.recent_project_clicked.connect(self._open_recent_project)
+        self.home_page.clear_recent_projects_clicked.connect(self._clear_home_recent_projects)
 
         self.home_scroll = QScrollArea()
         self.home_scroll.setObjectName("homeScrollArea")
@@ -1294,6 +1295,13 @@ class MainWindow(QMainWindow):
         if not self._load_project(resolved_path) and self.settings_manager:
             self.settings_manager.remove_recent_file(resolved_path)
             self._refresh_home_recent_projects()
+
+    def _clear_home_recent_projects(self):
+        """Clear all recent projects from the home page list."""
+        if not self.settings_manager:
+            return
+        self.settings_manager.clear_recent_files()
+        self._refresh_home_recent_projects()
 
     def _on_nav_changed(self, nav: str):
         """处理标题栏导航切换"""

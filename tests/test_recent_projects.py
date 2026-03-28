@@ -217,6 +217,35 @@ def test_home_recent_project_card_opens_target_project(window, workspace_tmp_dir
     assert opened_paths == [str(project_path.resolve())]
 
 
+def test_home_clear_all_button_clears_recent_projects(window, workspace_tmp_dir, qapp):
+    first_project = _create_project_file(workspace_tmp_dir, "first.smp", "First Project")
+    second_project = _create_project_file(workspace_tmp_dir, "second.smp", "Second Project")
+
+    window.settings_manager.add_recent_file(str(first_project))
+    window.settings_manager.add_recent_file(str(second_project))
+    window._refresh_home_recent_projects()
+    window.resize(1280, 760)
+    window._on_nav_changed("home")
+    window.show()
+    window.home_page.repaint()
+    qapp.processEvents()
+
+    assert len(window.home_page._cards) == 2
+    assert not window.home_page._clear_all_rect.isNull()
+
+    QTest.mouseClick(
+        window.home_page,
+        Qt.MouseButton.LeftButton,
+        Qt.KeyboardModifier.NoModifier,
+        window.home_page._clear_all_rect.center().toPoint(),
+    )
+    qapp.processEvents()
+
+    assert window.settings_manager.get_recent_files() == []
+    assert window.home_page._recent_projects == []
+    assert window.home_page._cards == []
+
+
 def test_home_recent_projects_enable_vertical_scroll_on_small_height(window, workspace_tmp_dir, qapp):
     for index in range(6):
         _create_project_file(

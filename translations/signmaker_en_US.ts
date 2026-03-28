@@ -120,6 +120,11 @@
         <translation>Recent Projects</translation>
     </message>
     <message>
+        <location filename="../src/ui/home_page.py" line="590"/>
+        <source>Clear All</source>
+        <translation>Clear All</translation>
+    </message>
+    <message>
         <location filename="../src/ui/home_page.py" line="539"/>
         <source>No recent projects yet</source>
         <translation>No recent projects yet</translation>

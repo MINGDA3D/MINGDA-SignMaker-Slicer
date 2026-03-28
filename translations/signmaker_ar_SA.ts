@@ -120,6 +120,11 @@
         <translation>المشاريع الأخيرة</translation>
     </message>
     <message>
+        <location filename="../src/ui/home_page.py" line="590"/>
+        <source>Clear All</source>
+        <translation>مسح الكل</translation>
+    </message>
+    <message>
         <location filename="../src/ui/home_page.py" line="539"/>
         <source>No recent projects yet</source>
         <translation>لا توجد مشاريع أخيرة بعد</translation>

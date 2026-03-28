@@ -120,6 +120,11 @@
         <translation>최근 프로젝트</translation>
     </message>
     <message>
+        <location filename="../src/ui/home_page.py" line="590"/>
+        <source>Clear All</source>
+        <translation>모두 지우기</translation>
+    </message>
+    <message>
         <location filename="../src/ui/home_page.py" line="539"/>
         <source>No recent projects yet</source>
         <translation>아직 최근 프로젝트가 없습니다</translation>

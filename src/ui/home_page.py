@@ -326,14 +326,18 @@ class HomePage(QWidget):
     new_project_clicked = Signal()
     open_file_clicked = Signal()
     recent_project_clicked = Signal(str)
+    clear_recent_projects_clicked = Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setObjectName("homePage")
+        self.setMouseTracking(True)
 
         # 数据
         self._recent_projects = []
         self._cards = []
+        self._clear_all_rect = QRectF()
+        self._clear_all_hovered = False
 
         # 布局参数
         self.hero_top = 88
@@ -464,6 +468,9 @@ class HomePage(QWidget):
     def set_recent_projects(self, projects: List[dict]):
         """设置最近项目列表"""
         self._recent_projects = projects
+        self._clear_all_rect = QRectF()
+        self._clear_all_hovered = False
+        self.unsetCursor()
         self._create_cards()
         self.update()
 
@@ -583,11 +590,51 @@ class HomePage(QWidget):
         font_section.setWeight(QFont.Weight.DemiBold)
         painter.setFont(font_section)
         painter.setPen(hex_to_qcolor(COLORS["text_primary"]))
+        section_fm = QFontMetrics(font_section)
+        section_title_w = section_fm.horizontalAdvance(section_title)
         painter.drawText(section_x, section_y, section_title)
 
         line_y = section_y + 16
+        line_start_x = section_x + section_title_w + 18
+        self._clear_all_rect = QRectF()
+
+        if self._recent_projects:
+            clear_text = self.tr("Clear All")
+            clear_font = QFont("Microsoft YaHei UI", 9)
+            clear_font.setWeight(QFont.Weight.Medium)
+            clear_fm = QFontMetrics(clear_font)
+            clear_w = clear_fm.horizontalAdvance(clear_text) + 24
+            clear_h = 28
+            clear_x = section_x + section_title_w + 18
+            clear_y = section_y - section_fm.ascent() - 4
+            max_clear_x = section_x + section_width - clear_w
+            clear_x = max(section_x, min(clear_x, max_clear_x))
+            self._clear_all_rect = QRectF(clear_x, clear_y, clear_w, clear_h)
+
+            painter.setPen(
+                QPen(
+                    hex_to_qcolor(
+                        COLORS["accent_primary"] if self._clear_all_hovered else COLORS["border_default"]
+                    ),
+                    1,
+                )
+            )
+            painter.setBrush(
+                hex_to_qcolor(COLORS["bg_hover"] if self._clear_all_hovered else COLORS["bg_card"])
+            )
+            painter.drawRoundedRect(self._clear_all_rect, 14, 14)
+
+            painter.setFont(clear_font)
+            painter.setPen(
+                hex_to_qcolor(COLORS["text_primary"] if self._clear_all_hovered else COLORS["text_secondary"])
+            )
+            painter.drawText(self._clear_all_rect, Qt.AlignmentFlag.AlignCenter, clear_text)
+            line_start_x = int(self._clear_all_rect.right()) + 18
+
         painter.setPen(QPen(hex_to_qcolor(COLORS["border_subtle"]), 1))
-        painter.drawLine(section_x + 150, line_y, section_x + section_width, line_y)
+        line_start_x = min(section_x + section_width, max(section_x + section_title_w + 18, line_start_x))
+        if line_start_x < section_x + section_width:
+            painter.drawLine(line_start_x, line_y, section_x + section_width, line_y)
 
         if not self._recent_projects:
             empty_rect = QRectF(section_x, metrics["content_y"] + 10, section_width, 170)
@@ -654,7 +701,33 @@ class HomePage(QWidget):
             self.open_file_clicked.emit()
             return
 
+        if not self._clear_all_rect.isNull() and self._clear_all_rect.contains(pos):
+            self.clear_recent_projects_clicked.emit()
+            return
+
         super().mousePressEvent(event)
+
+    def mouseMoveEvent(self, event):
+        pos = event.position()
+        clear_hovered = bool(
+            self._recent_projects
+            and not self._clear_all_rect.isNull()
+            and self._clear_all_rect.contains(pos)
+        )
+        if clear_hovered != self._clear_all_hovered:
+            self._clear_all_hovered = clear_hovered
+            self.update()
+        self.setCursor(
+            Qt.CursorShape.PointingHandCursor if clear_hovered else Qt.CursorShape.ArrowCursor
+        )
+        super().mouseMoveEvent(event)
+
+    def leaveEvent(self, event):
+        if self._clear_all_hovered:
+            self._clear_all_hovered = False
+            self.update()
+        self.unsetCursor()
+        super().leaveEvent(event)
 
     def resizeEvent(self, event):
         """窗口大小改变时重新定位卡片"""

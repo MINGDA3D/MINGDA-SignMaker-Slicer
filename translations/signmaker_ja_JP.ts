@@ -120,6 +120,11 @@
         <translation>最近のプロジェクト</translation>
     </message>
     <message>
+        <location filename="../src/ui/home_page.py" line="590"/>
+        <source>Clear All</source>
+        <translation>すべてクリア</translation>
+    </message>
+    <message>
         <location filename="../src/ui/home_page.py" line="539"/>
         <source>No recent projects yet</source>
         <translation>最近のプロジェクトはまだありません</translation>
