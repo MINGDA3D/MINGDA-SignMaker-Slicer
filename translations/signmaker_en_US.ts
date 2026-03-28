@@ -717,7 +717,7 @@
     <message>
         <location filename="../src/ui/main_window.py" line="2638"/>
         <source>Please select a grouped contour first</source>
-        <translation type="unfinished"></translation>
+        <translation>Please select a grouped contour first</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="860"/>

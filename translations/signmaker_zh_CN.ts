@@ -693,7 +693,7 @@
     <message>
         <location filename="../src/ui/main_window.py" line="2638"/>
         <source>Please select a grouped contour first</source>
-        <translation type="unfinished"></translation>
+        <translation>请先选择一个已编组的轮廓</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="860"/>

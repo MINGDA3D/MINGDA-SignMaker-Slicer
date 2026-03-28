@@ -731,7 +731,7 @@
     <message>
         <location filename="../src/ui/main_window.py" line="2638"/>
         <source>Please select a grouped contour first</source>
-        <translation type="unfinished"></translation>
+        <translation>먼저 그룹화된 윤곽선을 선택하세요</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="860"/>
