@@ -28,6 +28,7 @@ class CanvasToolbar(QWidget):
     difference_clicked = Signal()
     group_clicked = Signal()
     ungroup_clicked = Signal()
+    release_asset_clicked = Signal()
     text_clicked = Signal()
     slice_clicked = Signal()
 
@@ -99,6 +100,13 @@ class CanvasToolbar(QWidget):
         self.btn_ungroup.clicked.connect(self.ungroup_clicked.emit)
         layout.addWidget(self.btn_ungroup)
 
+        self.btn_release_asset = self._create_icon_button(
+            "explode_asset.svg",
+            self.tr("Explode Asset"),
+        )
+        self.btn_release_asset.clicked.connect(self.release_asset_clicked.emit)
+        layout.addWidget(self.btn_release_asset)
+
         layout.addWidget(self._create_separator())
 
         # ========== 文字生成 ==========
@@ -135,13 +143,6 @@ class CanvasToolbar(QWidget):
         btn.setCursor(Qt.CursorShape.PointingHandCursor)
         btn.setIconSize(QSize(36, 36))
         btn.setIcon(self._get_icon(icon_name))
-        return btn
-
-    def _create_text_button(self, text: str) -> QPushButton:
-        """创建文字按钮"""
-        btn = QPushButton(text)
-        btn.setObjectName("textButton")
-        btn.setCursor(Qt.CursorShape.PointingHandCursor)
         return btn
 
     def _create_separator(self) -> QFrame:
@@ -185,27 +186,6 @@ class CanvasToolbar(QWidget):
             QPushButton#iconButton:checked {{
                 background-color: #1F6FEB;
                 border-color: {COLORS.editor_canvas_toolbar_accent};
-            }}
-
-            /* 文字按钮 */
-            QPushButton#textButton {{
-                background-color: transparent;
-                color: #8B949E;
-                border: 1px solid transparent;
-                border-radius: 4px;
-                padding: 4px 10px;
-                font-size: 12px;
-                font-weight: 500;
-            }}
-            QPushButton#textButton:hover {{
-                background-color: {COLORS.editor_canvas_bg};
-                border-color: {COLORS.editor_canvas_toolbar_accent};
-                color: #C9D1D9;
-            }}
-            QPushButton#textButton:checked {{
-                background-color: #1F6FEB;
-                border-color: {COLORS.editor_canvas_toolbar_accent};
-                color: #FFFFFF;
             }}
 
             /* 分隔符 */

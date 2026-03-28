@@ -6,10 +6,12 @@
 """
 
 from datetime import datetime
+from pathlib import Path
 from typing import Optional, List
 
 from PySide6.QtCore import QObject, Signal
 
+from src.core.asset_utils import assign_contours_to_asset
 from src.core.types import Project, ProjectMeta, Contour, SliceParams
 from src.core.dxf_parser import DXFParser
 from src.business.project_format import (
@@ -119,6 +121,7 @@ class ProjectManager(QObject):
             self.new_project()
 
         contours = self._parser.parse(file_path)
+        assign_contours_to_asset(contours, Path(file_path).name)
         self.current_project.contours.extend(contours)
 
         self.is_modified = True

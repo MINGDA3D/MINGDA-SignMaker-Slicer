@@ -49,6 +49,14 @@ from src.core import (
     Contour, SliceParams, SliceResult,
     DXFWriter, export_baseplate_dxf, export_panel_dxf
 )
+from src.core.asset_utils import (
+    assign_contours_to_asset,
+    clear_contours_asset,
+    get_asset_member_indices,
+    get_contour_asset_id,
+    get_contour_asset_name,
+    get_shared_asset_metadata,
+)
 from src.core.types import resolve_shell_wall_thickness
 from src.core.stl_writer import STLWriter
 from src.business.undo_manager import (
@@ -639,7 +647,10 @@ class MainWindow(QMainWindow):
         self.project_panel.setMinimumWidth(180)
         self.project_panel.setMaximumWidth(300)
         self.project_panel.import_clicked.connect(self._on_open_file)
-        self.project_panel.contour_deleted.connect(self._on_contour_deleted)
+        self.project_panel.delete_requested.connect(self._on_delete_requested)
+        self.project_panel.release_asset_requested.connect(
+            self._on_release_asset_requested
+        )
         self.project_panel.selection_changed.connect(
             self._on_project_panel_selection_changed
         )
@@ -674,6 +685,7 @@ class MainWindow(QMainWindow):
         self.canvas_toolbar.difference_clicked.connect(self._on_difference)
         self.canvas_toolbar.group_clicked.connect(self._on_group)
         self.canvas_toolbar.ungroup_clicked.connect(self._on_ungroup)
+        self.canvas_toolbar.release_asset_clicked.connect(self._on_release_asset)
         self.canvas_toolbar.text_clicked.connect(self._on_text)
 
     def _init_statusbar(self):
@@ -843,7 +855,11 @@ class MainWindow(QMainWindow):
             return True
 
         if isinstance(command, TransformCommand):
-            return command.description not in {self.tr("Group"), self.tr("Ungroup")}
+            return command.description not in {
+                self.tr("Group"),
+                self.tr("Ungroup"),
+                self.tr("Explode Asset"),
+            }
 
         return False
 
@@ -935,6 +951,100 @@ class MainWindow(QMainWindow):
     def _on_contour_deleted(self, index: int):
         """处理项目面板的删除请求"""
         self._on_delete_requested([index])
+
+    def _on_release_asset_requested(self, asset_id: str):
+        """Handle asset release requests coming from the project panel."""
+        if not asset_id:
+            return
+
+        indices = get_asset_member_indices(self.contours, asset_id)
+        self._release_asset(indices)
+
+    def _on_release_asset(self):
+        """Release the selected logical asset container."""
+        selected_asset_indices = self.canvas.get_asset_target_indices()
+        asset_indices = [
+            idx for idx in selected_asset_indices
+            if 0 <= idx < len(self.contours) and get_contour_asset_id(self.contours[idx])
+        ]
+        if not asset_indices:
+            QMessageBox.information(
+                self,
+                self.tr("Info"),
+                self.tr("Please select an imported asset first"),
+            )
+            return
+
+        self._release_asset(asset_indices)
+
+    def _release_asset(self, indices: List[int]):
+        """Detach the provided contours from their shared asset container."""
+        if not indices:
+            return
+
+        cmd = TransformCommand(self.contours, indices, self.tr("Explode Asset"))
+        self._assign_released_contour_names(indices)
+        clear_contours_asset(
+            self.contours[idx]
+            for idx in indices
+            if 0 <= idx < len(self.contours)
+        )
+        cmd.capture_after()
+        self.undo_manager.push(cmd, execute=False)
+        self._apply_contour_selection(indices)
+        self.project_panel.update_contours(self.contours)
+
+    def _assign_released_contour_names(self, indices: List[int]) -> None:
+        """Rename released contours to <asset_stem>_<n> while avoiding conflicts."""
+        valid_indices = [
+            idx for idx in indices
+            if 0 <= idx < len(self.contours)
+        ]
+        if not valid_indices:
+            return
+
+        asset_name = next(
+            (
+                get_contour_asset_name(self.contours[idx]).strip()
+                for idx in valid_indices
+                if get_contour_asset_name(self.contours[idx]).strip()
+            ),
+            "",
+        )
+        base_name = self._released_contour_name_base(asset_name, valid_indices)
+        used_names = {
+            contour.name
+            for idx, contour in enumerate(self.contours)
+            if idx not in valid_indices and contour.name
+        }
+
+        next_index = 1
+        for idx in valid_indices:
+            while True:
+                candidate = f"{base_name}_{next_index}"
+                next_index += 1
+                if candidate not in used_names:
+                    self.contours[idx].name = candidate
+                    used_names.add(candidate)
+                    break
+
+    def _released_contour_name_base(
+        self,
+        asset_name: str,
+        released_indices: Optional[List[int]] = None,
+    ) -> str:
+        """Return the prefix used when naming contours after releasing an asset."""
+        normalized_name = asset_name.strip()
+        if not normalized_name:
+            return self.tr("Asset")
+
+        path = Path(normalized_name)
+        stem = path.stem.strip() or normalized_name
+        suffix = path.suffix.strip()
+        if not suffix:
+            return stem
+
+        return f"{stem}_{suffix.lstrip('.').lower()}"
 
     def _get_selected_contour_id(self) -> Optional[int]:
         """获取当前选中轮廓的唯一ID（单选时使用 object id）"""
@@ -1488,6 +1598,63 @@ class MainWindow(QMainWindow):
         if directory:
             self.settings_manager.set_last_save_dir(directory)
 
+    def _assign_asset_metadata(self, contours: List[Contour], asset_name: str) -> None:
+        """Assign a logical asset identity to a contour batch."""
+        if contours:
+            assign_contours_to_asset(
+                contours,
+                self._make_unique_asset_name(asset_name),
+            )
+
+    def _make_unique_asset_name(self, asset_name: str) -> str:
+        """Return a unique logical asset name for display in the project panel."""
+        normalized_name = asset_name.strip() or self.tr("Asset")
+        existing_names = {
+            get_contour_asset_name(contour).strip()
+            for contour in self.contours
+            if get_contour_asset_id(contour) and get_contour_asset_name(contour).strip()
+        }
+        if normalized_name not in existing_names:
+            return normalized_name
+
+        path = Path(normalized_name)
+        stem = path.stem or normalized_name
+        suffix = path.suffix
+        index = 2
+        while True:
+            candidate = f"{stem}_{index}{suffix}"
+            if candidate not in existing_names:
+                return candidate
+            index += 1
+
+    def _prepare_replacement_asset(
+        self,
+        result_contours: List[Contour],
+        source_indices: List[int],
+        fallback_name: str,
+    ) -> None:
+        """Preserve a shared asset when possible, otherwise create a derived one."""
+        if not result_contours:
+            return
+
+        source_contours = [
+            self.contours[idx]
+            for idx in source_indices
+            if 0 <= idx < len(self.contours)
+        ]
+        shared_asset = get_shared_asset_metadata(source_contours)
+        if shared_asset is not None:
+            asset_id, asset_name = shared_asset
+            assign_contours_to_asset(
+                result_contours,
+                asset_name or fallback_name,
+                asset_id=asset_id,
+            )
+            return
+
+        if source_contours:
+            assign_contours_to_asset(result_contours, fallback_name)
+
     def _load_file(self, file_path: str):
         """加载文件（异步）"""
         path = Path(file_path)
@@ -1697,6 +1864,7 @@ class MainWindow(QMainWindow):
     def _load_contours(self, new_contours: List[Contour], path: Path):
         """加载轮廓数据（从 DXF/SVG 导入）"""
         # 创建替换轮廓命令（可撤销）
+        self._assign_asset_metadata(new_contours, path.name)
         self._append_contours(
             new_contours,
             self.tr("Load ") + path.name,
@@ -2452,6 +2620,11 @@ class MainWindow(QMainWindow):
             return
 
         selected, result_contours = result
+        self._prepare_replacement_asset(
+            result_contours,
+            selected,
+            self.tr("Intersection"),
+        )
         insert_at = min(selected)
         new_selection = list(range(insert_at, insert_at + len(result_contours)))
         cmd = ReplaceSelectedContoursCommand(
@@ -2482,6 +2655,11 @@ class MainWindow(QMainWindow):
             return
 
         selected, result_contours = result
+        self._prepare_replacement_asset(
+            result_contours,
+            selected,
+            self.tr("Difference"),
+        )
         insert_at = min(selected)
         new_selection = list(range(insert_at, insert_at + len(result_contours)))
         cmd = ReplaceSelectedContoursCommand(
@@ -2554,6 +2732,12 @@ class MainWindow(QMainWindow):
                 contours = dialog.get_contours()
                 if contours:
                     # 使用撤销系统添加轮廓
+                    text_input = getattr(dialog, "text_input", None)
+                    text_value = text_input.text().strip() if text_input is not None else ""
+                    asset_name = self.tr("Text")
+                    if text_value:
+                        asset_name = f"{self.tr('Text')}: {text_value}"
+                    self._assign_asset_metadata(contours, asset_name)
                     self._append_contours(
                         contours,
                         self.tr("Add Contours"),

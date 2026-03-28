@@ -88,7 +88,7 @@ def test_export_requires_reprocess_after_param_change(qapp, monkeypatch):
         assert messages
         assert messages[-1][0][2] == window.tr("Please process first")
     finally:
-        window.close()
+        window.deleteLater()
 
 
 def test_save_project_blocked_when_canvas_has_no_graphics(qapp, monkeypatch):
@@ -113,7 +113,7 @@ def test_save_project_blocked_when_canvas_has_no_graphics(qapp, monkeypatch):
         assert messages
         assert messages[-1][0][2] == window.tr("Please import or create graphics before saving")
     finally:
-        window.close()
+        window.deleteLater()
 
 
 def test_close_confirmation_uses_custom_translated_buttons(qapp, monkeypatch):
@@ -138,7 +138,7 @@ def test_close_confirmation_uses_custom_translated_buttons(qapp, monkeypatch):
         assert captured["default"] == window.tr("Save")
         assert captured["escape"] == window.tr("Cancel")
     finally:
-        window.close()
+        window.deleteLater()
 
 
 def test_close_with_unsaved_changes_saves_current_project(qapp, monkeypatch, workspace_tmp_dir):
@@ -167,7 +167,7 @@ def test_close_with_unsaved_changes_saves_current_project(qapp, monkeypatch, wor
         assert window._handle_unsaved_changes_before_close() is True
         assert saved_paths == [str(project_path)]
     finally:
-        window.close()
+        window.deleteLater()
 
 
 def test_close_with_unsaved_changes_uses_save_as_for_non_project_path(qapp, monkeypatch):
@@ -194,7 +194,7 @@ def test_close_with_unsaved_changes_uses_save_as_for_non_project_path(qapp, monk
         assert window._handle_unsaved_changes_before_close() is True
         assert save_as_calls == [True]
     finally:
-        window.close()
+        window.deleteLater()
 
 
 def test_close_with_unsaved_changes_can_cancel_exit(qapp, monkeypatch):
@@ -220,7 +220,7 @@ def test_close_with_unsaved_changes_can_cancel_exit(qapp, monkeypatch):
         assert save_calls == []
     finally:
         window._set_project_save_point()
-        window.close()
+        window.deleteLater()
 
 
 def test_close_with_unsaved_changes_can_discard_exit(qapp, monkeypatch):
@@ -245,7 +245,7 @@ def test_close_with_unsaved_changes_can_discard_exit(qapp, monkeypatch):
         assert window._handle_unsaved_changes_before_close() is True
         assert save_calls == []
     finally:
-        window.close()
+        window.deleteLater()
 
 
 def test_manual_contour_move_invalidates_processed_result(qapp):
@@ -262,7 +262,7 @@ def test_manual_contour_move_invalidates_processed_result(qapp):
         assert window.slice_result is None
         assert window.title_bar.btn_export_stl.isEnabled() is True
     finally:
-        window.close()
+        window.deleteLater()
 
 
 def test_delete_invalidates_processed_result(qapp):
@@ -280,7 +280,7 @@ def test_delete_invalidates_processed_result(qapp):
         assert window.slice_result is None
         assert window.title_bar.btn_export_stl.isEnabled() is True
     finally:
-        window.close()
+        window.deleteLater()
 
 
 def test_canvas_marks_out_of_bounds_contour_with_error_color(qapp):
@@ -325,7 +325,7 @@ def test_import_contours_append_without_clearing_existing_canvas(qapp):
         assert window.canvas_toolbar.btn_move.isChecked() is True
         assert window.canvas.current_tool == "move"
     finally:
-        window.close()
+        window.deleteLater()
 
 
 def test_text_generation_appends_without_recentering_existing_canvas(qapp, monkeypatch):
@@ -363,7 +363,7 @@ def test_text_generation_appends_without_recentering_existing_canvas(qapp, monke
         assert window.canvas_toolbar.btn_move.isChecked() is True
         assert window.canvas.current_tool == "move"
     finally:
-        window.close()
+        window.deleteLater()
 
 
 def test_process_blocked_when_contour_exceeds_platform(qapp, monkeypatch):
@@ -395,7 +395,7 @@ def test_process_blocked_when_contour_exceeds_platform(qapp, monkeypatch):
             "Processing blocked: contours exceed platform size"
         )
     finally:
-        window.close()
+        window.deleteLater()
 
 
 def test_transform_panel_hidden_on_home_and_preview_pages(qapp, monkeypatch):
@@ -435,7 +435,7 @@ def test_transform_panel_hidden_on_home_and_preview_pages(qapp, monkeypatch):
         assert window.current_view == "3d"
         assert window.transform_panel.isVisible() is False
     finally:
-        window.close()
+        window.deleteLater()
 
 
 def test_preview_auto_processes_when_contours_exist_and_result_missing(qapp, monkeypatch):
@@ -454,7 +454,7 @@ def test_preview_auto_processes_when_contours_exist_and_result_missing(qapp, mon
         assert window.current_main_view == "editor"
         assert window.current_view == "3d"
     finally:
-        window.close()
+        window.deleteLater()
 
 
 def test_preview_does_not_auto_process_without_contours(qapp, monkeypatch):
@@ -476,7 +476,7 @@ def test_preview_does_not_auto_process_without_contours(qapp, monkeypatch):
         assert window.current_main_view == "editor"
         assert window.current_view == "3d"
     finally:
-        window.close()
+        window.deleteLater()
 
 
 def test_menu_tutorial_opens_default_browser(qapp, monkeypatch):
@@ -493,4 +493,4 @@ def test_menu_tutorial_opens_default_browser(qapp, monkeypatch):
 
         assert opened_urls == [TUTORIAL_PLAYLIST_URL]
     finally:
-        window.close()
+        window.deleteLater()

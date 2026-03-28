@@ -19,6 +19,11 @@ from PySide6.QtGui import (
     QWheelEvent, QMouseEvent, QKeyEvent, QTransform, QKeySequence
 )
 
+from src.core.asset_utils import (
+    get_asset_member_indices,
+    get_asset_member_indices_for_index,
+    get_contour_asset_id,
+)
 from src.core.contour_classifier import classify_paths_by_nesting
 from src.core.path_offset import PathOffset
 from src.core.types import Point, Path, Contour, PathType
@@ -597,6 +602,19 @@ class Canvas2D(QWidget):
 
         return expanded
 
+    def get_asset_target_indices(self) -> List[int]:
+        """Return the full asset selection for the current selection."""
+        expanded: List[int] = []
+        seen = set()
+
+        for idx in self._get_valid_selected_indices():
+            for related_idx in self._get_asset_member_indices_for_index(idx):
+                if related_idx not in seen:
+                    seen.add(related_idx)
+                    expanded.append(related_idx)
+
+        return expanded
+
     def _contour_to_boolean_paths(self, contour: Contour) -> List[Path]:
         """将轮廓转换为布尔运算用的闭合 loop 列表。"""
         paths = [
@@ -690,6 +708,14 @@ class Canvas2D(QWidget):
 
         members = self._get_group_member_indices(group_id)
         return members if members else [index]
+
+    def _get_asset_member_indices(self, asset_id: str) -> List[int]:
+        """èŽ·å– asset å†…æ‰€æœ‰æˆå‘˜ç´¢å¼•ã€‚"""
+        return get_asset_member_indices(self.contours, asset_id)
+
+    def _get_asset_member_indices_for_index(self, index: int) -> List[int]:
+        """èŽ·å–æŸä¸ªè½®å»“å¯¹åº”çš„å®Œæ•´ asset é€‰ä¸­é›†åˆã€‚"""
+        return get_asset_member_indices_for_index(self.contours, index)
 
     def _generate_group_id(self) -> str:
         """生成新的组 id。"""
@@ -1654,6 +1680,11 @@ class Canvas2D(QWidget):
             candidates.sort(key=lambda x: x[1])
             selected_idx = candidates[0][0]
             target_indices = self._get_group_member_indices_for_index(selected_idx)
+            if (
+                target_indices == [selected_idx]
+                and get_contour_asset_id(self.contours[selected_idx])
+            ):
+                target_indices = self._get_asset_member_indices_for_index(selected_idx)
 
             if Qt.KeyboardModifier.ControlModifier in QApplication.keyboardModifiers():
                 # Ctrl+点击：切换选择

@@ -29,7 +29,7 @@ from src.core.types import (
 
 
 # 格式常量
-FORMAT_VERSION = "4.0"
+FORMAT_VERSION = "4.1"
 MANIFEST_FILE = "manifest.json"
 PARAMS_FILE = "params.json"
 CONTOURS_FILE = "contours.bin"
@@ -37,7 +37,7 @@ PREVIEW_FILE = "preview.png"
 
 # 二进制格式
 BINARY_MAGIC = b'SMPC'  # SignMaker Project Contours
-BINARY_VERSION = 2
+BINARY_VERSION = 3
 
 
 class ProjectFormatError(Exception):
@@ -147,6 +147,7 @@ def _serialize_contours(contours: List[Contour]) -> bytes:
         Header: magic(4) + version(4) + count(4)
         Each Contour:
             name_len(2) + name(var) + start_idx(4) + print_order(4)
+            asset_id_len(2) + asset_id(var) + asset_name_len(2) + asset_name(var)
             group_len(2) + group(var)
             outer_path + hole_count(4) + holes[]
             cf_count(4) + connected_frames[]
@@ -169,6 +170,12 @@ def _serialize_contours(contours: List[Contour]) -> bytes:
 
         # Properties
         buf.write(struct.pack('<ii', contour.start_point_index, contour.print_order))
+        asset_id_bytes = contour.asset_id.encode('utf-8')
+        buf.write(struct.pack('<H', len(asset_id_bytes)))
+        buf.write(asset_id_bytes)
+        asset_name_bytes = contour.asset_name.encode('utf-8')
+        buf.write(struct.pack('<H', len(asset_name_bytes)))
+        buf.write(asset_name_bytes)
         group_bytes = contour.group_id.encode('utf-8')
         buf.write(struct.pack('<H', len(group_bytes)))
         buf.write(group_bytes)
@@ -236,6 +243,13 @@ def _deserialize_contours(data: bytes) -> List[Contour]:
 
         # Properties
         start_idx, print_order = struct.unpack('<ii', buf.read(8))
+        asset_id = ""
+        asset_name = ""
+        if version >= 3:
+            asset_id_len = struct.unpack('<H', buf.read(2))[0]
+            asset_id = buf.read(asset_id_len).decode('utf-8')
+            asset_name_len = struct.unpack('<H', buf.read(2))[0]
+            asset_name = buf.read(asset_name_len).decode('utf-8')
         group_id = ""
         if version >= 2:
             group_len = struct.unpack('<H', buf.read(2))[0]
@@ -259,7 +273,7 @@ def _deserialize_contours(data: bytes) -> List[Contour]:
         contours.append(Contour(
             outer=outer, holes=holes,
             connected_frames=connected_frames, patterns=patterns,
-            name=name, group_id=group_id,
+            name=name, asset_id=asset_id, asset_name=asset_name, group_id=group_id,
             start_point_index=start_idx, print_order=print_order
         ))
 
