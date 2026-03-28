@@ -283,6 +283,45 @@ def test_save_as_dialog_uses_last_save_dir(window, workspace_tmp_dir, monkeypatc
     assert window.settings_manager.get_last_save_dir() == str(chosen_save_dir.resolve())
 
 
+def test_imported_contours_reset_view_instead_of_fit_view(window, monkeypatch):
+    reset_calls = []
+    fit_calls = []
+
+    monkeypatch.setattr(window, "_reset_canvas_view", lambda: reset_calls.append(True))
+    monkeypatch.setattr(window.canvas, "fit_view", lambda: fit_calls.append(True))
+
+    window._load_contours([_rect_contour(0, 0, 30, 10, "I")], Path("imported.svg"))
+
+    assert reset_calls == [True]
+    assert fit_calls == []
+    window._set_project_save_point()
+
+
+def test_text_generation_resets_view_instead_of_fit_view(window, monkeypatch):
+    reset_calls = []
+    fit_calls = []
+
+    class _FakeTextDialog:
+        def __init__(self, _parent=None):
+            self._contours = [_rect_contour(0, 0, 30, 10, "T")]
+
+        def exec(self):
+            return True
+
+        def get_contours(self):
+            return self._contours
+
+    monkeypatch.setattr("src.ui.text_dialog.TextDialog", _FakeTextDialog)
+    monkeypatch.setattr(window, "_reset_canvas_view", lambda: reset_calls.append(True))
+    monkeypatch.setattr(window.canvas, "fit_view", lambda: fit_calls.append(True))
+
+    window._on_text()
+
+    assert reset_calls == [True]
+    assert fit_calls == []
+    window._set_project_save_point()
+
+
 def test_open_project_moves_recent_project_to_front(window, workspace_tmp_dir):
     older_project = _create_project_file(workspace_tmp_dir, "older.smp", "Older Project")
     newer_project = _create_project_file(workspace_tmp_dir, "newer.smp", "Newer Project")

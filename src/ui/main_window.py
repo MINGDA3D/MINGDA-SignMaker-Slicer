@@ -706,8 +706,7 @@ class MainWindow(QMainWindow):
         # 右键菜单信号
         self.canvas.mirror_requested.connect(self._on_mirror)
         self.canvas.fit_view_requested.connect(self.canvas.fit_view)
-        self.canvas.reset_view_requested.connect(self.canvas._init_view)
-        self.canvas.reset_view_requested.connect(self.canvas.update)
+        self.canvas.reset_view_requested.connect(self._reset_canvas_view)
 
         # 撤销管理器信号
         self.undo_manager.can_undo_changed.connect(self._update_undo_actions)
@@ -1665,6 +1664,7 @@ class MainWindow(QMainWindow):
         description: str,
         *,
         fit_view: bool = False,
+        reset_view: bool = False,
     ) -> List[int]:
         """追加新轮廓并自动排列。"""
         if not new_contours:
@@ -1682,10 +1682,17 @@ class MainWindow(QMainWindow):
         self.project_panel.update_contours(self.contours)
         self._apply_contour_selection(new_indices)
 
-        if fit_view:
+        if reset_view:
+            self._reset_canvas_view()
+        elif fit_view:
             self.canvas.fit_view()
 
         return new_indices
+
+    def _reset_canvas_view(self):
+        """恢复画布默认视图。"""
+        self.canvas._init_view()
+        self.canvas.update()
 
     def _load_contours(self, new_contours: List[Contour], path: Path):
         """加载轮廓数据（从 DXF/SVG 导入）"""
@@ -1693,7 +1700,7 @@ class MainWindow(QMainWindow):
         self._append_contours(
             new_contours,
             self.tr("Load ") + path.name,
-            fit_view=True,
+            reset_view=True,
         )
         self._remember_last_open_path(str(path))
 
@@ -2547,7 +2554,11 @@ class MainWindow(QMainWindow):
                 contours = dialog.get_contours()
                 if contours:
                     # 使用撤销系统添加轮廓
-                    self._append_contours(contours, self.tr("Add Contours"))
+                    self._append_contours(
+                        contours,
+                        self.tr("Add Contours"),
+                        reset_view=True,
+                    )
 
                     # 更新UI
                     self._update_status(self.tr("Text added"))
