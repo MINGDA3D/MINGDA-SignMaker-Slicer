@@ -9,7 +9,7 @@ from typing import List, Optional
 
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton,
-    QFrame, QScrollArea, QGridLayout, QSizePolicy
+    QFrame, QScrollArea, QGridLayout, QSizePolicy, QMenu
 )
 from PySide6.QtCore import Qt, Signal, QSize, QRectF, QPointF
 from PySide6.QtGui import (
@@ -58,6 +58,8 @@ class ProjectCard(QFrame):
     """最近项目卡片 - 按照设计规范实现"""
 
     clicked = Signal(str)
+    open_folder_requested = Signal(str)
+    remove_requested = Signal(str)
 
     def __init__(
         self,
@@ -188,6 +190,23 @@ class ProjectCard(QFrame):
         if event.button() == Qt.MouseButton.LeftButton:
             self.clicked.emit(self.file_path)
         super().mousePressEvent(event)
+
+    def contextMenuEvent(self, event):
+        if not self.file_path:
+            return
+
+        menu = QMenu(self)
+        open_folder_action = menu.addAction(self.tr("Open Containing Folder"))
+        remove_action = menu.addAction(self.tr("Remove from Recent"))
+
+        selected_action = self._show_context_menu(menu, event)
+        if selected_action == open_folder_action:
+            self.open_folder_requested.emit(self.file_path)
+        elif selected_action == remove_action:
+            self.remove_requested.emit(self.file_path)
+
+    def _show_context_menu(self, menu: QMenu, event):
+        return menu.exec(event.globalPos())
 
 
 class CaseCard(QFrame):
@@ -326,6 +345,8 @@ class HomePage(QWidget):
     new_project_clicked = Signal()
     open_file_clicked = Signal()
     recent_project_clicked = Signal(str)
+    open_recent_project_folder_clicked = Signal(str)
+    remove_recent_project_clicked = Signal(str)
     clear_recent_projects_clicked = Signal()
 
     def __init__(self, parent=None):
@@ -439,6 +460,8 @@ class HomePage(QWidget):
                 parent=self
             )
             card.clicked.connect(self.recent_project_clicked.emit)
+            card.open_folder_requested.connect(self.open_recent_project_folder_clicked.emit)
+            card.remove_requested.connect(self.remove_recent_project_clicked.emit)
             self._cards.append(card)
 
         self._sync_content_height()

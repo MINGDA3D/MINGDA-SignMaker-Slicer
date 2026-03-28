@@ -8,7 +8,8 @@ import pytest
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
-from PySide6.QtCore import Qt
+from PySide6.QtCore import QPoint, Qt
+from PySide6.QtGui import QContextMenuEvent
 from PySide6.QtTest import QTest
 from PySide6.QtWidgets import QApplication
 
@@ -244,6 +245,84 @@ def test_home_clear_all_button_clears_recent_projects(window, workspace_tmp_dir,
     assert window.settings_manager.get_recent_files() == []
     assert window.home_page._recent_projects == []
     assert window.home_page._cards == []
+
+
+def test_home_recent_project_context_menu_can_remove_single_project(
+    window,
+    workspace_tmp_dir,
+    qapp,
+    monkeypatch,
+):
+    first_project = _create_project_file(workspace_tmp_dir, "first.smp", "First Project")
+    second_project = _create_project_file(workspace_tmp_dir, "second.smp", "Second Project")
+
+    window.settings_manager.add_recent_file(str(first_project))
+    window.settings_manager.add_recent_file(str(second_project))
+    window._refresh_home_recent_projects()
+    window._on_nav_changed("home")
+    window.show()
+    qapp.processEvents()
+
+    first_project_path = str(first_project.resolve())
+    second_project_path = str(second_project.resolve())
+    card = next(card for card in window.home_page._cards if card.file_path == first_project_path)
+
+    monkeypatch.setattr(
+        card,
+        "_show_context_menu",
+        lambda menu, event: menu.actions()[1],
+    )
+
+    card.contextMenuEvent(
+        QContextMenuEvent(
+            QContextMenuEvent.Reason.Mouse,
+            QPoint(20, 20),
+            card.mapToGlobal(QPoint(20, 20)),
+        )
+    )
+    qapp.processEvents()
+
+    assert window.settings_manager.get_recent_files() == [second_project_path]
+    assert [project["path"] for project in window.home_page._recent_projects] == [second_project_path]
+
+
+def test_home_recent_project_context_menu_can_open_containing_folder(
+    window,
+    workspace_tmp_dir,
+    qapp,
+    monkeypatch,
+):
+    project_path = _create_project_file(workspace_tmp_dir, "folder_target.smp", "Folder Target")
+    opened_folders = []
+
+    window.settings_manager.add_recent_file(str(project_path))
+    window._refresh_home_recent_projects()
+    window._on_nav_changed("home")
+    window.show()
+    qapp.processEvents()
+
+    monkeypatch.setattr(
+        "src.ui.main_window.QDesktopServices.openUrl",
+        lambda url: opened_folders.append(url.toLocalFile()) or True,
+    )
+    card = window.home_page._cards[0]
+    monkeypatch.setattr(
+        card,
+        "_show_context_menu",
+        lambda menu, event: menu.actions()[0],
+    )
+    card.contextMenuEvent(
+        QContextMenuEvent(
+            QContextMenuEvent.Reason.Mouse,
+            QPoint(20, 20),
+            card.mapToGlobal(QPoint(20, 20)),
+        )
+    )
+    qapp.processEvents()
+
+    assert [str(Path(path).resolve()) for path in opened_folders] == [
+        str(project_path.resolve().parent)
+    ]
 
 
 def test_home_recent_projects_enable_vertical_scroll_on_small_height(window, workspace_tmp_dir, qapp):

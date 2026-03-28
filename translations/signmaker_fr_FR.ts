@@ -93,6 +93,19 @@
     </message>
 </context>
 <context>
+    <name>ProjectCard</name>
+    <message>
+        <location filename="../src/ui/home_page.py" line="201"/>
+        <source>Open Containing Folder</source>
+        <translation>Ouvrir le dossier contenant</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/home_page.py" line="202"/>
+        <source>Remove from Recent</source>
+        <translation>Retirer des récents</translation>
+    </message>
+</context>
+<context>
     <name>HomePage</name>
     <message>
         <location filename="../src/ui/home_page.py" line="452"/>

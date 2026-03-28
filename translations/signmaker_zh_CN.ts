@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
 <TS version="2.1" language="zh-CN">
 <context>
@@ -90,6 +90,19 @@
         <location filename="../src/ui/canvas_toolbar.py" line="105"/>
         <source>Text</source>
         <translation>文字</translation>
+    </message>
+</context>
+<context>
+    <name>ProjectCard</name>
+    <message>
+        <location filename="../src/ui/home_page.py" line="201"/>
+        <source>Open Containing Folder</source>
+        <translation>打开所在文件夹</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/home_page.py" line="202"/>
+        <source>Remove from Recent</source>
+        <translation>从最近项目中移除</translation>
     </message>
 </context>
 <context>

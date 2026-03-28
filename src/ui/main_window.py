@@ -566,6 +566,8 @@ class MainWindow(QMainWindow):
         self.home_page.new_project_clicked.connect(self._on_new_project)
         self.home_page.open_file_clicked.connect(self._on_open_file)
         self.home_page.recent_project_clicked.connect(self._open_recent_project)
+        self.home_page.open_recent_project_folder_clicked.connect(self._open_recent_project_folder)
+        self.home_page.remove_recent_project_clicked.connect(self._remove_recent_project)
         self.home_page.clear_recent_projects_clicked.connect(self._clear_home_recent_projects)
 
         self.home_scroll = QScrollArea()
@@ -1295,6 +1297,21 @@ class MainWindow(QMainWindow):
         if not self._load_project(resolved_path) and self.settings_manager:
             self.settings_manager.remove_recent_file(resolved_path)
             self._refresh_home_recent_projects()
+
+    def _open_recent_project_folder(self, file_path: str):
+        """Open the containing folder for a recent project."""
+        if not file_path:
+            return
+        folder_path = Path(file_path).resolve().parent
+        if folder_path.exists():
+            QDesktopServices.openUrl(QUrl.fromLocalFile(str(folder_path)))
+
+    def _remove_recent_project(self, file_path: str):
+        """Remove a single project from the home-page recent-project list."""
+        if not self.settings_manager or not file_path:
+            return
+        self.settings_manager.remove_recent_file(file_path)
+        self._refresh_home_recent_projects()
 
     def _clear_home_recent_projects(self):
         """Clear all recent projects from the home page list."""
