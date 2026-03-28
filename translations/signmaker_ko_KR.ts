@@ -761,8 +761,8 @@
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="2683"/>
-        <source>Version: 0.1.9 (Development)</source>
-        <translation>버전: 0.1.9 (개발판)</translation>
+        <source>Version: v0.2.0</source>
+        <translation>버전: v0.2.0</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="2685"/>
