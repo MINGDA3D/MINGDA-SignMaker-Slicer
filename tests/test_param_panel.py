@@ -44,6 +44,68 @@ def test_primary_groups_follow_requested_order(qapp):
     ]
 
 
+def test_primary_sections_separate_vector_machine_and_print_settings(qapp):
+    panel = ParamPanel()
+
+    assert [
+        (section["key"], section["title"], [group.title() for group in section["groups"]])
+        for section in panel._primary_sections
+    ] == [
+        (
+            "vector",
+            "2D Vector Settings",
+            [
+                "Shell Settings",
+                "Edge Type",
+                "Edge Wrap/Outline",
+                "Step/V-Groove",
+                "Anti-Warping Skirt",
+                "Top Face",
+                "Bottom Face",
+                "Connected Letters",
+                "Light Slot",
+                "DXF Export",
+            ],
+        ),
+        (
+            "machine",
+            "Machine Settings",
+            [
+                "Printer Profile",
+            ],
+        ),
+        (
+            "print",
+            "Print Settings",
+            [
+                "Speed Settings",
+                "Color Change",
+                "Klipper Commands",
+            ],
+        ),
+    ]
+
+
+def test_primary_sections_can_be_collapsed_and_expanded(qapp):
+    panel = ParamPanel()
+    vector_section = panel._section_widgets_by_key["vector"]
+    toggle_button = vector_section._toggle_button
+    body = vector_section._body
+
+    assert toggle_button.text() == "- 2D Vector Settings"
+    assert body.isHidden() is False
+
+    toggle_button.click()
+
+    assert toggle_button.text() == "+ 2D Vector Settings"
+    assert body.isHidden() is True
+
+    toggle_button.click()
+
+    assert toggle_button.text() == "- 2D Vector Settings"
+    assert body.isHidden() is False
+
+
 def test_step_controls_share_single_primary_group(qapp):
     panel = ParamPanel()
 

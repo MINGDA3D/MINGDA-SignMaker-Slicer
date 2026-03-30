@@ -142,13 +142,169 @@ class ParamPanel(QWidget):
             self.dxf_export_group,
         ]
 
-        for group in self._primary_groups:
-            content_layout.addWidget(group)
+        self._vector_groups = [
+            self.shell_group,
+            self.edge_group,
+            self.edge_wrap_group,
+            self.step_group,
+            self.skirt_group,
+            self.top_face_group,
+            self.bottom_face_group,
+            self.connected_group,
+            self.light_slot_group,
+            self.dxf_export_group,
+        ]
+        self._machine_groups = [
+            self.printer_profile_group,
+        ]
+        self._print_groups = [
+            self.speed_group,
+            self.color_group,
+            self.klipper_commands_group,
+        ]
+        self._primary_sections = [
+            {
+                "key": "vector",
+                "title": self.tr("2D Vector Settings"),
+                "description": self.tr(
+                    "Contour shaping, shell geometry, wraps, slots, and DXF output."
+                ),
+                "accent": COLORS.editor_canvas_toolbar_accent,
+                "groups": self._vector_groups,
+            },
+            {
+                "key": "machine",
+                "title": self.tr("Machine Settings"),
+                "description": self.tr(
+                    "Printer profile, bed size, nozzle, and material-related hardware values."
+                ),
+                "accent": COLORS.editor_sidebar_right_accent,
+                "groups": self._machine_groups,
+            },
+            {
+                "key": "print",
+                "title": self.tr("Print Settings"),
+                "description": self.tr(
+                    "Speed, color-change points, and start/end print commands."
+                ),
+                "accent": COLORS.accent_warning,
+                "groups": self._print_groups,
+            },
+        ]
+
+        self._section_widgets = []
+        self._section_widgets_by_key = {}
+        for section in self._primary_sections:
+            section_widget = self._create_settings_section(
+                key=section["key"],
+                title=section["title"],
+                description=section["description"],
+                accent_color=section["accent"],
+                groups=section["groups"],
+            )
+            self._section_widgets.append(section_widget)
+            self._section_widgets_by_key[section["key"]] = section_widget
+            content_layout.addWidget(section_widget)
+            self._set_section_expanded(section["key"], True)
 
         content_layout.addStretch()
 
         scroll.setWidget(content)
         self._sync_layer_based_controls()
+
+    def _create_settings_section(
+        self,
+        *,
+        key: str,
+        title: str,
+        description: str,
+        accent_color: str,
+        groups: list[QGroupBox],
+    ) -> QFrame:
+        """Create a higher-level settings section that groups related parameter cards."""
+        section = QFrame()
+        section.setObjectName(f"{key}SettingsSection")
+        section.setStyleSheet(
+            f"""
+            QFrame#{section.objectName()} {{
+                background-color: {COLORS.bg_primary};
+                border: 1px solid {COLORS.border_default};
+                border-radius: {LAYOUT.radius_lg}px;
+            }}
+            """
+        )
+
+        layout = QVBoxLayout(section)
+        layout.setContentsMargins(12, 12, 12, 12)
+        layout.setSpacing(10)
+
+        section_body = QWidget()
+        body_layout = QVBoxLayout(section_body)
+        body_layout.setContentsMargins(0, 0, 0, 0)
+        body_layout.setSpacing(10)
+
+        description_label = QLabel(description)
+        description_label.setWordWrap(True)
+        description_label.setStyleSheet(
+            f"""
+            color: {COLORS.text_muted};
+            font-size: 11px;
+            padding-left: 14px;
+            """
+        )
+        body_layout.addWidget(description_label)
+
+        for group in groups:
+            body_layout.addWidget(group)
+
+        section_button = QPushButton()
+        section_button.setObjectName(f"{key}SectionToggle")
+        section_button.setFlat(True)
+        section_button.setCheckable(True)
+        section_button.setChecked(True)
+        section_button.setCursor(Qt.CursorShape.PointingHandCursor)
+        section_button.setStyleSheet(
+            f"""
+            QPushButton#{section_button.objectName()} {{
+                background-color: transparent;
+                border: none;
+                color: {COLORS.text_primary};
+                font-size: 13px;
+                font-weight: 600;
+                text-align: left;
+                padding: 2px 0 2px 10px;
+                border-left: 4px solid {accent_color};
+            }}
+            QPushButton#{section_button.objectName()}:hover {{
+                color: #FFFFFF;
+            }}
+            """
+        )
+        section_button.clicked.connect(
+            lambda checked, section_key=key: self._set_section_expanded(section_key, checked)
+        )
+        section._toggle_button = section_button
+        section._body = section_body
+        section._section_title = title
+
+        layout.addWidget(section_button)
+        layout.addWidget(section_body)
+
+        return section
+
+    def _set_section_expanded(self, key: str, expanded: bool) -> None:
+        """Expand or collapse a top-level settings section."""
+        section = self._section_widgets_by_key.get(key)
+        if section is None:
+            return
+
+        section._body.setVisible(expanded)
+        section._toggle_button.blockSignals(True)
+        section._toggle_button.setChecked(expanded)
+        section._toggle_button.setText(
+            f"{'-' if expanded else '+'} {section._section_title}"
+        )
+        section._toggle_button.blockSignals(False)
 
     def _create_double_spinbox(self, decimals: int = 2) -> QDoubleSpinBox:
         """Create a standard floating-point input without custom plus/minus buttons."""
