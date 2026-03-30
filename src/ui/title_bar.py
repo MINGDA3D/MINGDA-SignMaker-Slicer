@@ -171,7 +171,7 @@ class TitleBar(QWidget):
         self.btn_slice.clicked.connect(self.slice_clicked.emit)
         action_layout.addWidget(self.btn_slice)
 
-        self.btn_export_stl = QPushButton(self.tr("Export STL"))
+        self.btn_export_stl = QPushButton(self.tr("Export G-code"))
         self.btn_export_stl.setObjectName("primaryButton")
         self.btn_export_stl.setCursor(Qt.CursorShape.PointingHandCursor)
         self.btn_export_stl.clicked.connect(self.export_stl_clicked.emit)
@@ -332,8 +332,7 @@ class TitleBar(QWidget):
         menu.addAction(self.tr("Save Project"), lambda: self.menu_action.emit("save"))
         menu.addAction(self.tr("Save As..."), lambda: self.menu_action.emit("save_as"))
         menu.addSeparator()
-        # 暂时屏蔽导出G-code功能
-        # menu.addAction(self.tr("Export G-code..."), lambda: self.menu_action.emit("export_gcode"))
+        menu.addAction(self.tr("Export G-code..."), lambda: self.menu_action.emit("export_gcode"))
         menu.addAction(self.tr("Export STL..."), lambda: self.menu_action.emit("export_stl"))
         menu.addSeparator()
         menu.addAction(self.tr("Export Baseplate DXF..."), lambda: self.menu_action.emit("export_baseplate"))

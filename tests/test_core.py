@@ -346,7 +346,7 @@ class TestGCodeWriter:
         lines = writer.generate(simple_result)
 
         assert any("MINGDA SignMaker" in line for line in lines)
-        assert any("Home" in line for line in lines)
+        assert any("Start sequence" in line for line in lines)
 
     def test_gcode_contains_footer(self, writer, simple_result):
         """测试G-code包含尾部"""

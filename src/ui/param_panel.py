@@ -18,16 +18,24 @@ from PySide6.QtWidgets import (
     QLabel,
     QComboBox, QCheckBox, QGroupBox, QFrame,
     QPushButton, QFormLayout, QRadioButton, QButtonGroup,
-    QSpinBox, QDoubleSpinBox, QAbstractSpinBox
+    QSpinBox, QDoubleSpinBox, QAbstractSpinBox, QTableWidget,
+    QTableWidgetItem, QHeaderView, QAbstractItemView, QInputDialog,
+    QMessageBox, QLineEdit
 )
 from PySide6.QtCore import Qt, Signal, QCoreApplication
 
 from src.core.types import (
     SliceParams, EdgeType, ExtruderType, EdgeDirection, BevelDirection,
-    EdgeProfile, default_shell_line_width, resolve_shell_line_width,
+    EdgeProfile, PrinterProfile, ColorChangePoint, default_shell_line_width, resolve_shell_line_width,
     resolve_shell_wall_thickness,
 )
 from src.business.settings_manager import get_settings_manager
+from src.business.printer_profile_manager import (
+    PrinterProfileManager,
+    apply_printer_profile_to_params,
+    clone_printer_profile,
+    printer_profile_from_params,
+)
 from src.core.edge_presets import EdgePresetManager, ProfileCategory
 from src.ui.widgets.edge_preset_selector import EdgePresetSelector
 from .theme import COLORS, LAYOUT
@@ -44,6 +52,11 @@ class ParamPanel(QWidget):
 
         # 参数
         self._params = SliceParams()
+        self._profile_manager = PrinterProfileManager()
+        self._runtime_profile: Optional[PrinterProfile] = None
+        self._runtime_profile_label = self.tr("Project Snapshot")
+        self._active_profile_id = ""
+        self._updating_profile_ui = False
 
         # 异形边预设管理器
         self._preset_manager = EdgePresetManager()
@@ -51,6 +64,7 @@ class ParamPanel(QWidget):
 
         # 初始化UI
         self._init_ui()
+        self._load_initial_printer_profile()
 
     def _init_ui(self):
         """初始化UI"""
@@ -101,10 +115,14 @@ class ParamPanel(QWidget):
         self.edge_wrap_group = self._create_edge_wrap_group()
         self.step_group = self._create_step_group()
         self.skirt_group = self._create_skirt_group()
+        self.speed_group = self._create_speed_group()
+        self.color_group = self._create_color_group()
         self.top_face_group = self._create_top_face_group()
         self.bottom_face_group = self._create_bottom_face_group()
         self.connected_group = self._create_connected_group()
         self.light_slot_group = self._create_light_slot_group()
+        self.printer_profile_group = self._create_printer_profile_group()
+        self.klipper_commands_group = self._create_klipper_commands_group()
         self.dxf_export_group = self._create_dxf_export_group()
 
         self._primary_groups = [
@@ -113,25 +131,19 @@ class ParamPanel(QWidget):
             self.edge_wrap_group,
             self.step_group,
             self.skirt_group,
+            self.speed_group,
+            self.color_group,
             self.top_face_group,
             self.bottom_face_group,
             self.connected_group,
             self.light_slot_group,
+            self.printer_profile_group,
+            self.klipper_commands_group,
             self.dxf_export_group,
         ]
 
         for group in self._primary_groups:
             content_layout.addWidget(group)
-
-        # 暂时隐藏换色层设置
-        color_group = self._create_color_group()
-        color_group.setVisible(False)
-        content_layout.addWidget(color_group)
-
-        # 暂时隐藏速度设置
-        speed_group = self._create_speed_group()
-        speed_group.setVisible(False)
-        content_layout.addWidget(speed_group)
 
         content_layout.addStretch()
 
@@ -654,44 +666,700 @@ class ParamPanel(QWidget):
         self.top_face_thickness.setEnabled(enabled)
 
     def _create_color_group(self) -> QGroupBox:
-        """创建换色层参数组"""
-        group = QGroupBox(self.tr("Color Layer Settings"))
+        """创建 Klipper 单喷头换色参数组"""
+        group = QGroupBox(self.tr("Color Change"))
         layout = QVBoxLayout(group)
         layout.setSpacing(8)
 
-        # 启用开关
-        self.color_enabled = QCheckBox(self.tr("Enable Color Layers"))
+        self.color_enabled = QCheckBox(self.tr("Enable Color Change"))
+        self.color_enabled.stateChanged.connect(
+            lambda: self._toggle_color_change_controls(self.color_enabled.isChecked())
+        )
+        self.color_enabled.stateChanged.connect(self._update_color_change_summary)
         self.color_enabled.stateChanged.connect(self._on_param_changed)
         layout.addWidget(self.color_enabled)
 
-        # 换色层配置（简化版）
+        self.color_change_hint = QLabel(
+            self.tr("Initial color comes from Start G-code. Each change point runs the selected T macro.")
+        )
+        self.color_change_hint.setWordWrap(True)
+        self.color_change_hint.setStyleSheet("color: #8B949E; font-size: 12px;")
+        layout.addWidget(self.color_change_hint)
+
+        self.color_change_table = QTableWidget(0, 3)
+        self.color_change_table.setHorizontalHeaderLabels(
+            [
+                self.tr("Change At Height"),
+                self.tr("Macro Index"),
+                self.tr("Preview"),
+            ]
+        )
+        self.color_change_table.verticalHeader().setVisible(False)
+        self.color_change_table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
+        self.color_change_table.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
+        self.color_change_table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.color_change_table.setAlternatingRowColors(True)
+        self.color_change_table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
+        self.color_change_table.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeMode.ResizeToContents)
+        self.color_change_table.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.ResizeToContents)
+        self.color_change_table.itemSelectionChanged.connect(self._update_color_change_remove_button_state)
+        layout.addWidget(self.color_change_table)
+
+        actions_layout = QHBoxLayout()
+        self.add_color_change_btn = QPushButton(self.tr("Add Change Point"))
+        self.add_color_change_btn.clicked.connect(self._on_add_color_change_point)
+        actions_layout.addWidget(self.add_color_change_btn)
+
+        self.remove_color_change_btn = QPushButton(self.tr("Remove Selected"))
+        self.remove_color_change_btn.clicked.connect(self._on_remove_color_change_point)
+        actions_layout.addWidget(self.remove_color_change_btn)
+        actions_layout.addStretch()
+        layout.addLayout(actions_layout)
+
+        self.color_change_summary = QLabel("")
+        self.color_change_summary.setWordWrap(True)
+        self.color_change_summary.setStyleSheet("color: #8B949E; font-size: 12px;")
+        layout.addWidget(self.color_change_summary)
+
+        self._toggle_color_change_controls(False)
+        self._update_color_change_summary()
+
+        return group
+
+    def _toggle_color_change_controls(self, enabled: bool):
+        """切换换色控件启用状态。"""
+        self.color_change_table.setEnabled(enabled)
+        self.add_color_change_btn.setEnabled(enabled)
+        self._update_color_change_remove_button_state()
+
+    def _update_color_change_remove_button_state(self):
+        enabled = self.color_enabled.isChecked() and bool(self.color_change_table.selectionModel().selectedRows())
+        self.remove_color_change_btn.setEnabled(enabled)
+
+    def _on_add_color_change_point(self):
+        last_height = self._get_color_change_rows()[-1].height_mm if self._get_color_change_rows() else 0.0
+        next_height = max(
+            self._current_layer_height(),
+            min(self.height_spin.value(), last_height + self._current_layer_height()),
+        )
+        self._insert_color_change_row(
+            ColorChangePoint(height_mm=next_height, macro_index=1)
+        )
+        self._update_color_change_summary()
+        self._on_param_changed()
+
+    def _on_remove_color_change_point(self):
+        selected_rows = self.color_change_table.selectionModel().selectedRows()
+        if not selected_rows:
+            return
+        for model_index in sorted(selected_rows, key=lambda item: item.row(), reverse=True):
+            self.color_change_table.removeRow(model_index.row())
+        self._update_color_change_summary()
+        self._update_color_change_remove_button_state()
+        self._on_param_changed()
+
+    def _insert_color_change_row(self, change_point: ColorChangePoint):
+        row = self.color_change_table.rowCount()
+        self.color_change_table.insertRow(row)
+
+        height_spin = self._create_double_spinbox()
+        height_spin.setRange(self._current_layer_height(), 100.0)
+        height_spin.setSingleStep(self._current_layer_height())
+        height_spin.setSuffix(" mm")
+        height_spin.setValue(change_point.height_mm)
+        height_spin.setEnabled(self.color_enabled.isChecked())
+        height_spin.valueChanged.connect(self._on_color_change_row_changed)
+        self.color_change_table.setCellWidget(row, 0, height_spin)
+
+        macro_spin = self._create_int_spinbox()
+        macro_spin.setRange(0, 999)
+        macro_spin.setValue(change_point.macro_index)
+        macro_spin.setEnabled(self.color_enabled.isChecked())
+        macro_spin.valueChanged.connect(self._on_color_change_row_changed)
+        self.color_change_table.setCellWidget(row, 1, macro_spin)
+
+        preview_item = QTableWidgetItem(self._format_color_change_preview(change_point.macro_index))
+        preview_item.setFlags(Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable)
+        self.color_change_table.setItem(row, 2, preview_item)
+
+    def _get_color_change_rows(self) -> list[ColorChangePoint]:
+        rows: list[ColorChangePoint] = []
+        for row in range(self.color_change_table.rowCount()):
+            height_spin = self.color_change_table.cellWidget(row, 0)
+            macro_spin = self.color_change_table.cellWidget(row, 1)
+            if isinstance(height_spin, QDoubleSpinBox) and isinstance(macro_spin, QSpinBox):
+                rows.append(
+                    ColorChangePoint(
+                        height_mm=height_spin.value(),
+                        macro_index=macro_spin.value(),
+                    )
+                )
+        return rows
+
+    def _rebuild_color_change_rows(self, change_points: list[ColorChangePoint]):
+        self._updating_profile_ui = True
+        try:
+            self.color_change_table.setRowCount(0)
+            for change_point in change_points:
+                self._insert_color_change_row(change_point)
+        finally:
+            self._updating_profile_ui = False
+        self._update_color_change_summary()
+        self._update_color_change_remove_button_state()
+
+    def _on_color_change_row_changed(self):
+        if self._updating_profile_ui:
+            return
+        for row in range(self.color_change_table.rowCount()):
+            macro_spin = self.color_change_table.cellWidget(row, 1)
+            preview_item = self.color_change_table.item(row, 2)
+            if isinstance(macro_spin, QSpinBox) and preview_item is not None:
+                preview_item.setText(self._format_color_change_preview(macro_spin.value()))
+        self._update_color_change_summary()
+        self._on_param_changed()
+
+    def _format_color_change_preview(self, macro_index: int) -> str:
+        if not hasattr(self, "profile_color_change_template"):
+            return f"T{macro_index}"
+        template = self.profile_color_change_template.text().strip() or "T{index}"
+        if "{index}" not in template:
+            return template
+        try:
+            return template.format(index=macro_index)
+        except Exception:
+            return template
+
+    def _update_color_change_summary(self):
+        if not hasattr(self, "color_change_summary"):
+            return
+        if not self.color_enabled.isChecked():
+            self.color_change_summary.setText(self.tr("Color change disabled."))
+            return
+
+        change_points = self._get_color_change_rows()
+        if not change_points:
+            self.color_change_summary.setText(
+                self.tr("Initial color comes from Start G-code. No automatic changes are configured.")
+            )
+            return
+
+        lines = []
+        for change_point in change_points:
+            lines.append(
+                self.tr("At {height:.2f}mm -> {command}").format(
+                    height=change_point.height_mm,
+                    command=self._format_color_change_preview(change_point.macro_index),
+                )
+            )
+        self.color_change_summary.setText("\n".join(lines))
+
+    def _create_printer_profile_group(self) -> QGroupBox:
+        """创建打印机档案参数组。"""
+        group = QGroupBox(self.tr("Printer Profile"))
+        layout = QVBoxLayout(group)
+        layout.setSpacing(8)
+
+        combo_row = QHBoxLayout()
+        self.printer_profile_combo = QComboBox()
+        self.printer_profile_combo.currentIndexChanged.connect(self._on_profile_selected)
+        combo_row.addWidget(self.printer_profile_combo, 1)
+        layout.addLayout(combo_row)
+
+        action_row = QHBoxLayout()
+        self.profile_new_btn = QPushButton(self.tr("New"))
+        self.profile_new_btn.clicked.connect(self._on_new_profile)
+        action_row.addWidget(self.profile_new_btn)
+
+        self.profile_duplicate_btn = QPushButton(self.tr("Duplicate"))
+        self.profile_duplicate_btn.clicked.connect(self._on_duplicate_profile)
+        action_row.addWidget(self.profile_duplicate_btn)
+
+        self.profile_rename_btn = QPushButton(self.tr("Rename"))
+        self.profile_rename_btn.clicked.connect(self._on_rename_profile)
+        action_row.addWidget(self.profile_rename_btn)
+
+        self.profile_delete_btn = QPushButton(self.tr("Delete"))
+        self.profile_delete_btn.clicked.connect(self._on_delete_profile)
+        action_row.addWidget(self.profile_delete_btn)
+
+        self.profile_default_btn = QPushButton(self.tr("Set Default"))
+        self.profile_default_btn.clicked.connect(self._on_set_default_profile)
+        action_row.addWidget(self.profile_default_btn)
+        layout.addLayout(action_row)
+
+        self.profile_source_label = QLabel("")
+        self.profile_source_label.setWordWrap(True)
+        self.profile_source_label.setStyleSheet("color: #8B949E; font-size: 12px;")
+        layout.addWidget(self.profile_source_label)
+
         form = QFormLayout()
         form.setSpacing(8)
 
-        self.color1_height = self._create_double_spinbox()
-        self.color1_height.setRange(0, 100)
-        self.color1_height.setValue(10)
-        self.color1_height.setSuffix(" mm")
-        self.color1_height.setEnabled(False)
-        form.addRow(self.tr("Color 1 Height:"), self.color1_height)
+        self.profile_bed_width = self._create_double_spinbox()
+        self.profile_bed_width.setRange(1.0, 5000.0)
+        self.profile_bed_width.setSuffix(" mm")
+        self.profile_bed_width.valueChanged.connect(self._on_printer_profile_field_changed)
+        form.addRow(self.tr("Bed Width:"), self.profile_bed_width)
 
-        self.color2_height = self._create_double_spinbox()
-        self.color2_height.setRange(0, 100)
-        self.color2_height.setValue(20)
-        self.color2_height.setSuffix(" mm")
-        self.color2_height.setEnabled(False)
-        form.addRow(self.tr("Color 2 Height:"), self.color2_height)
+        self.profile_bed_depth = self._create_double_spinbox()
+        self.profile_bed_depth.setRange(1.0, 5000.0)
+        self.profile_bed_depth.setSuffix(" mm")
+        self.profile_bed_depth.valueChanged.connect(self._on_printer_profile_field_changed)
+        form.addRow(self.tr("Bed Depth:"), self.profile_bed_depth)
+
+        self.profile_bed_height = self._create_double_spinbox()
+        self.profile_bed_height.setRange(1.0, 1000.0)
+        self.profile_bed_height.setSuffix(" mm")
+        self.profile_bed_height.valueChanged.connect(self._on_printer_profile_field_changed)
+        form.addRow(self.tr("Bed Height:"), self.profile_bed_height)
+
+        self.profile_nozzle_diameter = self._create_double_spinbox(3)
+        self.profile_nozzle_diameter.setRange(0.1, 5.0)
+        self.profile_nozzle_diameter.setSingleStep(0.05)
+        self.profile_nozzle_diameter.setSuffix(" mm")
+        self.profile_nozzle_diameter.valueChanged.connect(self._on_printer_profile_field_changed)
+        form.addRow(self.tr("Nozzle Diameter:"), self.profile_nozzle_diameter)
+
+        self.profile_filament_diameter = self._create_double_spinbox(3)
+        self.profile_filament_diameter.setRange(0.5, 5.0)
+        self.profile_filament_diameter.setSingleStep(0.05)
+        self.profile_filament_diameter.setSuffix(" mm")
+        self.profile_filament_diameter.valueChanged.connect(self._on_printer_profile_field_changed)
+        form.addRow(self.tr("Filament Diameter:"), self.profile_filament_diameter)
+
+        self.profile_retract_length = self._create_double_spinbox()
+        self.profile_retract_length.setRange(0.0, 20.0)
+        self.profile_retract_length.setSingleStep(0.1)
+        self.profile_retract_length.setSuffix(" mm")
+        self.profile_retract_length.valueChanged.connect(self._on_printer_profile_field_changed)
+        form.addRow(self.tr("Retract Length:"), self.profile_retract_length)
+
+        self.profile_retract_speed = self._create_double_spinbox()
+        self.profile_retract_speed.setRange(1.0, 300.0)
+        self.profile_retract_speed.setSuffix(" mm/s")
+        self.profile_retract_speed.valueChanged.connect(self._on_printer_profile_field_changed)
+        form.addRow(self.tr("Retract Speed:"), self.profile_retract_speed)
+
+        self.profile_z_hop_short = self._create_double_spinbox()
+        self.profile_z_hop_short.setRange(0.0, 20.0)
+        self.profile_z_hop_short.setSingleStep(0.1)
+        self.profile_z_hop_short.setSuffix(" mm")
+        self.profile_z_hop_short.valueChanged.connect(self._on_printer_profile_field_changed)
+        form.addRow(self.tr("Short Z-Hop:"), self.profile_z_hop_short)
+
+        self.profile_z_hop_long = self._create_double_spinbox()
+        self.profile_z_hop_long.setRange(0.0, 50.0)
+        self.profile_z_hop_long.setSingleStep(0.1)
+        self.profile_z_hop_long.setSuffix(" mm")
+        self.profile_z_hop_long.valueChanged.connect(self._on_printer_profile_field_changed)
+        form.addRow(self.tr("Long Z-Hop:"), self.profile_z_hop_long)
+
+        self.profile_long_travel_threshold = self._create_double_spinbox()
+        self.profile_long_travel_threshold.setRange(1.0, 1000.0)
+        self.profile_long_travel_threshold.setSuffix(" mm")
+        self.profile_long_travel_threshold.valueChanged.connect(self._on_printer_profile_field_changed)
+        form.addRow(self.tr("Long Travel Threshold:"), self.profile_long_travel_threshold)
+
+        self.profile_extruder_temp = self._create_int_spinbox()
+        self.profile_extruder_temp.setRange(0, 400)
+        self.profile_extruder_temp.setSuffix(" °C")
+        self.profile_extruder_temp.valueChanged.connect(self._on_printer_profile_field_changed)
+        form.addRow(self.tr("Nozzle Temperature:"), self.profile_extruder_temp)
+
+        self.profile_bed_temp = self._create_int_spinbox()
+        self.profile_bed_temp.setRange(0, 200)
+        self.profile_bed_temp.setSuffix(" °C")
+        self.profile_bed_temp.valueChanged.connect(self._on_printer_profile_field_changed)
+        form.addRow(self.tr("Bed Temperature:"), self.profile_bed_temp)
+
+        self.profile_color_change_template = QLineEdit()
+        self.profile_color_change_template.textChanged.connect(self._on_printer_profile_field_changed)
+        form.addRow(self.tr("Color Change Template:"), self.profile_color_change_template)
 
         layout.addLayout(form)
+        return group
 
-        self.color_enabled.stateChanged.connect(
-            lambda: self.color1_height.setEnabled(self.color_enabled.isChecked())
+    def _create_klipper_commands_group(self) -> QGroupBox:
+        """创建 Klipper 脚本参数组。"""
+        group = QGroupBox(self.tr("Klipper Commands"))
+        layout = QVBoxLayout(group)
+        layout.setSpacing(8)
+
+        start_row = QHBoxLayout()
+        self.start_gcode_summary = QLabel("")
+        self.start_gcode_summary.setWordWrap(True)
+        self.start_gcode_summary.setStyleSheet("color: #8B949E; font-size: 12px;")
+        start_row.addWidget(self.start_gcode_summary, 1)
+        self.edit_start_gcode_btn = QPushButton(self.tr("Edit Start G-code"))
+        self.edit_start_gcode_btn.clicked.connect(
+            lambda: self._edit_script("start_gcode", self.tr("Start G-code"))
         )
-        self.color_enabled.stateChanged.connect(
-            lambda: self.color2_height.setEnabled(self.color_enabled.isChecked())
+        start_row.addWidget(self.edit_start_gcode_btn)
+        layout.addLayout(start_row)
+
+        end_row = QHBoxLayout()
+        self.end_gcode_summary = QLabel("")
+        self.end_gcode_summary.setWordWrap(True)
+        self.end_gcode_summary.setStyleSheet("color: #8B949E; font-size: 12px;")
+        end_row.addWidget(self.end_gcode_summary, 1)
+        self.edit_end_gcode_btn = QPushButton(self.tr("Edit End G-code"))
+        self.edit_end_gcode_btn.clicked.connect(
+            lambda: self._edit_script("end_gcode", self.tr("End G-code"))
         )
+        end_row.addWidget(self.edit_end_gcode_btn)
+        layout.addLayout(end_row)
 
         return group
+
+    def _load_initial_printer_profile(self):
+        """初始化当前打印机档案。"""
+        settings = get_settings_manager()
+        saved_profile_id = settings.get_active_printer_profile_id() if settings else ""
+        target_profile_id = saved_profile_id or self._profile_manager.get_default_profile_id()
+        self._refresh_profile_selector(target_profile_id)
+        profile = self._current_printer_profile()
+        if profile is None:
+            return
+        self._apply_profile_to_form(profile)
+        apply_printer_profile_to_params(self._params, profile)
+        self._update_script_summaries()
+        self._update_color_change_summary()
+
+    def _refresh_profile_selector(self, selected_profile_id: str = ""):
+        self._updating_profile_ui = True
+        try:
+            self.printer_profile_combo.blockSignals(True)
+            self.printer_profile_combo.clear()
+            if self._runtime_profile is not None:
+                self.printer_profile_combo.addItem(
+                    self.tr("{name} (Project Snapshot)").format(name=self._runtime_profile.name),
+                    self._runtime_profile.id,
+                )
+            default_profile_id = self._profile_manager.get_default_profile_id()
+            for profile in self._profile_manager.list_profiles():
+                label = (
+                    self.tr("{name} (Default)").format(name=profile.name)
+                    if profile.id == default_profile_id
+                    else profile.name
+                )
+                self.printer_profile_combo.addItem(label, profile.id)
+
+            target_profile_id = (
+                selected_profile_id
+                or self._active_profile_id
+                or self._profile_manager.get_default_profile_id()
+            )
+            combo_index = self.printer_profile_combo.findData(target_profile_id)
+            if combo_index < 0 and self.printer_profile_combo.count() > 0:
+                combo_index = 0
+            self.printer_profile_combo.setCurrentIndex(combo_index)
+            self._active_profile_id = self.printer_profile_combo.currentData() or ""
+        finally:
+            self.printer_profile_combo.blockSignals(False)
+            self._updating_profile_ui = False
+        self._update_profile_action_buttons()
+
+    def _selected_profile_is_runtime(self) -> bool:
+        return self._runtime_profile is not None and self._active_profile_id == self._runtime_profile.id
+
+    def _current_printer_profile(self) -> Optional[PrinterProfile]:
+        if self._selected_profile_is_runtime():
+            return clone_printer_profile(self._runtime_profile)
+        profile = self._profile_manager.get_profile(self._active_profile_id)
+        if profile is not None:
+            return profile
+        if self._runtime_profile is not None:
+            return clone_printer_profile(self._runtime_profile)
+        return None
+
+    def _update_profile_action_buttons(self):
+        if not hasattr(self, "profile_source_label"):
+            return
+        is_runtime = self._selected_profile_is_runtime()
+        self.profile_new_btn.setEnabled(True)
+        self.profile_duplicate_btn.setEnabled(True)
+        self.profile_rename_btn.setEnabled(not is_runtime)
+        self.profile_delete_btn.setEnabled(not is_runtime)
+        self.profile_default_btn.setEnabled(not is_runtime)
+        self.profile_source_label.setText(
+            self.tr("Using embedded project profile snapshot.")
+            if is_runtime
+            else self.tr("Profile changes are saved immediately.")
+        )
+
+    def _apply_profile_to_form(self, profile: PrinterProfile):
+        self._updating_profile_ui = True
+        widgets = [
+            self.profile_bed_width,
+            self.profile_bed_depth,
+            self.profile_bed_height,
+            self.profile_nozzle_diameter,
+            self.profile_filament_diameter,
+            self.profile_retract_length,
+            self.profile_retract_speed,
+            self.profile_z_hop_short,
+            self.profile_z_hop_long,
+            self.profile_long_travel_threshold,
+            self.profile_extruder_temp,
+            self.profile_bed_temp,
+            self.profile_color_change_template,
+        ]
+        try:
+            for widget in widgets:
+                widget.blockSignals(True)
+
+            self.profile_bed_width.setValue(profile.bed_width)
+            self.profile_bed_depth.setValue(profile.bed_depth)
+            self.profile_bed_height.setValue(profile.bed_height)
+            self.profile_nozzle_diameter.setValue(profile.nozzle_diameter)
+            self.profile_filament_diameter.setValue(profile.filament_diameter)
+            self.profile_retract_length.setValue(profile.retract_length)
+            self.profile_retract_speed.setValue(profile.retract_speed)
+            self.profile_z_hop_short.setValue(profile.z_hop_short)
+            self.profile_z_hop_long.setValue(profile.z_hop_long)
+            self.profile_long_travel_threshold.setValue(profile.long_travel_threshold)
+            self.profile_extruder_temp.setValue(profile.extruder_temp)
+            self.profile_bed_temp.setValue(profile.bed_temp)
+            self.profile_color_change_template.setText(profile.color_change_command_template)
+            self._params.gcode.start_gcode = profile.start_gcode
+            self._params.gcode.end_gcode = profile.end_gcode
+        finally:
+            for widget in widgets:
+                widget.blockSignals(False)
+            self._updating_profile_ui = False
+
+        apply_printer_profile_to_params(self._params, profile)
+        self._update_script_summaries()
+        self._update_color_change_summary()
+
+    def _profile_from_form(
+        self,
+        *,
+        profile_id: Optional[str] = None,
+        name: Optional[str] = None,
+    ) -> PrinterProfile:
+        base_profile = self._current_printer_profile() or PrinterProfile()
+        profile = clone_printer_profile(base_profile)
+        if profile_id is not None:
+            profile.id = profile_id
+        if name is not None:
+            profile.name = name
+        profile.bed_width = self.profile_bed_width.value()
+        profile.bed_depth = self.profile_bed_depth.value()
+        profile.bed_height = self.profile_bed_height.value()
+        profile.nozzle_diameter = self.profile_nozzle_diameter.value()
+        profile.filament_diameter = self.profile_filament_diameter.value()
+        profile.retract_length = self.profile_retract_length.value()
+        profile.retract_speed = self.profile_retract_speed.value()
+        profile.z_hop_short = self.profile_z_hop_short.value()
+        profile.z_hop_long = self.profile_z_hop_long.value()
+        profile.long_travel_threshold = self.profile_long_travel_threshold.value()
+        profile.extruder_temp = self.profile_extruder_temp.value()
+        profile.bed_temp = self.profile_bed_temp.value()
+        profile.start_gcode = self._params.gcode.start_gcode
+        profile.end_gcode = self._params.gcode.end_gcode
+        profile.color_change_command_template = self.profile_color_change_template.text().strip() or "T{index}"
+        return profile
+
+    def _persist_profile_form_edits(self):
+        profile = self._profile_from_form()
+        apply_printer_profile_to_params(self._params, profile)
+        if self._selected_profile_is_runtime():
+            self._runtime_profile = clone_printer_profile(profile)
+        else:
+            self._profile_manager.save_profile(profile)
+        self._update_script_summaries()
+        self._update_color_change_summary()
+
+    def _on_profile_selected(self):
+        if self._updating_profile_ui:
+            return
+        self._active_profile_id = self.printer_profile_combo.currentData() or ""
+        profile = self._current_printer_profile()
+        if profile is None:
+            return
+        settings = get_settings_manager()
+        if settings and not self._selected_profile_is_runtime():
+            settings.set_active_printer_profile_id(self._active_profile_id)
+        self._apply_profile_to_form(profile)
+        self._update_profile_action_buttons()
+        self._on_param_changed()
+
+    def _on_printer_profile_field_changed(self):
+        if self._updating_profile_ui:
+            return
+        self._persist_profile_form_edits()
+        self._on_param_changed()
+
+    def _prompt_profile_name(self, title: str, text: str, value: str = "") -> Optional[str]:
+        name, accepted = QInputDialog.getText(self, title, text, text=value)
+        normalized = name.strip()
+        if not accepted or not normalized:
+            return None
+        return normalized
+
+    def _on_new_profile(self):
+        name = self._prompt_profile_name(
+            self.tr("New Printer Profile"),
+            self.tr("Profile Name:"),
+        )
+        if name is None:
+            return
+        base_profile = self._profile_from_form()
+        profile = self._profile_manager.create_profile(name, base_profile)
+        self._runtime_profile = None
+        self._active_profile_id = profile.id
+        self._refresh_profile_selector(profile.id)
+        self._apply_profile_to_form(profile)
+        settings = get_settings_manager()
+        if settings:
+            settings.set_active_printer_profile_id(profile.id)
+        self._on_param_changed()
+
+    def _on_duplicate_profile(self):
+        base_profile = self._profile_from_form()
+        name = self._prompt_profile_name(
+            self.tr("Duplicate Printer Profile"),
+            self.tr("New Profile Name:"),
+            self.tr("{name} Copy").format(name=base_profile.name),
+        )
+        if name is None:
+            return
+        profile = self._profile_manager.create_profile(name, base_profile)
+        self._runtime_profile = None
+        self._active_profile_id = profile.id
+        self._refresh_profile_selector(profile.id)
+        self._apply_profile_to_form(profile)
+        settings = get_settings_manager()
+        if settings:
+            settings.set_active_printer_profile_id(profile.id)
+        self._on_param_changed()
+
+    def _on_rename_profile(self):
+        if self._selected_profile_is_runtime():
+            return
+        profile = self._current_printer_profile()
+        if profile is None:
+            return
+        name = self._prompt_profile_name(
+            self.tr("Rename Printer Profile"),
+            self.tr("Profile Name:"),
+            profile.name,
+        )
+        if name is None:
+            return
+        profile.name = name
+        self._profile_manager.save_profile(profile)
+        self._refresh_profile_selector(profile.id)
+        self._apply_profile_to_form(profile)
+
+    def _on_delete_profile(self):
+        if self._selected_profile_is_runtime():
+            return
+        profile = self._current_printer_profile()
+        if profile is None:
+            return
+        answer = QMessageBox.question(
+            self,
+            self.tr("Delete Printer Profile"),
+            self.tr("Delete printer profile '{name}'?").format(name=profile.name),
+        )
+        if answer != QMessageBox.StandardButton.Yes:
+            return
+        self._profile_manager.delete_profile(profile.id)
+        fallback_profile_id = self._profile_manager.get_default_profile_id()
+        self._active_profile_id = fallback_profile_id
+        self._refresh_profile_selector(fallback_profile_id)
+        new_profile = self._current_printer_profile()
+        if new_profile is not None:
+            self._apply_profile_to_form(new_profile)
+            settings = get_settings_manager()
+            if settings:
+                settings.set_active_printer_profile_id(new_profile.id)
+            self._on_param_changed()
+
+    def _on_set_default_profile(self):
+        if self._selected_profile_is_runtime():
+            return
+        if self._profile_manager.set_default_profile_id(self._active_profile_id):
+            self._refresh_profile_selector(self._active_profile_id)
+
+    def _edit_script(self, attr_name: str, title: str):
+        current_text = getattr(self._params.gcode, attr_name, "")
+        text, accepted = QInputDialog.getMultiLineText(
+            self,
+            title,
+            title,
+            current_text,
+        )
+        if not accepted:
+            return
+        setattr(self._params.gcode, attr_name, text)
+        self._persist_profile_form_edits()
+        self._on_param_changed()
+
+    def _summarize_script(self, text: str) -> str:
+        lines = [line.strip() for line in text.splitlines() if line.strip()]
+        if not lines:
+            return self.tr("Empty")
+        if len(lines) == 1:
+            return lines[0]
+        return self.tr("{first} (+{count} more lines)").format(
+            first=lines[0],
+            count=len(lines) - 1,
+        )
+
+    def _update_script_summaries(self):
+        if hasattr(self, "start_gcode_summary"):
+            self.start_gcode_summary.setText(
+                self.tr("Start G-code: {summary}").format(
+                    summary=self._summarize_script(self._params.gcode.start_gcode)
+                )
+            )
+        if hasattr(self, "end_gcode_summary"):
+            self.end_gcode_summary.setText(
+                self.tr("End G-code: {summary}").format(
+                    summary=self._summarize_script(self._params.gcode.end_gcode)
+                )
+            )
+
+    def get_active_printer_profile(self) -> PrinterProfile:
+        current_profile = self._current_printer_profile()
+        return self._profile_from_form(
+            profile_id=self._active_profile_id or "",
+            name=current_profile.name if current_profile is not None else self.tr("Klipper Profile"),
+        )
+
+    def get_active_printer_profile_id(self) -> str:
+        return self._active_profile_id
+
+    def load_project_printer_profile(
+        self,
+        profile_id: str,
+        profile_snapshot: Optional[PrinterProfile],
+    ) -> None:
+        if profile_snapshot is None:
+            self.clear_project_printer_profile()
+            return
+        self._runtime_profile = clone_printer_profile(profile_snapshot)
+        self._runtime_profile.id = profile_id or self._runtime_profile.id
+        self._active_profile_id = self._runtime_profile.id
+        self._refresh_profile_selector(self._active_profile_id)
+        self._apply_profile_to_form(self._runtime_profile)
+
+    def clear_project_printer_profile(self) -> None:
+        self._runtime_profile = None
+        settings = get_settings_manager()
+        target_profile_id = (
+            settings.get_active_printer_profile_id()
+            if settings and settings.get_active_printer_profile_id()
+            else self._profile_manager.get_default_profile_id()
+        )
+        self._active_profile_id = target_profile_id
+        self._refresh_profile_selector(target_profile_id)
+        profile = self._current_printer_profile()
+        if profile is not None:
+            self._apply_profile_to_form(profile)
 
     def _create_step_group(self) -> QGroupBox:
         """创建台阶/V槽参数组"""
@@ -1213,8 +1881,6 @@ class ParamPanel(QWidget):
             self.outline_width,
             self.outline_height,
             self.outline_offset,
-            self.color1_height,
-            self.color2_height,
             self.panel_step_height,
             self.panel_step_width,
             self.baseplate_step_height,
@@ -1229,7 +1895,27 @@ class ParamPanel(QWidget):
             self.print_speed,
             self.travel_speed,
             self.first_layer_speed,
+            self.profile_bed_width,
+            self.profile_bed_depth,
+            self.profile_bed_height,
+            self.profile_nozzle_diameter,
+            self.profile_filament_diameter,
+            self.profile_retract_length,
+            self.profile_retract_speed,
+            self.profile_z_hop_short,
+            self.profile_z_hop_long,
+            self.profile_long_travel_threshold,
+            self.profile_extruder_temp,
+            self.profile_bed_temp,
         ]
+
+        for row in range(self.color_change_table.rowCount()):
+            height_spin = self.color_change_table.cellWidget(row, 0)
+            macro_spin = self.color_change_table.cellWidget(row, 1)
+            if isinstance(height_spin, QAbstractSpinBox):
+                numeric_widgets.append(height_spin)
+            if isinstance(macro_spin, QAbstractSpinBox):
+                numeric_widgets.append(macro_spin)
 
         self._committing_numeric_edits = True
         try:
@@ -1305,8 +1991,9 @@ class ParamPanel(QWidget):
             self._params.shell.bevel_width = self.bevel_width_spin.value()
             self._params.shell.edge_profile = None
 
-        # 换色层参数
+        # 换色参数
         self._params.color.enabled = self.color_enabled.isChecked()
+        self._params.color.change_points = self._get_color_change_rows()
 
         # 台阶参数
         # 面板台阶（顶部）
@@ -1381,6 +2068,7 @@ class ParamPanel(QWidget):
         self._params.gcode.print_speed = self.print_speed.value()
         self._params.gcode.travel_speed = self.travel_speed.value()
         self._params.gcode.first_layer_speed = self.first_layer_speed.value()
+        apply_printer_profile_to_params(self._params, self._profile_from_form())
 
         # 底面封闭参数
         self._params.bottom_face.enabled = self.bottom_face_enabled.isChecked()
@@ -1450,7 +2138,7 @@ class ParamPanel(QWidget):
             self.wrap_dir_inner, self.wrap_dir_outer,
             self.outline_enabled, self.outline_width, self.outline_height,
             self.outline_offset, self.outline_dir_inner, self.outline_dir_outer,
-            self.color_enabled, self.color1_height, self.color2_height,
+            self.color_enabled,
             self.panel_step_enabled, self.panel_step_height, self.panel_step_width,
             self.panel_step_v_groove, self.baseplate_step_enabled,
             self.baseplate_step_height, self.baseplate_step_width, self.baseplate_step_v_groove,
@@ -1500,6 +2188,18 @@ class ParamPanel(QWidget):
         self.travel_speed.setValue(int(params.speed.travel_speed))
         self.first_layer_speed.setValue(int(params.speed.first_layer_speed))
 
+        current_profile = self._current_printer_profile()
+        profile_snapshot = printer_profile_from_params(
+            params,
+            profile_id=self._active_profile_id or "",
+            name=(
+                current_profile.name
+                if current_profile is not None
+                else (params.machine.name or self.tr("Klipper Profile"))
+            ),
+        )
+        self._apply_profile_to_form(profile_snapshot)
+
         # 裙边参数
         self.skirt_width.setValue(params.skirt.width)
         self.skirt_height.setValue(params.skirt.height)
@@ -1539,6 +2239,7 @@ class ParamPanel(QWidget):
 
         # 换色层参数
         self.color_enabled.setChecked(params.color.enabled)
+        self._rebuild_color_change_rows(params.color.change_points)
 
         # 台阶参数 - 面板台阶（顶部）
         self.panel_step_enabled.setChecked(params.step.panel_step_enabled)
@@ -1595,8 +2296,7 @@ class ParamPanel(QWidget):
         self._toggle_outline_controls(params.edge_wrap.outline_enabled)
         self._toggle_panel_step_controls(params.step.panel_step_enabled)
         self._toggle_baseplate_step_controls(params.step.baseplate_step_enabled)
-        self.color1_height.setEnabled(params.color.enabled)
-        self.color2_height.setEnabled(params.color.enabled)
+        self._toggle_color_change_controls(params.color.enabled)
         self._toggle_bottom_face_controls(params.bottom_face.enabled)
         self._toggle_light_slot_controls(params.light_slot.enabled)
         self._toggle_top_face_controls(params.top_face.enabled)

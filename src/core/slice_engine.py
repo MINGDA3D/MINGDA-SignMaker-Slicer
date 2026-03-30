@@ -76,20 +76,22 @@ class SliceEngine:
         if not contours:
             return SliceResult()
 
+        ordered_contours = self._sort_contours_for_print(contours)
+
         # 1. 计算层规划
         layer_infos = self._plan_layers(params)
-        connected_context = self._build_connected_preview_context(contours, params)
+        connected_context = self._build_connected_preview_context(ordered_contours, params)
 
         # 2. 逐层生成
         layers = []
         for info in layer_infos:
-            layer = self._generate_layer(contours, info, params, connected_context)
+            layer = self._generate_layer(ordered_contours, info, params, connected_context)
             if layer.paths:  # 只添加有路径的层
                 layers.append(layer)
 
         # 3. 添加预打边线（安全线）
         if params.shell.safety_line_count > 0:
-            safety_layers = self._generate_safety_lines(contours, params)
+            safety_layers = self._generate_safety_lines(ordered_contours, params)
             # 安全线在最底层之前打印
             layers = safety_layers + layers
 
@@ -114,8 +116,7 @@ class SliceEngine:
         total_height = params.shell.height
         layer_count = max(1, int(total_height / layer_height))
 
-        # 构建换色层映射
-        color_layer_map = self._build_color_layer_map(params)
+        change_points = self._build_color_change_points(params)
 
         # 构建台阶层映射
         step_layer_map = self._build_step_layer_map(params, layer_height)
@@ -134,8 +135,9 @@ class SliceEngine:
         for i in range(layer_count):
             z = i * layer_height
 
-            # 确定挤出机
-            extruder = self._get_extruder_at_height(z, color_layer_map)
+            # 单喷头 Klipper：始终使用逻辑上的单喷头，颜色仅作为换色槽位
+            extruder = ExtruderType.EXTRUDER_1
+            color_index = self._get_color_index_at_height(z, change_points)
 
             # 检查是否台阶层
             is_step = z in step_layer_map
@@ -160,6 +162,7 @@ class SliceEngine:
                 z_height=z,
                 layer_height=layer_height,
                 extruder=extruder,
+                color_index=color_index,
                 is_first_layer=is_first,
                 is_step_layer=is_step,
                 step_config=step_config,
@@ -172,21 +175,14 @@ class SliceEngine:
 
         return layer_infos
 
-    def _build_color_layer_map(self, params: SliceParams) -> Dict[float, Tuple[float, ExtruderType]]:
-        """构建换色层高度-挤出机映射"""
-        if not params.color.enabled or not params.color.layers:
-            return {}
-
-        mapping = {}
-        current_height = 0
-
-        for config in params.color.layers:
-            end_height = current_height + config.height
-            # 将该高度范围映射到指定挤出机
-            mapping[current_height] = (end_height, config.extruder)
-            current_height = end_height
-
-        return mapping
+    def _build_color_change_points(self, params: SliceParams) -> List[tuple[float, int]]:
+        """构建换色高度与当前逻辑颜色槽位映射。"""
+        if not params.color.enabled or not params.color.change_points:
+            return []
+        return [
+            (point.height_mm, point.macro_index)
+            for point in params.color.change_points
+        ]
 
     def _build_step_layer_map(self, params: SliceParams,
                                layer_height: float) -> Dict[float, StepConfig]:
@@ -198,13 +194,29 @@ class SliceEngine:
             layer_height
         )
 
-    def _get_extruder_at_height(self, z: float,
-                                 color_layers: Dict) -> ExtruderType:
-        """获取指定高度应使用的挤出机"""
-        for start_z, (end_z, extruder) in color_layers.items():
-            if start_z <= z < end_z:
-                return extruder
-        return ExtruderType.EXTRUDER_1
+    def _get_color_index_at_height(
+        self,
+        z: float,
+        change_points: List[tuple[float, int]],
+    ) -> int:
+        """获取指定高度对应的当前逻辑颜色槽位。"""
+        color_index = 0
+        for height_mm, macro_index in change_points:
+            if z + 1e-6 >= height_mm:
+                color_index = macro_index
+            else:
+                break
+        return color_index
+
+    def _sort_contours_for_print(self, contours: List[Contour]) -> List[Contour]:
+        """按用户设置的打印顺序稳定排序轮廓。"""
+        return [
+            contour
+            for _index, contour in sorted(
+                enumerate(contours),
+                key=lambda item: (item[1].print_order, item[0]),
+            )
+        ]
 
     def _generate_layer(self, contours: List[Contour],
                         info: LayerInfo,
@@ -225,7 +237,8 @@ class SliceEngine:
         layer = Layer(
             z_height=info.z_height,
             layer_height=info.layer_height,
-            extruder=info.extruder
+            extruder=info.extruder,
+            color_index=info.color_index,
         )
 
         for contour in contours:
@@ -614,7 +627,12 @@ class SliceEngine:
             holes=new_holes,
             connected_frames=contour.connected_frames,
             patterns=contour.patterns,
-            name=contour.name
+            name=contour.name,
+            asset_id=contour.asset_id,
+            asset_name=contour.asset_name,
+            group_id=contour.group_id,
+            start_point_index=contour.start_point_index,
+            print_order=contour.print_order,
         )
 
     def _generate_wall_paths(self, contour: Contour,
@@ -647,8 +665,13 @@ class SliceEngine:
             )
 
             for offset_path in offset_results:
+                outer_points = self._rotate_path_to_user_start(
+                    offset_path.points,
+                    contour.outer.points,
+                    contour.start_point_index,
+                )
                 layer_path = LayerPath(
-                    points=offset_path.points,
+                    points=outer_points,
                     role=PathRole.WALL,
                     extruder=info.extruder,
                     line_width=line_width,
@@ -672,6 +695,31 @@ class SliceEngine:
                     paths.append(layer_path)
 
         return paths
+
+    def _rotate_path_to_user_start(
+        self,
+        points: List[Point],
+        reference_points: List[Point],
+        start_point_index: int,
+    ) -> List[Point]:
+        """让闭合路径尽量从用户选择的起点附近开始。"""
+        if (
+            not points
+            or not reference_points
+            or start_point_index <= 0
+            or start_point_index >= len(reference_points)
+        ):
+            return list(points)
+
+        target = reference_points[start_point_index]
+        closest_index = min(
+            range(len(points)),
+            key=lambda index: math.hypot(
+                points[index].x - target.x,
+                points[index].y - target.y,
+            ),
+        )
+        return list(points[closest_index:] + points[:closest_index])
 
     def _generate_all_skirt_paths(self, contours: List[Contour],
                                    params: SliceParams) -> List[LayerPath]:

@@ -281,6 +281,14 @@ class SettingsManager:
         """设置是否显示3D预览"""
         self._qsettings.setValue("UI/show_3d_preview", show)
 
+    def get_active_printer_profile_id(self) -> str:
+        """获取当前激活的打印机档案 ID。"""
+        return self._qsettings.value("PrinterProfile/active_id", "", type=str)
+
+    def set_active_printer_profile_id(self, profile_id: str):
+        """记录当前激活的打印机档案 ID。"""
+        self._qsettings.setValue("PrinterProfile/active_id", profile_id)
+
     # =========================================================================
     # 最近文件（使用 QSettings）
     # =========================================================================

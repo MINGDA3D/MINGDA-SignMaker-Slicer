@@ -1,6 +1,6 @@
 import pytest
 
-from src.core.types import EdgeDirection, SliceParams
+from src.core.types import ColorChangePoint, EdgeDirection, PrinterProfile, SliceParams
 from src.ui.param_panel import ParamPanel
 
 
@@ -32,10 +32,14 @@ def test_primary_groups_follow_requested_order(qapp):
         "Edge Wrap/Outline",
         "Step/V-Groove",
         "Anti-Warping Skirt",
+        "Speed Settings",
+        "Color Change",
         "Top Face",
         "Bottom Face",
         "Connected Letters",
         "Light Slot",
+        "Printer Profile",
+        "Klipper Commands",
         "DXF Export",
     ]
 
@@ -215,7 +219,7 @@ def test_wrap_outline_mutual_exclusive_updates_control_enabled_state(qapp):
         ),
         (
             lambda p: setattr(p.color, "enabled", True),
-            ("color1_height", "color2_height"),
+            ("color_change_table", "add_color_change_btn"),
         ),
     ],
 )
@@ -228,6 +232,57 @@ def test_set_params_restores_enabled_state_for_other_toggle_groups(qapp, configu
 
     for control_name in control_names:
         assert getattr(panel, control_name).isEnabled() is True
+
+
+def test_set_params_restores_color_change_rows_and_summary(qapp):
+    panel = ParamPanel()
+    params = SliceParams()
+    params.color.enabled = True
+    params.color.change_points = [
+        ColorChangePoint(height_mm=10.0, macro_index=3),
+        ColorChangePoint(height_mm=20.0, macro_index=1),
+    ]
+
+    panel.set_params(params)
+
+    assert panel.color_change_table.rowCount() == 2
+    first_height = panel.color_change_table.cellWidget(0, 0)
+    first_macro = panel.color_change_table.cellWidget(0, 1)
+    second_height = panel.color_change_table.cellWidget(1, 0)
+    second_macro = panel.color_change_table.cellWidget(1, 1)
+
+    assert first_height.value() == pytest.approx(10.0)
+    assert first_macro.value() == 3
+    assert second_height.value() == pytest.approx(20.0)
+    assert second_macro.value() == 1
+    assert "T3" in panel.color_change_summary.text()
+    assert "T1" in panel.color_change_summary.text()
+
+
+def test_load_project_printer_profile_uses_embedded_snapshot(qapp):
+    panel = ParamPanel()
+    snapshot = PrinterProfile(
+        id="profile-runtime",
+        name="Embedded Klipper",
+        bed_width=950.0,
+        bed_depth=1350.0,
+        start_gcode="G28\nT0",
+        end_gcode="M400",
+        color_change_command_template="MACRO_{index}",
+    )
+
+    panel.load_project_printer_profile("project-profile", snapshot)
+
+    active_profile = panel.get_active_printer_profile()
+
+    assert panel.get_active_printer_profile_id() == "project-profile"
+    assert panel.profile_bed_width.value() == pytest.approx(950.0)
+    assert panel.profile_bed_depth.value() == pytest.approx(1350.0)
+    assert panel.profile_color_change_template.text() == "MACRO_{index}"
+    assert active_profile.name == "Embedded Klipper"
+    assert active_profile.start_gcode == "G28\nT0"
+    assert active_profile.end_gcode == "M400"
+    assert panel.profile_rename_btn.isEnabled() is False
 
 
 def test_light_slot_and_baseplate_step_are_mutually_exclusive(qapp):

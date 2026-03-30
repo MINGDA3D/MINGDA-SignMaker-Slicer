@@ -11,7 +11,7 @@ import pytest
 from pathlib import Path
 
 from src.core.types import (
-    SliceParams, EdgeType, BevelDirection,
+    ColorChangePoint, SliceParams, EdgeType, BevelDirection,
     serialize_params, deserialize_params
 )
 from src.business.preset_manager import PresetManager
@@ -286,6 +286,53 @@ class TestSerializeParams:
             })
 
 
+    def test_serialize_and_deserialize_klipper_color_change_fields(self):
+        """æµ‹è¯• Klipper æ¢è‰²ç‚¹å’Œ G-code è„šæœ¬å­—æ®µå¾€è¿”åºåˆ—åŒ–"""
+        params = SliceParams()
+        params.color.enabled = True
+        params.color.change_points = [
+            ColorChangePoint(height_mm=10.0, macro_index=3),
+            ColorChangePoint(height_mm=20.0, macro_index=1),
+        ]
+        params.gcode.start_gcode = "G28\nT0"
+        params.gcode.end_gcode = "M400"
+        params.gcode.color_change_command_template = "MACRO_{index}"
+
+        data = serialize_params(params)
+        restored = deserialize_params(data)
+
+        assert data["color"]["change_points"] == [
+            {"height_mm": 10.0, "macro_index": 3},
+            {"height_mm": 20.0, "macro_index": 1},
+        ]
+        assert restored.color.enabled is True
+        assert [point.height_mm for point in restored.color.change_points] == [10.0, 20.0]
+        assert [point.macro_index for point in restored.color.change_points] == [3, 1]
+        assert restored.gcode.start_gcode == "G28\nT0"
+        assert restored.gcode.end_gcode == "M400"
+        assert restored.gcode.color_change_command_template == "MACRO_{index}"
+
+    def test_deserialize_legacy_color_layers_migrates_to_manual_change_points(self):
+        """æµ‹è¯•æ—§ç‰ˆ color.layers è¿ç§»ä¸ºæ‰‹åŠ¨æ¢è‰²ç‚¹"""
+        restored = deserialize_params({
+            "shell": {
+                "layer_height": 0.5,
+                "height_layers": 100,
+            },
+            "color": {
+                "enabled": True,
+                "layers": [
+                    {"height": 10.0, "extruder": "EXTRUDER_2"},
+                    {"height": 5.0, "extruder": "EXTRUDER_1"},
+                ],
+            },
+        })
+
+        assert restored.color.enabled is True
+        assert [point.height_mm for point in restored.color.change_points] == [10.0, 15.0]
+        assert [point.macro_index for point in restored.color.change_points] == [1, 0]
+
+
 class TestSettingsManagerWithQt:
     """设置管理器测试（需要 QApplication）"""
 
@@ -485,6 +532,19 @@ class TestSettingsManagerWithQt:
         recent = sm.get_recent_files()
         assert len(recent) == 2
         assert "file1.dxf" in recent[0]  # 重复的应该移到最前面
+
+
+    def test_set_and_get_active_printer_profile_id(self, qapp, temp_config_dir):
+        """æµ‹è¯•å½“å‰æ‰“å°æœºæ¡£æ¡ˆ ID æŒä¹…åŒ–"""
+        from src.business.settings_manager import SettingsManager
+
+        sm = SettingsManager(temp_config_dir)
+        sm.set_active_printer_profile_id("klipper-profile-1")
+
+        sm2 = SettingsManager(temp_config_dir)
+
+        assert sm.get_active_printer_profile_id() == "klipper-profile-1"
+        assert sm2.get_active_printer_profile_id() == "klipper-profile-1"
 
 
 class TestPresetManagerFull:

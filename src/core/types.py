@@ -12,6 +12,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from enum import Enum, auto
 from typing import List, Optional, Tuple, Dict
+from uuid import uuid4
 
 
 # =============================================================================
@@ -441,6 +442,7 @@ class Layer:
     z_height: float = 0.0           # 层底部高度
     layer_height: float = 0.3       # 层厚度
     extruder: ExtruderType = ExtruderType.EXTRUDER_1
+    color_index: int = 0
     paths: List[LayerPath] = field(default_factory=list)
 
 
@@ -450,6 +452,7 @@ class LayerInfo:
     z_height: float              # 层底部高度
     layer_height: float          # 层厚度
     extruder: ExtruderType       # 使用的挤出机
+    color_index: int = 0         # 当前逻辑颜色槽位
     is_first_layer: bool = False # 是否首层
     is_step_layer: bool = False  # 是否台阶层
     step_config: Optional[StepConfig] = None  # 台阶配置
@@ -498,17 +501,24 @@ class ShellParams:
 
 
 @dataclass
+class ColorChangePoint:
+    """换色点配置"""
+    height_mm: float = 10.0
+    macro_index: int = 1
+
+
+@dataclass
 class ColorLayerConfig:
-    """换色层配置"""
-    height: float = 10.0              # 层高度 (mm)
+    """旧版换色层配置（仅用于兼容历史项目/参数）"""
+    height: float = 10.0
     extruder: ExtruderType = ExtruderType.EXTRUDER_1
 
 
 @dataclass
 class ColorParams:
-    """换色层参数"""
+    """Klipper 单喷头换色参数"""
     enabled: bool = False
-    layers: List[ColorLayerConfig] = field(default_factory=list)
+    change_points: List[ColorChangePoint] = field(default_factory=list)
 
 
 @dataclass
@@ -748,11 +758,11 @@ class SpeedParams:
 @dataclass
 class GCodeParams:
     """G-code生成参数"""
-    machine_type: str = "MINGDA"
+    machine_type: str = "Klipper"
 
     # 温度
     extruder1_temp: int = 220
-    extruder2_temp: int = 220
+    extruder2_temp: int = 0
     extruder3_temp: int = 0
     bed_temp: int = 60
 
@@ -783,6 +793,11 @@ class GCodeParams:
     # 结束位置
     end_z_position: float = 100.0
 
+    # Klipper 脚本
+    start_gcode: str = "G28"
+    end_gcode: str = ""
+    color_change_command_template: str = "T{index}"
+
 
 @dataclass
 class MachineParams:
@@ -793,6 +808,28 @@ class MachineParams:
     bed_height: float = 100.0   # 发光字打印高度
     nozzle_diameter: float = 0.8
     extruder_count: int = 2
+
+
+@dataclass
+class PrinterProfile:
+    """打印机档案（独立于切片参数预设）"""
+    id: str = field(default_factory=lambda: uuid4().hex)
+    name: str = "Klipper Default"
+    bed_width: float = 800.0
+    bed_depth: float = 1200.0
+    bed_height: float = 100.0
+    nozzle_diameter: float = 0.8
+    filament_diameter: float = 1.75
+    retract_length: float = 2.0
+    retract_speed: float = 40.0
+    z_hop_short: float = 0.5
+    z_hop_long: float = 5.0
+    long_travel_threshold: float = 100.0
+    extruder_temp: int = 220
+    bed_temp: int = 60
+    start_gcode: str = "G28"
+    end_gcode: str = ""
+    color_change_command_template: str = "T{index}"
 
 
 @dataclass
@@ -858,6 +895,8 @@ class Project:
     contours: List[Contour] = field(default_factory=list)
     params: SliceParams = field(default_factory=SliceParams)
     gcode_params: GCodeParams = field(default_factory=GCodeParams)
+    active_printer_profile_id: str = ""
+    printer_profile_snapshot: Optional[PrinterProfile] = None
 
 
 # =============================================================================
@@ -1159,14 +1198,29 @@ def deserialize_params(data: dict) -> SliceParams:
     if "color" in data:
         color_data = data["color"]
         params.color.enabled = color_data.get("enabled", False)
-        if "layers" in color_data:
-            params.color.layers = []
+        if "change_points" in color_data:
+            params.color.change_points = []
+            for point_data in color_data["change_points"]:
+                point = ColorChangePoint(
+                    height_mm=point_data.get("height_mm", point_data.get("height", 10.0)),
+                    macro_index=max(0, int(point_data.get("macro_index", 1))),
+                )
+                params.color.change_points.append(point)
+        elif "layers" in color_data:
+            params.color.change_points = []
+            current_height = 0.0
             for layer_data in color_data["layers"]:
                 layer = ColorLayerConfig(
                     height=layer_data.get("height", 10.0),
                     extruder=_deserialize_enum(ExtruderType, layer_data.get("extruder", "EXTRUDER_1"))
                 )
-                params.color.layers.append(layer)
+                current_height += layer.height
+                params.color.change_points.append(
+                    ColorChangePoint(
+                        height_mm=current_height,
+                        macro_index=max(0, int(layer.extruder.value) - 1),
+                    )
+                )
 
     # Step 参数
     if "step" in data:
@@ -1371,9 +1425,9 @@ def deserialize_params(data: dict) -> SliceParams:
     # GCode 参数
     if "gcode" in data:
         gcode_data = data["gcode"]
-        params.gcode.machine_type = gcode_data.get("machine_type", "MINGDA")
+        params.gcode.machine_type = gcode_data.get("machine_type", params.gcode.machine_type)
         params.gcode.extruder1_temp = gcode_data.get("extruder1_temp", 220)
-        params.gcode.extruder2_temp = gcode_data.get("extruder2_temp", 220)
+        params.gcode.extruder2_temp = gcode_data.get("extruder2_temp", 0)
         params.gcode.extruder3_temp = gcode_data.get("extruder3_temp", 0)
         params.gcode.bed_temp = gcode_data.get("bed_temp", 60)
         params.gcode.retract_length = gcode_data.get("retract_length", 2.0)
@@ -1389,6 +1443,12 @@ def deserialize_params(data: dict) -> SliceParams:
         params.gcode.travel_speed = gcode_data.get("travel_speed", 150.0)
         params.gcode.first_layer_speed = gcode_data.get("first_layer_speed", 20.0)
         params.gcode.end_z_position = gcode_data.get("end_z_position", 100.0)
+        params.gcode.start_gcode = gcode_data.get("start_gcode", params.gcode.start_gcode)
+        params.gcode.end_gcode = gcode_data.get("end_gcode", params.gcode.end_gcode)
+        params.gcode.color_change_command_template = gcode_data.get(
+            "color_change_command_template",
+            params.gcode.color_change_command_template,
+        )
 
     # Machine 参数
     if "machine" in data:

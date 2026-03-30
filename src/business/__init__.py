@@ -7,6 +7,7 @@
 from .slice_manager import SliceManager
 from .project_manager import ProjectManager
 from .preset_manager import PresetManager
+from .printer_profile_manager import PrinterProfileManager
 from .settings_manager import (
     SettingsManager, init_settings_manager, get_settings_manager
 )
@@ -19,7 +20,7 @@ from .undo_manager import (
 )
 
 __all__ = [
-    'SliceManager', 'ProjectManager', 'PresetManager',
+    'SliceManager', 'ProjectManager', 'PresetManager', 'PrinterProfileManager',
     'SettingsManager', 'init_settings_manager', 'get_settings_manager',
     'UndoManager', 'Command', 'CompositeCommand',
     'MoveCommand', 'RotateCommand', 'ScaleCommand', 'MirrorCommand',

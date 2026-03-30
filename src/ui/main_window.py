@@ -181,7 +181,7 @@ class MainWindow(QMainWindow):
         self.title_bar.undo_clicked.connect(self._on_undo)
         self.title_bar.redo_clicked.connect(self._on_redo)
         self.title_bar.slice_clicked.connect(self._on_slice)
-        self.title_bar.export_stl_clicked.connect(self._on_export_stl)
+        self.title_bar.export_stl_clicked.connect(self._on_export_gcode)
 
     def _init_menubar(self):
         """初始化菜单栏"""
@@ -218,11 +218,10 @@ class MainWindow(QMainWindow):
 
         file_menu.addSeparator()
 
-        # 导出G-code (暂时屏蔽)
-        # export_gcode_action = QAction(self.tr("Export G-code..."), self)
-        # export_gcode_action.setShortcut(QKeySequence("Ctrl+E"))
-        # export_gcode_action.triggered.connect(self._on_export_gcode)
-        # file_menu.addAction(export_gcode_action)
+        export_gcode_action = QAction(self.tr("Export G-code..."), self)
+        export_gcode_action.setShortcut(QKeySequence("Ctrl+E"))
+        export_gcode_action.triggered.connect(self._on_export_gcode)
+        file_menu.addAction(export_gcode_action)
 
         # 导出STL
         export_stl_action = QAction(self.tr("Export STL..."), self)
@@ -1521,7 +1520,7 @@ class MainWindow(QMainWindow):
             "open_project": self._on_open_project,
             "save": self._on_save_project,
             "save_as": self._on_save_as,
-            # "export_gcode": self._on_export_gcode,  # 暂时屏蔽
+            "export_gcode": self._on_export_gcode,
             "export_stl": self._on_export_stl,
             "export_baseplate": self._on_export_baseplate,
             "export_panel": self._on_export_panel,
@@ -1553,6 +1552,7 @@ class MainWindow(QMainWindow):
         self.current_file = None
         self._contour_transforms.clear()
         self._current_selected_id = None
+        self.param_panel.clear_project_printer_profile()
         self.canvas.set_contours([])
         self.setWindowTitle(self.tr("MINGDA SignMaker - New Project"))
         self._update_status(self.tr("New Project"))
@@ -1961,6 +1961,10 @@ class MainWindow(QMainWindow):
             self._current_selected_id = None
 
             # 更新UI
+            self.param_panel.load_project_printer_profile(
+                project.active_printer_profile_id,
+                project.printer_profile_snapshot,
+            )
             self.canvas.set_contours(self.contours)
             self.canvas.fit_view()
             self.project_panel.update_contours(self.contours)
@@ -2061,6 +2065,12 @@ class MainWindow(QMainWindow):
             self.project_manager.current_project.meta.name = project_name
             self.project_manager.current_project.contours = self.contours
             self.project_manager.current_project.params = current_params
+            self.project_manager.current_project.active_printer_profile_id = (
+                self.param_panel.get_active_printer_profile_id()
+            )
+            self.project_manager.current_project.printer_profile_snapshot = (
+                self.param_panel.get_active_printer_profile()
+            )
 
             # 保存
             preview_png = render_project_preview_png(self.contours)
@@ -2112,7 +2122,7 @@ class MainWindow(QMainWindow):
             }
         """)
 
-        # menu.addAction(self.tr("Export G-code..."), self._on_export_gcode)  # 暂时屏蔽
+        menu.addAction(self.tr("Export G-code..."), self._on_export_gcode)
         menu.addAction(self.tr("Export STL..."), self._on_export_stl)
         menu.addSeparator()
         menu.addAction(self.tr("Export Baseplate DXF..."), self._on_export_baseplate)
@@ -2120,29 +2130,71 @@ class MainWindow(QMainWindow):
 
         menu.exec(QCursor.pos())
 
-    # 暂时屏蔽导出G-code功能
-    # def _on_export_gcode(self):
-    #     """导出G-code"""
-    #     if not self.slice_result:
-    #         QMessageBox.information(self, self.tr("Info"), self.tr("Please process first"))
-    #         return
-    #
-    #     file_path, _ = QFileDialog.getSaveFileName(
-    #         self,
-    #         self.tr("Export G-code"),
-    #         "",
-    #         self.tr("G-code Files (*.gcode);;All Files (*)")
-    #     )
-    #
-    #     if file_path:
-    #         try:
-    #             params = self.param_panel.get_params()
-    #             writer = GCodeWriter(params.gcode)
-    #             writer.write(self.slice_result, file_path, params)
-    #             self._update_status(self.tr("G-code exported: ") + Path(file_path).name)
-    #             QMessageBox.information(self, self.tr("Export Success"), self.tr("G-code saved to:") + f"\n{file_path}")
-    #         except Exception as e:
-    #             QMessageBox.critical(self, self.tr("Export Failed"), self.tr("Failed to export G-code:") + f"\n{e}")
+    def _on_export_gcode(self):
+        """导出 Klipper G-code（异步）。"""
+        if self.slice_result is None:
+            QMessageBox.information(self, self.tr("Info"), self.tr("Please process first"))
+            return
+
+        params = self.param_panel.get_params()
+        profile = self.param_panel.get_active_printer_profile()
+
+        try:
+            GCodeWriter.validate(self.slice_result, params, profile)
+        except Exception as exc:
+            QMessageBox.warning(
+                self,
+                self.tr("Export Blocked"),
+                self.tr("Cannot export G-code:") + f"\n{exc}",
+            )
+            return
+
+        default_name = ""
+        if self.current_file:
+            default_name = Path(self.current_file).stem + ".gcode"
+
+        file_path, _ = QFileDialog.getSaveFileName(
+            self,
+            self.tr("Export G-code"),
+            self._get_initial_save_path(default_name),
+            self.tr("G-code Files (*.gcode);;All Files (*)"),
+        )
+
+        if file_path:
+            self._remember_last_save_path(file_path)
+            slice_result = self.slice_result
+
+            def do_export():
+                writer = GCodeWriter(params.gcode)
+                writer.write(
+                    slice_result,
+                    file_path,
+                    slice_params=params,
+                    printer_profile=profile,
+                )
+
+            def on_success(_result):
+                self._update_status(self.tr("G-code exported: ") + Path(file_path).name)
+                QMessageBox.information(
+                    self,
+                    self.tr("Export Success"),
+                    self.tr("G-code saved to:") + f"\n{file_path}",
+                )
+
+            def on_error(err):
+                QMessageBox.critical(
+                    self,
+                    self.tr("Export Failed"),
+                    self.tr("Failed to export G-code:") + f"\n{err}",
+                )
+
+            run_async(
+                self,
+                self.tr("Exporting G-code..."),
+                do_export,
+                on_success=on_success,
+                on_error=on_error,
+            )
 
     def _on_export_stl(self):
         """导出STL（异步）"""

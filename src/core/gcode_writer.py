@@ -1,174 +1,402 @@
 """
-MINGDA SignMaker - G-code生成模块
+Klipper 单喷头 G-code 导出器。
 
-将层数据转换为机器可执行的G-code指令。
-
-支持功能：
-- 基本移动指令（G0/G1）
-- 挤出量计算
-- 回抽控制
-- Z轴抬升（空走防撞）
-- 换色/换挤出机
-- 速度控制
+按当前 SliceResult 直接生成 G-code，并在指定高度插入用户选择的 T 宏。
 """
 
 from __future__ import annotations
+
 import math
-from typing import List, Optional
 from datetime import datetime
+from typing import List, Optional
 
 from .types import (
-    Point, Point3D, Layer, LayerPath,
-    PathRole, ExtruderType,
-    SliceResult, GCodeParams, SliceParams
+    ColorChangePoint,
+    ExtruderType,
+    GCodeParams,
+    Layer,
+    LayerPath,
+    PathRole,
+    Point,
+    Point3D,
+    PrinterProfile,
+    SliceParams,
+    SliceResult,
 )
 
 
+class GCodeValidationError(ValueError):
+    """导出前校验失败。"""
+
+
 class GCodeWriter:
-    """G-code生成器"""
+    """Klipper 单喷头 G-code 生成器。"""
 
-    def __init__(self, params: GCodeParams):
-        """
-        初始化G-code生成器
-
-        Args:
-            params: G-code生成参数
-        """
-        self.params = params
-        self.current_extruder = ExtruderType.EXTRUDER_1
-        self.current_position = Point3D(0, 0, 0)
-        self.e_position = 0.0  # 挤出机位置
-        self.is_retracted = False
-        self.current_layer_height = 0.3  # 当前层高
-
-    def write(self, result: SliceResult, output_path: str,
-              slice_params: Optional[SliceParams] = None) -> None:
-        """
-        生成并写入G-code文件
-
-        Args:
-            result: 切片结果
-            output_path: 输出文件路径
-            slice_params: 切片参数（用于获取额外信息）
-        """
-        lines = self.generate(result, slice_params)
-
-        with open(output_path, 'w', encoding='utf-8') as f:
-            f.write('\n'.join(lines))
-
-    def generate(self, result: SliceResult,
-                 slice_params: Optional[SliceParams] = None) -> List[str]:
-        """
-        生成G-code行
-
-        Args:
-            result: 切片结果
-            slice_params: 切片参数
-
-        Returns:
-            G-code行列表
-        """
-        lines = []
-
-        # 重置状态
+    def __init__(self, params: Optional[GCodeParams] = None):
+        self._legacy_params = params or GCodeParams()
+        self.profile = self._profile_from_legacy_params(self._legacy_params)
+        self._slice_params = SliceParams()
         self._reset_state()
 
-        # 头部
+    def write(
+        self,
+        result: SliceResult,
+        output_path: str,
+        slice_params: Optional[SliceParams] = None,
+        printer_profile: Optional[PrinterProfile] = None,
+    ) -> None:
+        lines = self.generate(
+            result,
+            slice_params=slice_params,
+            printer_profile=printer_profile,
+        )
+        with open(output_path, "w", encoding="utf-8") as handle:
+            handle.write("\n".join(lines))
+
+    def generate(
+        self,
+        result: SliceResult,
+        slice_params: Optional[SliceParams] = None,
+        printer_profile: Optional[PrinterProfile] = None,
+    ) -> List[str]:
+        self.profile = self._resolve_profile(slice_params, printer_profile)
+        self._slice_params = slice_params or SliceParams()
+        self.validate(result, self._slice_params, self.profile)
+        self._reset_state()
+
+        lines: List[str] = []
         lines.extend(self._write_header(result))
 
-        # 各层
-        for i, layer in enumerate(result.layers):
-            lines.append(f"")
-            lines.append(f"; Layer {i} at Z={layer.z_height + layer.layer_height:.2f}mm")
+        change_points = self._get_change_points(self._slice_params)
+        next_change_index = 0
+
+        for layer_index, layer in enumerate(result.layers):
+            while (
+                next_change_index < len(change_points)
+                and self._should_emit_change_before_layer(change_points[next_change_index], layer)
+            ):
+                change_point = change_points[next_change_index]
+                lines.extend(
+                    self._write_color_change(
+                        change_point.macro_index,
+                        change_point.height_mm,
+                    )
+                )
+                next_change_index += 1
+
+            lines.append("")
+            lines.append(
+                f"; Layer {layer_index} at Z={layer.z_height + layer.layer_height:.2f}mm"
+            )
             self.current_layer_height = layer.layer_height
-            lines.extend(self._write_layer(layer, is_first=(i == 0)))
+            lines.extend(self._write_layer(layer, is_first=(layer_index == 0)))
 
-        # 尾部
         lines.extend(self._write_footer())
-
         return lines
 
-    def _reset_state(self):
-        """重置生成器状态"""
-        self.current_extruder = ExtruderType.EXTRUDER_1
-        self.current_position = Point3D(0, 0, 0)
-        self.e_position = 0.0
+    @classmethod
+    def validate(
+        cls,
+        result: SliceResult,
+        slice_params: Optional[SliceParams],
+        printer_profile: PrinterProfile,
+    ) -> None:
+        if result is None or not result.layers:
+            raise GCodeValidationError("No processed layers available for export.")
+
+        if printer_profile.bed_width <= 0 or printer_profile.bed_depth <= 0:
+            raise GCodeValidationError("Printer bed size must be greater than zero.")
+        if printer_profile.nozzle_diameter <= 0:
+            raise GCodeValidationError("Nozzle diameter must be greater than zero.")
+        if printer_profile.filament_diameter <= 0:
+            raise GCodeValidationError("Filament diameter must be greater than zero.")
+        if printer_profile.retract_length < 0:
+            raise GCodeValidationError("Retract length cannot be negative.")
+        if printer_profile.retract_speed <= 0:
+            raise GCodeValidationError("Retract speed must be greater than zero.")
+        if printer_profile.z_hop_short < 0 or printer_profile.z_hop_long < 0:
+            raise GCodeValidationError("Z-hop height cannot be negative.")
+
+        color_enabled = bool(slice_params and slice_params.color.enabled)
+        change_points = cls._get_change_points(slice_params)
+        if (color_enabled or change_points) and "{index}" not in printer_profile.color_change_command_template:
+            raise GCodeValidationError(
+                "Color change command template must contain '{index}'."
+            )
+
+        if color_enabled:
+            if not change_points:
+                raise GCodeValidationError("Color change is enabled but no change points are configured.")
+
+            previous_height = None
+            shell_height = slice_params.shell.height if slice_params else 0.0
+            for point in change_points:
+                if point.macro_index < 0:
+                    raise GCodeValidationError("Macro index must be a non-negative integer.")
+                if point.height_mm <= 0 or point.height_mm >= shell_height:
+                    raise GCodeValidationError(
+                        "Color change heights must stay within the shell height range."
+                    )
+                if previous_height is not None and point.height_mm <= previous_height:
+                    raise GCodeValidationError("Color change heights must be strictly increasing.")
+                previous_height = point.height_mm
+
+    @staticmethod
+    def _get_change_points(slice_params: Optional[SliceParams]) -> List[ColorChangePoint]:
+        if slice_params is None or not slice_params.color.enabled:
+            return []
+        return list(slice_params.color.change_points)
+
+    @staticmethod
+    def _profile_from_slice_params(slice_params: SliceParams) -> PrinterProfile:
+        return PrinterProfile(
+            id="",
+            name=slice_params.machine.name or "Klipper",
+            bed_width=slice_params.machine.bed_width,
+            bed_depth=slice_params.machine.bed_depth,
+            bed_height=slice_params.machine.bed_height,
+            nozzle_diameter=slice_params.machine.nozzle_diameter,
+            filament_diameter=slice_params.gcode.filament_diameter,
+            retract_length=slice_params.gcode.retract_length,
+            retract_speed=slice_params.gcode.retract_speed,
+            z_hop_short=slice_params.gcode.z_hop_height1,
+            z_hop_long=slice_params.gcode.z_hop_height2,
+            long_travel_threshold=slice_params.gcode.distance_threshold,
+            extruder_temp=slice_params.gcode.extruder1_temp,
+            bed_temp=slice_params.gcode.bed_temp,
+            start_gcode=slice_params.gcode.start_gcode,
+            end_gcode=slice_params.gcode.end_gcode,
+            color_change_command_template=(
+                slice_params.gcode.color_change_command_template or "T{index}"
+            ),
+        )
+
+    @staticmethod
+    def _profile_from_legacy_params(params: GCodeParams) -> PrinterProfile:
+        return PrinterProfile(
+            id="",
+            name=params.machine_type or "Klipper",
+            filament_diameter=params.filament_diameter,
+            retract_length=params.retract_length,
+            retract_speed=params.retract_speed,
+            z_hop_short=params.z_hop_height1,
+            z_hop_long=params.z_hop_height2,
+            long_travel_threshold=params.distance_threshold,
+            extruder_temp=params.extruder1_temp,
+            bed_temp=params.bed_temp,
+            start_gcode=params.start_gcode,
+            end_gcode=params.end_gcode,
+            color_change_command_template=params.color_change_command_template or "T{index}",
+        )
+
+    def _resolve_profile(
+        self,
+        slice_params: Optional[SliceParams],
+        printer_profile: Optional[PrinterProfile],
+    ) -> PrinterProfile:
+        if printer_profile is not None:
+            return printer_profile
+        if slice_params is not None:
+            return self._profile_from_slice_params(slice_params)
+        return self._profile_from_legacy_params(self._legacy_params)
+
+    def _reset_state(self) -> None:
+        self.current_position = Point3D(0.0, 0.0, 0.0)
         self.is_retracted = False
+        self.current_layer_height = 0.3
 
     def _write_header(self, result: SliceResult) -> List[str]:
-        """写入G-code头部"""
         lines = [
             "; ========================================",
             "; Generated by MINGDA SignMaker",
             f"; Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
-            f"; Machine: {self.params.machine_type}",
+            f"; Profile: {self.profile.name}",
+            "; Firmware: Klipper",
             f"; Layers: {result.total_layers}",
             f"; Height: {result.total_height:.2f}mm",
             f"; Estimated time: {result.estimated_time / 60:.1f} min",
             f"; Estimated filament: {result.estimated_filament:.2f}m",
             "; ========================================",
             "",
-            "; --- Startup sequence ---",
-            "G28 ; Home all axes",
+            "; --- Start sequence ---",
         ]
 
-        # 设置温度
-        lines.append(f"M104 S{self.params.extruder1_temp} T0 ; Set extruder 1 temp")
+        if self.profile.bed_temp > 0:
+            lines.append(f"M140 S{self.profile.bed_temp} ; Set bed temperature")
+        if self.profile.extruder_temp > 0:
+            lines.append(f"M104 S{self.profile.extruder_temp} ; Set nozzle temperature")
+        if self.profile.bed_temp > 0:
+            lines.append(f"M190 S{self.profile.bed_temp} ; Wait for bed temperature")
+        if self.profile.extruder_temp > 0:
+            lines.append(f"M109 S{self.profile.extruder_temp} ; Wait for nozzle temperature")
 
-        if self.params.extruder2_temp > 0:
-            lines.append(f"M104 S{self.params.extruder2_temp} T1 ; Set extruder 2 temp")
-
-        if self.params.extruder3_temp > 0:
-            lines.append(f"M104 S{self.params.extruder3_temp} T2 ; Set extruder 3 temp")
-
-        if self.params.bed_temp > 0:
-            lines.append(f"M140 S{self.params.bed_temp} ; Set bed temp")
-            lines.append(f"M190 S{self.params.bed_temp} ; Wait for bed temp")
-
-        lines.extend([
-            f"M109 S{self.params.extruder1_temp} T0 ; Wait for extruder 1 temp",
-            "",
-            "; --- Positioning ---",
-            "G90 ; Absolute positioning",
-            "M82 ; Absolute extrusion",
-            "G92 E0 ; Reset extruder",
-            "",
-            "; --- Prime nozzle ---",
-            f"G1 E{self.params.prime_length} F300 ; Prime",
-            "G92 E0 ; Reset extruder after prime",
-            "",
-        ])
+        lines.extend(self._restore_motion_state())
+        if self.profile.start_gcode.strip():
+            lines.append("; --- Start G-code ---")
+            lines.extend(self._write_script_block(self.profile.start_gcode))
+            lines.extend(self._restore_motion_state())
 
         return lines
 
     def _write_layer(self, layer: Layer, is_first: bool = False) -> List[str]:
-        """写入单层G-code"""
-        lines = []
+        lines: List[str] = []
         z = layer.z_height + layer.layer_height
+        lines.append(f"G0 Z{z:.3f} F{int(self._travel_speed() * 60)} ; Move to layer")
+        self.current_position = Point3D(self.current_position.x, self.current_position.y, z)
 
-        # 移动到层高度
-        lines.append(f"G1 Z{z:.3f} F{int(self.params.travel_speed * 60)} ; Move to layer Z")
-
-        # 设置打印速度
-        speed = (self.params.first_layer_speed if is_first
-                 else self.params.print_speed)
-
-        # 处理每条路径
+        base_speed = self._first_layer_speed() if is_first else self._print_speed()
         for path in layer.paths:
-            # 检查是否需要换挤出机
-            if path.extruder != self.current_extruder:
-                lines.extend(self._write_extruder_change(path.extruder))
-
-            # 根据路径角色调整速度
-            path_speed = self._get_path_speed(path.role, speed)
-
-            # 写入路径
+            path_speed = self._get_path_speed(path.role, base_speed)
             lines.extend(self._write_path(path, z, path_speed))
-
         return lines
 
+    def _write_path(self, path: LayerPath, z: float, speed: float) -> List[str]:
+        if not path.points:
+            return []
+
+        lines = [f"; {path.role.name} path, {len(path.points)} points"]
+        start = path.points[0]
+        lines.extend(self._write_travel(start, z))
+
+        if self.is_retracted:
+            lines.extend(self._write_unretract())
+
+        for point in path.points[1:]:
+            lines.extend(self._write_print_move(point, z, speed, path.line_width))
+
+        if path.is_closed and len(path.points) >= 2:
+            lines.extend(self._write_print_move(start, z, speed, path.line_width))
+
+        lines.extend(self._write_retract())
+        return lines
+
+    def _write_travel(self, target: Point, z: float) -> List[str]:
+        lines: List[str] = []
+        distance = self._calculate_distance_2d(
+            Point(self.current_position.x, self.current_position.y),
+            target,
+        )
+        hop_height = self._get_hop_height(distance)
+        travel_z = max(self.current_position.z, z + hop_height)
+
+        if travel_z > self.current_position.z + 1e-6:
+            lines.append(f"G0 Z{travel_z:.3f} F18000 ; Z hop up")
+
+        lines.append(
+            f"G0 X{target.x:.3f} Y{target.y:.3f} F{int(self._travel_speed() * 60)} ; Travel"
+        )
+
+        if abs(travel_z - z) > 1e-6:
+            lines.append(f"G0 Z{z:.3f} F18000 ; Move back to layer")
+
+        self.current_position = Point3D(target.x, target.y, z)
+        return lines
+
+    def _write_print_move(
+        self,
+        target: Point,
+        z: float,
+        speed: float,
+        line_width: float,
+    ) -> List[str]:
+        distance = self._calculate_distance_2d(
+            Point(self.current_position.x, self.current_position.y),
+            target,
+        )
+        extrusion = self._calculate_extrusion(distance, line_width)
+        self.current_position = Point3D(target.x, target.y, z)
+        return [
+            f"G1 X{target.x:.3f} Y{target.y:.3f} E{extrusion:.5f} F{int(speed * 60)}"
+        ]
+
+    def _write_retract(self) -> List[str]:
+        if self.is_retracted or self.profile.retract_length <= 0:
+            return []
+        self.is_retracted = True
+        return [
+            f"G1 E-{self.profile.retract_length:.5f} F{int(self.profile.retract_speed * 60)} ; Retract"
+        ]
+
+    def _write_unretract(self) -> List[str]:
+        if not self.is_retracted or self.profile.retract_length <= 0:
+            return []
+        self.is_retracted = False
+        return [
+            f"G1 E{self.profile.retract_length:.5f} F{int(self.profile.retract_speed * 60)} ; Unretract"
+        ]
+
+    def _write_color_change(self, macro_index: int, height_mm: float) -> List[str]:
+        lines = [
+            "",
+            f"; --- Color change at {height_mm:.2f}mm ---",
+        ]
+        lines.extend(self._write_retract())
+
+        safe_lift = max(self.current_layer_height, self.profile.z_hop_long)
+        safe_z = max(self.current_position.z, self.current_position.z + safe_lift)
+        if safe_z > self.current_position.z + 1e-6:
+            lines.append(f"G0 Z{safe_z:.3f} F18000 ; Raise for color change")
+
+        command = self.profile.color_change_command_template.format(index=macro_index)
+        lines.extend(self._write_script_block(command))
+        lines.extend(self._restore_motion_state())
+
+        self.current_position = Point3D(self.current_position.x, self.current_position.y, safe_z)
+        self.is_retracted = False
+        return lines
+
+    def _write_footer(self) -> List[str]:
+        lines = [
+            "",
+            "; --- End sequence ---",
+        ]
+
+        end_z = min(
+            self.profile.bed_height,
+            max(self.current_position.z, 0.0) + max(self.current_layer_height, 5.0),
+        )
+        if end_z > self.current_position.z + 1e-6:
+            lines.append(f"G0 Z{end_z:.3f} F18000 ; Raise Z")
+
+        lines.append("G92 E0 ; Reset extruder")
+        if self.profile.end_gcode.strip():
+            lines.append("; --- End G-code ---")
+            lines.extend(self._write_script_block(self.profile.end_gcode))
+
+        lines.extend(
+            [
+                "M104 S0 ; Turn off nozzle",
+                "M140 S0 ; Turn off bed",
+                "M84 ; Disable motors",
+                "",
+                "; === End of file ===",
+            ]
+        )
+        return lines
+
+    def _write_script_block(self, script: str) -> List[str]:
+        return [line.rstrip() for line in script.splitlines() if line.strip()]
+
+    def _restore_motion_state(self) -> List[str]:
+        return [
+            "G90 ; Absolute positioning",
+            "M83 ; Relative extrusion",
+            "G92 E0 ; Reset extruder",
+        ]
+
+    def _print_speed(self) -> float:
+        return self._slice_params.speed.print_speed or self._legacy_params.print_speed
+
+    def _travel_speed(self) -> float:
+        return self._slice_params.speed.travel_speed or self._legacy_params.travel_speed
+
+    def _first_layer_speed(self) -> float:
+        return (
+            self._slice_params.speed.first_layer_speed
+            or self._legacy_params.first_layer_speed
+        )
+
     def _get_path_speed(self, role: PathRole, base_speed: float) -> float:
-        """根据路径角色获取打印速度"""
         speed_multipliers = {
             PathRole.WALL: 0.8,
             PathRole.SAFETY_LINE: 1.0,
@@ -178,210 +406,48 @@ class GCodeWriter:
             PathRole.FILL_PANEL: 1.2,
             PathRole.FILL_GRID: 1.2,
             PathRole.FILL_BASEPLATE: 1.0,
-            PathRole.FILL_BOTTOM_FACE: 0.8,  # 底面填充速度稍慢以确保粘附
+            PathRole.FILL_BOTTOM_FACE: 0.8,
             PathRole.LIGHT_SLOT: 0.8,
+            PathRole.FILL_TOP_FACE: 0.8,
             PathRole.EDGE_WRAP: 0.6,
             PathRole.OUTLINE: 0.5,
             PathRole.CONNECTED: 0.8,
         }
-        multiplier = speed_multipliers.get(role, 1.0)
-        return base_speed * multiplier
+        return base_speed * speed_multipliers.get(role, 1.0)
 
-    def _write_path(self, path: LayerPath, z: float,
-                    speed: float) -> List[str]:
-        """写入路径G-code"""
-        lines = []
+    @staticmethod
+    def _should_emit_change_before_layer(change_point: ColorChangePoint, layer: Layer) -> bool:
+        return layer.z_height + 1e-6 >= change_point.height_mm
 
-        if not path.points:
-            return lines
-
-        # 添加路径注释
-        lines.append(f"; {path.role.name} path, {len(path.points)} points")
-
-        # 移动到起点
-        start = path.points[0]
-        lines.extend(self._write_travel(start, z))
-
-        # 取消回抽
-        if self.is_retracted:
-            lines.extend(self._write_unretract())
-
-        # 打印路径
-        for i in range(1, len(path.points)):
-            point = path.points[i]
-            lines.extend(self._write_print_move(point, z, speed, path.line_width))
-
-        # 闭合路径
-        if path.is_closed and len(path.points) >= 2:
-            lines.extend(self._write_print_move(start, z, speed, path.line_width))
-
-        # 回抽
-        lines.extend(self._write_retract())
-
-        return lines
-
-    def _write_travel(self, target: Point, z: float) -> List[str]:
-        """写入空走移动"""
-        lines = []
-
-        # 计算移动距离
-        distance = self._calculate_distance_2d(
-            Point(self.current_position.x, self.current_position.y),
-            target
-        )
-
-        # 根据距离决定Z轴抬升高度
-        hop_height = self._get_hop_height(distance)
-
-        if hop_height > 0:
-            # 抬升Z轴
-            lines.append(f"G1 Z{z + hop_height:.3f} F{18000} ; Z hop up")
-
-        # XY移动
-        lines.append(
-            f"G0 X{target.x:.3f} Y{target.y:.3f} "
-            f"F{int(self.params.travel_speed * 60)} ; Travel"
-        )
-
-        if hop_height > 0:
-            # 降低Z轴
-            lines.append(f"G1 Z{z:.3f} F{18000} ; Z hop down")
-
-        self.current_position = Point3D(target.x, target.y, z)
-        return lines
-
-    def _write_print_move(self, target: Point, z: float,
-                          speed: float, line_width: float) -> List[str]:
-        """写入打印移动"""
-        # 计算挤出量
-        distance = self._calculate_distance_2d(
-            Point(self.current_position.x, self.current_position.y),
-            target
-        )
-        extrusion = self._calculate_extrusion(distance, line_width)
-
-        self.e_position += extrusion
-        self.current_position = Point3D(target.x, target.y, z)
-
-        return [
-            f"G1 X{target.x:.3f} Y{target.y:.3f} "
-            f"E{self.e_position:.5f} F{int(speed * 60)}"
-        ]
-
-    def _write_retract(self) -> List[str]:
-        """写入回抽"""
-        if self.is_retracted:
-            return []
-
-        self.e_position -= self.params.retract_length
-        self.is_retracted = True
-
-        return [
-            f"G1 E{self.e_position:.5f} F{int(self.params.retract_speed * 60)} ; Retract"
-        ]
-
-    def _write_unretract(self) -> List[str]:
-        """写入取消回抽"""
-        if not self.is_retracted:
-            return []
-
-        self.e_position += self.params.retract_length
-        self.is_retracted = False
-
-        return [
-            f"G1 E{self.e_position:.5f} F{int(self.params.retract_speed * 60)} ; Unretract"
-        ]
-
-    def _write_extruder_change(self, new_extruder: ExtruderType) -> List[str]:
-        """写入换色/换挤出机"""
-        lines = [
-            "",
-            f"; --- Switch to Extruder {new_extruder.value} ---",
-        ]
-
-        # 长回抽
-        lines.append(
-            f"G1 E{self.e_position - self.params.color_change_retract:.5f} "
-            f"F3000 ; Long retract"
-        )
-
-        # 切换挤出机（T命令从0开始）
-        lines.append(f"T{new_extruder.value - 1}")
-
-        # 等待温度（根据挤出机设置不同温度）
-        temps = {
-            ExtruderType.EXTRUDER_1: self.params.extruder1_temp,
-            ExtruderType.EXTRUDER_2: self.params.extruder2_temp,
-            ExtruderType.EXTRUDER_3: self.params.extruder3_temp,
-        }
-        temp = temps.get(new_extruder, self.params.extruder1_temp)
-        if temp > 0:
-            lines.append(f"M109 S{temp} ; Wait for temp")
-
-        # 补料
-        self.e_position = self.params.color_change_prime
-        lines.append(
-            f"G1 E{self.e_position:.5f} F3000 ; Prime new extruder"
-        )
-        lines.append("G92 E0 ; Reset E")
-        self.e_position = 0
-
-        self.current_extruder = new_extruder
-        self.is_retracted = False
-
-        lines.append("")
-        return lines
-
-    def _write_footer(self) -> List[str]:
-        """写入G-code尾部"""
-        return [
-            "",
-            "; --- End sequence ---",
-            f"G1 Z{self.params.end_z_position:.0f} F{18000} ; Raise Z",
-            "G28 X Y ; Home X and Y",
-            "M104 S0 T0 ; Turn off extruder 1",
-            "M104 S0 T1 ; Turn off extruder 2",
-            "M140 S0 ; Turn off bed",
-            "M84 ; Disable motors",
-            "",
-            "; === End of file ===",
-        ]
-
-    def _calculate_distance_2d(self, p1: Point, p2: Point) -> float:
-        """计算两点间距离"""
+    @staticmethod
+    def _calculate_distance_2d(p1: Point, p2: Point) -> float:
         return math.sqrt((p2.x - p1.x) ** 2 + (p2.y - p1.y) ** 2)
 
     def _calculate_extrusion(self, distance: float, line_width: float) -> float:
-        """
-        计算挤出量
-
-        E = (距离 × 线宽 × 层高) / (π × (线材直径/2)²)
-        """
-        layer_height = self.current_layer_height
-        filament_area = math.pi * (self.params.filament_diameter / 2) ** 2
-        extrusion_area = line_width * layer_height
-
+        filament_area = math.pi * (self.profile.filament_diameter / 2) ** 2
+        extrusion_area = line_width * self.current_layer_height
         return distance * extrusion_area / filament_area
 
     def _get_hop_height(self, distance: float) -> float:
-        """根据移动距离决定抬升高度"""
-        if distance > self.params.distance_threshold:
-            return self.params.z_hop_height2
-        elif distance > 10:
-            return self.params.z_hop_height1
-        return 0
+        if distance > self.profile.long_travel_threshold:
+            return self.profile.z_hop_long
+        if distance > 10:
+            return self.profile.z_hop_short
+        return 0.0
 
 
-def write_gcode(result: SliceResult, output_path: str,
-                params: Optional[SliceParams] = None) -> None:
-    """
-    便捷函数：生成并写入G-code文件
-
-    Args:
-        result: 切片结果
-        output_path: 输出文件路径
-        params: 切片参数
-    """
-    gcode_params = params.gcode if params else GCodeParams()
-    writer = GCodeWriter(gcode_params)
-    writer.write(result, output_path, params)
+def write_gcode(
+    result: SliceResult,
+    output_path: str,
+    params: Optional[SliceParams] = None,
+    printer_profile: Optional[PrinterProfile] = None,
+) -> None:
+    """便捷函数：生成并写入 G-code 文件。"""
+    legacy_params = params.gcode if params else GCodeParams()
+    writer = GCodeWriter(legacy_params)
+    writer.write(
+        result,
+        output_path,
+        slice_params=params,
+        printer_profile=printer_profile,
+    )

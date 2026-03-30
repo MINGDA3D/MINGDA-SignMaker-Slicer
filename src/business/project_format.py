@@ -26,14 +26,19 @@ from src.core.types import (
     Point, Path as ContourPath, PathType,
     serialize_params, deserialize_params
 )
+from src.business.printer_profile_manager import (
+    serialize_printer_profile,
+    deserialize_printer_profile,
+)
 
 
 # 格式常量
-FORMAT_VERSION = "4.1"
+FORMAT_VERSION = "4.2"
 MANIFEST_FILE = "manifest.json"
 PARAMS_FILE = "params.json"
 CONTOURS_FILE = "contours.bin"
 PREVIEW_FILE = "preview.png"
+PRINTER_PROFILE_FILE = "printer_profile.json"
 
 # 二进制格式
 BINARY_MAGIC = b'SMPC'  # SignMaker Project Contours
@@ -86,6 +91,20 @@ def save_project(
         contours_bin = _serialize_contours(project.contours)
         zf.writestr(CONTOURS_FILE, contours_bin)
 
+        if project.active_printer_profile_id or project.printer_profile_snapshot is not None:
+            profile_payload = {
+                "active_profile_id": project.active_printer_profile_id,
+                "profile": (
+                    serialize_printer_profile(project.printer_profile_snapshot)
+                    if project.printer_profile_snapshot is not None
+                    else None
+                ),
+            }
+            zf.writestr(
+                PRINTER_PROFILE_FILE,
+                json.dumps(profile_payload, ensure_ascii=False, indent=2),
+            )
+
         if preview_png:
             zf.writestr(PREVIEW_FILE, preview_png)
 
@@ -122,6 +141,15 @@ def load_project(file_path: str) -> Project:
             params_data = json.loads(zf.read(PARAMS_FILE).decode('utf-8'))
             params = deserialize_params(params_data)
 
+        active_printer_profile_id = ""
+        printer_profile_snapshot = None
+        if PRINTER_PROFILE_FILE in names:
+            profile_payload = json.loads(zf.read(PRINTER_PROFILE_FILE).decode("utf-8"))
+            active_printer_profile_id = profile_payload.get("active_profile_id", "")
+            profile_data = profile_payload.get("profile")
+            if profile_data:
+                printer_profile_snapshot = deserialize_printer_profile(profile_data)
+
         # 3. 读取轮廓
         contours_bin = zf.read(CONTOURS_FILE)
         contours = repair_contours(_deserialize_contours(contours_bin))
@@ -137,7 +165,13 @@ def load_project(file_path: str) -> Project:
             version=manifest.get('format_version', FORMAT_VERSION)
         )
 
-        return Project(meta=meta, contours=contours, params=params)
+        return Project(
+            meta=meta,
+            contours=contours,
+            params=params,
+            active_printer_profile_id=active_printer_profile_id,
+            printer_profile_snapshot=printer_profile_snapshot,
+        )
 
 
 def _serialize_contours(contours: List[Contour]) -> bytes:

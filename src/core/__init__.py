@@ -8,10 +8,10 @@ from .types import (
     # 枚举类型
     PathType, PathRole, EdgeType, ExtruderType, FillPattern, JoinType,
     # 参数类型
-    SliceParams, ShellParams, ColorParams, ColorLayerConfig,
+    SliceParams, ShellParams, ColorParams, ColorLayerConfig, ColorChangePoint,
     StepParams, StepConfig, SkirtParams, ConnectedParams,
     EdgeWrapParams, PanelParams, BaseplateParams, GridParams,
-    LayoutParams, SpeedParams, GCodeParams, MachineParams,
+    LayoutParams, SpeedParams, GCodeParams, MachineParams, PrinterProfile,
     FillConfig, LayerConfig,
     # 结果类型
     SliceResult, ProjectData, ProjectMeta, Project
@@ -37,10 +37,10 @@ __all__ = [
     # 枚举类型
     'PathType', 'PathRole', 'EdgeType', 'ExtruderType', 'FillPattern', 'JoinType',
     # 参数类型
-    'SliceParams', 'ShellParams', 'ColorParams', 'ColorLayerConfig',
+    'SliceParams', 'ShellParams', 'ColorParams', 'ColorLayerConfig', 'ColorChangePoint',
     'StepParams', 'StepConfig', 'SkirtParams', 'ConnectedParams',
     'EdgeWrapParams', 'PanelParams', 'BaseplateParams', 'GridParams',
-    'LayoutParams', 'SpeedParams', 'GCodeParams', 'MachineParams',
+    'LayoutParams', 'SpeedParams', 'GCodeParams', 'MachineParams', 'PrinterProfile',
     'FillConfig', 'LayerConfig',
     # 结果类型
     'SliceResult', 'ProjectData', 'ProjectMeta', 'Project',
