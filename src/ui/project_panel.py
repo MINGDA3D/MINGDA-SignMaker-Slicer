@@ -407,7 +407,7 @@ class ProjectPanel(QWidget):
             secondary_text=f"({len(member_indices)})" if len(member_indices) > 1 else "",
             collapsible=len(member_indices) > 1,
             expanded=expanded,
-            releasable=True,
+            releasable=len(member_indices) > 1,
         )
         row.clicked.connect(self._on_asset_clicked)
         row.delete_clicked.connect(self._on_asset_delete)

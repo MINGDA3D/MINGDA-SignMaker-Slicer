@@ -106,6 +106,7 @@ class CanvasToolbar(QWidget):
         )
         self.btn_release_asset.clicked.connect(self.release_asset_clicked.emit)
         layout.addWidget(self.btn_release_asset)
+        self.btn_release_asset.setEnabled(False)
 
         layout.addWidget(self._create_separator())
 
@@ -223,3 +224,7 @@ class CanvasToolbar(QWidget):
         self.btn_move.setChecked(False)
         self.btn_rotate.setChecked(False)
         self.btn_scale.setChecked(False)
+
+    def set_release_asset_enabled(self, enabled: bool):
+        """Enable explode only when the current selection can use it."""
+        self.btn_release_asset.setEnabled(enabled)

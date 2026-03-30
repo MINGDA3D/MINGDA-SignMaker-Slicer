@@ -165,6 +165,72 @@ def test_main_window_release_asset_supports_undo(qapp):
     window.deleteLater()
 
 
+def test_project_panel_hides_release_button_for_single_contour_asset(qapp):
+    window = MainWindow()
+    window.contours = [_rect_contour(0, 0, 10, 10, "A")]
+    window.contours[0].asset_id = "asset-1"
+    window.contours[0].asset_name = "logo.svg"
+    window.project_panel.update_contours(window.contours)
+
+    asset_row = next(row for row in window.project_panel._rows if row.kind == "asset")
+
+    assert asset_row.item.release_btn is None
+
+    window.deleteLater()
+
+
+def test_canvas_toolbar_disables_release_button_for_single_contour_asset(qapp):
+    window = MainWindow()
+    window.contours = [
+        _rect_contour(0, 0, 10, 10, "A"),
+        _rect_contour(20, 0, 30, 10, "B"),
+    ]
+    window.contours[0].asset_id = "asset-1"
+    window.contours[0].asset_name = "logo.svg"
+    window.contours[1].asset_id = "asset-1"
+    window.contours[1].asset_name = "logo.svg"
+    window.canvas.set_contours(window.contours, center_on_platform=False)
+    window.project_panel.update_contours(window.contours)
+
+    window._apply_contour_selection([0])
+
+    assert window.canvas_toolbar.btn_release_asset.isEnabled() is True
+
+    single_window = MainWindow()
+    single_window.contours = [_rect_contour(0, 0, 10, 10, "A")]
+    single_window.contours[0].asset_id = "asset-2"
+    single_window.contours[0].asset_name = "logo.svg"
+    single_window.canvas.set_contours(single_window.contours, center_on_platform=False)
+    single_window.project_panel.update_contours(single_window.contours)
+
+    single_window._apply_contour_selection([0])
+
+    assert single_window.canvas_toolbar.btn_release_asset.isEnabled() is False
+    assert single_window.canvas_toolbar.btn_release_asset.isHidden() is False
+
+    window.deleteLater()
+    single_window.deleteLater()
+
+
+def test_main_window_release_asset_ignores_single_contour_asset(qapp):
+    window = MainWindow()
+    window.contours = [_rect_contour(0, 0, 10, 10, "A")]
+    window.contours[0].asset_id = "asset-1"
+    window.contours[0].asset_name = "logo.svg"
+    window.canvas.set_contours(window.contours, center_on_platform=False)
+    window.project_panel.update_contours(window.contours)
+    window.canvas.selected_indices = [0]
+
+    window._on_release_asset()
+
+    assert window.contours[0].asset_id == "asset-1"
+    assert window.contours[0].asset_name == "logo.svg"
+    assert window.contours[0].name == "A"
+    assert window.undo_manager.can_undo is False
+
+    window.deleteLater()
+
+
 def test_project_list_item_label_has_room_for_underscores(qapp):
     item = _ProjectListItem(1, "Coca-Cola_1")
     item.show()

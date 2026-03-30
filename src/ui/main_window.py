@@ -963,11 +963,11 @@ class MainWindow(QMainWindow):
     def _on_release_asset(self):
         """Release the selected logical asset container."""
         selected_asset_indices = self.canvas.get_asset_target_indices()
-        asset_indices = [
+        selected_asset_indices = [
             idx for idx in selected_asset_indices
             if 0 <= idx < len(self.contours) and get_contour_asset_id(self.contours[idx])
         ]
-        if not asset_indices:
+        if not selected_asset_indices:
             QMessageBox.information(
                 self,
                 self.tr("Info"),
@@ -975,11 +975,17 @@ class MainWindow(QMainWindow):
             )
             return
 
+        asset_indices = self._get_releasable_asset_indices(selected_asset_indices)
+        if not asset_indices:
+            return
+
         self._release_asset(asset_indices)
 
     def _release_asset(self, indices: List[int]):
         """Detach the provided contours from their shared asset container."""
+        indices = self._get_releasable_asset_indices(indices)
         if not indices:
+            self._sync_release_asset_button_state()
             return
 
         cmd = TransformCommand(self.contours, indices, self.tr("Explode Asset"))
@@ -993,6 +999,7 @@ class MainWindow(QMainWindow):
         self.undo_manager.push(cmd, execute=False)
         self._apply_contour_selection(indices)
         self.project_panel.update_contours(self.contours)
+        self._sync_release_asset_button_state()
 
     def _assign_released_contour_names(self, indices: List[int]) -> None:
         """Rename released contours to <asset_stem>_<n> while avoiding conflicts."""
@@ -1045,6 +1052,43 @@ class MainWindow(QMainWindow):
             return stem
 
         return f"{stem}_{suffix.lstrip('.').lower()}"
+
+    def _get_releasable_asset_indices(self, indices: List[int]) -> List[int]:
+        """Return asset members only for imported assets that contain multiple contours."""
+        releasable_indices: List[int] = []
+        seen_indices = set()
+        seen_asset_ids = set()
+
+        for idx in indices:
+            if not (0 <= idx < len(self.contours)):
+                continue
+
+            asset_id = get_contour_asset_id(self.contours[idx])
+            if not asset_id or asset_id in seen_asset_ids:
+                continue
+
+            member_indices = get_asset_member_indices(self.contours, asset_id)
+            if len(member_indices) <= 1:
+                continue
+
+            seen_asset_ids.add(asset_id)
+            for member_idx in member_indices:
+                if member_idx in seen_indices:
+                    continue
+                seen_indices.add(member_idx)
+                releasable_indices.append(member_idx)
+
+        return releasable_indices
+
+    def _sync_release_asset_button_state(self) -> None:
+        """Only enable explode when the current selection contains a multi-contour asset."""
+        if not hasattr(self, "canvas_toolbar"):
+            return
+
+        releasable_indices = self._get_releasable_asset_indices(
+            self.canvas.get_asset_target_indices()
+        )
+        self.canvas_toolbar.set_release_asset_enabled(bool(releasable_indices))
 
     def _get_selected_contour_id(self) -> Optional[int]:
         """获取当前选中轮廓的唯一ID（单选时使用 object id）"""
@@ -1140,9 +1184,11 @@ class MainWindow(QMainWindow):
                 self._sync_active_transform_tool()
                 self._update_transform_panel_values()
                 self._show_transform_panel()
+            self._sync_release_asset_button_state()
         else:
             # 取消选择时隐藏面板
             self.project_panel.clear_selection()
+            self._sync_release_asset_button_state()
             self._close_transform_panel()
 
     def _on_contours_modified(self):
@@ -1159,6 +1205,7 @@ class MainWindow(QMainWindow):
         """当选择被清除时隐藏面板"""
         self.project_panel.clear_selection()
         self._current_selected_id = None
+        self._sync_release_asset_button_state()
         self._close_transform_panel()
 
     def _on_project_panel_selection_changed(self, indices: List[int]):
@@ -1264,6 +1311,7 @@ class MainWindow(QMainWindow):
             self.canvas_toolbar.setVisible(
                 self.current_main_view == "editor" and self.current_view == "2d"
             )
+            self._sync_release_asset_button_state()
 
     def _sync_transform_panel_visibility(self):
         """Show the transform panel only in the 2D project editor."""
