@@ -33,6 +33,7 @@ def test_primary_groups_follow_requested_order(qapp):
         "Step/V-Groove",
         "Anti-Warping Skirt",
         "Speed Settings",
+        "Temperature Settings",
         "Color Change",
         "Top Face",
         "Bottom Face",
@@ -79,6 +80,7 @@ def test_primary_sections_separate_vector_machine_and_print_settings(qapp):
             "Print Settings",
             [
                 "Speed Settings",
+                "Temperature Settings",
                 "Color Change",
                 "Klipper Commands",
             ],
@@ -127,6 +129,23 @@ def test_set_params_restores_wrap_controls_enabled_state(qapp):
     assert panel.wrap_height.isEnabled() is True
     assert panel.wrap_dir_inner.isEnabled() is True
     assert panel.wrap_dir_outer.isEnabled() is True
+
+
+def test_temperature_settings_roundtrip_through_print_settings(qapp):
+    panel = ParamPanel()
+
+    panel.first_layer_nozzle_temp.setValue(235)
+    panel.other_layer_nozzle_temp.setValue(220)
+    panel.first_layer_bed_temp.setValue(65)
+    panel.other_layer_bed_temp.setValue(55)
+
+    params = panel.get_params()
+
+    assert panel.temperature_group.title() == "Temperature Settings"
+    assert params.gcode.first_layer_nozzle_temp == 235
+    assert params.gcode.other_layer_nozzle_temp == 220
+    assert params.gcode.first_layer_bed_temp == 65
+    assert params.gcode.other_layer_bed_temp == 55
 
 
 def test_width_line_defaults_to_twice_layer_height_and_updates_with_layer_height(qapp):

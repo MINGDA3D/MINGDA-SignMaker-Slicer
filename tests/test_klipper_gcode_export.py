@@ -106,6 +106,34 @@ def test_single_color_gcode_uses_relative_extrusion_without_tool_macros():
     assert macro_lines == []
 
 
+def test_temperature_settings_use_first_layer_values_then_switch_before_second_layer():
+    params = SliceParams()
+    params.gcode.first_layer_nozzle_temp = 230
+    params.gcode.other_layer_nozzle_temp = 215
+    params.gcode.first_layer_bed_temp = 65
+    params.gcode.other_layer_bed_temp = 55
+    profile = PrinterProfile(start_gcode="G28", end_gcode="M400")
+
+    lines = GCodeWriter(params.gcode).generate(
+        _build_result([0.0, 0.3], layer_height=0.3),
+        slice_params=params,
+        printer_profile=profile,
+    )
+
+    assert "M140 S65 ; Set first layer bed temperature" in lines
+    assert "M104 S230 ; Set first layer nozzle temperature" in lines
+    assert "M190 S65 ; Wait for first layer bed temperature" in lines
+    assert "M109 S230 ; Wait for first layer nozzle temperature" in lines
+
+    transition_index = lines.index("; --- Temperature transition after first layer ---")
+    assert lines[transition_index + 1:transition_index + 5] == [
+        "M140 S55 ; Set other layers bed temperature",
+        "M104 S215 ; Set other layers nozzle temperature",
+        "M190 S55 ; Wait for other layers bed temperature",
+        "M109 S215 ; Wait for other layers nozzle temperature",
+    ]
+
+
 def test_manual_color_change_macros_follow_selected_order_and_restore_state():
     params = SliceParams()
     params.shell.height = 40.0

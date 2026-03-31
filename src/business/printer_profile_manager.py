@@ -37,8 +37,6 @@ def deserialize_printer_profile(data: dict) -> PrinterProfile:
         z_hop_short=float(data.get("z_hop_short", 0.5)),
         z_hop_long=float(data.get("z_hop_long", 5.0)),
         long_travel_threshold=float(data.get("long_travel_threshold", 100.0)),
-        extruder_temp=int(data.get("extruder_temp", 220)),
-        bed_temp=int(data.get("bed_temp", 60)),
         start_gcode=data.get("start_gcode", "G28"),
         end_gcode=data.get("end_gcode", ""),
         color_change_command_template=data.get("color_change_command_template", "T{index}"),
@@ -60,10 +58,6 @@ def apply_printer_profile_to_params(params: SliceParams, profile: PrinterProfile
     params.machine.extruder_count = 1
 
     params.gcode.machine_type = "Klipper"
-    params.gcode.extruder1_temp = profile.extruder_temp
-    params.gcode.extruder2_temp = 0
-    params.gcode.extruder3_temp = 0
-    params.gcode.bed_temp = profile.bed_temp
     params.gcode.retract_length = profile.retract_length
     params.gcode.retract_speed = profile.retract_speed
     params.gcode.z_hop_height1 = profile.z_hop_short
@@ -95,8 +89,6 @@ def printer_profile_from_params(
         z_hop_short=params.gcode.z_hop_height1,
         z_hop_long=params.gcode.z_hop_height2,
         long_travel_threshold=params.gcode.distance_threshold,
-        extruder_temp=params.gcode.extruder1_temp,
-        bed_temp=params.gcode.bed_temp,
         start_gcode=params.gcode.start_gcode,
         end_gcode=params.gcode.end_gcode,
         color_change_command_template=(

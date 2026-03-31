@@ -116,6 +116,7 @@ class ParamPanel(QWidget):
         self.step_group = self._create_step_group()
         self.skirt_group = self._create_skirt_group()
         self.speed_group = self._create_speed_group()
+        self.temperature_group = self._create_temperature_group()
         self.color_group = self._create_color_group()
         self.top_face_group = self._create_top_face_group()
         self.bottom_face_group = self._create_bottom_face_group()
@@ -132,6 +133,7 @@ class ParamPanel(QWidget):
             self.step_group,
             self.skirt_group,
             self.speed_group,
+            self.temperature_group,
             self.color_group,
             self.top_face_group,
             self.bottom_face_group,
@@ -159,6 +161,7 @@ class ParamPanel(QWidget):
         ]
         self._print_groups = [
             self.speed_group,
+            self.temperature_group,
             self.color_group,
             self.klipper_commands_group,
         ]
@@ -185,7 +188,7 @@ class ParamPanel(QWidget):
                 "key": "print",
                 "title": self.tr("Print Settings"),
                 "description": self.tr(
-                    "Speed, color-change points, and start/end print commands."
+                    "Speed, temperature, color-change points, and start/end print commands."
                 ),
                 "accent": COLORS.accent_warning,
                 "groups": self._print_groups,
@@ -1116,18 +1119,6 @@ class ParamPanel(QWidget):
         self.profile_long_travel_threshold.valueChanged.connect(self._on_printer_profile_field_changed)
         form.addRow(self.tr("Long Travel Threshold:"), self.profile_long_travel_threshold)
 
-        self.profile_extruder_temp = self._create_int_spinbox()
-        self.profile_extruder_temp.setRange(0, 400)
-        self.profile_extruder_temp.setSuffix(" °C")
-        self.profile_extruder_temp.valueChanged.connect(self._on_printer_profile_field_changed)
-        form.addRow(self.tr("Nozzle Temperature:"), self.profile_extruder_temp)
-
-        self.profile_bed_temp = self._create_int_spinbox()
-        self.profile_bed_temp.setRange(0, 200)
-        self.profile_bed_temp.setSuffix(" °C")
-        self.profile_bed_temp.valueChanged.connect(self._on_printer_profile_field_changed)
-        form.addRow(self.tr("Bed Temperature:"), self.profile_bed_temp)
-
         self.profile_color_change_template = QLineEdit()
         self.profile_color_change_template.textChanged.connect(self._on_printer_profile_field_changed)
         form.addRow(self.tr("Color Change Template:"), self.profile_color_change_template)
@@ -1256,8 +1247,6 @@ class ParamPanel(QWidget):
             self.profile_z_hop_short,
             self.profile_z_hop_long,
             self.profile_long_travel_threshold,
-            self.profile_extruder_temp,
-            self.profile_bed_temp,
             self.profile_color_change_template,
         ]
         try:
@@ -1274,8 +1263,6 @@ class ParamPanel(QWidget):
             self.profile_z_hop_short.setValue(profile.z_hop_short)
             self.profile_z_hop_long.setValue(profile.z_hop_long)
             self.profile_long_travel_threshold.setValue(profile.long_travel_threshold)
-            self.profile_extruder_temp.setValue(profile.extruder_temp)
-            self.profile_bed_temp.setValue(profile.bed_temp)
             self.profile_color_change_template.setText(profile.color_change_command_template)
             self._params.gcode.start_gcode = profile.start_gcode
             self._params.gcode.end_gcode = profile.end_gcode
@@ -1310,8 +1297,6 @@ class ParamPanel(QWidget):
         profile.z_hop_short = self.profile_z_hop_short.value()
         profile.z_hop_long = self.profile_z_hop_long.value()
         profile.long_travel_threshold = self.profile_long_travel_threshold.value()
-        profile.extruder_temp = self.profile_extruder_temp.value()
-        profile.bed_temp = self.profile_bed_temp.value()
         profile.start_gcode = self._params.gcode.start_gcode
         profile.end_gcode = self._params.gcode.end_gcode
         profile.color_change_command_template = self.profile_color_change_template.text().strip() or "T{index}"
@@ -1980,6 +1965,42 @@ class ParamPanel(QWidget):
 
         return group
 
+    def _create_temperature_group(self) -> QGroupBox:
+        """创建温度参数组"""
+        group = QGroupBox(self.tr("Temperature Settings"))
+        layout = QFormLayout(group)
+        layout.setSpacing(8)
+
+        self.first_layer_nozzle_temp = self._create_int_spinbox()
+        self.first_layer_nozzle_temp.setRange(0, 400)
+        self.first_layer_nozzle_temp.setValue(220)
+        self.first_layer_nozzle_temp.setSuffix(" °C")
+        self.first_layer_nozzle_temp.valueChanged.connect(self._on_param_changed)
+        layout.addRow(self.tr("First Layer Nozzle Temperature:"), self.first_layer_nozzle_temp)
+
+        self.other_layer_nozzle_temp = self._create_int_spinbox()
+        self.other_layer_nozzle_temp.setRange(0, 400)
+        self.other_layer_nozzle_temp.setValue(220)
+        self.other_layer_nozzle_temp.setSuffix(" °C")
+        self.other_layer_nozzle_temp.valueChanged.connect(self._on_param_changed)
+        layout.addRow(self.tr("Other Layers Nozzle Temperature:"), self.other_layer_nozzle_temp)
+
+        self.first_layer_bed_temp = self._create_int_spinbox()
+        self.first_layer_bed_temp.setRange(0, 200)
+        self.first_layer_bed_temp.setValue(60)
+        self.first_layer_bed_temp.setSuffix(" °C")
+        self.first_layer_bed_temp.valueChanged.connect(self._on_param_changed)
+        layout.addRow(self.tr("First Layer Bed Temperature:"), self.first_layer_bed_temp)
+
+        self.other_layer_bed_temp = self._create_int_spinbox()
+        self.other_layer_bed_temp.setRange(0, 200)
+        self.other_layer_bed_temp.setValue(60)
+        self.other_layer_bed_temp.setSuffix(" °C")
+        self.other_layer_bed_temp.valueChanged.connect(self._on_param_changed)
+        layout.addRow(self.tr("Other Layers Bed Temperature:"), self.other_layer_bed_temp)
+
+        return group
+
     def _on_edge_type_changed(self, index: int):
         """边缘类型变化"""
         edge_type = self.edge_type_combo.currentData()
@@ -2051,6 +2072,10 @@ class ParamPanel(QWidget):
             self.print_speed,
             self.travel_speed,
             self.first_layer_speed,
+            self.first_layer_nozzle_temp,
+            self.other_layer_nozzle_temp,
+            self.first_layer_bed_temp,
+            self.other_layer_bed_temp,
             self.profile_bed_width,
             self.profile_bed_depth,
             self.profile_bed_height,
@@ -2061,8 +2086,6 @@ class ParamPanel(QWidget):
             self.profile_z_hop_short,
             self.profile_z_hop_long,
             self.profile_long_travel_threshold,
-            self.profile_extruder_temp,
-            self.profile_bed_temp,
         ]
 
         for row in range(self.color_change_table.rowCount()):
@@ -2224,6 +2247,10 @@ class ParamPanel(QWidget):
         self._params.gcode.print_speed = self.print_speed.value()
         self._params.gcode.travel_speed = self.travel_speed.value()
         self._params.gcode.first_layer_speed = self.first_layer_speed.value()
+        self._params.gcode.first_layer_nozzle_temp = self.first_layer_nozzle_temp.value()
+        self._params.gcode.other_layer_nozzle_temp = self.other_layer_nozzle_temp.value()
+        self._params.gcode.first_layer_bed_temp = self.first_layer_bed_temp.value()
+        self._params.gcode.other_layer_bed_temp = self.other_layer_bed_temp.value()
         apply_printer_profile_to_params(self._params, self._profile_from_form())
 
         # 底面封闭参数
@@ -2284,6 +2311,8 @@ class ParamPanel(QWidget):
             self.bevel_width_spin, self.baseplate_spin, self.panel_thickness_spin,
             self.dxf_outer_clearance_spin, self.dxf_hole_clearance_spin, self.dxf_laser_kerf_spin,
             self.print_speed, self.travel_speed, self.first_layer_speed,
+            self.first_layer_nozzle_temp, self.other_layer_nozzle_temp,
+            self.first_layer_bed_temp, self.other_layer_bed_temp,
             self.skirt_enabled, self.skirt_width, self.skirt_height,
             self.skirt_interval, self.skirt_offset,
             self.skirt_outer_enabled, self.skirt_inner_enabled,
@@ -2343,6 +2372,10 @@ class ParamPanel(QWidget):
         self.print_speed.setValue(int(params.speed.print_speed))
         self.travel_speed.setValue(int(params.speed.travel_speed))
         self.first_layer_speed.setValue(int(params.speed.first_layer_speed))
+        self.first_layer_nozzle_temp.setValue(int(params.gcode.first_layer_nozzle_temp))
+        self.other_layer_nozzle_temp.setValue(int(params.gcode.other_layer_nozzle_temp))
+        self.first_layer_bed_temp.setValue(int(params.gcode.first_layer_bed_temp))
+        self.other_layer_bed_temp.setValue(int(params.gcode.other_layer_bed_temp))
 
         current_profile = self._current_printer_profile()
         profile_snapshot = printer_profile_from_params(

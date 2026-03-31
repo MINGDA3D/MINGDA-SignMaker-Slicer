@@ -200,7 +200,10 @@ class TestSerializeParams:
         params.bottom_face.enabled = True
         params.light_slot.enabled = True
         params.top_face.enabled = True
-        params.gcode.extruder1_temp = 230
+        params.gcode.first_layer_nozzle_temp = 235
+        params.gcode.other_layer_nozzle_temp = 225
+        params.gcode.first_layer_bed_temp = 65
+        params.gcode.other_layer_bed_temp = 55
         params.machine.bed_width = 500.0
 
         data = serialize_params(params)
@@ -218,7 +221,10 @@ class TestSerializeParams:
         assert restored.bottom_face.enabled is True
         assert restored.light_slot.enabled is True
         assert restored.top_face.enabled is True
-        assert restored.gcode.extruder1_temp == 230
+        assert restored.gcode.first_layer_nozzle_temp == 235
+        assert restored.gcode.other_layer_nozzle_temp == 225
+        assert restored.gcode.first_layer_bed_temp == 65
+        assert restored.gcode.other_layer_bed_temp == 55
         assert restored.machine.bed_width == 500.0
 
     def test_deserialize_empty_dict(self):
@@ -331,6 +337,19 @@ class TestSerializeParams:
         assert restored.color.enabled is True
         assert [point.height_mm for point in restored.color.change_points] == [10.0, 15.0]
         assert [point.macro_index for point in restored.color.change_points] == [1, 0]
+
+    def test_deserialize_legacy_gcode_temperature_fields_migrates_to_first_and_other_layer_settings(self):
+        restored = deserialize_params({
+            "gcode": {
+                "extruder1_temp": 228,
+                "bed_temp": 62,
+            }
+        })
+
+        assert restored.gcode.first_layer_nozzle_temp == 228
+        assert restored.gcode.other_layer_nozzle_temp == 228
+        assert restored.gcode.first_layer_bed_temp == 62
+        assert restored.gcode.other_layer_bed_temp == 62
 
 
 class TestSettingsManagerWithQt:

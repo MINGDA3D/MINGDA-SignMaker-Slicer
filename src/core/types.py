@@ -761,10 +761,10 @@ class GCodeParams:
     machine_type: str = "Klipper"
 
     # 温度
-    extruder1_temp: int = 220
-    extruder2_temp: int = 0
-    extruder3_temp: int = 0
-    bed_temp: int = 60
+    first_layer_nozzle_temp: int = 220
+    other_layer_nozzle_temp: int = 220
+    first_layer_bed_temp: int = 60
+    other_layer_bed_temp: int = 60
 
     # 回抽
     retract_length: float = 2.0
@@ -825,8 +825,6 @@ class PrinterProfile:
     z_hop_short: float = 0.5
     z_hop_long: float = 5.0
     long_travel_threshold: float = 100.0
-    extruder_temp: int = 220
-    bed_temp: int = 60
     start_gcode: str = "G28"
     end_gcode: str = ""
     color_change_command_template: str = "T{index}"
@@ -1426,10 +1424,30 @@ def deserialize_params(data: dict) -> SliceParams:
     if "gcode" in data:
         gcode_data = data["gcode"]
         params.gcode.machine_type = gcode_data.get("machine_type", params.gcode.machine_type)
-        params.gcode.extruder1_temp = gcode_data.get("extruder1_temp", 220)
-        params.gcode.extruder2_temp = gcode_data.get("extruder2_temp", 0)
-        params.gcode.extruder3_temp = gcode_data.get("extruder3_temp", 0)
-        params.gcode.bed_temp = gcode_data.get("bed_temp", 60)
+        params.gcode.first_layer_nozzle_temp = int(
+            gcode_data.get(
+                "first_layer_nozzle_temp",
+                gcode_data.get("extruder1_temp", params.gcode.first_layer_nozzle_temp),
+            )
+        )
+        params.gcode.other_layer_nozzle_temp = int(
+            gcode_data.get(
+                "other_layer_nozzle_temp",
+                gcode_data.get("extruder1_temp", params.gcode.other_layer_nozzle_temp),
+            )
+        )
+        params.gcode.first_layer_bed_temp = int(
+            gcode_data.get(
+                "first_layer_bed_temp",
+                gcode_data.get("bed_temp", params.gcode.first_layer_bed_temp),
+            )
+        )
+        params.gcode.other_layer_bed_temp = int(
+            gcode_data.get(
+                "other_layer_bed_temp",
+                gcode_data.get("bed_temp", params.gcode.other_layer_bed_temp),
+            )
+        )
         params.gcode.retract_length = gcode_data.get("retract_length", 2.0)
         params.gcode.retract_speed = gcode_data.get("retract_speed", 40.0)
         params.gcode.color_change_retract = gcode_data.get("color_change_retract", 30.0)
