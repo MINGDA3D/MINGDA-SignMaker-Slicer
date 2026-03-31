@@ -1,7 +1,7 @@
 """
-独立打印机档案管理器。
+Standalone printer profile manager.
 
-负责 Klipper 单喷头打印机档案的持久化、加载和 CRUD。
+Handles persistence, loading, default seeding, and CRUD for Klipper printer profiles.
 """
 
 from __future__ import annotations
@@ -12,25 +12,136 @@ from pathlib import Path
 from typing import Dict, List, Optional
 
 from src.core.types import PrinterProfile, SliceParams
+
 from .settings_manager import SettingsManager
 
 
+DEFAULT_PRINTER_PROFILE_SPECS = (
+    {
+        "id": "builtin-mignda-ad-f4-mini-0p4",
+        "name": "MIGNDA AD-F4 Mini 0.4mm Nozzle",
+        "bed_width": 600.0,
+        "bed_depth": 800.0,
+        "nozzle_diameter": 0.4,
+    },
+    {
+        "id": "builtin-mignda-ad-f4-mini-0p6",
+        "name": "MIGNDA AD-F4 Mini 0.6mm Nozzle",
+        "bed_width": 600.0,
+        "bed_depth": 800.0,
+        "nozzle_diameter": 0.6,
+    },
+    {
+        "id": "builtin-mignda-ad-f4-mini-0p8",
+        "name": "MIGNDA AD-F4 Mini 0.8mm Nozzle",
+        "bed_width": 600.0,
+        "bed_depth": 800.0,
+        "nozzle_diameter": 0.8,
+    },
+    {
+        "id": "builtin-mignda-ad-f4-0p4",
+        "name": "MIGNDA AD-F4 0.4mm Nozzle",
+        "bed_width": 800.0,
+        "bed_depth": 1200.0,
+        "nozzle_diameter": 0.4,
+    },
+    {
+        "id": "builtin-mignda-ad-f4-0p6",
+        "name": "MIGNDA AD-F4 0.6mm Nozzle",
+        "bed_width": 800.0,
+        "bed_depth": 1200.0,
+        "nozzle_diameter": 0.6,
+    },
+    {
+        "id": "builtin-mignda-ad-f4-0p8",
+        "name": "MIGNDA AD-F4 0.8mm Nozzle",
+        "bed_width": 800.0,
+        "bed_depth": 1200.0,
+        "nozzle_diameter": 0.8,
+    },
+    {
+        "id": "builtin-mignda-ad-f6-0p4",
+        "name": "MIGNDA AD-F6 0.4mm Nozzle",
+        "bed_width": 800.0,
+        "bed_depth": 1200.0,
+        "nozzle_diameter": 0.4,
+    },
+    {
+        "id": "builtin-mignda-ad-f6-0p6",
+        "name": "MIGNDA AD-F6 0.6mm Nozzle",
+        "bed_width": 800.0,
+        "bed_depth": 1200.0,
+        "nozzle_diameter": 0.6,
+    },
+    {
+        "id": "builtin-mignda-ad-f6-0p8",
+        "name": "MIGNDA AD-F6 0.8mm Nozzle",
+        "bed_width": 800.0,
+        "bed_depth": 1200.0,
+        "nozzle_diameter": 0.8,
+    },
+    {
+        "id": "builtin-mignda-ad-f10-0p4",
+        "name": "MIGNDA AD-F10 0.4mm Nozzle",
+        "bed_width": 800.0,
+        "bed_depth": 1200.0,
+        "nozzle_diameter": 0.4,
+    },
+    {
+        "id": "builtin-mignda-ad-f10-0p6",
+        "name": "MIGNDA AD-F10 0.6mm Nozzle",
+        "bed_width": 800.0,
+        "bed_depth": 1200.0,
+        "nozzle_diameter": 0.6,
+    },
+    {
+        "id": "builtin-mignda-ad-f10-0p8",
+        "name": "MIGNDA AD-F10 0.8mm Nozzle",
+        "bed_width": 800.0,
+        "bed_depth": 1200.0,
+        "nozzle_diameter": 0.8,
+    },
+)
+
+DEFAULT_PRINTER_PROFILE_NAME = DEFAULT_PRINTER_PROFILE_SPECS[0]["name"]
+DEFAULT_PRINTER_PROFILE_ORDER = {
+    spec["id"]: index for index, spec in enumerate(DEFAULT_PRINTER_PROFILE_SPECS)
+}
+
+
+def _build_profile_from_spec(spec: dict) -> PrinterProfile:
+    return PrinterProfile(
+        id=spec["id"],
+        name=spec["name"],
+        bed_width=spec["bed_width"],
+        bed_depth=spec["bed_depth"],
+        nozzle_diameter=spec["nozzle_diameter"],
+    )
+
+
 def serialize_printer_profile(profile: PrinterProfile) -> dict:
-    """将打印机档案序列化为 JSON 兼容字典。"""
+    """Serialize a printer profile into a JSON-compatible dict."""
     return asdict(profile)
 
 
 def deserialize_printer_profile(data: dict) -> PrinterProfile:
-    """从字典恢复打印机档案。"""
+    """Restore a printer profile from a dict."""
     if not data:
-        return PrinterProfile()
+        return PrinterProfile(
+            name=DEFAULT_PRINTER_PROFILE_NAME,
+            bed_width=DEFAULT_PRINTER_PROFILE_SPECS[0]["bed_width"],
+            bed_depth=DEFAULT_PRINTER_PROFILE_SPECS[0]["bed_depth"],
+            nozzle_diameter=DEFAULT_PRINTER_PROFILE_SPECS[0]["nozzle_diameter"],
+        )
     return PrinterProfile(
         id=data.get("id", PrinterProfile().id),
-        name=data.get("name", "Klipper Default"),
-        bed_width=float(data.get("bed_width", 800.0)),
-        bed_depth=float(data.get("bed_depth", 1200.0)),
+        name=data.get("name", DEFAULT_PRINTER_PROFILE_NAME),
+        bed_width=float(data.get("bed_width", DEFAULT_PRINTER_PROFILE_SPECS[0]["bed_width"])),
+        bed_depth=float(data.get("bed_depth", DEFAULT_PRINTER_PROFILE_SPECS[0]["bed_depth"])),
         bed_height=float(data.get("bed_height", 100.0)),
-        nozzle_diameter=float(data.get("nozzle_diameter", 0.8)),
+        nozzle_diameter=float(
+            data.get("nozzle_diameter", DEFAULT_PRINTER_PROFILE_SPECS[0]["nozzle_diameter"])
+        ),
         filament_diameter=float(data.get("filament_diameter", 1.75)),
         retract_length=float(data.get("retract_length", 2.0)),
         retract_speed=float(data.get("retract_speed", 40.0)),
@@ -44,12 +155,12 @@ def deserialize_printer_profile(data: dict) -> PrinterProfile:
 
 
 def clone_printer_profile(profile: PrinterProfile) -> PrinterProfile:
-    """深拷贝打印机档案。"""
+    """Deep-copy a printer profile."""
     return deserialize_printer_profile(serialize_printer_profile(profile))
 
 
 def apply_printer_profile_to_params(params: SliceParams, profile: PrinterProfile) -> None:
-    """将打印机档案同步到 SliceParams 的 machine/gcode 快照。"""
+    """Sync printer profile data into SliceParams machine/gcode snapshots."""
     params.machine.name = profile.name
     params.machine.bed_width = profile.bed_width
     params.machine.bed_depth = profile.bed_depth
@@ -75,10 +186,10 @@ def printer_profile_from_params(
     profile_id: str = "",
     name: Optional[str] = None,
 ) -> PrinterProfile:
-    """从当前 SliceParams 的 machine/gcode 快照构建打印机档案。"""
+    """Build a printer profile from the current SliceParams machine/gcode snapshot."""
     return PrinterProfile(
         id=profile_id or PrinterProfile().id,
-        name=name or params.machine.name or "Klipper Default",
+        name=name or params.machine.name or DEFAULT_PRINTER_PROFILE_NAME,
         bed_width=params.machine.bed_width,
         bed_depth=params.machine.bed_depth,
         bed_height=params.machine.bed_height,
@@ -98,7 +209,7 @@ def printer_profile_from_params(
 
 
 class PrinterProfileManager:
-    """独立打印机档案管理器。"""
+    """Standalone printer profile manager."""
 
     FILE_NAME = "printer_profiles.json"
     FILE_VERSION = "1.0"
@@ -114,18 +225,37 @@ class PrinterProfileManager:
         self._load()
 
     def _build_default_profile(self) -> PrinterProfile:
-        return PrinterProfile(name="Klipper Default")
+        return _build_profile_from_spec(DEFAULT_PRINTER_PROFILE_SPECS[0])
 
-    def _ensure_defaults(self) -> None:
-        if self._profiles:
-            if self._default_profile_id in self._profiles:
-                return
-            self._default_profile_id = next(iter(self._profiles))
-            return
+    def _build_default_profiles(self) -> List[PrinterProfile]:
+        return [_build_profile_from_spec(spec) for spec in DEFAULT_PRINTER_PROFILE_SPECS]
 
-        profile = self._build_default_profile()
-        self._profiles[profile.id] = profile
-        self._default_profile_id = profile.id
+    @staticmethod
+    def _profile_sort_key(profile: PrinterProfile):
+        builtin_index = DEFAULT_PRINTER_PROFILE_ORDER.get(profile.id)
+        if builtin_index is not None:
+            return (0, builtin_index, profile.id)
+        return (1, profile.name.lower(), profile.id)
+
+    def _ensure_defaults(self) -> bool:
+        changed = False
+        existing_profiles = dict(self._profiles)
+        self._profiles = {}
+
+        for profile in self._build_default_profiles():
+            saved_profile = existing_profiles.get(profile.id)
+            self._profiles[profile.id] = saved_profile or profile
+            if saved_profile is None:
+                changed = True
+
+        if set(existing_profiles) != set(self._profiles):
+            changed = True
+
+        if self._default_profile_id not in self._profiles:
+            self._default_profile_id = self._build_default_profile().id
+            changed = True
+
+        return changed
 
     def _load(self) -> None:
         self._profiles = {}
@@ -143,7 +273,9 @@ class PrinterProfileManager:
                 self._profiles = {}
                 self._default_profile_id = ""
 
-        self._ensure_defaults()
+        defaults_changed = self._ensure_defaults()
+        if defaults_changed and self._file_path.exists():
+            self._save()
 
     def _save(self) -> None:
         self._ensure_defaults()
@@ -162,7 +294,7 @@ class PrinterProfileManager:
     def list_profiles(self) -> List[PrinterProfile]:
         return sorted(
             (clone_printer_profile(profile) for profile in self._profiles.values()),
-            key=lambda profile: (profile.name.lower(), profile.id),
+            key=self._profile_sort_key,
         )
 
     def get_profile(self, profile_id: str) -> Optional[PrinterProfile]:
@@ -183,6 +315,8 @@ class PrinterProfileManager:
         return True
 
     def save_profile(self, profile: PrinterProfile) -> PrinterProfile:
+        if profile.id not in self._profiles:
+            raise ValueError("Only the built-in printer profiles are supported.")
         self._profiles[profile.id] = clone_printer_profile(profile)
         if not self._default_profile_id:
             self._default_profile_id = profile.id
@@ -194,10 +328,7 @@ class PrinterProfileManager:
         name: str,
         base_profile: Optional[PrinterProfile] = None,
     ) -> PrinterProfile:
-        profile = clone_printer_profile(base_profile or self._build_default_profile())
-        profile.id = PrinterProfile().id
-        profile.name = name
-        return self.save_profile(profile)
+        raise ValueError("Creating additional printer profiles is disabled.")
 
     def delete_profile(self, profile_id: str) -> bool:
         if profile_id not in self._profiles:

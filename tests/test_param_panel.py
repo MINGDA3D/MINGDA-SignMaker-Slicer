@@ -45,6 +45,22 @@ def test_primary_groups_follow_requested_order(qapp):
     ]
 
 
+def test_profile_management_buttons_are_hidden_but_profile_fields_stay_editable(qapp):
+    panel = ParamPanel()
+
+    assert panel.profile_new_btn.isHidden() is True
+    assert panel.profile_duplicate_btn.isHidden() is True
+    assert panel.profile_rename_btn.isHidden() is True
+    assert panel.profile_delete_btn.isHidden() is True
+    assert panel.profile_default_btn.isHidden() is True
+
+    assert panel.printer_profile_combo.isEnabled() is True
+    assert panel.profile_bed_width.isEnabled() is True
+    assert panel.profile_color_change_template.isEnabled() is True
+    assert panel.edit_start_gcode_btn.isEnabled() is True
+    assert panel.edit_end_gcode_btn.isEnabled() is True
+
+
 def test_primary_sections_separate_vector_machine_and_print_settings(qapp):
     panel = ParamPanel()
 

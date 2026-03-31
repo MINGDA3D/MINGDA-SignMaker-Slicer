@@ -57,6 +57,7 @@ class ParamPanel(QWidget):
         self._runtime_profile_label = self.tr("Project Snapshot")
         self._active_profile_id = ""
         self._updating_profile_ui = False
+        self._profile_management_buttons_enabled = False
 
         # 异形边预设管理器
         self._preset_manager = EdgePresetManager()
@@ -1027,24 +1028,29 @@ class ParamPanel(QWidget):
         action_row = QHBoxLayout()
         self.profile_new_btn = QPushButton(self.tr("New"))
         self.profile_new_btn.clicked.connect(self._on_new_profile)
+        self.profile_new_btn.setVisible(False)
         action_row.addWidget(self.profile_new_btn)
 
         self.profile_duplicate_btn = QPushButton(self.tr("Duplicate"))
         self.profile_duplicate_btn.clicked.connect(self._on_duplicate_profile)
+        self.profile_duplicate_btn.setVisible(False)
         action_row.addWidget(self.profile_duplicate_btn)
 
         self.profile_rename_btn = QPushButton(self.tr("Rename"))
         self.profile_rename_btn.clicked.connect(self._on_rename_profile)
+        self.profile_rename_btn.setVisible(False)
         action_row.addWidget(self.profile_rename_btn)
 
         self.profile_delete_btn = QPushButton(self.tr("Delete"))
         self.profile_delete_btn.clicked.connect(self._on_delete_profile)
+        self.profile_delete_btn.setVisible(False)
         action_row.addWidget(self.profile_delete_btn)
 
         self.profile_default_btn = QPushButton(self.tr("Set Default"))
         self.profile_default_btn.clicked.connect(self._on_set_default_profile)
+        self.profile_default_btn.setVisible(False)
         action_row.addWidget(self.profile_default_btn)
-        layout.addLayout(action_row)
+        # Keep the button instances for now, but hide profile management actions from the UI.
 
         self.profile_source_label = QLabel("")
         self.profile_source_label.setWordWrap(True)
@@ -1223,11 +1229,12 @@ class ParamPanel(QWidget):
         if not hasattr(self, "profile_source_label"):
             return
         is_runtime = self._selected_profile_is_runtime()
-        self.profile_new_btn.setEnabled(True)
-        self.profile_duplicate_btn.setEnabled(True)
-        self.profile_rename_btn.setEnabled(not is_runtime)
-        self.profile_delete_btn.setEnabled(not is_runtime)
-        self.profile_default_btn.setEnabled(not is_runtime)
+        buttons_enabled = self._profile_management_buttons_enabled
+        self.profile_new_btn.setEnabled(buttons_enabled)
+        self.profile_duplicate_btn.setEnabled(buttons_enabled)
+        self.profile_rename_btn.setEnabled(buttons_enabled and not is_runtime)
+        self.profile_delete_btn.setEnabled(buttons_enabled and not is_runtime)
+        self.profile_default_btn.setEnabled(buttons_enabled and not is_runtime)
         self.profile_source_label.setText(
             self.tr("Using embedded project profile snapshot.")
             if is_runtime
@@ -1340,6 +1347,8 @@ class ParamPanel(QWidget):
         return normalized
 
     def _on_new_profile(self):
+        if not self._profile_management_buttons_enabled:
+            return
         name = self._prompt_profile_name(
             self.tr("New Printer Profile"),
             self.tr("Profile Name:"),
@@ -1358,6 +1367,8 @@ class ParamPanel(QWidget):
         self._on_param_changed()
 
     def _on_duplicate_profile(self):
+        if not self._profile_management_buttons_enabled:
+            return
         base_profile = self._profile_from_form()
         name = self._prompt_profile_name(
             self.tr("Duplicate Printer Profile"),
@@ -1377,6 +1388,8 @@ class ParamPanel(QWidget):
         self._on_param_changed()
 
     def _on_rename_profile(self):
+        if not self._profile_management_buttons_enabled:
+            return
         if self._selected_profile_is_runtime():
             return
         profile = self._current_printer_profile()
@@ -1395,6 +1408,8 @@ class ParamPanel(QWidget):
         self._apply_profile_to_form(profile)
 
     def _on_delete_profile(self):
+        if not self._profile_management_buttons_enabled:
+            return
         if self._selected_profile_is_runtime():
             return
         profile = self._current_printer_profile()
@@ -1420,6 +1435,8 @@ class ParamPanel(QWidget):
             self._on_param_changed()
 
     def _on_set_default_profile(self):
+        if not self._profile_management_buttons_enabled:
+            return
         if self._selected_profile_is_runtime():
             return
         if self._profile_manager.set_default_profile_id(self._active_profile_id):

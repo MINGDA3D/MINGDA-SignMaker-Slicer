@@ -1,0 +1,88 @@
+import json
+import shutil
+import uuid
+from pathlib import Path
+
+import pytest
+
+from src.business.printer_profile_manager import (
+    DEFAULT_PRINTER_PROFILE_SPECS,
+    PrinterProfileManager,
+)
+
+
+@pytest.fixture
+def temp_profile_dir():
+    base_dir = Path.cwd() / ".tmp_pytest_profile_manager"
+    base_dir.mkdir(parents=True, exist_ok=True)
+    tmpdir = base_dir / f"case_{uuid.uuid4().hex}"
+    tmpdir.mkdir(parents=True, exist_ok=True)
+    try:
+        yield tmpdir
+    finally:
+        shutil.rmtree(tmpdir, ignore_errors=True)
+
+
+def test_manager_seeds_only_requested_builtin_profiles(temp_profile_dir):
+    manager = PrinterProfileManager(config_dir=str(temp_profile_dir))
+
+    profiles = manager.list_profiles()
+
+    assert [profile.name for profile in profiles] == [
+        spec["name"] for spec in DEFAULT_PRINTER_PROFILE_SPECS
+    ]
+    assert [(profile.bed_width, profile.bed_depth, profile.nozzle_diameter) for profile in profiles] == [
+        (spec["bed_width"], spec["bed_depth"], spec["nozzle_diameter"])
+        for spec in DEFAULT_PRINTER_PROFILE_SPECS
+    ]
+    assert manager.get_default_profile_id() == DEFAULT_PRINTER_PROFILE_SPECS[0]["id"]
+
+
+def test_manager_discards_non_builtin_profiles_and_keeps_only_builtin_twelve(temp_profile_dir):
+    config_path = temp_profile_dir / PrinterProfileManager.FILE_NAME
+    config_path.write_text(
+        json.dumps(
+            {
+                "version": PrinterProfileManager.FILE_VERSION,
+                "default_profile_id": "custom-profile",
+                "profiles": [
+                    {
+                        "id": "custom-profile",
+                        "name": "Custom Profile",
+                        "bed_width": 123.0,
+                        "bed_depth": 456.0,
+                        "bed_height": 100.0,
+                        "nozzle_diameter": 0.5,
+                    },
+                    {
+                        "id": DEFAULT_PRINTER_PROFILE_SPECS[3]["id"],
+                        "name": DEFAULT_PRINTER_PROFILE_SPECS[3]["name"],
+                        "bed_width": 810.0,
+                        "bed_depth": 1210.0,
+                        "bed_height": 100.0,
+                        "nozzle_diameter": 0.4,
+                    },
+                ],
+            },
+            ensure_ascii=False,
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+
+    manager = PrinterProfileManager(config_dir=str(temp_profile_dir))
+
+    profiles = manager.list_profiles()
+
+    assert len(profiles) == 12
+    assert [profile.id for profile in profiles] == [
+        spec["id"] for spec in DEFAULT_PRINTER_PROFILE_SPECS
+    ]
+    assert all(profile.name != "Custom Profile" for profile in profiles)
+    assert manager.get_profile(DEFAULT_PRINTER_PROFILE_SPECS[3]["id"]).bed_width == 810.0
+    assert manager.get_default_profile_id() == DEFAULT_PRINTER_PROFILE_SPECS[0]["id"]
+
+    saved_data = json.loads(config_path.read_text(encoding="utf-8"))
+    assert [profile["id"] for profile in saved_data["profiles"]] == [
+        spec["id"] for spec in DEFAULT_PRINTER_PROFILE_SPECS
+    ]
