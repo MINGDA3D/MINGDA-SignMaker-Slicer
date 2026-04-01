@@ -91,6 +91,19 @@ def test_export_requires_reprocess_after_param_change(qapp, monkeypatch):
         window.deleteLater()
 
 
+def test_default_gcode_export_filename_includes_profile_name_and_sanitizes_invalid_chars(qapp):
+    window = MainWindow()
+
+    try:
+        window.current_file = r"E:\workspace\sample_project.smp"
+
+        default_name = window._build_default_gcode_filename('MIGNDA AD/F4 0.6mm:Nozzle')
+
+        assert default_name == "sample_project - MIGNDA AD_F4 0.6mm_Nozzle.gcode"
+    finally:
+        window.deleteLater()
+
+
 def test_save_project_blocked_when_canvas_has_no_graphics(qapp, monkeypatch):
     window = MainWindow()
     messages = []

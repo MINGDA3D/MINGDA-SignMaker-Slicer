@@ -12,6 +12,7 @@ MINGDA SignMaker - 主窗口
 
 from __future__ import annotations
 from datetime import datetime
+import re
 import sys
 from pathlib import Path
 from typing import Optional, List
@@ -1647,6 +1648,23 @@ class MainWindow(QMainWindow):
         if directory:
             self.settings_manager.set_last_save_dir(directory)
 
+    @staticmethod
+    def _sanitize_filename_component(value: str) -> str:
+        """Sanitize a filename component for Windows save dialogs."""
+        sanitized = re.sub(r'[<>:"/\\\\|?*]+', "_", value).strip()
+        sanitized = sanitized.rstrip(". ")
+        return sanitized or "Export"
+
+    def _build_default_gcode_filename(self, profile_name: str) -> str:
+        """Build the suggested G-code file name including the active profile."""
+        base_name = "Export"
+        if self.current_file:
+            base_name = Path(self.current_file).stem
+
+        sanitized_base = self._sanitize_filename_component(base_name)
+        sanitized_profile = self._sanitize_filename_component(profile_name or "Profile")
+        return f"{sanitized_base} - {sanitized_profile}.gcode"
+
     def _assign_asset_metadata(self, contours: List[Contour], asset_name: str) -> None:
         """Assign a logical asset identity to a contour batch."""
         if contours:
@@ -2150,9 +2168,7 @@ class MainWindow(QMainWindow):
             )
             return
 
-        default_name = ""
-        if self.current_file:
-            default_name = Path(self.current_file).stem + ".gcode"
+        default_name = self._build_default_gcode_filename(profile.name)
 
         file_path, _ = QFileDialog.getSaveFileName(
             self,
