@@ -23,6 +23,7 @@ def build():
         f"--icon={project_root / 'resources' / 'logos' / 'MINGDA_logo.ico'}",
         # 添加资源文件
         f"--add-data={project_root / 'resources'};resources",
+        f"--add-data={project_root / 'VERSION'};.",
         # 隐藏导入
         "--hidden-import=PySide6.QtSvg",
         "--hidden-import=PySide6.QtOpenGL",

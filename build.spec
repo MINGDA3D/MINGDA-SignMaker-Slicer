@@ -20,6 +20,8 @@ datas = [
     ('resources', 'resources'),
     # Translations
     ('translations/*.qm', 'translations'),
+    # App version
+    ('VERSION', '.'),
 ]
 
 # Resources already added above, no need for additional logo path

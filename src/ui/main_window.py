@@ -44,6 +44,7 @@ from .project_preview import (
 )
 from .busy_dialog import run_async, WorkerThread
 
+from src.app_info import APP_NAME, get_app_version
 from src.core import (
     DXFParser, SVGParser, SliceEngine, GCodeWriter,
     Contour, SliceParams, SliceResult,
@@ -2171,6 +2172,7 @@ class MainWindow(QMainWindow):
                     file_path,
                     slice_params=params,
                     printer_profile=profile,
+                    contours=self.contours,
                 )
 
             def on_success(_result):
@@ -2854,9 +2856,9 @@ class MainWindow(QMainWindow):
         QMessageBox.about(
             self,
             self.tr("About MINGDA SignMaker"),
-            "<h3>MINGDA SignMaker</h3>"
+            f"<h3>{APP_NAME}</h3>"
             "<p>" + self.tr("Professional LED Sign Letter 3D Printing Slicer") + "</p>"
-            "<p>" + self.tr("Version: ") + "0.3.0" + "</p>"
+            "<p>" + self.tr("Version: ") + get_app_version() + "</p>"
             "<p></p>"
             "<p>" + self.tr("Features:") + "</p>"
             "<ul>"
