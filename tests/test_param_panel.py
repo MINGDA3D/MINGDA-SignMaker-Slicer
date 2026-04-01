@@ -1,5 +1,8 @@
 import pytest
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QHeaderView, QPlainTextEdit
 
+from src.business.printer_profile_manager import DEFAULT_PRINTER_PROFILE_SPECS
 from src.core.types import ColorChangePoint, EdgeDirection, PrinterProfile, SliceParams
 from src.ui.param_panel import ParamPanel
 
@@ -40,7 +43,7 @@ def test_primary_groups_follow_requested_order(qapp):
         "Connected Letters",
         "Light Slot",
         "Printer Profile",
-        "Klipper Commands",
+        "Machine G-code",
         "DXF Export",
     ]
 
@@ -61,6 +64,74 @@ def test_profile_management_buttons_are_hidden_but_profile_fields_stay_editable(
     assert panel.edit_end_gcode_btn.isEnabled() is True
 
 
+def test_profile_selector_does_not_show_default_suffix(qapp):
+    panel = ParamPanel()
+
+    combo_labels = [
+        panel.printer_profile_combo.itemText(index)
+        for index in range(panel.printer_profile_combo.count())
+    ]
+
+    assert not any("(Default)" in label for label in combo_labels)
+    assert DEFAULT_PRINTER_PROFILE_SPECS[0]["name"] in combo_labels
+
+
+def test_switching_profile_updates_layer_height_and_width_line_when_nozzle_changes(qapp):
+    panel = ParamPanel()
+
+    panel.layer_height_spin.setValue(0.2)
+    panel.width_line_spin.setValue(0.4)
+
+    target_index = panel.printer_profile_combo.findData(DEFAULT_PRINTER_PROFILE_SPECS[2]["id"])
+    assert target_index >= 0
+
+    panel.printer_profile_combo.setCurrentIndex(target_index)
+
+    assert panel.profile_nozzle_diameter.value() == pytest.approx(0.8)
+    assert panel.layer_height_spin.value() == pytest.approx(0.4)
+    assert panel.width_line_spin.value() == pytest.approx(0.8)
+    assert panel.get_params().shell.layer_height == pytest.approx(0.4)
+    assert panel.get_params().shell.line_width == pytest.approx(0.8)
+
+
+def test_print_summary_labels_and_color_change_preview_column_can_shrink_in_narrow_sidebar(qapp):
+    panel = ParamPanel()
+
+    assert panel.klipper_commands_group.title() == "Machine G-code"
+    assert panel.start_gcode_title.text() == "Machine start G-code"
+    assert panel.end_gcode_title.text() == "Machine end G-code"
+    assert panel.color_change_hint.wordWrap() is True
+    assert panel.color_change_hint.minimumWidth() == 0
+    assert panel.color_change_summary.minimumWidth() == 0
+    assert isinstance(panel.start_gcode_summary, QPlainTextEdit)
+    assert panel.start_gcode_summary.isReadOnly() is True
+    assert (
+        panel.start_gcode_summary.lineWrapMode()
+        == QPlainTextEdit.LineWrapMode.WidgetWidth
+    )
+    assert panel.start_gcode_summary.minimumHeight() >= 88
+    assert isinstance(panel.end_gcode_summary, QPlainTextEdit)
+    assert (
+        panel.color_change_table.horizontalHeader().sectionResizeMode(2)
+        == QHeaderView.ResizeMode.Stretch
+    )
+
+
+def test_color_change_preview_cells_are_centered_and_action_buttons_split_to_edges(qapp):
+    panel = ParamPanel()
+
+    panel.color_enabled.setChecked(True)
+    panel._insert_color_change_row(ColorChangePoint(height_mm=0.3, macro_index=1))
+
+    preview_item = panel.color_change_table.item(0, 2)
+
+    assert preview_item is not None
+    assert preview_item.textAlignment() == int(Qt.AlignmentFlag.AlignCenter)
+    assert panel.color_change_actions_layout.itemAt(0).widget() is panel.add_color_change_btn
+    assert panel.color_change_actions_layout.itemAt(1).spacerItem() is not None
+    assert panel.color_change_actions_layout.itemAt(2).widget() is panel.remove_color_change_btn
+
+
 def test_primary_sections_separate_vector_machine_and_print_settings(qapp):
     panel = ParamPanel()
 
@@ -68,6 +139,13 @@ def test_primary_sections_separate_vector_machine_and_print_settings(qapp):
         (section["key"], section["title"], [group.title() for group in section["groups"]])
         for section in panel._primary_sections
     ] == [
+        (
+            "machine",
+            "Machine Settings",
+            [
+                "Printer Profile",
+            ],
+        ),
         (
             "vector",
             "2D Vector Settings",
@@ -85,20 +163,13 @@ def test_primary_sections_separate_vector_machine_and_print_settings(qapp):
             ],
         ),
         (
-            "machine",
-            "Machine Settings",
-            [
-                "Printer Profile",
-            ],
-        ),
-        (
             "print",
             "Print Settings",
             [
                 "Speed Settings",
                 "Temperature Settings",
                 "Color Change",
-                "Klipper Commands",
+                "Machine G-code",
             ],
         ),
     ]

@@ -20,7 +20,7 @@ from PySide6.QtWidgets import (
     QPushButton, QFormLayout, QRadioButton, QButtonGroup,
     QSpinBox, QDoubleSpinBox, QAbstractSpinBox, QTableWidget,
     QTableWidgetItem, QHeaderView, QAbstractItemView, QInputDialog,
-    QMessageBox, QLineEdit
+    QSizePolicy, QMessageBox, QLineEdit, QPlainTextEdit
 )
 from PySide6.QtCore import Qt, Signal, QCoreApplication
 
@@ -168,15 +168,6 @@ class ParamPanel(QWidget):
         ]
         self._primary_sections = [
             {
-                "key": "vector",
-                "title": self.tr("2D Vector Settings"),
-                "description": self.tr(
-                    "Contour shaping, shell geometry, wraps, slots, and DXF output."
-                ),
-                "accent": COLORS.editor_canvas_toolbar_accent,
-                "groups": self._vector_groups,
-            },
-            {
                 "key": "machine",
                 "title": self.tr("Machine Settings"),
                 "description": self.tr(
@@ -184,6 +175,15 @@ class ParamPanel(QWidget):
                 ),
                 "accent": COLORS.editor_sidebar_right_accent,
                 "groups": self._machine_groups,
+            },
+            {
+                "key": "vector",
+                "title": self.tr("2D Vector Settings"),
+                "description": self.tr(
+                    "Contour shaping, shell geometry, wraps, slots, and DXF output."
+                ),
+                "accent": COLORS.editor_canvas_toolbar_accent,
+                "groups": self._vector_groups,
             },
             {
                 "key": "print",
@@ -825,6 +825,44 @@ class ParamPanel(QWidget):
         """切换顶面封闭控件的启用状态"""
         self.top_face_thickness.setEnabled(enabled)
 
+    @staticmethod
+    def _configure_wrapped_secondary_label(label: QLabel) -> None:
+        label.setWordWrap(True)
+        label.setMinimumWidth(0)
+        label.setSizePolicy(
+            QSizePolicy.Policy.Expanding,
+            QSizePolicy.Policy.Preferred,
+        )
+        label.setStyleSheet("color: #8B949E; font-size: 12px;")
+
+    @staticmethod
+    def _create_script_preview_editor() -> QPlainTextEdit:
+        editor = QPlainTextEdit()
+        editor.setReadOnly(True)
+        editor.setLineWrapMode(QPlainTextEdit.LineWrapMode.WidgetWidth)
+        editor.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        editor.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+        editor.setMinimumHeight(88)
+        editor.setSizePolicy(
+            QSizePolicy.Policy.Expanding,
+            QSizePolicy.Policy.MinimumExpanding,
+        )
+        editor.setStyleSheet(
+            f"""
+            QPlainTextEdit {{
+                background-color: {COLORS.bg_primary};
+                color: {COLORS.text_primary};
+                border: 1px solid {COLORS.border_default};
+                border-bottom: 2px solid {COLORS.accent_primary};
+                border-radius: 4px;
+                padding: 6px;
+                font-family: Consolas, "Courier New", monospace;
+                font-size: 12px;
+            }}
+            """
+        )
+        return editor
+
     def _create_color_group(self) -> QGroupBox:
         """创建 Klipper 单喷头换色参数组"""
         group = QGroupBox(self.tr("Color Change"))
@@ -842,8 +880,7 @@ class ParamPanel(QWidget):
         self.color_change_hint = QLabel(
             self.tr("Initial color comes from Start G-code. Each change point runs the selected T macro.")
         )
-        self.color_change_hint.setWordWrap(True)
-        self.color_change_hint.setStyleSheet("color: #8B949E; font-size: 12px;")
+        self._configure_wrapped_secondary_label(self.color_change_hint)
         layout.addWidget(self.color_change_hint)
 
         self.color_change_table = QTableWidget(0, 3)
@@ -854,6 +891,9 @@ class ParamPanel(QWidget):
                 self.tr("Preview"),
             ]
         )
+        preview_header_item = self.color_change_table.horizontalHeaderItem(2)
+        if preview_header_item is not None:
+            preview_header_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
         self.color_change_table.verticalHeader().setVisible(False)
         self.color_change_table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
         self.color_change_table.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
@@ -861,24 +901,24 @@ class ParamPanel(QWidget):
         self.color_change_table.setAlternatingRowColors(True)
         self.color_change_table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
         self.color_change_table.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeMode.ResizeToContents)
-        self.color_change_table.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.ResizeToContents)
+        self.color_change_table.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.Stretch)
+        self.color_change_table.horizontalHeader().setStretchLastSection(True)
         self.color_change_table.itemSelectionChanged.connect(self._update_color_change_remove_button_state)
         layout.addWidget(self.color_change_table)
 
-        actions_layout = QHBoxLayout()
+        self.color_change_actions_layout = QHBoxLayout()
         self.add_color_change_btn = QPushButton(self.tr("Add Change Point"))
         self.add_color_change_btn.clicked.connect(self._on_add_color_change_point)
-        actions_layout.addWidget(self.add_color_change_btn)
+        self.color_change_actions_layout.addWidget(self.add_color_change_btn)
+        self.color_change_actions_layout.addStretch()
 
         self.remove_color_change_btn = QPushButton(self.tr("Remove Selected"))
         self.remove_color_change_btn.clicked.connect(self._on_remove_color_change_point)
-        actions_layout.addWidget(self.remove_color_change_btn)
-        actions_layout.addStretch()
-        layout.addLayout(actions_layout)
+        self.color_change_actions_layout.addWidget(self.remove_color_change_btn)
+        layout.addLayout(self.color_change_actions_layout)
 
         self.color_change_summary = QLabel("")
-        self.color_change_summary.setWordWrap(True)
-        self.color_change_summary.setStyleSheet("color: #8B949E; font-size: 12px;")
+        self._configure_wrapped_secondary_label(self.color_change_summary)
         layout.addWidget(self.color_change_summary)
 
         self._toggle_color_change_controls(False)
@@ -940,6 +980,7 @@ class ParamPanel(QWidget):
 
         preview_item = QTableWidgetItem(self._format_color_change_preview(change_point.macro_index))
         preview_item.setFlags(Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable)
+        preview_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
         self.color_change_table.setItem(row, 2, preview_item)
 
     def _get_color_change_rows(self) -> list[ColorChangePoint]:
@@ -1134,32 +1175,42 @@ class ParamPanel(QWidget):
 
     def _create_klipper_commands_group(self) -> QGroupBox:
         """创建 Klipper 脚本参数组。"""
-        group = QGroupBox(self.tr("Klipper Commands"))
+        group = QGroupBox(self.tr("Machine G-code"))
         layout = QVBoxLayout(group)
         layout.setSpacing(8)
 
-        start_row = QHBoxLayout()
-        self.start_gcode_summary = QLabel("")
-        self.start_gcode_summary.setWordWrap(True)
-        self.start_gcode_summary.setStyleSheet("color: #8B949E; font-size: 12px;")
-        start_row.addWidget(self.start_gcode_summary, 1)
+        start_row = QVBoxLayout()
+        start_row.setSpacing(6)
+        start_header_row = QHBoxLayout()
+        self.start_gcode_title = QLabel(self.tr("Machine start G-code"))
+        self.start_gcode_title.setStyleSheet("font-size: 13px; font-weight: 600;")
+        start_header_row.addWidget(self.start_gcode_title)
+        start_header_row.addStretch()
         self.edit_start_gcode_btn = QPushButton(self.tr("Edit Start G-code"))
         self.edit_start_gcode_btn.clicked.connect(
             lambda: self._edit_script("start_gcode", self.tr("Start G-code"))
         )
-        start_row.addWidget(self.edit_start_gcode_btn)
+        start_header_row.addWidget(self.edit_start_gcode_btn)
+        start_row.addLayout(start_header_row)
+        self.start_gcode_summary = self._create_script_preview_editor()
+        start_row.addWidget(self.start_gcode_summary)
         layout.addLayout(start_row)
 
-        end_row = QHBoxLayout()
-        self.end_gcode_summary = QLabel("")
-        self.end_gcode_summary.setWordWrap(True)
-        self.end_gcode_summary.setStyleSheet("color: #8B949E; font-size: 12px;")
-        end_row.addWidget(self.end_gcode_summary, 1)
+        end_row = QVBoxLayout()
+        end_row.setSpacing(6)
+        end_header_row = QHBoxLayout()
+        self.end_gcode_title = QLabel(self.tr("Machine end G-code"))
+        self.end_gcode_title.setStyleSheet("font-size: 13px; font-weight: 600;")
+        end_header_row.addWidget(self.end_gcode_title)
+        end_header_row.addStretch()
         self.edit_end_gcode_btn = QPushButton(self.tr("Edit End G-code"))
         self.edit_end_gcode_btn.clicked.connect(
             lambda: self._edit_script("end_gcode", self.tr("End G-code"))
         )
-        end_row.addWidget(self.edit_end_gcode_btn)
+        end_header_row.addWidget(self.edit_end_gcode_btn)
+        end_row.addLayout(end_header_row)
+        self.end_gcode_summary = self._create_script_preview_editor()
+        end_row.addWidget(self.end_gcode_summary)
         layout.addLayout(end_row)
 
         return group
@@ -1188,14 +1239,8 @@ class ParamPanel(QWidget):
                     self.tr("{name} (Project Snapshot)").format(name=self._runtime_profile.name),
                     self._runtime_profile.id,
                 )
-            default_profile_id = self._profile_manager.get_default_profile_id()
             for profile in self._profile_manager.list_profiles():
-                label = (
-                    self.tr("{name} (Default)").format(name=profile.name)
-                    if profile.id == default_profile_id
-                    else profile.name
-                )
-                self.printer_profile_combo.addItem(label, profile.id)
+                self.printer_profile_combo.addItem(profile.name, profile.id)
 
             target_profile_id = (
                 selected_profile_id
@@ -1282,6 +1327,50 @@ class ParamPanel(QWidget):
         self._update_script_summaries()
         self._update_color_change_summary()
 
+    def _apply_shell_defaults_for_profile_nozzle_change(
+        self,
+        previous_nozzle_diameter: float,
+        new_nozzle_diameter: float,
+    ) -> None:
+        if (
+            not hasattr(self, "layer_height_spin")
+            or not hasattr(self, "width_line_spin")
+            or math.isclose(
+                previous_nozzle_diameter,
+                new_nozzle_diameter,
+                abs_tol=1e-9,
+            )
+        ):
+            return
+
+        target_layer_height = round(
+            new_nozzle_diameter / 2.0,
+            self.layer_height_spin.decimals(),
+        )
+        target_layer_height = min(
+            max(target_layer_height, self.layer_height_spin.minimum()),
+            self.layer_height_spin.maximum(),
+        )
+        target_width_line = round(
+            new_nozzle_diameter,
+            self.width_line_spin.decimals(),
+        )
+        target_width_line = min(
+            max(target_width_line, self.width_line_spin.minimum()),
+            self.width_line_spin.maximum(),
+        )
+
+        self.layer_height_spin.blockSignals(True)
+        self.width_line_spin.blockSignals(True)
+        try:
+            self.layer_height_spin.setValue(target_layer_height)
+            self.width_line_spin.setValue(target_width_line)
+        finally:
+            self.layer_height_spin.blockSignals(False)
+            self.width_line_spin.blockSignals(False)
+
+        self._sync_layer_based_controls()
+
     def _profile_from_form(
         self,
         *,
@@ -1322,6 +1411,12 @@ class ParamPanel(QWidget):
     def _on_profile_selected(self):
         if self._updating_profile_ui:
             return
+        previous_profile = self._current_printer_profile()
+        previous_nozzle_diameter = (
+            previous_profile.nozzle_diameter
+            if previous_profile is not None
+            else self._params.machine.nozzle_diameter
+        )
         self._active_profile_id = self.printer_profile_combo.currentData() or ""
         profile = self._current_printer_profile()
         if profile is None:
@@ -1330,6 +1425,10 @@ class ParamPanel(QWidget):
         if settings and not self._selected_profile_is_runtime():
             settings.set_active_printer_profile_id(self._active_profile_id)
         self._apply_profile_to_form(profile)
+        self._apply_shell_defaults_for_profile_nozzle_change(
+            previous_nozzle_diameter,
+            profile.nozzle_diameter,
+        )
         self._update_profile_action_buttons()
         self._on_param_changed()
 
@@ -1469,17 +1568,9 @@ class ParamPanel(QWidget):
 
     def _update_script_summaries(self):
         if hasattr(self, "start_gcode_summary"):
-            self.start_gcode_summary.setText(
-                self.tr("Start G-code: {summary}").format(
-                    summary=self._summarize_script(self._params.gcode.start_gcode)
-                )
-            )
+            self.start_gcode_summary.setPlainText(self._params.gcode.start_gcode)
         if hasattr(self, "end_gcode_summary"):
-            self.end_gcode_summary.setText(
-                self.tr("End G-code: {summary}").format(
-                    summary=self._summarize_script(self._params.gcode.end_gcode)
-                )
-            )
+            self.end_gcode_summary.setPlainText(self._params.gcode.end_gcode)
 
     def get_active_printer_profile(self) -> PrinterProfile:
         current_profile = self._current_printer_profile()

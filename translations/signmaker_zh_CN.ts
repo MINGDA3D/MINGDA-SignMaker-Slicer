@@ -964,368 +964,383 @@
 <context>
     <name>ParamPanel</name>
     <message>
-        <location filename="../src/ui/param_panel.py" line="76"/>
+        <location filename="../src/ui/param_panel.py" line="77"/>
         <source>Parameters</source>
         <translation>参数设置</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="171"/>
+        <location filename="../src/ui/param_panel.py" line="181"/>
         <source>2D Vector Settings</source>
         <translation>2D矢量设置</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="173"/>
+        <location filename="../src/ui/param_panel.py" line="183"/>
         <source>Contour shaping, shell geometry, wraps, slots, and DXF output.</source>
         <translation>轮廓整形、字壳几何、包边、灯槽与 DXF 导出。</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="180"/>
+        <location filename="../src/ui/param_panel.py" line="172"/>
         <source>Machine Settings</source>
         <translation>机器设置</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="182"/>
+        <location filename="../src/ui/param_panel.py" line="174"/>
         <source>Printer profile, bed size, nozzle, and material-related hardware values.</source>
         <translation>打印机档案、热床尺寸、喷嘴及材料相关硬件参数。</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="189"/>
+        <location filename="../src/ui/param_panel.py" line="190"/>
         <source>Print Settings</source>
         <translation>打印设置</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="191"/>
+        <location filename="../src/ui/param_panel.py" line="192"/>
         <source>Speed, temperature, color-change points, and start/end print commands.</source>
         <translation>速度、温度、换色点以及打印开始/结束命令。</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="343"/>
+        <location filename="../src/ui/param_panel.py" line="344"/>
         <source>Height is derived from layer count * layer height.</source>
         <translation>高度由层数 * 层高计算得出。</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="411"/>
+        <location filename="../src/ui/param_panel.py" line="412"/>
         <source>Shell Settings</source>
         <translation>字壳工艺</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="423"/>
+        <location filename="../src/ui/param_panel.py" line="424"/>
         <source>Shell Height:</source>
         <translation>字壳高度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="432"/>
+        <location filename="../src/ui/param_panel.py" line="433"/>
         <source>Layer Height:</source>
         <translation>层高:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="441"/>
+        <location filename="../src/ui/param_panel.py" line="442"/>
         <source>Width Line:</source>
         <translation>线宽:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="448"/>
+        <location filename="../src/ui/param_panel.py" line="449"/>
         <source>Wall Count:</source>
         <translation>壁数量:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="454"/>
+        <location filename="../src/ui/param_panel.py" line="455"/>
         <source>Edge Type</source>
         <translation>边缘类型</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="463"/>
+        <location filename="../src/ui/param_panel.py" line="464"/>
         <source>Straight</source>
         <translation>直边</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="464"/>
+        <location filename="../src/ui/param_panel.py" line="465"/>
         <source>Beveled</source>
         <translation>斜边</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="465"/>
+        <location filename="../src/ui/param_panel.py" line="466"/>
         <source>Custom</source>
         <translation>异形边</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="467"/>
+        <location filename="../src/ui/param_panel.py" line="468"/>
         <source>Edge Type:</source>
         <translation>边缘类型:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="479"/>
+        <location filename="../src/ui/param_panel.py" line="480"/>
         <source>Top Small</source>
         <translation>上小下大</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="480"/>
+        <location filename="../src/ui/param_panel.py" line="481"/>
         <source>Top Large</source>
         <translation>上大下小</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="482"/>
+        <location filename="../src/ui/param_panel.py" line="483"/>
         <source>Bevel Direction:</source>
         <translation>斜边方向:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="485"/>
+        <location filename="../src/ui/param_panel.py" line="486"/>
         <source>Original contour is always based on the bottom face (z=0).</source>
         <translation>原始轮廓始终以底面 (z=0) 为基准。</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="497"/>
+        <location filename="../src/ui/param_panel.py" line="498"/>
         <source>Bevel Width:</source>
         <translation>斜边宽度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="508"/>
+        <location filename="../src/ui/param_panel.py" line="509"/>
         <source>Baseplate Thickness:</source>
         <translation>底板厚度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="519"/>
+        <location filename="../src/ui/param_panel.py" line="520"/>
         <source>Panel Thickness:</source>
         <translation>面板厚度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="531"/>
+        <location filename="../src/ui/param_panel.py" line="532"/>
         <source>Preset Templates:</source>
         <translation>预设模板:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="543"/>
+        <location filename="../src/ui/param_panel.py" line="544"/>
         <source>Import DXF...</source>
         <translation>导入DXF...</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="544"/>
+        <location filename="../src/ui/param_panel.py" line="545"/>
         <source>Import custom edge profile from DXF file</source>
         <translation>从DXF文件导入自定义异形边轮廓</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="552"/>
-        <location filename="../src/ui/param_panel.py" line="2566"/>
+        <location filename="../src/ui/param_panel.py" line="553"/>
+        <location filename="../src/ui/param_panel.py" line="2674"/>
         <source>No profile selected</source>
         <translation>未选择轮廓</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="554"/>
+        <location filename="../src/ui/param_panel.py" line="555"/>
         <source>Current Profile:</source>
         <translation>当前轮廓:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="596"/>
+        <location filename="../src/ui/param_panel.py" line="597"/>
         <source>Bottom Face</source>
         <translation>底面封闭</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="601"/>
+        <location filename="../src/ui/param_panel.py" line="602"/>
         <source>Enable Bottom Face</source>
         <translation>启用底面封闭</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="612"/>
+        <location filename="../src/ui/param_panel.py" line="613"/>
         <source>Bottom Thickness:</source>
         <translation>底面厚度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="658"/>
+        <location filename="../src/ui/param_panel.py" line="659"/>
         <source>Light Slot</source>
         <translation>灯槽</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="662"/>
+        <location filename="../src/ui/param_panel.py" line="663"/>
         <source>Enable Light Slot</source>
         <translation>启用灯槽</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="676"/>
+        <location filename="../src/ui/param_panel.py" line="677"/>
         <source>Slot Width:</source>
         <translation>灯槽宽度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="681"/>
+        <location filename="../src/ui/param_panel.py" line="682"/>
         <source>Slot Depth:</source>
         <translation>灯槽深度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="690"/>
+        <location filename="../src/ui/param_panel.py" line="691"/>
         <source>Floor Layers:</source>
         <translation>底部层数:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="699"/>
+        <location filename="../src/ui/param_panel.py" line="700"/>
         <source>Wall Gap:</source>
         <translation>壁边间隙:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="703"/>
+        <location filename="../src/ui/param_panel.py" line="704"/>
         <source>Outer Slot</source>
         <translation>外轮廓灯槽</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="709"/>
+        <location filename="../src/ui/param_panel.py" line="710"/>
         <source>Hole Slot</source>
         <translation>内孔灯槽</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="715"/>
+        <location filename="../src/ui/param_panel.py" line="716"/>
         <source>Auto Skip Small Holes</source>
         <translation>自动跳过小孔</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="733"/>
+        <location filename="../src/ui/param_panel.py" line="734"/>
         <source>Min Hole Span:</source>
         <translation>最小孔跨度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="768"/>
+        <location filename="../src/ui/param_panel.py" line="769"/>
         <source>Top Face</source>
         <translation>顶面封闭</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="773"/>
+        <location filename="../src/ui/param_panel.py" line="774"/>
         <source>Enable Top Face</source>
         <translation>启用顶面封闭</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="790"/>
+        <location filename="../src/ui/param_panel.py" line="791"/>
         <source>Top Thickness:</source>
         <translation>顶面厚度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1507"/>
+        <location filename="../src/ui/param_panel.py" line="1178"/>
+        <source>Machine G-code</source>
+        <translation>机器 G-code</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="1185"/>
+        <source>Machine start G-code</source>
+        <translation>机器起始 G-code</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="1202"/>
+        <source>Machine end G-code</source>
+        <translation>机器结束 G-code</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="1615"/>
         <source>Step/V-Groove</source>
         <translation>台阶/V槽</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1512"/>
+        <location filename="../src/ui/param_panel.py" line="1620"/>
         <source>Enable Panel Step (Top)</source>
         <translation>启用面板台阶（顶部）</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1524"/>
-        <location filename="../src/ui/param_panel.py" line="1562"/>
+        <location filename="../src/ui/param_panel.py" line="1632"/>
+        <location filename="../src/ui/param_panel.py" line="1670"/>
         <source>Step Height:</source>
         <translation>台阶高度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1532"/>
-        <location filename="../src/ui/param_panel.py" line="1570"/>
+        <location filename="../src/ui/param_panel.py" line="1640"/>
+        <location filename="../src/ui/param_panel.py" line="1678"/>
         <source>Step Width:</source>
         <translation>台阶宽度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1534"/>
-        <location filename="../src/ui/param_panel.py" line="1572"/>
+        <location filename="../src/ui/param_panel.py" line="1642"/>
+        <location filename="../src/ui/param_panel.py" line="1680"/>
         <source>V-Groove</source>
         <translation>V型槽</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1554"/>
+        <location filename="../src/ui/param_panel.py" line="1662"/>
         <source>Enable Baseplate Step (Bottom)</source>
         <translation>启用底板台阶（底部）</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1639"/>
+        <location filename="../src/ui/param_panel.py" line="1747"/>
         <source>Anti-Warping Skirt</source>
         <translation>防翘裙边</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1644"/>
+        <location filename="../src/ui/param_panel.py" line="1752"/>
         <source>Enable Anti-Warping Skirt</source>
         <translation>启用防翘裙边</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1657"/>
+        <location filename="../src/ui/param_panel.py" line="1765"/>
         <source>Skirt Width:</source>
         <translation>裙边宽度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1666"/>
+        <location filename="../src/ui/param_panel.py" line="1774"/>
         <source>Skirt Height:</source>
         <translation>裙边高度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1674"/>
+        <location filename="../src/ui/param_panel.py" line="1782"/>
         <source>Trapezoid Interval:</source>
         <translation>梯形间距:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1682"/>
+        <location filename="../src/ui/param_panel.py" line="1790"/>
         <source>Skirt Offset:</source>
         <translation>裙边距离:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1696"/>
+        <location filename="../src/ui/param_panel.py" line="1804"/>
         <source>Skirt Sides:</source>
         <translation>裙边方向:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1717"/>
+        <location filename="../src/ui/param_panel.py" line="1825"/>
         <source>Connected Letters</source>
         <translation>连襟字</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1722"/>
+        <location filename="../src/ui/param_panel.py" line="1830"/>
         <source>Enable Connected Letters</source>
         <translation>启用连襟字</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1731"/>
+        <location filename="../src/ui/param_panel.py" line="1839"/>
         <source>Triangle</source>
         <translation>三角形连襟</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1732"/>
+        <location filename="../src/ui/param_panel.py" line="1840"/>
         <source>Diamond</source>
         <translation>菱形连襟</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1735"/>
+        <location filename="../src/ui/param_panel.py" line="1843"/>
         <source>Connection Type:</source>
         <translation>连襟类型:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1738"/>
+        <location filename="../src/ui/param_panel.py" line="1846"/>
         <source>Auto Detect Connection Points</source>
         <translation>自动检测连接点</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1751"/>
+        <location filename="../src/ui/param_panel.py" line="1859"/>
         <source>Connection Width:</source>
         <translation>连襟宽度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1763"/>
+        <location filename="../src/ui/param_panel.py" line="1871"/>
         <source>Bevel Height:</source>
         <translation>斜边高度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1775"/>
+        <location filename="../src/ui/param_panel.py" line="1883"/>
         <source>Base Height:</source>
         <translation>底座高度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1784"/>
+        <location filename="../src/ui/param_panel.py" line="1892"/>
         <source>Support Offset:</source>
         <translation>支撑偏移:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1820"/>
+        <location filename="../src/ui/param_panel.py" line="1928"/>
         <source>Edge Wrap/Outline</source>
         <translation>包边勾边</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1825"/>
+        <location filename="../src/ui/param_panel.py" line="1933"/>
         <source>Enable Edge Wrap</source>
         <translation>启用包边</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1691"/>
-        <location filename="../src/ui/param_panel.py" line="1834"/>
-        <location filename="../src/ui/param_panel.py" line="1886"/>
+        <location filename="../src/ui/param_panel.py" line="1799"/>
+        <location filename="../src/ui/param_panel.py" line="1942"/>
+        <location filename="../src/ui/param_panel.py" line="1994"/>
         <source>Inner</source>
         <translation>内部</translation>
     </message>
@@ -1335,366 +1350,346 @@
         <translation>项目快照</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="829"/>
+        <location filename="../src/ui/param_panel.py" line="868"/>
         <source>Color Change</source>
         <translation>换色设置</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="833"/>
+        <location filename="../src/ui/param_panel.py" line="872"/>
         <source>Enable Color Change</source>
         <translation>启用换色</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="842"/>
+        <location filename="../src/ui/param_panel.py" line="881"/>
         <source>Initial color comes from Start G-code. Each change point runs the selected T macro.</source>
         <translation>初始颜色由 Start G-code 决定。每个换色点会执行所选的 T 宏命令。</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="851"/>
+        <location filename="../src/ui/param_panel.py" line="889"/>
         <source>Change At Height</source>
         <translation>换色高度</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="852"/>
+        <location filename="../src/ui/param_panel.py" line="890"/>
         <source>Macro Index</source>
         <translation>宏序号</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="853"/>
+        <location filename="../src/ui/param_panel.py" line="891"/>
         <source>Preview</source>
         <translation>预览</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="868"/>
+        <location filename="../src/ui/param_panel.py" line="910"/>
         <source>Add Change Point</source>
         <translation>添加换色点</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="872"/>
+        <location filename="../src/ui/param_panel.py" line="915"/>
         <source>Remove Selected</source>
         <translation>删除所选</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="995"/>
+        <location filename="../src/ui/param_panel.py" line="1037"/>
         <source>Color change disabled.</source>
         <translation>已禁用换色。</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1001"/>
+        <location filename="../src/ui/param_panel.py" line="1043"/>
         <source>Initial color comes from Start G-code. No automatic changes are configured.</source>
         <translation>初始颜色由 Start G-code 决定。当前未配置自动换色。</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1008"/>
+        <location filename="../src/ui/param_panel.py" line="1050"/>
         <source>At {height:.2f}mm -&gt; {command}</source>
         <translation>{height:.2f}mm -&gt; {command}</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1017"/>
+        <location filename="../src/ui/param_panel.py" line="1059"/>
         <source>Printer Profile</source>
         <translation>打印机档案</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1028"/>
+        <location filename="../src/ui/param_panel.py" line="1070"/>
         <source>New</source>
         <translation>新建</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1032"/>
+        <location filename="../src/ui/param_panel.py" line="1075"/>
         <source>Duplicate</source>
         <translation>复制</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1036"/>
+        <location filename="../src/ui/param_panel.py" line="1080"/>
         <source>Rename</source>
         <translation>重命名</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1040"/>
+        <location filename="../src/ui/param_panel.py" line="1085"/>
         <source>Delete</source>
         <translation>删除</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1044"/>
+        <location filename="../src/ui/param_panel.py" line="1090"/>
         <source>Set Default</source>
         <translation>设为默认</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1061"/>
+        <location filename="../src/ui/param_panel.py" line="1108"/>
         <source>Bed Width:</source>
         <translation>热床宽度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1067"/>
+        <location filename="../src/ui/param_panel.py" line="1114"/>
         <source>Bed Depth:</source>
         <translation>热床深度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1073"/>
+        <location filename="../src/ui/param_panel.py" line="1120"/>
         <source>Bed Height:</source>
         <translation>热床高度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1080"/>
+        <location filename="../src/ui/param_panel.py" line="1127"/>
         <source>Nozzle Diameter:</source>
         <translation>喷嘴直径:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1087"/>
+        <location filename="../src/ui/param_panel.py" line="1134"/>
         <source>Filament Diameter:</source>
         <translation>耗材直径:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1094"/>
+        <location filename="../src/ui/param_panel.py" line="1141"/>
         <source>Retract Length:</source>
         <translation>回抽长度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1100"/>
+        <location filename="../src/ui/param_panel.py" line="1147"/>
         <source>Retract Speed:</source>
         <translation>回抽速度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1107"/>
+        <location filename="../src/ui/param_panel.py" line="1154"/>
         <source>Short Z-Hop:</source>
         <translation>短距离 Z 抬升:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1114"/>
+        <location filename="../src/ui/param_panel.py" line="1161"/>
         <source>Long Z-Hop:</source>
         <translation>长距离 Z 抬升:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1120"/>
+        <location filename="../src/ui/param_panel.py" line="1167"/>
         <source>Long Travel Threshold:</source>
         <translation>长距离移动阈值:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1124"/>
+        <location filename="../src/ui/param_panel.py" line="1171"/>
         <source>Color Change Template:</source>
         <translation>换色模板:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1131"/>
-        <source>Klipper Commands</source>
-        <translation>Klipper 命令</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="1140"/>
+        <location filename="../src/ui/param_panel.py" line="1189"/>
         <source>Edit Start G-code</source>
         <translation>编辑起始 G-code</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1142"/>
+        <location filename="../src/ui/param_panel.py" line="1191"/>
         <source>Start G-code</source>
         <translation>起始 G-code</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1152"/>
+        <location filename="../src/ui/param_panel.py" line="1206"/>
         <source>Edit End G-code</source>
         <translation>编辑结束 G-code</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1154"/>
+        <location filename="../src/ui/param_panel.py" line="1208"/>
         <source>End G-code</source>
         <translation>结束 G-code</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1182"/>
+        <location filename="../src/ui/param_panel.py" line="1239"/>
         <source>{name} (Project Snapshot)</source>
         <translation>{name}（项目快照）</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1188"/>
-        <source>{name} (Default)</source>
-        <translation>{name}（默认）</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="1232"/>
+        <location filename="../src/ui/param_panel.py" line="1284"/>
         <source>Using embedded project profile snapshot.</source>
         <translation>正在使用项目内嵌的打印机档案快照。</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1234"/>
+        <location filename="../src/ui/param_panel.py" line="1286"/>
         <source>Profile changes are saved immediately.</source>
         <translation>档案修改会立即保存。</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1344"/>
+        <location filename="../src/ui/param_panel.py" line="1452"/>
         <source>New Printer Profile</source>
         <translation>新建打印机档案</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1345"/>
-        <location filename="../src/ui/param_panel.py" line="1387"/>
+        <location filename="../src/ui/param_panel.py" line="1453"/>
+        <location filename="../src/ui/param_panel.py" line="1499"/>
         <source>Profile Name:</source>
         <translation>档案名称:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1363"/>
+        <location filename="../src/ui/param_panel.py" line="1473"/>
         <source>Duplicate Printer Profile</source>
         <translation>复制打印机档案</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1364"/>
+        <location filename="../src/ui/param_panel.py" line="1474"/>
         <source>New Profile Name:</source>
         <translation>新档案名称:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1365"/>
+        <location filename="../src/ui/param_panel.py" line="1475"/>
         <source>{name} Copy</source>
         <translation>{name} 副本</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1386"/>
+        <location filename="../src/ui/param_panel.py" line="1498"/>
         <source>Rename Printer Profile</source>
         <translation>重命名打印机档案</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1405"/>
+        <location filename="../src/ui/param_panel.py" line="1519"/>
         <source>Delete Printer Profile</source>
         <translation>删除打印机档案</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1406"/>
+        <location filename="../src/ui/param_panel.py" line="1520"/>
         <source>Delete printer profile &apos;{name}&apos;?</source>
         <translation>确定删除打印机档案“{name}”吗？</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1445"/>
+        <location filename="../src/ui/param_panel.py" line="1561"/>
         <source>Empty</source>
         <translation>空</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1448"/>
+        <location filename="../src/ui/param_panel.py" line="1564"/>
         <source>{first} (+{count} more lines)</source>
         <translation>{first}（另有 {count} 行）</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1456"/>
-        <source>Start G-code: {summary}</source>
-        <translation>起始 G-code: {summary}</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="1462"/>
-        <source>End G-code: {summary}</source>
-        <translation>结束 G-code: {summary}</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="1471"/>
-        <location filename="../src/ui/param_panel.py" line="2387"/>
+        <location filename="../src/ui/param_panel.py" line="1579"/>
+        <location filename="../src/ui/param_panel.py" line="2495"/>
         <source>Klipper Profile</source>
         <translation>Klipper 档案</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1686"/>
-        <location filename="../src/ui/param_panel.py" line="1835"/>
-        <location filename="../src/ui/param_panel.py" line="1887"/>
+        <location filename="../src/ui/param_panel.py" line="1794"/>
+        <location filename="../src/ui/param_panel.py" line="1943"/>
+        <location filename="../src/ui/param_panel.py" line="1995"/>
         <source>Outer</source>
         <translation>外部</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1846"/>
+        <location filename="../src/ui/param_panel.py" line="1954"/>
         <source>Wrap Direction:</source>
         <translation>包边方向:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1854"/>
+        <location filename="../src/ui/param_panel.py" line="1962"/>
         <source>Wrap Width:</source>
         <translation>包边宽度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1862"/>
+        <location filename="../src/ui/param_panel.py" line="1970"/>
         <source>Wrap Height:</source>
         <translation>包边高度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1877"/>
+        <location filename="../src/ui/param_panel.py" line="1985"/>
         <source>Enable Outline</source>
         <translation>启用勾边</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1898"/>
+        <location filename="../src/ui/param_panel.py" line="2006"/>
         <source>Outline Direction:</source>
         <translation>勾边方向:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1906"/>
+        <location filename="../src/ui/param_panel.py" line="2014"/>
         <source>Outline Width:</source>
         <translation>勾边宽度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1914"/>
+        <location filename="../src/ui/param_panel.py" line="2022"/>
         <source>Outline Height:</source>
         <translation>勾边高度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1922"/>
+        <location filename="../src/ui/param_panel.py" line="2030"/>
         <source>Outline Offset:</source>
         <translation>勾边偏移:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1938"/>
+        <location filename="../src/ui/param_panel.py" line="2046"/>
         <source>Speed Settings</source>
         <translation>速度设置</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1948"/>
+        <location filename="../src/ui/param_panel.py" line="2056"/>
         <source>Print Speed:</source>
         <translation>打印速度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1956"/>
+        <location filename="../src/ui/param_panel.py" line="2064"/>
         <source>Travel Speed:</source>
         <translation>空走速度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1964"/>
+        <location filename="../src/ui/param_panel.py" line="2072"/>
         <source>First Layer Speed:</source>
         <translation>首层速度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1970"/>
+        <location filename="../src/ui/param_panel.py" line="2078"/>
         <source>Temperature Settings</source>
         <translation>温度设置</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1979"/>
+        <location filename="../src/ui/param_panel.py" line="2087"/>
         <source>First Layer Nozzle Temperature:</source>
         <translation>首层喷嘴温度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1986"/>
+        <location filename="../src/ui/param_panel.py" line="2094"/>
         <source>Other Layers Nozzle Temperature:</source>
         <translation>其他层喷嘴温度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1993"/>
+        <location filename="../src/ui/param_panel.py" line="2101"/>
         <source>First Layer Bed Temperature:</source>
         <translation>首层热床温度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2000"/>
+        <location filename="../src/ui/param_panel.py" line="2108"/>
         <source>Other Layers Bed Temperature:</source>
         <translation>其他层热床温度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2517"/>
+        <location filename="../src/ui/param_panel.py" line="2625"/>
         <source>Import Custom Edge DXF</source>
         <translation>导入异形边DXF</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2519"/>
+        <location filename="../src/ui/param_panel.py" line="2627"/>
         <source>DXF Files (*.dxf);;All Files (*.*)</source>
         <translation>DXF文件 (*.dxf);;所有文件 (*.*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2538"/>
+        <location filename="../src/ui/param_panel.py" line="2646"/>
         <source>Import Success</source>
         <translation>导入成功</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2539"/>
+        <location filename="../src/ui/param_panel.py" line="2647"/>
         <source>Imported custom edge profile: {name}
 Size: {width:.1f} x {height:.1f} mm
 Control points: {points}</source>
@@ -1703,39 +1698,39 @@ Control points: {points}</source>
 控制点: {points} 个</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2550"/>
+        <location filename="../src/ui/param_panel.py" line="2658"/>
         <source>Import Failed</source>
         <translation>导入失败</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2551"/>
+        <location filename="../src/ui/param_panel.py" line="2659"/>
         <source>Failed to import DXF file:
 {error}</source>
         <translation>无法导入DXF文件:
 {error}</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2562"/>
+        <location filename="../src/ui/param_panel.py" line="2670"/>
         <source> ({count} points)</source>
         <translation> ({count}点)</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="564"/>
+        <location filename="../src/ui/param_panel.py" line="565"/>
         <source>DXF Export</source>
         <translation>DXF导出</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="574"/>
+        <location filename="../src/ui/param_panel.py" line="575"/>
         <source>Outer Clearance:</source>
         <translation>外轮廓公差:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="582"/>
+        <location filename="../src/ui/param_panel.py" line="583"/>
         <source>Hole Clearance:</source>
         <translation>内孔公差:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="590"/>
+        <location filename="../src/ui/param_panel.py" line="591"/>
         <source>Laser Kerf:</source>
         <translation>激光切缝:</translation>
     </message>
