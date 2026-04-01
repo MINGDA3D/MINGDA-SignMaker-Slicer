@@ -31,6 +31,7 @@ from src.core.step_generator import StepGenerator
 from src.core.svg_parser import SVGParser
 from src.core.stl import ShellMeshBuilder
 from src.core.stl.step_mesh import StepMeshBuilder
+from src.utils.geometry import normalize_path
 
 
 class TestPoint:
@@ -845,6 +846,16 @@ class TestSliceEngineWithSteps:
         ], is_closed=True)
         return Contour(outer=outer)
 
+    @pytest.fixture
+    def contour_with_hole(self):
+        outer = normalize_path(Path(points=[
+            Point(0, 0), Point(100, 0), Point(100, 100), Point(0, 100)
+        ], is_closed=True, path_type=PathType.OUTER))
+        hole = normalize_path(Path(points=[
+            Point(30, 30), Point(70, 30), Point(70, 70), Point(30, 70)
+        ], is_closed=True, path_type=PathType.INNER))
+        return Contour(outer=outer, holes=[hole])
+
     def test_slice_with_steps(self, engine, simple_contour):
         """测试带台阶的切片"""
         params = SliceParams()
@@ -988,6 +999,46 @@ class TestSliceEngineWithSteps:
                 break
 
         assert baseplate_step_found, "应该在底部找到底板台阶路径"
+
+    def test_hole_wall_offsets_toward_solid_and_overlaps_step(self, engine, contour_with_hole):
+        """回归测试：内孔 WALL 应向实体侧偏移，并与 STEP 保持搭接"""
+        params = SliceParams()
+        params.shell.height = 1.0
+        params.shell.layer_height = 0.3
+        params.shell.wall_thickness = 1.2
+        params.shell.wall_count = 1
+        params.step.enabled = True
+        params.step.steps = [
+            StepConfig(enabled=True, position=0.0, width=3.0, height=0.0, is_v_groove=False),
+        ]
+
+        result = engine.slice([contour_with_hole], params)
+
+        layer = result.layers[0]
+        wall_paths = [path for path in layer.paths if path.role == PathRole.WALL]
+        step_paths = [path for path in layer.paths if path.role == PathRole.STEP]
+
+        assert len(wall_paths) == 2
+        assert len(step_paths) == 2
+
+        hole_wall = min(
+            wall_paths,
+            key=lambda path: (max(p.x for p in path.points) - min(p.x for p in path.points))
+        )
+        hole_step = min(
+            step_paths,
+            key=lambda path: (max(p.x for p in path.points) - min(p.x for p in path.points))
+        )
+
+        hole_wall_min_x = min(point.x for point in hole_wall.points)
+        hole_step_min_x = min(point.x for point in hole_step.points)
+
+        # hole wall centerline must move into the solid, not into the empty hole.
+        assert hole_wall_min_x == pytest.approx(29.4)
+
+        hole_step_outer_edge = hole_step_min_x + hole_step.line_width / 2
+        hole_wall_inner_edge = hole_wall_min_x - hole_wall.line_width / 2
+        assert hole_step_outer_edge >= hole_wall_inner_edge - 1e-6
 
     def test_beveled_edge_with_steps_regression(self, engine, simple_contour):
         """回归测试：斜边字+台阶组合，防止台阶悬空问题"""

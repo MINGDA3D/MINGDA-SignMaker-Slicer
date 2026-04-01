@@ -2856,7 +2856,7 @@ class MainWindow(QMainWindow):
             self.tr("About MINGDA SignMaker"),
             "<h3>MINGDA SignMaker</h3>"
             "<p>" + self.tr("Professional LED Sign Letter 3D Printing Slicer") + "</p>"
-            "<p>" + self.tr("Version: v0.2.0") + "</p>"
+            "<p>" + self.tr("Version: ") + "0.3.0" + "</p>"
             "<p></p>"
             "<p>" + self.tr("Features:") + "</p>"
             "<ul>"

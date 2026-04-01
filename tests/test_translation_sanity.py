@@ -26,6 +26,7 @@ ZH_CN_REQUIRED = {
         "Intersection",
         "Difference",
         "Group",
+        "Version: ",
     },
     "ParamPanel": {
         "2D Vector Settings",
@@ -138,9 +139,20 @@ def _assert_required_translations_finished(ts_name: str, required_contexts: dict
 def test_translation_files_do_not_contain_corruption_markers():
     suspicious = []
     for ts_file in TRANSLATIONS_DIR.glob("signmaker_*.ts"):
-        for text in re.findall(r"<translation(?: [^>]*)?>(.*?)</translation>", ts_file.read_text(encoding="utf-8"), re.S):
-            if "\ufffd" in text or re.search(r"\?{3,}", text):
-                suspicious.append((ts_file.name, text))
+        root = ET.parse(ts_file).getroot()
+        for context in root.findall("context"):
+            ctx_name = context.findtext("name") or ""
+            for message in context.findall("message"):
+                source = message.findtext("source") or ""
+                translation = message.find("translation")
+                if translation is None:
+                    continue
+                text = "".join(translation.itertext())
+                if "\ufffd" in text or re.search(r"\?{3,}", text):
+                    suspicious.append((ts_file.name, ctx_name, source, text))
+                    continue
+                if text.count("?") > source.count("?"):
+                    suspicious.append((ts_file.name, ctx_name, source, text))
     assert not suspicious
 
 
