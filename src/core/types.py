@@ -755,6 +755,24 @@ class SpeedParams:
     fill_speed: float = 60.0          # 填充速度
 
 
+LEGACY_DEFAULT_START_GCODE = "G28"
+LEGACY_DEFAULT_END_GCODE = ""
+DEFAULT_START_GCODE_TEMPLATE = (
+    "START_PRINT EXTRUDER={nozzle_temperature_initial_layer[0]} "
+    "BED=[first_layer_bed_temperature] TOOL=[initial_tool]"
+)
+DEFAULT_END_GCODE_TEMPLATE = "END_PRINT"
+
+
+def normalize_default_gcode_scripts(start_gcode: str, end_gcode: str) -> tuple[str, str]:
+    if (
+        start_gcode == LEGACY_DEFAULT_START_GCODE
+        and end_gcode == LEGACY_DEFAULT_END_GCODE
+    ):
+        return DEFAULT_START_GCODE_TEMPLATE, DEFAULT_END_GCODE_TEMPLATE
+    return start_gcode, end_gcode
+
+
 @dataclass
 class GCodeParams:
     """G-code生成参数"""
@@ -794,8 +812,8 @@ class GCodeParams:
     end_z_position: float = 100.0
 
     # Klipper 脚本
-    start_gcode: str = "G28"
-    end_gcode: str = ""
+    start_gcode: str = DEFAULT_START_GCODE_TEMPLATE
+    end_gcode: str = DEFAULT_END_GCODE_TEMPLATE
     color_change_command_template: str = "T{index}"
 
 
@@ -825,8 +843,8 @@ class PrinterProfile:
     z_hop_short: float = 0.5
     z_hop_long: float = 5.0
     long_travel_threshold: float = 100.0
-    start_gcode: str = "G28"
-    end_gcode: str = ""
+    start_gcode: str = DEFAULT_START_GCODE_TEMPLATE
+    end_gcode: str = DEFAULT_END_GCODE_TEMPLATE
     color_change_command_template: str = "T{index}"
 
 
@@ -1461,8 +1479,12 @@ def deserialize_params(data: dict) -> SliceParams:
         params.gcode.travel_speed = gcode_data.get("travel_speed", 150.0)
         params.gcode.first_layer_speed = gcode_data.get("first_layer_speed", 20.0)
         params.gcode.end_z_position = gcode_data.get("end_z_position", 100.0)
-        params.gcode.start_gcode = gcode_data.get("start_gcode", params.gcode.start_gcode)
-        params.gcode.end_gcode = gcode_data.get("end_gcode", params.gcode.end_gcode)
+        start_gcode = gcode_data.get("start_gcode", params.gcode.start_gcode)
+        end_gcode = gcode_data.get("end_gcode", params.gcode.end_gcode)
+        (
+            params.gcode.start_gcode,
+            params.gcode.end_gcode,
+        ) = normalize_default_gcode_scripts(start_gcode, end_gcode)
         params.gcode.color_change_command_template = gcode_data.get(
             "color_change_command_template",
             params.gcode.color_change_command_template,

@@ -8,6 +8,7 @@ import pytest
 from src.business.printer_profile_manager import (
     DEFAULT_PRINTER_PROFILE_SPECS,
     PrinterProfileManager,
+    deserialize_printer_profile,
 )
 
 
@@ -35,6 +36,13 @@ def test_manager_seeds_only_requested_builtin_profiles(temp_profile_dir):
         (spec["bed_width"], spec["bed_depth"], spec["nozzle_diameter"])
         for spec in DEFAULT_PRINTER_PROFILE_SPECS
     ]
+    assert all(
+        profile.start_gcode
+        == "START_PRINT EXTRUDER={nozzle_temperature_initial_layer[0]} "
+        "BED=[first_layer_bed_temperature] TOOL=[initial_tool]"
+        for profile in profiles
+    )
+    assert all(profile.end_gcode == "END_PRINT" for profile in profiles)
     assert manager.get_default_profile_id() == DEFAULT_PRINTER_PROFILE_SPECS[0]["id"]
 
 
@@ -86,3 +94,58 @@ def test_manager_discards_non_builtin_profiles_and_keeps_only_builtin_twelve(tem
     assert [profile["id"] for profile in saved_data["profiles"]] == [
         spec["id"] for spec in DEFAULT_PRINTER_PROFILE_SPECS
     ]
+
+
+def test_manager_upgrades_legacy_builtin_start_and_end_gcode_defaults(temp_profile_dir):
+    config_path = temp_profile_dir / PrinterProfileManager.FILE_NAME
+    config_path.write_text(
+        json.dumps(
+            {
+                "version": PrinterProfileManager.FILE_VERSION,
+                "default_profile_id": DEFAULT_PRINTER_PROFILE_SPECS[0]["id"],
+                "profiles": [
+                    {
+                        "id": DEFAULT_PRINTER_PROFILE_SPECS[0]["id"],
+                        "name": DEFAULT_PRINTER_PROFILE_SPECS[0]["name"],
+                        "bed_width": DEFAULT_PRINTER_PROFILE_SPECS[0]["bed_width"],
+                        "bed_depth": DEFAULT_PRINTER_PROFILE_SPECS[0]["bed_depth"],
+                        "bed_height": 100.0,
+                        "nozzle_diameter": DEFAULT_PRINTER_PROFILE_SPECS[0]["nozzle_diameter"],
+                        "start_gcode": "G28",
+                        "end_gcode": "",
+                    },
+                ],
+            },
+            ensure_ascii=False,
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+
+    manager = PrinterProfileManager(config_dir=str(temp_profile_dir))
+    profile = manager.get_profile(DEFAULT_PRINTER_PROFILE_SPECS[0]["id"])
+
+    assert profile is not None
+    assert (
+        profile.start_gcode
+        == "START_PRINT EXTRUDER={nozzle_temperature_initial_layer[0]} "
+        "BED=[first_layer_bed_temperature] TOOL=[initial_tool]"
+    )
+    assert profile.end_gcode == "END_PRINT"
+
+
+def test_deserialize_printer_profile_upgrades_legacy_default_gcode_scripts():
+    profile = deserialize_printer_profile(
+        {
+            "name": "Legacy Snapshot",
+            "start_gcode": "G28",
+            "end_gcode": "",
+        }
+    )
+
+    assert (
+        profile.start_gcode
+        == "START_PRINT EXTRUDER={nozzle_temperature_initial_layer[0]} "
+        "BED=[first_layer_bed_temperature] TOOL=[initial_tool]"
+    )
+    assert profile.end_gcode == "END_PRINT"

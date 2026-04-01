@@ -11,9 +11,19 @@ from dataclasses import asdict
 from pathlib import Path
 from typing import Dict, List, Optional
 
-from src.core.types import PrinterProfile, SliceParams
+from src.core.types import (
+    PrinterProfile,
+    SliceParams,
+    normalize_default_gcode_scripts,
+)
 
 from .settings_manager import SettingsManager
+
+
+DEFAULT_BUILTIN_START_GCODE = PrinterProfile().start_gcode
+DEFAULT_BUILTIN_END_GCODE = PrinterProfile().end_gcode
+LEGACY_START_GCODE = "G28"
+LEGACY_END_GCODE = ""
 
 
 DEFAULT_PRINTER_PROFILE_SPECS = (
@@ -133,6 +143,10 @@ def deserialize_printer_profile(data: dict) -> PrinterProfile:
             bed_depth=DEFAULT_PRINTER_PROFILE_SPECS[0]["bed_depth"],
             nozzle_diameter=DEFAULT_PRINTER_PROFILE_SPECS[0]["nozzle_diameter"],
         )
+    start_gcode, end_gcode = normalize_default_gcode_scripts(
+        data.get("start_gcode", DEFAULT_BUILTIN_START_GCODE),
+        data.get("end_gcode", DEFAULT_BUILTIN_END_GCODE),
+    )
     return PrinterProfile(
         id=data.get("id", PrinterProfile().id),
         name=data.get("name", DEFAULT_PRINTER_PROFILE_NAME),
@@ -148,8 +162,8 @@ def deserialize_printer_profile(data: dict) -> PrinterProfile:
         z_hop_short=float(data.get("z_hop_short", 0.5)),
         z_hop_long=float(data.get("z_hop_long", 5.0)),
         long_travel_threshold=float(data.get("long_travel_threshold", 100.0)),
-        start_gcode=data.get("start_gcode", "G28"),
-        end_gcode=data.get("end_gcode", ""),
+        start_gcode=start_gcode,
+        end_gcode=end_gcode,
         color_change_command_template=data.get("color_change_command_template", "T{index}"),
     )
 
@@ -244,9 +258,21 @@ class PrinterProfileManager:
 
         for profile in self._build_default_profiles():
             saved_profile = existing_profiles.get(profile.id)
-            self._profiles[profile.id] = saved_profile or profile
             if saved_profile is None:
+                self._profiles[profile.id] = profile
                 changed = True
+                continue
+
+            normalized_profile = clone_printer_profile(saved_profile)
+            if (
+                normalized_profile.start_gcode == LEGACY_START_GCODE
+                and normalized_profile.end_gcode == LEGACY_END_GCODE
+            ):
+                normalized_profile.start_gcode = profile.start_gcode
+                normalized_profile.end_gcode = profile.end_gcode
+                changed = True
+
+            self._profiles[profile.id] = normalized_profile
 
         if set(existing_profiles) != set(self._profiles):
             changed = True

@@ -338,7 +338,9 @@ class TestGCodeWriter:
         lines = writer.generate(simple_result)
 
         assert len(lines) > 0
-        assert any("G28" in line for line in lines)  # Home command
+        assert any(
+            "START_PRINT EXTRUDER=220 BED=60 TOOL=0" in line for line in lines
+        )
         assert any("G1" in line for line in lines)   # Move command
 
     def test_gcode_contains_header(self, writer, simple_result):

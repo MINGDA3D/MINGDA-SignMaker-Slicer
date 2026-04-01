@@ -106,6 +106,28 @@ def test_single_color_gcode_uses_relative_extrusion_without_tool_macros():
     assert macro_lines == []
 
 
+def test_start_and_end_gcode_templates_expand_using_current_print_settings():
+    params = SliceParams()
+    params.gcode.first_layer_nozzle_temp = 235
+    params.gcode.first_layer_bed_temp = 70
+    profile = PrinterProfile(
+        start_gcode=(
+            "START_PRINT EXTRUDER={nozzle_temperature_initial_layer[0]} "
+            "BED=[first_layer_bed_temperature] TOOL=[initial_tool]"
+        ),
+        end_gcode="END_PRINT",
+    )
+
+    lines = GCodeWriter(params.gcode).generate(
+        _build_result([0.0], layer_height=0.3),
+        slice_params=params,
+        printer_profile=profile,
+    )
+
+    assert "START_PRINT EXTRUDER=235 BED=70 TOOL=0" in lines
+    assert "END_PRINT" in lines
+
+
 def test_temperature_settings_use_first_layer_values_then_switch_before_second_layer():
     params = SliceParams()
     params.gcode.first_layer_nozzle_temp = 230

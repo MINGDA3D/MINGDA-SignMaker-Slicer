@@ -234,7 +234,7 @@ class GCodeWriter:
         lines.extend(self._restore_motion_state())
         if self.profile.start_gcode.strip():
             lines.append("; --- Start G-code ---")
-            lines.extend(self._write_script_block(self.profile.start_gcode))
+            lines.extend(self._write_script_block(self.profile.start_gcode, result=result))
             lines.extend(self._restore_motion_state())
 
         return lines
@@ -405,8 +405,47 @@ class GCodeWriter:
         )
         return lines
 
-    def _write_script_block(self, script: str) -> List[str]:
-        return [line.rstrip() for line in script.splitlines() if line.strip()]
+    def _write_script_block(
+        self,
+        script: str,
+        *,
+        result: Optional[SliceResult] = None,
+    ) -> List[str]:
+        rendered_script = self._render_script_template(script, result=result)
+        return [line.rstrip() for line in rendered_script.splitlines() if line.strip()]
+
+    def _render_script_template(
+        self,
+        script: str,
+        *,
+        result: Optional[SliceResult] = None,
+    ) -> str:
+        replacements = {
+            "{nozzle_temperature_initial_layer[0]}": str(self._first_layer_nozzle_temp()),
+            "[first_layer_bed_temperature]": str(self._first_layer_bed_temp()),
+            "{first_layer_bed_temperature}": str(self._first_layer_bed_temp()),
+            "[initial_tool]": str(self._initial_tool(result)),
+            "{initial_tool}": str(self._initial_tool(result)),
+        }
+
+        rendered_script = script
+        for token, value in replacements.items():
+            rendered_script = rendered_script.replace(token, value)
+        return rendered_script
+
+    def _initial_tool(self, result: Optional[SliceResult]) -> int:
+        if result is None or not result.layers:
+            return 0
+
+        first_layer = result.layers[0]
+        if isinstance(first_layer.extruder, ExtruderType):
+            return max(first_layer.extruder.value - 1, 0)
+
+        for path in first_layer.paths:
+            if isinstance(path.extruder, ExtruderType):
+                return max(path.extruder.value - 1, 0)
+
+        return 0
 
     def _restore_motion_state(self) -> List[str]:
         return [

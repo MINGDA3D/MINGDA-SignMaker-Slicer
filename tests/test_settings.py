@@ -351,6 +351,23 @@ class TestSerializeParams:
         assert restored.gcode.first_layer_bed_temp == 62
         assert restored.gcode.other_layer_bed_temp == 62
 
+    def test_deserialize_legacy_default_gcode_scripts_upgrades_to_start_and_end_print(self):
+        restored = deserialize_params(
+            {
+                "gcode": {
+                    "start_gcode": "G28",
+                    "end_gcode": "",
+                }
+            }
+        )
+
+        assert (
+            restored.gcode.start_gcode
+            == "START_PRINT EXTRUDER={nozzle_temperature_initial_layer[0]} "
+            "BED=[first_layer_bed_temperature] TOOL=[initial_tool]"
+        )
+        assert restored.gcode.end_gcode == "END_PRINT"
+
 
 class TestSettingsManagerWithQt:
     """设置管理器测试（需要 QApplication）"""
