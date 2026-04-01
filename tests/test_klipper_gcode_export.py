@@ -194,13 +194,33 @@ def test_temperature_settings_use_first_layer_values_then_switch_before_second_l
     assert "M190 S65 ; Wait for first layer bed temperature" in lines
     assert "M109 S230 ; Wait for first layer nozzle temperature" in lines
 
-    transition_index = lines.index("; --- Temperature transition after first layer ---")
+    transition_index = lines.index("; --- Print settings transition after first layer ---")
     assert lines[transition_index + 1:transition_index + 5] == [
         "M140 S55 ; Set other layers bed temperature",
         "M104 S215 ; Set other layers nozzle temperature",
         "M190 S55 ; Wait for other layers bed temperature",
         "M109 S215 ; Wait for other layers nozzle temperature",
     ]
+
+
+def test_cooling_settings_use_first_layer_fan_then_switch_before_second_layer():
+    params = SliceParams()
+    params.gcode.first_layer_fan_percent = 25
+    params.gcode.other_layer_fan_percent = 60
+    profile = PrinterProfile(start_gcode="G28", end_gcode="M400")
+
+    lines = GCodeWriter(params.gcode).generate(
+        _build_result([0.0, 0.3], layer_height=0.3),
+        slice_params=params,
+        printer_profile=profile,
+    )
+
+    start_gcode_index = lines.index("G28")
+    first_layer_fan_index = lines.index("M106 S64 ; Set first layer fan speed to 25%")
+    transition_index = lines.index("; --- Print settings transition after first layer ---")
+
+    assert first_layer_fan_index > start_gcode_index
+    assert lines[transition_index + 1] == "M106 S153 ; Set other layers fan speed to 60%"
 
 
 def test_manual_color_change_macros_follow_selected_order_and_restore_state():

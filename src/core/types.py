@@ -783,6 +783,8 @@ class GCodeParams:
     other_layer_nozzle_temp: int = 220
     first_layer_bed_temp: int = 60
     other_layer_bed_temp: int = 60
+    first_layer_fan_percent: int = 0
+    other_layer_fan_percent: int = 100
 
     # 回抽
     retract_length: float = 2.0
@@ -1464,6 +1466,18 @@ def deserialize_params(data: dict) -> SliceParams:
             gcode_data.get(
                 "other_layer_bed_temp",
                 gcode_data.get("bed_temp", params.gcode.other_layer_bed_temp),
+            )
+        )
+        params.gcode.first_layer_fan_percent = int(
+            gcode_data.get(
+                "first_layer_fan_percent",
+                params.gcode.first_layer_fan_percent,
+            )
+        )
+        params.gcode.other_layer_fan_percent = int(
+            gcode_data.get(
+                "other_layer_fan_percent",
+                params.gcode.other_layer_fan_percent,
             )
         )
         params.gcode.retract_length = gcode_data.get("retract_length", 2.0)

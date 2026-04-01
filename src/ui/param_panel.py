@@ -118,6 +118,7 @@ class ParamPanel(QWidget):
         self.skirt_group = self._create_skirt_group()
         self.speed_group = self._create_speed_group()
         self.temperature_group = self._create_temperature_group()
+        self.cooling_group = self._create_cooling_group()
         self.color_group = self._create_color_group()
         self.top_face_group = self._create_top_face_group()
         self.bottom_face_group = self._create_bottom_face_group()
@@ -135,6 +136,7 @@ class ParamPanel(QWidget):
             self.skirt_group,
             self.speed_group,
             self.temperature_group,
+            self.cooling_group,
             self.color_group,
             self.top_face_group,
             self.bottom_face_group,
@@ -163,6 +165,7 @@ class ParamPanel(QWidget):
         self._print_groups = [
             self.speed_group,
             self.temperature_group,
+            self.cooling_group,
             self.color_group,
             self.klipper_commands_group,
         ]
@@ -189,7 +192,7 @@ class ParamPanel(QWidget):
                 "key": "print",
                 "title": self.tr("Print Settings"),
                 "description": self.tr(
-                    "Speed, temperature, color-change points, and start/end print commands."
+                    "Speed, temperature, cooling, color-change points, and start/end print commands."
                 ),
                 "accent": COLORS.accent_warning,
                 "groups": self._print_groups,
@@ -2109,6 +2112,28 @@ class ParamPanel(QWidget):
 
         return group
 
+    def _create_cooling_group(self) -> QGroupBox:
+        """Create cooling parameters group."""
+        group = QGroupBox(self.tr("Cooling Settings"))
+        layout = QFormLayout(group)
+        layout.setSpacing(8)
+
+        self.first_layer_fan_percent = self._create_int_spinbox()
+        self.first_layer_fan_percent.setRange(0, 100)
+        self.first_layer_fan_percent.setValue(0)
+        self.first_layer_fan_percent.setSuffix(" %")
+        self.first_layer_fan_percent.valueChanged.connect(self._on_param_changed)
+        layout.addRow(self.tr("First Layer Fan Speed:"), self.first_layer_fan_percent)
+
+        self.other_layer_fan_percent = self._create_int_spinbox()
+        self.other_layer_fan_percent.setRange(0, 100)
+        self.other_layer_fan_percent.setValue(100)
+        self.other_layer_fan_percent.setSuffix(" %")
+        self.other_layer_fan_percent.valueChanged.connect(self._on_param_changed)
+        layout.addRow(self.tr("Other Layers Fan Speed:"), self.other_layer_fan_percent)
+
+        return group
+
     def _on_edge_type_changed(self, index: int):
         """边缘类型变化"""
         edge_type = self.edge_type_combo.currentData()
@@ -2184,6 +2209,8 @@ class ParamPanel(QWidget):
             self.other_layer_nozzle_temp,
             self.first_layer_bed_temp,
             self.other_layer_bed_temp,
+            self.first_layer_fan_percent,
+            self.other_layer_fan_percent,
             self.profile_bed_width,
             self.profile_bed_depth,
             self.profile_bed_height,
@@ -2359,6 +2386,8 @@ class ParamPanel(QWidget):
         self._params.gcode.other_layer_nozzle_temp = self.other_layer_nozzle_temp.value()
         self._params.gcode.first_layer_bed_temp = self.first_layer_bed_temp.value()
         self._params.gcode.other_layer_bed_temp = self.other_layer_bed_temp.value()
+        self._params.gcode.first_layer_fan_percent = self.first_layer_fan_percent.value()
+        self._params.gcode.other_layer_fan_percent = self.other_layer_fan_percent.value()
         apply_printer_profile_to_params(self._params, self._profile_from_form())
 
         # 底面封闭参数
@@ -2421,6 +2450,7 @@ class ParamPanel(QWidget):
             self.print_speed, self.travel_speed, self.first_layer_speed,
             self.first_layer_nozzle_temp, self.other_layer_nozzle_temp,
             self.first_layer_bed_temp, self.other_layer_bed_temp,
+            self.first_layer_fan_percent, self.other_layer_fan_percent,
             self.skirt_enabled, self.skirt_width, self.skirt_height,
             self.skirt_interval, self.skirt_offset,
             self.skirt_outer_enabled, self.skirt_inner_enabled,
@@ -2484,6 +2514,8 @@ class ParamPanel(QWidget):
         self.other_layer_nozzle_temp.setValue(int(params.gcode.other_layer_nozzle_temp))
         self.first_layer_bed_temp.setValue(int(params.gcode.first_layer_bed_temp))
         self.other_layer_bed_temp.setValue(int(params.gcode.other_layer_bed_temp))
+        self.first_layer_fan_percent.setValue(int(params.gcode.first_layer_fan_percent))
+        self.other_layer_fan_percent.setValue(int(params.gcode.other_layer_fan_percent))
 
         current_profile = self._current_printer_profile()
         profile_snapshot = printer_profile_from_params(

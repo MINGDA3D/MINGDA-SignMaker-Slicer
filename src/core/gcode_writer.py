@@ -259,6 +259,8 @@ class GCodeWriter:
             lines.extend(self._write_script_block(self.profile.start_gcode, result=result))
             lines.extend(self._restore_motion_state())
 
+        lines.extend(self._write_first_layer_fan_setup())
+
         return lines
 
     def _write_summary_header_block(
@@ -464,16 +466,19 @@ class GCodeWriter:
         other_layer_nozzle_temp = self._other_layer_nozzle_temp()
         first_layer_bed_temp = self._first_layer_bed_temp()
         other_layer_bed_temp = self._other_layer_bed_temp()
+        first_layer_fan_percent = self._first_layer_fan_percent()
+        other_layer_fan_percent = self._other_layer_fan_percent()
 
         if (
             first_layer_nozzle_temp == other_layer_nozzle_temp
             and first_layer_bed_temp == other_layer_bed_temp
+            and first_layer_fan_percent == other_layer_fan_percent
         ):
             return []
 
         lines = [
             "",
-            "; --- Temperature transition after first layer ---",
+            "; --- Print settings transition after first layer ---",
         ]
 
         if first_layer_bed_temp != other_layer_bed_temp:
@@ -486,6 +491,9 @@ class GCodeWriter:
         if first_layer_nozzle_temp != other_layer_nozzle_temp:
             if other_layer_nozzle_temp > 0:
                 lines.append(f"M109 S{other_layer_nozzle_temp} ; Wait for other layers nozzle temperature")
+
+        if first_layer_fan_percent != other_layer_fan_percent:
+            lines.extend(self._write_fan_command(other_layer_fan_percent, "other layers"))
 
         return lines
 
@@ -601,6 +609,37 @@ class GCodeWriter:
         if self._slice_params is not None:
             return self._slice_params.gcode.other_layer_bed_temp
         return self._legacy_params.other_layer_bed_temp
+
+    def _first_layer_fan_percent(self) -> int:
+        if self._slice_params is not None:
+            return self._clamp_fan_percent(self._slice_params.gcode.first_layer_fan_percent)
+        return self._clamp_fan_percent(self._legacy_params.first_layer_fan_percent)
+
+    def _other_layer_fan_percent(self) -> int:
+        if self._slice_params is not None:
+            return self._clamp_fan_percent(self._slice_params.gcode.other_layer_fan_percent)
+        return self._clamp_fan_percent(self._legacy_params.other_layer_fan_percent)
+
+    def _write_first_layer_fan_setup(self) -> List[str]:
+        return self._write_fan_command(self._first_layer_fan_percent(), "first layer")
+
+    @staticmethod
+    def _clamp_fan_percent(value: int) -> int:
+        return max(0, min(int(value), 100))
+
+    @classmethod
+    def _fan_pwm_from_percent(cls, percent: int) -> int:
+        clamped_percent = cls._clamp_fan_percent(percent)
+        return int(round((clamped_percent / 100.0) * 255))
+
+    def _write_fan_command(self, percent: int, target: str) -> List[str]:
+        clamped_percent = self._clamp_fan_percent(percent)
+        if clamped_percent <= 0:
+            return [f"M107 ; Turn off fan for {target}"]
+        return [
+            f"M106 S{self._fan_pwm_from_percent(clamped_percent)} ; "
+            f"Set {target} fan speed to {clamped_percent}%"
+        ]
 
     def _get_path_speed(self, role: PathRole, base_speed: float) -> float:
         speed_multipliers = {

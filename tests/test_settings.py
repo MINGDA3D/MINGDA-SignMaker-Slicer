@@ -204,6 +204,8 @@ class TestSerializeParams:
         params.gcode.other_layer_nozzle_temp = 225
         params.gcode.first_layer_bed_temp = 65
         params.gcode.other_layer_bed_temp = 55
+        params.gcode.first_layer_fan_percent = 30
+        params.gcode.other_layer_fan_percent = 80
         params.machine.bed_width = 500.0
 
         data = serialize_params(params)
@@ -225,6 +227,8 @@ class TestSerializeParams:
         assert restored.gcode.other_layer_nozzle_temp == 225
         assert restored.gcode.first_layer_bed_temp == 65
         assert restored.gcode.other_layer_bed_temp == 55
+        assert restored.gcode.first_layer_fan_percent == 30
+        assert restored.gcode.other_layer_fan_percent == 80
         assert restored.machine.bed_width == 500.0
 
     def test_deserialize_empty_dict(self):

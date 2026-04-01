@@ -37,6 +37,7 @@ def test_primary_groups_follow_requested_order(qapp):
         "Anti-Warping Skirt",
         "Speed Settings",
         "Temperature Settings",
+        "Cooling Settings",
         "Color Change",
         "Top Face",
         "Bottom Face",
@@ -168,6 +169,7 @@ def test_primary_sections_separate_vector_machine_and_print_settings(qapp):
             [
                 "Speed Settings",
                 "Temperature Settings",
+                "Cooling Settings",
                 "Color Change",
                 "Machine G-code",
             ],
@@ -233,6 +235,29 @@ def test_temperature_settings_roundtrip_through_print_settings(qapp):
     assert params.gcode.other_layer_nozzle_temp == 220
     assert params.gcode.first_layer_bed_temp == 65
     assert params.gcode.other_layer_bed_temp == 55
+
+
+def test_cooling_settings_roundtrip_through_print_settings(qapp):
+    panel = ParamPanel()
+
+    panel.first_layer_fan_percent.setValue(30)
+    panel.other_layer_fan_percent.setValue(75)
+
+    params = panel.get_params()
+
+    assert panel.cooling_group.title() == "Cooling Settings"
+    assert params.gcode.first_layer_fan_percent == 30
+    assert params.gcode.other_layer_fan_percent == 75
+
+
+def test_cooling_settings_default_to_first_layer_off_and_other_layers_full_speed(qapp):
+    panel = ParamPanel()
+    params = panel.get_params()
+
+    assert panel.first_layer_fan_percent.value() == 0
+    assert panel.other_layer_fan_percent.value() == 100
+    assert params.gcode.first_layer_fan_percent == 0
+    assert params.gcode.other_layer_fan_percent == 100
 
 
 def test_width_line_defaults_to_twice_layer_height_and_updates_with_layer_height(qapp):
