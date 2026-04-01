@@ -220,7 +220,7 @@
         <location filename="../src/ui/main_window.py" line="221"/>
         <location filename="../src/ui/main_window.py" line="2125"/>
         <source>Export G-code...</source>
-        <translation type="unfinished"></translation>
+        <translation>Exporter le G-code...</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="243"/>
@@ -291,14 +291,14 @@
         <location filename="../src/ui/main_window.py" line="431"/>
         <location filename="../src/ui/main_window.py" line="2456"/>
         <source>Scale</source>
-        <translation type="unfinished">Échelle</translation>
+        <translation>Mise ? l'?chelle</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="550"/>
         <location filename="../src/ui/main_window.py" line="1182"/>
         <location filename="../src/ui/main_window.py" line="2448"/>
         <source>Arrow keys: 1mm, Shift+Arrow: 10mm</source>
-        <translation type="unfinished"></translation>
+        <translation>Fl?ches : 1 mm, Maj+Fl?che : 10 mm</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="696"/>
@@ -325,29 +325,29 @@
         <location filename="../src/ui/main_window.py" line="1045"/>
         <location filename="../src/ui/main_window.py" line="1659"/>
         <source>Asset</source>
-        <translation type="unfinished">Ressource</translation>
+        <translation>Ressource</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="1177"/>
         <location filename="../src/ui/main_window.py" line="2444"/>
         <source>Position</source>
-        <translation type="unfinished"></translation>
+        <translation>Position</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="1262"/>
         <location filename="../src/ui/main_window.py" line="1275"/>
         <source>Loading 3D preview...</source>
-        <translation type="unfinished"></translation>
+        <translation>Chargement de l'aper?u 3D...</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="1296"/>
         <source>3D preview loading failed</source>
-        <translation type="unfinished"></translation>
+        <translation>?chec du chargement de l'aper?u 3D</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="1300"/>
         <source>Failed to prepare 3D preview:</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossible de pr?parer l'aper?u 3D :</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="1457"/>
@@ -430,28 +430,28 @@
     <message>
         <location filename="../src/ui/main_window.py" line="292"/>
         <source>Process(&amp;P)</source>
-        <translation type="unfinished"></translation>
+        <translation>Traiter(&amp;P)</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="1571"/>
         <source>Supported Files (*.dxf *.svg *.smp);;SignMaker Project (*.smp);;DXF Files (*.dxf);;SVG Files (*.svg);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Fichiers pris en charge (*.dxf *.svg *.smp);;Projet SignMaker (*.smp);;Fichiers DXF (*.dxf);;Fichiers SVG (*.svg);;Tous les fichiers (*)</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="1456"/>
         <location filename="../src/ui/main_window.py" line="1582"/>
         <source>Open Project</source>
-        <translation type="unfinished"></translation>
+        <translation>Ouvrir le projet</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="1987"/>
         <source>Project loaded: {name}, {count} contours</source>
-        <translation type="unfinished"></translation>
+        <translation>Projet charg? : {name}, {count} contours</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="2000"/>
         <source>Failed to load project:</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossible de charger le projet :</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="2083"/>
@@ -461,12 +461,12 @@
     <message>
         <location filename="../src/ui/main_window.py" line="2093"/>
         <source>Save Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>?chec de l'enregistrement</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="2093"/>
         <source>Failed to save project:</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossible d'enregistrer le projet :</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="2128"/>
@@ -569,42 +569,42 @@
     <message>
         <location filename="../src/ui/main_window.py" line="2147"/>
         <source>Export Blocked</source>
-        <translation type="unfinished"></translation>
+        <translation>Export bloqu?</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="2148"/>
         <source>Cannot export G-code:</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossible d'exporter le G-code :</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="2158"/>
         <source>Export G-code</source>
-        <translation type="unfinished"></translation>
+        <translation>Exporter le G-code</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="2160"/>
         <source>G-code Files (*.gcode);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Fichiers G-code (*.gcode);;Tous les fichiers (*)</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="2177"/>
         <source>G-code exported: </source>
-        <translation type="unfinished"></translation>
+        <translation>G-code export? : </translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="2181"/>
         <source>G-code saved to:</source>
-        <translation type="unfinished"></translation>
+        <translation>G-code enregistr? dans :</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="2188"/>
         <source>Failed to export G-code:</source>
-        <translation type="unfinished"></translation>
+        <translation>?chec de l'export du G-code :</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="2193"/>
         <source>Exporting G-code...</source>
-        <translation type="unfinished"></translation>
+        <translation>Export du G-code...</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="2256"/>
@@ -690,12 +690,12 @@
     <message>
         <location filename="../src/ui/main_window.py" line="2837"/>
         <source>Text</source>
-        <translation type="unfinished">Texte</translation>
+        <translation>Texte</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="2843"/>
         <source>Add Contours</source>
-        <translation type="unfinished"></translation>
+        <translation>Ajouter des contours</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="2881"/>
@@ -720,7 +720,7 @@
     <message>
         <location filename="../src/ui/main_window.py" line="2450"/>
         <source>Rotation</source>
-        <translation type="unfinished"></translation>
+        <translation>Rotation</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="2469"/>
@@ -765,24 +765,24 @@
         <location filename="../src/ui/main_window.py" line="2726"/>
         <location filename="../src/ui/main_window.py" line="2734"/>
         <source>Intersection</source>
-        <translation type="unfinished">Intersection</translation>
+        <translation>Intersection</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="2761"/>
         <location filename="../src/ui/main_window.py" line="2769"/>
         <source>Difference</source>
-        <translation type="unfinished">Différence</translation>
+        <translation>Diff?rence</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="2795"/>
         <source>Already grouped</source>
-        <translation type="unfinished"></translation>
+        <translation>D?j? group?</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="858"/>
         <location filename="../src/ui/main_window.py" line="2798"/>
         <source>Group</source>
-        <translation type="unfinished">Grouper</translation>
+        <translation>Grouper</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="2814"/>
@@ -798,12 +798,12 @@
     <message>
         <location filename="../src/ui/main_window.py" line="2848"/>
         <source>Text added</source>
-        <translation type="unfinished"></translation>
+        <translation>Texte ajout?</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="2850"/>
         <source>Error</source>
-        <translation type="unfinished">Erreur</translation>
+        <translation>Erreur</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="2856"/>
@@ -971,32 +971,32 @@
     <message>
         <location filename="../src/ui/param_panel.py" line="181"/>
         <source>2D Vector Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Param?tres vectoriels 2D</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="183"/>
         <source>Contour shaping, shell geometry, wraps, slots, and DXF output.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fa?onnage des contours, g?om?trie de coque, enroulements, fentes et sortie DXF.</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="172"/>
         <source>Machine Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Param?tres machine</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="174"/>
         <source>Printer profile, bed size, nozzle, and material-related hardware values.</source>
-        <translation type="unfinished"></translation>
+        <translation>Profil d'imprimante, dimensions du plateau, buse et valeurs mat?rielles li?es au mat?riau.</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="190"/>
         <source>Print Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Param?tres d'impression</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="192"/>
         <source>Speed, temperature, color-change points, and start/end print commands.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vitesse, temp?rature, points de changement de couleur et commandes de d?but/fin d'impression.</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="344"/>
@@ -1347,239 +1347,239 @@
     <message>
         <location filename="../src/ui/param_panel.py" line="57"/>
         <source>Project Snapshot</source>
-        <translation type="unfinished"></translation>
+        <translation>Instantan? du projet</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="868"/>
         <source>Color Change</source>
-        <translation type="unfinished"></translation>
+        <translation>Changement de couleur</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="872"/>
         <source>Enable Color Change</source>
-        <translation type="unfinished"></translation>
+        <translation>Activer le changement de couleur</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="881"/>
         <source>Initial color comes from Start G-code. Each change point runs the selected T macro.</source>
-        <translation type="unfinished"></translation>
+        <translation>La couleur initiale provient du G-code de d?marrage. Chaque point de changement ex?cute la macro T s?lectionn?e.</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="889"/>
         <source>Change At Height</source>
-        <translation type="unfinished"></translation>
+        <translation>Changer ? la hauteur</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="890"/>
         <source>Macro Index</source>
-        <translation type="unfinished"></translation>
+        <translation>Index de macro</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="891"/>
         <source>Preview</source>
-        <translation type="unfinished">Aperçu</translation>
+        <translation>Aper?u</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="910"/>
         <source>Add Change Point</source>
-        <translation type="unfinished"></translation>
+        <translation>Ajouter un point de changement</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="915"/>
         <source>Remove Selected</source>
-        <translation type="unfinished"></translation>
+        <translation>Supprimer la s?lection</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1037"/>
         <source>Color change disabled.</source>
-        <translation type="unfinished"></translation>
+        <translation>Changement de couleur d?sactiv?.</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1043"/>
         <source>Initial color comes from Start G-code. No automatic changes are configured.</source>
-        <translation type="unfinished"></translation>
+        <translation>La couleur initiale provient du G-code de d?marrage. Aucun changement automatique n'est configur?.</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1050"/>
         <source>At {height:.2f}mm -&gt; {command}</source>
-        <translation type="unfinished"></translation>
+        <translation>? {height:.2f} mm -&gt; {command}</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1059"/>
         <source>Printer Profile</source>
-        <translation type="unfinished"></translation>
+        <translation>Profil d'imprimante</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1070"/>
         <source>New</source>
-        <translation type="unfinished"></translation>
+        <translation>Nouveau</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1075"/>
         <source>Duplicate</source>
-        <translation type="unfinished"></translation>
+        <translation>Dupliquer</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1080"/>
         <source>Rename</source>
-        <translation type="unfinished"></translation>
+        <translation>Renommer</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1085"/>
         <source>Delete</source>
-        <translation type="unfinished">Supprimer</translation>
+        <translation>Supprimer</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1090"/>
         <source>Set Default</source>
-        <translation type="unfinished"></translation>
+        <translation>D?finir par d?faut</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1108"/>
         <source>Bed Width:</source>
-        <translation type="unfinished"></translation>
+        <translation>Largeur du plateau :</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1114"/>
         <source>Bed Depth:</source>
-        <translation type="unfinished"></translation>
+        <translation>Profondeur du plateau :</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1120"/>
         <source>Bed Height:</source>
-        <translation type="unfinished"></translation>
+        <translation>Hauteur du plateau :</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1127"/>
         <source>Nozzle Diameter:</source>
-        <translation type="unfinished"></translation>
+        <translation>Diam?tre de la buse :</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1134"/>
         <source>Filament Diameter:</source>
-        <translation type="unfinished"></translation>
+        <translation>Diam?tre du filament :</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1141"/>
         <source>Retract Length:</source>
-        <translation type="unfinished"></translation>
+        <translation>Longueur de r?traction :</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1147"/>
         <source>Retract Speed:</source>
-        <translation type="unfinished"></translation>
+        <translation>Vitesse de r?traction :</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1154"/>
         <source>Short Z-Hop:</source>
-        <translation type="unfinished"></translation>
+        <translation>Z-hop court :</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1161"/>
         <source>Long Z-Hop:</source>
-        <translation type="unfinished"></translation>
+        <translation>Z-hop long :</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1167"/>
         <source>Long Travel Threshold:</source>
-        <translation type="unfinished"></translation>
+        <translation>Seuil de long d?placement :</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1171"/>
         <source>Color Change Template:</source>
-        <translation type="unfinished"></translation>
+        <translation>Mod?le de changement de couleur :</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1189"/>
         <source>Edit Start G-code</source>
-        <translation type="unfinished"></translation>
+        <translation>Modifier le G-code de d?marrage</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1191"/>
         <source>Start G-code</source>
-        <translation type="unfinished"></translation>
+        <translation>G-code de d?marrage</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1206"/>
         <source>Edit End G-code</source>
-        <translation type="unfinished"></translation>
+        <translation>Modifier le G-code de fin</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1208"/>
         <source>End G-code</source>
-        <translation type="unfinished"></translation>
+        <translation>G-code de fin</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1239"/>
         <source>{name} (Project Snapshot)</source>
-        <translation type="unfinished"></translation>
+        <translation>{name} (Instantan? du projet)</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1284"/>
         <source>Using embedded project profile snapshot.</source>
-        <translation type="unfinished"></translation>
+        <translation>Utilisation de l'instantan? int?gr? du profil du projet.</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1286"/>
         <source>Profile changes are saved immediately.</source>
-        <translation type="unfinished"></translation>
+        <translation>Les modifications du profil sont enregistr?es imm?diatement.</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1452"/>
         <source>New Printer Profile</source>
-        <translation type="unfinished"></translation>
+        <translation>Nouveau profil d'imprimante</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1453"/>
         <location filename="../src/ui/param_panel.py" line="1499"/>
         <source>Profile Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nom du profil :</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1473"/>
         <source>Duplicate Printer Profile</source>
-        <translation type="unfinished"></translation>
+        <translation>Dupliquer le profil d'imprimante</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1474"/>
         <source>New Profile Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nouveau nom du profil :</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1475"/>
         <source>{name} Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>Copie de {name}</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1498"/>
         <source>Rename Printer Profile</source>
-        <translation type="unfinished"></translation>
+        <translation>Renommer le profil d'imprimante</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1519"/>
         <source>Delete Printer Profile</source>
-        <translation type="unfinished"></translation>
+        <translation>Supprimer le profil d'imprimante</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1520"/>
         <source>Delete printer profile &apos;{name}&apos;?</source>
-        <translation type="unfinished"></translation>
+        <translation>Supprimer le profil d'imprimante '{name}' ?</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1561"/>
         <source>Empty</source>
-        <translation type="unfinished"></translation>
+        <translation>Vide</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1564"/>
         <source>{first} (+{count} more lines)</source>
-        <translation type="unfinished"></translation>
+        <translation>{first} (+{count} lignes suppl?mentaires)</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1579"/>
         <location filename="../src/ui/param_panel.py" line="2495"/>
         <source>Klipper Profile</source>
-        <translation type="unfinished"></translation>
+        <translation>Profil Klipper</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1794"/>
@@ -1651,27 +1651,27 @@
     <message>
         <location filename="../src/ui/param_panel.py" line="2078"/>
         <source>Temperature Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Param?tres de temp?rature</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="2087"/>
         <source>First Layer Nozzle Temperature:</source>
-        <translation type="unfinished"></translation>
+        <translation>Temp?rature de buse de la premi?re couche :</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="2094"/>
         <source>Other Layers Nozzle Temperature:</source>
-        <translation type="unfinished"></translation>
+        <translation>Temp?rature de buse des autres couches :</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="2101"/>
         <source>First Layer Bed Temperature:</source>
-        <translation type="unfinished"></translation>
+        <translation>Temp?rature du plateau de la premi?re couche :</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="2108"/>
         <source>Other Layers Bed Temperature:</source>
-        <translation type="unfinished"></translation>
+        <translation>Temp?rature du plateau des autres couches :</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="2625"/>
@@ -1740,7 +1740,7 @@ Points de contrôle : {points}</translation>
     <message>
         <location filename="../src/ui/preview_3d.py" line="1142"/>
         <source>Loading 3D preview...</source>
-        <translation type="unfinished"></translation>
+        <translation>Chargement de l'aper?u 3D...</translation>
     </message>
     <message>
         <location filename="../src/ui/preview_3d.py" line="1208"/>
@@ -1952,7 +1952,7 @@ Points de contrôle : {points}</translation>
     <message>
         <location filename="../src/ui/title_bar.py" line="174"/>
         <source>Export G-code</source>
-        <translation type="unfinished"></translation>
+        <translation>Exporter le G-code</translation>
     </message>
     <message>
         <location filename="../src/ui/title_bar.py" line="328"/>
@@ -1973,7 +1973,7 @@ Points de contrôle : {points}</translation>
     <message>
         <location filename="../src/ui/title_bar.py" line="335"/>
         <source>Export G-code...</source>
-        <translation type="unfinished"></translation>
+        <translation>Exporter le G-code...</translation>
     </message>
     <message>
         <location filename="../src/ui/title_bar.py" line="336"/>

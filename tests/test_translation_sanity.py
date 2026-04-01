@@ -100,31 +100,26 @@ ZH_CN_REQUIRED = {
 }
 
 
-def test_translation_files_do_not_contain_corruption_markers():
-    suspicious = []
-    for ts_file in TRANSLATIONS_DIR.glob("signmaker_*.ts"):
-        for text in re.findall(r"<translation(?: [^>]*)?>(.*?)</translation>", ts_file.read_text(encoding="utf-8"), re.S):
-            if "\ufffd" in text or re.search(r"\?{3,}", text):
-                suspicious.append((ts_file.name, text))
-    assert not suspicious
-
-
-def test_zh_cn_targeted_translations_are_finished():
-    root = ET.parse(TRANSLATIONS_DIR / "signmaker_zh_CN.ts").getroot()
+def _collect_messages(ts_name: str, required_contexts: dict[str, set[str]]) -> dict[tuple[str, str], ET.Element]:
+    root = ET.parse(TRANSLATIONS_DIR / ts_name).getroot()
     messages = {}
     for context in root.findall("context"):
         ctx_name = context.findtext("name")
-        if ctx_name not in ZH_CN_REQUIRED:
+        if ctx_name not in required_contexts:
             continue
         for message in context.findall("message"):
             source = message.findtext("source") or ""
-            if source in ZH_CN_REQUIRED[ctx_name]:
+            if source in required_contexts[ctx_name]:
                 messages[(ctx_name, source)] = message.find("translation")
+    return messages
 
+
+def _assert_required_translations_finished(ts_name: str, required_contexts: dict[str, set[str]]):
+    messages = _collect_messages(ts_name, required_contexts)
     missing = []
     unfinished = []
     empty = []
-    for ctx_name, sources in ZH_CN_REQUIRED.items():
+    for ctx_name, sources in required_contexts.items():
         for source in sources:
             translation = messages.get((ctx_name, source))
             if translation is None:
@@ -138,3 +133,23 @@ def test_zh_cn_targeted_translations_are_finished():
     assert not missing
     assert not unfinished
     assert not empty
+
+
+def test_translation_files_do_not_contain_corruption_markers():
+    suspicious = []
+    for ts_file in TRANSLATIONS_DIR.glob("signmaker_*.ts"):
+        for text in re.findall(r"<translation(?: [^>]*)?>(.*?)</translation>", ts_file.read_text(encoding="utf-8"), re.S):
+            if "\ufffd" in text or re.search(r"\?{3,}", text):
+                suspicious.append((ts_file.name, text))
+    assert not suspicious
+
+
+def test_zh_cn_targeted_translations_are_finished():
+    _assert_required_translations_finished("signmaker_zh_CN.ts", ZH_CN_REQUIRED)
+
+
+def test_secondary_locale_targeted_translations_are_finished():
+    for ts_file in TRANSLATIONS_DIR.glob("signmaker_*.ts"):
+        if ts_file.name == "signmaker_zh_CN.ts":
+            continue
+        _assert_required_translations_finished(ts_file.name, ZH_CN_REQUIRED)

@@ -220,7 +220,7 @@
         <location filename="../src/ui/main_window.py" line="221"/>
         <location filename="../src/ui/main_window.py" line="2125"/>
         <source>Export G-code...</source>
-        <translation type="unfinished"></translation>
+        <translation>G-codeをエクスポート...</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="243"/>
@@ -291,14 +291,14 @@
         <location filename="../src/ui/main_window.py" line="431"/>
         <location filename="../src/ui/main_window.py" line="2456"/>
         <source>Scale</source>
-        <translation type="unfinished">拡大縮小</translation>
+        <translation>拡大縮小</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="550"/>
         <location filename="../src/ui/main_window.py" line="1182"/>
         <location filename="../src/ui/main_window.py" line="2448"/>
         <source>Arrow keys: 1mm, Shift+Arrow: 10mm</source>
-        <translation type="unfinished"></translation>
+        <translation>矢印キー: 1mm、Shift+矢印: 10mm</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="696"/>
@@ -325,29 +325,29 @@
         <location filename="../src/ui/main_window.py" line="1045"/>
         <location filename="../src/ui/main_window.py" line="1659"/>
         <source>Asset</source>
-        <translation type="unfinished">アセット</translation>
+        <translation>アセット</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="1177"/>
         <location filename="../src/ui/main_window.py" line="2444"/>
         <source>Position</source>
-        <translation type="unfinished"></translation>
+        <translation>位置</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="1262"/>
         <location filename="../src/ui/main_window.py" line="1275"/>
         <source>Loading 3D preview...</source>
-        <translation type="unfinished"></translation>
+        <translation>3Dプレビューを読み込み中...</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="1296"/>
         <source>3D preview loading failed</source>
-        <translation type="unfinished"></translation>
+        <translation>3Dプレビューの読み込みに失敗しました</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="1300"/>
         <source>Failed to prepare 3D preview:</source>
-        <translation type="unfinished"></translation>
+        <translation>3Dプレビューの準備に失敗しました:</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="1457"/>
@@ -430,28 +430,28 @@
     <message>
         <location filename="../src/ui/main_window.py" line="292"/>
         <source>Process(&amp;P)</source>
-        <translation type="unfinished"></translation>
+        <translation>処理(&amp;P)</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="1571"/>
         <source>Supported Files (*.dxf *.svg *.smp);;SignMaker Project (*.smp);;DXF Files (*.dxf);;SVG Files (*.svg);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>対応ファイル (*.dxf *.svg *.smp);;SignMaker プロジェクト (*.smp);;DXF ファイル (*.dxf);;SVG ファイル (*.svg);;すべてのファイル (*)</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="1456"/>
         <location filename="../src/ui/main_window.py" line="1582"/>
         <source>Open Project</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクトを開く</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="1987"/>
         <source>Project loaded: {name}, {count} contours</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクトを読み込みました: {name}、{count} 個の輪郭</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="2000"/>
         <source>Failed to load project:</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクトの読み込みに失敗しました:</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="2083"/>
@@ -461,12 +461,12 @@
     <message>
         <location filename="../src/ui/main_window.py" line="2093"/>
         <source>Save Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>保存に失敗</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="2093"/>
         <source>Failed to save project:</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクトの保存に失敗しました:</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="2128"/>
@@ -569,42 +569,42 @@
     <message>
         <location filename="../src/ui/main_window.py" line="2147"/>
         <source>Export Blocked</source>
-        <translation type="unfinished"></translation>
+        <translation>エクスポート不可</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="2148"/>
         <source>Cannot export G-code:</source>
-        <translation type="unfinished"></translation>
+        <translation>G-code をエクスポートできません:</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="2158"/>
         <source>Export G-code</source>
-        <translation type="unfinished"></translation>
+        <translation>G-codeをエクスポート</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="2160"/>
         <source>G-code Files (*.gcode);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>G-code ファイル (*.gcode);;すべてのファイル (*)</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="2177"/>
         <source>G-code exported: </source>
-        <translation type="unfinished"></translation>
+        <translation>G-code をエクスポートしました: </translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="2181"/>
         <source>G-code saved to:</source>
-        <translation type="unfinished"></translation>
+        <translation>G-code の保存先:</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="2188"/>
         <source>Failed to export G-code:</source>
-        <translation type="unfinished"></translation>
+        <translation>G-code のエクスポートに失敗しました:</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="2193"/>
         <source>Exporting G-code...</source>
-        <translation type="unfinished"></translation>
+        <translation>G-code をエクスポート中...</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="2256"/>
@@ -690,12 +690,12 @@
     <message>
         <location filename="../src/ui/main_window.py" line="2837"/>
         <source>Text</source>
-        <translation type="unfinished">テキスト</translation>
+        <translation>テキスト</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="2843"/>
         <source>Add Contours</source>
-        <translation type="unfinished"></translation>
+        <translation>輪郭を追加</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="2881"/>
@@ -720,7 +720,7 @@
     <message>
         <location filename="../src/ui/main_window.py" line="2450"/>
         <source>Rotation</source>
-        <translation type="unfinished"></translation>
+        <translation>回転</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="2469"/>
@@ -765,24 +765,24 @@
         <location filename="../src/ui/main_window.py" line="2726"/>
         <location filename="../src/ui/main_window.py" line="2734"/>
         <source>Intersection</source>
-        <translation type="unfinished">交差</translation>
+        <translation>交差</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="2761"/>
         <location filename="../src/ui/main_window.py" line="2769"/>
         <source>Difference</source>
-        <translation type="unfinished">差分</translation>
+        <translation>差分</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="2795"/>
         <source>Already grouped</source>
-        <translation type="unfinished"></translation>
+        <translation>すでにグループ化されています</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="858"/>
         <location filename="../src/ui/main_window.py" line="2798"/>
         <source>Group</source>
-        <translation type="unfinished">グループ化</translation>
+        <translation>グループ化</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="2814"/>
@@ -798,12 +798,12 @@
     <message>
         <location filename="../src/ui/main_window.py" line="2848"/>
         <source>Text added</source>
-        <translation type="unfinished"></translation>
+        <translation>テキストを追加しました</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="2850"/>
         <source>Error</source>
-        <translation type="unfinished">エラー</translation>
+        <translation>エラー</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="2856"/>
@@ -971,32 +971,32 @@
     <message>
         <location filename="../src/ui/param_panel.py" line="181"/>
         <source>2D Vector Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>2Dベクター設定</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="183"/>
         <source>Contour shaping, shell geometry, wraps, slots, and DXF output.</source>
-        <translation type="unfinished"></translation>
+        <translation>輪郭の成形、シェル形状、ラップ、スロット、DXF 出力を設定します。</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="172"/>
         <source>Machine Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>マシン設定</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="174"/>
         <source>Printer profile, bed size, nozzle, and material-related hardware values.</source>
-        <translation type="unfinished"></translation>
+        <translation>プリンタープロファイル、ベッドサイズ、ノズル、材料関連のハードウェア値を設定します。</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="190"/>
         <source>Print Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>印刷設定</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="192"/>
         <source>Speed, temperature, color-change points, and start/end print commands.</source>
-        <translation type="unfinished"></translation>
+        <translation>速度、温度、色替えポイント、印刷開始/終了コマンドを設定します。</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="344"/>
@@ -1347,239 +1347,239 @@
     <message>
         <location filename="../src/ui/param_panel.py" line="57"/>
         <source>Project Snapshot</source>
-        <translation type="unfinished"></translation>
+        <translation>プロジェクトスナップショット</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="868"/>
         <source>Color Change</source>
-        <translation type="unfinished"></translation>
+        <translation>色替え</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="872"/>
         <source>Enable Color Change</source>
-        <translation type="unfinished"></translation>
+        <translation>色替えを有効にする</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="881"/>
         <source>Initial color comes from Start G-code. Each change point runs the selected T macro.</source>
-        <translation type="unfinished"></translation>
+        <translation>初期色は開始 G-code から取得されます。各色替えポイントでは選択した T マクロが実行されます。</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="889"/>
         <source>Change At Height</source>
-        <translation type="unfinished"></translation>
+        <translation>変更高さ</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="890"/>
         <source>Macro Index</source>
-        <translation type="unfinished"></translation>
+        <translation>マクロ番号</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="891"/>
         <source>Preview</source>
-        <translation type="unfinished">プレビュー</translation>
+        <translation>プレビュー</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="910"/>
         <source>Add Change Point</source>
-        <translation type="unfinished"></translation>
+        <translation>色替えポイントを追加</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="915"/>
         <source>Remove Selected</source>
-        <translation type="unfinished"></translation>
+        <translation>選択項目を削除</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1037"/>
         <source>Color change disabled.</source>
-        <translation type="unfinished"></translation>
+        <translation>色替えは無効です。</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1043"/>
         <source>Initial color comes from Start G-code. No automatic changes are configured.</source>
-        <translation type="unfinished"></translation>
+        <translation>初期色は開始 G-code から取得されます。自動色替えは設定されていません。</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1050"/>
         <source>At {height:.2f}mm -&gt; {command}</source>
-        <translation type="unfinished"></translation>
+        <translation>{height:.2f}mm で変更 -&gt; {command}</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1059"/>
         <source>Printer Profile</source>
-        <translation type="unfinished"></translation>
+        <translation>プリンタープロファイル</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1070"/>
         <source>New</source>
-        <translation type="unfinished"></translation>
+        <translation>新規</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1075"/>
         <source>Duplicate</source>
-        <translation type="unfinished"></translation>
+        <translation>複製</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1080"/>
         <source>Rename</source>
-        <translation type="unfinished"></translation>
+        <translation>名前を変更</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1085"/>
         <source>Delete</source>
-        <translation type="unfinished">削除</translation>
+        <translation>削除</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1090"/>
         <source>Set Default</source>
-        <translation type="unfinished"></translation>
+        <translation>既定に設定</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1108"/>
         <source>Bed Width:</source>
-        <translation type="unfinished"></translation>
+        <translation>ベッド幅:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1114"/>
         <source>Bed Depth:</source>
-        <translation type="unfinished"></translation>
+        <translation>ベッド奥行き:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1120"/>
         <source>Bed Height:</source>
-        <translation type="unfinished"></translation>
+        <translation>ベッド高さ:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1127"/>
         <source>Nozzle Diameter:</source>
-        <translation type="unfinished"></translation>
+        <translation>ノズル径:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1134"/>
         <source>Filament Diameter:</source>
-        <translation type="unfinished"></translation>
+        <translation>フィラメント径:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1141"/>
         <source>Retract Length:</source>
-        <translation type="unfinished"></translation>
+        <translation>リトラクト長:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1147"/>
         <source>Retract Speed:</source>
-        <translation type="unfinished"></translation>
+        <translation>リトラクト速度:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1154"/>
         <source>Short Z-Hop:</source>
-        <translation type="unfinished"></translation>
+        <translation>短距離 Z ホップ:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1161"/>
         <source>Long Z-Hop:</source>
-        <translation type="unfinished"></translation>
+        <translation>長距離 Z ホップ:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1167"/>
         <source>Long Travel Threshold:</source>
-        <translation type="unfinished"></translation>
+        <translation>長距離移動しきい値:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1171"/>
         <source>Color Change Template:</source>
-        <translation type="unfinished"></translation>
+        <translation>色替えテンプレート:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1189"/>
         <source>Edit Start G-code</source>
-        <translation type="unfinished"></translation>
+        <translation>開始 G-code を編集</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1191"/>
         <source>Start G-code</source>
-        <translation type="unfinished"></translation>
+        <translation>開始 G-code</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1206"/>
         <source>Edit End G-code</source>
-        <translation type="unfinished"></translation>
+        <translation>終了 G-code を編集</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1208"/>
         <source>End G-code</source>
-        <translation type="unfinished"></translation>
+        <translation>終了 G-code</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1239"/>
         <source>{name} (Project Snapshot)</source>
-        <translation type="unfinished"></translation>
+        <translation>{name}（プロジェクトスナップショット）</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1284"/>
         <source>Using embedded project profile snapshot.</source>
-        <translation type="unfinished"></translation>
+        <translation>埋め込みのプロジェクトプロファイルスナップショットを使用しています。</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1286"/>
         <source>Profile changes are saved immediately.</source>
-        <translation type="unfinished"></translation>
+        <translation>プロファイルの変更はすぐに保存されます。</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1452"/>
         <source>New Printer Profile</source>
-        <translation type="unfinished"></translation>
+        <translation>新しいプリンタープロファイル</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1453"/>
         <location filename="../src/ui/param_panel.py" line="1499"/>
         <source>Profile Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>プロファイル名:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1473"/>
         <source>Duplicate Printer Profile</source>
-        <translation type="unfinished"></translation>
+        <translation>プリンタープロファイルを複製</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1474"/>
         <source>New Profile Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>新しいプロファイル名:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1475"/>
         <source>{name} Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>{name} のコピー</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1498"/>
         <source>Rename Printer Profile</source>
-        <translation type="unfinished"></translation>
+        <translation>プリンタープロファイル名を変更</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1519"/>
         <source>Delete Printer Profile</source>
-        <translation type="unfinished"></translation>
+        <translation>プリンタープロファイルを削除</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1520"/>
         <source>Delete printer profile &apos;{name}&apos;?</source>
-        <translation type="unfinished"></translation>
+        <translation>プリンタープロファイル '{name}' を削除しますか？</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1561"/>
         <source>Empty</source>
-        <translation type="unfinished"></translation>
+        <translation>空</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1564"/>
         <source>{first} (+{count} more lines)</source>
-        <translation type="unfinished"></translation>
+        <translation>{first}（他 {count} 行）</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1579"/>
         <location filename="../src/ui/param_panel.py" line="2495"/>
         <source>Klipper Profile</source>
-        <translation type="unfinished"></translation>
+        <translation>Klipper プロファイル</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1794"/>
@@ -1651,27 +1651,27 @@
     <message>
         <location filename="../src/ui/param_panel.py" line="2078"/>
         <source>Temperature Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>温度設定</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="2087"/>
         <source>First Layer Nozzle Temperature:</source>
-        <translation type="unfinished"></translation>
+        <translation>1層目ノズル温度:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="2094"/>
         <source>Other Layers Nozzle Temperature:</source>
-        <translation type="unfinished"></translation>
+        <translation>その他の層のノズル温度:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="2101"/>
         <source>First Layer Bed Temperature:</source>
-        <translation type="unfinished"></translation>
+        <translation>1層目ベッド温度:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="2108"/>
         <source>Other Layers Bed Temperature:</source>
-        <translation type="unfinished"></translation>
+        <translation>その他の層のベッド温度:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="2625"/>
@@ -1740,7 +1740,7 @@ Control points: {points}</source>
     <message>
         <location filename="../src/ui/preview_3d.py" line="1142"/>
         <source>Loading 3D preview...</source>
-        <translation type="unfinished"></translation>
+        <translation>3Dプレビューを読み込み中...</translation>
     </message>
     <message>
         <location filename="../src/ui/preview_3d.py" line="1208"/>
@@ -1952,7 +1952,7 @@ Control points: {points}</source>
     <message>
         <location filename="../src/ui/title_bar.py" line="174"/>
         <source>Export G-code</source>
-        <translation type="unfinished"></translation>
+        <translation>G-codeをエクスポート</translation>
     </message>
     <message>
         <location filename="../src/ui/title_bar.py" line="328"/>
@@ -1973,7 +1973,7 @@ Control points: {points}</source>
     <message>
         <location filename="../src/ui/title_bar.py" line="335"/>
         <source>Export G-code...</source>
-        <translation type="unfinished"></translation>
+        <translation>G-codeをエクスポート...</translation>
     </message>
     <message>
         <location filename="../src/ui/title_bar.py" line="336"/>
