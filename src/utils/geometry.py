@@ -77,11 +77,16 @@ def is_clockwise(path: Path) -> bool:
 
 def reverse_path(path: Path) -> Path:
     """反转路径方向"""
+    point_count = len(path.points)
+    start_point_index = 0
+    if 0 < path.start_point_index <= point_count:
+        start_point_index = point_count - path.start_point_index + 1
     return Path(
         points=list(reversed(path.points)),
         path_type=path.path_type,
         color=path.color,
-        is_closed=path.is_closed
+        is_closed=path.is_closed,
+        start_point_index=start_point_index,
     )
 
 
@@ -125,7 +130,8 @@ def rotate_path(path: Path, center: Point, angle_deg: float) -> Path:
         points=rotated_points,
         path_type=path.path_type,
         color=path.color,
-        is_closed=path.is_closed
+        is_closed=path.is_closed,
+        start_point_index=path.start_point_index,
     )
 
 
@@ -142,7 +148,8 @@ def scale_path(path: Path, center: Point, scale: float) -> Path:
         points=scaled_points,
         path_type=path.path_type,
         color=path.color,
-        is_closed=path.is_closed
+        is_closed=path.is_closed,
+        start_point_index=path.start_point_index,
     )
 
 
@@ -153,7 +160,8 @@ def translate_path(path: Path, dx: float, dy: float) -> Path:
         points=translated_points,
         path_type=path.path_type,
         color=path.color,
-        is_closed=path.is_closed
+        is_closed=path.is_closed,
+        start_point_index=path.start_point_index,
     )
 
 
@@ -164,7 +172,8 @@ def mirror_path_x(path: Path, center_x: float = 0) -> Path:
         points=mirrored_points,
         path_type=path.path_type,
         color=path.color,
-        is_closed=path.is_closed
+        is_closed=path.is_closed,
+        start_point_index=path.start_point_index,
     )
 
 
@@ -175,7 +184,8 @@ def mirror_path_y(path: Path, center_y: float = 0) -> Path:
         points=mirrored_points,
         path_type=path.path_type,
         color=path.color,
-        is_closed=path.is_closed
+        is_closed=path.is_closed,
+        start_point_index=path.start_point_index,
     )
 
 

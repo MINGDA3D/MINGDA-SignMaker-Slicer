@@ -61,8 +61,10 @@ from src.core.asset_utils import (
 )
 from src.core.types import (
     get_contour_user_start_point_index,
+    get_path_user_start_point_index,
     resolve_shell_wall_thickness,
     set_contour_user_start_point_index,
+    set_path_user_start_point_index,
 )
 from src.core.stl_writer import STLWriter
 from src.business.undo_manager import (
@@ -2501,15 +2503,29 @@ class MainWindow(QMainWindow):
         self.canvas.setFocus()
         self._update_status(self.tr("Ready"))
 
-    def _on_start_point_change_requested(self, contour_index: int, point_index: int):
-        """Persist one contour start-point change as an undoable snapshot command."""
+    def _on_start_point_change_requested(
+        self,
+        contour_index: int,
+        hole_index: int,
+        point_index: int,
+    ):
+        """Persist one path start-point change as an undoable snapshot command."""
         if not (0 <= contour_index < len(self.contours)):
             return
 
         contour = self.contours[contour_index]
-        if not (0 <= point_index < len(contour.outer.points)):
+        target_path = contour.outer if hole_index < 0 else None
+        if hole_index >= 0:
+            if hole_index >= len(contour.holes):
+                return
+            target_path = contour.holes[hole_index]
+        if target_path is None or not (0 <= point_index < len(target_path.points)):
             return
-        if get_contour_user_start_point_index(contour) == point_index:
+        if (
+            get_contour_user_start_point_index(contour) == point_index
+            if hole_index < 0
+            else get_path_user_start_point_index(target_path) == point_index
+        ):
             self.canvas.update()
             return
 
@@ -2518,7 +2534,10 @@ class MainWindow(QMainWindow):
             [contour_index],
             self.tr("Set Start Point"),
         )
-        set_contour_user_start_point_index(contour, point_index)
+        if hole_index < 0:
+            set_contour_user_start_point_index(contour, point_index)
+        else:
+            set_path_user_start_point_index(target_path, point_index)
         cmd.capture_after()
         self.undo_manager.push(cmd, execute=False)
         self._invalidate_processed_result()

@@ -17,7 +17,8 @@ from src.business.project_format import (
 from src.core.types import (
     Contour, Path, Point, PathType, SliceParams,
     Project, ProjectMeta, EdgeType, BevelDirection,
-    get_contour_user_start_point_index, set_contour_user_start_point_index
+    get_contour_user_start_point_index, get_path_user_start_point_index,
+    set_contour_user_start_point_index, set_path_user_start_point_index,
 )
 
 
@@ -70,6 +71,7 @@ class TestProjectFormat:
             print_order=5
         )
         set_contour_user_start_point_index(contour, 2)
+        set_path_user_start_point_index(contour.holes[0], 1)
 
         project = Project(
             meta=ProjectMeta(name="带轮廓项目"),
@@ -93,6 +95,9 @@ class TestProjectFormat:
             assert len(c.outer.points) == 4
             assert c.outer.color == (255, 128, 0)
             assert len(c.holes) == 1
+            hole_start_index = get_path_user_start_point_index(c.holes[0])
+            assert hole_start_index is not None
+            assert c.holes[0].points[hole_start_index] == Point(80, 20)
 
     def test_save_and_load_with_params(self):
         """测试保存和加载包含参数的项目"""

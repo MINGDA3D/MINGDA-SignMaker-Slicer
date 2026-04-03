@@ -31,8 +31,8 @@ from src.core.types import (
     Path,
     Contour,
     PathType,
-    get_contour_start_point_candidate_indices,
-    resolve_contour_start_point_index,
+    get_path_start_point_candidate_indices,
+    resolve_path_start_point_index,
     normalize_contour_start_point_index,
 )
 from src.utils.geometry import normalize_path
@@ -48,7 +48,7 @@ class Canvas2D(QWidget):
     mouse_moved = Signal(float, float)  # 鼠标移动信号
     zoom_changed = Signal(float)  # 缩放变化信号
     contours_modified = Signal()  # 轮廓被修改信号
-    start_point_change_requested = Signal(int, int)  # 请求修改轮廓起始点
+    start_point_change_requested = Signal(int, int, int)  # 请求修改轮廓/内孔起始点
     start_point_mode_exit_requested = Signal()  # 请求退出起始点模式
 
     # 撤销/重做相关信号
@@ -94,7 +94,7 @@ class Canvas2D(QWidget):
         self.current_tool = "select"  # 当前工具: select, move, rotate, scale, start_point
         self.is_panning = False  # 是否正在平移视图
         self.is_transforming = False  # 是否正在变换轮廓
-        self._hovered_start_point_candidate: Optional[Tuple[int, int]] = None
+        self._hovered_start_point_candidate: Optional[Tuple[int, int, int]] = None
         self.pan_start = QPointF()  # 平移起始点
         self._pan_button_down = False  # 右键/中键已按下，等待判定是否为平移
         self._pan_origin = QPointF()   # 按下时的位置（用于阈值判定）
@@ -709,6 +709,7 @@ class Canvas2D(QWidget):
             path_type=path_type,
             color=path.color,
             is_closed=path.is_closed,
+            start_point_index=path.start_point_index,
         )
 
     def _get_group_id(self, contour: Contour) -> str:
@@ -751,34 +752,38 @@ class Canvas2D(QWidget):
 
         return uuid.uuid4().hex
 
-    def get_start_point_candidate_indices(self, contour: Contour) -> List[int]:
-        """Return candidate outer-point indices for manual start-point selection."""
-        return get_contour_start_point_candidate_indices(
-            contour,
+    def get_start_point_candidate_indices(self, path: Path | Contour) -> List[int]:
+        """Return candidate point indices for manual start-point selection."""
+        target_path = path.outer if isinstance(path, Contour) else path
+        return get_path_start_point_candidate_indices(
+            target_path,
             corner_threshold_degrees=self.START_POINT_CORNER_THRESHOLD_DEGREES,
             fallback_limit=self.START_POINT_FALLBACK_LIMIT,
         )
 
     def _iter_start_point_candidates(self):
-        """Yield (contour_index, point_index, point) for all visible start-point candidates."""
+        """Yield (contour_index, hole_index, point_index, point) for all candidates."""
         for contour_index, contour in enumerate(self.contours):
-            for point_index in self.get_start_point_candidate_indices(contour):
-                yield contour_index, point_index, contour.outer.points[point_index]
+            for point_index in self.get_start_point_candidate_indices(contour.outer):
+                yield contour_index, -1, point_index, contour.outer.points[point_index]
+            for hole_index, hole in enumerate(contour.holes):
+                for point_index in self.get_start_point_candidate_indices(hole):
+                    yield contour_index, hole_index, point_index, hole.points[point_index]
 
     def _find_start_point_candidate_at(
         self,
         pos: QPointF,
-    ) -> Optional[Tuple[int, int]]:
+    ) -> Optional[Tuple[int, int, int]]:
         """Find the closest selectable start-point candidate under a screen-space hit radius."""
-        best_match: Optional[Tuple[int, int]] = None
+        best_match: Optional[Tuple[int, int, int]] = None
         best_distance = float("inf")
         hit_radius = 10.0
 
-        for contour_index, point_index, point in self._iter_start_point_candidates():
+        for contour_index, hole_index, point_index, point in self._iter_start_point_candidates():
             screen_point = self._world_to_screen(QPointF(point.x, point.y))
             distance = math.hypot(screen_point.x() - pos.x(), screen_point.y() - pos.y())
             if distance <= hit_radius and distance < best_distance:
-                best_match = (contour_index, point_index)
+                best_match = (contour_index, hole_index, point_index)
                 best_distance = distance
 
         return best_match
@@ -787,9 +792,9 @@ class Canvas2D(QWidget):
         """Handle a click in start-point mode. Returns True when the click was consumed."""
         match = self._find_start_point_candidate_at(pos)
         if match is not None:
-            contour_index, point_index = match
+            contour_index, hole_index, point_index = match
             self.set_selected_indices([contour_index], active_index=contour_index)
-            self.start_point_change_requested.emit(contour_index, point_index)
+            self.start_point_change_requested.emit(contour_index, hole_index, point_index)
             return True
 
         return self._handle_start_point_selection(pos)
@@ -1056,9 +1061,15 @@ class Canvas2D(QWidget):
 
             # 绘制起始点
             if contour.outer.points:
-                start_idx = resolve_contour_start_point_index(contour)
+                start_idx = resolve_path_start_point_index(contour.outer)
                 if 0 <= start_idx < len(contour.outer.points):
                     self._draw_start_point(painter, contour.outer.points[start_idx])
+            for hole in contour.holes:
+                if not hole.points:
+                    continue
+                start_idx = resolve_path_start_point_index(hole)
+                if 0 <= start_idx < len(hole.points):
+                    self._draw_start_point(painter, hole.points[start_idx])
 
     def is_contour_out_of_bounds(self, contour: Contour) -> bool:
         """åˆ¤æ–­è½®å»“æ˜¯å¦è¶…å‡ºå¹³å°è¾¹ç•Œã€‚"""
@@ -1136,11 +1147,16 @@ class Canvas2D(QWidget):
         )
 
     def _draw_start_point_candidates(self, painter: QPainter):
-        """Draw selectable start-point candidates for each contour."""
-        for contour_index, point_index, point in self._iter_start_point_candidates():
+        """Draw selectable start-point candidates for each path."""
+        for contour_index, hole_index, point_index, point in self._iter_start_point_candidates():
             contour = self.contours[contour_index]
-            is_current = point_index == resolve_contour_start_point_index(contour)
-            is_hovered = self._hovered_start_point_candidate == (contour_index, point_index)
+            path = contour.outer if hole_index < 0 else contour.holes[hole_index]
+            is_current = point_index == resolve_path_start_point_index(path)
+            is_hovered = self._hovered_start_point_candidate == (
+                contour_index,
+                hole_index,
+                point_index,
+            )
             radius = (7 if is_hovered else 5) / self.view_scale
             pen = QPen(
                 self.start_point_hover_color if is_hovered else self.start_point_candidate_color

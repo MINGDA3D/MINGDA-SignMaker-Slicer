@@ -23,6 +23,7 @@ from .types import (
     SliceParams, ShellParams, StepConfig, BottomFaceParams,
     SliceResult, EdgeProfile, InterpolationType, resolve_shell_line_width,
     resolve_shell_wall_thickness, resolve_contour_start_point_index,
+    resolve_path_start_point_index,
 )
 from .path_offset import PathOffset, JoinType
 from .step_generator import StepGenerator
@@ -682,12 +683,18 @@ class SliceEngine:
 
             # 偏移内孔（方向与外轮廓相反，向实体侧偏移）
             for hole in contour.holes:
+                effective_hole_start_point_index = resolve_path_start_point_index(hole)
                 hole_offset_results = self.path_offset.offset(
                     hole, -offset_distance, JoinType.MITER
                 )
                 for offset_hole in hole_offset_results:
+                    hole_points = self._rotate_path_to_user_start(
+                        offset_hole.points,
+                        hole.points,
+                        effective_hole_start_point_index,
+                    )
                     layer_path = LayerPath(
-                        points=offset_hole.points,
+                        points=hole_points,
                         role=PathRole.WALL,
                         extruder=info.extruder,
                         line_width=line_width,

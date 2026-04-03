@@ -12,6 +12,8 @@ from src.core.types import (
     Path,
     Point,
     get_contour_user_start_point_index,
+    get_path_user_start_point_index,
+    resolve_path_start_point_index,
     resolve_contour_start_point_index,
 )
 from src.ui.canvas_2d import Canvas2D
@@ -67,6 +69,42 @@ def _circle_contour(
     )
 
 
+def _rect_contour_with_hole(
+    x1: float,
+    y1: float,
+    x2: float,
+    y2: float,
+    hole_x1: float,
+    hole_y1: float,
+    hole_x2: float,
+    hole_y2: float,
+    name: str = "",
+) -> Contour:
+    return Contour(
+        outer=Path(
+            points=[
+                Point(x1, y1),
+                Point(x2, y1),
+                Point(x2, y2),
+                Point(x1, y2),
+            ],
+            is_closed=True,
+        ),
+        holes=[
+            Path(
+                points=[
+                    Point(hole_x1, hole_y1),
+                    Point(hole_x2, hole_y1),
+                    Point(hole_x2, hole_y2),
+                    Point(hole_x1, hole_y2),
+                ],
+                is_closed=True,
+            )
+        ],
+        name=name,
+    )
+
+
 def test_canvas_click_selects_entire_group(qapp):
     canvas = Canvas2D()
     contours = [
@@ -99,6 +137,16 @@ def test_canvas_start_point_candidates_fall_back_to_sampled_points_for_smooth_co
     assert 0 < len(candidates) <= canvas.START_POINT_FALLBACK_LIMIT
     assert resolve_contour_start_point_index(contour) in candidates
     assert len(candidates) == len(set(candidates))
+
+
+def test_canvas_hole_start_point_candidates_and_default(qapp):
+    canvas = Canvas2D()
+    contour = _rect_contour_with_hole(0, 0, 30, 30, 10, 10, 20, 20, "HoleRect")
+
+    candidates = canvas.get_start_point_candidate_indices(contour.holes[0])
+
+    assert candidates == [0, 1, 2, 3]
+    assert resolve_path_start_point_index(contour.holes[0]) in candidates
 
 
 def test_auto_start_point_prefers_sharpest_corner():
@@ -361,6 +409,34 @@ def test_start_point_click_can_explicitly_store_first_vertex(qapp):
     assert handled is True
     assert window.contours[0].start_point_index == 1
     assert get_contour_user_start_point_index(window.contours[0]) == 0
+
+    window.deleteLater()
+
+
+def test_start_point_click_updates_hole_only_and_is_undoable(qapp):
+    window = MainWindow()
+    window.contours = [_rect_contour_with_hole(0, 0, 40, 40, 10, 10, 20, 20, "A")]
+    window.canvas.set_contours(window.contours, center_on_platform=False)
+    window.project_panel.update_contours(window.contours)
+    window.slice_result = object()
+
+    window._on_start_point_tool()
+    target_point = window.contours[0].holes[0].points[2]
+    handled = window.canvas._handle_start_point_click(
+        window.canvas._world_to_screen(QPointF(target_point.x, target_point.y))
+    )
+
+    assert handled is True
+    assert window.contours[0].start_point_index == 0
+    assert window.contours[0].holes[0].start_point_index == 3
+    assert get_path_user_start_point_index(window.contours[0].holes[0]) == 2
+    assert window.canvas.selected_indices == [0]
+    assert window.undo_manager.can_undo is True
+    assert window.slice_result is None
+
+    window._on_undo()
+
+    assert window.contours[0].holes[0].start_point_index == 0
 
     window.deleteLater()
 

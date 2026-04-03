@@ -24,6 +24,7 @@ from src.core.types import (
     SliceParams,
     SliceResult,
     set_contour_user_start_point_index,
+    set_path_user_start_point_index,
 )
 
 
@@ -83,6 +84,42 @@ def _rect_contour(x1: float, y1: float, x2: float, y2: float, **kwargs) -> Conto
             ],
             is_closed=True,
         ),
+        **kwargs,
+    )
+
+
+def _rect_contour_with_hole(
+    x1: float,
+    y1: float,
+    x2: float,
+    y2: float,
+    hole_x1: float,
+    hole_y1: float,
+    hole_x2: float,
+    hole_y2: float,
+    **kwargs,
+) -> Contour:
+    return Contour(
+        outer=Path(
+            points=[
+                Point(x1, y1),
+                Point(x2, y1),
+                Point(x2, y2),
+                Point(x1, y2),
+            ],
+            is_closed=True,
+        ),
+        holes=[
+            Path(
+                points=[
+                    Point(hole_x1, hole_y1),
+                    Point(hole_x2, hole_y1),
+                    Point(hole_x2, hole_y2),
+                    Point(hole_x1, hole_y2),
+                ],
+                is_closed=True,
+            )
+        ],
         **kwargs,
     )
 
@@ -431,3 +468,26 @@ def test_slice_engine_respects_explicit_first_vertex_start_point():
     assert wall_paths
     assert wall_paths[0].points[0].x < 110.0
     assert wall_paths[0].points[0].y < 110.0
+
+
+def test_slice_engine_respects_hole_start_point():
+    params = SliceParams()
+    params.shell.height = 0.3
+    params.shell.layer_height = 0.3
+    params.shell.wall_count = 1
+
+    contour = _rect_contour_with_hole(0.0, 0.0, 60.0, 60.0, 20.0, 20.0, 40.0, 40.0, name="hole")
+    set_path_user_start_point_index(contour.holes[0], 2)
+
+    result = SliceEngine().slice([contour], params)
+    wall_paths = [path for path in result.layers[0].paths if path.role == PathRole.WALL]
+
+    assert len(wall_paths) >= 2
+    hole_wall = next(
+        path
+        for path in wall_paths
+        if min(point.x for point in path.points) > 15.0
+        and max(point.x for point in path.points) < 45.0
+    )
+    assert hole_wall.points[0].x > 35.0
+    assert hole_wall.points[0].y > 35.0

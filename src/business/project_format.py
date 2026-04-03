@@ -35,7 +35,7 @@ from src.business.printer_profile_manager import (
 
 
 # 格式常量
-FORMAT_VERSION = "4.3"
+FORMAT_VERSION = "4.4"
 MANIFEST_FILE = "manifest.json"
 PARAMS_FILE = "params.json"
 CONTOURS_FILE = "contours.bin"
@@ -44,7 +44,7 @@ PRINTER_PROFILE_FILE = "printer_profile.json"
 
 # 二进制格式
 BINARY_MAGIC = b'SMPC'  # SignMaker Project Contours
-BINARY_VERSION = 3
+BINARY_VERSION = 4
 
 
 class ProjectFormatError(Exception):
@@ -191,7 +191,7 @@ def _serialize_contours(contours: List[Contour]) -> bytes:
             cf_count(4) + connected_frames[]
             pattern_count(4) + patterns[]
         Each Path:
-            type(1) + color(3) + closed(1) + point_count(4)
+            type(1) + color(3) + closed(1) + start_idx(4) + point_count(4)
             points[] as (x: f64, y: f64)
     """
     buf = io.BytesIO()
@@ -254,6 +254,9 @@ def _write_path(buf: BinaryIO, path: ContourPath) -> None:
     # Is closed
     buf.write(struct.pack('<?', path.is_closed))
 
+    # Start point token
+    buf.write(struct.pack('<i', path.start_point_index))
+
     # Points (float64 for precision)
     buf.write(struct.pack('<I', len(path.points)))
     for p in path.points:
@@ -294,19 +297,19 @@ def _deserialize_contours(data: bytes) -> List[Contour]:
             group_id = buf.read(group_len).decode('utf-8')
 
         # Outer
-        outer = _read_path(buf)
+        outer = _read_path(buf, version)
 
         # Holes
         hole_count = struct.unpack('<I', buf.read(4))[0]
-        holes = [_read_path(buf) for _ in range(hole_count)]
+        holes = [_read_path(buf, version) for _ in range(hole_count)]
 
         # Connected frames
         cf_count = struct.unpack('<I', buf.read(4))[0]
-        connected_frames = [_read_path(buf) for _ in range(cf_count)]
+        connected_frames = [_read_path(buf, version) for _ in range(cf_count)]
 
         # Patterns
         pattern_count = struct.unpack('<I', buf.read(4))[0]
-        patterns = [_read_path(buf) for _ in range(pattern_count)]
+        patterns = [_read_path(buf, version) for _ in range(pattern_count)]
 
         contours.append(Contour(
             outer=outer, holes=holes,
@@ -340,7 +343,7 @@ def _migrate_legacy_contour_start_points(
         migrate_legacy_contour_start_point_index(contour)
 
 
-def _read_path(buf: BinaryIO) -> ContourPath:
+def _read_path(buf: BinaryIO, version: int) -> ContourPath:
     """读取路径"""
     type_map = {
         0: PathType.OUTER, 1: PathType.INNER, 2: PathType.CONNECTED,
@@ -350,6 +353,7 @@ def _read_path(buf: BinaryIO) -> ContourPath:
     path_type = type_map.get(struct.unpack('<B', buf.read(1))[0], PathType.OUTER)
     color = struct.unpack('<BBB', buf.read(3))
     is_closed = struct.unpack('<?', buf.read(1))[0]
+    start_point_index = struct.unpack('<i', buf.read(4))[0] if version >= 4 else 0
 
     point_count = struct.unpack('<I', buf.read(4))[0]
     points = []
@@ -357,7 +361,13 @@ def _read_path(buf: BinaryIO) -> ContourPath:
         x, y = struct.unpack('<dd', buf.read(16))
         points.append(Point(x, y))
 
-    return ContourPath(points=points, path_type=path_type, color=color, is_closed=is_closed)
+    return ContourPath(
+        points=points,
+        path_type=path_type,
+        color=color,
+        is_closed=is_closed,
+        start_point_index=start_point_index,
+    )
 
 
 def get_project_info(file_path: str) -> dict:

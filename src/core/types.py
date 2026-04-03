@@ -150,6 +150,7 @@ class Path:
     path_type: PathType = PathType.OUTER
     color: Tuple[int, int, int] = (0, 0, 0)  # RGB颜色
     is_closed: bool = True
+    start_point_index: int = 0  # 0=自动；1..N 表示显式顶点 0..N-1
 
     @property
     def bounds(self) -> Tuple[float, float, float, float]:
@@ -406,7 +407,7 @@ class EdgeProfile:
         )
 
 
-@dataclass
+@dataclass(init=False)
 class Contour:
     """轮廓（包含外边界和内孔）"""
     outer: Path = field(default_factory=Path)
@@ -417,32 +418,63 @@ class Contour:
     asset_id: str = ""
     asset_name: str = ""
     group_id: str = ""
-    # 用户设置的属性
-    start_point_index: int = 0  # 0=自动；1..N 表示显式顶点 0..N-1
     print_order: int = 0        # 打印顺序
 
+    def __init__(
+        self,
+        outer: Optional[Path] = None,
+        holes: Optional[List[Path]] = None,
+        connected_frames: Optional[List[Path]] = None,
+        patterns: Optional[List[Path]] = None,
+        name: str = "",
+        asset_id: str = "",
+        asset_name: str = "",
+        group_id: str = "",
+        start_point_index: int = 0,
+        print_order: int = 0,
+    ):
+        self.outer = outer if outer is not None else Path()
+        self.holes = list(holes) if holes is not None else []
+        self.connected_frames = list(connected_frames) if connected_frames is not None else []
+        self.patterns = list(patterns) if patterns is not None else []
+        self.name = name
+        self.asset_id = asset_id
+        self.asset_name = asset_name
+        self.group_id = group_id
+        self.print_order = print_order
+        if start_point_index != 0 or self.outer.start_point_index == 0:
+            self.outer.start_point_index = start_point_index
 
-def normalize_contour_start_point_index(contour: Contour) -> int:
+    @property
+    def start_point_index(self) -> int:
+        return self.outer.start_point_index
+
+    @start_point_index.setter
+    def start_point_index(self, value: int) -> None:
+        self.outer.start_point_index = value
+
+
+def normalize_path_start_point_index(path: Path) -> int:
     """Clamp the stored start-point token to auto or a valid explicit vertex."""
-    point_count = len(contour.outer.points)
+    point_count = len(path.points)
     if point_count <= 0:
-        contour.start_point_index = 0
+        path.start_point_index = 0
         return 0
 
-    if contour.start_point_index < 0 or contour.start_point_index > point_count:
-        contour.start_point_index = 0
+    if path.start_point_index < 0 or path.start_point_index > point_count:
+        path.start_point_index = 0
 
-    return contour.start_point_index
+    return path.start_point_index
 
 
-def get_contour_user_start_point_index(contour: Contour) -> Optional[int]:
+def get_path_user_start_point_index(path: Path) -> Optional[int]:
     """Return the explicit user-selected vertex index, or None when auto."""
-    point_count = len(contour.outer.points)
+    point_count = len(path.points)
     if point_count <= 0:
-        contour.start_point_index = 0
+        path.start_point_index = 0
         return None
 
-    stored_index = normalize_contour_start_point_index(contour)
+    stored_index = normalize_path_start_point_index(path)
     if stored_index <= 0:
         return None
 
@@ -450,39 +482,55 @@ def get_contour_user_start_point_index(contour: Contour) -> Optional[int]:
     if 0 <= vertex_index < point_count:
         return vertex_index
 
-    contour.start_point_index = 0
+    path.start_point_index = 0
     return None
 
 
-def set_contour_user_start_point_index(contour: Contour, point_index: int) -> int:
+def set_path_user_start_point_index(path: Path, point_index: int) -> int:
     """Store an explicit user-selected start-point vertex index."""
-    point_count = len(contour.outer.points)
+    point_count = len(path.points)
     if point_count <= 0:
-        contour.start_point_index = 0
+        path.start_point_index = 0
         return 0
     if point_index < 0 or point_index >= point_count:
         raise ValueError(
-            f"Start point index {point_index} out of range for contour with {point_count} points."
+            f"Start point index {point_index} out of range for path with {point_count} points."
         )
 
-    contour.start_point_index = point_index + 1
+    path.start_point_index = point_index + 1
+    return path.start_point_index
+
+
+def normalize_contour_start_point_index(contour: Contour) -> int:
+    """Normalize the outer and hole start-point tokens for a contour."""
+    normalize_path_start_point_index(contour.outer)
+    for hole in contour.holes:
+        normalize_path_start_point_index(hole)
     return contour.start_point_index
 
 
-def get_contour_start_point_candidate_indices(
-    contour: Contour,
+def get_contour_user_start_point_index(contour: Contour) -> Optional[int]:
+    return get_path_user_start_point_index(contour.outer)
+
+
+def set_contour_user_start_point_index(contour: Contour, point_index: int) -> int:
+    return set_path_user_start_point_index(contour.outer, point_index)
+
+
+def get_path_start_point_candidate_indices(
+    path: Path,
     *,
     corner_threshold_degrees: float = 150.0,
     fallback_limit: int = 8,
 ) -> List[int]:
     """Return stable candidate vertex indices for start-point selection/auto-pick."""
-    normalize_contour_start_point_index(contour)
-    points = contour.outer.points
+    normalize_path_start_point_index(path)
+    points = path.points
     point_count = len(points)
     if point_count <= 0:
         return []
     if point_count <= 2:
-        explicit_index = get_contour_user_start_point_index(contour)
+        explicit_index = get_path_user_start_point_index(path)
         return [explicit_index if explicit_index is not None else 0]
 
     candidate_indices = _get_sharp_start_point_candidate_indices(
@@ -492,29 +540,42 @@ def get_contour_start_point_candidate_indices(
     candidate_indices = _dedupe_start_point_candidates(points, candidate_indices)
     if not candidate_indices:
         candidate_indices = _get_fallback_start_point_indices(
-            contour,
+            path,
             fallback_limit=fallback_limit,
         )
 
-    explicit_index = get_contour_user_start_point_index(contour)
+    explicit_index = get_path_user_start_point_index(path)
     if explicit_index is not None and explicit_index not in candidate_indices:
         candidate_indices.append(explicit_index)
 
     return sorted(set(candidate_indices))
 
 
-def resolve_contour_start_point_index(contour: Contour) -> int:
+def get_contour_start_point_candidate_indices(
+    contour: Contour,
+    *,
+    corner_threshold_degrees: float = 150.0,
+    fallback_limit: int = 8,
+) -> List[int]:
+    return get_path_start_point_candidate_indices(
+        contour.outer,
+        corner_threshold_degrees=corner_threshold_degrees,
+        fallback_limit=fallback_limit,
+    )
+
+
+def resolve_path_start_point_index(path: Path) -> int:
     """Resolve the effective start-point vertex index for display and slicing."""
-    point_count = len(contour.outer.points)
+    point_count = len(path.points)
     if point_count <= 0:
-        contour.start_point_index = 0
+        path.start_point_index = 0
         return 0
 
-    explicit_index = get_contour_user_start_point_index(contour)
+    explicit_index = get_path_user_start_point_index(path)
     if explicit_index is not None:
         return explicit_index
 
-    points = contour.outer.points
+    points = path.points
     sharp_candidate_indices = _get_sharp_start_point_candidate_indices(points, 150.0)
     sharp_candidate_indices = _dedupe_start_point_candidates(points, sharp_candidate_indices)
     if sharp_candidate_indices:
@@ -528,7 +589,7 @@ def resolve_contour_start_point_index(contour: Contour) -> int:
             ),
         )
 
-    candidate_indices = get_contour_start_point_candidate_indices(contour)
+    candidate_indices = get_path_start_point_candidate_indices(path)
     if not candidate_indices:
         return 0
 
@@ -536,6 +597,10 @@ def resolve_contour_start_point_index(contour: Contour) -> int:
         candidate_indices,
         key=lambda index: (points[index].x, points[index].y, -index),
     )
+
+
+def resolve_contour_start_point_index(contour: Contour) -> int:
+    return resolve_path_start_point_index(contour.outer)
 
 
 def migrate_legacy_contour_start_point_index(contour: Contour) -> int:
@@ -641,9 +706,9 @@ def _get_start_point_proximity_threshold(points: List[Point]) -> float:
     return max(0.5, min(2.0, diagonal * 0.01))
 
 
-def _get_fallback_start_point_indices(contour: Contour, *, fallback_limit: int) -> List[int]:
+def _get_fallback_start_point_indices(path: Path, *, fallback_limit: int) -> List[int]:
     """Sample a limited set of vertices when no sharp corners are available."""
-    point_count = len(contour.outer.points)
+    point_count = len(path.points)
     if point_count <= 0:
         return []
 

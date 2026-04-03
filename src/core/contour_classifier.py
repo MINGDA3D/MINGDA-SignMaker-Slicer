@@ -204,6 +204,7 @@ def _prepare_loop(path: Path) -> Optional[Path]:
         path_type=path.path_type,
         color=path.color,
         is_closed=True,
+        start_point_index=path.start_point_index,
     )
     if abs(prepared.area) < _AREA_EPSILON:
         return None
@@ -236,6 +237,7 @@ def _clone_path(path: Path, path_type: Optional[PathType] = None) -> Path:
         path_type=path.path_type if path_type is None else path_type,
         color=path.color,
         is_closed=path.is_closed,
+        start_point_index=path.start_point_index,
     )
 
 

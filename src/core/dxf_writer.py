@@ -351,7 +351,8 @@ class DXFWriter:
             points=[Point(p.x, p.y) for p in path.points],
             path_type=path.path_type,
             color=path.color,
-            is_closed=path.is_closed
+            is_closed=path.is_closed,
+            start_point_index=path.start_point_index,
         )
 
     def _copy_contour(self, contour: Contour) -> Contour:
