@@ -789,22 +789,22 @@
         <translation>处理被阻止：轮廓超出画布尺寸</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2478"/>
+        <location filename="../src/ui/main_window.py" line="2484"/>
         <source>No contours available for start point selection</source>
         <translation>当前没有可供设置起始点的轮廓</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2488"/>
-        <source>Click a corner on each contour, Esc to exit</source>
-        <translation>点击每个轮廓的尖角设置起始点，按 Esc 退出</translation>
+        <location filename="../src/ui/main_window.py" line="2494"/>
+        <source>Click a corner on any contour or hole, Esc to exit</source>
+        <translation>点击任意轮廓或内孔的尖角设置起始点，按 Esc 退出</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2515"/>
+        <location filename="../src/ui/main_window.py" line="2535"/>
         <source>Set Start Point</source>
         <translation>设置起始点</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2523"/>
+        <location filename="../src/ui/main_window.py" line="2546"/>
         <source>Start point updated</source>
         <translation>起始点已更新</translation>
     </message>

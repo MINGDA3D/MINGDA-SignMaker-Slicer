@@ -2491,7 +2491,7 @@ class MainWindow(QMainWindow):
         self.canvas.set_tool("start_point")
         self.transform_panel.setVisible(False)
         self.canvas.setFocus()
-        self._update_status(self.tr("Click a corner on each contour, Esc to exit"))
+        self._update_status(self.tr("Click a corner on any contour or hole, Esc to exit"))
 
     def _exit_start_point_mode(self):
         """Return the canvas to normal selection mode from start-point editing."""

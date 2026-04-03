@@ -96,6 +96,11 @@
         <source>Text</source>
         <translation>Текст</translation>
     </message>
+    <message>
+        <location filename="../src/ui/canvas_toolbar.py" line="122"/>
+        <source>Start Point</source>
+        <translation>Початкова точка</translation>
+    </message>
 </context>
 <context>
     <name>HomePage</name>
@@ -959,6 +964,26 @@
         <location filename="../src/ui/main_window.py" line="2329"/>
         <source>Laser kerf: </source>
         <translation>Ширина лазерного різу: </translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2484"/>
+        <source>No contours available for start point selection</source>
+        <translation>Немає контурів для вибору початкової точки</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2494"/>
+        <source>Click a corner on any contour or hole, Esc to exit</source>
+        <translation>Клацніть кут будь-якого контуру або отвору, натисніть Esc для виходу</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2535"/>
+        <source>Set Start Point</source>
+        <translation>Задати початкову точку</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2546"/>
+        <source>Start point updated</source>
+        <translation>Початкову точку оновлено</translation>
     </message>
 </context>
 <context>

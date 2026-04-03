@@ -96,6 +96,11 @@
         <source>Text</source>
         <translation>텍스트</translation>
     </message>
+    <message>
+        <location filename="../src/ui/canvas_toolbar.py" line="122"/>
+        <source>Start Point</source>
+        <translation>시작점</translation>
+    </message>
 </context>
 <context>
     <name>HomePage</name>
@@ -959,6 +964,26 @@
         <location filename="../src/ui/main_window.py" line="2329"/>
         <source>Laser kerf: </source>
         <translation>레이저 커프: </translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2484"/>
+        <source>No contours available for start point selection</source>
+        <translation>시작점을 선택할 윤곽선이 없습니다</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2494"/>
+        <source>Click a corner on any contour or hole, Esc to exit</source>
+        <translation>임의의 윤곽선 또는 구멍의 모서리를 클릭하고 Esc를 눌러 종료하세요</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2535"/>
+        <source>Set Start Point</source>
+        <translation>시작점 설정</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2546"/>
+        <source>Start point updated</source>
+        <translation>시작점이 업데이트되었습니다</translation>
     </message>
 </context>
 <context>

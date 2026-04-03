@@ -96,6 +96,11 @@
         <source>Text</source>
         <translation>نص</translation>
     </message>
+    <message>
+        <location filename="../src/ui/canvas_toolbar.py" line="122"/>
+        <source>Start Point</source>
+        <translation>نقطة البداية</translation>
+    </message>
 </context>
 <context>
     <name>HomePage</name>
@@ -959,6 +964,26 @@
         <location filename="../src/ui/main_window.py" line="2329"/>
         <source>Laser kerf: </source>
         <translation>عرض شق الليزر: </translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2484"/>
+        <source>No contours available for start point selection</source>
+        <translation>لا توجد حدود متاحة لاختيار نقطة البداية</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2494"/>
+        <source>Click a corner on any contour or hole, Esc to exit</source>
+        <translation>انقر على زاوية في أي حد أو فتحة، ثم اضغط Esc للخروج</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2535"/>
+        <source>Set Start Point</source>
+        <translation>تعيين نقطة البداية</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2546"/>
+        <source>Start point updated</source>
+        <translation>تم تحديث نقطة البداية</translation>
     </message>
 </context>
 <context>

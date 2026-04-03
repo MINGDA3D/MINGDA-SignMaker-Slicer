@@ -96,6 +96,11 @@
         <source>Text</source>
         <translation>テキスト</translation>
     </message>
+    <message>
+        <location filename="../src/ui/canvas_toolbar.py" line="122"/>
+        <source>Start Point</source>
+        <translation>開始点</translation>
+    </message>
 </context>
 <context>
     <name>HomePage</name>
@@ -959,6 +964,26 @@
         <location filename="../src/ui/main_window.py" line="2329"/>
         <source>Laser kerf: </source>
         <translation>レーザーカーフ: </translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2484"/>
+        <source>No contours available for start point selection</source>
+        <translation>開始点を選択できる輪郭がありません</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2494"/>
+        <source>Click a corner on any contour or hole, Esc to exit</source>
+        <translation>任意の輪郭または穴の角をクリックし、Escで終了します</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2535"/>
+        <source>Set Start Point</source>
+        <translation>開始点を設定</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2546"/>
+        <source>Start point updated</source>
+        <translation>開始点を更新しました</translation>
     </message>
 </context>
 <context>

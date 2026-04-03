@@ -96,6 +96,11 @@
         <source>Text</source>
         <translation>Texto</translation>
     </message>
+    <message>
+        <location filename="../src/ui/canvas_toolbar.py" line="122"/>
+        <source>Start Point</source>
+        <translation>Punto de inicio</translation>
+    </message>
 </context>
 <context>
     <name>HomePage</name>
@@ -959,6 +964,26 @@
         <location filename="../src/ui/main_window.py" line="2329"/>
         <source>Laser kerf: </source>
         <translation>Ancho de corte laser: </translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2484"/>
+        <source>No contours available for start point selection</source>
+        <translation>No hay contornos disponibles para seleccionar el punto de inicio</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2494"/>
+        <source>Click a corner on any contour or hole, Esc to exit</source>
+        <translation>Haga clic en una esquina de cualquier contorno o agujero y pulse Esc para salir</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2535"/>
+        <source>Set Start Point</source>
+        <translation>Definir punto de inicio</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2546"/>
+        <source>Start point updated</source>
+        <translation>Punto de inicio actualizado</translation>
     </message>
 </context>
 <context>
