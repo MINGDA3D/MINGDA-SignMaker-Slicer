@@ -73,6 +73,7 @@ from src.core.types import (
     set_path_user_start_point_index,
 )
 from src.core.stl_writer import STLWriter
+from src.core.prime_tower import PrimeTowerValidationError
 from src.business.undo_manager import (
     UndoManager, Command, MoveCommand, RotateCommand, ScaleCommand,
     MirrorCommand, DeleteCommand, AddContoursCommand, ReplaceContoursCommand,
@@ -781,6 +782,7 @@ class MainWindow(QMainWindow):
         """参数变化后，当前处理结果失效。"""
         self.slice_params = self.param_panel.get_params()
         self._sync_canvas_platform_size(self.slice_params)
+        self._refresh_prime_tower_overlay(self.slice_params)
         self._invalidate_processed_result()
         if self.contours or self.current_file or self.project_manager.current_project is not None:
             self._params_modified = True
@@ -856,6 +858,35 @@ class MainWindow(QMainWindow):
             or abs(self.canvas.platform_height - height) > 1e-6
         ):
             self.canvas.set_platform_size(width, height, self.canvas.grid_spacing)
+
+    def _get_prime_tower_validation_error(
+        self,
+        params: Optional[SliceParams] = None,
+    ) -> Optional[str]:
+        """Return the current prime tower validation error, if any."""
+        target_params = params or self.slice_params
+        try:
+            self.slice_engine.validate_prime_tower_placement(self.contours, target_params)
+        except PrimeTowerValidationError as exc:
+            return str(exc)
+        return None
+
+    def _refresh_prime_tower_overlay(
+        self,
+        params: Optional[SliceParams] = None,
+    ) -> None:
+        """Refresh the non-interactive prime tower footprint overlay in the 2D canvas."""
+        if not hasattr(self, "canvas"):
+            return
+
+        target_params = params or self.slice_params
+        if not target_params.prime_tower.enabled:
+            self.canvas.set_prime_tower_overlay(None)
+            return
+
+        bounds = self.slice_engine.prime_tower_generator.get_bounds(target_params)
+        error = self._get_prime_tower_validation_error(target_params)
+        self.canvas.set_prime_tower_overlay(bounds, invalid=error is not None)
 
     def _command_requires_reprocess(self, command: Optional[Command]) -> bool:
         """判断撤销/重做的命令是否会影响导出的 STL。"""
@@ -1238,6 +1269,7 @@ class MainWindow(QMainWindow):
         """当轮廓被修改时更新面板"""
         if self._pending_transform is None and not self.canvas.is_transforming:
             self._invalidate_processed_result()
+        self._refresh_prime_tower_overlay()
         if self.canvas.selected_indices and self.transform_panel.isVisible():
             # 拖拽旋转过程中不更新面板，等拖拽结束后再更新
             if self.canvas.is_transforming and self.current_transform_mode == "rotate":
@@ -1606,6 +1638,7 @@ class MainWindow(QMainWindow):
         self._current_selected_id = None
         self.param_panel.clear_project_printer_profile()
         self.canvas.set_contours([])
+        self._refresh_prime_tower_overlay()
         self.setWindowTitle(self.tr("MINGDA SignMaker - New Project"))
         self._update_status(self.tr("New Project"))
         self._set_project_save_point()
@@ -1964,6 +1997,7 @@ class MainWindow(QMainWindow):
 
         new_indices = list(range(insert_at, insert_at + len(new_contours)))
         self.canvas.set_contours(self.contours, center_on_platform=False)
+        self._refresh_prime_tower_overlay()
         self.project_panel.update_contours(self.contours)
         self._apply_contour_selection(new_indices)
 
@@ -2042,6 +2076,7 @@ class MainWindow(QMainWindow):
             self.project_panel.update_contours(self.contours)
             self.param_panel.set_params(self.slice_params)
             self._sync_canvas_platform_size(self.slice_params)
+            self._refresh_prime_tower_overlay(self.slice_params)
 
             # 切换到编辑器视图
             self.main_stack.setCurrentIndex(1)
@@ -2395,6 +2430,7 @@ class MainWindow(QMainWindow):
             if self.undo_manager.undo():
                 self.canvas.update()
                 self.project_panel.update_contours(self.contours)
+                self._refresh_prime_tower_overlay()
                 if requires_reprocess:
                     self._invalidate_processed_result()
         else:
@@ -2409,6 +2445,7 @@ class MainWindow(QMainWindow):
             if self.undo_manager.redo():
                 self.canvas.update()
                 self.project_panel.update_contours(self.contours)
+                self._refresh_prime_tower_overlay()
                 if requires_reprocess:
                     self._invalidate_processed_result()
         else:
@@ -2423,6 +2460,7 @@ class MainWindow(QMainWindow):
         # 获取参数
         params = self.param_panel.get_params()
         self._sync_canvas_platform_size(params)
+        self._refresh_prime_tower_overlay(params)
 
         out_of_bounds_indices = self.canvas.get_out_of_bounds_indices()
         if out_of_bounds_indices:
@@ -2436,6 +2474,16 @@ class MainWindow(QMainWindow):
             self._update_status(
                 self.tr("Processing blocked: contours exceed platform size")
             )
+            return
+
+        prime_tower_error = self._get_prime_tower_validation_error(params)
+        if prime_tower_error is not None:
+            QMessageBox.warning(
+                self,
+                self.tr("Processing Blocked"),
+                prime_tower_error,
+            )
+            self._update_status(f"{self.tr('Processing Blocked')}: {prime_tower_error}")
             return
 
         def do_slice():
@@ -3168,6 +3216,7 @@ class MainWindow(QMainWindow):
                 if hasattr(self, 'param_panel') and self.param_panel:
                     self.param_panel.set_params(saved_params)
                 self._sync_canvas_platform_size(saved_params)
+                self._refresh_prime_tower_overlay(saved_params)
                 self._update_status(self.tr("Loaded saved parameters"))
 
     def _save_current_params(self):

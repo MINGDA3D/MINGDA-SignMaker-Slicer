@@ -411,6 +411,69 @@ def test_process_blocked_when_contour_exceeds_platform(qapp, monkeypatch):
         window.deleteLater()
 
 
+def test_canvas_marks_prime_tower_overlay_invalid_when_it_overlaps_model(qapp):
+    window = MainWindow()
+
+    try:
+        window.contours = [_rect_contour(0, 0, 40, 40, "A")]
+        window.canvas.set_contours(window.contours, center_on_platform=False)
+        window.project_panel.update_contours(window.contours)
+
+        params = window.param_panel.get_params()
+        params.prime_tower.enabled = True
+        params.prime_tower.center_x = 20.0
+        params.prime_tower.center_y = 20.0
+        params.prime_tower.width = 40.0
+        params.prime_tower.depth = 40.0
+        window.param_panel.set_params(params)
+        window.slice_params = params
+
+        window._refresh_prime_tower_overlay(params)
+
+        assert window.canvas.prime_tower_bounds == pytest.approx((0.0, 0.0, 40.0, 40.0))
+        assert window.canvas.prime_tower_invalid is True
+    finally:
+        window.deleteLater()
+
+
+def test_process_blocked_when_prime_tower_overlaps_model(qapp, monkeypatch):
+    window = MainWindow()
+    warnings = []
+    run_async_calls = []
+
+    try:
+        window.contours = [_rect_contour(0, 0, 40, 40, "A")]
+        window.canvas.set_contours(window.contours, center_on_platform=False)
+        window.project_panel.update_contours(window.contours)
+
+        params = window.param_panel.get_params()
+        params.prime_tower.enabled = True
+        params.prime_tower.center_x = 20.0
+        params.prime_tower.center_y = 20.0
+        params.prime_tower.width = 40.0
+        params.prime_tower.depth = 40.0
+        window.param_panel.set_params(params)
+
+        monkeypatch.setattr(
+            "src.ui.main_window.QMessageBox.warning",
+            lambda *args, **kwargs: warnings.append((args, kwargs)) or 0,
+        )
+        monkeypatch.setattr(
+            "src.ui.main_window.run_async",
+            lambda *args, **kwargs: run_async_calls.append((args, kwargs)),
+        )
+
+        window._on_slice()
+
+        assert run_async_calls == []
+        assert warnings
+        assert warnings[-1][0][1] == window.tr("Processing Blocked")
+        assert "Prime tower overlaps existing printable geometry." in warnings[-1][0][2]
+        assert window.status_label.text().startswith(window.tr("Processing Blocked"))
+    finally:
+        window.deleteLater()
+
+
 def test_transform_panel_hidden_on_home_and_preview_pages(qapp, monkeypatch):
     window = MainWindow()
 

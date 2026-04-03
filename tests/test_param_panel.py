@@ -39,6 +39,7 @@ def test_primary_groups_follow_requested_order(qapp):
         "Temperature Settings",
         "Cooling Settings",
         "Color Change",
+        "Prime Tower",
         "Top Face",
         "Bottom Face",
         "Connected Letters",
@@ -171,6 +172,7 @@ def test_primary_sections_separate_vector_machine_and_print_settings(qapp):
                 "Temperature Settings",
                 "Cooling Settings",
                 "Color Change",
+                "Prime Tower",
                 "Machine G-code",
             ],
         ),
@@ -195,6 +197,39 @@ def test_primary_sections_can_be_collapsed_and_expanded(qapp):
 
     assert toggle_button.text() == "- 2D Vector Settings"
     assert body.isHidden() is False
+
+
+def test_prime_tower_controls_roundtrip_through_print_settings(qapp):
+    panel = ParamPanel()
+    params = SliceParams()
+    params.machine.bed_width = 600.0
+    params.machine.bed_depth = 900.0
+    params.prime_tower.enabled = True
+    params.prime_tower.center_x = 540.0
+    params.prime_tower.center_y = 820.0
+    params.prime_tower.width = 60.0
+    params.prime_tower.depth = 40.0
+    params.prime_tower.infill_density_percent = 35
+
+    panel.set_params(params)
+    restored = panel.get_params()
+
+    assert panel.prime_tower_group.title() == "Prime Tower"
+    assert panel.prime_tower_enabled.isChecked() is True
+    assert panel.prime_tower_center_x.isEnabled() is True
+    assert panel.prime_tower_center_y.isEnabled() is True
+    assert panel.prime_tower_width.isEnabled() is True
+    assert panel.prime_tower_depth.isEnabled() is True
+    assert panel.prime_tower_infill_density.isEnabled() is True
+    assert panel.prime_tower_infill_density.minimum() == 10
+    assert panel.prime_tower_infill_density.maximum() == 80
+    assert panel.prime_tower_infill_density.singleStep() == 5
+    assert restored.prime_tower.enabled is True
+    assert restored.prime_tower.center_x == pytest.approx(540.0)
+    assert restored.prime_tower.center_y == pytest.approx(820.0)
+    assert restored.prime_tower.width == pytest.approx(60.0)
+    assert restored.prime_tower.depth == pytest.approx(40.0)
+    assert restored.prime_tower.infill_density_percent == 35
 
 
 def test_step_controls_share_single_primary_group(qapp):

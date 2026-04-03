@@ -29,6 +29,7 @@ from src.core.types import (
     EdgeProfile, PrinterProfile, ColorChangePoint, default_shell_line_width, resolve_shell_line_width,
     resolve_shell_wall_thickness,
 )
+from src.core.prime_tower import PrimeTowerGenerator
 from src.business.settings_manager import get_settings_manager
 from src.business.printer_profile_manager import (
     PrinterProfileManager,
@@ -120,6 +121,7 @@ class ParamPanel(QWidget):
         self.temperature_group = self._create_temperature_group()
         self.cooling_group = self._create_cooling_group()
         self.color_group = self._create_color_group()
+        self.prime_tower_group = self._create_prime_tower_group()
         self.top_face_group = self._create_top_face_group()
         self.bottom_face_group = self._create_bottom_face_group()
         self.connected_group = self._create_connected_group()
@@ -138,6 +140,7 @@ class ParamPanel(QWidget):
             self.temperature_group,
             self.cooling_group,
             self.color_group,
+            self.prime_tower_group,
             self.top_face_group,
             self.bottom_face_group,
             self.connected_group,
@@ -167,6 +170,7 @@ class ParamPanel(QWidget):
             self.temperature_group,
             self.cooling_group,
             self.color_group,
+            self.prime_tower_group,
             self.klipper_commands_group,
         ]
         self._primary_sections = [
@@ -218,6 +222,7 @@ class ParamPanel(QWidget):
 
         scroll.setWidget(content)
         self._sync_layer_based_controls()
+        self._update_prime_tower_coordinate_ranges()
 
     def _create_settings_section(
         self,
@@ -1057,6 +1062,129 @@ class ParamPanel(QWidget):
             )
         self.color_change_summary.setText("\n".join(lines))
 
+    def _create_prime_tower_group(self) -> QGroupBox:
+        """Create prime tower settings."""
+        group = QGroupBox(self.tr("Prime Tower"))
+        layout = QVBoxLayout(group)
+        layout.setSpacing(8)
+
+        self.prime_tower_enabled = QCheckBox(self.tr("Enable Prime Tower"))
+        self.prime_tower_enabled.stateChanged.connect(
+            lambda: self._toggle_prime_tower_controls(self.prime_tower_enabled.isChecked())
+        )
+        self.prime_tower_enabled.stateChanged.connect(self._on_param_changed)
+        layout.addWidget(self.prime_tower_enabled)
+
+        self.prime_tower_hint = QLabel(
+            self.tr("Prime tower geometry is defined by its center point in bed coordinates.")
+        )
+        self._configure_wrapped_secondary_label(self.prime_tower_hint)
+        layout.addWidget(self.prime_tower_hint)
+
+        form = QFormLayout()
+        form.setSpacing(8)
+
+        default_center_x, default_center_y = PrimeTowerGenerator.default_center(
+            self._params.machine
+        )
+
+        self.prime_tower_center_x = self._create_double_spinbox()
+        self.prime_tower_center_x.setDecimals(2)
+        self.prime_tower_center_x.setRange(0.0, max(float(self._params.machine.bed_width), 1.0))
+        self.prime_tower_center_x.setValue(default_center_x)
+        self.prime_tower_center_x.setSuffix(" mm")
+        self.prime_tower_center_x.setEnabled(False)
+        self.prime_tower_center_x.valueChanged.connect(self._on_param_changed)
+        form.addRow(self.tr("Center X:"), self.prime_tower_center_x)
+
+        self.prime_tower_center_y = self._create_double_spinbox()
+        self.prime_tower_center_y.setDecimals(2)
+        self.prime_tower_center_y.setRange(0.0, max(float(self._params.machine.bed_depth), 1.0))
+        self.prime_tower_center_y.setValue(default_center_y)
+        self.prime_tower_center_y.setSuffix(" mm")
+        self.prime_tower_center_y.setEnabled(False)
+        self.prime_tower_center_y.valueChanged.connect(self._on_param_changed)
+        form.addRow(self.tr("Center Y:"), self.prime_tower_center_y)
+
+        self.prime_tower_width = self._create_double_spinbox()
+        self.prime_tower_width.setDecimals(2)
+        self.prime_tower_width.setRange(1.0, 5000.0)
+        self.prime_tower_width.setValue(20.0)
+        self.prime_tower_width.setSuffix(" mm")
+        self.prime_tower_width.setEnabled(False)
+        self.prime_tower_width.valueChanged.connect(self._update_prime_tower_coordinate_ranges)
+        self.prime_tower_width.valueChanged.connect(self._on_param_changed)
+        form.addRow(self.tr("Tower Width:"), self.prime_tower_width)
+
+        self.prime_tower_depth = self._create_double_spinbox()
+        self.prime_tower_depth.setDecimals(2)
+        self.prime_tower_depth.setRange(1.0, 5000.0)
+        self.prime_tower_depth.setValue(20.0)
+        self.prime_tower_depth.setSuffix(" mm")
+        self.prime_tower_depth.setEnabled(False)
+        self.prime_tower_depth.valueChanged.connect(self._update_prime_tower_coordinate_ranges)
+        self.prime_tower_depth.valueChanged.connect(self._on_param_changed)
+        form.addRow(self.tr("Tower Depth:"), self.prime_tower_depth)
+
+        self.prime_tower_infill_density = self._create_int_spinbox()
+        self.prime_tower_infill_density.setRange(10, 80)
+        self.prime_tower_infill_density.setSingleStep(5)
+        self.prime_tower_infill_density.setValue(20)
+        self.prime_tower_infill_density.setSuffix(" %")
+        self.prime_tower_infill_density.setEnabled(False)
+        self.prime_tower_infill_density.valueChanged.connect(self._on_param_changed)
+        form.addRow(self.tr("Infill Density:"), self.prime_tower_infill_density)
+
+        layout.addLayout(form)
+        return group
+
+    def _toggle_prime_tower_controls(self, enabled: bool):
+        """Toggle prime tower controls."""
+        self.prime_tower_center_x.setEnabled(enabled)
+        self.prime_tower_center_y.setEnabled(enabled)
+        self.prime_tower_width.setEnabled(enabled)
+        self.prime_tower_depth.setEnabled(enabled)
+        self.prime_tower_infill_density.setEnabled(enabled)
+
+    def _update_prime_tower_coordinate_ranges(self):
+        """Clamp prime tower coordinates to the active bed size."""
+        if not hasattr(self, "prime_tower_center_x"):
+            return
+
+        bed_width = (
+            self.profile_bed_width.value()
+            if hasattr(self, "profile_bed_width")
+            else float(self._params.machine.bed_width)
+        )
+        bed_depth = (
+            self.profile_bed_depth.value()
+            if hasattr(self, "profile_bed_depth")
+            else float(self._params.machine.bed_depth)
+        )
+        half_width = self.prime_tower_width.value() / 2.0
+        half_depth = self.prime_tower_depth.value() / 2.0
+
+        min_x = min(half_width, bed_width)
+        max_x = max(min_x, bed_width - half_width)
+        min_y = min(half_depth, bed_depth)
+        max_y = max(min_y, bed_depth - half_depth)
+
+        widgets = (self.prime_tower_center_x, self.prime_tower_center_y)
+        for widget in widgets:
+            widget.blockSignals(True)
+        try:
+            self.prime_tower_center_x.setRange(min_x, max_x)
+            self.prime_tower_center_y.setRange(min_y, max_y)
+            self.prime_tower_center_x.setValue(
+                min(max(self.prime_tower_center_x.value(), min_x), max_x)
+            )
+            self.prime_tower_center_y.setValue(
+                min(max(self.prime_tower_center_y.value(), min_y), max_y)
+            )
+        finally:
+            for widget in widgets:
+                widget.blockSignals(False)
+
     def _create_printer_profile_group(self) -> QGroupBox:
         """创建打印机档案参数组。"""
         group = QGroupBox(self.tr("Printer Profile"))
@@ -1303,6 +1431,8 @@ class ParamPanel(QWidget):
             self.profile_z_hop_long,
             self.profile_long_travel_threshold,
             self.profile_color_change_template,
+            self.prime_tower_center_x,
+            self.prime_tower_center_y,
         ]
         try:
             for widget in widgets:
@@ -1327,6 +1457,7 @@ class ParamPanel(QWidget):
             self._updating_profile_ui = False
 
         apply_printer_profile_to_params(self._params, profile)
+        self._update_prime_tower_coordinate_ranges()
         self._update_script_summaries()
         self._update_color_change_summary()
 
@@ -1438,6 +1569,7 @@ class ParamPanel(QWidget):
     def _on_printer_profile_field_changed(self):
         if self._updating_profile_ui:
             return
+        self._update_prime_tower_coordinate_ranges()
         self._persist_profile_form_edits()
         self._on_param_changed()
 
@@ -2211,6 +2343,11 @@ class ParamPanel(QWidget):
             self.other_layer_bed_temp,
             self.first_layer_fan_percent,
             self.other_layer_fan_percent,
+            self.prime_tower_center_x,
+            self.prime_tower_center_y,
+            self.prime_tower_width,
+            self.prime_tower_depth,
+            self.prime_tower_infill_density,
             self.profile_bed_width,
             self.profile_bed_depth,
             self.profile_bed_height,
@@ -2308,6 +2445,14 @@ class ParamPanel(QWidget):
         # 换色参数
         self._params.color.enabled = self.color_enabled.isChecked()
         self._params.color.change_points = self._get_color_change_rows()
+
+        # Prime tower 参数
+        self._params.prime_tower.enabled = self.prime_tower_enabled.isChecked()
+        self._params.prime_tower.center_x = self.prime_tower_center_x.value()
+        self._params.prime_tower.center_y = self.prime_tower_center_y.value()
+        self._params.prime_tower.width = self.prime_tower_width.value()
+        self._params.prime_tower.depth = self.prime_tower_depth.value()
+        self._params.prime_tower.infill_density_percent = self.prime_tower_infill_density.value()
 
         # 台阶参数
         # 面板台阶（顶部）
@@ -2429,6 +2574,33 @@ class ParamPanel(QWidget):
             params.shell.layer_height,
             wall_thickness=params.shell.wall_thickness,
         )
+        prime_tower_enabled = params.prime_tower.enabled
+        prime_tower_center_x = params.prime_tower.center_x
+        prime_tower_center_y = params.prime_tower.center_y
+        prime_tower_width = params.prime_tower.width
+        prime_tower_depth = params.prime_tower.depth
+        prime_tower_infill_density = params.prime_tower.infill_density_percent
+        panel_step_enabled = params.step.panel_step_enabled
+        panel_step_height = params.step.panel_step_height
+        panel_step_width = params.step.panel_step_width
+        panel_step_is_v_groove = params.step.panel_step_is_v_groove
+        baseplate_step_enabled = params.step.baseplate_step_enabled
+        baseplate_step_height = params.step.baseplate_step_height
+        baseplate_step_width = params.step.baseplate_step_width
+        baseplate_step_is_v_groove = params.step.baseplate_step_is_v_groove
+        bottom_face_enabled = params.bottom_face.enabled
+        bottom_face_thickness = params.bottom_face.thickness
+        light_slot_enabled = params.light_slot.enabled
+        light_slot_width = params.light_slot.width
+        light_slot_depth = params.light_slot.depth
+        light_slot_floor_layers = params.light_slot.floor_layers
+        light_slot_wall_gap = params.light_slot.wall_gap
+        light_slot_outer_enabled = params.light_slot.outer_enabled
+        light_slot_hole_enabled = params.light_slot.hole_enabled
+        light_slot_auto_skip_small_holes = params.light_slot.auto_skip_small_holes
+        light_slot_min_hole_span = params.light_slot.min_hole_span
+        top_face_enabled = params.top_face.enabled
+        top_face_thickness = params.top_face.thickness
         self._params = params
 
         # 确保机器参数使用当前默认值（避免旧配置的平台尺寸被加载）
@@ -2462,6 +2634,8 @@ class ParamPanel(QWidget):
             self.outline_enabled, self.outline_width, self.outline_height,
             self.outline_offset, self.outline_dir_inner, self.outline_dir_outer,
             self.color_enabled,
+            self.prime_tower_enabled, self.prime_tower_center_x, self.prime_tower_center_y,
+            self.prime_tower_width, self.prime_tower_depth, self.prime_tower_infill_density,
             self.panel_step_enabled, self.panel_step_height, self.panel_step_width,
             self.panel_step_v_groove, self.baseplate_step_enabled,
             self.baseplate_step_height, self.baseplate_step_width, self.baseplate_step_v_groove,
@@ -2570,36 +2744,45 @@ class ParamPanel(QWidget):
         self.color_enabled.setChecked(params.color.enabled)
         self._rebuild_color_change_rows(params.color.change_points)
 
+        # Prime tower 参数
+        self.prime_tower_enabled.setChecked(prime_tower_enabled)
+        self.prime_tower_width.setValue(prime_tower_width)
+        self.prime_tower_depth.setValue(prime_tower_depth)
+        self._update_prime_tower_coordinate_ranges()
+        self.prime_tower_center_x.setValue(prime_tower_center_x)
+        self.prime_tower_center_y.setValue(prime_tower_center_y)
+        self.prime_tower_infill_density.setValue(prime_tower_infill_density)
+
         # 台阶参数 - 面板台阶（顶部）
-        self.panel_step_enabled.setChecked(params.step.panel_step_enabled)
-        self.panel_step_height.setValue(params.step.panel_step_height)
-        self.panel_step_width.setValue(params.step.panel_step_width)
-        self.panel_step_v_groove.setChecked(params.step.panel_step_is_v_groove)
+        self.panel_step_enabled.setChecked(panel_step_enabled)
+        self.panel_step_height.setValue(panel_step_height)
+        self.panel_step_width.setValue(panel_step_width)
+        self.panel_step_v_groove.setChecked(panel_step_is_v_groove)
 
         # 台阶参数 - 底板台阶（底部）
-        self.baseplate_step_enabled.setChecked(params.step.baseplate_step_enabled)
-        self.baseplate_step_height.setValue(self._height_to_layers(params.step.baseplate_step_height))
-        self.baseplate_step_width.setValue(params.step.baseplate_step_width)
-        self.baseplate_step_v_groove.setChecked(params.step.baseplate_step_is_v_groove)
+        self.baseplate_step_enabled.setChecked(baseplate_step_enabled)
+        self.baseplate_step_height.setValue(self._height_to_layers(baseplate_step_height))
+        self.baseplate_step_width.setValue(baseplate_step_width)
+        self.baseplate_step_v_groove.setChecked(baseplate_step_is_v_groove)
 
         # 底面封闭参数
-        self.bottom_face_enabled.setChecked(params.bottom_face.enabled)
-        self.bottom_face_thickness.setValue(self._height_to_layers(params.bottom_face.thickness))
+        self.bottom_face_enabled.setChecked(bottom_face_enabled)
+        self.bottom_face_thickness.setValue(self._height_to_layers(bottom_face_thickness))
 
         # 灯槽参数
-        self.light_slot_enabled.setChecked(params.light_slot.enabled)
-        self.light_slot_width.setValue(params.light_slot.width)
-        self.light_slot_depth.setValue(self._height_to_layers(params.light_slot.depth))
-        self.light_slot_floor_layers.setValue(params.light_slot.floor_layers)
-        self.light_slot_wall_gap.setValue(params.light_slot.wall_gap)
-        self.light_slot_outer_enabled.setChecked(params.light_slot.outer_enabled)
-        self.light_slot_hole_enabled.setChecked(params.light_slot.hole_enabled)
-        self.light_slot_auto_skip_small_holes.setChecked(params.light_slot.auto_skip_small_holes)
-        self.light_slot_min_hole_span.setValue(params.light_slot.min_hole_span)
+        self.light_slot_enabled.setChecked(light_slot_enabled)
+        self.light_slot_width.setValue(light_slot_width)
+        self.light_slot_depth.setValue(self._height_to_layers(light_slot_depth))
+        self.light_slot_floor_layers.setValue(light_slot_floor_layers)
+        self.light_slot_wall_gap.setValue(light_slot_wall_gap)
+        self.light_slot_outer_enabled.setChecked(light_slot_outer_enabled)
+        self.light_slot_hole_enabled.setChecked(light_slot_hole_enabled)
+        self.light_slot_auto_skip_small_holes.setChecked(light_slot_auto_skip_small_holes)
+        self.light_slot_min_hole_span.setValue(light_slot_min_hole_span)
 
         # 顶面封闭参数
-        self.top_face_enabled.setChecked(params.top_face.enabled)
-        self.top_face_thickness.setValue(self._height_to_layers(params.top_face.thickness))
+        self.top_face_enabled.setChecked(top_face_enabled)
+        self.top_face_thickness.setValue(self._height_to_layers(top_face_thickness))
 
         # 恢复信号
         for w in widgets:
@@ -2623,12 +2806,13 @@ class ParamPanel(QWidget):
         self._toggle_connected_controls(params.connected.enabled)
         self._toggle_wrap_controls(params.edge_wrap.wrap_enabled)
         self._toggle_outline_controls(params.edge_wrap.outline_enabled)
-        self._toggle_panel_step_controls(params.step.panel_step_enabled)
-        self._toggle_baseplate_step_controls(params.step.baseplate_step_enabled)
+        self._toggle_panel_step_controls(panel_step_enabled)
+        self._toggle_baseplate_step_controls(baseplate_step_enabled)
         self._toggle_color_change_controls(params.color.enabled)
-        self._toggle_bottom_face_controls(params.bottom_face.enabled)
-        self._toggle_light_slot_controls(params.light_slot.enabled)
-        self._toggle_top_face_controls(params.top_face.enabled)
+        self._toggle_prime_tower_controls(prime_tower_enabled)
+        self._toggle_bottom_face_controls(bottom_face_enabled)
+        self._toggle_light_slot_controls(light_slot_enabled)
+        self._toggle_top_face_controls(top_face_enabled)
         self._sync_layer_based_controls()
 
     # ===== 异形边相关方法 =====

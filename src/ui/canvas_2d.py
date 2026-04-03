@@ -91,6 +91,8 @@ class Canvas2D(QWidget):
         self.contours: List[Contour] = []
         self.selected_indices: List[int] = []
         self.slice_result = None
+        self.prime_tower_bounds: Optional[Tuple[float, float, float, float]] = None
+        self.prime_tower_invalid = False
         self._path_offset = PathOffset()
 
         # 交互状态
@@ -142,6 +144,7 @@ class Canvas2D(QWidget):
         self.hole_color = QColor(COLORS.accent_warning)
         self.selected_color = QColor(COLORS.accent_primary)
         self.out_of_bounds_color = QColor(COLORS.accent_error)
+        self.prime_tower_color = QColor(COLORS.accent_primary)
         self.start_point_color = QColor(COLORS.accent_success)
         self.start_point_candidate_color = QColor(COLORS.accent_primary)
         self.start_point_hover_color = QColor(COLORS.accent_warning)
@@ -211,6 +214,17 @@ class Canvas2D(QWidget):
         self.contours = contours
         self._hovered_start_point_candidate = None
         self.set_selected_indices([], update_view=False)
+        self.update()
+
+    def set_prime_tower_overlay(
+        self,
+        bounds: Optional[Tuple[float, float, float, float]],
+        *,
+        invalid: bool = False,
+    ) -> None:
+        """Display the prime tower footprint as a non-interactive overlay."""
+        self.prime_tower_bounds = bounds
+        self.prime_tower_invalid = invalid
         self.update()
 
     def _normalize_selected_indices(self, indices: List[int]) -> List[int]:
@@ -909,6 +923,7 @@ class Canvas2D(QWidget):
 
         # 绘制轮廓
         self._draw_contours(painter)
+        self._draw_prime_tower_overlay(painter)
 
         # 绘制选中状态（边界框和控制手柄）
         self._draw_selection_overlay(painter)
@@ -1145,6 +1160,30 @@ class Canvas2D(QWidget):
                 start_idx = resolve_path_start_point_index(hole)
                 if 0 <= start_idx < len(hole.points):
                     self._draw_start_point(painter, hole.points[start_idx])
+
+    def _draw_prime_tower_overlay(self, painter: QPainter) -> None:
+        """Draw the prime tower footprint as a dashed, non-interactive rectangle."""
+        if self.prime_tower_bounds is None:
+            return
+
+        min_x, min_y, max_x, max_y = self.prime_tower_bounds
+        width = max_x - min_x
+        height = max_y - min_y
+        if width <= 0.0 or height <= 0.0:
+            return
+
+        color = QColor(self.out_of_bounds_color if self.prime_tower_invalid else self.prime_tower_color)
+        fill_color = QColor(color)
+        fill_color.setAlpha(26)
+        pen = QPen(color)
+        pen.setStyle(Qt.PenStyle.DashLine)
+        pen.setWidthF(1.5 / max(self.view_scale, 1e-6))
+
+        painter.save()
+        painter.setPen(pen)
+        painter.setBrush(QBrush(fill_color))
+        painter.drawRect(QRectF(min_x, min_y, width, height))
+        painter.restore()
 
     def is_contour_out_of_bounds(self, contour: Contour) -> bool:
         """åˆ¤æ–­è½®å»“æ˜¯å¦è¶…å‡ºå¹³å°è¾¹ç•Œã€‚"""

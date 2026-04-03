@@ -9,7 +9,7 @@ from .types import (
     PathType, PathRole, EdgeType, ExtruderType, FillPattern, JoinType,
     # 参数类型
     SliceParams, ShellParams, ColorParams, ColorLayerConfig, ColorChangePoint,
-    StepParams, StepConfig, SkirtParams, ConnectedParams,
+    PrimeTowerParams, StepParams, StepConfig, SkirtParams, ConnectedParams,
     EdgeWrapParams, PanelParams, BaseplateParams, GridParams,
     LayoutParams, SpeedParams, GCodeParams, MachineParams, PrinterProfile,
     FillConfig, LayerConfig,
@@ -38,7 +38,7 @@ __all__ = [
     'PathType', 'PathRole', 'EdgeType', 'ExtruderType', 'FillPattern', 'JoinType',
     # 参数类型
     'SliceParams', 'ShellParams', 'ColorParams', 'ColorLayerConfig', 'ColorChangePoint',
-    'StepParams', 'StepConfig', 'SkirtParams', 'ConnectedParams',
+    'PrimeTowerParams', 'StepParams', 'StepConfig', 'SkirtParams', 'ConnectedParams',
     'EdgeWrapParams', 'PanelParams', 'BaseplateParams', 'GridParams',
     'LayoutParams', 'SpeedParams', 'GCodeParams', 'MachineParams', 'PrinterProfile',
     'FillConfig', 'LayerConfig',
