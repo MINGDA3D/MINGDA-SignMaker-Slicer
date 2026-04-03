@@ -26,6 +26,7 @@ from .types import (
     resolve_path_start_point_index,
 )
 from .path_offset import PathOffset, JoinType
+from .print_order import build_loop_order
 from .step_generator import StepGenerator
 from .edge_profile_generator import EdgeProfileGenerator
 from .skirt_generator import SkirtGenerator
@@ -77,22 +78,20 @@ class SliceEngine:
         if not contours:
             return SliceResult()
 
-        ordered_contours = self._sort_contours_for_print(contours)
-
         # 1. 计算层规划
         layer_infos = self._plan_layers(params)
-        connected_context = self._build_connected_preview_context(ordered_contours, params)
+        connected_context = self._build_connected_preview_context(contours, params)
 
         # 2. 逐层生成
         layers = []
         for info in layer_infos:
-            layer = self._generate_layer(ordered_contours, info, params, connected_context)
+            layer = self._generate_layer(contours, info, params, connected_context)
             if layer.paths:  # 只添加有路径的层
                 layers.append(layer)
 
         # 3. 添加预打边线（安全线）
         if params.shell.safety_line_count > 0:
-            safety_layers = self._generate_safety_lines(ordered_contours, params)
+            safety_layers = self._generate_safety_lines(contours, params)
             # 安全线在最底层之前打印
             layers = safety_layers + layers
 
@@ -242,19 +241,18 @@ class SliceEngine:
             color_index=info.color_index,
         )
 
-        for contour in contours:
-            # 1. 应用边缘轮廓
-            modified_contour = self._apply_edge_profile(
-                contour, info.z_height, params.shell
-            )
-            if not modified_contour:
-                continue
+        modified_contours: List[Optional[Contour]] = []
+        bottom_reference_contours: List[Optional[Contour]] = []
+        light_slot_geometries: List[Optional[LightSlotGeometry]] = []
 
-            # 2. 生成壁路径
-            wall_paths = self._generate_wall_paths(
-                modified_contour, info, params.shell
-            )
-            layer.paths.extend(wall_paths)
+        for contour in contours:
+            modified_contour = self._apply_edge_profile(contour, info.z_height, params.shell)
+            modified_contours.append(modified_contour)
+
+            if modified_contour is None:
+                bottom_reference_contours.append(None)
+                light_slot_geometries.append(None)
+                continue
 
             bottom_reference_contour = modified_contour
             light_slot_geometry = None
@@ -271,6 +269,26 @@ class SliceEngine:
                     bottom_reference_contour,
                     params,
                 )
+
+            bottom_reference_contours.append(bottom_reference_contour)
+            light_slot_geometries.append(light_slot_geometry)
+
+        layer.paths.extend(
+            self._generate_wall_paths_in_loop_order(
+                contours,
+                modified_contours,
+                info,
+                params.shell,
+            )
+        )
+
+        for modified_contour, bottom_reference_contour, light_slot_geometry in zip(
+            modified_contours,
+            bottom_reference_contours,
+            light_slot_geometries,
+        ):
+            if modified_contour is None or bottom_reference_contour is None:
+                continue
 
             # 3. 生成灯槽（如需要）
             if light_slot_geometry is not None:
@@ -636,71 +654,88 @@ class SliceEngine:
             print_order=contour.print_order,
         )
 
-    def _generate_wall_paths(self, contour: Contour,
-                              info: LayerInfo,
-                              params: ShellParams) -> List[LayerPath]:
-        """
-        生成壁路径
+    def _generate_wall_paths_in_loop_order(
+        self,
+        contours: List[Contour],
+        modified_contours: List[Optional[Contour]],
+        info: LayerInfo,
+        params: ShellParams,
+    ) -> List[LayerPath]:
+        """Generate wall paths in the global outer/hole loop order."""
+        paths: List[LayerPath] = []
 
-        支持多层壁（走线次数）
-        """
-        paths = []
+        for contour_index, hole_index in build_loop_order(contours):
+            if not (0 <= contour_index < len(modified_contours)):
+                continue
+
+            modified_contour = modified_contours[contour_index]
+            if modified_contour is None:
+                continue
+
+            if hole_index < 0:
+                loop_path = modified_contour.outer
+                start_point_index = resolve_contour_start_point_index(modified_contour)
+                offset_sign = 1.0
+            else:
+                if hole_index >= len(modified_contour.holes):
+                    continue
+                loop_path = modified_contour.holes[hole_index]
+                start_point_index = resolve_path_start_point_index(loop_path)
+                offset_sign = -1.0
+
+            paths.extend(
+                self._generate_wall_paths_for_loop(
+                    loop_path,
+                    start_point_index,
+                    offset_sign,
+                    info,
+                    params,
+                )
+            )
+
+        return paths
+
+    def _generate_wall_paths_for_loop(
+        self,
+        loop_path: Path,
+        start_point_index: int,
+        offset_sign: float,
+        info: LayerInfo,
+        params: ShellParams,
+    ) -> List[LayerPath]:
+        """Generate all wall passes for one loop as a consecutive block."""
+        paths: List[LayerPath] = []
         line_width = resolve_shell_line_width(
             params.line_width,
             params.layer_height,
             wall_thickness=params.wall_thickness,
             wall_count=params.wall_count,
         )
-        wall_count = params.wall_count
         wall_offset = params.wall_offset if params.wall_offset > 0 else line_width
-        effective_start_point_index = resolve_contour_start_point_index(contour)
 
-        for i in range(wall_count):
-            # 计算当前壁的偏移距离
-            # 第一壁偏移 line_width/2（让壁中心线在原轮廓上）
-            # 后续壁依次向内偏移
-            offset_distance = -(line_width / 2 + i * wall_offset)
-
-            # 偏移外轮廓
+        for i in range(params.wall_count):
+            offset_distance = -(line_width / 2 + i * wall_offset) * offset_sign
             offset_results = self.path_offset.offset(
-                contour.outer, offset_distance, JoinType.MITER
+                loop_path,
+                offset_distance,
+                JoinType.MITER,
             )
 
             for offset_path in offset_results:
-                outer_points = self._rotate_path_to_user_start(
+                rotated_points = self._rotate_path_to_user_start(
                     offset_path.points,
-                    contour.outer.points,
-                    effective_start_point_index,
+                    loop_path.points,
+                    start_point_index,
                 )
-                layer_path = LayerPath(
-                    points=outer_points,
-                    role=PathRole.WALL,
-                    extruder=info.extruder,
-                    line_width=line_width,
-                    is_closed=True
-                )
-                paths.append(layer_path)
-
-            # 偏移内孔（方向与外轮廓相反，向实体侧偏移）
-            for hole in contour.holes:
-                effective_hole_start_point_index = resolve_path_start_point_index(hole)
-                hole_offset_results = self.path_offset.offset(
-                    hole, -offset_distance, JoinType.MITER
-                )
-                for offset_hole in hole_offset_results:
-                    hole_points = self._rotate_path_to_user_start(
-                        offset_hole.points,
-                        hole.points,
-                        effective_hole_start_point_index,
-                    )
-                    layer_path = LayerPath(
-                        points=hole_points,
+                paths.append(
+                    LayerPath(
+                        points=rotated_points,
                         role=PathRole.WALL,
                         extruder=info.extruder,
                         line_width=line_width,
-                        is_closed=True
+                        is_closed=True,
                     )
-                    paths.append(layer_path)
+                )
 
         return paths
 

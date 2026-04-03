@@ -102,7 +102,8 @@ class PathOffset:
                 result_paths.append(Path(
                     points=points,
                     path_type=path.path_type,
-                    is_closed=True
+                    is_closed=True,
+                    print_order=path.print_order,
                 ))
 
         return result_paths
@@ -142,7 +143,12 @@ class PathOffset:
             holes=new_holes,
             connected_frames=contour.connected_frames,
             patterns=contour.patterns,
-            name=contour.name
+            name=contour.name,
+            asset_id=contour.asset_id,
+            asset_name=contour.asset_name,
+            group_id=contour.group_id,
+            start_point_index=contour.start_point_index,
+            print_order=contour.print_order,
         )
 
     def multi_offset(self, path: Path, distances: List[float],
@@ -398,7 +404,8 @@ class PathOffset:
                     points=points,
                     path_type=path.path_type,
                     color=path.color,
-                    is_closed=path.is_closed
+                    is_closed=path.is_closed,
+                    print_order=path.print_order,
                 )
 
         return path
@@ -430,7 +437,8 @@ class PathOffset:
                 points=points,
                 path_type=path.path_type,
                 color=path.color,
-                is_closed=path.is_closed
+                is_closed=path.is_closed,
+                print_order=path.print_order,
             )
 
         return path

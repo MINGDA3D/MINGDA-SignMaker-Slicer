@@ -21,6 +21,7 @@ from typing import Optional, List, BinaryIO
 from pathlib import Path
 
 from src.core.contour_classifier import repair_contours
+from src.core.print_order import migrate_legacy_contour_order_to_loops
 from src.core.types import (
     Project, ProjectMeta, Contour, SliceParams,
     Point, Path as ContourPath, PathType,
@@ -35,7 +36,7 @@ from src.business.printer_profile_manager import (
 
 
 # 格式常量
-FORMAT_VERSION = "4.4"
+FORMAT_VERSION = "4.5"
 MANIFEST_FILE = "manifest.json"
 PARAMS_FILE = "params.json"
 CONTOURS_FILE = "contours.bin"
@@ -44,7 +45,7 @@ PRINTER_PROFILE_FILE = "printer_profile.json"
 
 # 二进制格式
 BINARY_MAGIC = b'SMPC'  # SignMaker Project Contours
-BINARY_VERSION = 4
+BINARY_VERSION = 5
 
 
 class ProjectFormatError(Exception):
@@ -157,6 +158,7 @@ def load_project(file_path: str) -> Project:
         contours_bin = zf.read(CONTOURS_FILE)
         contours = repair_contours(_deserialize_contours(contours_bin))
         _migrate_legacy_contour_start_points(contours, project_format_version)
+        _migrate_legacy_loop_print_orders(contours, project_format_version)
 
         # 构建项目
         project_info = manifest.get('project', {})
@@ -191,7 +193,7 @@ def _serialize_contours(contours: List[Contour]) -> bytes:
             cf_count(4) + connected_frames[]
             pattern_count(4) + patterns[]
         Each Path:
-            type(1) + color(3) + closed(1) + start_idx(4) + point_count(4)
+            type(1) + color(3) + closed(1) + start_idx(4) + print_order(4) + point_count(4)
             points[] as (x: f64, y: f64)
     """
     buf = io.BytesIO()
@@ -256,6 +258,9 @@ def _write_path(buf: BinaryIO, path: ContourPath) -> None:
 
     # Start point token
     buf.write(struct.pack('<i', path.start_point_index))
+
+    # Loop-level print order
+    buf.write(struct.pack('<i', path.print_order))
 
     # Points (float64 for precision)
     buf.write(struct.pack('<I', len(path.points)))
@@ -343,6 +348,16 @@ def _migrate_legacy_contour_start_points(
         migrate_legacy_contour_start_point_index(contour)
 
 
+def _migrate_legacy_loop_print_orders(
+    contours: List[Contour],
+    project_format_version: str,
+) -> None:
+    """Upgrade contour-level print order into loop-level outer/hole order."""
+    if _parse_format_version(project_format_version) >= _parse_format_version("4.5"):
+        return
+    migrate_legacy_contour_order_to_loops(contours)
+
+
 def _read_path(buf: BinaryIO, version: int) -> ContourPath:
     """读取路径"""
     type_map = {
@@ -354,6 +369,7 @@ def _read_path(buf: BinaryIO, version: int) -> ContourPath:
     color = struct.unpack('<BBB', buf.read(3))
     is_closed = struct.unpack('<?', buf.read(1))[0]
     start_point_index = struct.unpack('<i', buf.read(4))[0] if version >= 4 else 0
+    print_order = struct.unpack('<i', buf.read(4))[0] if version >= 5 else 0
 
     point_count = struct.unpack('<I', buf.read(4))[0]
     points = []
@@ -367,6 +383,7 @@ def _read_path(buf: BinaryIO, version: int) -> ContourPath:
         color=color,
         is_closed=is_closed,
         start_point_index=start_point_index,
+        print_order=print_order,
     )
 
 
@@ -405,6 +422,10 @@ def load_project_contours(file_path: str) -> List[Contour]:
         contours_bin = zf.read(CONTOURS_FILE)
         contours = repair_contours(_deserialize_contours(contours_bin))
         _migrate_legacy_contour_start_points(
+            contours,
+            manifest.get("format_version", FORMAT_VERSION),
+        )
+        _migrate_legacy_loop_print_orders(
             contours,
             manifest.get("format_version", FORMAT_VERSION),
         )

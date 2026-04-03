@@ -152,6 +152,8 @@ class Path:
     is_closed: bool = True
     start_point_index: int = 0  # 0=自动；1..N 表示显式顶点 0..N-1
 
+    print_order: int = 0
+
     @property
     def bounds(self) -> Tuple[float, float, float, float]:
         """获取边界框 (min_x, min_y, max_x, max_y)"""
@@ -418,7 +420,6 @@ class Contour:
     asset_id: str = ""
     asset_name: str = ""
     group_id: str = ""
-    print_order: int = 0        # 打印顺序
 
     def __init__(
         self,
@@ -452,6 +453,15 @@ class Contour:
     @start_point_index.setter
     def start_point_index(self, value: int) -> None:
         self.outer.start_point_index = value
+
+    @property
+    def print_order(self) -> int:
+        """Compatibility proxy for legacy contour-level print order."""
+        return self.outer.print_order
+
+    @print_order.setter
+    def print_order(self, value: int) -> None:
+        self.outer.print_order = value
 
 
 def normalize_path_start_point_index(path: Path) -> int:

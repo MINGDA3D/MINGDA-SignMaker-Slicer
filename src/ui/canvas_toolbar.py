@@ -31,6 +31,7 @@ class CanvasToolbar(QWidget):
     release_asset_clicked = Signal()
     text_clicked = Signal()
     start_point_clicked = Signal()
+    print_order_clicked = Signal()
     slice_clicked = Signal()
 
     def __init__(self, parent=None):
@@ -121,17 +122,13 @@ class CanvasToolbar(QWidget):
 
         self.btn_start_point = self._create_icon_button("start_point.png", self.tr("Start Point"))
         self.btn_start_point.setCheckable(True)
-        self.btn_start_point.clicked.connect(self.start_point_clicked.emit)
+        self.btn_start_point.clicked.connect(self._on_start_point_clicked)
         layout.addWidget(self.btn_start_point)
 
-        # 临时隐藏以下按钮，保留代码便于后续恢复：
-        # self.btn_order = self._create_icon_button("print_order.png", self.tr("Print Order"))
-        # layout.addWidget(self.btn_order)
-        #
-        # layout.addWidget(self._create_separator())
-        #
-        # self.btn_center = self._create_icon_button("center_view.png", self.tr("Center View"))
-        # layout.addWidget(self.btn_center)
+        self.btn_order = self._create_icon_button("print_order.png", self.tr("Print Order"))
+        self.btn_order.setCheckable(True)
+        self.btn_order.clicked.connect(self._on_print_order_clicked)
+        layout.addWidget(self.btn_order)
 
         # ========== 右侧弹性空间（居中用）==========
         layout.addStretch(1)
@@ -214,6 +211,16 @@ class CanvasToolbar(QWidget):
         self._set_tool_checked("scale")
         self.scale_clicked.emit()
 
+    def _on_start_point_clicked(self):
+        """起始点工具点击"""
+        self._set_tool_checked("start_point")
+        self.start_point_clicked.emit()
+
+    def _on_print_order_clicked(self):
+        """打印顺序工具点击"""
+        self._set_tool_checked("print_order")
+        self.print_order_clicked.emit()
+
     def _set_tool_checked(self, tool: str):
         """设置工具选中状态"""
         self.current_tool = tool
@@ -221,6 +228,7 @@ class CanvasToolbar(QWidget):
         self.btn_rotate.setChecked(tool == "rotate")
         self.btn_scale.setChecked(tool == "scale")
         self.btn_start_point.setChecked(tool == "start_point")
+        self.btn_order.setChecked(tool == "print_order")
 
     def clear_tool(self):
         """清除工具选择"""
@@ -229,6 +237,7 @@ class CanvasToolbar(QWidget):
         self.btn_rotate.setChecked(False)
         self.btn_scale.setChecked(False)
         self.btn_start_point.setChecked(False)
+        self.btn_order.setChecked(False)
 
     def set_release_asset_enabled(self, enabled: bool):
         """Enable explode only when the current selection can use it."""

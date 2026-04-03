@@ -292,4 +292,6 @@ class LightSlotGeometryBuilder:
             path_type=path.path_type if path.path_type is not None else fallback_path_type or PathType.OUTER,
             color=path.color,
             is_closed=path.is_closed,
+            start_point_index=path.start_point_index,
+            print_order=path.print_order,
         )

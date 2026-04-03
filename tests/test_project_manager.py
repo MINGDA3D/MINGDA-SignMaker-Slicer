@@ -72,6 +72,7 @@ class TestProjectFormat:
         )
         set_contour_user_start_point_index(contour, 2)
         set_path_user_start_point_index(contour.holes[0], 1)
+        contour.holes[0].print_order = 2
 
         project = Project(
             meta=ProjectMeta(name="带轮廓项目"),
@@ -92,9 +93,11 @@ class TestProjectFormat:
             assert c.start_point_index == 3
             assert get_contour_user_start_point_index(c) == 2
             assert c.print_order == 5
+            assert c.outer.print_order == 5
             assert len(c.outer.points) == 4
             assert c.outer.color == (255, 128, 0)
             assert len(c.holes) == 1
+            assert c.holes[0].print_order == 2
             hole_start_index = get_path_user_start_point_index(c.holes[0])
             assert hole_start_index is not None
             assert c.holes[0].points[hole_start_index] == Point(80, 20)
@@ -289,6 +292,59 @@ class TestProjectFormat:
             loaded_contours = load_project_contours(file_path)
             assert loaded_contours[0].start_point_index == 3
             assert get_contour_user_start_point_index(loaded_contours[0]) == 2
+
+    def test_load_project_migrates_legacy_contour_print_order_to_loops(self):
+        """测试旧格式工程中的 contour 级打印顺序会迁移到 loop 级顺序"""
+        contour_a = Contour(
+            outer=Path(
+                points=[Point(0, 0), Point(80, 0), Point(80, 80), Point(0, 80)],
+                path_type=PathType.OUTER,
+            ),
+            holes=[
+                Path(
+                    points=[Point(20, 20), Point(60, 20), Point(60, 60), Point(20, 60)],
+                    path_type=PathType.INNER,
+                )
+            ],
+            name="legacy-a",
+            print_order=10,
+        )
+        contour_b = Contour(
+            outer=Path(
+                points=[Point(100, 0), Point(140, 0), Point(140, 40), Point(100, 40)],
+                path_type=PathType.OUTER,
+            ),
+            name="legacy-b",
+            print_order=1,
+        )
+        manifest = {
+            "format_version": "4.4",
+            "application": "MINGDA SignMaker",
+            "created_at": "2026-01-01T00:00:00",
+            "modified_at": "2026-01-01T00:00:00",
+            "project": {"name": "legacy-print-order"},
+            "statistics": {"contour_count": 2, "total_points": 12},
+        }
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            file_path = os.path.join(tmpdir, "legacy-print-order.smp")
+            with zipfile.ZipFile(file_path, "w", zipfile.ZIP_DEFLATED) as zf:
+                zf.writestr(
+                    MANIFEST_FILE,
+                    json.dumps(manifest, ensure_ascii=False, indent=2),
+                )
+                zf.writestr(PARAMS_FILE, json.dumps({}, ensure_ascii=False, indent=2))
+                zf.writestr(CONTOURS_FILE, _serialize_contours([contour_a, contour_b]))
+
+            loaded = load_project(file_path)
+            assert loaded.contours[1].outer.print_order == 1
+            assert loaded.contours[0].outer.print_order == 2
+            assert loaded.contours[0].holes[0].print_order == 3
+
+            loaded_contours = load_project_contours(file_path)
+            assert loaded_contours[1].outer.print_order == 1
+            assert loaded_contours[0].outer.print_order == 2
+            assert loaded_contours[0].holes[0].print_order == 3
 
 
 class TestProjectManager:

@@ -59,6 +59,12 @@ from src.core.asset_utils import (
     get_contour_asset_name,
     get_shared_asset_metadata,
 )
+from src.core.print_order import (
+    LoopTarget,
+    apply_loop_order,
+    build_loop_order,
+    iter_loop_targets,
+)
 from src.core.types import (
     get_contour_user_start_point_index,
     get_path_user_start_point_index,
@@ -126,6 +132,10 @@ class MainWindow(QMainWindow):
         # 撤销/重做管理器
         self.undo_manager = UndoManager(max_undo_levels=100)
         self._pending_transform: Optional[TransformCommand] = None
+        self._print_order_session_initial_order: Optional[List[LoopTarget]] = None
+        self._print_order_session_initial_tokens: Optional[dict[LoopTarget, int]] = None
+        self._print_order_session_picked: List[LoopTarget] = []
+        self._print_order_session_command: Optional[TransformCommand] = None
 
         # 初始化UI
         self._init_window()
@@ -695,6 +705,7 @@ class MainWindow(QMainWindow):
         self.canvas_toolbar.release_asset_clicked.connect(self._on_release_asset)
         self.canvas_toolbar.text_clicked.connect(self._on_text)
         self.canvas_toolbar.start_point_clicked.connect(self._on_start_point_tool)
+        self.canvas_toolbar.print_order_clicked.connect(self._on_print_order_tool)
 
     def _init_statusbar(self):
         """初始化状态栏"""
@@ -724,6 +735,8 @@ class MainWindow(QMainWindow):
         self.canvas.contours_modified.connect(self._on_contours_modified)
         self.canvas.start_point_change_requested.connect(self._on_start_point_change_requested)
         self.canvas.start_point_mode_exit_requested.connect(self._exit_start_point_mode)
+        self.canvas.print_order_loop_clicked.connect(self._on_print_order_loop_clicked)
+        self.canvas.print_order_mode_exit_requested.connect(self._exit_print_order_mode)
 
         # 右键菜单信号
         self.canvas.mirror_requested.connect(self._on_mirror)
@@ -938,6 +951,7 @@ class MainWindow(QMainWindow):
 
     def _on_delete_requested(self, indices: list):
         """处理删除请求"""
+        self._exit_print_order_mode()
         if not indices:
             return
 
@@ -1162,9 +1176,9 @@ class MainWindow(QMainWindow):
         )
 
         if active_mode is None:
-            if self.canvas.current_tool == "start_point":
-                self.canvas_toolbar._set_tool_checked("start_point")
-                self.canvas.set_tool("start_point")
+            if self.canvas.current_tool in {"start_point", "print_order"}:
+                self.canvas_toolbar._set_tool_checked(self.canvas.current_tool)
+                self.canvas.set_tool(self.canvas.current_tool)
                 return
             self.canvas_toolbar.clear_tool()
             self.canvas.set_tool("select")
@@ -1173,6 +1187,17 @@ class MainWindow(QMainWindow):
         self.canvas_toolbar._set_tool_checked(active_mode)
         self.canvas.set_tool(active_mode)
 
+    def _snapshot_loop_print_orders(self) -> dict[LoopTarget, int]:
+        """Capture the stored loop print-order tokens for the current contours."""
+        return {
+            target: path.print_order
+            for target, path in iter_loop_targets(self.contours)
+        }
+
+    def _is_print_order_mode_active(self) -> bool:
+        """Return whether the canvas is currently editing loop print order."""
+        return self.canvas.current_tool == "print_order"
+
     def _on_contour_selected(self, index: int):
         """当选中轮廓时显示位置面板"""
         if self.canvas.selected_indices:
@@ -1180,7 +1205,7 @@ class MainWindow(QMainWindow):
             # 恢复新选中轮廓的变换状态
             new_id = self._get_selected_contour_id()
             self._restore_contour_transform(new_id)
-            if self.canvas.current_tool == "start_point":
+            if self.canvas.current_tool in {"start_point", "print_order"}:
                 self.transform_panel.setVisible(False)
                 self._sync_release_asset_button_state()
                 return
@@ -1224,7 +1249,7 @@ class MainWindow(QMainWindow):
         self.project_panel.clear_selection()
         self._current_selected_id = None
         self._sync_release_asset_button_state()
-        if self.canvas.current_tool == "start_point":
+        if self.canvas.current_tool in {"start_point", "print_order"}:
             self.transform_panel.setVisible(False)
             return
         self._close_transform_panel()
@@ -1370,6 +1395,7 @@ class MainWindow(QMainWindow):
     def _show_preview_view(self):
         """Switch to the 3D preview view without preparing content yet."""
         self._exit_start_point_mode()
+        self._exit_print_order_mode()
         self.main_stack.setCurrentIndex(1)
         self.current_main_view = "editor"
         self.view_stack.setCurrentIndex(1)
@@ -1511,6 +1537,7 @@ class MainWindow(QMainWindow):
         """处理标题栏导航切换"""
         if nav == "home":
             self._exit_start_point_mode()
+            self._exit_print_order_mode()
             # 显示首页
             self.main_stack.setCurrentIndex(0)
             self.current_main_view = "home"
@@ -1568,6 +1595,7 @@ class MainWindow(QMainWindow):
 
     def _on_new_project(self):
         """新建项目"""
+        self._exit_print_order_mode(commit=False)
         # 清空撤销历史
         self.undo_manager.clear()
 
@@ -1926,6 +1954,7 @@ class MainWindow(QMainWindow):
         if not new_contours:
             return []
 
+        self._exit_print_order_mode()
         self._auto_arrange_contours(new_contours)
         insert_at = len(self.contours)
 
@@ -1952,6 +1981,7 @@ class MainWindow(QMainWindow):
 
     def _load_contours(self, new_contours: List[Contour], path: Path):
         """加载轮廓数据（从 DXF/SVG 导入）"""
+        self._exit_print_order_mode()
         # 创建替换轮廓命令（可撤销）
         self._assign_asset_metadata(new_contours, path.name)
         self._append_contours(
@@ -1987,6 +2017,7 @@ class MainWindow(QMainWindow):
     def _load_project(self, file_path: str) -> bool:
         """加载项目文件（.smp）"""
         try:
+            self._exit_print_order_mode(commit=False)
             project = self.project_manager.open_project(file_path)
 
             # 清空撤销历史
@@ -2357,6 +2388,7 @@ class MainWindow(QMainWindow):
 
     def _on_undo(self):
         """撤销"""
+        self._exit_print_order_mode()
         if self.undo_manager.can_undo:
             command = self.undo_manager._undo_stack[-1] if self.undo_manager._undo_stack else None
             requires_reprocess = self._command_requires_reprocess(command)
@@ -2370,6 +2402,7 @@ class MainWindow(QMainWindow):
 
     def _on_redo(self):
         """重做"""
+        self._exit_print_order_mode()
         if self.undo_manager.can_redo:
             command = self.undo_manager._redo_stack[-1] if self.undo_manager._redo_stack else None
             requires_reprocess = self._command_requires_reprocess(command)
@@ -2443,6 +2476,7 @@ class MainWindow(QMainWindow):
             self.current_view = "2d"
         else:
             self._exit_start_point_mode()
+            self._exit_print_order_mode()
             self.view_stack.setCurrentIndex(1)
             self.current_view = "3d"
             QTimer.singleShot(0, self._prepare_preview_3d)
@@ -2485,6 +2519,7 @@ class MainWindow(QMainWindow):
             )
             return
 
+        self._exit_print_order_mode()
         self._close_transform_panel()
         self.current_transform_mode = None
         self.canvas_toolbar._set_tool_checked("start_point")
@@ -2502,6 +2537,94 @@ class MainWindow(QMainWindow):
         self.canvas.set_tool("select")
         self.canvas.setFocus()
         self._update_status(self.tr("Ready"))
+
+    def _on_print_order_tool(self):
+        """Toggle loop-level print-order editing mode."""
+        if self._is_print_order_mode_active():
+            self._exit_print_order_mode()
+            return
+
+        self._enter_print_order_mode()
+
+    def _enter_print_order_mode(self):
+        """Start a loop print-order editing session."""
+        if not self.contours:
+            QMessageBox.information(
+                self,
+                self.tr("Info"),
+                self.tr("No contours available for print order selection"),
+            )
+            return
+
+        self._exit_start_point_mode()
+        self._close_transform_panel()
+        self.current_transform_mode = None
+        self._print_order_session_initial_order = build_loop_order(self.contours)
+        self._print_order_session_initial_tokens = self._snapshot_loop_print_orders()
+        self._print_order_session_picked = []
+        self._print_order_session_command = TransformCommand(
+            self.contours,
+            list(range(len(self.contours))),
+            self.tr("Set Print Order"),
+        )
+        self.canvas_toolbar._set_tool_checked("print_order")
+        self.canvas.set_tool("print_order")
+        self.canvas.set_print_order_highlighted_targets([])
+        self.transform_panel.setVisible(False)
+        self.canvas.setFocus()
+        self._update_status(
+            self.tr("Click contours or holes in desired print order, Esc to finish")
+        )
+
+    def _exit_print_order_mode(self, commit: bool = True):
+        """Finish the current print-order editing session."""
+        session_active = self._is_print_order_mode_active()
+        initial_tokens = self._print_order_session_initial_tokens
+        current_tokens = self._snapshot_loop_print_orders() if initial_tokens is not None else None
+        has_changes = initial_tokens is not None and current_tokens != initial_tokens
+
+        if commit and has_changes and self._print_order_session_command is not None:
+            self._print_order_session_command.capture_after()
+            self.undo_manager.push(self._print_order_session_command, execute=False)
+
+        self._print_order_session_initial_order = None
+        self._print_order_session_initial_tokens = None
+        self._print_order_session_picked = []
+        self._print_order_session_command = None
+        self.canvas.set_print_order_highlighted_targets([])
+
+        if not session_active:
+            return
+
+        self.canvas_toolbar.clear_tool()
+        self.canvas.set_tool("select")
+        self.canvas.setFocus()
+        self._update_status(self.tr("Ready"))
+
+    def _on_print_order_loop_clicked(self, contour_index: int, hole_index: int):
+        """Apply one loop click inside the active print-order session."""
+        if self._print_order_session_initial_order is None:
+            return
+
+        target = (contour_index, hole_index)
+        picked = list(self._print_order_session_picked)
+        if target in picked:
+            picked = [item for item in picked if item != target]
+        else:
+            picked.append(target)
+
+        new_order = picked + [
+            item for item in self._print_order_session_initial_order
+            if item not in picked
+        ]
+        apply_loop_order(self.contours, new_order)
+        self._print_order_session_picked = picked
+
+        self.canvas.set_selected_indices([contour_index], active_index=contour_index)
+        self.canvas.set_print_order_highlighted_targets(picked)
+        self.canvas.update()
+        self._invalidate_processed_result()
+        self._update_status(self.tr("Print order updated"))
 
     def _on_start_point_change_requested(
         self,
@@ -2549,6 +2672,8 @@ class MainWindow(QMainWindow):
         """激活变换工具并显示面板"""
         if self.canvas.current_tool == "start_point":
             self._exit_start_point_mode()
+        if self._is_print_order_mode_active():
+            self._exit_print_order_mode()
 
         # 更新工具栏按钮状态
         self.canvas_toolbar._set_tool_checked(mode)
@@ -2805,6 +2930,7 @@ class MainWindow(QMainWindow):
 
     def _on_mirror(self, axis: str):
         """镜像"""
+        self._exit_print_order_mode()
         if not self.canvas.selected_indices:
             QMessageBox.information(self, self.tr("Info"), self.tr("Please select a contour first"))
             return
@@ -2827,6 +2953,7 @@ class MainWindow(QMainWindow):
 
     def _on_intersection(self):
         """交集"""
+        self._exit_print_order_mode()
         if len(self.canvas.selected_indices) < 2:
             QMessageBox.information(
                 self,
@@ -2862,6 +2989,7 @@ class MainWindow(QMainWindow):
 
     def _on_difference(self):
         """差集"""
+        self._exit_print_order_mode()
         if len(self.canvas.selected_indices) < 2:
             QMessageBox.information(
                 self,
@@ -2897,6 +3025,7 @@ class MainWindow(QMainWindow):
 
     def _on_group(self):
         """组合"""
+        self._exit_print_order_mode()
         selected = self.canvas.get_group_target_indices()
         if len(selected) < 2:
             QMessageBox.information(
@@ -2926,6 +3055,7 @@ class MainWindow(QMainWindow):
 
     def _on_ungroup(self):
         """打散"""
+        self._exit_print_order_mode()
         selected = self.canvas.get_ungroup_target_indices()
         if not selected:
             QMessageBox.information(

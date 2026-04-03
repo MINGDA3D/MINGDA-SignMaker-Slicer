@@ -7,7 +7,15 @@ import pyclipper
 
 from src.utils.geometry import normalize_path
 
-from .types import Contour, Path, PathType, Point, normalize_contour_start_point_index
+from .types import (
+    Contour,
+    Path,
+    PathType,
+    Point,
+    get_path_user_start_point_index,
+    normalize_contour_start_point_index,
+    set_path_user_start_point_index,
+)
 
 
 _CLIPPER_SCALE = 1000.0
@@ -107,6 +115,12 @@ def repair_contours(contours: List[Contour]) -> List[Contour]:
             repaired.append(_normalize_existing_contour(contour))
             continue
 
+        rebuilt_paths: List[Path] = []
+        for rebuilt_contour in rebuilt:
+            rebuilt_paths.append(rebuilt_contour.outer)
+            rebuilt_paths.extend(rebuilt_contour.holes)
+        _transfer_path_user_state([contour.outer, *contour.holes], rebuilt_paths)
+
         for rebuilt_contour in rebuilt:
             rebuilt_contour.connected_frames = list(contour.connected_frames)
             rebuilt_contour.patterns = list(contour.patterns)
@@ -114,12 +128,66 @@ def repair_contours(contours: List[Contour]) -> List[Contour]:
             rebuilt_contour.asset_id = contour.asset_id
             rebuilt_contour.asset_name = contour.asset_name
             rebuilt_contour.group_id = contour.group_id
-            rebuilt_contour.start_point_index = contour.start_point_index
-            rebuilt_contour.print_order = contour.print_order
             normalize_contour_start_point_index(rebuilt_contour)
             repaired.append(rebuilt_contour)
 
     return repaired
+
+
+def _transfer_path_user_state(original_paths: List[Path], rebuilt_paths: List[Path]) -> None:
+    """Best-effort transfer of per-path start-point and print-order state."""
+    remaining = list(original_paths)
+
+    for rebuilt_path in rebuilt_paths:
+        if not remaining:
+            break
+
+        best_index = min(
+            range(len(remaining)),
+            key=lambda index: _path_match_score(remaining[index], rebuilt_path),
+        )
+        source = remaining.pop(best_index)
+        _transfer_single_path_user_state(source, rebuilt_path)
+
+
+def _transfer_single_path_user_state(source: Path, rebuilt_path: Path) -> None:
+    """Transfer per-loop user state while preserving the selected geometric start point."""
+    explicit_index = get_path_user_start_point_index(source)
+    if explicit_index is None or not source.points or not rebuilt_path.points:
+        rebuilt_path.start_point_index = 0
+    else:
+        source_point = source.points[explicit_index]
+        closest_index = min(
+            range(len(rebuilt_path.points)),
+            key=lambda index: (
+                (rebuilt_path.points[index].x - source_point.x) ** 2
+                + (rebuilt_path.points[index].y - source_point.y) ** 2
+            ),
+        )
+        set_path_user_start_point_index(rebuilt_path, closest_index)
+
+    rebuilt_path.print_order = source.print_order
+
+
+def _path_match_score(original: Path, rebuilt: Path) -> float:
+    """Lower scores mean the rebuilt loop is more likely the same original loop."""
+    original_centroid = original.centroid
+    rebuilt_centroid = rebuilt.centroid
+    dx = original_centroid.x - rebuilt_centroid.x
+    dy = original_centroid.y - rebuilt_centroid.y
+    centroid_distance = (dx * dx + dy * dy) ** 0.5
+
+    original_bounds = original.bounds
+    rebuilt_bounds = rebuilt.bounds
+    bounds_delta = sum(
+        abs(a - b) for a, b in zip(original_bounds, rebuilt_bounds)
+    )
+
+    return (
+        abs(abs(original.area) - abs(rebuilt.area)) * 100.0
+        + centroid_distance * 10.0
+        + bounds_delta
+    )
 
 
 def path_contains_path(outer: Path, inner: Path) -> bool:
@@ -205,6 +273,7 @@ def _prepare_loop(path: Path) -> Optional[Path]:
         color=path.color,
         is_closed=True,
         start_point_index=path.start_point_index,
+        print_order=path.print_order,
     )
     if abs(prepared.area) < _AREA_EPSILON:
         return None
@@ -238,6 +307,7 @@ def _clone_path(path: Path, path_type: Optional[PathType] = None) -> Path:
         color=path.color,
         is_closed=path.is_closed,
         start_point_index=path.start_point_index,
+        print_order=path.print_order,
     )
 
 

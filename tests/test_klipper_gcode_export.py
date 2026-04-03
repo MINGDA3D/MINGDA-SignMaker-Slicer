@@ -491,3 +491,80 @@ def test_slice_engine_respects_hole_start_point():
     )
     assert hole_wall.points[0].x > 35.0
     assert hole_wall.points[0].y > 35.0
+
+
+def test_slice_engine_respects_global_loop_print_order_with_holes():
+    params = SliceParams()
+    params.shell.height = 0.3
+    params.shell.layer_height = 0.3
+    params.shell.wall_count = 1
+
+    contour_with_hole = _rect_contour_with_hole(
+        0.0,
+        0.0,
+        60.0,
+        60.0,
+        20.0,
+        20.0,
+        40.0,
+        40.0,
+        name="with-hole",
+    )
+    later_contour = _rect_contour(100.0, 0.0, 120.0, 20.0, name="later")
+
+    contour_with_hole.holes[0].print_order = 1
+    later_contour.outer.print_order = 2
+    contour_with_hole.outer.print_order = 3
+
+    result = SliceEngine().slice([contour_with_hole, later_contour], params)
+    wall_paths = [path for path in result.layers[0].paths if path.role == PathRole.WALL]
+
+    assert len(wall_paths) >= 3
+
+    def bounds(path):
+        xs = [point.x for point in path.points]
+        ys = [point.y for point in path.points]
+        return min(xs), min(ys), max(xs), max(ys)
+
+    first_bounds = bounds(wall_paths[0])
+    second_bounds = bounds(wall_paths[1])
+    third_bounds = bounds(wall_paths[2])
+
+    assert first_bounds[0] > 15.0 and first_bounds[2] < 45.0
+    assert second_bounds[0] > 95.0 and second_bounds[2] < 125.0
+    assert third_bounds[0] < 5.0 and third_bounds[2] > 55.0
+
+
+def test_slice_engine_keeps_multi_wall_passes_grouped_per_loop():
+    params = SliceParams()
+    params.shell.height = 0.3
+    params.shell.layer_height = 0.3
+    params.shell.wall_count = 2
+
+    contour = _rect_contour_with_hole(
+        0.0,
+        0.0,
+        60.0,
+        60.0,
+        20.0,
+        20.0,
+        40.0,
+        40.0,
+        name="with-hole",
+    )
+    contour.holes[0].print_order = 1
+    contour.outer.print_order = 2
+
+    result = SliceEngine().slice([contour], params)
+    wall_paths = [path for path in result.layers[0].paths if path.role == PathRole.WALL]
+
+    assert len(wall_paths) == 4
+
+    def is_hole(path) -> bool:
+        xs = [point.x for point in path.points]
+        return min(xs) > 15.0 and max(xs) < 45.0
+
+    assert is_hole(wall_paths[0]) is True
+    assert is_hole(wall_paths[1]) is True
+    assert is_hole(wall_paths[2]) is False
+    assert is_hole(wall_paths[3]) is False

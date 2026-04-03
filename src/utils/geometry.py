@@ -87,6 +87,7 @@ def reverse_path(path: Path) -> Path:
         color=path.color,
         is_closed=path.is_closed,
         start_point_index=start_point_index,
+        print_order=path.print_order,
     )
 
 
@@ -132,6 +133,7 @@ def rotate_path(path: Path, center: Point, angle_deg: float) -> Path:
         color=path.color,
         is_closed=path.is_closed,
         start_point_index=path.start_point_index,
+        print_order=path.print_order,
     )
 
 
@@ -150,6 +152,7 @@ def scale_path(path: Path, center: Point, scale: float) -> Path:
         color=path.color,
         is_closed=path.is_closed,
         start_point_index=path.start_point_index,
+        print_order=path.print_order,
     )
 
 
@@ -162,6 +165,7 @@ def translate_path(path: Path, dx: float, dy: float) -> Path:
         color=path.color,
         is_closed=path.is_closed,
         start_point_index=path.start_point_index,
+        print_order=path.print_order,
     )
 
 
@@ -174,6 +178,7 @@ def mirror_path_x(path: Path, center_x: float = 0) -> Path:
         color=path.color,
         is_closed=path.is_closed,
         start_point_index=path.start_point_index,
+        print_order=path.print_order,
     )
 
 
@@ -186,6 +191,7 @@ def mirror_path_y(path: Path, center_y: float = 0) -> Path:
         color=path.color,
         is_closed=path.is_closed,
         start_point_index=path.start_point_index,
+        print_order=path.print_order,
     )
 
 
@@ -249,14 +255,16 @@ def simplify_path_rdp(path: Path, epsilon: float) -> Path:
             points=left_simplified.points[:-1] + right_simplified.points,
             path_type=path.path_type,
             color=path.color,
-            is_closed=path.is_closed
+            is_closed=path.is_closed,
+            print_order=path.print_order,
         )
     else:
         return Path(
             points=[start, end],
             path_type=path.path_type,
             color=path.color,
-            is_closed=path.is_closed
+            is_closed=path.is_closed,
+            print_order=path.print_order,
         )
 
 

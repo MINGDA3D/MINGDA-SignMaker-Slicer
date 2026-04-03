@@ -9,7 +9,7 @@ MINGDA SignMaker - 2D画布组件
 """
 
 from __future__ import annotations
-from typing import List, Optional, Tuple
+from typing import Iterable, List, Optional, Tuple
 import math
 
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QApplication, QMenu
@@ -26,6 +26,7 @@ from src.core.asset_utils import (
 )
 from src.core.contour_classifier import classify_paths_by_nesting
 from src.core.path_offset import PathOffset
+from src.core.print_order import LoopTarget, build_loop_order
 from src.core.types import (
     Point,
     Path,
@@ -35,7 +36,7 @@ from src.core.types import (
     resolve_path_start_point_index,
     normalize_contour_start_point_index,
 )
-from src.utils.geometry import normalize_path
+from src.utils.geometry import normalize_path, point_in_polygon
 from .theme import COLORS
 
 
@@ -50,6 +51,8 @@ class Canvas2D(QWidget):
     contours_modified = Signal()  # 轮廓被修改信号
     start_point_change_requested = Signal(int, int, int)  # 请求修改轮廓/内孔起始点
     start_point_mode_exit_requested = Signal()  # 请求退出起始点模式
+    print_order_loop_clicked = Signal(int, int)  # 请求调整 loop 打印顺序
+    print_order_mode_exit_requested = Signal()  # 请求退出打印顺序模式
 
     # 撤销/重做相关信号
     transform_started = Signal(str, list)  # 变换开始（操作类型, 索引列表）
@@ -91,10 +94,11 @@ class Canvas2D(QWidget):
         self._path_offset = PathOffset()
 
         # 交互状态
-        self.current_tool = "select"  # 当前工具: select, move, rotate, scale, start_point
+        self.current_tool = "select"  # 当前工具: select, move, rotate, scale, start_point, print_order
         self.is_panning = False  # 是否正在平移视图
         self.is_transforming = False  # 是否正在变换轮廓
         self._hovered_start_point_candidate: Optional[Tuple[int, int, int]] = None
+        self._print_order_highlighted_targets: set[LoopTarget] = set()
         self.pan_start = QPointF()  # 平移起始点
         self._pan_button_down = False  # 右键/中键已按下，等待判定是否为平移
         self._pan_origin = QPointF()   # 按下时的位置（用于阈值判定）
@@ -294,6 +298,11 @@ class Canvas2D(QWidget):
         if tool != "start_point":
             self._hovered_start_point_candidate = None
         self._set_tool_cursor()
+        self.update()
+
+    def set_print_order_highlighted_targets(self, targets: Iterable[LoopTarget]) -> None:
+        """Update the currently highlighted loop targets in print-order mode."""
+        self._print_order_highlighted_targets = set(targets)
         self.update()
 
     @staticmethod
@@ -710,6 +719,7 @@ class Canvas2D(QWidget):
             color=path.color,
             is_closed=path.is_closed,
             start_point_index=path.start_point_index,
+            print_order=path.print_order,
         )
 
     def _get_group_id(self, contour: Contour) -> str:
@@ -815,6 +825,68 @@ class Canvas2D(QWidget):
         self.set_selected_indices([selected_index], active_index=selected_index)
         return True
 
+    def _get_loop_path(self, target: LoopTarget) -> Optional[Path]:
+        """Return a loop path for the given contour/hole target."""
+        contour_index, hole_index = target
+        if not (0 <= contour_index < len(self.contours)):
+            return None
+
+        contour = self.contours[contour_index]
+        if hole_index < 0:
+            return contour.outer
+        if hole_index >= len(contour.holes):
+            return None
+        return contour.holes[hole_index]
+
+    def _point_in_path(self, point: Point, path: Path) -> bool:
+        """Check whether a world-space point is inside a closed polygonal path."""
+        if not path.points:
+            return False
+
+        min_x, min_y, max_x, max_y = path.bounds
+        if point.x < min_x or point.x > max_x or point.y < min_y or point.y > max_y:
+            return False
+
+        return point_in_polygon(point, path)
+
+    def _find_print_order_loop_at(self, pos: QPointF) -> Optional[LoopTarget]:
+        """Find the smallest matching hole/outer loop for print-order editing."""
+        world_pos = self._screen_to_world(pos)
+        point = Point(world_pos.x(), world_pos.y())
+        hole_candidates: List[tuple[LoopTarget, float]] = []
+        outer_candidates: List[tuple[LoopTarget, float]] = []
+
+        for contour_index, contour in enumerate(self.contours):
+            for hole_index, hole in enumerate(contour.holes):
+                if self._point_in_path(point, hole):
+                    hole_candidates.append(((contour_index, hole_index), abs(hole.area)))
+
+            if not self._point_in_path(point, contour.outer):
+                continue
+
+            if any(self._point_in_path(point, hole) for hole in contour.holes):
+                continue
+
+            outer_candidates.append(((contour_index, -1), abs(contour.outer.area)))
+
+        candidates = hole_candidates if hole_candidates else outer_candidates
+        if not candidates:
+            return None
+
+        candidates.sort(key=lambda item: (item[1], item[0][0], item[0][1]))
+        return candidates[0][0]
+
+    def _handle_print_order_click(self, pos: QPointF) -> bool:
+        """Handle a click in print-order mode."""
+        target = self._find_print_order_loop_at(pos)
+        if target is None:
+            return False
+
+        contour_index, hole_index = target
+        self.set_selected_indices([contour_index], active_index=contour_index)
+        self.print_order_loop_clicked.emit(contour_index, hole_index)
+        return True
+
     # =========================================================================
     # 绘制
     # =========================================================================
@@ -845,6 +917,9 @@ class Canvas2D(QWidget):
             self._draw_start_point_candidates(painter)
 
         painter.restore()
+
+        if self.current_tool == "print_order":
+            self._draw_print_order_badges(painter)
 
         # 绘制旋转Gizmo（屏幕坐标，不受世界变换影响）
         if self.current_tool == "rotate" and self.selected_indices:
@@ -1167,6 +1242,111 @@ class Canvas2D(QWidget):
                 QBrush(self.start_point_color if is_current else Qt.BrushStyle.NoBrush)
             )
             painter.drawEllipse(QPointF(point.x, point.y), radius, radius)
+
+    def _draw_print_order_badges(self, painter: QPainter):
+        """Draw the effective loop print order as screen-space badges."""
+        font = painter.font()
+        font.setBold(True)
+        painter.setFont(font)
+
+        for order, target, rect in self._build_print_order_badge_layout():
+            is_highlighted = target in self._print_order_highlighted_targets
+
+            painter.setPen(QPen(QColor("#0D1117"), 1.2))
+            painter.setBrush(
+                QBrush(self.selected_color if is_highlighted else QColor("#F2CC60"))
+            )
+            painter.drawRoundedRect(rect, 8.0, 8.0)
+            painter.setPen(
+                QColor("#FFFFFF") if is_highlighted else QColor("#111111")
+            )
+            painter.drawText(rect, Qt.AlignmentFlag.AlignCenter, str(order))
+
+    def _build_print_order_badge_layout(self) -> List[tuple[int, LoopTarget, QRectF]]:
+        """Lay out print-order badges and avoid merging overlapping loop labels."""
+        badge_layout: List[tuple[int, LoopTarget, QRectF]] = []
+        occupied_rects: List[QRectF] = []
+
+        for order, target in enumerate(build_loop_order(self.contours), start=1):
+            path = self._get_loop_path(target)
+            if path is None or not path.points:
+                continue
+
+            badge_rect = self._resolve_print_order_badge_rect(path, occupied_rects)
+            badge_layout.append((order, target, badge_rect))
+            occupied_rects.append(badge_rect)
+
+        return badge_layout
+
+    def _resolve_print_order_badge_rect(
+        self,
+        path: Path,
+        occupied_rects: List[QRectF],
+    ) -> QRectF:
+        """Place one badge near the loop anchor without overlapping earlier badges."""
+        anchor = self._get_loop_badge_anchor(path)
+        screen_pos = self._world_to_screen(QPointF(anchor.x, anchor.y))
+        badge_width = 26.0
+        badge_height = 24.0
+        base_rect = QRectF(
+            screen_pos.x() - badge_width / 2,
+            screen_pos.y() - badge_height / 2,
+            badge_width,
+            badge_height,
+        )
+
+        candidate_offsets = [
+            (0.0, 0.0),
+            (30.0, 0.0),
+            (-30.0, 0.0),
+            (0.0, -28.0),
+            (0.0, 28.0),
+            (30.0, -28.0),
+            (-30.0, -28.0),
+            (30.0, 28.0),
+            (-30.0, 28.0),
+            (60.0, 0.0),
+            (-60.0, 0.0),
+            (0.0, -56.0),
+            (0.0, 56.0),
+            (60.0, -28.0),
+            (-60.0, -28.0),
+            (60.0, 28.0),
+            (-60.0, 28.0),
+            (30.0, -56.0),
+            (-30.0, -56.0),
+            (30.0, 56.0),
+            (-30.0, 56.0),
+        ]
+
+        for dx, dy in candidate_offsets:
+            candidate_rect = base_rect.translated(dx, dy)
+            if not self._print_order_badge_rect_conflicts(candidate_rect, occupied_rects):
+                return candidate_rect
+
+        fallback_step = badge_width + 8.0
+        fallback_rect = base_rect
+        while self._print_order_badge_rect_conflicts(fallback_rect, occupied_rects):
+            fallback_rect = fallback_rect.translated(fallback_step, 0.0)
+        return fallback_rect
+
+    def _print_order_badge_rect_conflicts(
+        self,
+        rect: QRectF,
+        occupied_rects: List[QRectF],
+    ) -> bool:
+        """Keep a small gap so adjacent badges stay readable."""
+        padded_rect = rect.adjusted(-4.0, -4.0, 4.0, 4.0)
+        return any(padded_rect.intersects(existing) for existing in occupied_rects)
+
+    def _get_loop_badge_anchor(self, path: Path) -> Point:
+        """Pick a stable anchor for the print-order badge."""
+        centroid = path.centroid
+        if point_in_polygon(centroid, path):
+            return centroid
+
+        min_x, min_y, max_x, max_y = path.bounds
+        return Point((min_x + max_x) / 2, (min_y + max_y) / 2)
 
     def _draw_selection_overlay(self, painter: QPainter):
         """绘制选中状态覆盖层（边界框和控制手柄）"""
@@ -1526,6 +1706,9 @@ class Canvas2D(QWidget):
             if self.current_tool == "start_point":
                 if self._handle_start_point_click(event.position()):
                     return
+            elif self.current_tool == "print_order":
+                self._handle_print_order_click(event.position())
+                return
 
             # 先检查是否点击在已选中的轮廓上（支持直接拖动）
             clicked_on_selected = False
@@ -1768,6 +1951,7 @@ class Canvas2D(QWidget):
             "rotate": Qt.CursorShape.CrossCursor,
             "scale": Qt.CursorShape.SizeFDiagCursor,
             "start_point": Qt.CursorShape.CrossCursor,
+            "print_order": Qt.CursorShape.PointingHandCursor,
         }
         self.setCursor(cursors.get(self.current_tool, Qt.CursorShape.ArrowCursor))
 
@@ -1780,6 +1964,8 @@ class Canvas2D(QWidget):
         elif event.key() == Qt.Key.Key_Escape:
             if self.current_tool == "start_point":
                 self.start_point_mode_exit_requested.emit()
+            elif self.current_tool == "print_order":
+                self.print_order_mode_exit_requested.emit()
             else:
                 # 取消选择
                 self.set_selected_indices([])

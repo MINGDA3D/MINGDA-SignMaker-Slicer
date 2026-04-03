@@ -353,6 +353,7 @@ class DXFWriter:
             color=path.color,
             is_closed=path.is_closed,
             start_point_index=path.start_point_index,
+            print_order=path.print_order,
         )
 
     def _copy_contour(self, contour: Contour) -> Contour:

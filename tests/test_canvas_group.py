@@ -441,6 +441,97 @@ def test_start_point_click_updates_hole_only_and_is_undoable(qapp):
     window.deleteLater()
 
 
+def test_print_order_mode_toggles_from_toolbar_and_escape(qapp):
+    window = MainWindow()
+    window.contours = [_rect_contour(0, 0, 10, 10, "A")]
+    window.canvas.set_contours(window.contours, center_on_platform=False)
+    window.project_panel.update_contours(window.contours)
+
+    window._on_print_order_tool()
+
+    assert window.canvas.current_tool == "print_order"
+    assert window.canvas_toolbar.btn_order.isChecked() is True
+
+    escape_event = QKeyEvent(
+        QEvent.Type.KeyPress,
+        Qt.Key.Key_Escape,
+        Qt.KeyboardModifier.NoModifier,
+    )
+    window.canvas.keyPressEvent(escape_event)
+
+    assert window.canvas.current_tool == "select"
+    assert window.canvas_toolbar.btn_order.isChecked() is False
+
+    window.deleteLater()
+
+
+def test_print_order_click_prioritizes_hole_and_commits_as_one_undo_step(qapp):
+    window = MainWindow()
+    window.contours = [
+        _rect_contour_with_hole(0, 0, 40, 40, 10, 10, 20, 20, "A"),
+        _rect_contour(60, 0, 80, 20, "B"),
+    ]
+    window.canvas.set_contours(window.contours, center_on_platform=False)
+    window.project_panel.update_contours(window.contours)
+    window.slice_result = object()
+
+    window._on_print_order_tool()
+
+    hole_click = window.canvas._world_to_screen(QPointF(15, 15))
+    assert window.canvas._find_print_order_loop_at(hole_click) == (0, 0)
+
+    handled = window.canvas._handle_print_order_click(hole_click)
+
+    assert handled is True
+    assert window.contours[0].holes[0].print_order == 1
+    assert window.contours[0].outer.print_order == 2
+    assert window.contours[1].outer.print_order == 3
+    assert window.canvas.selected_indices == [0]
+    assert window.undo_manager.can_undo is False
+    assert window.slice_result is None
+
+    outer_b_click = window.canvas._world_to_screen(QPointF(70, 10))
+    assert window.canvas._handle_print_order_click(outer_b_click) is True
+    assert window.contours[0].holes[0].print_order == 1
+    assert window.contours[1].outer.print_order == 2
+    assert window.contours[0].outer.print_order == 3
+
+    window._exit_print_order_mode()
+
+    assert window.undo_manager.can_undo is True
+
+    window._on_undo()
+
+    assert window.contours[0].outer.print_order == 0
+    assert window.contours[0].holes[0].print_order == 0
+    assert window.contours[1].outer.print_order == 0
+
+    window.deleteLater()
+
+
+def test_print_order_badges_do_not_overlap_for_concentric_loops(qapp):
+    window = MainWindow()
+    window.contours = [
+        _rect_contour_with_hole(0, 0, 40, 40, 10, 10, 20, 20, "A"),
+        _rect_contour(60, 0, 80, 20, "B"),
+    ]
+    window.canvas.set_contours(window.contours, center_on_platform=False)
+    window.project_panel.update_contours(window.contours)
+
+    window._on_print_order_tool()
+    badge_layout = window.canvas._build_print_order_badge_layout()
+
+    assert [order for order, _target, _rect in badge_layout] == [1, 2, 3]
+
+    rects = [rect for _order, _target, rect in badge_layout]
+    assert len(rects) == 3
+    assert rects[0].intersects(rects[1]) is False
+    assert rects[0].intersects(rects[2]) is False
+    assert rects[1].intersects(rects[2]) is False
+
+    window.deleteLater()
+
+
 def test_main_window_release_asset_ignores_single_contour_asset(qapp):
     window = MainWindow()
     window.contours = [_rect_contour(0, 0, 10, 10, "A")]
