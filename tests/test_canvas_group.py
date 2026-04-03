@@ -1,11 +1,19 @@
+import math
 import os
 
 import pytest
-from PySide6.QtCore import QPointF
+from PySide6.QtCore import QEvent, QPointF, Qt
+from PySide6.QtGui import QKeyEvent
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
-from src.core.types import Contour, Path, Point
+from src.core.types import (
+    Contour,
+    Path,
+    Point,
+    get_contour_user_start_point_index,
+    resolve_contour_start_point_index,
+)
 from src.ui.canvas_2d import Canvas2D
 from src.ui.main_window import MainWindow
 from src.ui.project_panel import _ProjectListItem
@@ -36,6 +44,29 @@ def _rect_contour(x1: float, y1: float, x2: float, y2: float, name: str = "") ->
     )
 
 
+def _circle_contour(
+    center_x: float,
+    center_y: float,
+    radius: float,
+    *,
+    segments: int = 32,
+    name: str = "",
+) -> Contour:
+    return Contour(
+        outer=Path(
+            points=[
+                Point(
+                    center_x + radius * math.cos(2 * math.pi * i / segments),
+                    center_y + radius * math.sin(2 * math.pi * i / segments),
+                )
+                for i in range(segments)
+            ],
+            is_closed=True,
+        ),
+        name=name,
+    )
+
+
 def test_canvas_click_selects_entire_group(qapp):
     canvas = Canvas2D()
     contours = [
@@ -50,6 +81,50 @@ def test_canvas_click_selects_entire_group(qapp):
     canvas._handle_selection(canvas._world_to_screen(QPointF(1, 1)))
 
     assert canvas.selected_indices == [0, 1]
+
+
+def test_canvas_start_point_candidates_use_sharp_corners_for_rectangle(qapp):
+    canvas = Canvas2D()
+    contour = _rect_contour(0, 0, 10, 10, "Rect")
+
+    assert canvas.get_start_point_candidate_indices(contour) == [0, 1, 2, 3]
+
+
+def test_canvas_start_point_candidates_fall_back_to_sampled_points_for_smooth_contour(qapp):
+    canvas = Canvas2D()
+    contour = _circle_contour(0, 0, 10, segments=32, name="Circle")
+
+    candidates = canvas.get_start_point_candidate_indices(contour)
+
+    assert 0 < len(candidates) <= canvas.START_POINT_FALLBACK_LIMIT
+    assert resolve_contour_start_point_index(contour) in candidates
+    assert len(candidates) == len(set(candidates))
+
+
+def test_auto_start_point_prefers_sharpest_corner():
+    contour = Contour(
+        outer=Path(
+            points=[
+                Point(0, 0),
+                Point(10, 0),
+                Point(5, 20),
+            ],
+            is_closed=True,
+        ),
+        name="SharpTriangle",
+    )
+
+    assert resolve_contour_start_point_index(contour) == 2
+
+
+def test_canvas_set_contours_normalizes_invalid_start_point_index(qapp):
+    canvas = Canvas2D()
+    contour = _rect_contour(0, 0, 10, 10, "Rect")
+    contour.start_point_index = 99
+
+    canvas.set_contours([contour], center_on_platform=False)
+
+    assert contour.start_point_index == 0
 
 
 def test_canvas_click_selects_entire_asset(qapp):
@@ -210,6 +285,84 @@ def test_canvas_toolbar_disables_release_button_for_single_contour_asset(qapp):
 
     window.deleteLater()
     single_window.deleteLater()
+
+
+def test_start_point_mode_toggles_from_toolbar_and_escape(qapp):
+    window = MainWindow()
+    window.contours = [_rect_contour(0, 0, 10, 10, "A")]
+    window.canvas.set_contours(window.contours, center_on_platform=False)
+    window.project_panel.update_contours(window.contours)
+
+    window._on_start_point_tool()
+
+    assert window.canvas.current_tool == "start_point"
+    assert window.canvas_toolbar.btn_start_point.isChecked() is True
+
+    escape_event = QKeyEvent(
+        QEvent.Type.KeyPress,
+        Qt.Key.Key_Escape,
+        Qt.KeyboardModifier.NoModifier,
+    )
+    window.canvas.keyPressEvent(escape_event)
+
+    assert window.canvas.current_tool == "select"
+    assert window.canvas_toolbar.btn_start_point.isChecked() is False
+
+    window.deleteLater()
+
+
+def test_start_point_click_updates_only_target_contour_and_is_undoable(qapp):
+    window = MainWindow()
+    window.contours = [
+        _rect_contour(0, 0, 10, 10, "A"),
+        _rect_contour(20, 0, 30, 10, "B"),
+    ]
+    window.contours[0].asset_id = "asset-1"
+    window.contours[0].asset_name = "logo.svg"
+    window.contours[1].asset_id = "asset-1"
+    window.contours[1].asset_name = "logo.svg"
+    window.canvas.set_contours(window.contours, center_on_platform=False)
+    window.project_panel.update_contours(window.contours)
+    window.slice_result = object()
+
+    window._on_start_point_tool()
+    target_point = window.contours[0].outer.points[2]
+    handled = window.canvas._handle_start_point_click(
+        window.canvas._world_to_screen(QPointF(target_point.x, target_point.y))
+    )
+
+    assert handled is True
+    assert window.contours[0].start_point_index == 3
+    assert window.contours[1].start_point_index == 0
+    assert get_contour_user_start_point_index(window.contours[0]) == 2
+    assert window.canvas.selected_indices == [0]
+    assert window.undo_manager.can_undo is True
+    assert window.slice_result is None
+
+    window._on_undo()
+
+    assert window.contours[0].start_point_index == 0
+
+    window.deleteLater()
+
+
+def test_start_point_click_can_explicitly_store_first_vertex(qapp):
+    window = MainWindow()
+    window.contours = [_rect_contour(0, 0, 10, 10, "A")]
+    window.canvas.set_contours(window.contours, center_on_platform=False)
+    window.project_panel.update_contours(window.contours)
+
+    window._on_start_point_tool()
+    target_point = window.contours[0].outer.points[0]
+    handled = window.canvas._handle_start_point_click(
+        window.canvas._world_to_screen(QPointF(target_point.x, target_point.y))
+    )
+
+    assert handled is True
+    assert window.contours[0].start_point_index == 1
+    assert get_contour_user_start_point_index(window.contours[0]) == 0
+
+    window.deleteLater()
 
 
 def test_main_window_release_asset_ignores_single_contour_asset(qapp):

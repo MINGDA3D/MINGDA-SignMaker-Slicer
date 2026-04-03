@@ -30,6 +30,7 @@ class CanvasToolbar(QWidget):
     ungroup_clicked = Signal()
     release_asset_clicked = Signal()
     text_clicked = Signal()
+    start_point_clicked = Signal()
     slice_clicked = Signal()
 
     def __init__(self, parent=None):
@@ -115,13 +116,15 @@ class CanvasToolbar(QWidget):
         self.btn_text.clicked.connect(self.text_clicked.emit)
         layout.addWidget(self.btn_text)
 
-        # layout.addWidget(self._create_separator())
-
         # ========== 起始点/顺序/视图居中 ==========
+        layout.addWidget(self._create_separator())
+
+        self.btn_start_point = self._create_icon_button("start_point.png", self.tr("Start Point"))
+        self.btn_start_point.setCheckable(True)
+        self.btn_start_point.clicked.connect(self.start_point_clicked.emit)
+        layout.addWidget(self.btn_start_point)
+
         # 临时隐藏以下按钮，保留代码便于后续恢复：
-        # self.btn_start_point = self._create_icon_button("start_point.png", self.tr("Start Point"))
-        # layout.addWidget(self.btn_start_point)
-        #
         # self.btn_order = self._create_icon_button("print_order.png", self.tr("Print Order"))
         # layout.addWidget(self.btn_order)
         #
@@ -217,6 +220,7 @@ class CanvasToolbar(QWidget):
         self.btn_move.setChecked(tool == "move")
         self.btn_rotate.setChecked(tool == "rotate")
         self.btn_scale.setChecked(tool == "scale")
+        self.btn_start_point.setChecked(tool == "start_point")
 
     def clear_tool(self):
         """清除工具选择"""
@@ -224,6 +228,7 @@ class CanvasToolbar(QWidget):
         self.btn_move.setChecked(False)
         self.btn_rotate.setChecked(False)
         self.btn_scale.setChecked(False)
+        self.btn_start_point.setChecked(False)
 
     def set_release_asset_enabled(self, enabled: bool):
         """Enable explode only when the current selection can use it."""

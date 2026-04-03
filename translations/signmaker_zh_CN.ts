@@ -96,6 +96,11 @@
         <source>Text</source>
         <translation>文字</translation>
     </message>
+    <message>
+        <location filename="../src/ui/canvas_toolbar.py" line="122"/>
+        <source>Start Point</source>
+        <translation>起始点</translation>
+    </message>
 </context>
 <context>
     <name>HomePage</name>
@@ -782,6 +787,26 @@
         <location filename="../src/ui/main_window.py" line="2382"/>
         <source>Processing blocked: contours exceed platform size</source>
         <translation>处理被阻止：轮廓超出画布尺寸</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2478"/>
+        <source>No contours available for start point selection</source>
+        <translation>当前没有可供设置起始点的轮廓</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2488"/>
+        <source>Click a corner on each contour, Esc to exit</source>
+        <translation>点击每个轮廓的尖角设置起始点，按 Esc 退出</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2515"/>
+        <source>Set Start Point</source>
+        <translation>设置起始点</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2523"/>
+        <source>Start point updated</source>
+        <translation>起始点已更新</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="2855"/>
@@ -2060,7 +2085,6 @@ Control points: {points}</source>
     </message>
 </context>
 </TS>
-
 
 
 

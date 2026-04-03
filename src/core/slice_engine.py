@@ -22,7 +22,7 @@ from .types import (
     PathType, PathRole, EdgeType, ExtruderType, BevelDirection,
     SliceParams, ShellParams, StepConfig, BottomFaceParams,
     SliceResult, EdgeProfile, InterpolationType, resolve_shell_line_width,
-    resolve_shell_wall_thickness,
+    resolve_shell_wall_thickness, resolve_contour_start_point_index,
 )
 from .path_offset import PathOffset, JoinType
 from .step_generator import StepGenerator
@@ -652,6 +652,7 @@ class SliceEngine:
         )
         wall_count = params.wall_count
         wall_offset = params.wall_offset if params.wall_offset > 0 else line_width
+        effective_start_point_index = resolve_contour_start_point_index(contour)
 
         for i in range(wall_count):
             # 计算当前壁的偏移距离
@@ -668,7 +669,7 @@ class SliceEngine:
                 outer_points = self._rotate_path_to_user_start(
                     offset_path.points,
                     contour.outer.points,
-                    contour.start_point_index,
+                    effective_start_point_index,
                 )
                 layer_path = LayerPath(
                     points=outer_points,
@@ -706,7 +707,7 @@ class SliceEngine:
         if (
             not points
             or not reference_points
-            or start_point_index <= 0
+            or start_point_index < 0
             or start_point_index >= len(reference_points)
         ):
             return list(points)

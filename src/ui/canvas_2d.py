@@ -26,7 +26,15 @@ from src.core.asset_utils import (
 )
 from src.core.contour_classifier import classify_paths_by_nesting
 from src.core.path_offset import PathOffset
-from src.core.types import Point, Path, Contour, PathType
+from src.core.types import (
+    Point,
+    Path,
+    Contour,
+    PathType,
+    get_contour_start_point_candidate_indices,
+    resolve_contour_start_point_index,
+    normalize_contour_start_point_index,
+)
 from src.utils.geometry import normalize_path
 from .theme import COLORS
 
@@ -40,6 +48,8 @@ class Canvas2D(QWidget):
     mouse_moved = Signal(float, float)  # 鼠标移动信号
     zoom_changed = Signal(float)  # 缩放变化信号
     contours_modified = Signal()  # 轮廓被修改信号
+    start_point_change_requested = Signal(int, int)  # 请求修改轮廓起始点
+    start_point_mode_exit_requested = Signal()  # 请求退出起始点模式
 
     # 撤销/重做相关信号
     transform_started = Signal(str, list)  # 变换开始（操作类型, 索引列表）
@@ -57,6 +67,8 @@ class Canvas2D(QWidget):
     PLATFORM_HEIGHT = 1200  # 平台高度 (mm)
     GRID_SPACING = 20       # 网格间距 (mm)
     RULER_WIDTH = 30        # 标尺宽度 (像素)
+    START_POINT_CORNER_THRESHOLD_DEGREES = 150.0
+    START_POINT_FALLBACK_LIMIT = 8
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -79,9 +91,10 @@ class Canvas2D(QWidget):
         self._path_offset = PathOffset()
 
         # 交互状态
-        self.current_tool = "select"  # 当前工具: select, move, rotate, scale
+        self.current_tool = "select"  # 当前工具: select, move, rotate, scale, start_point
         self.is_panning = False  # 是否正在平移视图
         self.is_transforming = False  # 是否正在变换轮廓
+        self._hovered_start_point_candidate: Optional[Tuple[int, int]] = None
         self.pan_start = QPointF()  # 平移起始点
         self._pan_button_down = False  # 右键/中键已按下，等待判定是否为平移
         self._pan_origin = QPointF()   # 按下时的位置（用于阈值判定）
@@ -126,6 +139,8 @@ class Canvas2D(QWidget):
         self.selected_color = QColor(COLORS.accent_primary)
         self.out_of_bounds_color = QColor(COLORS.accent_error)
         self.start_point_color = QColor(COLORS.accent_success)
+        self.start_point_candidate_color = QColor(COLORS.accent_primary)
+        self.start_point_hover_color = QColor(COLORS.accent_warning)
         self.transform_handle_color = QColor(COLORS.accent_primary)
         self.rotate_gizmo_color = QColor(88, 166, 255, 180)  # 旋转圆环颜色
         self.rotate_arc_color = QColor(88, 166, 255, 120)    # 旋转角度弧颜色
@@ -185,9 +200,12 @@ class Canvas2D(QWidget):
             contours: 轮廓列表
             center_on_platform: 是否将轮廓居中到平台中心
         """
+        for contour in contours:
+            self._normalize_contour_user_state(contour)
         if center_on_platform and contours:
             self._center_contours_on_platform(contours)
         self.contours = contours
+        self._hovered_start_point_candidate = None
         self.set_selected_indices([], update_view=False)
         self.update()
 
@@ -273,8 +291,15 @@ class Canvas2D(QWidget):
         self.current_tool = tool
         self._rotate_base_angle = 0.0  # 切换工具时重置旋转Gizmo
         self._rotate_hovering_grabber = False
+        if tool != "start_point":
+            self._hovered_start_point_candidate = None
         self._set_tool_cursor()
         self.update()
+
+    @staticmethod
+    def _normalize_contour_user_state(contour: Contour) -> None:
+        """Keep contour user-editable properties valid after geometry changes."""
+        normalize_contour_start_point_index(contour)
 
     def fit_view(self):
         """适应视图"""
@@ -642,6 +667,9 @@ class Canvas2D(QWidget):
             for i, contour in enumerate(contours, start=1):
                 contour.name = f"{template.name}-{i}"
 
+        for contour in contours:
+            self._normalize_contour_user_state(contour)
+
         return contours
 
     def _replace_selected_contours(
@@ -723,6 +751,65 @@ class Canvas2D(QWidget):
 
         return uuid.uuid4().hex
 
+    def get_start_point_candidate_indices(self, contour: Contour) -> List[int]:
+        """Return candidate outer-point indices for manual start-point selection."""
+        return get_contour_start_point_candidate_indices(
+            contour,
+            corner_threshold_degrees=self.START_POINT_CORNER_THRESHOLD_DEGREES,
+            fallback_limit=self.START_POINT_FALLBACK_LIMIT,
+        )
+
+    def _iter_start_point_candidates(self):
+        """Yield (contour_index, point_index, point) for all visible start-point candidates."""
+        for contour_index, contour in enumerate(self.contours):
+            for point_index in self.get_start_point_candidate_indices(contour):
+                yield contour_index, point_index, contour.outer.points[point_index]
+
+    def _find_start_point_candidate_at(
+        self,
+        pos: QPointF,
+    ) -> Optional[Tuple[int, int]]:
+        """Find the closest selectable start-point candidate under a screen-space hit radius."""
+        best_match: Optional[Tuple[int, int]] = None
+        best_distance = float("inf")
+        hit_radius = 10.0
+
+        for contour_index, point_index, point in self._iter_start_point_candidates():
+            screen_point = self._world_to_screen(QPointF(point.x, point.y))
+            distance = math.hypot(screen_point.x() - pos.x(), screen_point.y() - pos.y())
+            if distance <= hit_radius and distance < best_distance:
+                best_match = (contour_index, point_index)
+                best_distance = distance
+
+        return best_match
+
+    def _handle_start_point_click(self, pos: QPointF) -> bool:
+        """Handle a click in start-point mode. Returns True when the click was consumed."""
+        match = self._find_start_point_candidate_at(pos)
+        if match is not None:
+            contour_index, point_index = match
+            self.set_selected_indices([contour_index], active_index=contour_index)
+            self.start_point_change_requested.emit(contour_index, point_index)
+            return True
+
+        return self._handle_start_point_selection(pos)
+
+    def _handle_start_point_selection(self, pos: QPointF) -> bool:
+        """Select a single contour in start-point mode without expanding groups/assets."""
+        world_pos = self._screen_to_world(pos)
+        candidates = []
+        for contour_index, contour in enumerate(self.contours):
+            if self._point_in_contour(world_pos, contour):
+                candidates.append((contour_index, contour.outer.area))
+
+        if not candidates:
+            return False
+
+        candidates.sort(key=lambda item: item[1])
+        selected_index = candidates[0][0]
+        self.set_selected_indices([selected_index], active_index=selected_index)
+        return True
+
     # =========================================================================
     # 绘制
     # =========================================================================
@@ -748,6 +835,9 @@ class Canvas2D(QWidget):
 
         # 绘制选中状态（边界框和控制手柄）
         self._draw_selection_overlay(painter)
+
+        if self.current_tool == "start_point":
+            self._draw_start_point_candidates(painter)
 
         painter.restore()
 
@@ -966,7 +1056,7 @@ class Canvas2D(QWidget):
 
             # 绘制起始点
             if contour.outer.points:
-                start_idx = contour.start_point_index
+                start_idx = resolve_contour_start_point_index(contour)
                 if 0 <= start_idx < len(contour.outer.points):
                     self._draw_start_point(painter, contour.outer.points[start_idx])
 
@@ -1044,6 +1134,23 @@ class Canvas2D(QWidget):
             QPointF(point.x, point.y),
             radius, radius
         )
+
+    def _draw_start_point_candidates(self, painter: QPainter):
+        """Draw selectable start-point candidates for each contour."""
+        for contour_index, point_index, point in self._iter_start_point_candidates():
+            contour = self.contours[contour_index]
+            is_current = point_index == resolve_contour_start_point_index(contour)
+            is_hovered = self._hovered_start_point_candidate == (contour_index, point_index)
+            radius = (7 if is_hovered else 5) / self.view_scale
+            pen = QPen(
+                self.start_point_hover_color if is_hovered else self.start_point_candidate_color
+            )
+            pen.setWidthF((2.0 if is_hovered else 1.5) / self.view_scale)
+            painter.setPen(pen)
+            painter.setBrush(
+                QBrush(self.start_point_color if is_current else Qt.BrushStyle.NoBrush)
+            )
+            painter.drawEllipse(QPointF(point.x, point.y), radius, radius)
 
     def _draw_selection_overlay(self, painter: QPainter):
         """绘制选中状态覆盖层（边界框和控制手柄）"""
@@ -1400,6 +1507,10 @@ class Canvas2D(QWidget):
             self._pan_origin = event.position()
             self.pan_start = event.position()
         elif event.button() == Qt.MouseButton.LeftButton:
+            if self.current_tool == "start_point":
+                if self._handle_start_point_click(event.position()):
+                    return
+
             # 先检查是否点击在已选中的轮廓上（支持直接拖动）
             clicked_on_selected = False
             if self.selected_indices:
@@ -1528,6 +1639,19 @@ class Canvas2D(QWidget):
             # 更新坐标显示
             self.mouse_moved.emit(world_pos.x(), world_pos.y())
 
+            if self.current_tool == "start_point":
+                hovered_candidate = self._find_start_point_candidate_at(pos)
+                if hovered_candidate != self._hovered_start_point_candidate:
+                    self._hovered_start_point_candidate = hovered_candidate
+                    self.update()
+                self.setCursor(
+                    Qt.CursorShape.PointingHandCursor
+                    if hovered_candidate is not None
+                    else Qt.CursorShape.CrossCursor
+                )
+                self.last_mouse_pos = pos
+                return
+
             # 旋转工具：更新Grabber悬停状态
             if self.current_tool == "rotate" and self.selected_indices:
                 was_hovering = self._rotate_hovering_grabber
@@ -1627,6 +1751,7 @@ class Canvas2D(QWidget):
             "move": Qt.CursorShape.SizeAllCursor,
             "rotate": Qt.CursorShape.CrossCursor,
             "scale": Qt.CursorShape.SizeFDiagCursor,
+            "start_point": Qt.CursorShape.CrossCursor,
         }
         self.setCursor(cursors.get(self.current_tool, Qt.CursorShape.ArrowCursor))
 
@@ -1637,8 +1762,11 @@ class Canvas2D(QWidget):
             if self.selected_indices:
                 self.delete_requested.emit(list(self.selected_indices))
         elif event.key() == Qt.Key.Key_Escape:
-            # 取消选择
-            self.set_selected_indices([])
+            if self.current_tool == "start_point":
+                self.start_point_mode_exit_requested.emit()
+            else:
+                # 取消选择
+                self.set_selected_indices([])
         elif event.key() == Qt.Key.Key_A and event.modifiers() == Qt.KeyboardModifier.ControlModifier:
             # 全选
             self._select_all()

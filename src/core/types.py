@@ -11,6 +11,7 @@ MINGDA SignMaker - 核心数据类型定义
 from __future__ import annotations
 from dataclasses import dataclass, field
 from enum import Enum, auto
+import math
 from typing import List, Optional, Tuple, Dict
 from uuid import uuid4
 
@@ -417,8 +418,244 @@ class Contour:
     asset_name: str = ""
     group_id: str = ""
     # 用户设置的属性
-    start_point_index: int = 0  # 起始点索引
+    start_point_index: int = 0  # 0=自动；1..N 表示显式顶点 0..N-1
     print_order: int = 0        # 打印顺序
+
+
+def normalize_contour_start_point_index(contour: Contour) -> int:
+    """Clamp the stored start-point token to auto or a valid explicit vertex."""
+    point_count = len(contour.outer.points)
+    if point_count <= 0:
+        contour.start_point_index = 0
+        return 0
+
+    if contour.start_point_index < 0 or contour.start_point_index > point_count:
+        contour.start_point_index = 0
+
+    return contour.start_point_index
+
+
+def get_contour_user_start_point_index(contour: Contour) -> Optional[int]:
+    """Return the explicit user-selected vertex index, or None when auto."""
+    point_count = len(contour.outer.points)
+    if point_count <= 0:
+        contour.start_point_index = 0
+        return None
+
+    stored_index = normalize_contour_start_point_index(contour)
+    if stored_index <= 0:
+        return None
+
+    vertex_index = stored_index - 1
+    if 0 <= vertex_index < point_count:
+        return vertex_index
+
+    contour.start_point_index = 0
+    return None
+
+
+def set_contour_user_start_point_index(contour: Contour, point_index: int) -> int:
+    """Store an explicit user-selected start-point vertex index."""
+    point_count = len(contour.outer.points)
+    if point_count <= 0:
+        contour.start_point_index = 0
+        return 0
+    if point_index < 0 or point_index >= point_count:
+        raise ValueError(
+            f"Start point index {point_index} out of range for contour with {point_count} points."
+        )
+
+    contour.start_point_index = point_index + 1
+    return contour.start_point_index
+
+
+def get_contour_start_point_candidate_indices(
+    contour: Contour,
+    *,
+    corner_threshold_degrees: float = 150.0,
+    fallback_limit: int = 8,
+) -> List[int]:
+    """Return stable candidate vertex indices for start-point selection/auto-pick."""
+    normalize_contour_start_point_index(contour)
+    points = contour.outer.points
+    point_count = len(points)
+    if point_count <= 0:
+        return []
+    if point_count <= 2:
+        explicit_index = get_contour_user_start_point_index(contour)
+        return [explicit_index if explicit_index is not None else 0]
+
+    candidate_indices = _get_sharp_start_point_candidate_indices(
+        points,
+        corner_threshold_degrees,
+    )
+    candidate_indices = _dedupe_start_point_candidates(points, candidate_indices)
+    if not candidate_indices:
+        candidate_indices = _get_fallback_start_point_indices(
+            contour,
+            fallback_limit=fallback_limit,
+        )
+
+    explicit_index = get_contour_user_start_point_index(contour)
+    if explicit_index is not None and explicit_index not in candidate_indices:
+        candidate_indices.append(explicit_index)
+
+    return sorted(set(candidate_indices))
+
+
+def resolve_contour_start_point_index(contour: Contour) -> int:
+    """Resolve the effective start-point vertex index for display and slicing."""
+    point_count = len(contour.outer.points)
+    if point_count <= 0:
+        contour.start_point_index = 0
+        return 0
+
+    explicit_index = get_contour_user_start_point_index(contour)
+    if explicit_index is not None:
+        return explicit_index
+
+    points = contour.outer.points
+    sharp_candidate_indices = _get_sharp_start_point_candidate_indices(points, 150.0)
+    sharp_candidate_indices = _dedupe_start_point_candidates(points, sharp_candidate_indices)
+    if sharp_candidate_indices:
+        return min(
+            sharp_candidate_indices,
+            key=lambda index: (
+                round(_corner_angle_degrees(points, index), 6),
+                -points[index].x,
+                -points[index].y,
+                index,
+            ),
+        )
+
+    candidate_indices = get_contour_start_point_candidate_indices(contour)
+    if not candidate_indices:
+        return 0
+
+    return max(
+        candidate_indices,
+        key=lambda index: (points[index].x, points[index].y, -index),
+    )
+
+
+def migrate_legacy_contour_start_point_index(contour: Contour) -> int:
+    """Convert pre-4.3 raw vertex storage to the new 0=auto, 1..N=explicit token."""
+    point_count = len(contour.outer.points)
+    if point_count <= 0:
+        contour.start_point_index = 0
+        return 0
+
+    legacy_index = contour.start_point_index
+    if legacy_index <= 0:
+        contour.start_point_index = 0
+    elif legacy_index < point_count:
+        contour.start_point_index = legacy_index + 1
+    else:
+        contour.start_point_index = 0
+
+    return contour.start_point_index
+
+
+def _is_sharp_corner(
+    points: List[Point],
+    index: int,
+    corner_threshold_degrees: float,
+) -> bool:
+    """Return True when the vertex interior angle is sharp enough to be a candidate."""
+    angle = _corner_angle_degrees(points, index)
+    return angle is not None and angle <= corner_threshold_degrees
+
+
+def _get_sharp_start_point_candidate_indices(
+    points: List[Point],
+    corner_threshold_degrees: float,
+) -> List[int]:
+    """Return candidate indices whose interior angle is sharp enough."""
+    return [
+        index
+        for index in range(len(points))
+        if _is_sharp_corner(points, index, corner_threshold_degrees)
+    ]
+
+
+def _corner_angle_degrees(points: List[Point], index: int) -> Optional[float]:
+    """Return the vertex interior angle in degrees, or None for degenerate vertices."""
+    point_count = len(points)
+    if point_count < 3:
+        return None
+
+    prev_point = points[(index - 1) % point_count]
+    current_point = points[index]
+    next_point = points[(index + 1) % point_count]
+
+    vec_a_x = prev_point.x - current_point.x
+    vec_a_y = prev_point.y - current_point.y
+    vec_b_x = next_point.x - current_point.x
+    vec_b_y = next_point.y - current_point.y
+
+    len_a = math.hypot(vec_a_x, vec_a_y)
+    len_b = math.hypot(vec_b_x, vec_b_y)
+    if len_a <= 1e-6 or len_b <= 1e-6:
+        return None
+
+    cos_angle = (vec_a_x * vec_b_x + vec_a_y * vec_b_y) / (len_a * len_b)
+    cos_angle = max(-1.0, min(1.0, cos_angle))
+    return math.degrees(math.acos(cos_angle))
+
+
+def _dedupe_start_point_candidates(
+    points: List[Point],
+    candidate_indices: List[int],
+) -> List[int]:
+    """Filter near-duplicate corner candidates produced by dense curve sampling."""
+    if not candidate_indices:
+        return []
+
+    kept: List[int] = []
+    proximity_threshold = _get_start_point_proximity_threshold(points)
+    for candidate_index in candidate_indices:
+        candidate_point = points[candidate_index]
+        is_duplicate = False
+        for kept_index in kept:
+            kept_point = points[kept_index]
+            if math.hypot(
+                candidate_point.x - kept_point.x,
+                candidate_point.y - kept_point.y,
+            ) <= proximity_threshold:
+                is_duplicate = True
+                break
+        if not is_duplicate:
+            kept.append(candidate_index)
+
+    return kept
+
+
+def _get_start_point_proximity_threshold(points: List[Point]) -> float:
+    """Scale duplicate-filter distance with contour size."""
+    if not points:
+        return 0.5
+
+    xs = [point.x for point in points]
+    ys = [point.y for point in points]
+    diagonal = math.hypot(max(xs) - min(xs), max(ys) - min(ys))
+    return max(0.5, min(2.0, diagonal * 0.01))
+
+
+def _get_fallback_start_point_indices(contour: Contour, *, fallback_limit: int) -> List[int]:
+    """Sample a limited set of vertices when no sharp corners are available."""
+    point_count = len(contour.outer.points)
+    if point_count <= 0:
+        return []
+
+    if point_count <= fallback_limit:
+        return list(range(point_count))
+
+    return sorted(
+        {
+            int(round(sample_index * point_count / fallback_limit)) % point_count
+            for sample_index in range(fallback_limit)
+        }
+    )
 
 
 # =============================================================================

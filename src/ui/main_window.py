@@ -59,7 +59,11 @@ from src.core.asset_utils import (
     get_contour_asset_name,
     get_shared_asset_metadata,
 )
-from src.core.types import resolve_shell_wall_thickness
+from src.core.types import (
+    get_contour_user_start_point_index,
+    resolve_shell_wall_thickness,
+    set_contour_user_start_point_index,
+)
 from src.core.stl_writer import STLWriter
 from src.business.undo_manager import (
     UndoManager, Command, MoveCommand, RotateCommand, ScaleCommand,
@@ -688,6 +692,7 @@ class MainWindow(QMainWindow):
         self.canvas_toolbar.ungroup_clicked.connect(self._on_ungroup)
         self.canvas_toolbar.release_asset_clicked.connect(self._on_release_asset)
         self.canvas_toolbar.text_clicked.connect(self._on_text)
+        self.canvas_toolbar.start_point_clicked.connect(self._on_start_point_tool)
 
     def _init_statusbar(self):
         """初始化状态栏"""
@@ -715,6 +720,8 @@ class MainWindow(QMainWindow):
         self.canvas.contour_selected.connect(self._on_contour_selected)
         self.canvas.selection_cleared.connect(self._on_selection_cleared)
         self.canvas.contours_modified.connect(self._on_contours_modified)
+        self.canvas.start_point_change_requested.connect(self._on_start_point_change_requested)
+        self.canvas.start_point_mode_exit_requested.connect(self._exit_start_point_mode)
 
         # 右键菜单信号
         self.canvas.mirror_requested.connect(self._on_mirror)
@@ -1153,6 +1160,10 @@ class MainWindow(QMainWindow):
         )
 
         if active_mode is None:
+            if self.canvas.current_tool == "start_point":
+                self.canvas_toolbar._set_tool_checked("start_point")
+                self.canvas.set_tool("start_point")
+                return
             self.canvas_toolbar.clear_tool()
             self.canvas.set_tool("select")
             return
@@ -1167,6 +1178,10 @@ class MainWindow(QMainWindow):
             # 恢复新选中轮廓的变换状态
             new_id = self._get_selected_contour_id()
             self._restore_contour_transform(new_id)
+            if self.canvas.current_tool == "start_point":
+                self.transform_panel.setVisible(False)
+                self._sync_release_asset_button_state()
+                return
             if self.current_transform_mode in ("rotate", "scale"):
                 if self.current_transform_mode == "scale" and self._scale_original_w is None:
                     self._capture_original_size()
@@ -1207,6 +1222,9 @@ class MainWindow(QMainWindow):
         self.project_panel.clear_selection()
         self._current_selected_id = None
         self._sync_release_asset_button_state()
+        if self.canvas.current_tool == "start_point":
+            self.transform_panel.setVisible(False)
+            return
         self._close_transform_panel()
 
     def _on_project_panel_selection_changed(self, indices: List[int]):
@@ -1349,6 +1367,7 @@ class MainWindow(QMainWindow):
 
     def _show_preview_view(self):
         """Switch to the 3D preview view without preparing content yet."""
+        self._exit_start_point_mode()
         self.main_stack.setCurrentIndex(1)
         self.current_main_view = "editor"
         self.view_stack.setCurrentIndex(1)
@@ -1489,6 +1508,7 @@ class MainWindow(QMainWindow):
     def _on_nav_changed(self, nav: str):
         """处理标题栏导航切换"""
         if nav == "home":
+            self._exit_start_point_mode()
             # 显示首页
             self.main_stack.setCurrentIndex(0)
             self.current_main_view = "home"
@@ -2420,6 +2440,7 @@ class MainWindow(QMainWindow):
             self.view_stack.setCurrentIndex(0)
             self.current_view = "2d"
         else:
+            self._exit_start_point_mode()
             self.view_stack.setCurrentIndex(1)
             self.current_view = "3d"
             QTimer.singleShot(0, self._prepare_preview_3d)
@@ -2448,8 +2469,68 @@ class MainWindow(QMainWindow):
         """激活缩放工具"""
         self._activate_transform_tool("scale")
 
+    def _on_start_point_tool(self):
+        """Toggle batch start-point selection mode."""
+        if self.canvas.current_tool == "start_point":
+            self._exit_start_point_mode()
+            return
+
+        if not self.contours:
+            QMessageBox.information(
+                self,
+                self.tr("Info"),
+                self.tr("No contours available for start point selection"),
+            )
+            return
+
+        self._close_transform_panel()
+        self.current_transform_mode = None
+        self.canvas_toolbar._set_tool_checked("start_point")
+        self.canvas.set_tool("start_point")
+        self.transform_panel.setVisible(False)
+        self.canvas.setFocus()
+        self._update_status(self.tr("Click a corner on each contour, Esc to exit"))
+
+    def _exit_start_point_mode(self):
+        """Return the canvas to normal selection mode from start-point editing."""
+        if self.canvas.current_tool != "start_point":
+            return
+
+        self.canvas_toolbar.clear_tool()
+        self.canvas.set_tool("select")
+        self.canvas.setFocus()
+        self._update_status(self.tr("Ready"))
+
+    def _on_start_point_change_requested(self, contour_index: int, point_index: int):
+        """Persist one contour start-point change as an undoable snapshot command."""
+        if not (0 <= contour_index < len(self.contours)):
+            return
+
+        contour = self.contours[contour_index]
+        if not (0 <= point_index < len(contour.outer.points)):
+            return
+        if get_contour_user_start_point_index(contour) == point_index:
+            self.canvas.update()
+            return
+
+        cmd = TransformCommand(
+            self.contours,
+            [contour_index],
+            self.tr("Set Start Point"),
+        )
+        set_contour_user_start_point_index(contour, point_index)
+        cmd.capture_after()
+        self.undo_manager.push(cmd, execute=False)
+        self._invalidate_processed_result()
+        self._apply_contour_selection([contour_index])
+        self.canvas.update()
+        self._update_status(self.tr("Start point updated"))
+
     def _activate_transform_tool(self, mode: str):
         """激活变换工具并显示面板"""
+        if self.canvas.current_tool == "start_point":
+            self._exit_start_point_mode()
+
         # 更新工具栏按钮状态
         self.canvas_toolbar._set_tool_checked(mode)
 
@@ -2689,10 +2770,12 @@ class MainWindow(QMainWindow):
     def _close_transform_panel(self):
         """关闭变换面板"""
         self.transform_panel.setVisible(False)
+        had_transform_tool = self.current_transform_mode in {"move", "rotate", "scale"}
         self.current_transform_mode = None
-        self.canvas_toolbar.clear_tool()
-        self.canvas.set_tool("select")
-        self._update_status(self.tr("Ready"))
+        if had_transform_tool:
+            self.canvas_toolbar.clear_tool()
+            self.canvas.set_tool("select")
+            self._update_status(self.tr("Ready"))
 
     def _toggle_param_panel(self):
         """切换参数面板显示/隐藏"""

@@ -24,7 +24,9 @@ from src.core.contour_classifier import repair_contours
 from src.core.types import (
     Project, ProjectMeta, Contour, SliceParams,
     Point, Path as ContourPath, PathType,
-    serialize_params, deserialize_params
+    deserialize_params,
+    migrate_legacy_contour_start_point_index,
+    serialize_params,
 )
 from src.business.printer_profile_manager import (
     serialize_printer_profile,
@@ -33,7 +35,7 @@ from src.business.printer_profile_manager import (
 
 
 # 格式常量
-FORMAT_VERSION = "4.2"
+FORMAT_VERSION = "4.3"
 MANIFEST_FILE = "manifest.json"
 PARAMS_FILE = "params.json"
 CONTOURS_FILE = "contours.bin"
@@ -151,8 +153,10 @@ def load_project(file_path: str) -> Project:
                 printer_profile_snapshot = deserialize_printer_profile(profile_data)
 
         # 3. 读取轮廓
+        project_format_version = manifest.get("format_version", FORMAT_VERSION)
         contours_bin = zf.read(CONTOURS_FILE)
         contours = repair_contours(_deserialize_contours(contours_bin))
+        _migrate_legacy_contour_start_points(contours, project_format_version)
 
         # 构建项目
         project_info = manifest.get('project', {})
@@ -314,6 +318,28 @@ def _deserialize_contours(data: bytes) -> List[Contour]:
     return contours
 
 
+def _parse_format_version(version: str) -> tuple[int, ...]:
+    parts = []
+    for raw_part in str(version or "").split("."):
+        try:
+            parts.append(int(raw_part))
+        except ValueError:
+            break
+    return tuple(parts) if parts else (0,)
+
+
+def _migrate_legacy_contour_start_points(
+    contours: List[Contour],
+    project_format_version: str,
+) -> None:
+    """Upgrade raw start-point storage used before 4.3."""
+    if _parse_format_version(project_format_version) >= _parse_format_version("4.3"):
+        return
+
+    for contour in contours:
+        migrate_legacy_contour_start_point_index(contour)
+
+
 def _read_path(buf: BinaryIO) -> ContourPath:
     """读取路径"""
     type_map = {
@@ -361,7 +387,15 @@ def load_project_contours(file_path: str) -> List[Contour]:
     """Load only contour geometry from a project file."""
     with zipfile.ZipFile(file_path, 'r') as zf:
         names = zf.namelist()
+        if MANIFEST_FILE not in names:
+            raise ProjectFormatError(f"Missing {MANIFEST_FILE}")
         if CONTOURS_FILE not in names:
             raise ProjectFormatError(f"Missing {CONTOURS_FILE}")
+        manifest = json.loads(zf.read(MANIFEST_FILE).decode("utf-8"))
         contours_bin = zf.read(CONTOURS_FILE)
-        return repair_contours(_deserialize_contours(contours_bin))
+        contours = repair_contours(_deserialize_contours(contours_bin))
+        _migrate_legacy_contour_start_points(
+            contours,
+            manifest.get("format_version", FORMAT_VERSION),
+        )
+        return contours

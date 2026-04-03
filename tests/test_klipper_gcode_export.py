@@ -23,6 +23,7 @@ from src.core.types import (
     ProjectMeta,
     SliceParams,
     SliceResult,
+    set_contour_user_start_point_index,
 )
 
 
@@ -403,8 +404,8 @@ def test_slice_engine_respects_print_order_and_user_selected_start_point():
         120.0,
         name="first",
         print_order=1,
-        start_point_index=2,
     )
+    set_contour_user_start_point_index(first_contour, 2)
 
     result = SliceEngine().slice([later_contour, first_contour], params)
     wall_paths = [path for path in result.layers[0].paths if path.role == PathRole.WALL]
@@ -413,3 +414,20 @@ def test_slice_engine_respects_print_order_and_user_selected_start_point():
     assert wall_paths[0].points[0].x > 110.0
     assert wall_paths[0].points[0].y > 110.0
     assert wall_paths[1].points[0].x < 20.0
+
+
+def test_slice_engine_respects_explicit_first_vertex_start_point():
+    params = SliceParams()
+    params.shell.height = 0.3
+    params.shell.layer_height = 0.3
+    params.shell.wall_count = 1
+
+    contour = _rect_contour(100.0, 100.0, 120.0, 120.0, name="first")
+    set_contour_user_start_point_index(contour, 0)
+
+    result = SliceEngine().slice([contour], params)
+    wall_paths = [path for path in result.layers[0].paths if path.role == PathRole.WALL]
+
+    assert wall_paths
+    assert wall_paths[0].points[0].x < 110.0
+    assert wall_paths[0].points[0].y < 110.0

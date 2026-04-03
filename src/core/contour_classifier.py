@@ -7,7 +7,7 @@ import pyclipper
 
 from src.utils.geometry import normalize_path
 
-from .types import Contour, Path, PathType, Point
+from .types import Contour, Path, PathType, Point, normalize_contour_start_point_index
 
 
 _CLIPPER_SCALE = 1000.0
@@ -116,6 +116,7 @@ def repair_contours(contours: List[Contour]) -> List[Contour]:
             rebuilt_contour.group_id = contour.group_id
             rebuilt_contour.start_point_index = contour.start_point_index
             rebuilt_contour.print_order = contour.print_order
+            normalize_contour_start_point_index(rebuilt_contour)
             repaired.append(rebuilt_contour)
 
     return repaired
@@ -225,6 +226,7 @@ def _normalize_existing_contour(contour: Contour) -> Contour:
         start_point_index=contour.start_point_index,
         print_order=contour.print_order,
     )
+    normalize_contour_start_point_index(normalized)
     return normalized
 
 

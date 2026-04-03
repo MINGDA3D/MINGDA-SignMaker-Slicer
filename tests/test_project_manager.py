@@ -12,11 +12,12 @@ from src.business.project_manager import ProjectManager
 from src.business.project_format import (
     save_project, load_project, get_project_info,
     FORMAT_VERSION, MANIFEST_FILE, PARAMS_FILE, CONTOURS_FILE,
-    ProjectFormatError
+    ProjectFormatError, _serialize_contours, load_project_contours,
 )
 from src.core.types import (
     Contour, Path, Point, PathType, SliceParams,
-    Project, ProjectMeta, EdgeType, BevelDirection
+    Project, ProjectMeta, EdgeType, BevelDirection,
+    get_contour_user_start_point_index, set_contour_user_start_point_index
 )
 
 
@@ -66,9 +67,9 @@ class TestProjectFormat:
             asset_id="asset-1",
             asset_name="logo.svg",
             group_id="group-1",
-            start_point_index=2,
             print_order=5
         )
+        set_contour_user_start_point_index(contour, 2)
 
         project = Project(
             meta=ProjectMeta(name="带轮廓项目"),
@@ -86,7 +87,8 @@ class TestProjectFormat:
             assert c.asset_id == "asset-1"
             assert c.asset_name == "logo.svg"
             assert c.group_id == "group-1"
-            assert c.start_point_index == 2
+            assert c.start_point_index == 3
+            assert get_contour_user_start_point_index(c) == 2
             assert c.print_order == 5
             assert len(c.outer.points) == 4
             assert c.outer.color == (255, 128, 0)
@@ -245,6 +247,43 @@ class TestProjectFormat:
             assert loaded.contours[0].outer.area > 0
             assert len(loaded.contours[0].holes) == 1
             assert loaded.contours[0].holes[0].area < 0
+
+    def test_load_project_migrates_legacy_start_point_tokens(self):
+        """测试旧格式工程中的起始点索引会迁移到新语义"""
+        contour = Contour(
+            outer=Path(
+                points=[Point(0, 0), Point(100, 0), Point(100, 100), Point(0, 100)],
+                path_type=PathType.OUTER,
+            ),
+            name="legacy-start-point",
+            start_point_index=2,
+        )
+        manifest = {
+            "format_version": "4.2",
+            "application": "MINGDA SignMaker",
+            "created_at": "2026-01-01T00:00:00",
+            "modified_at": "2026-01-01T00:00:00",
+            "project": {"name": "legacy-project"},
+            "statistics": {"contour_count": 1, "total_points": 4},
+        }
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            file_path = os.path.join(tmpdir, "legacy-start-point.smp")
+            with zipfile.ZipFile(file_path, "w", zipfile.ZIP_DEFLATED) as zf:
+                zf.writestr(
+                    MANIFEST_FILE,
+                    json.dumps(manifest, ensure_ascii=False, indent=2),
+                )
+                zf.writestr(PARAMS_FILE, json.dumps({}, ensure_ascii=False, indent=2))
+                zf.writestr(CONTOURS_FILE, _serialize_contours([contour]))
+
+            loaded = load_project(file_path)
+            assert loaded.contours[0].start_point_index == 3
+            assert get_contour_user_start_point_index(loaded.contours[0]) == 2
+
+            loaded_contours = load_project_contours(file_path)
+            assert loaded_contours[0].start_point_index == 3
+            assert get_contour_user_start_point_index(loaded_contours[0]) == 2
 
 
 class TestProjectManager:
