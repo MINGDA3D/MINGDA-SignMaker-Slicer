@@ -1728,6 +1728,20 @@ class MainWindow(QMainWindow):
             return str(Path(directory) / default_name)
         return directory or default_name
 
+    @staticmethod
+    def _ensure_save_file_suffix(file_path: str, expected_suffix: str) -> str:
+        """Append the expected suffix unless the selected path already uses it."""
+        normalized_path = file_path.strip()
+        if not normalized_path:
+            return normalized_path
+
+        normalized_suffix = expected_suffix if expected_suffix.startswith(".") else f".{expected_suffix}"
+        if Path(normalized_path).suffix.lower() == normalized_suffix.lower():
+            return normalized_path
+
+        trimmed_path = normalized_path.rstrip(". ")
+        return f"{trimmed_path or normalized_path}{normalized_suffix}"
+
     def _remember_last_open_path(self, file_path: str):
         """记住最后一次打开文件的目录。"""
         if not self.settings_manager:
@@ -2148,8 +2162,7 @@ class MainWindow(QMainWindow):
         )
         if file_path:
             # 确保扩展名
-            if not file_path.lower().endswith('.smp'):
-                file_path += '.smp'
+            file_path = self._ensure_save_file_suffix(file_path, ".smp")
             self._remember_last_save_path(file_path)
             self._save_project(file_path)
 
@@ -2279,6 +2292,7 @@ class MainWindow(QMainWindow):
         )
 
         if file_path:
+            file_path = self._ensure_save_file_suffix(file_path, ".gcode")
             self._remember_last_save_path(file_path)
             slice_result = self.slice_result
 
@@ -2329,6 +2343,7 @@ class MainWindow(QMainWindow):
         )
 
         if file_path:
+            file_path = self._ensure_save_file_suffix(file_path, ".stl")
             self._remember_last_save_path(file_path)
             # 获取当前参数
             params = self.param_panel.get_params()
@@ -2378,6 +2393,7 @@ class MainWindow(QMainWindow):
         )
 
         if file_path:
+            file_path = self._ensure_save_file_suffix(file_path, ".dxf")
             self._remember_last_save_path(file_path)
             try:
                 # 获取当前参数
@@ -2413,6 +2429,7 @@ class MainWindow(QMainWindow):
         )
 
         if file_path:
+            file_path = self._ensure_save_file_suffix(file_path, ".dxf")
             self._remember_last_save_path(file_path)
             try:
                 # 获取当前参数

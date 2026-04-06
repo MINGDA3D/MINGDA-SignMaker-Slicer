@@ -157,6 +157,66 @@ def test_default_gcode_export_filename_includes_profile_name_and_sanitizes_inval
         window.deleteLater()
 
 
+def test_ensure_save_file_suffix_preserves_decimal_name_and_appends_missing_or_wrong_suffix(qapp):
+    window = MainWindow()
+
+    try:
+        assert window._ensure_save_file_suffix(r"E:\exports\panel.2", ".stl") == r"E:\exports\panel.2.stl"
+        assert window._ensure_save_file_suffix(r"E:\exports\panel", ".stl") == r"E:\exports\panel.stl"
+        assert window._ensure_save_file_suffix(r"E:\exports\panel.txt", ".stl") == r"E:\exports\panel.txt.stl"
+        assert window._ensure_save_file_suffix(r"E:\exports\panel.STL", ".stl") == r"E:\exports\panel.STL"
+    finally:
+        window.deleteLater()
+
+
+def test_export_stl_appends_expected_suffix_without_rewriting_decimal_filename(
+    qapp,
+    workspace_tmp_dir,
+    monkeypatch,
+):
+    window = MainWindow()
+    captured = {}
+
+    def fake_run_async(_parent, _message, func, on_success, on_error=None):
+        try:
+            result = func()
+        except Exception as exc:  # pragma: no cover - defensive branch
+            if on_error:
+                on_error(str(exc))
+            return
+        on_success(result)
+
+    class FakeSTLWriter:
+        def __init__(self, wall_thickness):
+            captured["wall_thickness"] = wall_thickness
+
+        def write(self, slice_result, file_path, contours, params):
+            captured["slice_result"] = slice_result
+            captured["path"] = file_path
+            captured["contours"] = contours
+
+    try:
+        window.slice_result = object()
+        window.contours = [_rect_contour(0, 0, 20, 10, "A")]
+        selected_path = workspace_tmp_dir / "beveled.2"
+
+        monkeypatch.setattr(
+            "src.ui.main_window.QFileDialog.getSaveFileName",
+            lambda *args: (str(selected_path), ""),
+        )
+        monkeypatch.setattr("src.ui.main_window.run_async", fake_run_async)
+        monkeypatch.setattr("src.ui.main_window.STLWriter", FakeSTLWriter)
+        monkeypatch.setattr("src.ui.main_window.QMessageBox.information", lambda *args, **kwargs: None)
+
+        window._on_export_stl()
+
+        assert captured["slice_result"] is window.slice_result
+        assert captured["contours"] == window.contours
+        assert captured["path"] == str(selected_path) + ".stl"
+    finally:
+        window.deleteLater()
+
+
 def test_title_bar_primary_export_button_tracks_selected_format(qapp):
     title_bar = TitleBar()
     changed_formats = []
