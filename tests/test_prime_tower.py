@@ -54,6 +54,40 @@ def _rect_contour(x1: float, y1: float, x2: float, y2: float) -> Contour:
     )
 
 
+def _rect_contour_with_hole(
+    outer_x1: float,
+    outer_y1: float,
+    outer_x2: float,
+    outer_y2: float,
+    hole_x1: float,
+    hole_y1: float,
+    hole_x2: float,
+    hole_y2: float,
+) -> Contour:
+    return Contour(
+        outer=Path(
+            points=[
+                Point(outer_x1, outer_y1),
+                Point(outer_x2, outer_y1),
+                Point(outer_x2, outer_y2),
+                Point(outer_x1, outer_y2),
+            ],
+            is_closed=True,
+        ),
+        holes=[
+            Path(
+                points=[
+                    Point(hole_x1, hole_y1),
+                    Point(hole_x2, hole_y1),
+                    Point(hole_x2, hole_y2),
+                    Point(hole_x1, hole_y2),
+                ],
+                is_closed=True,
+            )
+        ],
+    )
+
+
 def _base_params() -> SliceParams:
     params = SliceParams()
     params.machine.bed_width = 200.0
@@ -123,6 +157,29 @@ def test_prime_tower_validation_rejects_overlap_with_model_geometry():
 
     with pytest.raises(PrimeTowerValidationError, match="overlaps existing printable geometry"):
         SliceEngine().validate_prime_tower_placement([contour], params)
+
+
+def test_prime_tower_2d_validation_allows_prime_tower_inside_contour_hole():
+    contour = _rect_contour_with_hole(0.0, 0.0, 100.0, 100.0, 30.0, 30.0, 70.0, 70.0)
+    params = _base_params()
+    params.prime_tower.center_x = 50.0
+    params.prime_tower.center_y = 50.0
+    params.prime_tower.width = 20.0
+    params.prime_tower.depth = 20.0
+
+    SliceEngine().validate_prime_tower_2d_placement([contour], params)
+
+
+def test_prime_tower_2d_validation_rejects_touching_model_boundary():
+    contour = _rect_contour(0.0, 0.0, 40.0, 40.0)
+    params = _base_params()
+    params.prime_tower.center_x = 50.0
+    params.prime_tower.center_y = 20.0
+    params.prime_tower.width = 20.0
+    params.prime_tower.depth = 20.0
+
+    with pytest.raises(PrimeTowerValidationError, match="overlaps existing printable geometry"):
+        SliceEngine().validate_prime_tower_2d_placement([contour], params)
 
 
 def test_gcode_prints_prime_tower_before_model_after_color_change():

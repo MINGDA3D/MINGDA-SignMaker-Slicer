@@ -97,10 +97,7 @@ class SliceEngine:
             safety_layers = self._generate_safety_lines(contours, params)
 
         if params.prime_tower.enabled:
-            occupancy_geometry = self.prime_tower_generator.build_occupied_geometry(
-                safety_layers + base_layers
-            )
-            self.prime_tower_generator.validate(params, occupancy_geometry)
+            self.prime_tower_generator.validate(params)
             for info, layer in zip(layer_infos, base_layers):
                 prime_tower_paths = self.prime_tower_generator.generate_layer_paths(
                     info,
@@ -145,6 +142,22 @@ class SliceEngine:
             safety_layers + base_layers
         )
         self.prime_tower_generator.validate(params, occupancy_geometry)
+
+    def validate_prime_tower_2d_placement(
+        self,
+        contours: List[Contour],
+        params: SliceParams,
+    ) -> None:
+        """Validate prime tower placement against the source 2D contour footprint."""
+        if not params.prime_tower.enabled:
+            return
+
+        if not contours:
+            self.prime_tower_generator.validate(params)
+            return
+
+        contour_geometry = self.prime_tower_generator.build_contours_geometry(contours)
+        self.prime_tower_generator.validate(params, contour_geometry)
 
     def _plan_layers(self, params: SliceParams) -> List[LayerInfo]:
         """

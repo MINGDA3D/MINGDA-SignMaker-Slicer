@@ -866,7 +866,7 @@ class MainWindow(QMainWindow):
         """Return the current prime tower validation error, if any."""
         target_params = params or self.slice_params
         try:
-            self.slice_engine.validate_prime_tower_placement(self.contours, target_params)
+            self.slice_engine.validate_prime_tower_2d_placement(self.contours, target_params)
         except PrimeTowerValidationError as exc:
             return str(exc)
         return None
@@ -875,7 +875,7 @@ class MainWindow(QMainWindow):
         self,
         params: Optional[SliceParams] = None,
     ) -> None:
-        """Refresh the non-interactive prime tower footprint overlay in the 2D canvas."""
+        """Refresh the lightweight prime tower overlay in the 2D canvas."""
         if not hasattr(self, "canvas"):
             return
 
@@ -885,8 +885,7 @@ class MainWindow(QMainWindow):
             return
 
         bounds = self.slice_engine.prime_tower_generator.get_bounds(target_params)
-        error = self._get_prime_tower_validation_error(target_params)
-        self.canvas.set_prime_tower_overlay(bounds, invalid=error is not None)
+        self.canvas.set_prime_tower_overlay(bounds)
 
     def _command_requires_reprocess(self, command: Optional[Command]) -> bool:
         """判断撤销/重做的命令是否会影响导出的 STL。"""

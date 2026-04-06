@@ -48,6 +48,42 @@ def _rect_contour(x1: float, y1: float, x2: float, y2: float, name: str = "") ->
     )
 
 
+def _rect_contour_with_hole(
+    outer_x1: float,
+    outer_y1: float,
+    outer_x2: float,
+    outer_y2: float,
+    hole_x1: float,
+    hole_y1: float,
+    hole_x2: float,
+    hole_y2: float,
+    name: str = "",
+) -> Contour:
+    return Contour(
+        outer=Path(
+            points=[
+                Point(outer_x1, outer_y1),
+                Point(outer_x2, outer_y1),
+                Point(outer_x2, outer_y2),
+                Point(outer_x1, outer_y2),
+            ],
+            is_closed=True,
+        ),
+        holes=[
+            Path(
+                points=[
+                    Point(hole_x1, hole_y1),
+                    Point(hole_x2, hole_y1),
+                    Point(hole_x2, hole_y2),
+                    Point(hole_x1, hole_y2),
+                ],
+                is_closed=True,
+            )
+        ],
+        name=name,
+    )
+
+
 def _bounds_overlap(
     first: tuple[float, float, float, float],
     second: tuple[float, float, float, float],
@@ -411,8 +447,9 @@ def test_process_blocked_when_contour_exceeds_platform(qapp, monkeypatch):
         window.deleteLater()
 
 
-def test_canvas_marks_prime_tower_overlay_invalid_when_it_overlaps_model(qapp):
+def test_canvas_shows_prime_tower_overlay_without_live_validation(qapp, monkeypatch):
     window = MainWindow()
+    validation_calls = []
 
     try:
         window.contours = [_rect_contour(0, 0, 40, 40, "A")]
@@ -428,10 +465,16 @@ def test_canvas_marks_prime_tower_overlay_invalid_when_it_overlaps_model(qapp):
         window.param_panel.set_params(params)
         window.slice_params = params
 
+        monkeypatch.setattr(
+            window,
+            "_get_prime_tower_validation_error",
+            lambda *args, **kwargs: validation_calls.append((args, kwargs)) or None,
+        )
         window._refresh_prime_tower_overlay(params)
 
+        assert validation_calls == []
         assert window.canvas.prime_tower_bounds == pytest.approx((0.0, 0.0, 40.0, 40.0))
-        assert window.canvas.prime_tower_invalid is True
+        assert window.canvas.prime_tower_invalid is False
     finally:
         window.deleteLater()
 
@@ -470,6 +513,119 @@ def test_process_blocked_when_prime_tower_overlaps_model(qapp, monkeypatch):
         assert warnings[-1][0][1] == window.tr("Processing Blocked")
         assert "Prime tower overlaps existing printable geometry." in warnings[-1][0][2]
         assert window.status_label.text().startswith(window.tr("Processing Blocked"))
+    finally:
+        window.deleteLater()
+
+
+def test_process_allows_prime_tower_inside_contour_hole(qapp, monkeypatch):
+    window = MainWindow()
+    warnings = []
+    run_async_calls = []
+
+    try:
+        window.contours = [_rect_contour_with_hole(0, 0, 100, 100, 30, 30, 70, 70, "A")]
+        window.canvas.set_contours(window.contours, center_on_platform=False)
+        window.project_panel.update_contours(window.contours)
+
+        params = window.param_panel.get_params()
+        params.prime_tower.enabled = True
+        params.prime_tower.center_x = 50.0
+        params.prime_tower.center_y = 50.0
+        params.prime_tower.width = 20.0
+        params.prime_tower.depth = 20.0
+        window.param_panel.set_params(params)
+
+        monkeypatch.setattr(
+            "src.ui.main_window.QMessageBox.warning",
+            lambda *args, **kwargs: warnings.append((args, kwargs)) or 0,
+        )
+        monkeypatch.setattr(
+            "src.ui.main_window.run_async",
+            lambda *args, **kwargs: run_async_calls.append((args, kwargs)),
+        )
+
+        window._on_slice()
+
+        assert warnings == []
+        assert len(run_async_calls) == 1
+    finally:
+        window.deleteLater()
+
+
+def test_process_blocked_when_prime_tower_touches_model_boundary(qapp, monkeypatch):
+    window = MainWindow()
+    warnings = []
+    run_async_calls = []
+
+    try:
+        window.contours = [_rect_contour(0, 0, 40, 40, "A")]
+        window.canvas.set_contours(window.contours, center_on_platform=False)
+        window.project_panel.update_contours(window.contours)
+
+        params = window.param_panel.get_params()
+        params.prime_tower.enabled = True
+        params.prime_tower.center_x = 50.0
+        params.prime_tower.center_y = 20.0
+        params.prime_tower.width = 20.0
+        params.prime_tower.depth = 20.0
+        window.param_panel.set_params(params)
+
+        monkeypatch.setattr(
+            "src.ui.main_window.QMessageBox.warning",
+            lambda *args, **kwargs: warnings.append((args, kwargs)) or 0,
+        )
+        monkeypatch.setattr(
+            "src.ui.main_window.run_async",
+            lambda *args, **kwargs: run_async_calls.append((args, kwargs)),
+        )
+
+        window._on_slice()
+
+        assert run_async_calls == []
+        assert warnings
+        assert "Prime tower overlaps existing printable geometry." in warnings[-1][0][2]
+    finally:
+        window.deleteLater()
+
+
+def test_process_uses_lightweight_prime_tower_validation(qapp, monkeypatch):
+    window = MainWindow()
+    warnings = []
+    run_async_calls = []
+    heavy_validation_calls = []
+
+    try:
+        window.contours = [_rect_contour(0, 0, 40, 40, "A")]
+        window.canvas.set_contours(window.contours, center_on_platform=False)
+        window.project_panel.update_contours(window.contours)
+
+        params = window.param_panel.get_params()
+        params.prime_tower.enabled = True
+        params.prime_tower.center_x = 80.0
+        params.prime_tower.center_y = 80.0
+        params.prime_tower.width = 20.0
+        params.prime_tower.depth = 20.0
+        window.param_panel.set_params(params)
+
+        monkeypatch.setattr(
+            window.slice_engine,
+            "validate_prime_tower_placement",
+            lambda *args, **kwargs: heavy_validation_calls.append((args, kwargs)),
+        )
+        monkeypatch.setattr(
+            "src.ui.main_window.QMessageBox.warning",
+            lambda *args, **kwargs: warnings.append((args, kwargs)) or 0,
+        )
+        monkeypatch.setattr(
+            "src.ui.main_window.run_async",
+            lambda *args, **kwargs: run_async_calls.append((args, kwargs)),
+        )
+
+        window._on_slice()
+
+        assert warnings == []
+        assert heavy_validation_calls == []
+        assert len(run_async_calls) == 1
     finally:
         window.deleteLater()
 

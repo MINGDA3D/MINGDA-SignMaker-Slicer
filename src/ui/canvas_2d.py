@@ -1172,7 +1172,7 @@ class Canvas2D(QWidget):
         if width <= 0.0 or height <= 0.0:
             return
 
-        color = QColor(self.out_of_bounds_color if self.prime_tower_invalid else self.prime_tower_color)
+        color = QColor(self.prime_tower_color)
         fill_color = QColor(color)
         fill_color.setAlpha(26)
         pen = QPen(color)

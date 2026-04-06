@@ -81,6 +81,21 @@ class PrimeTowerGenerator:
         coords.append(coords[0])
         return Polygon(coords)
 
+    def build_contours_geometry(self, contours: List[Contour]):
+        """Build a lightweight 2D occupancy geometry from source contours."""
+        geometries = []
+        for contour in contours:
+            geometry = self._contour_to_geometry(contour)
+            if geometry is not None:
+                geometries.append(geometry)
+
+        if not geometries:
+            return Polygon()
+
+        merged = unary_union(geometries)
+        normalized = self._normalize_polygonal_geometry(merged)
+        return normalized if normalized is not None else Polygon()
+
     def validate(self, params: SliceParams, occupancy_geometry=None) -> None:
         prime_tower = params.prime_tower
         if not prime_tower.enabled:
@@ -179,6 +194,55 @@ class PrimeTowerGenerator:
         if not occupied.is_valid:
             occupied = make_valid(occupied)
         return occupied
+
+    def _contour_to_geometry(self, contour: Contour):
+        outer_coords = self._path_coords(contour.outer)
+        if len(outer_coords) < 4:
+            return None
+
+        hole_coords = [self._path_coords(hole) for hole in contour.holes]
+        hole_coords = [coords for coords in hole_coords if len(coords) >= 4]
+
+        polygon = Polygon(outer_coords, hole_coords)
+        return self._normalize_polygonal_geometry(polygon)
+
+    @staticmethod
+    def _path_coords(path: Path) -> List[tuple[float, float]]:
+        coords = [(point.x, point.y) for point in path.points]
+        if coords and coords[0] != coords[-1]:
+            coords.append(coords[0])
+        return coords
+
+    def _normalize_polygonal_geometry(self, geometry):
+        if geometry is None or geometry.is_empty:
+            return None
+
+        if not geometry.is_valid:
+            geometry = make_valid(geometry)
+        if geometry.is_empty:
+            return None
+
+        if geometry.geom_type in {"Polygon", "MultiPolygon"}:
+            return geometry
+
+        if geometry.geom_type != "GeometryCollection":
+            return None
+
+        polygonal_parts = []
+        for part in geometry.geoms:
+            normalized = self._normalize_polygonal_geometry(part)
+            if normalized is not None:
+                polygonal_parts.append(normalized)
+
+        if not polygonal_parts:
+            return None
+
+        merged = unary_union(polygonal_parts)
+        if not merged.is_valid:
+            merged = make_valid(merged)
+        if merged.is_empty:
+            return None
+        return merged if merged.geom_type in {"Polygon", "MultiPolygon"} else None
 
     def _generate_wall_paths(
         self,
