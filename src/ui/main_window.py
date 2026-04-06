@@ -201,7 +201,10 @@ class MainWindow(QMainWindow):
         self.title_bar.undo_clicked.connect(self._on_undo)
         self.title_bar.redo_clicked.connect(self._on_redo)
         self.title_bar.slice_clicked.connect(self._on_slice)
-        self.title_bar.export_stl_clicked.connect(self._on_export_gcode)
+        self.title_bar.export_gcode_clicked.connect(self._on_export_gcode)
+        self.title_bar.export_stl_clicked.connect(self._on_export_stl)
+        self.title_bar.export_format_changed.connect(self._on_primary_export_format_changed)
+        self.title_bar.set_primary_export_format(self._get_saved_primary_export_format())
 
     def _init_menubar(self):
         """初始化菜单栏"""
@@ -763,8 +766,19 @@ class MainWindow(QMainWindow):
         # 这里可以更新菜单项的启用/禁用状态和文本
         pass
 
+    def _get_saved_primary_export_format(self) -> str:
+        """Return the persisted primary export format for the title-bar split button."""
+        if not self.settings_manager:
+            return TitleBar.EXPORT_GCODE
+        return self.settings_manager.get_primary_export_format()
+
+    def _on_primary_export_format_changed(self, export_format: str):
+        """Persist the selected primary export format to QSettings."""
+        if self.settings_manager:
+            self.settings_manager.set_primary_export_format(export_format)
+
     def _sync_export_stl_state(self):
-        """根据当前处理结果同步导出 STL 按钮状态。"""
+        """根据当前处理结果同步导出按钮状态。"""
         if hasattr(self, "title_bar") and hasattr(self.title_bar, "btn_export_stl"):
             self.title_bar.btn_export_stl.setEnabled(True)
 

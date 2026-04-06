@@ -8,10 +8,10 @@ MINGDA SignMaker - 导航栏
 """
 
 from PySide6.QtWidgets import (
-    QWidget, QHBoxLayout, QPushButton, QMenu, QFrame
+    QWidget, QHBoxLayout, QPushButton, QMenu, QFrame, QToolButton
 )
-from PySide6.QtCore import Qt, Signal, QSize
-from PySide6.QtGui import QIcon
+from PySide6.QtCore import Qt, Signal, QSize, QCoreApplication
+from PySide6.QtGui import QIcon, QAction, QActionGroup
 
 from .theme import COLORS
 
@@ -30,7 +30,12 @@ class TitleBar(QWidget):
     undo_clicked = Signal()
     redo_clicked = Signal()
     slice_clicked = Signal()
+    export_gcode_clicked = Signal()
     export_stl_clicked = Signal()
+    export_format_changed = Signal(str)
+
+    EXPORT_GCODE = "gcode"
+    EXPORT_STL = "stl"
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -171,10 +176,34 @@ class TitleBar(QWidget):
         self.btn_slice.clicked.connect(self.slice_clicked.emit)
         action_layout.addWidget(self.btn_slice)
 
-        self.btn_export_stl = QPushButton(self.tr("Export G-code"))
+        self.btn_export_stl = QToolButton()
         self.btn_export_stl.setObjectName("primaryButton")
+        self.btn_export_stl.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextOnly)
+        self.btn_export_stl.setPopupMode(QToolButton.ToolButtonPopupMode.MenuButtonPopup)
         self.btn_export_stl.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.btn_export_stl.clicked.connect(self.export_stl_clicked.emit)
+        self.btn_export_stl.clicked.connect(self._on_primary_export_clicked)
+        self._export_menu = QMenu(self.btn_export_stl)
+        self._export_action_group = QActionGroup(self)
+        self._export_action_group.setExclusive(True)
+        self._export_gcode_action = QAction(
+            self._translate_export_text(self.EXPORT_GCODE),
+            self,
+        )
+        self._export_gcode_action.setCheckable(True)
+        self._export_gcode_action.triggered.connect(self._on_export_gcode_selected)
+        self._export_action_group.addAction(self._export_gcode_action)
+        self._export_menu.addAction(self._export_gcode_action)
+        self._export_stl_action = QAction(
+            self._translate_export_text(self.EXPORT_STL),
+            self,
+        )
+        self._export_stl_action.setCheckable(True)
+        self._export_stl_action.triggered.connect(self._on_export_stl_selected)
+        self._export_action_group.addAction(self._export_stl_action)
+        self._export_menu.addAction(self._export_stl_action)
+        self.btn_export_stl.setMenu(self._export_menu)
+        self._current_primary_export_format = self.EXPORT_GCODE
+        self.set_primary_export_format(self.EXPORT_GCODE)
         action_layout.addWidget(self.btn_export_stl)
 
         layout.addWidget(action_container)
@@ -266,7 +295,8 @@ class TitleBar(QWidget):
             }}
 
             /* 主要按钮 */
-            QPushButton#primaryButton {{
+            QPushButton#primaryButton,
+            QToolButton#primaryButton {{
                 background-color: #238636;
                 color: #FFFFFF;
                 border: none;
@@ -275,13 +305,76 @@ class TitleBar(QWidget):
                 font-size: 12px;
                 font-weight: 500;
             }}
-            QPushButton#primaryButton:hover {{
+            QPushButton#primaryButton:hover,
+            QToolButton#primaryButton:hover {{
                 background-color: #2EA043;
             }}
-            QPushButton#primaryButton:pressed {{
+            QPushButton#primaryButton:pressed,
+            QToolButton#primaryButton:pressed {{
                 background-color: #196C2E;
             }}
+            QToolButton#primaryButton {{
+                padding-right: 28px;
+            }}
+            QToolButton#primaryButton::menu-button {{
+                border: none;
+                width: 18px;
+            }}
+            QToolButton#primaryButton::menu-indicator {{
+                subcontrol-origin: padding;
+                subcontrol-position: center right;
+                right: 8px;
+            }}
         """)
+
+    def _translate_export_text(self, export_format: str) -> str:
+        """Return the translated label for the primary export button."""
+        source = "Export STL" if export_format == self.EXPORT_STL else "Export G-code"
+        return QCoreApplication.translate("MainWindow", source)
+
+    def get_primary_export_format(self) -> str:
+        """Return the currently selected primary export format."""
+        return self._current_primary_export_format
+
+    def set_primary_export_format(self, export_format: str):
+        """Update the primary export button label and checked menu item."""
+        normalized = (
+            export_format
+            if export_format in {self.EXPORT_GCODE, self.EXPORT_STL}
+            else self.EXPORT_GCODE
+        )
+        self._current_primary_export_format = normalized
+        self.btn_export_stl.setText(self._translate_export_text(normalized))
+        self.btn_export_stl.setToolTip(self.btn_export_stl.text())
+        self._export_gcode_action.setChecked(normalized == self.EXPORT_GCODE)
+        self._export_stl_action.setChecked(normalized == self.EXPORT_STL)
+
+    def _select_primary_export_format(self, export_format: str):
+        """Update the selected primary export format without running an export."""
+        previous_format = self._current_primary_export_format
+        self.set_primary_export_format(export_format)
+        if export_format != previous_format:
+            self.export_format_changed.emit(export_format)
+
+    def _emit_primary_export_clicked(self):
+        """Run the currently selected export action."""
+        export_format = self._current_primary_export_format
+        if export_format == self.EXPORT_STL:
+            self.export_stl_clicked.emit()
+        else:
+            self.export_gcode_clicked.emit()
+
+    def _on_primary_export_clicked(self):
+        """Run the currently selected export action."""
+        self._emit_primary_export_clicked()
+
+    def _on_export_gcode_selected(self):
+        """Select G-code as the primary export action."""
+        self._select_primary_export_format(self.EXPORT_GCODE)
+
+    def _on_export_stl_selected(self):
+        """Select STL as the primary export action."""
+        self._select_primary_export_format(self.EXPORT_STL)
 
     def _on_nav_click(self, nav: str):
         """处理导航点击"""

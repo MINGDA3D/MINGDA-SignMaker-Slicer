@@ -10,6 +10,7 @@ os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 from src.core.types import Contour, Path, Point
 from src.ui.canvas_2d import Canvas2D
 from src.ui.main_window import MainWindow, TUTORIAL_PLAYLIST_URL
+from src.ui.title_bar import TitleBar
 from src.ui.widgets import GuardedDoubleSpinBox
 from PySide6.QtWidgets import QMessageBox
 
@@ -154,6 +155,76 @@ def test_default_gcode_export_filename_includes_profile_name_and_sanitizes_inval
         assert default_name == "sample_project - MIGNDA AD_F4 0.6mm_Nozzle.gcode"
     finally:
         window.deleteLater()
+
+
+def test_title_bar_primary_export_button_tracks_selected_format(qapp):
+    title_bar = TitleBar()
+    changed_formats = []
+    triggered = []
+
+    try:
+        title_bar.export_format_changed.connect(changed_formats.append)
+        title_bar.export_gcode_clicked.connect(lambda: triggered.append("gcode"))
+        title_bar.export_stl_clicked.connect(lambda: triggered.append("stl"))
+
+        assert title_bar.get_primary_export_format() == TitleBar.EXPORT_GCODE
+        title_bar.btn_export_stl.click()
+        assert triggered == ["gcode"]
+
+        title_bar._export_stl_action.trigger()
+
+        assert changed_formats == ["stl"]
+        assert triggered == ["gcode"]
+        assert title_bar.get_primary_export_format() == TitleBar.EXPORT_STL
+
+        title_bar.btn_export_stl.click()
+        assert triggered[-1] == "stl"
+    finally:
+        title_bar.deleteLater()
+
+
+def test_primary_export_selection_persists_across_main_window_instances(
+    qapp, monkeypatch, workspace_tmp_dir
+):
+    from src.business.settings_manager import init_settings_manager as real_init_settings_manager
+
+    settings_dir = workspace_tmp_dir / "config"
+    messages = []
+
+    monkeypatch.setattr(
+        "src.ui.main_window.init_settings_manager",
+        lambda: real_init_settings_manager(str(settings_dir)),
+    )
+    monkeypatch.setattr(
+        "src.ui.main_window.QMessageBox.information",
+        lambda *args, **kwargs: messages.append((args, kwargs)) or 0,
+    )
+
+    first_window = MainWindow()
+
+    try:
+        assert first_window.title_bar.get_primary_export_format() == TitleBar.EXPORT_GCODE
+
+        first_window.title_bar._export_stl_action.trigger()
+
+        assert first_window.settings_manager.get_primary_export_format() == TitleBar.EXPORT_STL
+        assert first_window.title_bar.get_primary_export_format() == TitleBar.EXPORT_STL
+        assert messages == []
+
+        first_window.title_bar.btn_export_stl.click()
+
+        assert messages
+        assert messages[-1][0][2] == first_window.tr("Please process first")
+    finally:
+        first_window.deleteLater()
+
+    second_window = MainWindow()
+
+    try:
+        assert second_window.settings_manager.get_primary_export_format() == TitleBar.EXPORT_STL
+        assert second_window.title_bar.get_primary_export_format() == TitleBar.EXPORT_STL
+    finally:
+        second_window.deleteLater()
 
 
 def test_save_project_blocked_when_canvas_has_no_graphics(qapp, monkeypatch):

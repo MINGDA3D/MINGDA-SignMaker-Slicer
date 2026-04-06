@@ -612,6 +612,35 @@ class TestSettingsManagerWithQt:
         assert sm.get_active_printer_profile_id() == "klipper-profile-1"
         assert sm2.get_active_printer_profile_id() == "klipper-profile-1"
 
+    def test_primary_export_format_defaults_to_gcode(self, qapp, temp_config_dir):
+        """测试标题栏主导出格式默认值。"""
+        from src.business.settings_manager import SettingsManager
+
+        sm = SettingsManager(temp_config_dir)
+
+        assert sm.get_primary_export_format() == "gcode"
+
+    def test_primary_export_format_persists(self, qapp, temp_config_dir):
+        """测试标题栏主导出格式会持久化到 QSettings。"""
+        from src.business.settings_manager import SettingsManager
+
+        sm = SettingsManager(temp_config_dir)
+        sm.set_primary_export_format("stl")
+
+        sm2 = SettingsManager(temp_config_dir)
+
+        assert sm.get_primary_export_format() == "stl"
+        assert sm2.get_primary_export_format() == "stl"
+
+    def test_primary_export_format_falls_back_to_gcode_for_invalid_value(self, qapp, temp_config_dir):
+        """测试非法导出格式会回退到默认 G-code。"""
+        from src.business.settings_manager import SettingsManager
+
+        sm = SettingsManager(temp_config_dir)
+        sm.set_primary_export_format("invalid")
+
+        assert sm.get_primary_export_format() == "gcode"
+
 
 class TestPresetManagerFull:
     """预设管理器完整参数测试"""

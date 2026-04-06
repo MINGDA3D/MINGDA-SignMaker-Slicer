@@ -37,6 +37,7 @@ class SettingsManager:
     # QSettings 组织和应用名称
     ORGANIZATION = "MINGDA"
     APPLICATION = "SignMaker"
+    DEFAULT_PRIMARY_EXPORT_FORMAT = "gcode"
 
     def __init__(self, config_dir: Optional[str] = None):
         """初始化设置管理器"""
@@ -288,6 +289,26 @@ class SettingsManager:
     def set_active_printer_profile_id(self, profile_id: str):
         """记录当前激活的打印机档案 ID。"""
         self._qsettings.setValue("PrinterProfile/active_id", profile_id)
+
+    def get_primary_export_format(self) -> str:
+        """Return the preferred primary export format for the title-bar split button."""
+        export_format = self._qsettings.value(
+            "Export/primary_format",
+            self.DEFAULT_PRIMARY_EXPORT_FORMAT,
+            type=str,
+        )
+        if export_format not in {"gcode", "stl"}:
+            return self.DEFAULT_PRIMARY_EXPORT_FORMAT
+        return export_format
+
+    def set_primary_export_format(self, export_format: str):
+        """Persist the preferred primary export format for the title-bar split button."""
+        normalized = (
+            export_format
+            if export_format in {"gcode", "stl"}
+            else self.DEFAULT_PRIMARY_EXPORT_FORMAT
+        )
+        self._qsettings.setValue("Export/primary_format", normalized)
 
     # =========================================================================
     # 最近文件（使用 QSettings）
