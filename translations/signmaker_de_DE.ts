@@ -2153,4 +2153,12 @@ Kontrollpunkte: {points}</translation>
         <translation>Asset zerlegen</translation>
     </message>
 </context>
+<context>
+    <name>GCodeWriter</name>
+    <message>
+        <location filename="../src/core/gcode_writer.py" line="152" />
+        <source>Color change is enabled but no change points are configured.</source>
+        <translation>Farbwechsel ist aktiviert, aber es sind keine Wechselpunkte konfiguriert.</translation>
+    </message>
+</context>
 </TS>

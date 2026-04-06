@@ -2153,4 +2153,12 @@ Control points: {points}</source>
         <translation>アセットを分解</translation>
     </message>
 </context>
+<context>
+    <name>GCodeWriter</name>
+    <message>
+        <location filename="../src/core/gcode_writer.py" line="152" />
+        <source>Color change is enabled but no change points are configured.</source>
+        <translation>色変更が有効ですが、変更ポイントが設定されていません。</translation>
+    </message>
+</context>
 </TS>

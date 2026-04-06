@@ -2153,4 +2153,12 @@ Control points: {points}</source>
         <translation>分解导入对象</translation>
     </message>
 </context>
+<context>
+    <name>GCodeWriter</name>
+    <message>
+        <location filename="../src/core/gcode_writer.py" line="151" />
+        <source>Color change is enabled but no change points are configured.</source>
+        <translation>已启用换色，但尚未配置任何换色点。</translation>
+    </message>
+</context>
 </TS>

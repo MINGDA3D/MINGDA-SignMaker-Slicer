@@ -2153,4 +2153,12 @@ Punti di controllo: {points}</translation>
         <translation>Scomponi risorsa</translation>
     </message>
 </context>
+<context>
+    <name>GCodeWriter</name>
+    <message>
+        <location filename="../src/core/gcode_writer.py" line="152" />
+        <source>Color change is enabled but no change points are configured.</source>
+        <translation>Il cambio colore è abilitato, ma non sono configurati punti di cambio.</translation>
+    </message>
+</context>
 </TS>

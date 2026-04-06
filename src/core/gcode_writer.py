@@ -11,7 +11,7 @@ import math
 from datetime import datetime
 from typing import List, Optional
 
-from PySide6.QtCore import QSize
+from PySide6.QtCore import QSize, QCoreApplication
 
 from src.app_info import APP_NAME, get_app_version
 
@@ -38,6 +38,11 @@ DEFAULT_FILAMENT_DENSITY = 1.24
 
 class GCodeValidationError(ValueError):
     """导出前校验失败。"""
+
+
+def _tr(message: str) -> str:
+    """Translate G-code validation messages through Qt."""
+    return QCoreApplication.translate("GCodeWriter", message)
 
 
 class GCodeWriter:
@@ -143,7 +148,9 @@ class GCodeWriter:
 
         if color_enabled:
             if not change_points:
-                raise GCodeValidationError("Color change is enabled but no change points are configured.")
+                raise GCodeValidationError(
+                    _tr("Color change is enabled but no change points are configured.")
+                )
 
             previous_height = None
             shell_height = slice_params.shell.height if slice_params else 0.0

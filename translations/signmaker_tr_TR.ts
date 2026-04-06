@@ -2153,4 +2153,12 @@ Kontrol noktalari: {points}</translation>
         <translation>Varlığı parçala</translation>
     </message>
 </context>
+<context>
+    <name>GCodeWriter</name>
+    <message>
+        <location filename="../src/core/gcode_writer.py" line="152" />
+        <source>Color change is enabled but no change points are configured.</source>
+        <translation>Renk değişimi etkin, ancak hiçbir değişim noktası yapılandırılmadı.</translation>
+    </message>
+</context>
 </TS>

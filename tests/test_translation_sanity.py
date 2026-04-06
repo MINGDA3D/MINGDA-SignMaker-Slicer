@@ -109,6 +109,9 @@ ZH_CN_REQUIRED = {
         "Export G-code",
         "Export G-code...",
     },
+    "GCodeWriter": {
+        "Color change is enabled but no change points are configured.",
+    },
 }
 
 

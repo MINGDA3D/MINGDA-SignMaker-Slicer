@@ -2153,4 +2153,12 @@ Control points: {points}</source>
         <translation>에셋 분해</translation>
     </message>
 </context>
+<context>
+    <name>GCodeWriter</name>
+    <message>
+        <location filename="../src/core/gcode_writer.py" line="152" />
+        <source>Color change is enabled but no change points are configured.</source>
+        <translation>색상 변경이 활성화되어 있지만 변경 지점이 구성되지 않았습니다.</translation>
+    </message>
+</context>
 </TS>

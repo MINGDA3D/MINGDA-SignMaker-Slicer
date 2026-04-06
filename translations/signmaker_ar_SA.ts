@@ -2153,4 +2153,12 @@ Control points: {points}</source>
         <translation>تفكيك الأصل</translation>
     </message>
 </context>
+<context>
+    <name>GCodeWriter</name>
+    <message>
+        <location filename="../src/core/gcode_writer.py" line="152" />
+        <source>Color change is enabled but no change points are configured.</source>
+        <translation>تم تمكين تغيير اللون، ولكن لم يتم تكوين أي نقاط تغيير.</translation>
+    </message>
+</context>
 </TS>

@@ -2153,4 +2153,12 @@ Puntos de control: {points}</translation>
         <translation>Descomponer recurso</translation>
     </message>
 </context>
+<context>
+    <name>GCodeWriter</name>
+    <message>
+        <location filename="../src/core/gcode_writer.py" line="152" />
+        <source>Color change is enabled but no change points are configured.</source>
+        <translation>El cambio de color está activado, pero no hay puntos de cambio configurados.</translation>
+    </message>
+</context>
 </TS>
