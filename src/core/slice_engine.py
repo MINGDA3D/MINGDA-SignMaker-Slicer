@@ -13,7 +13,7 @@ MINGDA SignMaker - 切片引擎模块
 
 from __future__ import annotations
 import math
-from copy import copy
+from copy import deepcopy
 from typing import List, Dict, Optional
 from dataclasses import dataclass, field
 
@@ -32,6 +32,7 @@ from .edge_profile_generator import EdgeProfileGenerator
 from .skirt_generator import SkirtGenerator
 from .connected_generator import ConnectedGenerator, ConnectionBridge
 from .light_slot_geometry import LightSlotGeometry, LightSlotGeometryBuilder
+from .prime_tower import PrimeTowerGenerator
 
 
 @dataclass
@@ -57,6 +58,7 @@ class SliceEngine:
         self.skirt_generator = SkirtGenerator()
         self.connected_generator = ConnectedGenerator(self.path_offset)
         self.light_slot_geometry_builder = LightSlotGeometryBuilder(self.path_offset)
+        self.prime_tower_generator = PrimeTowerGenerator(self.path_offset)
 
     def slice(self, contours: List[Contour], params: SliceParams) -> SliceResult:
         """
@@ -78,27 +80,84 @@ class SliceEngine:
         if not contours:
             return SliceResult()
 
-        # 1. 计算层规划
         layer_infos = self._plan_layers(params)
-        connected_context = self._build_connected_preview_context(contours, params)
+        base_params = params
+        if params.prime_tower.enabled:
+            base_params = deepcopy(params)
+            base_params.prime_tower.enabled = False
 
-        # 2. 逐层生成
-        layers = []
-        for info in layer_infos:
-            layer = self._generate_layer(contours, info, params, connected_context)
-            if layer.paths:  # 只添加有路径的层
-                layers.append(layer)
+        connected_context = self._build_connected_preview_context(contours, base_params)
+        base_layers = [
+            self._generate_layer(contours, info, base_params, connected_context)
+            for info in layer_infos
+        ]
 
-        # 3. 添加预打边线（安全线）
+        safety_layers: List[Layer] = []
         if params.shell.safety_line_count > 0:
             safety_layers = self._generate_safety_lines(contours, params)
-            # 安全线在最底层之前打印
+
+        if params.prime_tower.enabled:
+            self.prime_tower_generator.validate(params)
+            for info, layer in zip(layer_infos, base_layers):
+                prime_tower_paths = self.prime_tower_generator.generate_layer_paths(
+                    info,
+                    params,
+                    self._generate_line_fill,
+                )
+                if prime_tower_paths:
+                    layer.paths = prime_tower_paths + layer.paths
+
+        layers = [layer for layer in base_layers if layer.paths]
+        if safety_layers:
             layers = safety_layers + layers
 
-        # 4. 计算统计
-        result = self._create_result(layers, params)
+        return self._create_result(layers, params)
 
-        return result
+    def validate_prime_tower_placement(
+        self,
+        contours: List[Contour],
+        params: SliceParams,
+    ) -> None:
+        """Validate prime tower bounds and collisions without mutating slice output."""
+        if not params.prime_tower.enabled:
+            return
+
+        if not contours:
+            self.prime_tower_generator.validate(params)
+            return
+
+        base_params = deepcopy(params)
+        base_params.prime_tower.enabled = False
+        layer_infos = self._plan_layers(params)
+        connected_context = self._build_connected_preview_context(contours, base_params)
+        base_layers = [
+            self._generate_layer(contours, info, base_params, connected_context)
+            for info in layer_infos
+        ]
+        safety_layers: List[Layer] = []
+        if params.shell.safety_line_count > 0:
+            safety_layers = self._generate_safety_lines(contours, params)
+
+        occupancy_geometry = self.prime_tower_generator.build_occupied_geometry(
+            safety_layers + base_layers
+        )
+        self.prime_tower_generator.validate(params, occupancy_geometry)
+
+    def validate_prime_tower_2d_placement(
+        self,
+        contours: List[Contour],
+        params: SliceParams,
+    ) -> None:
+        """Validate prime tower placement against the source 2D contour footprint."""
+        if not params.prime_tower.enabled:
+            return
+
+        if not contours:
+            self.prime_tower_generator.validate(params)
+            return
+
+        contour_geometry = self.prime_tower_generator.build_contours_geometry(contours)
+        self.prime_tower_generator.validate(params, contour_geometry)
 
     def _plan_layers(self, params: SliceParams) -> List[LayerInfo]:
         """

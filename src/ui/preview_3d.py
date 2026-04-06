@@ -38,6 +38,7 @@ from src.core.stl import (
     ShellMeshBuilder,
     StepMeshBuilder,
     SkirtMeshBuilder,
+    PrimeTowerMeshBuilder,
     ConnectedMeshBuilder,
     EdgeWrapMeshBuilder,
     BottomFaceMeshBuilder,
@@ -70,6 +71,8 @@ CONNECTED_COLOR = (0.100, 0.960, 0.960, 1.0)             # 连字亮青
 SKIRT_COLOR = (1.000, 0.671, 0.122, 0.95)                # 裙边亮琥珀
 LIGHT_SLOT_COLOR = (0.969, 0.741, 0.247, 0.98)           # 灯槽暖金
 
+PRIME_TOWER_COLOR = (0.149, 0.737, 0.612, 0.98)
+
 WALL_LIKE_ROLES = {
     PathRole.WALL,
     PathRole.FILL_PANEL,
@@ -82,6 +85,7 @@ WALL_LIKE_ROLES = {
 # 路径角色颜色
 ROLE_COLORS = {
     PathRole.WALL: WALL_COLOR,
+    PathRole.PRIME_TOWER: PRIME_TOWER_COLOR,
     PathRole.SAFETY_LINE: (0.650, 0.710, 0.780, 0.75),   # 冷灰
     PathRole.SKIRT: SKIRT_COLOR,
     PathRole.STEP: STEP_COLOR,
@@ -98,6 +102,7 @@ ROLE_COLORS = {
 }
 
 RIBBON_ROLES = {
+    PathRole.PRIME_TOWER,
     PathRole.SKIRT,
     PathRole.STEP,
     PathRole.V_GROOVE,
@@ -106,6 +111,7 @@ RIBBON_ROLES = {
 
 ROLE_Z_LIFTS = {
     PathRole.WALL: 0.020,
+    PathRole.PRIME_TOWER: 0.035,
     PathRole.SAFETY_LINE: 0.025,
     PathRole.FILL_PANEL: 0.030,
     PathRole.FILL_GRID: 0.030,
@@ -280,6 +286,7 @@ class Preview3DWidget(QOpenGLWidget):
         shell_builder = ShellMeshBuilder(path_offset, wall_thickness)
         step_builder = StepMeshBuilder(path_offset)
         skirt_builder = SkirtMeshBuilder(path_offset)
+        prime_tower_builder = PrimeTowerMeshBuilder()
         connected_builder = ConnectedMeshBuilder(path_offset)
         edge_wrap_builder = EdgeWrapMeshBuilder(path_offset, wall_thickness)
         bottom_face_builder = BottomFaceMeshBuilder(path_offset)
@@ -291,6 +298,10 @@ class Preview3DWidget(QOpenGLWidget):
 
         shell_mesh = shell_builder.build(result.layers)
         Preview3DWidget._append_mesh_part(parts, "wall", shell_mesh, WALL_COLOR)
+
+        if params.prime_tower.enabled:
+            prime_tower_mesh = prime_tower_builder.build(result.layers)
+            Preview3DWidget._append_mesh_part(parts, "prime_tower", prime_tower_mesh, PRIME_TOWER_COLOR)
 
         top_contours = Preview3DWidget._get_transformed_contours_at_z(
             contours, params.shell.height, temp_engine, params

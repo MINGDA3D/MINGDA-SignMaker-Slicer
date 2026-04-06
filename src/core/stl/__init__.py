@@ -18,6 +18,7 @@ from .shell_mesh import ShellMeshBuilder
 from .edge_wrap_mesh import EdgeWrapMeshBuilder
 from .step_mesh import StepMeshBuilder
 from .skirt_mesh import SkirtMeshBuilder
+from .prime_tower_mesh import PrimeTowerMeshBuilder
 from .connected_mesh import ConnectedMeshBuilder
 from .bottom_face_mesh import BottomFaceMeshBuilder
 from .light_slot_mesh import LightSlotMeshBuilder
@@ -29,6 +30,7 @@ __all__ = [
     'EdgeWrapMeshBuilder',
     'StepMeshBuilder',
     'SkirtMeshBuilder',
+    'PrimeTowerMeshBuilder',
     'ConnectedMeshBuilder',
     'BottomFaceMeshBuilder',
     'LightSlotMeshBuilder',

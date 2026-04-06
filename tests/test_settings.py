@@ -182,6 +182,32 @@ class TestSerializeParams:
         assert restored.connected.base_height == 2.0
         assert restored.connected.support_offset == 1.5
 
+    def test_serialize_and_deserialize_prime_tower_params(self):
+        """æµ‹è¯• Prime tower å‚æ•°å¯å®Œæ•´å¾€è¿”åºåˆ—åŒ–"""
+        params = SliceParams()
+        params.prime_tower.enabled = True
+        params.prime_tower.center_x = 512.5
+        params.prime_tower.center_y = 860.0
+        params.prime_tower.width = 48.0
+        params.prime_tower.depth = 36.0
+        params.prime_tower.infill_density_percent = 35
+
+        data = serialize_params(params)
+        restored = deserialize_params(data)
+
+        assert data["prime_tower"]["enabled"] is True
+        assert data["prime_tower"]["center_x"] == pytest.approx(512.5)
+        assert data["prime_tower"]["center_y"] == pytest.approx(860.0)
+        assert data["prime_tower"]["width"] == pytest.approx(48.0)
+        assert data["prime_tower"]["depth"] == pytest.approx(36.0)
+        assert data["prime_tower"]["infill_density_percent"] == 35
+        assert restored.prime_tower.enabled is True
+        assert restored.prime_tower.center_x == pytest.approx(512.5)
+        assert restored.prime_tower.center_y == pytest.approx(860.0)
+        assert restored.prime_tower.width == pytest.approx(48.0)
+        assert restored.prime_tower.depth == pytest.approx(36.0)
+        assert restored.prime_tower.infill_density_percent == 35
+
     def test_roundtrip_all_params(self):
         """测试完整参数的往返序列化"""
         params = SliceParams()

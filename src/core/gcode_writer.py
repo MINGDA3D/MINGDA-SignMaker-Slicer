@@ -644,6 +644,7 @@ class GCodeWriter:
     def _get_path_speed(self, role: PathRole, base_speed: float) -> float:
         speed_multipliers = {
             PathRole.WALL: 0.8,
+            PathRole.PRIME_TOWER: 0.8,
             PathRole.SAFETY_LINE: 1.0,
             PathRole.SKIRT: 1.0,
             PathRole.STEP: 0.7,

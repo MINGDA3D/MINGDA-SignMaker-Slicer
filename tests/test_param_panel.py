@@ -1,10 +1,12 @@
 import pytest
-from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QHeaderView, QPlainTextEdit
+from PySide6.QtCore import QPoint, QPointF, Qt
+from PySide6.QtGui import QWheelEvent
+from PySide6.QtWidgets import QApplication, QHeaderView, QPlainTextEdit, QPushButton, QVBoxLayout, QWidget
 
 from src.business.printer_profile_manager import DEFAULT_PRINTER_PROFILE_SPECS
 from src.core.types import ColorChangePoint, EdgeDirection, PrinterProfile, SliceParams
 from src.ui.param_panel import ParamPanel
+from src.ui.widgets import GuardedComboBox, GuardedDoubleSpinBox, GuardedSpinBox
 
 
 @pytest.fixture
@@ -26,6 +28,93 @@ def _owning_group(widget):
     return None
 
 
+def _dispatch_wheel(widget, delta_y: int = 120) -> None:
+    event = QWheelEvent(
+        QPointF(5, 5),
+        QPointF(5, 5),
+        QPoint(0, 0),
+        QPoint(0, delta_y),
+        Qt.MouseButton.NoButton,
+        Qt.KeyboardModifier.NoModifier,
+        Qt.ScrollPhase.ScrollUpdate,
+        False,
+    )
+    QApplication.sendEvent(widget, event)
+    QApplication.processEvents()
+
+
+def test_guarded_double_spinbox_ignores_wheel_until_focused(qapp):
+    container = QWidget()
+    layout = QVBoxLayout(container)
+    blocker = QPushButton("blocker")
+    spinbox = GuardedDoubleSpinBox()
+    spinbox.setRange(0.0, 10.0)
+    spinbox.setSingleStep(1.0)
+    spinbox.setValue(5.0)
+    layout.addWidget(blocker)
+    layout.addWidget(spinbox)
+
+    try:
+        container.show()
+        qapp.processEvents()
+
+        blocker.setFocus()
+        qapp.processEvents()
+        assert spinbox.hasFocus() is False
+
+        _dispatch_wheel(spinbox)
+        assert spinbox.value() == pytest.approx(5.0)
+
+        spinbox.setFocus()
+        qapp.processEvents()
+        assert spinbox.hasFocus() is True
+
+        _dispatch_wheel(spinbox)
+        assert spinbox.value() == pytest.approx(6.0)
+    finally:
+        container.close()
+
+
+def test_guarded_combobox_ignores_wheel_until_focused(qapp):
+    container = QWidget()
+    layout = QVBoxLayout(container)
+    blocker = QPushButton("blocker")
+    combo = GuardedComboBox()
+    combo.addItems(["A", "B", "C"])
+    combo.setCurrentIndex(1)
+    layout.addWidget(blocker)
+    layout.addWidget(combo)
+
+    try:
+        container.show()
+        qapp.processEvents()
+
+        blocker.setFocus()
+        qapp.processEvents()
+        assert combo.hasFocus() is False
+
+        _dispatch_wheel(combo)
+        assert combo.currentIndex() == 1
+
+        combo.setFocus()
+        qapp.processEvents()
+        assert combo.hasFocus() is True
+
+        _dispatch_wheel(combo)
+        assert combo.currentIndex() != 1
+    finally:
+        container.close()
+
+
+def test_param_panel_uses_guarded_inputs_for_scroll_sensitive_controls(qapp):
+    panel = ParamPanel()
+
+    assert isinstance(panel.height_spin, GuardedDoubleSpinBox)
+    assert isinstance(panel.wall_count_spin, GuardedSpinBox)
+    assert isinstance(panel.edge_type_combo, GuardedComboBox)
+    assert isinstance(panel.printer_profile_combo, GuardedComboBox)
+
+
 def test_primary_groups_follow_requested_order(qapp):
     panel = ParamPanel()
 
@@ -39,6 +128,7 @@ def test_primary_groups_follow_requested_order(qapp):
         "Temperature Settings",
         "Cooling Settings",
         "Color Change",
+        "Prime Tower",
         "Top Face",
         "Bottom Face",
         "Connected Letters",
@@ -171,6 +261,7 @@ def test_primary_sections_separate_vector_machine_and_print_settings(qapp):
                 "Temperature Settings",
                 "Cooling Settings",
                 "Color Change",
+                "Prime Tower",
                 "Machine G-code",
             ],
         ),
@@ -195,6 +286,39 @@ def test_primary_sections_can_be_collapsed_and_expanded(qapp):
 
     assert toggle_button.text() == "- 2D Vector Settings"
     assert body.isHidden() is False
+
+
+def test_prime_tower_controls_roundtrip_through_print_settings(qapp):
+    panel = ParamPanel()
+    params = SliceParams()
+    params.machine.bed_width = 600.0
+    params.machine.bed_depth = 900.0
+    params.prime_tower.enabled = True
+    params.prime_tower.center_x = 540.0
+    params.prime_tower.center_y = 820.0
+    params.prime_tower.width = 60.0
+    params.prime_tower.depth = 40.0
+    params.prime_tower.infill_density_percent = 35
+
+    panel.set_params(params)
+    restored = panel.get_params()
+
+    assert panel.prime_tower_group.title() == "Prime Tower"
+    assert panel.prime_tower_enabled.isChecked() is True
+    assert panel.prime_tower_center_x.isEnabled() is True
+    assert panel.prime_tower_center_y.isEnabled() is True
+    assert panel.prime_tower_width.isEnabled() is True
+    assert panel.prime_tower_depth.isEnabled() is True
+    assert panel.prime_tower_infill_density.isEnabled() is True
+    assert panel.prime_tower_infill_density.minimum() == 10
+    assert panel.prime_tower_infill_density.maximum() == 80
+    assert panel.prime_tower_infill_density.singleStep() == 5
+    assert restored.prime_tower.enabled is True
+    assert restored.prime_tower.center_x == pytest.approx(540.0)
+    assert restored.prime_tower.center_y == pytest.approx(820.0)
+    assert restored.prime_tower.width == pytest.approx(60.0)
+    assert restored.prime_tower.depth == pytest.approx(40.0)
+    assert restored.prime_tower.infill_density_percent == 35
 
 
 def test_step_controls_share_single_primary_group(qapp):

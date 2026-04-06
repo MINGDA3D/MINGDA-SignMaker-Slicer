@@ -33,6 +33,7 @@ class PathRole(Enum):
     """路径角色（打印时的用途）"""
     WALL = auto()           # 壁/外墙
     SAFETY_LINE = auto()    # 预打边线/安全线
+    PRIME_TOWER = auto()    # Prime tower
     SKIRT = auto()          # 防翘裙边
     STEP = auto()           # 台阶
     V_GROOVE = auto()       # V槽
@@ -834,6 +835,17 @@ class ColorParams:
 
 
 @dataclass
+class PrimeTowerParams:
+    """Prime tower parameters."""
+    enabled: bool = False
+    center_x: float = 770.0
+    center_y: float = 1170.0
+    width: float = 20.0
+    depth: float = 20.0
+    infill_density_percent: int = 20
+
+
+@dataclass
 class StepConfig:
     """单个台阶配置"""
     enabled: bool = True
@@ -1167,6 +1179,7 @@ class SliceParams:
     """切片总参数"""
     shell: ShellParams = field(default_factory=ShellParams)
     color: ColorParams = field(default_factory=ColorParams)
+    prime_tower: PrimeTowerParams = field(default_factory=PrimeTowerParams)
     step: StepParams = field(default_factory=StepParams)
     skirt: SkirtParams = field(default_factory=SkirtParams)
     connected: ConnectedParams = field(default_factory=ConnectedParams)
@@ -1373,6 +1386,7 @@ def serialize_params(params: SliceParams) -> dict:
     data = {
         "shell": serialize_value(params.shell),
         "color": serialize_value(params.color),
+        "prime_tower": serialize_value(params.prime_tower),
         "step": serialize_value(params.step),
         "skirt": serialize_value(params.skirt),
         "connected": serialize_value(params.connected),
@@ -1604,6 +1618,29 @@ def deserialize_params(data: dict) -> SliceParams:
         params.step.extrusion_width = step_data.get("extrusion_width", 1.2)
         params.step.print_speed = step_data.get("print_speed", 30.0)
         params.step.horizontal_offset = step_data.get("horizontal_offset", 0.0)
+
+    # Prime tower 参数
+    if "prime_tower" in data:
+        prime_tower_data = data["prime_tower"]
+        params.prime_tower.enabled = prime_tower_data.get("enabled", False)
+        params.prime_tower.center_x = float(
+            prime_tower_data.get("center_x", params.prime_tower.center_x)
+        )
+        params.prime_tower.center_y = float(
+            prime_tower_data.get("center_y", params.prime_tower.center_y)
+        )
+        params.prime_tower.width = float(
+            prime_tower_data.get("width", params.prime_tower.width)
+        )
+        params.prime_tower.depth = float(
+            prime_tower_data.get("depth", params.prime_tower.depth)
+        )
+        params.prime_tower.infill_density_percent = int(
+            prime_tower_data.get(
+                "infill_density_percent",
+                params.prime_tower.infill_density_percent,
+            )
+        )
 
     # Skirt 参数
     if "skirt" in data:
