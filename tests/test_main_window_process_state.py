@@ -10,6 +10,7 @@ os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 from src.core.types import Contour, Path, Point
 from src.ui.canvas_2d import Canvas2D
 from src.ui.main_window import MainWindow, TUTORIAL_PLAYLIST_URL
+from src.ui.widgets import GuardedDoubleSpinBox
 from PySide6.QtWidgets import QMessageBox
 
 
@@ -123,6 +124,21 @@ def test_export_requires_reprocess_after_param_change(qapp, monkeypatch):
 
         assert messages
         assert messages[-1][0][2] == window.tr("Please process first")
+    finally:
+        window.deleteLater()
+
+
+def test_transform_panel_uses_guarded_spinboxes(qapp):
+    window = MainWindow()
+
+    try:
+        assert isinstance(window.transform_x, GuardedDoubleSpinBox)
+        assert isinstance(window.transform_y, GuardedDoubleSpinBox)
+        assert isinstance(window.transform_angle, GuardedDoubleSpinBox)
+        assert isinstance(window.scale_x_pct, GuardedDoubleSpinBox)
+        assert isinstance(window.scale_y_pct, GuardedDoubleSpinBox)
+        assert isinstance(window.scale_w, GuardedDoubleSpinBox)
+        assert isinstance(window.scale_h, GuardedDoubleSpinBox)
     finally:
         window.deleteLater()
 

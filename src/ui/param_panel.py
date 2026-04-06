@@ -38,7 +38,12 @@ from src.business.printer_profile_manager import (
     printer_profile_from_params,
 )
 from src.core.edge_presets import EdgePresetManager, ProfileCategory
-from src.ui.widgets.edge_preset_selector import EdgePresetSelector
+from src.ui.widgets import (
+    EdgePresetSelector,
+    GuardedComboBox,
+    GuardedDoubleSpinBox,
+    GuardedSpinBox,
+)
 from .theme import COLORS, LAYOUT
 
 
@@ -320,7 +325,7 @@ class ParamPanel(QWidget):
 
     def _create_double_spinbox(self, decimals: int = 2) -> QDoubleSpinBox:
         """Create a standard floating-point input without custom plus/minus buttons."""
-        spinbox = QDoubleSpinBox()
+        spinbox = GuardedDoubleSpinBox()
         spinbox.setDecimals(decimals)
         spinbox.setButtonSymbols(QAbstractSpinBox.ButtonSymbols.NoButtons)
         spinbox.setKeyboardTracking(False)
@@ -329,7 +334,7 @@ class ParamPanel(QWidget):
 
     def _create_int_spinbox(self) -> QSpinBox:
         """Create a standard integer input without custom plus/minus buttons."""
-        spinbox = QSpinBox()
+        spinbox = GuardedSpinBox()
         spinbox.setButtonSymbols(QAbstractSpinBox.ButtonSymbols.NoButtons)
         spinbox.setKeyboardTracking(False)
         spinbox.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -468,7 +473,7 @@ class ParamPanel(QWidget):
         type_form = QFormLayout()
         type_form.setSpacing(8)
 
-        self.edge_type_combo = QComboBox()
+        self.edge_type_combo = GuardedComboBox()
         self.edge_type_combo.addItem(self.tr("Straight"), EdgeType.STRAIGHT)
         self.edge_type_combo.addItem(self.tr("Beveled"), EdgeType.BEVELED)
         self.edge_type_combo.addItem(self.tr("Custom"), EdgeType.CUSTOM)
@@ -484,7 +489,7 @@ class ParamPanel(QWidget):
         bevel_layout.setSpacing(8)
 
         # 斜边方向
-        self.bevel_direction_combo = QComboBox()
+        self.bevel_direction_combo = GuardedComboBox()
         self.bevel_direction_combo.addItem(self.tr("Top Small"), BevelDirection.TOP_SMALL)
         self.bevel_direction_combo.addItem(self.tr("Top Large"), BevelDirection.TOP_LARGE)
         self.bevel_direction_combo.currentIndexChanged.connect(self._on_param_changed)
@@ -1192,7 +1197,7 @@ class ParamPanel(QWidget):
         layout.setSpacing(8)
 
         combo_row = QHBoxLayout()
-        self.printer_profile_combo = QComboBox()
+        self.printer_profile_combo = GuardedComboBox()
         self.printer_profile_combo.currentIndexChanged.connect(self._on_profile_selected)
         combo_row.addWidget(self.printer_profile_combo, 1)
         layout.addLayout(combo_row)
@@ -1970,7 +1975,7 @@ class ParamPanel(QWidget):
         form.setSpacing(8)
 
         # 连襟类型
-        self.connected_type = QComboBox()
+        self.connected_type = GuardedComboBox()
         self.connected_type.addItem(self.tr("Triangle"), "triangle")
         self.connected_type.addItem(self.tr("Diamond"), "diamond")
         self.connected_type.setEnabled(False)

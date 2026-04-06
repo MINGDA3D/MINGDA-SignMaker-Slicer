@@ -1,10 +1,12 @@
 import pytest
-from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QHeaderView, QPlainTextEdit
+from PySide6.QtCore import QPoint, QPointF, Qt
+from PySide6.QtGui import QWheelEvent
+from PySide6.QtWidgets import QApplication, QHeaderView, QPlainTextEdit, QPushButton, QVBoxLayout, QWidget
 
 from src.business.printer_profile_manager import DEFAULT_PRINTER_PROFILE_SPECS
 from src.core.types import ColorChangePoint, EdgeDirection, PrinterProfile, SliceParams
 from src.ui.param_panel import ParamPanel
+from src.ui.widgets import GuardedComboBox, GuardedDoubleSpinBox, GuardedSpinBox
 
 
 @pytest.fixture
@@ -24,6 +26,93 @@ def _owning_group(widget):
             return current
         current = current.parentWidget()
     return None
+
+
+def _dispatch_wheel(widget, delta_y: int = 120) -> None:
+    event = QWheelEvent(
+        QPointF(5, 5),
+        QPointF(5, 5),
+        QPoint(0, 0),
+        QPoint(0, delta_y),
+        Qt.MouseButton.NoButton,
+        Qt.KeyboardModifier.NoModifier,
+        Qt.ScrollPhase.ScrollUpdate,
+        False,
+    )
+    QApplication.sendEvent(widget, event)
+    QApplication.processEvents()
+
+
+def test_guarded_double_spinbox_ignores_wheel_until_focused(qapp):
+    container = QWidget()
+    layout = QVBoxLayout(container)
+    blocker = QPushButton("blocker")
+    spinbox = GuardedDoubleSpinBox()
+    spinbox.setRange(0.0, 10.0)
+    spinbox.setSingleStep(1.0)
+    spinbox.setValue(5.0)
+    layout.addWidget(blocker)
+    layout.addWidget(spinbox)
+
+    try:
+        container.show()
+        qapp.processEvents()
+
+        blocker.setFocus()
+        qapp.processEvents()
+        assert spinbox.hasFocus() is False
+
+        _dispatch_wheel(spinbox)
+        assert spinbox.value() == pytest.approx(5.0)
+
+        spinbox.setFocus()
+        qapp.processEvents()
+        assert spinbox.hasFocus() is True
+
+        _dispatch_wheel(spinbox)
+        assert spinbox.value() == pytest.approx(6.0)
+    finally:
+        container.close()
+
+
+def test_guarded_combobox_ignores_wheel_until_focused(qapp):
+    container = QWidget()
+    layout = QVBoxLayout(container)
+    blocker = QPushButton("blocker")
+    combo = GuardedComboBox()
+    combo.addItems(["A", "B", "C"])
+    combo.setCurrentIndex(1)
+    layout.addWidget(blocker)
+    layout.addWidget(combo)
+
+    try:
+        container.show()
+        qapp.processEvents()
+
+        blocker.setFocus()
+        qapp.processEvents()
+        assert combo.hasFocus() is False
+
+        _dispatch_wheel(combo)
+        assert combo.currentIndex() == 1
+
+        combo.setFocus()
+        qapp.processEvents()
+        assert combo.hasFocus() is True
+
+        _dispatch_wheel(combo)
+        assert combo.currentIndex() != 1
+    finally:
+        container.close()
+
+
+def test_param_panel_uses_guarded_inputs_for_scroll_sensitive_controls(qapp):
+    panel = ParamPanel()
+
+    assert isinstance(panel.height_spin, GuardedDoubleSpinBox)
+    assert isinstance(panel.wall_count_spin, GuardedSpinBox)
+    assert isinstance(panel.edge_type_combo, GuardedComboBox)
+    assert isinstance(panel.printer_profile_combo, GuardedComboBox)
 
 
 def test_primary_groups_follow_requested_order(qapp):

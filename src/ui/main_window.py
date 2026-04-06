@@ -38,6 +38,7 @@ from .preview_3d import Preview3D, Preview3DWidget
 from .title_bar import TitleBar
 from .canvas_toolbar import CanvasToolbar
 from .home_page import HomePage
+from .widgets import GuardedDoubleSpinBox
 from .project_preview import (
     preview_pixmap_from_png_bytes,
     render_project_preview_pixmap,
@@ -390,7 +391,7 @@ class MainWindow(QMainWindow):
         x_label = QLabel("X")
         x_label.setStyleSheet("color: #58A6FF; font-weight: bold;")
         x_layout.addWidget(x_label)
-        self.transform_x = QDoubleSpinBox()
+        self.transform_x = GuardedDoubleSpinBox()
         self.transform_x.setRange(-10000, 10000)
         self.transform_x.setValue(0)
         self.transform_x.setDecimals(2)
@@ -405,7 +406,7 @@ class MainWindow(QMainWindow):
         y_label = QLabel("Y")
         y_label.setStyleSheet("color: #58A6FF; font-weight: bold;")
         y_layout.addWidget(y_label)
-        self.transform_y = QDoubleSpinBox()
+        self.transform_y = GuardedDoubleSpinBox()
         self.transform_y.setRange(-10000, 10000)
         self.transform_y.setValue(0)
         self.transform_y.setDecimals(2)
@@ -425,7 +426,7 @@ class MainWindow(QMainWindow):
         rot_label = QLabel(self.tr("Angle"))
         rot_label.setStyleSheet("color: #58A6FF; font-weight: bold;")
         rot_layout.addWidget(rot_label)
-        self.transform_angle = QDoubleSpinBox()
+        self.transform_angle = GuardedDoubleSpinBox()
         self.transform_angle.setRange(-360, 360)
         self.transform_angle.setValue(0)
         self.transform_angle.setDecimals(2)
@@ -457,7 +458,7 @@ class MainWindow(QMainWindow):
         sx_label = QLabel("X")
         sx_label.setStyleSheet("color: #FF6B6B; font-weight: bold;")
         sx_layout.addWidget(sx_label)
-        self.scale_x_pct = QDoubleSpinBox()
+        self.scale_x_pct = GuardedDoubleSpinBox()
         self.scale_x_pct.setRange(1, 10000)
         self.scale_x_pct.setValue(100)
         self.scale_x_pct.setDecimals(2)
@@ -472,7 +473,7 @@ class MainWindow(QMainWindow):
         sy_label = QLabel("Y")
         sy_label.setStyleSheet("color: #69DB7C; font-weight: bold;")
         sy_layout.addWidget(sy_label)
-        self.scale_y_pct = QDoubleSpinBox()
+        self.scale_y_pct = GuardedDoubleSpinBox()
         self.scale_y_pct.setRange(1, 10000)
         self.scale_y_pct.setValue(100)
         self.scale_y_pct.setDecimals(2)
@@ -496,7 +497,7 @@ class MainWindow(QMainWindow):
         sw_label = QLabel("W")
         sw_label.setStyleSheet("color: #FF6B6B; font-weight: bold;")
         sw_layout.addWidget(sw_label)
-        self.scale_w = QDoubleSpinBox()
+        self.scale_w = GuardedDoubleSpinBox()
         self.scale_w.setRange(0.01, 100000)
         self.scale_w.setValue(100)
         self.scale_w.setDecimals(2)
@@ -511,7 +512,7 @@ class MainWindow(QMainWindow):
         sh_label = QLabel("H")
         sh_label.setStyleSheet("color: #69DB7C; font-weight: bold;")
         sh_layout.addWidget(sh_label)
-        self.scale_h = QDoubleSpinBox()
+        self.scale_h = GuardedDoubleSpinBox()
         self.scale_h.setRange(0.01, 100000)
         self.scale_h.setValue(100)
         self.scale_h.setDecimals(2)
