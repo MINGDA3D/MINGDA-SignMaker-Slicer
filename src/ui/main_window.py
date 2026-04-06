@@ -1600,7 +1600,6 @@ class MainWindow(QMainWindow):
             # 显示3D预览；如果还未处理但已有图形，则自动先处理
             self._show_preview_view()
             if self.slice_result is None and self.contours:
-                self.preview_3d.set_loading(True, self.tr("Processing..."))
                 self._update_status(self.tr("Processing..."))
                 self._on_slice()
                 return

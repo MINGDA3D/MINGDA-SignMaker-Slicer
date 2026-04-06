@@ -760,16 +760,23 @@ def test_transform_panel_hidden_on_home_and_preview_pages(qapp, monkeypatch):
 def test_preview_auto_processes_when_contours_exist_and_result_missing(qapp, monkeypatch):
     window = MainWindow()
     calls = []
+    loading_calls = []
 
     try:
         window.contours = [_rect_contour(0, 0, 10, 10, "A")]
         window.canvas.set_contours(window.contours, center_on_platform=False)
 
         monkeypatch.setattr(window, "_on_slice", lambda: calls.append("slice"))
+        monkeypatch.setattr(
+            window.preview_3d,
+            "set_loading",
+            lambda *args, **kwargs: loading_calls.append((args, kwargs)),
+        )
 
         window._on_nav_changed("preview")
 
         assert calls == ["slice"]
+        assert loading_calls == []
         assert window.current_main_view == "editor"
         assert window.current_view == "3d"
     finally:
