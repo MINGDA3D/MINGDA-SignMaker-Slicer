@@ -127,7 +127,7 @@ class GCodeWriter:
             raise GCodeValidationError("No processed layers available for export.")
 
         if printer_profile.bed_width <= 0 or printer_profile.bed_depth <= 0:
-            raise GCodeValidationError("Printer bed size must be greater than zero.")
+            raise GCodeValidationError("Printer printable area must be greater than zero.")
         if printer_profile.nozzle_diameter <= 0:
             raise GCodeValidationError("Nozzle diameter must be greater than zero.")
         if printer_profile.filament_diameter <= 0:

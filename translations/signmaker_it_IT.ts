@@ -368,7 +368,7 @@
     <message>
         <location filename="../src/ui/main_window.py" line="1577" />
         <source>Home</source>
-        <translation>Home</translation>
+        <translation>Pagina iniziale</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="1584" />
@@ -1039,8 +1039,8 @@
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="181" />
-        <source>Printer profile, bed size, nozzle, and material-related hardware values.</source>
-        <translation>Profilo stampante, dimensioni del piano, ugello e valori hardware relativi al materiale.</translation>
+        <source>Printer profile, printable area, nozzle, and material-related hardware values.</source>
+        <translation>Profilo stampante, area stampabile, ugello e valori hardware relativi al materiale.</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="197" />
@@ -1530,18 +1530,18 @@
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1239" />
-        <source>Bed Width:</source>
-        <translation>Larghezza piano:</translation>
+        <source>Printable Area X:</source>
+        <translation>Area stampabile X:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1245" />
-        <source>Bed Depth:</source>
-        <translation>Profondità piano:</translation>
+        <source>Printable Area Y:</source>
+        <translation>Area stampabile Y:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1251" />
-        <source>Bed Height:</source>
-        <translation>Altezza piano:</translation>
+        <source>Printable Area Z:</source>
+        <translation>Area stampabile Z:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1258" />
@@ -2041,7 +2041,7 @@ Punti di controllo: {points}</translation>
     <message>
         <location filename="../src/ui/title_bar.py" line="138" />
         <source>Home</source>
-        <translation>Home</translation>
+        <translation>Pagina iniziale</translation>
     </message>
     <message>
         <location filename="../src/ui/title_bar.py" line="144" />
@@ -2102,7 +2102,7 @@ Punti di controllo: {points}</translation>
     <message>
         <location filename="../src/ui/title_bar.py" line="358" />
         <source>Tutorial</source>
-        <translation>Tutorial</translation>
+        <translation>Guida</translation>
     </message>
     <message>
         <location filename="../src/ui/title_bar.py" line="361" />

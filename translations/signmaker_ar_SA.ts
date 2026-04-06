@@ -1039,8 +1039,8 @@
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="181" />
-        <source>Printer profile, bed size, nozzle, and material-related hardware values.</source>
-        <translation>ملف تعريف الطابعة وحجم السرير والفوهة وقيم العتاد المرتبطة بالمادة.</translation>
+        <source>Printer profile, printable area, nozzle, and material-related hardware values.</source>
+        <translation>ملف تعريف الطابعة، مساحة الطباعة، الفوهة، وقيم العتاد المرتبطة بالمادة.</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="197" />
@@ -1530,18 +1530,18 @@
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1239" />
-        <source>Bed Width:</source>
-        <translation>عرض السرير:</translation>
+        <source>Printable Area X:</source>
+        <translation>مساحة الطباعة X:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1245" />
-        <source>Bed Depth:</source>
-        <translation>عمق السرير:</translation>
+        <source>Printable Area Y:</source>
+        <translation>مساحة الطباعة Y:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1251" />
-        <source>Bed Height:</source>
-        <translation>ارتفاع السرير:</translation>
+        <source>Printable Area Z:</source>
+        <translation>مساحة الطباعة Z:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1258" />
@@ -1591,7 +1591,7 @@
     <message>
         <location filename="../src/ui/param_panel.py" line="1322" />
         <source>Start G-code</source>
-        <translation>Start G-code</translation>
+        <translation>بداية G-code</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1337" />
@@ -1601,7 +1601,7 @@
     <message>
         <location filename="../src/ui/param_panel.py" line="1339" />
         <source>End G-code</source>
-        <translation>End G-code</translation>
+        <translation>نهاية G-code</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1370" />

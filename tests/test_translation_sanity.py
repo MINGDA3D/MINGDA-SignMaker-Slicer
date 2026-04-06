@@ -32,7 +32,7 @@ ZH_CN_REQUIRED = {
         "2D Vector Settings",
         "Contour shaping, shell geometry, wraps, slots, and DXF output.",
         "Machine Settings",
-        "Printer profile, bed size, nozzle, and material-related hardware values.",
+        "Printer profile, printable area, nozzle, and material-related hardware values.",
         "Print Settings",
         "Speed, temperature, cooling, color-change points, and start/end print commands.",
         "Project Snapshot",
@@ -61,9 +61,9 @@ ZH_CN_REQUIRED = {
         "Rename",
         "Delete",
         "Set Default",
-        "Bed Width:",
-        "Bed Depth:",
-        "Bed Height:",
+        "Printable Area X:",
+        "Printable Area Y:",
+        "Printable Area Z:",
         "Nozzle Diameter:",
         "Filament Diameter:",
         "Retract Length:",
@@ -111,6 +111,15 @@ ZH_CN_REQUIRED = {
     },
     "GCodeWriter": {
         "Color change is enabled but no change points are configured.",
+    },
+}
+
+SECONDARY_LOCALE_MUST_DIFFER_FROM_SOURCE = {
+    "ParamPanel": {
+        "Printer profile, printable area, nozzle, and material-related hardware values.",
+        "Printable Area X:",
+        "Printable Area Y:",
+        "Printable Area Z:",
     },
 }
 
@@ -179,3 +188,18 @@ def test_secondary_locale_targeted_translations_are_finished():
         if ts_file.name == "signmaker_zh_CN.ts":
             continue
         _assert_required_translations_finished(ts_file.name, ZH_CN_REQUIRED)
+
+
+def test_secondary_locale_printable_area_translations_are_localized():
+    for ts_file in TRANSLATIONS_DIR.glob("signmaker_*.ts"):
+        if ts_file.name in {"signmaker_zh_CN.ts", "signmaker_en_US.ts"}:
+            continue
+
+        messages = _collect_messages(ts_file.name, SECONDARY_LOCALE_MUST_DIFFER_FROM_SOURCE)
+        for ctx_name, sources in SECONDARY_LOCALE_MUST_DIFFER_FROM_SOURCE.items():
+            for source in sources:
+                translation = messages.get((ctx_name, source))
+                assert translation is not None
+                text = "".join(translation.itertext()).strip()
+                assert text
+                assert text != source

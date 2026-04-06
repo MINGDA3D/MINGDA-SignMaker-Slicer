@@ -183,7 +183,7 @@ class ParamPanel(QWidget):
                 "key": "machine",
                 "title": self.tr("Machine Settings"),
                 "description": self.tr(
-                    "Printer profile, bed size, nozzle, and material-related hardware values."
+                    "Printer profile, printable area, nozzle, and material-related hardware values."
                 ),
                 "accent": COLORS.editor_sidebar_right_accent,
                 "groups": self._machine_groups,
@@ -1152,7 +1152,7 @@ class ParamPanel(QWidget):
         self.prime_tower_infill_density.setEnabled(enabled)
 
     def _update_prime_tower_coordinate_ranges(self):
-        """Clamp prime tower coordinates to the active bed size."""
+        """Clamp prime tower coordinates to the active printable area."""
         if not hasattr(self, "prime_tower_center_x"):
             return
 
@@ -1241,19 +1241,19 @@ class ParamPanel(QWidget):
         self.profile_bed_width.setRange(1.0, 5000.0)
         self.profile_bed_width.setSuffix(" mm")
         self.profile_bed_width.valueChanged.connect(self._on_printer_profile_field_changed)
-        form.addRow(self.tr("Bed Width:"), self.profile_bed_width)
+        form.addRow(self.tr("Printable Area X:"), self.profile_bed_width)
 
         self.profile_bed_depth = self._create_double_spinbox()
         self.profile_bed_depth.setRange(1.0, 5000.0)
         self.profile_bed_depth.setSuffix(" mm")
         self.profile_bed_depth.valueChanged.connect(self._on_printer_profile_field_changed)
-        form.addRow(self.tr("Bed Depth:"), self.profile_bed_depth)
+        form.addRow(self.tr("Printable Area Y:"), self.profile_bed_depth)
 
         self.profile_bed_height = self._create_double_spinbox()
         self.profile_bed_height.setRange(1.0, 1000.0)
         self.profile_bed_height.setSuffix(" mm")
         self.profile_bed_height.valueChanged.connect(self._on_printer_profile_field_changed)
-        form.addRow(self.tr("Bed Height:"), self.profile_bed_height)
+        form.addRow(self.tr("Printable Area Z:"), self.profile_bed_height)
 
         self.profile_nozzle_diameter = self._create_double_spinbox(3)
         self.profile_nozzle_diameter.setRange(0.1, 5.0)

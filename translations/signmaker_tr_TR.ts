@@ -1039,8 +1039,8 @@
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="181" />
-        <source>Printer profile, bed size, nozzle, and material-related hardware values.</source>
-        <translation>Yazıcı profili, tabla boyutu, nozul ve malzemeyle ilgili donanım değerleri.</translation>
+        <source>Printer profile, printable area, nozzle, and material-related hardware values.</source>
+        <translation>Yazıcı profili, yazdırılabilir alan, nozul ve malzemeyle ilgili donanım değerleri.</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="197" />
@@ -1530,18 +1530,18 @@
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1239" />
-        <source>Bed Width:</source>
-        <translation>Tabla Genişliği:</translation>
+        <source>Printable Area X:</source>
+        <translation>Yazdırılabilir Alan X:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1245" />
-        <source>Bed Depth:</source>
-        <translation>Tabla Derinliği:</translation>
+        <source>Printable Area Y:</source>
+        <translation>Yazdırılabilir Alan Y:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1251" />
-        <source>Bed Height:</source>
-        <translation>Tabla Yüksekliği:</translation>
+        <source>Printable Area Z:</source>
+        <translation>Yazdırılabilir Alan Z:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1258" />
@@ -1591,7 +1591,7 @@
     <message>
         <location filename="../src/ui/param_panel.py" line="1322" />
         <source>Start G-code</source>
-        <translation>Start G-code</translation>
+        <translation>Başlangıç G-kodu</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1337" />
@@ -1601,7 +1601,7 @@
     <message>
         <location filename="../src/ui/param_panel.py" line="1339" />
         <source>End G-code</source>
-        <translation>End G-code</translation>
+        <translation>Bitiş G-kodu</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1370" />
@@ -2026,7 +2026,7 @@ Kontrol noktalari: {points}</translation>
     <message>
         <location filename="../src/ui/title_bar.py" line="55" />
         <source>Menu</source>
-        <translation>Menu</translation>
+        <translation>Menü</translation>
     </message>
     <message>
         <location filename="../src/ui/title_bar.py" line="113" />

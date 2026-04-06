@@ -1039,8 +1039,8 @@
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="181" />
-        <source>Printer profile, bed size, nozzle, and material-related hardware values.</source>
-        <translation>プリンタープロファイル、ベッドサイズ、ノズル、材料関連のハードウェア値を設定します。</translation>
+        <source>Printer profile, printable area, nozzle, and material-related hardware values.</source>
+        <translation>プリンタープロファイル、印刷可能領域、ノズル、および材料関連のハードウェア値。</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="197" />
@@ -1530,18 +1530,18 @@
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1239" />
-        <source>Bed Width:</source>
-        <translation>ベッド幅:</translation>
+        <source>Printable Area X:</source>
+        <translation>印刷可能領域 X:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1245" />
-        <source>Bed Depth:</source>
-        <translation>ベッド奥行き:</translation>
+        <source>Printable Area Y:</source>
+        <translation>印刷可能領域 Y:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1251" />
-        <source>Bed Height:</source>
-        <translation>ベッド高さ:</translation>
+        <source>Printable Area Z:</source>
+        <translation>印刷可能領域 Z:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1258" />

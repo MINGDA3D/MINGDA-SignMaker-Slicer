@@ -1039,8 +1039,8 @@
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="181" />
-        <source>Printer profile, bed size, nozzle, and material-related hardware values.</source>
-        <translation>Perfil de impresora, tamaño de cama, boquilla y valores de hardware relacionados con el material.</translation>
+        <source>Printer profile, printable area, nozzle, and material-related hardware values.</source>
+        <translation>Perfil de impresora, área imprimible, boquilla y valores de hardware relacionados con el material.</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="197" />
@@ -1530,18 +1530,18 @@
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1239" />
-        <source>Bed Width:</source>
-        <translation>Ancho de cama:</translation>
+        <source>Printable Area X:</source>
+        <translation>Área imprimible X:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1245" />
-        <source>Bed Depth:</source>
-        <translation>Fondo de cama:</translation>
+        <source>Printable Area Y:</source>
+        <translation>Área imprimible Y:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1251" />
-        <source>Bed Height:</source>
-        <translation>Altura de cama:</translation>
+        <source>Printable Area Z:</source>
+        <translation>Área imprimible Z:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1258" />
@@ -2026,7 +2026,7 @@ Puntos de control: {points}</translation>
     <message>
         <location filename="../src/ui/title_bar.py" line="55" />
         <source>Menu</source>
-        <translation>Menu</translation>
+        <translation>Menú</translation>
     </message>
     <message>
         <location filename="../src/ui/title_bar.py" line="113" />
@@ -2102,7 +2102,7 @@ Puntos de control: {points}</translation>
     <message>
         <location filename="../src/ui/title_bar.py" line="358" />
         <source>Tutorial</source>
-        <translation>Tutorial</translation>
+        <translation>Guía</translation>
     </message>
     <message>
         <location filename="../src/ui/title_bar.py" line="361" />

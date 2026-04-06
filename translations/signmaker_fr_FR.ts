@@ -1039,8 +1039,8 @@
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="181" />
-        <source>Printer profile, bed size, nozzle, and material-related hardware values.</source>
-        <translation>Profil d'imprimante, dimensions du plateau, buse et valeurs matérielles liées au matériau.</translation>
+        <source>Printer profile, printable area, nozzle, and material-related hardware values.</source>
+        <translation>Profil d''imprimante, zone imprimable, buse et paramètres matériels liés au matériau.</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="197" />
@@ -1530,18 +1530,18 @@
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1239" />
-        <source>Bed Width:</source>
-        <translation>Largeur du plateau :</translation>
+        <source>Printable Area X:</source>
+        <translation>Zone imprimable X:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1245" />
-        <source>Bed Depth:</source>
-        <translation>Profondeur du plateau :</translation>
+        <source>Printable Area Y:</source>
+        <translation>Zone imprimable Y:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1251" />
-        <source>Bed Height:</source>
-        <translation>Hauteur du plateau :</translation>
+        <source>Printable Area Z:</source>
+        <translation>Zone imprimable Z:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1258" />

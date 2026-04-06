@@ -1039,8 +1039,8 @@
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="181" />
-        <source>Printer profile, bed size, nozzle, and material-related hardware values.</source>
-        <translation>פרופיל מדפסת, גודל משטח, דיזה וערכי חומרה הקשורים לחומר.</translation>
+        <source>Printer profile, printable area, nozzle, and material-related hardware values.</source>
+        <translation>פרופיל מדפסת, אזור הדפסה, נחיר וערכי חומרה הקשורים לחומר.</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="197" />
@@ -1530,18 +1530,18 @@
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1239" />
-        <source>Bed Width:</source>
-        <translation>רוחב משטח:</translation>
+        <source>Printable Area X:</source>
+        <translation>אזור הדפסה X:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1245" />
-        <source>Bed Depth:</source>
-        <translation>עומק משטח:</translation>
+        <source>Printable Area Y:</source>
+        <translation>אזור הדפסה Y:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1251" />
-        <source>Bed Height:</source>
-        <translation>גובה משטח:</translation>
+        <source>Printable Area Z:</source>
+        <translation>אזור הדפסה Z:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1258" />
@@ -1591,7 +1591,7 @@
     <message>
         <location filename="../src/ui/param_panel.py" line="1322" />
         <source>Start G-code</source>
-        <translation>Start G-code</translation>
+        <translation>G-code התחלה</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1337" />
@@ -1601,7 +1601,7 @@
     <message>
         <location filename="../src/ui/param_panel.py" line="1339" />
         <source>End G-code</source>
-        <translation>End G-code</translation>
+        <translation>G-code סיום</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1370" />

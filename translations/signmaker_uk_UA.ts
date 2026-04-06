@@ -1039,8 +1039,8 @@
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="181" />
-        <source>Printer profile, bed size, nozzle, and material-related hardware values.</source>
-        <translation>Профіль принтера, розмір стола, сопло та апаратні значення, пов'язані з матеріалом.</translation>
+        <source>Printer profile, printable area, nozzle, and material-related hardware values.</source>
+        <translation>Профіль принтера, область друку, сопло та апаратні параметри, пов'язані з матеріалом.</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="197" />
@@ -1530,18 +1530,18 @@
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1239" />
-        <source>Bed Width:</source>
-        <translation>Ширина стола:</translation>
+        <source>Printable Area X:</source>
+        <translation>Область друку X:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1245" />
-        <source>Bed Depth:</source>
-        <translation>Глибина стола:</translation>
+        <source>Printable Area Y:</source>
+        <translation>Область друку Y:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1251" />
-        <source>Bed Height:</source>
-        <translation>Висота стола:</translation>
+        <source>Printable Area Z:</source>
+        <translation>Область друку Z:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1258" />

@@ -1039,8 +1039,8 @@
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="181" />
-        <source>Printer profile, bed size, nozzle, and material-related hardware values.</source>
-        <translation>Perfil da impressora, tamanho da mesa, bico e valores de hardware relacionados ao material.</translation>
+        <source>Printer profile, printable area, nozzle, and material-related hardware values.</source>
+        <translation>Perfil da impressora, área imprimível, bico e valores de hardware relacionados ao material.</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="197" />
@@ -1530,18 +1530,18 @@
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1239" />
-        <source>Bed Width:</source>
-        <translation>Largura da mesa:</translation>
+        <source>Printable Area X:</source>
+        <translation>Área imprimível X:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1245" />
-        <source>Bed Depth:</source>
-        <translation>Profundidade da mesa:</translation>
+        <source>Printable Area Y:</source>
+        <translation>Área imprimível Y:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1251" />
-        <source>Bed Height:</source>
-        <translation>Altura da mesa:</translation>
+        <source>Printable Area Z:</source>
+        <translation>Área imprimível Z:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1258" />
@@ -2102,7 +2102,7 @@ Pontos de controle: {points}</translation>
     <message>
         <location filename="../src/ui/title_bar.py" line="358" />
         <source>Tutorial</source>
-        <translation>Tutorial</translation>
+        <translation>Guia</translation>
     </message>
     <message>
         <location filename="../src/ui/title_bar.py" line="361" />

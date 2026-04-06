@@ -1039,8 +1039,8 @@
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="181" />
-        <source>Printer profile, bed size, nozzle, and material-related hardware values.</source>
-        <translation>Druckerprofil, Bettgröße, Düse und materialbezogene Hardwarewerte.</translation>
+        <source>Printer profile, printable area, nozzle, and material-related hardware values.</source>
+        <translation>Druckerprofil, Druckbereich, Düse und materialbezogene Hardwarewerte.</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="197" />
@@ -1530,18 +1530,18 @@
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1239" />
-        <source>Bed Width:</source>
-        <translation>Bettbreite:</translation>
+        <source>Printable Area X:</source>
+        <translation>Druckbereich X:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1245" />
-        <source>Bed Depth:</source>
-        <translation>Betttiefe:</translation>
+        <source>Printable Area Y:</source>
+        <translation>Druckbereich Y:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1251" />
-        <source>Bed Height:</source>
-        <translation>Betthöhe:</translation>
+        <source>Printable Area Z:</source>
+        <translation>Druckbereich Z:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1258" />
@@ -2102,7 +2102,7 @@ Kontrollpunkte: {points}</translation>
     <message>
         <location filename="../src/ui/title_bar.py" line="358" />
         <source>Tutorial</source>
-        <translation>Tutorial</translation>
+        <translation>Anleitung</translation>
     </message>
     <message>
         <location filename="../src/ui/title_bar.py" line="361" />
