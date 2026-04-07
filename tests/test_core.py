@@ -549,6 +549,34 @@ class TestStepGenerator:
         assert paths[0].role == PathRole.STEP
         assert paths[0].line_width == step_config.width
 
+    def test_flat_step_geometry_matches_configured_width(self, step_generator, simple_contour):
+        """平台阶应从壁内边界开始，向内延伸配置宽度。"""
+        step_config = StepConfig(
+            enabled=True,
+            position=5.0,
+            width=3.0,
+            height=0.0,
+            is_v_groove=False,
+        )
+        step_params = StepParams(enabled=True)
+
+        paths = step_generator.generate_steps(
+            simple_contour,
+            step_config,
+            step_params,
+            wall_thickness=1.2,
+        )
+
+        assert paths
+
+        path = paths[0]
+        min_x = min(point.x for point in path.points)
+        step_outer_edge = min_x - path.line_width / 2
+        step_inner_edge = min_x + path.line_width / 2
+
+        assert step_outer_edge == pytest.approx(1.2)
+        assert step_inner_edge - step_outer_edge == pytest.approx(step_config.width)
+
     def test_generate_v_groove(self, step_generator, simple_contour):
         """测试生成V槽"""
         step_config = StepConfig(
@@ -1000,8 +1028,8 @@ class TestSliceEngineWithSteps:
 
         assert baseplate_step_found, "应该在底部找到底板台阶路径"
 
-    def test_hole_wall_offsets_toward_solid_and_overlaps_step(self, engine, contour_with_hole):
-        """回归测试：内孔 WALL 应向实体侧偏移，并与 STEP 保持搭接"""
+    def test_hole_step_width_matches_configured_opening_span(self, engine, contour_with_hole):
+        """回归测试：内孔 STEP 应从开口边界向实体侧延伸配置宽度"""
         params = SliceParams()
         params.shell.height = 1.0
         params.shell.layer_height = 0.3
@@ -1032,13 +1060,15 @@ class TestSliceEngineWithSteps:
 
         hole_wall_min_x = min(point.x for point in hole_wall.points)
         hole_step_min_x = min(point.x for point in hole_step.points)
+        hole_boundary_min_x = min(point.x for point in contour_with_hole.holes[0].points)
 
         # hole wall centerline must move into the solid, not into the empty hole.
         assert hole_wall_min_x == pytest.approx(29.4)
 
-        hole_step_outer_edge = hole_step_min_x + hole_step.line_width / 2
-        hole_wall_inner_edge = hole_wall_min_x - hole_wall.line_width / 2
-        assert hole_step_outer_edge >= hole_wall_inner_edge - 1e-6
+        hole_step_opening_edge = hole_step_min_x + hole_step.line_width / 2
+        hole_step_solid_edge = hole_step_min_x - hole_step.line_width / 2
+        assert hole_step_opening_edge == pytest.approx(hole_boundary_min_x)
+        assert hole_boundary_min_x - hole_step_solid_edge == pytest.approx(3.0)
 
     def test_beveled_edge_with_steps_regression(self, engine, simple_contour):
         """回归测试：斜边字+台阶组合，防止台阶悬空问题"""

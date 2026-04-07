@@ -108,15 +108,17 @@ class StepGenerator:
         extruder: ExtruderType,
         speed_multiplier: float,
     ) -> List[LayerPath]:
-        """Generate one closed ring with the requested effective width."""
+        """Generate one closed ring whose physical span matches the requested width."""
         if width <= 0.0:
             return []
 
-        offset = -(wall_thickness / 2 + width / 2)
+        shell_inner_offset = max(wall_thickness, 0.0)
+        outer_centerline_offset = -(shell_inner_offset + width / 2)
+        hole_centerline_offset = width / 2
         paths: List[LayerPath] = []
 
         for offset_path in self.path_offset.offset(
-            contour.outer, offset, JoinType.MITER
+            contour.outer, outer_centerline_offset, JoinType.MITER
         ):
             paths.append(
                 LayerPath(
@@ -131,7 +133,7 @@ class StepGenerator:
 
         for hole in contour.holes:
             for hole_path in self.path_offset.offset(
-                hole, -offset, JoinType.MITER
+                hole, hole_centerline_offset, JoinType.MITER
             ):
                 paths.append(
                     LayerPath(
@@ -416,11 +418,12 @@ class StepGenerator:
 
         paths = []
 
-        # 从壁内侧向内偏移
-        offset = -(wall_thickness / 2 + groove_depth / 2)
+        shell_inner_offset = max(wall_thickness, 0.0)
+        outer_centerline_offset = -(shell_inner_offset + groove_depth / 2)
+        hole_centerline_offset = groove_depth / 2
 
         offset_paths = self.path_offset.offset(
-            contour.outer, offset, JoinType.MITER
+            contour.outer, outer_centerline_offset, JoinType.MITER
         )
 
         for offset_path in offset_paths:
@@ -437,7 +440,7 @@ class StepGenerator:
         # 内孔的凹槽
         for hole in contour.holes:
             hole_offset_paths = self.path_offset.offset(
-                hole, -offset, JoinType.MITER
+                hole, hole_centerline_offset, JoinType.MITER
             )
             for hole_path in hole_offset_paths:
                 layer_path = LayerPath(
@@ -462,7 +465,7 @@ class StepGenerator:
             (min_x, min_y, max_x, max_y) 台阶区域边界
         """
         step_width = step_config.width
-        offset = -(wall_thickness / 2 + step_width / 2)
+        offset = -(max(wall_thickness, 0.0) + step_width / 2)
 
         # 偏移轮廓获取台阶边界
         offset_paths = self.path_offset.offset(
