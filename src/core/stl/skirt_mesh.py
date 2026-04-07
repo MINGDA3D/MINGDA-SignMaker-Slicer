@@ -2,9 +2,9 @@
 MINGDA SignMaker - Skirt mesh builder
 
 Build skirt STL geometry from the same 2D skirt paths used by slicing.
-The paths are buffered into solid 2D regions first, unioned, then extruded.
-This avoids cracks caused by concatenating separately-built ring and connector
-meshes that only touch at edges.
+Closed skirt rings and open connectors are buffered into 2D solids first, then
+unioned before extrusion. Connectors use flat caps so the tabs stay rectangular
+while still producing a single watertight body after union.
 """
 
 from __future__ import annotations
@@ -55,6 +55,11 @@ class SkirtMeshBuilder:
                         wall_thickness=params.shell.wall_thickness,
                     ),
                     path_offset=self.path_offset,
+                    path_line_width=(
+                        params.machine.nozzle_diameter
+                        if params.machine.nozzle_diameter > 0.0
+                        else None
+                    ),
                 )
                 skirt_polygons.extend(self._paths_to_polygons(outer_paths))
             except Exception as exc:
@@ -96,7 +101,7 @@ class SkirtMeshBuilder:
                 )
             else:
                 geometry = LineString(coords).buffer(
-                    radius, cap_style="round", join_style="round"
+                    radius, cap_style="flat", join_style="round"
                 )
         except Exception:
             return None

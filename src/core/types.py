@@ -900,27 +900,25 @@ class StepParams:
 class SkirtParams:
     """防翘裙边参数
 
-    裙边结构（截面图）：
-      字壳 ════════════════════════════════════════════
-           ╲          ╱╲          ╱╲          ╱
-            ╲        ╱  ╲        ╱  ╲        ╱
-             ╲      ╱    ╲      ╱    ╲      ╱
-              ╲    ╱      ╲    ╱      ╲    ╱
-               ────        ────        ────
+    当前实现使用闭合裙边主体 + 稀疏连接线：
+    - 裙边主体围绕轮廓外/内侧生成
+    - 连接线与墙体之间可以保留微小净空，便于剥离
+    - 裙边/连接线实体宽度由调用方决定，当前导出/切片使用喷嘴直径
 
-    相邻梯形共享斜边，形成连续的波浪形防翘结构。
+    兼容说明：
+    - ``width`` / ``interval`` 仍保留序列化兼容，但当前 UI 不再直接暴露
     """
     enabled: bool = False
-    width: float = 5.0                # 裙边宽度 (mm) - 梯形底部宽度
+    width: float = 5.0                # 旧参数，保留兼容
     height: float = 0.3               # 裙边高度 (mm) - 用于STL导出，最小0.2
-    offset: float = 0.0               # 距离轮廓的偏移 (mm) - 通常为0，贴着字壳
-    interval: float = 10.0            # 梯形间距 (mm) - 相邻梯形顶边的中心距离
+    offset: float = 0.0               # 连接线到 wall 的净空 (mm)，会被限制到 0..1
+    interval: float = 10.0            # 旧参数，保留兼容
     outer_enabled: bool = True        # 外裙边：外轮廓朝外，内孔朝内
     inner_enabled: bool = False       # 内裙边：外轮廓朝内，内孔朝外
     is_outer: bool = True             # 旧参数，保留兼容
 
     # 以下参数用于G-code生成
-    extrusion_width: float = 1.2      # 吐丝宽度
+    extrusion_width: float = 1.2      # 旧参数，保留兼容
     length: float = 10.0              # 旧参数，保持兼容
     v_opening: float = 5.0            # 旧参数，保持兼容
     line_width: float = 1.2           # 旧参数，保持兼容

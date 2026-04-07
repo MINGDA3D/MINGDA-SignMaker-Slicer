@@ -180,6 +180,59 @@ def test_preview_builds_solid_mesh_parts_for_step_and_connected(qapp):
     assert "skirt" in names
 
 
+def _distance_to_rect_xy(x, y, rect):
+    left, bottom, right, top = rect
+    if left <= x <= right and bottom <= y <= top:
+        return min(x - left, right - x, y - bottom, top - y)
+    dx = max(left - x, 0.0, x - right)
+    dy = max(bottom - y, 0.0, y - top)
+    return (dx * dx + dy * dy) ** 0.5
+
+
+def test_preview_skirt_mesh_respects_breakaway_gap_from_wall(qapp):
+    contour = Contour(
+        outer=Path(points=[
+            Point(0.0, 0.0),
+            Point(40.0, 0.0),
+            Point(40.0, 20.0),
+            Point(0.0, 20.0),
+        ])
+    )
+
+    params_no_gap = SliceParams()
+    params_no_gap.shell.height = 10.0
+    params_no_gap.shell.layer_height = 1.0
+    params_no_gap.skirt.enabled = True
+    params_no_gap.skirt.offset = 0.0
+
+    params_gap = SliceParams()
+    params_gap.shell.height = 10.0
+    params_gap.shell.layer_height = 1.0
+    params_gap.skirt.enabled = True
+    params_gap.skirt.offset = 0.1
+
+    result_no_gap = SliceEngine().slice([contour], params_no_gap)
+    result_gap = SliceEngine().slice([contour], params_gap)
+
+    parts_no_gap = Preview3DWidget.build_mesh_parts_for_result(result_no_gap, [contour], params_no_gap)
+    parts_gap = Preview3DWidget.build_mesh_parts_for_result(result_gap, [contour], params_gap)
+
+    skirt_no_gap = next(part for part in parts_no_gap if part.name == "skirt")
+    skirt_gap = next(part for part in parts_gap if part.name == "skirt")
+
+    no_gap_distance = min(
+        _distance_to_rect_xy(vertex[0], vertex[1], (0.0, 0.0, 40.0, 20.0))
+        for vertex in skirt_no_gap.vertices
+    )
+    gap_distance = min(
+        _distance_to_rect_xy(vertex[0], vertex[1], (0.0, 0.0, 40.0, 20.0))
+        for vertex in skirt_gap.vertices
+    )
+
+    assert no_gap_distance == pytest.approx(0.0, abs=1e-6)
+    assert gap_distance == pytest.approx(0.1, abs=1e-4)
+
+
 def test_preview_builds_wrap_and_outline_on_bottom_reference(qapp):
     contour = Contour(
         outer=Path(

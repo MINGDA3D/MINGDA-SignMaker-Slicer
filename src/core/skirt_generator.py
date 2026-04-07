@@ -1,16 +1,11 @@
 """
-防翘裙边生成器模块 - v3 重构版
+防翘裙边生成器模块
 
-新设计：
-- 外轮廓：向外偏移5mm生成裙边环
-- 内孔：向内偏移5mm生成裙边环
-- 每隔15mm生成一根连接线，连接裙边与壁
-
-结构示意（俯视图）：
-  Wall ═══════════════════════════════════
-       ║       ║       ║       ║
-       ║       ║       ║       ║  <- 连接线（每15mm一根）
-  Skirt ───────────────────────────────
+当前实现：
+- 外轮廓：向外偏移固定距离生成裙边环
+- 内孔：向内偏移固定距离生成裙边环
+- 每隔一段距离生成一根连接线
+- 连接线与 wall 之间允许保留微小净空，便于剥离
 """
 
 import math
@@ -34,7 +29,7 @@ except ImportError:
 @dataclass
 class SkirtConnection:
     """裙边连接线数据"""
-    wall_point: Point      # 壁上的点
+    start_point: Point     # 连接线起点（与 wall 保持净空）
     skirt_point: Point     # 裙边上的点
 
 
@@ -140,7 +135,7 @@ class SkirtMesh:
         if np is None:
             return
 
-        p1, p2 = conn.wall_point, conn.skirt_point
+        p1, p2 = conn.start_point, conn.skirt_point
         dx, dy = p2.x - p1.x, p2.y - p1.y
         length = (dx * dx + dy * dy) ** 0.5
 
@@ -187,12 +182,13 @@ class SkirtMesh:
 
 
 class SkirtGenerator:
-    """防翘裙边生成器 v3
+    """防翘裙边生成器。
 
-    新算法：
-    1. 外轮廓向外偏移5mm，内孔向内偏移5mm
-    2. 每隔15mm生成一根连接线
-    3. 裙边 = 偏移环 + 连接线
+    生成结果由闭合裙边环和稀疏连接线组成。连接线会保留一个
+    可配置的 breakaway gap，避免与 wall 完全粘连。
+    连接线按平头矩形语义建模，便于与裙边环做稳定的实体并集。
+    路径实体宽度由调用方显式传入，导出/切片时通常使用喷嘴直径。
+    如果调用方未提供，则默认回退到 height * 2。
     """
 
     def generate_skirt_clipped(
@@ -201,7 +197,8 @@ class SkirtGenerator:
         all_contours: List[Contour],
         params: SkirtParams,
         wall_thickness: float,
-        path_offset: 'PathOffset'
+        path_offset: 'PathOffset',
+        path_line_width: Optional[float] = None,
     ) -> List[LayerPath]:
         """生成裙边路径（G-code用）"""
         if not params.enabled:
@@ -212,14 +209,22 @@ class SkirtGenerator:
         if params.outer_enabled:
             result.extend(
                 self._generate_contour_side_paths(
-                    contour, params, path_offset, generate_outer_side=True
+                    contour,
+                    params,
+                    path_offset,
+                    generate_outer_side=True,
+                    path_line_width=path_line_width,
                 )
             )
 
         if params.inner_enabled:
             result.extend(
                 self._generate_contour_side_paths(
-                    contour, params, path_offset, generate_outer_side=False
+                    contour,
+                    params,
+                    path_offset,
+                    generate_outer_side=False,
+                    path_line_width=path_line_width,
                 )
             )
 
@@ -231,7 +236,8 @@ class SkirtGenerator:
         all_contours: List[Contour],
         params: SkirtParams,
         wall_thickness: float,
-        path_offset: 'PathOffset'
+        path_offset: 'PathOffset',
+        path_line_width: Optional[float] = None,
     ) -> List['SkirtMesh']:
         """生成3D裙边数据（STL用）"""
         if not params.enabled:
@@ -242,14 +248,22 @@ class SkirtGenerator:
         if params.outer_enabled:
             meshes.extend(
                 self._generate_contour_side_meshes(
-                    contour, params, path_offset, generate_outer_side=True
+                    contour,
+                    params,
+                    path_offset,
+                    generate_outer_side=True,
+                    path_line_width=path_line_width,
                 )
             )
 
         if params.inner_enabled:
             meshes.extend(
                 self._generate_contour_side_meshes(
-                    contour, params, path_offset, generate_outer_side=False
+                    contour,
+                    params,
+                    path_offset,
+                    generate_outer_side=False,
+                    path_line_width=path_line_width,
                 )
             )
 
@@ -261,23 +275,32 @@ class SkirtGenerator:
         params: SkirtParams,
         path_offset: 'PathOffset',
         generate_outer_side: bool,
+        path_line_width: Optional[float],
     ) -> List[LayerPath]:
         result: List[LayerPath] = []
+        ring_center_distance = self._get_ring_center_distance()
+        effective_line_width = self._get_line_width(params, path_line_width)
 
         for wall_path, offset_outward in self._iter_boundary_modes(
             contour, generate_outer_side
         ):
             skirt_ring = self._generate_skirt_ring(
-                wall_path, 5.0, offset_outward, path_offset
+                wall_path, ring_center_distance, offset_outward, path_offset
             )
             if skirt_ring:
-                result.append(self._path_to_layer_path(skirt_ring, params))
+                result.append(self._path_to_layer_path(skirt_ring, effective_line_width))
 
             connections = self._generate_connections(
-                wall_path, skirt_ring, 15.0, offset_outward
+                wall_path,
+                skirt_ring,
+                15.0,
+                offset_outward,
+                params,
+                ring_center_distance,
+                effective_line_width,
             )
             for conn in connections:
-                result.append(self._connection_to_layer_path(conn, params))
+                result.append(self._connection_to_layer_path(conn, effective_line_width))
 
         return result
 
@@ -287,14 +310,17 @@ class SkirtGenerator:
         params: SkirtParams,
         path_offset: 'PathOffset',
         generate_outer_side: bool,
+        path_line_width: Optional[float],
     ) -> List['SkirtMesh']:
         meshes: List['SkirtMesh'] = []
+        ring_center_distance = self._get_ring_center_distance()
+        effective_line_width = self._get_line_width(params, path_line_width)
 
         for wall_path, offset_outward in self._iter_boundary_modes(
             contour, generate_outer_side
         ):
             skirt_ring = self._generate_skirt_ring(
-                wall_path, 5.0, offset_outward, path_offset
+                wall_path, ring_center_distance, offset_outward, path_offset
             )
             if not skirt_ring:
                 continue
@@ -303,7 +329,13 @@ class SkirtGenerator:
             mesh.add_ring(skirt_ring, params.height)
 
             connections = self._generate_connections(
-                wall_path, skirt_ring, 15.0, offset_outward
+                wall_path,
+                skirt_ring,
+                15.0,
+                offset_outward,
+                params,
+                ring_center_distance,
+                effective_line_width,
             )
             for conn in connections:
                 mesh.add_connection(conn, params.height)
@@ -357,7 +389,10 @@ class SkirtGenerator:
         wall_path: Path,
         skirt_ring: Optional[Path],
         interval: float,
-        is_outer: bool
+        is_outer: bool,
+        params: SkirtParams,
+        ring_center_distance: float,
+        line_width: float,
     ) -> List[SkirtConnection]:
         """生成连接线
 
@@ -368,6 +403,13 @@ class SkirtGenerator:
             is_outer: 是否外轮廓
         """
         if not skirt_ring:
+            return []
+
+        connector_start_distance = min(
+            ring_center_distance,
+            self._get_connector_start_distance(params, line_width),
+        )
+        if connector_start_distance >= ring_center_distance - 1e-6:
             return []
 
         connections = []
@@ -394,7 +436,7 @@ class SkirtGenerator:
         if total_length < interval:
             return connections
 
-        # 沿壁路径每隔15mm取一个点
+        # 沿壁路径按等间距取样，并从每段的中点开始，避免采样落在角点上
         num_connections = max(1, int(total_length / interval))
         actual_interval = total_length / num_connections
 
@@ -402,7 +444,7 @@ class SkirtGenerator:
         is_ccw = signed_area > 0
 
         for i in range(num_connections):
-            dist = i * actual_interval
+            dist = (i + 0.5) * actual_interval
 
             wall_pos, direction = self._get_point_and_direction_at_distance(
                 points, segment_lengths, cumulative_lengths, dist
@@ -419,10 +461,15 @@ class SkirtGenerator:
             else:
                 normal = self._get_inward_normal(direction)
 
+            start_point = Point(
+                wall_point.x + normal[0] * connector_start_distance,
+                wall_point.y + normal[1] * connector_start_distance
+            )
+
             # 沿法线方向找裙边环上的最近点
             search_point = Point(
-                wall_point.x + normal[0] * 5.0,
-                wall_point.y + normal[1] * 5.0
+                wall_point.x + normal[0] * ring_center_distance,
+                wall_point.y + normal[1] * ring_center_distance
             )
 
             skirt_point = self._find_nearest_point_on_path(
@@ -430,33 +477,55 @@ class SkirtGenerator:
             )
 
             connections.append(SkirtConnection(
-                wall_point=wall_point,
+                start_point=start_point,
                 skirt_point=skirt_point
             ))
 
         return connections
 
-    def _path_to_layer_path(self, path: Path, params: SkirtParams) -> LayerPath:
+    def _path_to_layer_path(self, path: Path, line_width: float) -> LayerPath:
         """将Path转换为LayerPath"""
         return LayerPath(
             points=path.points,
             role=PathRole.SKIRT,
             extruder=ExtruderType.EXTRUDER_1,
-            line_width=params.height * 2,
+            line_width=line_width,
             is_closed=True
         )
 
     def _connection_to_layer_path(
-        self, conn: SkirtConnection, params: SkirtParams
+        self, conn: SkirtConnection, line_width: float
     ) -> LayerPath:
         """将连接线转换为LayerPath"""
         return LayerPath(
-            points=[conn.wall_point, conn.skirt_point],
+            points=[conn.start_point, conn.skirt_point],
             role=PathRole.SKIRT,
             extruder=ExtruderType.EXTRUDER_1,
-            line_width=params.height * 2,
+            line_width=line_width,
             is_closed=False
         )
+
+    def _get_line_width(
+        self,
+        params: SkirtParams,
+        path_line_width: Optional[float] = None,
+    ) -> float:
+        """Return the emitted skirt path width."""
+        if path_line_width is not None and path_line_width > 0.0:
+            return path_line_width
+        return params.height * 2
+
+    def _get_ring_center_distance(self) -> float:
+        """Return the fixed centerline distance between the wall and skirt ring."""
+        return 5.0
+
+    def _get_connector_wall_gap(self, params: SkirtParams) -> float:
+        """Return the requested breakaway gap between the connector body and wall."""
+        return min(1.0, max(0.0, params.offset))
+
+    def _get_connector_start_distance(self, params: SkirtParams, line_width: float) -> float:
+        """Return connector centerline distance needed to realize the body gap."""
+        return self._get_connector_wall_gap(params)
 
     # ================================================================
     # 辅助方法

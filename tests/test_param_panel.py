@@ -1,7 +1,7 @@
 import pytest
 from PySide6.QtCore import QPoint, QPointF, Qt
 from PySide6.QtGui import QWheelEvent
-from PySide6.QtWidgets import QApplication, QHeaderView, QPlainTextEdit, QPushButton, QVBoxLayout, QWidget
+from PySide6.QtWidgets import QApplication, QHeaderView, QLabel, QPlainTextEdit, QPushButton, QVBoxLayout, QWidget
 
 from src.business.printer_profile_manager import DEFAULT_PRINTER_PROFILE_SPECS
 from src.core.types import ColorChangePoint, EdgeDirection, PrinterProfile, SliceParams
@@ -495,12 +495,53 @@ def test_wrap_outline_mutual_exclusive_updates_control_enabled_state(qapp):
     assert panel.outline_offset.isEnabled() is False
 
 
+def test_skirt_group_shows_only_requested_visible_fields(qapp):
+    panel = ParamPanel()
+    skirt_group = next(group for group in panel._primary_groups if group.title() == "Anti-Warping Skirt")
+
+    labels = {label.text() for label in skirt_group.findChildren(QLabel)}
+
+    assert "Skirt Height:" in labels
+    assert "Wall Gap:" in labels
+    assert "Skirt Width:" not in labels
+    assert "Trapezoid Interval:" not in labels
+
+
+def test_hidden_skirt_width_and_interval_values_are_preserved(qapp):
+    panel = ParamPanel()
+    params = SliceParams()
+    params.skirt.enabled = True
+    params.skirt.width = 7.5
+    params.skirt.interval = 18.0
+    params.skirt.height = 0.6
+    params.skirt.offset = 0.8
+
+    panel.set_params(params)
+    panel.skirt_offset.setValue(0.6)
+
+    restored = panel.get_params()
+
+    assert restored.skirt.width == pytest.approx(7.5)
+    assert restored.skirt.interval == pytest.approx(18.0)
+    assert restored.skirt.offset == pytest.approx(0.6)
+
+
+def test_skirt_wall_gap_is_clamped_to_one_mm_in_ui(qapp):
+    panel = ParamPanel()
+
+    panel.skirt_enabled.setChecked(True)
+    panel.skirt_offset.setValue(2.4)
+
+    assert panel.skirt_offset.value() == pytest.approx(1.0)
+    assert panel.get_params().skirt.offset == pytest.approx(1.0)
+
+
 @pytest.mark.parametrize(
     ("configure", "control_names"),
     [
         (
             lambda p: setattr(p.skirt, "enabled", True),
-            ("skirt_width", "skirt_height", "skirt_interval", "skirt_offset", "skirt_outer_enabled", "skirt_inner_enabled"),
+            ("skirt_height", "skirt_offset", "skirt_outer_enabled", "skirt_inner_enabled"),
         ),
         (
             lambda p: setattr(p.connected, "enabled", True),

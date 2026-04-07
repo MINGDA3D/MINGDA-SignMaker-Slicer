@@ -1896,14 +1896,6 @@ class ParamPanel(QWidget):
         form = QFormLayout()
         form.setSpacing(8)
 
-        self.skirt_width = self._create_double_spinbox()
-        self.skirt_width.setRange(1, 20)
-        self.skirt_width.setValue(5)
-        self.skirt_width.setSuffix(" mm")
-        self.skirt_width.setEnabled(False)
-        self.skirt_width.valueChanged.connect(self._on_param_changed)
-        form.addRow(self.tr("Skirt Width:"), self.skirt_width)
-
         self.skirt_height = self._create_double_spinbox()
         self.skirt_height.setRange(0.2, 10)
         self.skirt_height.setValue(0.3)
@@ -1913,21 +1905,14 @@ class ParamPanel(QWidget):
         self.skirt_height.valueChanged.connect(self._on_param_changed)
         form.addRow(self.tr("Skirt Height:"), self.skirt_height)
 
-        self.skirt_interval = self._create_double_spinbox()
-        self.skirt_interval.setRange(5, 50)
-        self.skirt_interval.setValue(10)
-        self.skirt_interval.setSuffix(" mm")
-        self.skirt_interval.setEnabled(False)
-        self.skirt_interval.valueChanged.connect(self._on_param_changed)
-        form.addRow(self.tr("Trapezoid Interval:"), self.skirt_interval)
-
         self.skirt_offset = self._create_double_spinbox()
-        self.skirt_offset.setRange(0, 20)
+        self.skirt_offset.setRange(0, 1.0)
         self.skirt_offset.setValue(0)
+        self.skirt_offset.setSingleStep(0.1)
         self.skirt_offset.setSuffix(" mm")
         self.skirt_offset.setEnabled(False)
         self.skirt_offset.valueChanged.connect(self._on_param_changed)
-        form.addRow(self.tr("Skirt Offset:"), self.skirt_offset)
+        form.addRow(self.tr("Wall Gap:"), self.skirt_offset)
 
         direction_layout = QHBoxLayout()
         direction_layout.setContentsMargins(0, 0, 0, 0)
@@ -1953,9 +1938,7 @@ class ParamPanel(QWidget):
 
     def _toggle_skirt_controls(self, enabled: bool):
         """切换裙边控件的启用状态"""
-        self.skirt_width.setEnabled(enabled)
         self.skirt_height.setEnabled(enabled)
-        self.skirt_interval.setEnabled(enabled)
         self.skirt_offset.setEnabled(enabled)
         self.skirt_outer_enabled.setEnabled(enabled)
         self.skirt_inner_enabled.setEnabled(enabled)
@@ -2315,9 +2298,7 @@ class ParamPanel(QWidget):
             self.dxf_outer_clearance_spin,
             self.dxf_hole_clearance_spin,
             self.dxf_laser_kerf_spin,
-            self.skirt_width,
             self.skirt_height,
-            self.skirt_interval,
             self.skirt_offset,
             self.connected_width,
             self.connected_height,
@@ -2489,9 +2470,7 @@ class ParamPanel(QWidget):
 
         # 裙边参数
         self._params.skirt.enabled = self.skirt_enabled.isChecked()
-        self._params.skirt.width = self.skirt_width.value()
         self._params.skirt.height = self.skirt_height.value()
-        self._params.skirt.interval = self.skirt_interval.value()
         self._params.skirt.offset = self.skirt_offset.value()
         self._params.skirt.outer_enabled = self.skirt_outer_enabled.isChecked()
         self._params.skirt.inner_enabled = self.skirt_inner_enabled.isChecked()
@@ -2628,8 +2607,7 @@ class ParamPanel(QWidget):
             self.first_layer_nozzle_temp, self.other_layer_nozzle_temp,
             self.first_layer_bed_temp, self.other_layer_bed_temp,
             self.first_layer_fan_percent, self.other_layer_fan_percent,
-            self.skirt_enabled, self.skirt_width, self.skirt_height,
-            self.skirt_interval, self.skirt_offset,
+            self.skirt_enabled, self.skirt_height, self.skirt_offset,
             self.skirt_outer_enabled, self.skirt_inner_enabled,
             self.connected_enabled, self.connected_type, self.connected_auto_detect,
             self.connected_width, self.connected_height, self.connected_base_height,
@@ -2709,9 +2687,7 @@ class ParamPanel(QWidget):
         self._apply_profile_to_form(profile_snapshot)
 
         # 裙边参数
-        self.skirt_width.setValue(params.skirt.width)
         self.skirt_height.setValue(params.skirt.height)
-        self.skirt_interval.setValue(params.skirt.interval)
         self.skirt_offset.setValue(params.skirt.offset)
         self.skirt_outer_enabled.setChecked(params.skirt.outer_enabled)
         self.skirt_inner_enabled.setChecked(params.skirt.inner_enabled)

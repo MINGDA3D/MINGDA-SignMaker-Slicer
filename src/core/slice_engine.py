@@ -856,7 +856,12 @@ class SliceEngine:
                 all_contours=contours,
                 params=skirt_params,
                 wall_thickness=wall_thickness,
-                path_offset=self.path_offset
+                path_offset=self.path_offset,
+                path_line_width=(
+                    params.machine.nozzle_diameter
+                    if params.machine.nozzle_diameter > 0.0
+                    else None
+                ),
             )
             paths.extend(contour_skirt_paths)
 
