@@ -8,7 +8,15 @@ from shapely.ops import unary_union
 from shapely.validation import make_valid
 
 from .path_offset import PathOffset
-from .types import Contour, Path, PathType, Point, SliceParams, resolve_shell_wall_thickness
+from .types import (
+    Contour,
+    Path,
+    PathType,
+    Point,
+    SliceParams,
+    resolve_shell_line_width,
+    resolve_shell_wall_thickness,
+)
 
 
 @dataclass
@@ -136,7 +144,11 @@ class LightSlotGeometryBuilder:
         if clipped_geometry is None:
             return None, []
 
-        return clipped_geometry, [self._clone_path(path) for path in end_paths]
+        free_edge_paths = self._offset_free_edge_paths(
+            end_paths,
+            -self._resolve_free_edge_line_width(params) / 2.0,
+        )
+        return clipped_geometry, free_edge_paths
 
     def _build_hole_slot_geometry(
         self,
@@ -175,10 +187,11 @@ class LightSlotGeometryBuilder:
         if clipped_geometry is None:
             return None, []
 
-        free_paths = [
-            self._clone_path(path, fallback_path_type=PathType.HOLE)
-            for path in end_paths
-        ]
+        free_paths = self._offset_free_edge_paths(
+            end_paths,
+            self._resolve_free_edge_line_width(params) / 2.0,
+            fallback_path_type=PathType.HOLE,
+        )
         return clipped_geometry, free_paths
 
     def _should_skip_hole(
@@ -295,3 +308,41 @@ class LightSlotGeometryBuilder:
             start_point_index=path.start_point_index,
             print_order=path.print_order,
         )
+
+    def _resolve_free_edge_line_width(self, params: SliceParams) -> float:
+        return resolve_shell_line_width(
+            params.shell.line_width,
+            params.shell.layer_height,
+            wall_thickness=params.shell.wall_thickness,
+            wall_count=params.shell.wall_count,
+        )
+
+    def _offset_free_edge_paths(
+        self,
+        paths: List[Path],
+        distance: float,
+        fallback_path_type: Optional[PathType] = None,
+    ) -> List[Path]:
+        if not paths:
+            return []
+
+        if abs(distance) <= 1e-6:
+            return [
+                self._clone_path(path, fallback_path_type=fallback_path_type)
+                for path in paths
+            ]
+
+        offset_paths: List[Path] = []
+        for path in paths:
+            offset_paths.extend(self.path_offset.offset(path, distance))
+
+        if offset_paths:
+            return [
+                self._clone_path(path, fallback_path_type=fallback_path_type)
+                for path in offset_paths
+            ]
+
+        return [
+            self._clone_path(path, fallback_path_type=fallback_path_type)
+            for path in paths
+        ]

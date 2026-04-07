@@ -5,7 +5,19 @@ from src.core.light_slot_geometry import LightSlotGeometryBuilder
 from src.core.path_offset import PathOffset
 from src.core.slice_engine import SliceEngine
 from src.core.stl.light_slot_mesh import LightSlotMeshBuilder
-from src.core.types import Contour, EdgeProfile, EdgeType, BevelDirection, Path, PathRole, PathType, Point, SliceParams
+from src.core.types import (
+    Contour,
+    EdgeProfile,
+    EdgeType,
+    BevelDirection,
+    Path,
+    PathRole,
+    PathType,
+    Point,
+    SliceParams,
+    resolve_shell_line_width,
+    resolve_shell_wall_thickness,
+)
 
 
 def _build_outer_with_hole():
@@ -61,8 +73,8 @@ def test_light_slot_geometry_expands_outer_inward_and_hole_outward():
     bounds = sorted(path.bounds for path in geometry.slot_free_edge_paths)
 
     assert len(bounds) == 2
-    assert bounds[0] == pytest.approx((9.2, 9.2, 90.8, 90.8), abs=1e-6)
-    assert bounds[1] == pytest.approx((22.0, 22.0, 78.0, 78.0), abs=1e-6)
+    assert bounds[0] == pytest.approx((9.8, 9.8, 90.2, 90.2), abs=1e-6)
+    assert bounds[1] == pytest.approx((21.4, 21.4, 78.6, 78.6), abs=1e-6)
 
     hole_slot_polygon = next(
         polygon for polygon in geometry.slot_band_polygons
@@ -70,6 +82,33 @@ def test_light_slot_geometry_expands_outer_inward_and_hole_outward():
     )
     assert hole_slot_polygon.bounds == pytest.approx((22.0, 22.0, 78.0, 78.0), abs=1e-6)
     assert hole_slot_polygon.interiors[0].bounds == pytest.approx((30.0, 30.0, 70.0, 70.0), abs=1e-6)
+
+
+def test_light_slot_geometry_preserves_requested_net_slot_width():
+    contour = _build_outer_with_hole()
+    params = _default_params()
+
+    geometry = LightSlotGeometryBuilder(PathOffset()).build(contour, params)
+    free_edge_paths = sorted(geometry.slot_free_edge_paths, key=lambda path: path.bounds[0])
+    line_width = resolve_shell_line_width(
+        params.shell.line_width,
+        params.shell.layer_height,
+        wall_thickness=params.shell.wall_thickness,
+        wall_count=params.shell.wall_count,
+    )
+    shell_wall_thickness = resolve_shell_wall_thickness(
+        params.shell.line_width,
+        params.shell.wall_count,
+        params.shell.layer_height,
+        wall_thickness=params.shell.wall_thickness,
+    )
+
+    outer_path, hole_path = free_edge_paths
+    outer_slot_width = outer_path.bounds[0] - line_width / 2.0 - shell_wall_thickness
+    hole_slot_width = contour.holes[0].bounds[0] - (hole_path.bounds[0] + line_width / 2.0)
+
+    assert outer_slot_width == pytest.approx(params.light_slot.width, abs=1e-6)
+    assert hole_slot_width == pytest.approx(params.light_slot.width, abs=1e-6)
 
 
 def test_light_slot_auto_skips_small_holes():
@@ -94,7 +133,7 @@ def test_light_slot_auto_skips_small_holes():
 
     assert len(geometry.slot_free_edge_paths) == 1
     assert geometry.slot_free_edge_paths[0].bounds == pytest.approx(
-        (9.2, 9.2, 90.8, 90.8),
+        (9.8, 9.8, 90.2, 90.2),
         abs=1e-6,
     )
 
@@ -167,6 +206,33 @@ def test_light_slot_mesh_builder_uses_requested_depth():
     assert mesh.vertices[:, 2].max() == pytest.approx(3.0, abs=1e-6)
 
 
+def test_light_slot_mesh_builder_uses_effective_line_width_for_free_edge_wall():
+    contour = Contour(
+        outer=Path(
+            points=[
+                Point(0.0, 0.0),
+                Point(100.0, 0.0),
+                Point(100.0, 100.0),
+                Point(0.0, 100.0),
+            ],
+            path_type=PathType.OUTER,
+            is_closed=True,
+        ),
+        holes=[],
+    )
+    params = _default_params()
+    params.shell.wall_thickness = 1.6
+    params.shell.wall_count = 2
+    params.light_slot.hole_enabled = False
+    params.light_slot.floor_layers = 0
+
+    mesh = LightSlotMeshBuilder(PathOffset()).build([contour], params)
+
+    assert mesh is not None
+    assert mesh.vertices[:, 0].min() == pytest.approx(9.6, abs=1e-6)
+    assert mesh.vertices[:, 0].max() == pytest.approx(90.4, abs=1e-6)
+
+
 @pytest.mark.parametrize(
     ("configure", "expected_outer", "expected_hole", "expected_slot_bounds"),
     [
@@ -174,7 +240,7 @@ def test_light_slot_mesh_builder_uses_requested_depth():
             lambda p: setattr(p.shell, "edge_type", EdgeType.STRAIGHT),
             (0.0, 0.0, 100.0, 100.0),
             (30.0, 30.0, 70.0, 70.0),
-            [(9.2, 9.2, 90.8, 90.8), (22.0, 22.0, 78.0, 78.0)],
+            [(9.8, 9.8, 90.2, 90.2), (21.4, 21.4, 78.6, 78.6)],
         ),
         (
             lambda p: (
@@ -186,7 +252,7 @@ def test_light_slot_mesh_builder_uses_requested_depth():
             ),
             (0.0, 0.0, 100.0, 100.0),
             (30.0, 30.0, 70.0, 70.0),
-            [(9.2, 9.2, 90.8, 90.8), (22.0, 22.0, 78.0, 78.0)],
+            [(9.8, 9.8, 90.2, 90.2), (21.4, 21.4, 78.6, 78.6)],
         ),
         (
             lambda p: (
@@ -200,7 +266,7 @@ def test_light_slot_mesh_builder_uses_requested_depth():
             ),
             (-1.2, -1.2, 101.2, 101.2),
             (28.8, 28.8, 71.2, 71.2),
-            [(8.0, 8.0, 92.0, 92.0), (20.8, 20.8, 79.2, 79.2)],
+            [(8.6, 8.6, 91.4, 91.4), (20.2, 20.2, 79.8, 79.8)],
         ),
     ],
 )

@@ -8,7 +8,7 @@ from shapely.validation import make_valid
 
 from ..light_slot_geometry import LightSlotGeometryBuilder
 from ..path_offset import PathOffset
-from ..types import Contour, Path, SliceParams, resolve_shell_wall_thickness
+from ..types import Contour, Path, SliceParams, resolve_shell_line_width
 from .mesh_utils import MeshUtils
 
 
@@ -41,11 +41,11 @@ class LightSlotMeshBuilder:
             params.shell.layer_height * max(0, slot_params.floor_layers),
             slot_params.depth,
         )
-        wall_thickness = resolve_shell_wall_thickness(
+        free_edge_line_width = resolve_shell_line_width(
             params.shell.line_width,
-            params.shell.wall_count,
             params.shell.layer_height,
             wall_thickness=params.shell.wall_thickness,
+            wall_count=params.shell.wall_count,
         )
 
         for contour in contours:
@@ -60,7 +60,7 @@ class LightSlotMeshBuilder:
             for free_edge_path in geometry.slot_free_edge_paths:
                 wall_mesh = self._build_free_edge_wall(
                     free_edge_path,
-                    wall_thickness,
+                    free_edge_line_width,
                     slot_params.depth,
                 )
                 if wall_mesh is not None:
