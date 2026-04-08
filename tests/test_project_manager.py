@@ -110,6 +110,7 @@ class TestProjectFormat:
         project.params.shell.edge_type = EdgeType.BEVELED
         project.params.skirt.enabled = True
         project.params.skirt.width = 6.0
+        project.params.skirt.speed = 26.0
 
         with tempfile.TemporaryDirectory() as tmpdir:
             file_path = os.path.join(tmpdir, "test.smp")
@@ -127,6 +128,7 @@ class TestProjectFormat:
             assert loaded.params.shell.edge_type == EdgeType.BEVELED
             assert loaded.params.skirt.enabled is True
             assert loaded.params.skirt.width == 6.0
+            assert loaded.params.skirt.speed == 26.0
 
     def test_file_size_comparison(self):
         """测试文件大小（二进制应该更小）"""

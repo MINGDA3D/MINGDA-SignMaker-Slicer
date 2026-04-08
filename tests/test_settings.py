@@ -45,6 +45,7 @@ class TestSerializeParams:
         params.shell.bevel_direction = BevelDirection.TOP_LARGE
         params.skirt.enabled = True
         params.skirt.width = 10.0
+        params.skirt.speed = 27.0
 
         data = serialize_params(params)
 
@@ -56,6 +57,7 @@ class TestSerializeParams:
         assert data["shell"]["bevel_direction"] == "TOP_LARGE"
         assert data["skirt"]["enabled"] is True
         assert data["skirt"]["width"] == 10.0
+        assert data["skirt"]["speed"] == pytest.approx(27.0)
 
     def test_deserialize_default_params(self):
         """测试反序列化默认参数"""
@@ -68,6 +70,7 @@ class TestSerializeParams:
         assert restored.shell.wall_thickness == pytest.approx(0.6)
         assert restored.shell.edge_type == EdgeType.STRAIGHT
         assert restored.skirt.enabled is False
+        assert restored.skirt.speed == pytest.approx(20.0)
 
     def test_deserialize_custom_params(self):
         """测试反序列化自定义参数"""
@@ -78,6 +81,8 @@ class TestSerializeParams:
         params.step.enabled = True
         params.step.panel_step_enabled = True
         params.speed.print_speed = 80.0
+        params.skirt.enabled = True
+        params.skirt.speed = 27.0
 
         data = serialize_params(params)
         restored = deserialize_params(data)
@@ -88,6 +93,7 @@ class TestSerializeParams:
         assert restored.step.enabled is True
         assert restored.step.panel_step_enabled is True
         assert restored.speed.print_speed == 80.0
+        assert restored.skirt.speed == pytest.approx(27.0)
 
     def test_deserialize_shell_line_width_defaults_to_layer_height_double_when_missing(self):
         """测试旧 shell 数据缺少 line_width 时自动按层高两倍补齐"""

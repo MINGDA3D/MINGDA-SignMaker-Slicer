@@ -502,27 +502,31 @@ def test_skirt_group_shows_only_requested_visible_fields(qapp):
     labels = {label.text() for label in skirt_group.findChildren(QLabel)}
 
     assert "Skirt Height:" in labels
+    assert "Skirt Speed:" in labels
     assert "Wall Gap:" in labels
     assert "Skirt Width:" not in labels
     assert "Trapezoid Interval:" not in labels
 
 
-def test_hidden_skirt_width_and_interval_values_are_preserved(qapp):
+def test_hidden_skirt_width_interval_and_visible_speed_are_preserved(qapp):
     panel = ParamPanel()
     params = SliceParams()
     params.skirt.enabled = True
     params.skirt.width = 7.5
     params.skirt.interval = 18.0
     params.skirt.height = 0.6
+    params.skirt.speed = 23.0
     params.skirt.offset = 0.8
 
     panel.set_params(params)
+    panel.skirt_speed.setValue(26.0)
     panel.skirt_offset.setValue(0.6)
 
     restored = panel.get_params()
 
     assert restored.skirt.width == pytest.approx(7.5)
     assert restored.skirt.interval == pytest.approx(18.0)
+    assert restored.skirt.speed == pytest.approx(26.0)
     assert restored.skirt.offset == pytest.approx(0.6)
 
 
@@ -541,7 +545,7 @@ def test_skirt_wall_gap_is_clamped_to_one_mm_in_ui(qapp):
     [
         (
             lambda p: setattr(p.skirt, "enabled", True),
-            ("skirt_height", "skirt_offset", "skirt_outer_enabled", "skirt_inner_enabled"),
+            ("skirt_height", "skirt_speed", "skirt_offset", "skirt_outer_enabled", "skirt_inner_enabled"),
         ),
         (
             lambda p: setattr(p.connected, "enabled", True),

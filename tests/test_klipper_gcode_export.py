@@ -156,6 +156,18 @@ def _extract_thumbnail_blocks(lines: list[str]) -> list[dict[str, str | int]]:
     return blocks
 
 
+def _first_print_feedrate_for_role(lines: list[str], role: str) -> int:
+    for index, line in enumerate(lines):
+        if not line.startswith(f"; {role} path"):
+            continue
+        for move in lines[index + 1:]:
+            if move.startswith("; "):
+                break
+            if move.startswith("G1 X") and " E" in move and " F" in move:
+                return int(move.rsplit(" F", 1)[1])
+    raise AssertionError(f"Could not find print move for role {role}.")
+
+
 def test_single_color_gcode_uses_relative_extrusion_without_tool_macros():
     params = SliceParams()
     profile = PrinterProfile(start_gcode="G28", end_gcode="M400")
@@ -259,6 +271,95 @@ def test_cooling_settings_use_first_layer_fan_then_switch_before_second_layer():
 
     assert first_layer_fan_index > start_gcode_index
     assert lines[transition_index + 1] == "M106 S153 ; Set other layers fan speed to 60%"
+
+
+def test_slice_emits_skirt_for_height_derived_layers_before_model_paths():
+    contour = _rect_contour(0.0, 0.0, 40.0, 20.0)
+    params = SliceParams()
+    params.shell.height = 0.9
+    params.shell.layer_height = 0.3
+    params.skirt.enabled = True
+    params.skirt.height = 0.6
+
+    result = SliceEngine().slice([contour], params)
+
+    assert len(result.layers) == 3
+    assert result.layers[0].paths[0].role == PathRole.SKIRT
+    assert result.layers[1].paths[0].role == PathRole.SKIRT
+    assert any(path.role == PathRole.WALL for path in result.layers[0].paths)
+    assert any(path.role == PathRole.WALL for path in result.layers[1].paths)
+    assert all(path.role != PathRole.SKIRT for path in result.layers[2].paths)
+
+
+def test_gcode_prints_skirt_before_model_on_all_skirt_layers():
+    contour = _rect_contour(0.0, 0.0, 40.0, 20.0)
+    params = SliceParams()
+    params.shell.height = 0.9
+    params.shell.layer_height = 0.3
+    params.skirt.enabled = True
+    params.skirt.height = 0.6
+    profile = PrinterProfile(start_gcode="G28", end_gcode="M400")
+
+    result = SliceEngine().slice([contour], params)
+    lines = GCodeWriter(params.gcode).generate(
+        result,
+        slice_params=params,
+        printer_profile=profile,
+        contours=[contour],
+    )
+
+    layer0_index = lines.index("; Layer 0 at Z=0.30mm")
+    layer1_index = lines.index("; Layer 1 at Z=0.60mm")
+    layer2_index = lines.index("; Layer 2 at Z=0.90mm")
+
+    layer0_paths = [
+        line for line in lines[layer0_index + 1:layer1_index] if line.startswith("; ")
+    ]
+    layer1_paths = [
+        line for line in lines[layer1_index + 1:layer2_index] if line.startswith("; ")
+    ]
+    layer2_paths = [
+        line for line in lines[layer2_index + 1:] if line.startswith("; ")
+    ]
+
+    assert layer0_paths[0].startswith("; SKIRT path")
+    assert layer1_paths[0].startswith("; SKIRT path")
+    assert any(line.startswith("; WALL path") for line in layer0_paths)
+    assert any(line.startswith("; WALL path") for line in layer1_paths)
+    assert not any(line.startswith("; SKIRT path") for line in layer2_paths)
+
+
+def test_gcode_uses_dedicated_skirt_speed_on_each_skirt_layer():
+    contour = _rect_contour(0.0, 0.0, 40.0, 20.0)
+    params = SliceParams()
+    params.shell.height = 0.9
+    params.shell.layer_height = 0.3
+    params.speed.first_layer_speed = 12.0
+    params.speed.print_speed = 70.0
+    params.skirt.enabled = True
+    params.skirt.height = 0.6
+    params.skirt.speed = 33.0
+    profile = PrinterProfile(start_gcode="G28", end_gcode="M400")
+
+    result = SliceEngine().slice([contour], params)
+    lines = GCodeWriter(params.gcode).generate(
+        result,
+        slice_params=params,
+        printer_profile=profile,
+        contours=[contour],
+    )
+
+    layer0_index = lines.index("; Layer 0 at Z=0.30mm")
+    layer1_index = lines.index("; Layer 1 at Z=0.60mm")
+    layer2_index = lines.index("; Layer 2 at Z=0.90mm")
+
+    layer0_lines = lines[layer0_index + 1:layer1_index]
+    layer1_lines = lines[layer1_index + 1:layer2_index]
+
+    assert _first_print_feedrate_for_role(layer0_lines, "SKIRT") == 1980
+    assert _first_print_feedrate_for_role(layer1_lines, "SKIRT") == 1980
+    assert _first_print_feedrate_for_role(layer0_lines, "WALL") != 1980
+    assert _first_print_feedrate_for_role(layer1_lines, "WALL") != 1980
 
 
 def test_manual_color_change_macros_follow_selected_order_and_restore_state():

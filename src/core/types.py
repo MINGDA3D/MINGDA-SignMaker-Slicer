@@ -910,7 +910,8 @@ class SkirtParams:
     """
     enabled: bool = False
     width: float = 5.0                # 旧参数，保留兼容
-    height: float = 0.3               # 裙边高度 (mm) - 用于STL导出，最小0.2
+    height: float = 0.3               # 裙边高度 (mm) - 控制 STL 高度与 G-code 覆盖层数，最小0.2
+    speed: float = 20.0               # G-code skirt print speed (mm/s)
     offset: float = 0.0               # 连接线到 wall 的净空 (mm)，会被限制到 0..1
     interval: float = 10.0            # 旧参数，保留兼容
     outer_enabled: bool = True        # 外裙边：外轮廓朝外，内孔朝内
@@ -1646,6 +1647,7 @@ def deserialize_params(data: dict) -> SliceParams:
         params.skirt.enabled = skirt_data.get("enabled", False)
         params.skirt.width = skirt_data.get("width", 5.0)
         params.skirt.height = skirt_data.get("height", 0.3)
+        params.skirt.speed = float(skirt_data.get("speed", 20.0))
         params.skirt.offset = skirt_data.get("offset", 0.0)
         params.skirt.interval = skirt_data.get("interval", 10.0)
         legacy_is_outer = skirt_data.get("is_outer", True)

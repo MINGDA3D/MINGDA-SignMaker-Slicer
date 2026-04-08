@@ -57,7 +57,7 @@ class SkirtPanel(QWidget):
 
         self.speed_spin = QDoubleSpinBox()
         self.speed_spin.setRange(10, 100)
-        self.speed_spin.setValue(30.0)
+        self.speed_spin.setValue(20.0)
         self.speed_spin.setSuffix(" mm/s")
         param_layout.addRow("防翘速度:", self.speed_spin)
 

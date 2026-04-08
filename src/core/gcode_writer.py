@@ -649,6 +649,13 @@ class GCodeWriter:
         ]
 
     def _get_path_speed(self, role: PathRole, base_speed: float) -> float:
+        if (
+            role == PathRole.SKIRT
+            and self._slice_params is not None
+            and self._slice_params.skirt.speed > 0
+        ):
+            return self._slice_params.skirt.speed
+
         speed_multipliers = {
             PathRole.WALL: 0.8,
             PathRole.PRIME_TOWER: 0.8,

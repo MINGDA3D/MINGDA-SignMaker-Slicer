@@ -174,6 +174,7 @@ class SliceEngine:
         layer_height = params.shell.layer_height
         total_height = params.shell.height
         layer_count = max(1, int(total_height / layer_height))
+        skirt_layer_count = self._get_skirt_layer_count(params, layer_height, layer_count)
 
         change_points = self._build_color_change_points(params)
 
@@ -202,9 +203,9 @@ class SliceEngine:
             is_step = z in step_layer_map
             step_config = step_layer_map.get(z)
 
-            # 检查是否首层（需要防翘裙边）
+            # 检查是否首层
             is_first = (i == 0)
-            has_skirt = is_first and params.skirt.enabled
+            has_skirt = i < skirt_layer_count
 
             # 检查是否顶层（需要包边/勾边）
             is_last = (i == layer_count - 1)
@@ -233,6 +234,22 @@ class SliceEngine:
             layer_infos.append(info)
 
         return layer_infos
+
+    @staticmethod
+    def _get_skirt_layer_count(
+        params: SliceParams,
+        layer_height: float,
+        total_layer_count: int,
+    ) -> int:
+        """Return how many leading layers should emit skirt paths."""
+        if not params.skirt.enabled or total_layer_count <= 0:
+            return 0
+        if layer_height <= 0:
+            return 1
+        return min(
+            total_layer_count,
+            max(1, int(params.skirt.height / layer_height + 0.5)),
+        )
 
     def _build_color_change_points(self, params: SliceParams) -> List[tuple[float, int]]:
         """构建换色高度与当前逻辑颜色槽位映射。"""
@@ -286,12 +303,12 @@ class SliceEngine:
 
         处理顺序：
         1. 应用边缘轮廓（斜边收缩）
-        2. 生成壁路径
-        3. 生成底面填充（如需要）
-        4. 生成自定义台阶（如需要）
-        5. 生成面板台阶（顶部台阶）
-        6. 生成底板台阶（底部台阶）
-        7. 生成防翘裙边（如需要）
+        2. 生成防翘裙边（如需要）
+        3. 生成壁路径
+        4. 生成底面填充（如需要）
+        5. 生成自定义台阶（如需要）
+        6. 生成面板台阶（顶部台阶）
+        7. 生成底板台阶（底部台阶）
         """
         layer = Layer(
             z_height=info.z_height,
@@ -299,6 +316,9 @@ class SliceEngine:
             extruder=info.extruder,
             color_index=info.color_index,
         )
+
+        if info.has_skirt:
+            layer.paths.extend(self._generate_all_skirt_paths(contours, params))
 
         modified_contours: List[Optional[Contour]] = []
         bottom_reference_contours: List[Optional[Contour]] = []
@@ -430,12 +450,7 @@ class SliceEngine:
                 )
                 layer.paths.extend(baseplate_step_paths)
 
-        # 8. 生成防翘裙边（仅首层，在所有轮廓处理完后统一生成）
-        if info.has_skirt:
-            skirt_paths = self._generate_all_skirt_paths(contours, params)
-            layer.paths.extend(skirt_paths)
-
-        # 9. 生成连襟结构（用于 3D 预览与切片导出）
+        # 8. 生成连襟结构（用于 3D 预览与切片导出）
         if connected_context is not None:
             connected_paths = self._generate_connected_paths_for_layer(
                 connected_context, info.z_height, params
