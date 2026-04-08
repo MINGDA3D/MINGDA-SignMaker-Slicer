@@ -50,6 +50,10 @@ class StepLayerInfo:
 class StepGenerator:
     """台阶/V槽生成器"""
 
+    SUPPORTED_FLAT_STEP_LINE_WIDTH_SCALE = 1.15
+    SUPPORTED_FLAT_STEP_OVERLAP_RATIO = 0.45
+    _STEP_LAYER_EPSILON = 1e-6
+
     def __init__(self, path_offset: Optional[PathOffset] = None):
         self.path_offset = path_offset or PathOffset()
 
@@ -112,9 +116,47 @@ class StepGenerator:
         if width <= 0.0:
             return []
 
+        paths: List[LayerPath] = []
+
+        paths.extend(
+            self._create_outer_step_paths_for_centerline(
+                contour=contour,
+                center_from_wall_inner_edge=width / 2,
+                line_width=width,
+                role=role,
+                wall_thickness=wall_thickness,
+                extruder=extruder,
+                speed_multiplier=speed_multiplier,
+            )
+        )
+        paths.extend(
+            self._create_hole_step_paths_for_centerline(
+                contour=contour,
+                center_from_hole_boundary=width / 2,
+                line_width=width,
+                role=role,
+                extruder=extruder,
+                speed_multiplier=speed_multiplier,
+            )
+        )
+        return paths
+
+    def _create_outer_step_paths_for_centerline(
+        self,
+        contour: Contour,
+        center_from_wall_inner_edge: float,
+        line_width: float,
+        role: PathRole,
+        wall_thickness: float,
+        extruder: ExtruderType,
+        speed_multiplier: float,
+    ) -> List[LayerPath]:
+        """Create one outer-loop pass centered at the requested distance from the wall inner edge."""
+        if line_width <= 0.0:
+            return []
+
         shell_inner_offset = max(wall_thickness, 0.0)
-        outer_centerline_offset = -(shell_inner_offset + width / 2)
-        hole_centerline_offset = width / 2
+        outer_centerline_offset = -(shell_inner_offset + center_from_wall_inner_edge)
         paths: List[LayerPath] = []
 
         for offset_path in self.path_offset.offset(
@@ -125,26 +167,182 @@ class StepGenerator:
                     points=offset_path.points,
                     role=role,
                     extruder=extruder,
-                    line_width=width,
+                    line_width=line_width,
                     is_closed=True,
                     speed_multiplier=speed_multiplier,
                 )
             )
 
+        return paths
+
+    def _create_hole_step_paths_for_centerline(
+        self,
+        contour: Contour,
+        center_from_hole_boundary: float,
+        line_width: float,
+        role: PathRole,
+        extruder: ExtruderType,
+        speed_multiplier: float,
+    ) -> List[LayerPath]:
+        """Create one pass for each hole centered at the requested distance from the opening boundary."""
+        if line_width <= 0.0:
+            return []
+
+        paths: List[LayerPath] = []
+
         for hole in contour.holes:
             for hole_path in self.path_offset.offset(
-                hole, hole_centerline_offset, JoinType.MITER
+                hole, center_from_hole_boundary, JoinType.MITER
             ):
                 paths.append(
-                    LayerPath(
-                        points=hole_path.points,
-                        role=role,
-                        extruder=extruder,
-                        line_width=width,
-                        is_closed=True,
-                        speed_multiplier=speed_multiplier,
-                    )
+                LayerPath(
+                    points=hole_path.points,
+                    role=role,
+                    extruder=extruder,
+                    line_width=line_width,
+                    is_closed=True,
+                    speed_multiplier=speed_multiplier,
                 )
+            )
+
+        return paths
+
+    def _resolve_supported_flat_pass_width(
+        self,
+        target_width: float,
+        extrusion_width: float,
+        path_line_width: float = 0.0,
+    ) -> float:
+        """Resolve the preferred per-pass width for horizontal step support passes."""
+        base_width = path_line_width if path_line_width > 0.0 else extrusion_width
+        if base_width <= 0.0:
+            base_width = target_width
+        if base_width <= 0.0:
+            return target_width
+        return base_width * self.SUPPORTED_FLAT_STEP_LINE_WIDTH_SCALE
+
+    def _build_supported_outer_flat_passes(
+        self,
+        step_width: float,
+        extrusion_width: float,
+        path_line_width: float = 0.0,
+    ) -> List[Tuple[float, float]]:
+        """Build outer-loop flat-step passes with intentional wall overlap for support."""
+        if step_width <= 0.0:
+            return []
+
+        overlap_ratio = self.SUPPORTED_FLAT_STEP_OVERLAP_RATIO
+        contribution_ratio = 1.0 - overlap_ratio
+        if contribution_ratio <= 0.0:
+            return [(step_width / 2, step_width)]
+
+        preferred_pass_width = self._resolve_supported_flat_pass_width(
+            step_width,
+            extrusion_width,
+            path_line_width=path_line_width,
+        )
+        contribution_target = preferred_pass_width * contribution_ratio
+        if contribution_target <= 1e-6:
+            return [(step_width / 2, step_width)]
+
+        pass_count = max(1, math.ceil(step_width / contribution_target - 1e-9))
+        contribution = step_width / pass_count
+        pass_width = step_width / (pass_count * contribution_ratio)
+        first_center = contribution - pass_width / 2
+
+        return [
+            (first_center + i * contribution, pass_width)
+            for i in range(pass_count)
+        ]
+
+    def _build_supported_hole_flat_passes(
+        self,
+        step_width: float,
+        extrusion_width: float,
+        path_line_width: float = 0.0,
+    ) -> List[Tuple[float, float]]:
+        """Build hole-step passes anchored at the opening boundary and overlapping inward."""
+        if step_width <= 0.0:
+            return []
+
+        overlap_ratio = self.SUPPORTED_FLAT_STEP_OVERLAP_RATIO
+        contribution_ratio = 1.0 - overlap_ratio
+        if contribution_ratio <= 0.0:
+            return [(step_width / 2, step_width)]
+
+        preferred_pass_width = self._resolve_supported_flat_pass_width(
+            step_width,
+            extrusion_width,
+            path_line_width=path_line_width,
+        )
+        if step_width <= preferred_pass_width + 1e-6:
+            return [(step_width / 2, step_width)]
+
+        extra_width_per_pass = preferred_pass_width * contribution_ratio
+        if extra_width_per_pass <= 1e-6:
+            return [(step_width / 2, step_width)]
+
+        pass_count = 1 + max(
+            1,
+            math.ceil((step_width - preferred_pass_width) / extra_width_per_pass - 1e-9),
+        )
+        pass_width = step_width / (1.0 + (pass_count - 1) * contribution_ratio)
+        spacing = pass_width * contribution_ratio
+
+        return [
+            (pass_width / 2 + i * spacing, pass_width)
+            for i in range(pass_count)
+        ]
+
+    def _generate_supported_flat_paths(
+        self,
+        contour: Contour,
+        width: float,
+        wall_thickness: float,
+        extrusion_width: float,
+        path_line_width: float,
+        role: PathRole,
+        extruder: ExtruderType,
+        speed_multiplier: float,
+    ) -> List[LayerPath]:
+        """Generate flat horizontal step passes as overlapping narrow rings."""
+        if width <= 0.0:
+            return []
+
+        paths: List[LayerPath] = []
+
+        for center_from_wall_inner_edge, pass_width in self._build_supported_outer_flat_passes(
+            width,
+            extrusion_width,
+            path_line_width=path_line_width,
+        ):
+            paths.extend(
+                self._create_outer_step_paths_for_centerline(
+                    contour=contour,
+                    center_from_wall_inner_edge=center_from_wall_inner_edge,
+                    line_width=pass_width,
+                    role=role,
+                    wall_thickness=wall_thickness,
+                    extruder=extruder,
+                    speed_multiplier=speed_multiplier,
+                )
+            )
+
+        for center_from_hole_boundary, pass_width in self._build_supported_hole_flat_passes(
+            width,
+            extrusion_width,
+            path_line_width=path_line_width,
+        ):
+            paths.extend(
+                self._create_hole_step_paths_for_centerline(
+                    contour=contour,
+                    center_from_hole_boundary=center_from_hole_boundary,
+                    line_width=pass_width,
+                    role=role,
+                    extruder=extruder,
+                    speed_multiplier=speed_multiplier,
+                )
+            )
 
         return paths
 
@@ -237,17 +435,54 @@ class StepGenerator:
                             step_config: StepConfig,
                             wall_thickness: float,
                             extrusion_width: float,
-                            extruder: ExtruderType) -> List[LayerPath]:
-        """Generate one constant-width step ring."""
+                            extruder: ExtruderType,
+                            path_line_width: float = 0.0) -> List[LayerPath]:
+        """Generate a supported flat step using overlapping narrow passes."""
         step_width = step_config.width
-        return self._create_step_paths_for_width(
+        return self._generate_supported_flat_paths(
             contour=contour,
             width=step_width,
             role=PathRole.STEP,
             wall_thickness=wall_thickness,
+            extrusion_width=extrusion_width,
+            path_line_width=path_line_width,
             extruder=extruder,
             speed_multiplier=0.8,
         )
+
+    def _align_flat_step_layer_z(
+        self,
+        step_position: float,
+        layer_height: float,
+        total_height: Optional[float] = None,
+    ) -> Optional[float]:
+        """Align a flat step anchor to the single printable layer that should carry it."""
+        if layer_height <= 0.0:
+            return None
+
+        aligned_position = max(step_position, 0.0)
+        if total_height is not None:
+            max_layer_z = max(total_height - layer_height, 0.0)
+            aligned_position = min(aligned_position, max_layer_z)
+
+        layer_index = max(
+            0,
+            int(math.floor(aligned_position / layer_height + self._STEP_LAYER_EPSILON)),
+        )
+        return round(layer_index * layer_height, 6)
+
+    def _is_flat_step_layer(
+        self,
+        z_height: float,
+        layer_height: float,
+        step_position: float,
+        total_height: Optional[float] = None,
+    ) -> bool:
+        """Return True only for the single aligned layer used by a flat step."""
+        aligned_z = self._align_flat_step_layer_z(step_position, layer_height, total_height)
+        if aligned_z is None:
+            return False
+        return abs(z_height - aligned_z) <= self._STEP_LAYER_EPSILON
 
     def generate_step_for_layer(self, contour: Contour,
                                  z_height: float,
@@ -256,7 +491,8 @@ class StepGenerator:
                                  params: StepParams,
                                  wall_thickness: float = 1.2,
                                  extruder: ExtruderType = ExtruderType.EXTRUDER_1,
-                                 full_width_at_end: bool = True) -> List[LayerPath]:
+                                 full_width_at_end: bool = True,
+                                 path_line_width: float = 0.0) -> List[LayerPath]:
         """Generate step paths for one sliced layer."""
         paths = []
 
@@ -268,15 +504,15 @@ class StepGenerator:
         step_width = step_config.width
         is_v_groove = step_config.is_v_groove
 
-        step_start = step_position
-        step_end = step_position + max(step_height, layer_height)
-        layer_bottom = z_height
-        layer_top = z_height + layer_height
-
-        if layer_top <= step_start or layer_bottom >= step_end:
-            return paths
-
         if is_v_groove and step_height > 0:
+            step_start = step_position
+            step_end = step_position + max(step_height, layer_height)
+            layer_bottom = z_height
+            layer_top = z_height + layer_height
+
+            if layer_top <= step_start or layer_bottom >= step_end:
+                return paths
+
             current_width = self._compute_v_step_width(
                 step_width=step_width,
                 step_height=step_height,
@@ -299,9 +535,13 @@ class StepGenerator:
                 speed_multiplier=0.7,
             )
 
+        if not self._is_flat_step_layer(z_height, layer_height, step_position):
+            return paths
+
         return self._generate_flat_step(
             contour, step_config,
-            wall_thickness, params.extrusion_width, extruder
+            wall_thickness, params.extrusion_width, extruder,
+            path_line_width=path_line_width,
         )
 
     def get_step_layers(self, params: StepParams,
@@ -330,6 +570,16 @@ class StepGenerator:
                 continue
 
             # 计算台阶覆盖的层范围
+            if not step.is_v_groove:
+                aligned_z = self._align_flat_step_layer_z(
+                    step.position,
+                    layer_height,
+                    total_height=total_height,
+                )
+                if aligned_z is not None:
+                    step_layers.setdefault(aligned_z, step)
+                continue
+
             step_start = step.position
             step_end = step.position + max(step.height, layer_height)
 
@@ -389,7 +639,8 @@ class StepGenerator:
                                layer_height: float,
                                params: StepParams,
                                wall_thickness: float = 1.2,
-                               extruder: ExtruderType = ExtruderType.EXTRUDER_1) -> List[LayerPath]:
+                               extruder: ExtruderType = ExtruderType.EXTRUDER_1,
+                               path_line_width: float = 0.0) -> List[LayerPath]:
         """
         生成底部凹槽（用于安装底板）
 
@@ -416,44 +667,16 @@ class StepGenerator:
         if z_height >= groove_height:
             return []
 
-        paths = []
-
-        shell_inner_offset = max(wall_thickness, 0.0)
-        outer_centerline_offset = -(shell_inner_offset + groove_depth / 2)
-        hole_centerline_offset = groove_depth / 2
-
-        offset_paths = self.path_offset.offset(
-            contour.outer, outer_centerline_offset, JoinType.MITER
+        return self._generate_supported_flat_paths(
+            contour=contour,
+            width=groove_depth,
+            role=PathRole.STEP,
+            wall_thickness=wall_thickness,
+            extrusion_width=params.extrusion_width,
+            path_line_width=path_line_width,
+            extruder=extruder,
+            speed_multiplier=0.8,
         )
-
-        for offset_path in offset_paths:
-            layer_path = LayerPath(
-                points=offset_path.points,
-                role=PathRole.STEP,
-                extruder=extruder,
-                line_width=groove_depth,
-                is_closed=True,
-                speed_multiplier=0.8
-            )
-            paths.append(layer_path)
-
-        # 内孔的凹槽
-        for hole in contour.holes:
-            hole_offset_paths = self.path_offset.offset(
-                hole, hole_centerline_offset, JoinType.MITER
-            )
-            for hole_path in hole_offset_paths:
-                layer_path = LayerPath(
-                    points=hole_path.points,
-                    role=PathRole.STEP,
-                    extruder=extruder,
-                    line_width=groove_depth,
-                    is_closed=True,
-                    speed_multiplier=0.8
-                )
-                paths.append(layer_path)
-
-        return paths
 
     def calculate_step_bounds(self, contour: Contour,
                               step_config: StepConfig,
@@ -503,6 +726,11 @@ class StepGenerator:
             if not step.enabled:
                 continue
 
+            if not step.is_v_groove:
+                if self._is_flat_step_layer(z_height, layer_height, step.position):
+                    return True, step
+                continue
+
             step_start = step.position
             step_end = step.position + max(step.height, layer_height)
 
@@ -517,7 +745,8 @@ class StepGenerator:
                                        total_height: float,
                                        params: StepParams,
                                        wall_thickness: float = 1.2,
-                                       extruder: ExtruderType = ExtruderType.EXTRUDER_1) -> List[LayerPath]:
+                                       extruder: ExtruderType = ExtruderType.EXTRUDER_1,
+                                       path_line_width: float = 0.0) -> List[LayerPath]:
         """
         为指定层生成面板台阶路径（顶部台阶）
 
@@ -553,10 +782,16 @@ class StepGenerator:
             step_start = min(step_height - layer_height * 10, 0)
             step_end = step_height
             step_height = step_end - step_start
+            step_position = step_start
         else:
             # 普通台阶保持原来的顶部区间逻辑
-            step_start = total_height - step_height
-            step_end = total_height
+            step_position = step_height
+            step_start = self._align_flat_step_layer_z(
+                step_position,
+                layer_height,
+                total_height=total_height,
+            )
+            step_end = step_start + layer_height
 
         # 当前层范围
         layer_bottom = z_height
@@ -569,9 +804,9 @@ class StepGenerator:
         # 创建临时台阶配置
         step_config = StepConfig(
             enabled=True,
-            position=step_start,
+            position=step_position,
             width=step_width,
-            height=step_height,
+            height=step_height if is_v_groove else 0.0,
             is_v_groove=is_v_groove
         )
 
@@ -579,7 +814,8 @@ class StepGenerator:
             contour, z_height, layer_height,
             step_config, params,
             wall_thickness, extruder,
-            full_width_at_end=True
+            full_width_at_end=True,
+            path_line_width=path_line_width,
         )
 
     def generate_baseplate_step_for_layer(self, contour: Contour,
@@ -588,7 +824,8 @@ class StepGenerator:
                                            total_height: float,
                                            params: StepParams,
                                            wall_thickness: float = 1.2,
-                                           extruder: ExtruderType = ExtruderType.EXTRUDER_1) -> List[LayerPath]:
+                                           extruder: ExtruderType = ExtruderType.EXTRUDER_1,
+                                           path_line_width: float = 0.0) -> List[LayerPath]:
         """
         为指定层生成底板台阶路径（底部台阶）
 
@@ -620,8 +857,16 @@ class StepGenerator:
             step_height = max_step_height
 
         # 台阶区域：从 0 到 台阶高度
-        step_start = 0
-        step_end = step_height
+        step_start = (
+            0.0
+            if is_v_groove
+            else self._align_flat_step_layer_z(
+                step_height,
+                layer_height,
+                total_height=total_height,
+            )
+        )
+        step_end = step_height if is_v_groove else step_start + layer_height
 
         # 当前层范围
         layer_bottom = z_height
@@ -634,9 +879,9 @@ class StepGenerator:
         # 创建临时台阶配置
         step_config = StepConfig(
             enabled=True,
-            position=step_start,
+            position=step_start if is_v_groove else step_height,
             width=step_width,
-            height=step_height,
+            height=step_height if is_v_groove else 0.0,
             is_v_groove=is_v_groove
         )
 
@@ -644,5 +889,6 @@ class StepGenerator:
             contour, z_height, layer_height,
             step_config, params,
             wall_thickness, extruder,
-            full_width_at_end=True
+            full_width_at_end=True,
+            path_line_width=path_line_width,
         )

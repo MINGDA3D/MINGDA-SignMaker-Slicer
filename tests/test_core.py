@@ -546,8 +546,9 @@ class TestStepGenerator:
         )
 
         assert len(paths) > 0
-        assert paths[0].role == PathRole.STEP
-        assert paths[0].line_width == step_config.width
+        assert all(path.role == PathRole.STEP for path in paths)
+        assert len(paths) > 1
+        assert max(path.line_width for path in paths) < step_config.width
 
     def test_flat_step_geometry_matches_configured_width(self, step_generator, simple_contour):
         """平台阶应从壁内边界开始，向内延伸配置宽度。"""
@@ -569,13 +570,18 @@ class TestStepGenerator:
 
         assert paths
 
-        path = paths[0]
-        min_x = min(point.x for point in path.points)
-        step_outer_edge = min_x - path.line_width / 2
-        step_inner_edge = min_x + path.line_width / 2
+        wall_inner_edge = 1.2
+        step_inner_edge = max(
+            min(point.x for point in path.points) + path.line_width / 2
+            for path in paths
+        )
+        first_pass_overlap_edge = min(
+            min(point.x for point in path.points) - path.line_width / 2
+            for path in paths
+        )
 
-        assert step_outer_edge == pytest.approx(1.2)
-        assert step_inner_edge - step_outer_edge == pytest.approx(step_config.width)
+        assert step_inner_edge - wall_inner_edge == pytest.approx(step_config.width, abs=1e-3)
+        assert first_pass_overlap_edge < wall_inner_edge
 
     def test_generate_v_groove(self, step_generator, simple_contour):
         """测试生成V槽"""
@@ -740,7 +746,7 @@ class TestStepGenerator:
         )
 
         # 应该找到台阶层
-        assert len(step_layers) > 0
+        assert sorted(step_layers.keys()) == [3.0, 9.0]
 
     def test_generate_step_for_layer(self, step_generator, simple_contour):
         """测试逐层台阶生成"""
@@ -821,6 +827,10 @@ class TestStepGenerator:
         is_step, config = step_generator.is_step_layer(3.0, 0.3, step_params)
         assert is_step is True
         assert config is not None
+
+        is_step, config = step_generator.is_step_layer(3.3, 0.3, step_params)
+        assert is_step is False
+        assert config is None
 
         # 在台阶范围外
         is_step, config = step_generator.is_step_layer(10.0, 0.3, step_params)
@@ -932,15 +942,13 @@ class TestSliceEngineWithSteps:
         assert result.total_layers > 0
 
         # 检查底部层是否有台阶路径
-        bottom_step_found = False
-        for layer in result.layers[:10]:  # 检查前10层
-            for path in layer.paths:
-                if path.role in (PathRole.STEP, PathRole.V_GROOVE):
-                    bottom_step_found = True
-                    break
+        bottom_step_layers = [
+            layer.z_height
+            for layer in result.layers
+            if any(path.role == PathRole.STEP for path in layer.paths)
+        ]
 
-        assert bottom_step_found, "应该找到底部台阶路径"
-
+        assert bottom_step_layers == [pytest.approx(3.0)]
     def test_slice_with_panel_step(self, engine, simple_contour):
         """测试带面板台阶的切片"""
         params = SliceParams()
@@ -960,19 +968,13 @@ class TestSliceEngineWithSteps:
         assert result.total_layers > 0
 
         # 检查顶部层是否有台阶路径
-        panel_step_found = False
-        # 台阶应该在 (30 - 5) = 25mm 到 30mm 之间
-        for layer in result.layers:
-            if layer.z_height >= 25.0:
-                for path in layer.paths:
-                    if path.role in (PathRole.STEP, PathRole.V_GROOVE):
-                        panel_step_found = True
-                        break
-            if panel_step_found:
-                break
+        panel_step_layers = [
+            layer.z_height
+            for layer in result.layers
+            if any(path.role == PathRole.STEP for path in layer.paths)
+        ]
 
-        assert panel_step_found, "应该在顶部找到面板台阶路径"
-
+        assert panel_step_layers == [pytest.approx(15.0)]
     def test_slice_with_panel_v_groove_ends_at_configured_height(self, engine, simple_contour):
         params = SliceParams()
         params.shell.height = 10.0
@@ -1015,18 +1017,53 @@ class TestSliceEngineWithSteps:
         assert result.total_layers > 0
 
         # 检查底部层是否有台阶路径
-        baseplate_step_found = False
-        # 台阶应该在 0mm 到 5mm 之间
-        for layer in result.layers:
-            if layer.z_height < 5.0:  # 底部区域
-                for path in layer.paths:
-                    if path.role in (PathRole.STEP, PathRole.V_GROOVE):
-                        baseplate_step_found = True
-                        break
-            if baseplate_step_found:
-                break
+        baseplate_step_layers = [
+            layer.z_height
+            for layer in result.layers
+            if any(path.role == PathRole.STEP for path in layer.paths)
+        ]
 
-        assert baseplate_step_found, "应该在底部找到底板台阶路径"
+        assert baseplate_step_layers == [pytest.approx(4.8)]
+    @pytest.mark.parametrize("shell_line_width", [0.4, 0.6, 0.8])
+    def test_flat_step_support_pass_width_follows_shell_line_width(
+        self,
+        engine,
+        simple_contour,
+        shell_line_width,
+    ):
+        """平台阶多道支撑应跟随当前壳体线宽，而不是固定使用旧的 1.2mm 台阶吐丝宽度。"""
+        params = SliceParams()
+        params.shell.height = 5.0
+        params.shell.layer_height = 0.3
+        params.shell.line_width = shell_line_width
+        params.shell.wall_thickness = shell_line_width
+        params.shell.wall_count = 1
+        params.step.enabled = True
+        params.step.baseplate_step_enabled = True
+        params.step.baseplate_step_height = 1.0
+        params.step.baseplate_step_width = 1.8
+        params.step.baseplate_step_is_v_groove = False
+        params.step.extrusion_width = 1.2
+
+        result = engine.slice([simple_contour], params)
+
+        step_layers = [
+            layer for layer in result.layers
+            if any(path.role == PathRole.STEP for path in layer.paths)
+        ]
+        assert len(step_layers) == 1
+
+        first_step_layer = step_layers[0]
+        step_paths = [path for path in first_step_layer.paths if path.role == PathRole.STEP]
+
+        assert step_paths
+        assert first_step_layer.z_height == pytest.approx(0.9)
+
+        max_line_width = max(path.line_width for path in step_paths)
+        assert max_line_width <= (
+            shell_line_width * StepGenerator.SUPPORTED_FLAT_STEP_LINE_WIDTH_SCALE + 1e-6
+        )
+        assert max_line_width >= shell_line_width * 0.9
 
     def test_hole_step_width_matches_configured_opening_span(self, engine, contour_with_hole):
         """回归测试：内孔 STEP 应从开口边界向实体侧延伸配置宽度"""
@@ -1047,28 +1084,35 @@ class TestSliceEngineWithSteps:
         step_paths = [path for path in layer.paths if path.role == PathRole.STEP]
 
         assert len(wall_paths) == 2
-        assert len(step_paths) == 2
+        assert len(step_paths) > 2
 
         hole_wall = min(
             wall_paths,
             key=lambda path: (max(p.x for p in path.points) - min(p.x for p in path.points))
         )
-        hole_step = min(
-            step_paths,
-            key=lambda path: (max(p.x for p in path.points) - min(p.x for p in path.points))
-        )
+        hole_step_paths = [
+            path for path in step_paths
+            if (max(p.x for p in path.points) - min(p.x for p in path.points)) < 60.0
+        ]
+
+        assert hole_step_paths
 
         hole_wall_min_x = min(point.x for point in hole_wall.points)
-        hole_step_min_x = min(point.x for point in hole_step.points)
         hole_boundary_min_x = min(point.x for point in contour_with_hole.holes[0].points)
 
         # hole wall centerline must move into the solid, not into the empty hole.
         assert hole_wall_min_x == pytest.approx(29.4)
 
-        hole_step_opening_edge = hole_step_min_x + hole_step.line_width / 2
-        hole_step_solid_edge = hole_step_min_x - hole_step.line_width / 2
-        assert hole_step_opening_edge == pytest.approx(hole_boundary_min_x)
-        assert hole_boundary_min_x - hole_step_solid_edge == pytest.approx(3.0)
+        hole_step_opening_edge = max(
+            min(point.x for point in path.points) + path.line_width / 2
+            for path in hole_step_paths
+        )
+        hole_step_solid_edge = min(
+            min(point.x for point in path.points) - path.line_width / 2
+            for path in hole_step_paths
+        )
+        assert hole_step_opening_edge == pytest.approx(hole_boundary_min_x, abs=1e-3)
+        assert hole_boundary_min_x - hole_step_solid_edge == pytest.approx(3.0, abs=1e-3)
 
     def test_beveled_edge_with_steps_regression(self, engine, simple_contour):
         """回归测试：斜边字+台阶组合，防止台阶悬空问题"""

@@ -349,6 +349,19 @@ class SliceEngine:
             if modified_contour is None or bottom_reference_contour is None:
                 continue
 
+            shell_line_width = resolve_shell_line_width(
+                params.shell.line_width,
+                params.shell.layer_height,
+                wall_thickness=params.shell.wall_thickness,
+                wall_count=params.shell.wall_count,
+            )
+            shell_wall_thickness = resolve_shell_wall_thickness(
+                params.shell.line_width,
+                params.shell.wall_count,
+                params.shell.layer_height,
+                wall_thickness=params.shell.wall_thickness,
+            )
+
             # 3. 生成灯槽（如需要）
             if light_slot_geometry is not None:
                 light_slot_paths = self._generate_light_slot_paths(
@@ -383,13 +396,9 @@ class SliceEngine:
                     info.layer_height,
                     info.step_config,
                     params.step,
-                    resolve_shell_wall_thickness(
-                        params.shell.line_width,
-                        params.shell.wall_count,
-                        params.shell.layer_height,
-                        wall_thickness=params.shell.wall_thickness,
-                    ),
-                    info.extruder
+                    shell_wall_thickness,
+                    info.extruder,
+                    path_line_width=shell_line_width,
                 )
                 layer.paths.extend(step_paths)
 
@@ -401,13 +410,9 @@ class SliceEngine:
                     info.layer_height,
                     params.shell.height,
                     params.step,
-                    resolve_shell_wall_thickness(
-                        params.shell.line_width,
-                        params.shell.wall_count,
-                        params.shell.layer_height,
-                        wall_thickness=params.shell.wall_thickness,
-                    ),
-                    info.extruder
+                    shell_wall_thickness,
+                    info.extruder,
+                    path_line_width=shell_line_width,
                 )
                 layer.paths.extend(panel_step_paths)
 
@@ -419,13 +424,9 @@ class SliceEngine:
                     info.layer_height,
                     params.shell.height,
                     params.step,
-                    resolve_shell_wall_thickness(
-                        params.shell.line_width,
-                        params.shell.wall_count,
-                        params.shell.layer_height,
-                        wall_thickness=params.shell.wall_thickness,
-                    ),
-                    info.extruder
+                    shell_wall_thickness,
+                    info.extruder,
+                    path_line_width=shell_line_width,
                 )
                 layer.paths.extend(baseplate_step_paths)
 
