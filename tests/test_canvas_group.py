@@ -11,6 +11,7 @@ from src.core.types import (
     Contour,
     Path,
     Point,
+    SliceParams,
     get_contour_user_start_point_index,
     get_path_user_start_point_index,
     resolve_path_start_point_index,
@@ -103,6 +104,16 @@ def _rect_contour_with_hole(
         ],
         name=name,
     )
+
+
+def _enable_bottom_face(window: MainWindow, *, diameter: float = 4.0) -> None:
+    params = SliceParams()
+    params.bottom_face.enabled = True
+    params.bottom_face.thickness = 1.0
+    params.bottom_face.screw_hole_diameter = diameter
+    window.slice_params = params
+    window._refresh_prime_tower_overlay(params)
+    window.canvas_toolbar.set_screw_hole_enabled(True)
 
 
 def test_canvas_click_selects_entire_group(qapp):
@@ -463,6 +474,142 @@ def test_print_order_mode_toggles_from_toolbar_and_escape(qapp):
     assert window.canvas_toolbar.btn_order.isChecked() is False
 
     window.deleteLater()
+
+
+def test_screw_hole_mode_toggles_from_toolbar_and_escape(qapp):
+    window = MainWindow()
+    window.contours = [_rect_contour(0, 0, 40, 40, "A")]
+    window.canvas.set_contours(window.contours, center_on_platform=False)
+    window.project_panel.update_contours(window.contours)
+    _enable_bottom_face(window)
+
+    assert window.canvas_toolbar.btn_screw_hole.isEnabled() is True
+
+    window._on_screw_hole_tool()
+
+    assert window.canvas.current_tool == "screw_hole"
+    assert window.canvas_toolbar.btn_screw_hole.isChecked() is True
+
+    escape_event = QKeyEvent(
+        QEvent.Type.KeyPress,
+        Qt.Key.Key_Escape,
+        Qt.KeyboardModifier.NoModifier,
+    )
+    window.canvas.keyPressEvent(escape_event)
+
+    assert window.canvas.current_tool == "select"
+    assert window.canvas_toolbar.btn_screw_hole.isChecked() is False
+
+    window.deleteLater()
+
+
+def test_screw_hole_edit_session_commits_as_single_undo_step(qapp):
+    window = MainWindow()
+    window.contours = [_rect_contour(0, 0, 40, 40, "A")]
+    window.canvas.set_contours(window.contours, center_on_platform=False)
+    window.project_panel.update_contours(window.contours)
+    _enable_bottom_face(window)
+
+    window._on_screw_hole_tool()
+    window._on_screw_hole_add_requested(10.0, 10.0)
+    window._on_screw_hole_move_requested(0, 0, 15.0, 15.0)
+
+    assert window.contours[0].screw_hole_centers == [Point(15.0, 15.0)]
+    assert window.undo_manager.can_undo is False
+
+    window._exit_screw_hole_mode()
+
+    assert window.undo_manager.can_undo is True
+
+    window._on_undo()
+    assert window.contours[0].screw_hole_centers == []
+
+    window._on_redo()
+    assert window.contours[0].screw_hole_centers == [Point(15.0, 15.0)]
+
+    window.deleteLater()
+
+
+def test_screw_hole_delete_key_removes_only_active_hole(qapp):
+    window = MainWindow()
+    contour = _rect_contour(0, 0, 40, 40, "A")
+    contour.screw_hole_centers = [Point(10.0, 10.0)]
+    window.contours = [contour]
+    window.canvas.set_contours(window.contours, center_on_platform=False)
+    window.project_panel.update_contours(window.contours)
+    _enable_bottom_face(window)
+
+    window._on_screw_hole_tool()
+    window.canvas.set_active_screw_hole((0, 0))
+
+    delete_event = QKeyEvent(
+        QEvent.Type.KeyPress,
+        Qt.Key.Key_Delete,
+        Qt.KeyboardModifier.NoModifier,
+    )
+    window.canvas.keyPressEvent(delete_event)
+
+    assert len(window.contours) == 1
+    assert window.contours[0].screw_hole_centers == []
+
+    window.deleteLater()
+
+
+def test_screw_hole_target_prefers_smallest_nested_contour(qapp):
+    window = MainWindow()
+    window.contours = [
+        _rect_contour(0, 0, 60, 60, "outer"),
+        _rect_contour(20, 20, 40, 40, "inner"),
+    ]
+    window.canvas.set_contours(window.contours, center_on_platform=False)
+    window.project_panel.update_contours(window.contours)
+    _enable_bottom_face(window)
+
+    window._on_screw_hole_tool()
+    window._on_screw_hole_add_requested(30.0, 30.0)
+
+    assert window.contours[0].screw_hole_centers == []
+    assert window.contours[1].screw_hole_centers == [Point(30.0, 30.0)]
+
+    window.deleteLater()
+
+
+def test_canvas_transforms_keep_screw_hole_centers_in_sync(qapp):
+    move_canvas = Canvas2D()
+    move_contour = _rect_contour(0, 0, 10, 10, "move")
+    move_contour.screw_hole_centers = [Point(2.0, 2.0)]
+    move_canvas.set_contours([move_contour], center_on_platform=False)
+    move_canvas.set_selected_indices([0], update_view=False)
+    move_canvas.move_selected(3.0, 4.0)
+    assert move_canvas.contours[0].screw_hole_centers == [Point(5.0, 6.0)]
+
+    rotate_canvas = Canvas2D()
+    rotate_contour = _rect_contour(0, 0, 10, 10, "rotate")
+    rotate_contour.screw_hole_centers = [Point(2.0, 2.0)]
+    rotate_canvas.set_contours([rotate_contour], center_on_platform=False)
+    rotate_canvas.set_selected_indices([0], update_view=False)
+    rotate_canvas.rotate_selected(90.0)
+    rotated_point = rotate_canvas.contours[0].screw_hole_centers[0]
+    assert rotated_point.x == pytest.approx(8.0)
+    assert rotated_point.y == pytest.approx(2.0)
+
+    scale_canvas = Canvas2D()
+    scale_contour = _rect_contour(0, 0, 10, 10, "scale")
+    scale_contour.screw_hole_centers = [Point(2.0, 4.0)]
+    scale_canvas.set_contours([scale_contour], center_on_platform=False)
+    scale_canvas.set_selected_indices([0], update_view=False)
+    scale_canvas.scale_selected_xy(2.0, 0.5)
+    scaled_point = scale_canvas.contours[0].screw_hole_centers[0]
+    assert scaled_point.x == pytest.approx(-1.0)
+    assert scaled_point.y == pytest.approx(4.5)
+
+    mirror_canvas = Canvas2D()
+    mirror_contour = _rect_contour(0, 0, 10, 10, "mirror")
+    mirror_contour.screw_hole_centers = [Point(2.0, 4.0)]
+    mirror_canvas.set_contours([mirror_contour], center_on_platform=False)
+    mirror_canvas.set_selected_indices([0], update_view=False)
+    mirror_canvas.mirror_selected("x")
+    assert mirror_canvas.contours[0].screw_hole_centers == [Point(8.0, 4.0)]
 
 
 def test_print_order_click_prioritizes_hole_and_commits_as_one_undo_step(qapp):

@@ -143,6 +143,7 @@ class PathOffset:
             holes=new_holes,
             connected_frames=contour.connected_frames,
             patterns=contour.patterns,
+            screw_hole_centers=[Point(point.x, point.y) for point in contour.screw_hole_centers],
             name=contour.name,
             asset_id=contour.asset_id,
             asset_name=contour.asset_name,

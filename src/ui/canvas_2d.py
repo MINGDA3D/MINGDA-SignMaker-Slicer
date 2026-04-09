@@ -39,6 +39,8 @@ from src.core.types import (
 from src.utils.geometry import normalize_path, point_in_polygon
 from .theme import COLORS
 
+ScrewHoleOverlayItem = Tuple[int, int, Point, float, bool]
+
 
 class Canvas2D(QWidget):
     """2D画布组件"""
@@ -53,6 +55,10 @@ class Canvas2D(QWidget):
     start_point_mode_exit_requested = Signal()  # 请求退出起始点模式
     print_order_loop_clicked = Signal(int, int)  # 请求调整 loop 打印顺序
     print_order_mode_exit_requested = Signal()  # 请求退出打印顺序模式
+    screw_hole_add_requested = Signal(float, float)  # 请求新增螺丝孔
+    screw_hole_move_requested = Signal(int, int, float, float)  # 请求移动螺丝孔
+    screw_hole_delete_requested = Signal(int, int)  # 请求删除螺丝孔
+    screw_hole_mode_exit_requested = Signal()  # 请求退出螺丝孔模式
 
     # 撤销/重做相关信号
     transform_started = Signal(str, list)  # 变换开始（操作类型, 索引列表）
@@ -101,6 +107,10 @@ class Canvas2D(QWidget):
         self.is_transforming = False  # 是否正在变换轮廓
         self._hovered_start_point_candidate: Optional[Tuple[int, int, int]] = None
         self._print_order_highlighted_targets: set[LoopTarget] = set()
+        self._screw_hole_overlay: List[ScrewHoleOverlayItem] = []
+        self._hovered_screw_hole: Optional[Tuple[int, int]] = None
+        self._selected_screw_hole: Optional[Tuple[int, int]] = None
+        self._dragging_screw_hole = False
         self.pan_start = QPointF()  # 平移起始点
         self._pan_button_down = False  # 右键/中键已按下，等待判定是否为平移
         self._pan_origin = QPointF()   # 按下时的位置（用于阈值判定）
@@ -148,6 +158,9 @@ class Canvas2D(QWidget):
         self.start_point_color = QColor(COLORS.accent_success)
         self.start_point_candidate_color = QColor(COLORS.accent_primary)
         self.start_point_hover_color = QColor(COLORS.accent_warning)
+        self.screw_hole_color = QColor(COLORS.accent_primary)
+        self.screw_hole_invalid_color = QColor(COLORS.accent_error)
+        self.screw_hole_selected_color = QColor(COLORS.accent_success)
         self.transform_handle_color = QColor(COLORS.accent_primary)
         self.rotate_gizmo_color = QColor(88, 166, 255, 180)  # 旋转圆环颜色
         self.rotate_arc_color = QColor(88, 166, 255, 120)    # 旋转角度弧颜色
@@ -213,6 +226,9 @@ class Canvas2D(QWidget):
             self._center_contours_on_platform(contours)
         self.contours = contours
         self._hovered_start_point_candidate = None
+        self._hovered_screw_hole = None
+        self._selected_screw_hole = None
+        self._dragging_screw_hole = False
         self.set_selected_indices([], update_view=False)
         self.update()
 
@@ -225,6 +241,31 @@ class Canvas2D(QWidget):
         """Display the prime tower footprint as a non-interactive overlay."""
         self.prime_tower_bounds = bounds
         self.prime_tower_invalid = invalid
+        self.update()
+
+    def set_screw_hole_overlay(
+        self,
+        holes: Optional[Iterable[ScrewHoleOverlayItem]],
+    ) -> None:
+        """Display the current screw-hole overlay in world coordinates."""
+        self._screw_hole_overlay = list(holes or [])
+        valid_keys = {(contour_index, hole_index) for contour_index, hole_index, *_ in self._screw_hole_overlay}
+        if self._hovered_screw_hole not in valid_keys:
+            self._hovered_screw_hole = None
+        if self._selected_screw_hole not in valid_keys:
+            self._selected_screw_hole = None
+            self._dragging_screw_hole = False
+        self.update()
+
+    def set_active_screw_hole(
+        self,
+        selection: Optional[Tuple[int, int]],
+    ) -> None:
+        """Update the currently selected screw hole in edit mode."""
+        valid_keys = {(contour_index, hole_index) for contour_index, hole_index, *_ in self._screw_hole_overlay}
+        self._selected_screw_hole = selection if selection in valid_keys else None
+        if self._selected_screw_hole is None:
+            self._dragging_screw_hole = False
         self.update()
 
     def _normalize_selected_indices(self, indices: List[int]) -> List[int]:
@@ -292,12 +333,44 @@ class Canvas2D(QWidget):
             self._offset_path(contour.outer, offset_x, offset_y)
             for hole in contour.holes:
                 self._offset_path(hole, offset_x, offset_y)
+            contour.screw_hole_centers = self._translate_points(contour.screw_hole_centers, offset_x, offset_y)
 
     def _offset_path(self, path, offset_x: float, offset_y: float):
         """将路径偏移指定距离"""
         for point in path.points:
             point.x += offset_x
             point.y += offset_y
+
+    def _translate_points(self, points: List[Point], dx: float, dy: float) -> List[Point]:
+        return [Point(point.x + dx, point.y + dy) for point in points]
+
+    def _rotate_points(self, points: List[Point], center: QPointF, angle_rad: float) -> List[Point]:
+        cos_a = math.cos(angle_rad)
+        sin_a = math.sin(angle_rad)
+        cx, cy = center.x(), center.y()
+        return [
+            Point(
+                cx + (point.x - cx) * cos_a - (point.y - cy) * sin_a,
+                cy + (point.x - cx) * sin_a + (point.y - cy) * cos_a,
+            )
+            for point in points
+        ]
+
+    def _scale_points_xy(self, points: List[Point], center: QPointF, sx: float, sy: float) -> List[Point]:
+        cx, cy = center.x(), center.y()
+        return [
+            Point(cx + (point.x - cx) * sx, cy + (point.y - cy) * sy)
+            for point in points
+        ]
+
+    def _mirror_points(self, points: List[Point], center: QPointF, axis: str) -> List[Point]:
+        mirrored = []
+        for point in points:
+            if axis == "x":
+                mirrored.append(Point(2 * center.x() - point.x, point.y))
+            else:
+                mirrored.append(Point(point.x, 2 * center.y() - point.y))
+        return mirrored
 
     def set_view_mode(self, mode: str):
         """设置视图模式 (2d/3d)"""
@@ -311,6 +384,10 @@ class Canvas2D(QWidget):
         self._rotate_hovering_grabber = False
         if tool != "start_point":
             self._hovered_start_point_candidate = None
+        if tool != "screw_hole":
+            self._hovered_screw_hole = None
+            self._selected_screw_hole = None
+            self._dragging_screw_hole = False
         self._set_tool_cursor()
         self.update()
 
@@ -377,6 +454,7 @@ class Canvas2D(QWidget):
             self._mirror_path(contour.outer, center, axis)
             for hole in contour.holes:
                 self._mirror_path(hole, center, axis)
+            contour.screw_hole_centers = self._mirror_points(contour.screw_hole_centers, center, axis)
 
         self.contours_modified.emit()
         self.update()
@@ -403,6 +481,7 @@ class Canvas2D(QWidget):
             self._translate_path(contour.outer, dx, dy)
             for hole in contour.holes:
                 self._translate_path(hole, dx, dy)
+            contour.screw_hole_centers = self._translate_points(contour.screw_hole_centers, dx, dy)
 
         self.contours_modified.emit()
         self.update()
@@ -424,6 +503,7 @@ class Canvas2D(QWidget):
             self._rotate_path(contour.outer, center, angle_rad)
             for hole in contour.holes:
                 self._rotate_path(hole, center, angle_rad)
+            contour.screw_hole_centers = self._rotate_points(contour.screw_hole_centers, center, angle_rad)
 
         self.contours_modified.emit()
         self.update()
@@ -459,6 +539,7 @@ class Canvas2D(QWidget):
             self._scale_path_xy(contour.outer, center, sx, sy)
             for hole in contour.holes:
                 self._scale_path_xy(hole, center, sx, sy)
+            contour.screw_hole_centers = self._scale_points_xy(contour.screw_hole_centers, center, sx, sy)
 
         self.contours_modified.emit()
         self.update()
@@ -901,6 +982,46 @@ class Canvas2D(QWidget):
         self.print_order_loop_clicked.emit(contour_index, hole_index)
         return True
 
+    def _find_screw_hole_at(self, pos: QPointF) -> Optional[Tuple[int, int]]:
+        """Find a screw hole by screen-space proximity to its center."""
+        closest_match: Optional[Tuple[int, int]] = None
+        closest_distance = float("inf")
+        for contour_index, hole_index, center, radius, _is_valid in self._screw_hole_overlay:
+            screen_center = self._world_to_screen(QPointF(center.x, center.y))
+            dx = screen_center.x() - pos.x()
+            dy = screen_center.y() - pos.y()
+            distance = math.hypot(dx, dy)
+            hit_radius = max(8.0, min(18.0, radius * self.view_scale + 6.0))
+            if distance <= hit_radius and distance < closest_distance:
+                closest_match = (contour_index, hole_index)
+                closest_distance = distance
+        return closest_match
+
+    def _draw_screw_hole_overlay(self, painter: QPainter) -> None:
+        """Draw screw-hole circles in world coordinates."""
+        if not self._screw_hole_overlay:
+            return
+
+        for contour_index, hole_index, center, radius, is_valid in self._screw_hole_overlay:
+            key = (contour_index, hole_index)
+            is_selected = key == self._selected_screw_hole
+            is_hovered = key == self._hovered_screw_hole
+            color = (
+                self.screw_hole_selected_color
+                if is_selected
+                else (self.screw_hole_invalid_color if not is_valid else self.screw_hole_color)
+            )
+            pen = QPen(color)
+            pen.setStyle(Qt.PenStyle.SolidLine if self.current_tool == "screw_hole" else Qt.PenStyle.DashLine)
+            pen.setWidthF((2.4 if is_selected or is_hovered else 1.6) / max(self.view_scale, 1e-6))
+            painter.setPen(pen)
+            painter.setBrush(Qt.BrushStyle.NoBrush)
+            painter.drawEllipse(QPointF(center.x, center.y), radius, radius)
+
+            cross_half = max(radius * 0.3, 2.0 / max(self.view_scale, 1e-6))
+            painter.drawLine(center.x - cross_half, center.y, center.x + cross_half, center.y)
+            painter.drawLine(center.x, center.y - cross_half, center.x, center.y + cross_half)
+
     # =========================================================================
     # 绘制
     # =========================================================================
@@ -924,6 +1045,7 @@ class Canvas2D(QWidget):
         # 绘制轮廓
         self._draw_contours(painter)
         self._draw_prime_tower_overlay(painter)
+        self._draw_screw_hole_overlay(painter)
 
         # 绘制选中状态（边界框和控制手柄）
         self._draw_selection_overlay(painter)
@@ -1748,6 +1870,20 @@ class Canvas2D(QWidget):
             elif self.current_tool == "print_order":
                 self._handle_print_order_click(event.position())
                 return
+            elif self.current_tool == "screw_hole":
+                hit_hole = self._find_screw_hole_at(event.position())
+                if hit_hole is not None:
+                    contour_index, _hole_index = hit_hole
+                    self._selected_screw_hole = hit_hole
+                    self._dragging_screw_hole = True
+                    self.set_selected_indices([contour_index], active_index=contour_index)
+                    self.setCursor(Qt.CursorShape.ClosedHandCursor)
+                    self.update()
+                else:
+                    self._selected_screw_hole = None
+                    self._dragging_screw_hole = False
+                    self.screw_hole_add_requested.emit(world_pos.x(), world_pos.y())
+                return
 
             # 先检查是否点击在已选中的轮廓上（支持直接拖动）
             clicked_on_selected = False
@@ -1828,6 +1964,14 @@ class Canvas2D(QWidget):
             self.view_offset += delta
             self.pan_start = pos
             self.update()
+        elif self._dragging_screw_hole and self._selected_screw_hole is not None:
+            contour_index, hole_index = self._selected_screw_hole
+            self.screw_hole_move_requested.emit(
+                contour_index,
+                hole_index,
+                world_pos.x(),
+                world_pos.y(),
+            )
         elif self.is_transforming and self.selected_indices:
             # 执行变换 - 使用实际的拖动工具
             active_tool = getattr(self, '_active_drag_tool', self.current_tool)
@@ -1889,6 +2033,18 @@ class Canvas2D(QWidget):
                 )
                 self.last_mouse_pos = pos
                 return
+            if self.current_tool == "screw_hole":
+                hovered_hole = self._find_screw_hole_at(pos)
+                if hovered_hole != self._hovered_screw_hole:
+                    self._hovered_screw_hole = hovered_hole
+                    self.update()
+                self.setCursor(
+                    Qt.CursorShape.PointingHandCursor
+                    if hovered_hole is not None
+                    else Qt.CursorShape.CrossCursor
+                )
+                self.last_mouse_pos = pos
+                return
 
             # 旋转工具：更新Grabber悬停状态
             if self.current_tool == "rotate" and self.selected_indices:
@@ -1912,6 +2068,10 @@ class Canvas2D(QWidget):
                 # 未超过阈值，视为右键单击 → 弹出右键菜单
                 self._show_context_menu(event.globalPosition().toPoint())
         elif event.button() == Qt.MouseButton.LeftButton:
+            if self._dragging_screw_hole:
+                self._dragging_screw_hole = False
+                self._set_tool_cursor()
+                return
             if self.is_transforming:
                 active_tool = getattr(self, '_active_drag_tool', self.current_tool)
                 # 旋转结束时更新Grabber基准角度
@@ -1991,6 +2151,7 @@ class Canvas2D(QWidget):
             "scale": Qt.CursorShape.SizeFDiagCursor,
             "start_point": Qt.CursorShape.CrossCursor,
             "print_order": Qt.CursorShape.PointingHandCursor,
+            "screw_hole": Qt.CursorShape.CrossCursor,
         }
         self.setCursor(cursors.get(self.current_tool, Qt.CursorShape.ArrowCursor))
 
@@ -1998,13 +2159,18 @@ class Canvas2D(QWidget):
         """键盘事件"""
         if event.key() == Qt.Key.Key_Delete:
             # 删除选中
-            if self.selected_indices:
+            if self.current_tool == "screw_hole" and self._selected_screw_hole is not None:
+                contour_index, hole_index = self._selected_screw_hole
+                self.screw_hole_delete_requested.emit(contour_index, hole_index)
+            elif self.selected_indices:
                 self.delete_requested.emit(list(self.selected_indices))
         elif event.key() == Qt.Key.Key_Escape:
             if self.current_tool == "start_point":
                 self.start_point_mode_exit_requested.emit()
             elif self.current_tool == "print_order":
                 self.print_order_mode_exit_requested.emit()
+            elif self.current_tool == "screw_hole":
+                self.screw_hole_mode_exit_requested.emit()
             else:
                 # 取消选择
                 self.set_selected_indices([])

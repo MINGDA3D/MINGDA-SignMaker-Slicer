@@ -9,16 +9,11 @@ from __future__ import annotations
 from typing import List, Optional
 
 import trimesh
-from shapely.geometry import Polygon as ShapelyPolygon
-from shapely.validation import make_valid
 
-from ..light_slot_geometry import LightSlotGeometryBuilder
+from ..bottom_face_geometry import BottomFaceGeometryBuilder
 from ..types import (
     Contour,
     SliceParams,
-    EdgeType,
-    BevelDirection,
-    resolve_shell_wall_thickness,
 )
 from ..path_offset import PathOffset
 from .mesh_utils import MeshUtils
@@ -36,7 +31,7 @@ class BottomFaceMeshBuilder:
         """
         self.path_offset = path_offset
         self.mesh_utils = MeshUtils()
-        self.light_slot_geometry_builder = LightSlotGeometryBuilder(path_offset)
+        self.bottom_face_geometry_builder = BottomFaceGeometryBuilder(path_offset)
 
     def build(self, contours: List[Contour],
               params: SliceParams) -> Optional[trimesh.Trimesh]:
@@ -62,6 +57,19 @@ class BottomFaceMeshBuilder:
 
         meshes = []
         thickness = bottom_face.thickness
+
+        for contour in contours:
+            try:
+                geometry = self.bottom_face_geometry_builder.build(contour, params)
+                for polygon in geometry.fill_polygons:
+                    mesh = self.mesh_utils.extrude_polygon(polygon, thickness, z_offset=0)
+                    if mesh is not None:
+                        meshes.append(mesh)
+            except Exception as e:
+                print(f"Warning: failed to build bottom face geometry: {e}")
+                continue
+
+        return MeshUtils.merge_meshes(meshes)
 
         if params.light_slot.enabled:
             for contour in contours:

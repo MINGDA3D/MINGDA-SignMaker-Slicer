@@ -31,6 +31,7 @@ from .step_generator import StepGenerator
 from .edge_profile_generator import EdgeProfileGenerator
 from .skirt_generator import SkirtGenerator
 from .connected_generator import ConnectedGenerator, ConnectionBridge
+from .bottom_face_geometry import BottomFaceGeometryBuilder
 from .light_slot_geometry import LightSlotGeometry, LightSlotGeometryBuilder
 from .prime_tower import PrimeTowerGenerator
 
@@ -57,6 +58,7 @@ class SliceEngine:
         self.edge_profile_generator = EdgeProfileGenerator()
         self.skirt_generator = SkirtGenerator()
         self.connected_generator = ConnectedGenerator(self.path_offset)
+        self.bottom_face_geometry_builder = BottomFaceGeometryBuilder(self.path_offset)
         self.light_slot_geometry_builder = LightSlotGeometryBuilder(self.path_offset)
         self.prime_tower_generator = PrimeTowerGenerator(self.path_offset)
 
@@ -721,6 +723,7 @@ class SliceEngine:
             holes=new_holes,
             connected_frames=contour.connected_frames,
             patterns=contour.patterns,
+            screw_hole_centers=[Point(point.x, point.y) for point in contour.screw_hole_centers],
             name=contour.name,
             asset_id=contour.asset_id,
             asset_name=contour.asset_name,
@@ -1028,10 +1031,13 @@ class SliceEngine:
 
         return Contour(outer=outer, holes=holes)
 
-    def _generate_bottom_face_paths(self, contour: Contour,
-                                     info: LayerInfo,
-                                     params: SliceParams,
-                                     light_slot_geometry: Optional[LightSlotGeometry] = None) -> List[LayerPath]:
+    def _generate_bottom_face_paths(
+        self,
+        contour: Contour,
+        info: LayerInfo,
+        params: SliceParams,
+        light_slot_geometry: Optional[LightSlotGeometry] = None,
+    ) -> List[LayerPath]:
         """
         生成底面填充路径
 
@@ -1052,19 +1058,35 @@ class SliceEngine:
         if not bottom_params.enabled:
             return paths
 
-        if params.light_slot.enabled:
-            geometry = light_slot_geometry or self.light_slot_geometry_builder.build(contour, params)
-            return self._generate_fill_paths_for_polygons(
-                geometry.center_fill_polygons,
+        del light_slot_geometry
+        fill_line_width = resolve_shell_line_width(
+            params.shell.line_width,
+            params.shell.layer_height,
+            wall_thickness=params.shell.wall_thickness,
+            wall_count=params.shell.wall_count,
+        )
+        geometry = self.bottom_face_geometry_builder.build(contour, params)
+
+        for hole_path in geometry.hole_boundary_paths:
+            paths.append(
+                LayerPath(
+                    points=[Point(point.x, point.y) for point in hole_path.points],
+                    role=PathRole.FILL_BOTTOM_FACE,
+                    extruder=info.extruder,
+                    line_width=fill_line_width,
+                    is_closed=True,
+                )
+            )
+
+        paths.extend(
+            self._generate_fill_paths_for_polygons(
+                geometry.fill_polygons,
                 info,
-                resolve_shell_wall_thickness(
-                    params.shell.line_width,
-                    params.shell.wall_count,
-                    params.shell.layer_height,
-                    wall_thickness=params.shell.wall_thickness,
-                ),
+                fill_line_width,
                 PathRole.FILL_BOTTOM_FACE,
             )
+        )
+        return paths
 
         # 固定填充参数
         fill_line_width = resolve_shell_line_width(

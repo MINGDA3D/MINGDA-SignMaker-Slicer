@@ -84,6 +84,7 @@ class TestSerializeParams:
         params.shell.height = 42.0
         params.shell.line_width = 1.1
         params.shell.edge_type = EdgeType.BEVELED
+        params.bottom_face.screw_hole_diameter = 5.5
         params.step.enabled = True
         params.step.panel_step_enabled = True
         params.step.print_speed = 36.0
@@ -97,6 +98,7 @@ class TestSerializeParams:
         assert restored.shell.height == 42.0
         assert restored.shell.line_width == pytest.approx(1.1)
         assert restored.shell.edge_type == EdgeType.BEVELED
+        assert restored.bottom_face.screw_hole_diameter == pytest.approx(5.5)
         assert restored.step.enabled is True
         assert restored.step.panel_step_enabled is True
         assert restored.step.print_speed == pytest.approx(36.0)

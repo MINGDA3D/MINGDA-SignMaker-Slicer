@@ -17,6 +17,8 @@ import sys
 from pathlib import Path
 from typing import Optional, List
 
+from shapely.geometry import Point as ShapelyPoint
+
 from PySide6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
     QSplitter, QMenuBar, QMenu, QToolBar, QStatusBar, QLabel,
@@ -49,9 +51,10 @@ from .busy_dialog import run_async, WorkerThread
 from src.app_info import APP_NAME, get_app_version
 from src.core import (
     DXFParser, SVGParser, SliceEngine, GCodeWriter,
-    Contour, SliceParams, SliceResult,
+    Contour, Point, SliceParams, SliceResult,
     DXFWriter, export_baseplate_dxf, export_panel_dxf
 )
+from src.core.bottom_face_geometry import BottomFaceGeometryBuilder
 from src.core.asset_utils import (
     assign_contours_to_asset,
     clear_contours_asset,
@@ -130,6 +133,7 @@ class MainWindow(QMainWindow):
         self.dxf_parser = DXFParser()
         self.svg_parser = SVGParser()
         self.slice_engine = SliceEngine()
+        self.bottom_face_geometry_builder = BottomFaceGeometryBuilder(self.slice_engine.path_offset)
 
         # 撤销/重做管理器
         self.undo_manager = UndoManager(max_undo_levels=100)
@@ -138,6 +142,9 @@ class MainWindow(QMainWindow):
         self._print_order_session_initial_tokens: Optional[dict[LoopTarget, int]] = None
         self._print_order_session_picked: List[LoopTarget] = []
         self._print_order_session_command: Optional[TransformCommand] = None
+        self._screw_hole_session_command: Optional[TransformCommand] = None
+        self._screw_hole_session_dirty = False
+        self._cached_screw_hole_geometries: dict[int, object] = {}
 
         # 初始化UI
         self._init_window()
@@ -711,6 +718,7 @@ class MainWindow(QMainWindow):
         self.canvas_toolbar.text_clicked.connect(self._on_text)
         self.canvas_toolbar.start_point_clicked.connect(self._on_start_point_tool)
         self.canvas_toolbar.print_order_clicked.connect(self._on_print_order_tool)
+        self.canvas_toolbar.screw_hole_clicked.connect(self._on_screw_hole_tool)
 
     def _init_statusbar(self):
         """初始化状态栏"""
@@ -742,6 +750,10 @@ class MainWindow(QMainWindow):
         self.canvas.start_point_mode_exit_requested.connect(self._exit_start_point_mode)
         self.canvas.print_order_loop_clicked.connect(self._on_print_order_loop_clicked)
         self.canvas.print_order_mode_exit_requested.connect(self._exit_print_order_mode)
+        self.canvas.screw_hole_add_requested.connect(self._on_screw_hole_add_requested)
+        self.canvas.screw_hole_move_requested.connect(self._on_screw_hole_move_requested)
+        self.canvas.screw_hole_delete_requested.connect(self._on_screw_hole_delete_requested)
+        self.canvas.screw_hole_mode_exit_requested.connect(self._exit_screw_hole_mode)
 
         # 右键菜单信号
         self.canvas.mirror_requested.connect(self._on_mirror)
@@ -796,6 +808,8 @@ class MainWindow(QMainWindow):
     def _on_params_changed(self):
         """参数变化后，当前处理结果失效。"""
         self.slice_params = self.param_panel.get_params()
+        if self.canvas.current_tool == "screw_hole" and not self.slice_params.bottom_face.enabled:
+            self._exit_screw_hole_mode()
         self._sync_canvas_platform_size(self.slice_params)
         self._refresh_prime_tower_overlay(self.slice_params)
         self._invalidate_processed_result()
@@ -897,10 +911,75 @@ class MainWindow(QMainWindow):
         target_params = params or self.slice_params
         if not target_params.prime_tower.enabled:
             self.canvas.set_prime_tower_overlay(None)
+            self._refresh_screw_hole_overlay(target_params)
             return
 
         bounds = self.slice_engine.prime_tower_generator.get_bounds(target_params)
         self.canvas.set_prime_tower_overlay(bounds)
+        self._refresh_screw_hole_overlay(target_params)
+
+    def _refresh_screw_hole_overlay(
+        self,
+        params: Optional[SliceParams] = None,
+    ) -> None:
+        """Refresh the lightweight screw-hole overlay in the 2D canvas."""
+        if not hasattr(self, "canvas"):
+            return
+
+        target_params = params or self.slice_params
+        self._cached_screw_hole_geometries = {}
+        if hasattr(self, "canvas_toolbar"):
+            self.canvas_toolbar.set_screw_hole_enabled(target_params.bottom_face.enabled)
+        if not target_params.bottom_face.enabled or not self.contours:
+            self.canvas.set_screw_hole_overlay(None)
+            return
+
+        overlay_items = []
+        for contour_index, contour in enumerate(self.contours):
+            bottom_contour = self.slice_engine._apply_edge_profile(
+                contour,
+                0.0,
+                target_params.shell,
+            )
+            if bottom_contour is None:
+                continue
+            geometry = self.bottom_face_geometry_builder.build(bottom_contour, target_params)
+            self._cached_screw_hole_geometries[contour_index] = geometry
+            for placement in geometry.valid_holes:
+                overlay_items.append(
+                    (contour_index, placement.hole_index, placement.center, placement.radius, True)
+                )
+            for placement in geometry.invalid_holes:
+                overlay_items.append(
+                    (contour_index, placement.hole_index, placement.center, placement.radius, False)
+                )
+
+        self.canvas.set_screw_hole_overlay(overlay_items)
+
+    def _pick_screw_hole_target_contour(self, x: float, y: float) -> Optional[int]:
+        """Pick the smallest bottom-face placement region that contains the given point."""
+        click_point = ShapelyPoint(x, y)
+        candidates: List[tuple[float, int]] = []
+        for contour_index, geometry in self._cached_screw_hole_geometries.items():
+            polygons = getattr(geometry, "placement_polygons", [])
+            if any(polygon.covers(click_point) for polygon in polygons):
+                candidates.append((abs(self.contours[contour_index].outer.area), contour_index))
+        if not candidates:
+            return None
+        candidates.sort(key=lambda item: item[0])
+        return candidates[0][1]
+
+    def _set_screw_hole_status(self, fallback_message: str) -> None:
+        invalid_count = sum(
+            len(getattr(geometry, "invalid_holes", []))
+            for geometry in self._cached_screw_hole_geometries.values()
+        )
+        if invalid_count > 0:
+            self._update_status(
+                self.tr("{count} screw holes are invalid").format(count=invalid_count)
+            )
+            return
+        self._update_status(fallback_message)
 
     def _command_requires_reprocess(self, command: Optional[Command]) -> bool:
         """判断撤销/重做的命令是否会影响导出的 STL。"""
@@ -958,6 +1037,9 @@ class MainWindow(QMainWindow):
                             for p in hole.points:
                                 p.x -= delta['dx']
                                 p.y -= delta['dy']
+                        for point in contour.screw_hole_centers:
+                            point.x -= delta['dx']
+                            point.y -= delta['dy']
 
                 # 创建命令并执行
                 cmd = MoveCommand(self.contours, indices, delta['dx'], delta['dy'])
@@ -997,6 +1079,7 @@ class MainWindow(QMainWindow):
     def _on_delete_requested(self, indices: list):
         """处理删除请求"""
         self._exit_print_order_mode()
+        self._exit_screw_hole_mode()
         if not indices:
             return
 
@@ -1403,6 +1486,7 @@ class MainWindow(QMainWindow):
             self.canvas_toolbar.setVisible(
                 self.current_main_view == "editor" and self.current_view == "2d"
             )
+            self.canvas_toolbar.set_screw_hole_enabled(self.slice_params.bottom_face.enabled)
             self._sync_release_asset_button_state()
 
     def _sync_transform_panel_visibility(self):
@@ -1442,6 +1526,7 @@ class MainWindow(QMainWindow):
         """Switch to the 3D preview view without preparing content yet."""
         self._exit_start_point_mode()
         self._exit_print_order_mode()
+        self._exit_screw_hole_mode()
         self.main_stack.setCurrentIndex(1)
         self.current_main_view = "editor"
         self.view_stack.setCurrentIndex(1)
@@ -1584,6 +1669,7 @@ class MainWindow(QMainWindow):
         if nav == "home":
             self._exit_start_point_mode()
             self._exit_print_order_mode()
+            self._exit_screw_hole_mode()
             # 显示首页
             self.main_stack.setCurrentIndex(0)
             self.current_main_view = "home"
@@ -1641,6 +1727,7 @@ class MainWindow(QMainWindow):
     def _on_new_project(self):
         """新建项目"""
         self._exit_print_order_mode(commit=False)
+        self._exit_screw_hole_mode(commit=False)
         # 清空撤销历史
         self.undo_manager.clear()
 
@@ -2015,6 +2102,7 @@ class MainWindow(QMainWindow):
             return []
 
         self._exit_print_order_mode()
+        self._exit_screw_hole_mode()
         self._auto_arrange_contours(new_contours)
         insert_at = len(self.contours)
 
@@ -2043,6 +2131,7 @@ class MainWindow(QMainWindow):
     def _load_contours(self, new_contours: List[Contour], path: Path):
         """加载轮廓数据（从 DXF/SVG 导入）"""
         self._exit_print_order_mode()
+        self._exit_screw_hole_mode()
         # 创建替换轮廓命令（可撤销）
         self._assign_asset_metadata(new_contours, path.name)
         self._append_contours(
@@ -2079,6 +2168,7 @@ class MainWindow(QMainWindow):
         """加载项目文件（.smp）"""
         try:
             self._exit_print_order_mode(commit=False)
+            self._exit_screw_hole_mode(commit=False)
             project = self.project_manager.open_project(file_path)
 
             # 清空撤销历史
@@ -2454,6 +2544,7 @@ class MainWindow(QMainWindow):
     def _on_undo(self):
         """撤销"""
         self._exit_print_order_mode()
+        self._exit_screw_hole_mode()
         if self.undo_manager.can_undo:
             command = self.undo_manager._undo_stack[-1] if self.undo_manager._undo_stack else None
             requires_reprocess = self._command_requires_reprocess(command)
@@ -2469,6 +2560,7 @@ class MainWindow(QMainWindow):
     def _on_redo(self):
         """重做"""
         self._exit_print_order_mode()
+        self._exit_screw_hole_mode()
         if self.undo_manager.can_redo:
             command = self.undo_manager._redo_stack[-1] if self.undo_manager._redo_stack else None
             requires_reprocess = self._command_requires_reprocess(command)
@@ -2483,6 +2575,7 @@ class MainWindow(QMainWindow):
 
     def _on_slice(self):
         """执行处理（异步）"""
+        self._exit_screw_hole_mode()
         if not self.contours:
             QMessageBox.information(self, self.tr("Info"), self.tr("Please import a DXF file first"))
             return
@@ -2555,6 +2648,7 @@ class MainWindow(QMainWindow):
         else:
             self._exit_start_point_mode()
             self._exit_print_order_mode()
+            self._exit_screw_hole_mode()
             self.view_stack.setCurrentIndex(1)
             self.current_view = "3d"
             QTimer.singleShot(0, self._prepare_preview_3d)
@@ -2583,6 +2677,126 @@ class MainWindow(QMainWindow):
         """激活缩放工具"""
         self._activate_transform_tool("scale")
 
+    def _on_screw_hole_tool(self):
+        """Toggle manual screw-hole editing mode."""
+        if self.canvas.current_tool == "screw_hole":
+            self._exit_screw_hole_mode()
+            return
+
+        if not self.contours:
+            QMessageBox.information(
+                self,
+                self.tr("Info"),
+                self.tr("No contours available for screw-hole editing"),
+            )
+            return
+
+        if not self.slice_params.bottom_face.enabled:
+            QMessageBox.information(
+                self,
+                self.tr("Info"),
+                self.tr("Enable Bottom Face before editing screw holes"),
+            )
+            return
+
+        self._enter_screw_hole_mode()
+
+    def _enter_screw_hole_mode(self):
+        """Start a manual screw-hole editing session."""
+        self._exit_start_point_mode()
+        self._exit_print_order_mode()
+        self._close_transform_panel()
+        self.current_transform_mode = None
+        self._screw_hole_session_dirty = False
+        self._screw_hole_session_command = TransformCommand(
+            self.contours,
+            list(range(len(self.contours))),
+            self.tr("Edit Screw Holes"),
+        )
+        self.canvas_toolbar._set_tool_checked("screw_hole")
+        self.canvas.set_tool("screw_hole")
+        self.canvas.set_active_screw_hole(None)
+        self.transform_panel.setVisible(False)
+        self._refresh_screw_hole_overlay()
+        self.canvas.setFocus()
+        self._update_status(
+            self.tr("Click to add screw holes, drag to move, Delete to remove, Esc to finish")
+        )
+
+    def _exit_screw_hole_mode(self, commit: bool = True):
+        """Finish the current screw-hole editing session."""
+        session_active = self.canvas.current_tool == "screw_hole"
+        if commit and self._screw_hole_session_dirty and self._screw_hole_session_command is not None:
+            self._screw_hole_session_command.capture_after()
+            self.undo_manager.push(self._screw_hole_session_command, execute=False)
+
+        self._screw_hole_session_command = None
+        self._screw_hole_session_dirty = False
+        self.canvas.set_active_screw_hole(None)
+
+        if session_active:
+            self.canvas_toolbar.clear_tool()
+            self.canvas.set_tool("select")
+            self.canvas.setFocus()
+            self._update_status(self.tr("Ready"))
+
+        self._refresh_screw_hole_overlay()
+
+    def _on_screw_hole_add_requested(self, x: float, y: float):
+        """Create a new manual screw hole at the clicked world position."""
+        contour_index = self._pick_screw_hole_target_contour(x, y)
+        if contour_index is None:
+            self._update_status(self.tr("Click inside a valid bottom-face region"))
+            return
+
+        contour = self.contours[contour_index]
+        contour.screw_hole_centers.append(Point(x, y))
+        self._screw_hole_session_dirty = True
+        self._invalidate_processed_result()
+        self._apply_contour_selection([contour_index])
+        self._refresh_screw_hole_overlay()
+        self.canvas.set_active_screw_hole((contour_index, len(contour.screw_hole_centers) - 1))
+        self.canvas.update()
+        self._set_screw_hole_status(self.tr("Screw hole added"))
+
+    def _on_screw_hole_move_requested(self, contour_index: int, hole_index: int, x: float, y: float):
+        """Move one screw hole inside the active edit session."""
+        if not (0 <= contour_index < len(self.contours)):
+            return
+        contour = self.contours[contour_index]
+        if not (0 <= hole_index < len(contour.screw_hole_centers)):
+            return
+
+        current_point = contour.screw_hole_centers[hole_index]
+        if abs(current_point.x - x) < 1e-6 and abs(current_point.y - y) < 1e-6:
+            return
+
+        contour.screw_hole_centers[hole_index] = Point(x, y)
+        self._screw_hole_session_dirty = True
+        self._invalidate_processed_result()
+        self._apply_contour_selection([contour_index])
+        self._refresh_screw_hole_overlay()
+        self.canvas.set_active_screw_hole((contour_index, hole_index))
+        self.canvas.update()
+        self._set_screw_hole_status(self.tr("Screw hole updated"))
+
+    def _on_screw_hole_delete_requested(self, contour_index: int, hole_index: int):
+        """Delete one screw hole from the active edit session."""
+        if not (0 <= contour_index < len(self.contours)):
+            return
+        contour = self.contours[contour_index]
+        if not (0 <= hole_index < len(contour.screw_hole_centers)):
+            return
+
+        contour.screw_hole_centers.pop(hole_index)
+        self._screw_hole_session_dirty = True
+        self._invalidate_processed_result()
+        self._apply_contour_selection([contour_index])
+        self._refresh_screw_hole_overlay()
+        self.canvas.set_active_screw_hole(None)
+        self.canvas.update()
+        self._set_screw_hole_status(self.tr("Screw hole removed"))
+
     def _on_start_point_tool(self):
         """Toggle batch start-point selection mode."""
         if self.canvas.current_tool == "start_point":
@@ -2598,6 +2812,7 @@ class MainWindow(QMainWindow):
             return
 
         self._exit_print_order_mode()
+        self._exit_screw_hole_mode()
         self._close_transform_panel()
         self.current_transform_mode = None
         self.canvas_toolbar._set_tool_checked("start_point")
@@ -2635,6 +2850,7 @@ class MainWindow(QMainWindow):
             return
 
         self._exit_start_point_mode()
+        self._exit_screw_hole_mode()
         self._close_transform_panel()
         self.current_transform_mode = None
         self._print_order_session_initial_order = build_loop_order(self.contours)
@@ -2752,6 +2968,8 @@ class MainWindow(QMainWindow):
             self._exit_start_point_mode()
         if self._is_print_order_mode_active():
             self._exit_print_order_mode()
+        if self.canvas.current_tool == "screw_hole":
+            self._exit_screw_hole_mode()
 
         # 更新工具栏按钮状态
         self.canvas_toolbar._set_tool_checked(mode)
@@ -3009,6 +3227,7 @@ class MainWindow(QMainWindow):
     def _on_mirror(self, axis: str):
         """镜像"""
         self._exit_print_order_mode()
+        self._exit_screw_hole_mode()
         if not self.canvas.selected_indices:
             QMessageBox.information(self, self.tr("Info"), self.tr("Please select a contour first"))
             return
@@ -3032,6 +3251,7 @@ class MainWindow(QMainWindow):
     def _on_intersection(self):
         """交集"""
         self._exit_print_order_mode()
+        self._exit_screw_hole_mode()
         if len(self.canvas.selected_indices) < 2:
             QMessageBox.information(
                 self,
@@ -3068,6 +3288,7 @@ class MainWindow(QMainWindow):
     def _on_difference(self):
         """差集"""
         self._exit_print_order_mode()
+        self._exit_screw_hole_mode()
         if len(self.canvas.selected_indices) < 2:
             QMessageBox.information(
                 self,
@@ -3104,6 +3325,7 @@ class MainWindow(QMainWindow):
     def _on_group(self):
         """组合"""
         self._exit_print_order_mode()
+        self._exit_screw_hole_mode()
         selected = self.canvas.get_group_target_indices()
         if len(selected) < 2:
             QMessageBox.information(
@@ -3134,6 +3356,7 @@ class MainWindow(QMainWindow):
     def _on_ungroup(self):
         """打散"""
         self._exit_print_order_mode()
+        self._exit_screw_hole_mode()
         selected = self.canvas.get_ungroup_target_indices()
         if not selected:
             QMessageBox.information(

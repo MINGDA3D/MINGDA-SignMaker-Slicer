@@ -121,6 +121,7 @@ def repair_contours(contours: List[Contour]) -> List[Contour]:
             rebuilt_paths.extend(rebuilt_contour.holes)
         _transfer_path_user_state([contour.outer, *contour.holes], rebuilt_paths)
 
+        preserve_screw_holes = len(rebuilt) == 1
         for rebuilt_contour in rebuilt:
             rebuilt_contour.connected_frames = list(contour.connected_frames)
             rebuilt_contour.patterns = list(contour.patterns)
@@ -128,6 +129,11 @@ def repair_contours(contours: List[Contour]) -> List[Contour]:
             rebuilt_contour.asset_id = contour.asset_id
             rebuilt_contour.asset_name = contour.asset_name
             rebuilt_contour.group_id = contour.group_id
+            rebuilt_contour.screw_hole_centers = (
+                [Point(point.x, point.y) for point in contour.screw_hole_centers]
+                if preserve_screw_holes
+                else []
+            )
             normalize_contour_start_point_index(rebuilt_contour)
             repaired.append(rebuilt_contour)
 
@@ -289,6 +295,7 @@ def _normalize_existing_contour(contour: Contour) -> Contour:
         holes=[normalize_path(_clone_path(hole, PathType.INNER)) for hole in holes],
         connected_frames=list(contour.connected_frames),
         patterns=list(contour.patterns),
+        screw_hole_centers=[Point(point.x, point.y) for point in contour.screw_hole_centers],
         name=contour.name,
         asset_id=contour.asset_id,
         asset_name=contour.asset_name,

@@ -625,11 +625,20 @@ class ParamPanel(QWidget):
         self.bottom_face_thickness.valueChanged.connect(self._on_param_changed)
         form.addRow(self.tr("Bottom Thickness:"), self.bottom_face_thickness)
 
+        self.bottom_face_screw_hole_diameter = self._create_double_spinbox()
+        self.bottom_face_screw_hole_diameter.setRange(0.1, 100.0)
+        self.bottom_face_screw_hole_diameter.setSingleStep(0.5)
+        self.bottom_face_screw_hole_diameter.setSuffix(" mm")
+        self.bottom_face_screw_hole_diameter.setValue(4.0)
+        self.bottom_face_screw_hole_diameter.setEnabled(False)
+        self.bottom_face_screw_hole_diameter.valueChanged.connect(self._on_param_changed)
+        form.addRow(self.tr("Screw Hole Diameter:"), self.bottom_face_screw_hole_diameter)
+
         layout.addLayout(form)
 
         # 启用/禁用控件联动
         self.bottom_face_enabled.stateChanged.connect(
-            lambda: self.bottom_face_thickness.setEnabled(self.bottom_face_enabled.isChecked())
+            lambda: self._toggle_bottom_face_controls(self.bottom_face_enabled.isChecked())
         )
         # 与 Baseplate Step (Bottom) 互斥
         self.bottom_face_enabled.stateChanged.connect(self._on_bottom_face_toggled)
@@ -653,6 +662,7 @@ class ParamPanel(QWidget):
                 self.bottom_face_enabled.blockSignals(True)
                 self.bottom_face_enabled.setChecked(False)
                 self.bottom_face_thickness.setEnabled(False)
+                self.bottom_face_screw_hole_diameter.setEnabled(False)
                 self.bottom_face_enabled.blockSignals(False)
                 self._on_param_changed()
         if self.baseplate_step_enabled.isChecked() and hasattr(self, 'light_slot_enabled'):
@@ -666,6 +676,7 @@ class ParamPanel(QWidget):
     def _toggle_bottom_face_controls(self, enabled: bool):
         """切换底面封闭控件的启用状态"""
         self.bottom_face_thickness.setEnabled(enabled)
+        self.bottom_face_screw_hole_diameter.setEnabled(enabled)
 
     def _create_light_slot_group(self) -> QGroupBox:
         """创建灯槽参数组"""
@@ -2557,6 +2568,7 @@ class ParamPanel(QWidget):
         # 底面封闭参数
         self._params.bottom_face.enabled = self.bottom_face_enabled.isChecked()
         self._params.bottom_face.thickness = self._layers_to_mm(self.bottom_face_thickness.value())
+        self._params.bottom_face.screw_hole_diameter = self.bottom_face_screw_hole_diameter.value()
 
         # 灯槽参数
         self._params.light_slot.enabled = self.light_slot_enabled.isChecked()
@@ -2609,6 +2621,7 @@ class ParamPanel(QWidget):
         baseplate_step_is_v_groove = params.step.baseplate_step_is_v_groove
         bottom_face_enabled = params.bottom_face.enabled
         bottom_face_thickness = params.bottom_face.thickness
+        bottom_face_screw_hole_diameter = params.bottom_face.screw_hole_diameter
         light_slot_enabled = params.light_slot.enabled
         light_slot_width = params.light_slot.width
         light_slot_depth = params.light_slot.depth
@@ -2659,7 +2672,7 @@ class ParamPanel(QWidget):
             self.panel_step_v_groove, self.baseplate_step_enabled,
             self.baseplate_step_height, self.baseplate_step_width, self.baseplate_step_v_groove,
             # 底面封闭控件
-            self.bottom_face_enabled, self.bottom_face_thickness,
+            self.bottom_face_enabled, self.bottom_face_thickness, self.bottom_face_screw_hole_diameter,
             # 灯槽控件
             self.light_slot_enabled, self.light_slot_width, self.light_slot_depth,
             self.light_slot_floor_layers,
@@ -2787,6 +2800,7 @@ class ParamPanel(QWidget):
         # 底面封闭参数
         self.bottom_face_enabled.setChecked(bottom_face_enabled)
         self.bottom_face_thickness.setValue(self._height_to_layers(bottom_face_thickness))
+        self.bottom_face_screw_hole_diameter.setValue(bottom_face_screw_hole_diameter)
 
         # 灯槽参数
         self.light_slot_enabled.setChecked(light_slot_enabled)

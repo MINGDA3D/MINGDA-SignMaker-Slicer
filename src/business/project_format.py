@@ -36,7 +36,7 @@ from src.business.printer_profile_manager import (
 
 
 # 格式常量
-FORMAT_VERSION = "4.5"
+FORMAT_VERSION = "4.6"
 MANIFEST_FILE = "manifest.json"
 PARAMS_FILE = "params.json"
 CONTOURS_FILE = "contours.bin"
@@ -45,7 +45,7 @@ PRINTER_PROFILE_FILE = "printer_profile.json"
 
 # 二进制格式
 BINARY_MAGIC = b'SMPC'  # SignMaker Project Contours
-BINARY_VERSION = 5
+BINARY_VERSION = 6
 
 
 class ProjectFormatError(Exception):
@@ -189,6 +189,7 @@ def _serialize_contours(contours: List[Contour]) -> bytes:
             name_len(2) + name(var) + start_idx(4) + print_order(4)
             asset_id_len(2) + asset_id(var) + asset_name_len(2) + asset_name(var)
             group_len(2) + group(var)
+            screw_hole_count(4) + screw_hole_points[]
             outer_path + hole_count(4) + holes[]
             cf_count(4) + connected_frames[]
             pattern_count(4) + patterns[]
@@ -219,6 +220,10 @@ def _serialize_contours(contours: List[Contour]) -> bytes:
         group_bytes = contour.group_id.encode('utf-8')
         buf.write(struct.pack('<H', len(group_bytes)))
         buf.write(group_bytes)
+
+        buf.write(struct.pack('<I', len(contour.screw_hole_centers)))
+        for point in contour.screw_hole_centers:
+            buf.write(struct.pack('<dd', point.x, point.y))
 
         # Outer path
         _write_path(buf, contour.outer)
@@ -300,6 +305,12 @@ def _deserialize_contours(data: bytes) -> List[Contour]:
         if version >= 2:
             group_len = struct.unpack('<H', buf.read(2))[0]
             group_id = buf.read(group_len).decode('utf-8')
+        screw_hole_centers = []
+        if version >= 6:
+            screw_hole_count = struct.unpack('<I', buf.read(4))[0]
+            for _ in range(screw_hole_count):
+                x, y = struct.unpack('<dd', buf.read(16))
+                screw_hole_centers.append(Point(x, y))
 
         # Outer
         outer = _read_path(buf, version)
@@ -319,6 +330,7 @@ def _deserialize_contours(data: bytes) -> List[Contour]:
         contours.append(Contour(
             outer=outer, holes=holes,
             connected_frames=connected_frames, patterns=patterns,
+            screw_hole_centers=screw_hole_centers,
             name=name, asset_id=asset_id, asset_name=asset_name, group_id=group_id,
             start_point_index=start_idx, print_order=print_order
         ))

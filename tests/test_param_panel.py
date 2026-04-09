@@ -627,7 +627,7 @@ def test_step_speed_stays_enabled_while_any_step_toggle_remains_active(qapp):
         ),
         (
             lambda p: setattr(p.bottom_face, "enabled", True),
-            ("bottom_face_thickness",),
+            ("bottom_face_thickness", "bottom_face_screw_hole_diameter"),
         ),
         (
             lambda p: setattr(p.light_slot, "enabled", True),
@@ -735,7 +735,23 @@ def test_light_slot_and_bottom_face_can_coexist(qapp):
     assert panel.bottom_face_enabled.isChecked() is True
     assert panel.light_slot_enabled.isChecked() is True
     assert panel.bottom_face_thickness.isEnabled() is True
+    assert panel.bottom_face_screw_hole_diameter.isEnabled() is True
     assert panel.light_slot_width.isEnabled() is True
+
+
+def test_bottom_face_screw_hole_diameter_roundtrips_with_bottom_face_params(qapp):
+    panel = ParamPanel()
+    params = SliceParams()
+    params.bottom_face.enabled = True
+    params.bottom_face.thickness = 1.5
+    params.bottom_face.screw_hole_diameter = 6.5
+
+    panel.set_params(params)
+    restored = panel.get_params()
+
+    assert panel.bottom_face_screw_hole_diameter.isEnabled() is True
+    assert panel.bottom_face_screw_hole_diameter.value() == pytest.approx(6.5)
+    assert restored.bottom_face.screw_hole_diameter == pytest.approx(6.5)
 
 
 def test_set_params_restores_light_slot_floor_layers_value(qapp):

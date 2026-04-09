@@ -32,6 +32,7 @@ class CanvasToolbar(QWidget):
     text_clicked = Signal()
     start_point_clicked = Signal()
     print_order_clicked = Signal()
+    screw_hole_clicked = Signal()
     slice_clicked = Signal()
 
     def __init__(self, parent=None):
@@ -130,6 +131,11 @@ class CanvasToolbar(QWidget):
         self.btn_order.clicked.connect(self._on_print_order_clicked)
         layout.addWidget(self.btn_order)
 
+        self.btn_screw_hole = self._create_icon_button("bottom_hole.png", self.tr("Screw Hole"))
+        self.btn_screw_hole.setCheckable(True)
+        self.btn_screw_hole.clicked.connect(self._on_screw_hole_clicked)
+        layout.addWidget(self.btn_screw_hole)
+
         # ========== 右侧弹性空间（居中用）==========
         layout.addStretch(1)
 
@@ -221,6 +227,11 @@ class CanvasToolbar(QWidget):
         self._set_tool_checked("print_order")
         self.print_order_clicked.emit()
 
+    def _on_screw_hole_clicked(self):
+        """Manual screw-hole tool clicked."""
+        self._set_tool_checked("screw_hole")
+        self.screw_hole_clicked.emit()
+
     def _set_tool_checked(self, tool: str):
         """设置工具选中状态"""
         self.current_tool = tool
@@ -229,6 +240,7 @@ class CanvasToolbar(QWidget):
         self.btn_scale.setChecked(tool == "scale")
         self.btn_start_point.setChecked(tool == "start_point")
         self.btn_order.setChecked(tool == "print_order")
+        self.btn_screw_hole.setChecked(tool == "screw_hole")
 
     def clear_tool(self):
         """清除工具选择"""
@@ -238,7 +250,14 @@ class CanvasToolbar(QWidget):
         self.btn_scale.setChecked(False)
         self.btn_start_point.setChecked(False)
         self.btn_order.setChecked(False)
+        self.btn_screw_hole.setChecked(False)
 
     def set_release_asset_enabled(self, enabled: bool):
         """Enable explode only when the current selection can use it."""
         self.btn_release_asset.setEnabled(enabled)
+
+    def set_screw_hole_enabled(self, enabled: bool):
+        """Enable the manual screw-hole tool only when bottom-face editing is available."""
+        self.btn_screw_hole.setEnabled(enabled)
+        if not enabled:
+            self.btn_screw_hole.setChecked(False)

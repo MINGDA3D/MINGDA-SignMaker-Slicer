@@ -378,6 +378,10 @@ class MoveCommand(Command):
                     hole.points = [
                         Point(p.x + dx, p.y + dy) for p in hole.points
                     ]
+                contour.screw_hole_centers = [
+                    Point(point.x + dx, point.y + dy)
+                    for point in contour.screw_hole_centers
+                ]
 
     def merge_with(self, other: Command) -> Optional[Command]:
         """合并连续的移动命令"""
@@ -416,14 +420,17 @@ class RotateCommand(Command):
         cos_a = math.cos(angle_rad)
         sin_a = math.sin(angle_rad)
 
-        from src.core.types import Point
-
         for idx in self.indices:
             if 0 <= idx < len(self.contours):
                 contour = self.contours[idx]
                 self._rotate_path(contour.outer, cos_a, sin_a)
                 for hole in contour.holes:
                     self._rotate_path(hole, cos_a, sin_a)
+                contour.screw_hole_centers = self._rotate_points(
+                    contour.screw_hole_centers,
+                    cos_a,
+                    sin_a,
+                )
 
         self._is_executed = True
         return True
@@ -447,6 +454,23 @@ class RotateCommand(Command):
             new_points.append(Point(new_x, new_y))
         path.points = new_points
 
+    def _rotate_points(
+        self,
+        points: List['Point'],
+        cos_a: float,
+        sin_a: float,
+    ) -> List['Point']:
+        from src.core.types import Point
+
+        cx, cy = self.center_x, self.center_y
+        return [
+            Point(
+                (point.x - cx) * cos_a - (point.y - cy) * sin_a + cx,
+                (point.x - cx) * sin_a + (point.y - cy) * cos_a + cy,
+            )
+            for point in points
+        ]
+
 
 class ScaleCommand(Command):
     """缩放命令"""
@@ -469,14 +493,15 @@ class ScaleCommand(Command):
         ]
 
     def execute(self) -> bool:
-        from src.core.types import Point
-
         for idx in self.indices:
             if 0 <= idx < len(self.contours):
                 contour = self.contours[idx]
                 self._scale_path(contour.outer)
                 for hole in contour.holes:
                     self._scale_path(hole)
+                contour.screw_hole_centers = self._scale_points(
+                    contour.screw_hole_centers
+                )
 
         self._is_executed = True
         return True
@@ -496,6 +521,18 @@ class ScaleCommand(Command):
             new_y = cy + (p.y - cy) * self.scale_y
             new_points.append(Point(new_x, new_y))
         path.points = new_points
+
+    def _scale_points(self, points: List['Point']) -> List['Point']:
+        from src.core.types import Point
+
+        cx, cy = self.center_x, self.center_y
+        return [
+            Point(
+                cx + (point.x - cx) * self.scale_x,
+                cy + (point.y - cy) * self.scale_y,
+            )
+            for point in points
+        ]
 
 
 class MirrorCommand(Command):
@@ -522,14 +559,15 @@ class MirrorCommand(Command):
         return True
 
     def _apply_mirror(self):
-        from src.core.types import Point
-
         for idx in self.indices:
             if 0 <= idx < len(self.contours):
                 contour = self.contours[idx]
                 self._mirror_path(contour.outer)
                 for hole in contour.holes:
                     self._mirror_path(hole)
+                contour.screw_hole_centers = self._mirror_points(
+                    contour.screw_hole_centers
+                )
 
     def _mirror_path(self, path):
         from src.core.types import Point
@@ -542,6 +580,17 @@ class MirrorCommand(Command):
                 new_y = 2 * self.center_y - p.y
                 new_points.append(Point(p.x, new_y))
         path.points = new_points
+
+    def _mirror_points(self, points: List['Point']) -> List['Point']:
+        from src.core.types import Point
+
+        mirrored = []
+        for point in points:
+            if self.axis == 'x':
+                mirrored.append(Point(2 * self.center_x - point.x, point.y))
+            else:
+                mirrored.append(Point(point.x, 2 * self.center_y - point.y))
+        return mirrored
 
 
 class DeleteCommand(Command):

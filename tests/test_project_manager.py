@@ -2,11 +2,15 @@
 项目管理器和项目格式单元测试
 """
 
-import pytest
-import tempfile
-import os
-import zipfile
 import json
+import os
+import shutil
+import uuid
+import zipfile
+from contextlib import contextmanager
+from pathlib import Path as FilePath
+
+import pytest
 
 from src.business.project_manager import ProjectManager
 from src.business.project_format import (
@@ -22,6 +26,21 @@ from src.core.types import (
 )
 
 
+_TEST_TMP_ROOT = FilePath(__file__).resolve().parents[1] / ".tmp_test_project_manager"
+
+
+@contextmanager
+def writable_tempdir():
+    """Use a repo-local writable temp directory to avoid sandboxed tempfile ACL issues."""
+    _TEST_TMP_ROOT.mkdir(exist_ok=True)
+    tmpdir = _TEST_TMP_ROOT / uuid.uuid4().hex
+    tmpdir.mkdir()
+    try:
+        yield str(tmpdir)
+    finally:
+        shutil.rmtree(tmpdir, ignore_errors=True)
+
+
 class TestProjectFormat:
     """项目格式测试"""
 
@@ -31,7 +50,7 @@ class TestProjectFormat:
             meta=ProjectMeta(name="测试项目", version=FORMAT_VERSION)
         )
 
-        with tempfile.TemporaryDirectory() as tmpdir:
+        with writable_tempdir() as tmpdir:
             file_path = os.path.join(tmpdir, "test.smp")
             save_project(project, file_path)
 
@@ -73,13 +92,14 @@ class TestProjectFormat:
         set_contour_user_start_point_index(contour, 2)
         set_path_user_start_point_index(contour.holes[0], 1)
         contour.holes[0].print_order = 2
+        contour.screw_hole_centers = [Point(15, 25), Point(85, 25)]
 
         project = Project(
             meta=ProjectMeta(name="带轮廓项目"),
             contours=[contour]
         )
 
-        with tempfile.TemporaryDirectory() as tmpdir:
+        with writable_tempdir() as tmpdir:
             file_path = os.path.join(tmpdir, "test.smp")
             save_project(project, file_path)
             loaded = load_project(file_path)
@@ -98,6 +118,7 @@ class TestProjectFormat:
             assert c.outer.color == (255, 128, 0)
             assert len(c.holes) == 1
             assert c.holes[0].print_order == 2
+            assert c.screw_hole_centers == [Point(15, 25), Point(85, 25)]
             hole_start_index = get_path_user_start_point_index(c.holes[0])
             assert hole_start_index is not None
             assert c.holes[0].points[hole_start_index] == Point(80, 20)
@@ -112,7 +133,7 @@ class TestProjectFormat:
         project.params.skirt.width = 6.0
         project.params.skirt.speed = 26.0
 
-        with tempfile.TemporaryDirectory() as tmpdir:
+        with writable_tempdir() as tmpdir:
             file_path = os.path.join(tmpdir, "test.smp")
             save_project(project, file_path)
 
@@ -140,7 +161,7 @@ class TestProjectFormat:
             contours=[contour]
         )
 
-        with tempfile.TemporaryDirectory() as tmpdir:
+        with writable_tempdir() as tmpdir:
             file_path = os.path.join(tmpdir, "test.smp")
             save_project(project, file_path)
 
@@ -161,7 +182,7 @@ class TestProjectFormat:
             contours=contours
         )
 
-        with tempfile.TemporaryDirectory() as tmpdir:
+        with writable_tempdir() as tmpdir:
             file_path = os.path.join(tmpdir, "test.smp")
             save_project(project, file_path)
 
@@ -172,7 +193,7 @@ class TestProjectFormat:
 
     def test_invalid_file_raises_error(self):
         """测试无效文件抛出错误"""
-        with tempfile.TemporaryDirectory() as tmpdir:
+        with writable_tempdir() as tmpdir:
             file_path = os.path.join(tmpdir, "invalid.smp")
 
             # 创建一个无效的文件
@@ -192,7 +213,7 @@ class TestProjectFormat:
         contour = Contour(outer=Path(points=precise_points))
         project = Project(meta=ProjectMeta(name="精度测试"), contours=[contour])
 
-        with tempfile.TemporaryDirectory() as tmpdir:
+        with writable_tempdir() as tmpdir:
             file_path = os.path.join(tmpdir, "test.smp")
             save_project(project, file_path)
             loaded = load_project(file_path)
@@ -223,7 +244,7 @@ class TestProjectFormat:
             contours=[contour],
         )
 
-        with tempfile.TemporaryDirectory() as tmpdir:
+        with writable_tempdir() as tmpdir:
             file_path = os.path.join(tmpdir, "repair.smp")
             save_project(project, file_path)
             loaded = load_project(file_path)
@@ -248,7 +269,7 @@ class TestProjectFormat:
 
         project = Project(meta=ProjectMeta(name="方向修正"), contours=[contour])
 
-        with tempfile.TemporaryDirectory() as tmpdir:
+        with writable_tempdir() as tmpdir:
             file_path = os.path.join(tmpdir, "orientation.smp")
             save_project(project, file_path)
             loaded = load_project(file_path)
@@ -277,7 +298,7 @@ class TestProjectFormat:
             "statistics": {"contour_count": 1, "total_points": 4},
         }
 
-        with tempfile.TemporaryDirectory() as tmpdir:
+        with writable_tempdir() as tmpdir:
             file_path = os.path.join(tmpdir, "legacy-start-point.smp")
             with zipfile.ZipFile(file_path, "w", zipfile.ZIP_DEFLATED) as zf:
                 zf.writestr(
@@ -290,10 +311,12 @@ class TestProjectFormat:
             loaded = load_project(file_path)
             assert loaded.contours[0].start_point_index == 3
             assert get_contour_user_start_point_index(loaded.contours[0]) == 2
+            assert loaded.contours[0].screw_hole_centers == []
 
             loaded_contours = load_project_contours(file_path)
             assert loaded_contours[0].start_point_index == 3
             assert get_contour_user_start_point_index(loaded_contours[0]) == 2
+            assert loaded_contours[0].screw_hole_centers == []
 
     def test_load_project_migrates_legacy_contour_print_order_to_loops(self):
         """测试旧格式工程中的 contour 级打印顺序会迁移到 loop 级顺序"""
@@ -328,7 +351,7 @@ class TestProjectFormat:
             "statistics": {"contour_count": 2, "total_points": 12},
         }
 
-        with tempfile.TemporaryDirectory() as tmpdir:
+        with writable_tempdir() as tmpdir:
             file_path = os.path.join(tmpdir, "legacy-print-order.smp")
             with zipfile.ZipFile(file_path, "w", zipfile.ZIP_DEFLATED) as zf:
                 zf.writestr(
@@ -374,7 +397,7 @@ class TestProjectManager:
         )
         project.contours.append(contour)
 
-        with tempfile.TemporaryDirectory() as tmpdir:
+        with writable_tempdir() as tmpdir:
             file_path = os.path.join(tmpdir, "test.smp")
             pm.save_project(file_path)
 
@@ -409,7 +432,7 @@ class TestProjectManager:
         pm.mark_modified()
         assert pm.is_modified is True
 
-        with tempfile.TemporaryDirectory() as tmpdir:
+        with writable_tempdir() as tmpdir:
             file_path = os.path.join(tmpdir, "test.smp")
             pm.save_project(file_path)
             assert pm.is_modified is False

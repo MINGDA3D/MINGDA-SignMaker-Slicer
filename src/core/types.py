@@ -421,6 +421,7 @@ class Contour:
     asset_id: str = ""
     asset_name: str = ""
     group_id: str = ""
+    screw_hole_centers: List[Point] = field(default_factory=list)
 
     def __init__(
         self,
@@ -428,6 +429,7 @@ class Contour:
         holes: Optional[List[Path]] = None,
         connected_frames: Optional[List[Path]] = None,
         patterns: Optional[List[Path]] = None,
+        screw_hole_centers: Optional[List[Point]] = None,
         name: str = "",
         asset_id: str = "",
         asset_name: str = "",
@@ -439,6 +441,7 @@ class Contour:
         self.holes = list(holes) if holes is not None else []
         self.connected_frames = list(connected_frames) if connected_frames is not None else []
         self.patterns = list(patterns) if patterns is not None else []
+        self.screw_hole_centers = list(screw_hole_centers) if screw_hole_centers is not None else []
         self.name = name
         self.asset_id = asset_id
         self.asset_name = asset_name
@@ -1033,6 +1036,9 @@ class BottomFaceParams:
     """
     enabled: bool = False               # 是否启用底面封闭
     thickness: float = 1.0              # 底面厚度 (mm)，层数自动根据层高计算
+
+
+    screw_hole_diameter: float = 4.0
 
 
 @dataclass
@@ -1738,6 +1744,7 @@ def deserialize_params(data: dict) -> SliceParams:
         bf_data = data["bottom_face"]
         _reject_legacy_layer_key("bottom_face", bf_data, "thickness", "thickness_layers")
         params.bottom_face.enabled = bf_data.get("enabled", False)
+        params.bottom_face.screw_hole_diameter = bf_data.get("screw_hole_diameter", 4.0)
         if "thickness_layers" in bf_data:
             params.bottom_face.thickness = _layers_to_height(
                 bf_data["thickness_layers"],
