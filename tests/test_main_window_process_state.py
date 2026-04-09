@@ -287,6 +287,50 @@ def test_primary_export_selection_persists_across_main_window_instances(
         second_window.deleteLater()
 
 
+def test_screw_hole_button_follows_restored_bottom_face_checkbox_state(
+    qapp, monkeypatch, workspace_tmp_dir
+):
+    from src.business.settings_manager import init_settings_manager as real_init_settings_manager
+
+    settings_dir = workspace_tmp_dir / "config"
+
+    monkeypatch.setattr(
+        "src.ui.main_window.init_settings_manager",
+        lambda: real_init_settings_manager(str(settings_dir)),
+    )
+
+    first_window = MainWindow()
+
+    try:
+        first_window._on_nav_changed("project")
+        first_window.param_panel.bottom_face_enabled.setChecked(True)
+        qapp.processEvents()
+        assert first_window.canvas_toolbar.btn_screw_hole.isEnabled() is True
+
+        first_window.close()
+        qapp.processEvents()
+    finally:
+        first_window.deleteLater()
+
+    second_window = MainWindow()
+
+    try:
+        second_window._on_nav_changed("project")
+        qapp.processEvents()
+
+        assert second_window.param_panel.bottom_face_enabled.isChecked() is True
+
+        # Simulate a stale cached copy to ensure the toolbar re-syncs from the panel state.
+        second_window.slice_params.bottom_face.enabled = False
+        second_window._sync_canvas_toolbar_visibility()
+        qapp.processEvents()
+
+        assert second_window.canvas_toolbar.btn_screw_hole.isEnabled() is True
+        assert second_window._sync_params_from_panel().bottom_face.enabled is True
+    finally:
+        second_window.deleteLater()
+
+
 def test_save_project_blocked_when_canvas_has_no_graphics(qapp, monkeypatch):
     window = MainWindow()
     messages = []

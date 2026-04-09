@@ -794,6 +794,12 @@ class MainWindow(QMainWindow):
         if hasattr(self, "title_bar") and hasattr(self.title_bar, "btn_export_stl"):
             self.title_bar.btn_export_stl.setEnabled(True)
 
+    def _sync_params_from_panel(self) -> SliceParams:
+        """Sync the cached slice params from the visible parameter panel without side effects."""
+        if hasattr(self, "param_panel") and self.param_panel:
+            self.slice_params = self.param_panel.get_params()
+        return self.slice_params
+
     def _invalidate_processed_result(self):
         """清除当前处理结果，要求重新点击 Process。"""
         had_processed_output = (
@@ -807,7 +813,7 @@ class MainWindow(QMainWindow):
 
     def _on_params_changed(self):
         """参数变化后，当前处理结果失效。"""
-        self.slice_params = self.param_panel.get_params()
+        self._sync_params_from_panel()
         if self.canvas.current_tool == "screw_hole" and not self.slice_params.bottom_face.enabled:
             self._exit_screw_hole_mode()
         self._sync_canvas_platform_size(self.slice_params)
@@ -877,7 +883,7 @@ class MainWindow(QMainWindow):
 
     def _sync_canvas_platform_size(self, params: Optional[SliceParams] = None) -> None:
         """å°†ç”»å¸ƒå¹³å°å°ºå¯¸åŒæ­¥åˆ°å½“å‰æœºå™¨å‚æ•°ã€‚"""
-        target_params = params or self.slice_params
+        target_params = params or self._sync_params_from_panel()
         machine = target_params.machine
         width = float(machine.bed_width)
         height = float(machine.bed_depth)
@@ -893,7 +899,7 @@ class MainWindow(QMainWindow):
         params: Optional[SliceParams] = None,
     ) -> Optional[str]:
         """Return the current prime tower validation error, if any."""
-        target_params = params or self.slice_params
+        target_params = params or self._sync_params_from_panel()
         try:
             self.slice_engine.validate_prime_tower_2d_placement(self.contours, target_params)
         except PrimeTowerValidationError as exc:
@@ -908,7 +914,7 @@ class MainWindow(QMainWindow):
         if not hasattr(self, "canvas"):
             return
 
-        target_params = params or self.slice_params
+        target_params = params or self._sync_params_from_panel()
         if not target_params.prime_tower.enabled:
             self.canvas.set_prime_tower_overlay(None)
             self._refresh_screw_hole_overlay(target_params)
@@ -926,7 +932,7 @@ class MainWindow(QMainWindow):
         if not hasattr(self, "canvas"):
             return
 
-        target_params = params or self.slice_params
+        target_params = params or self._sync_params_from_panel()
         self._cached_screw_hole_geometries = {}
         if hasattr(self, "canvas_toolbar"):
             self.canvas_toolbar.set_screw_hole_enabled(target_params.bottom_face.enabled)
@@ -1483,10 +1489,11 @@ class MainWindow(QMainWindow):
     def _sync_canvas_toolbar_visibility(self):
         """Show the canvas toolbar only in the 2D project editor."""
         if hasattr(self, "canvas_toolbar"):
+            current_params = self._sync_params_from_panel()
             self.canvas_toolbar.setVisible(
                 self.current_main_view == "editor" and self.current_view == "2d"
             )
-            self.canvas_toolbar.set_screw_hole_enabled(self.slice_params.bottom_face.enabled)
+            self.canvas_toolbar.set_screw_hole_enabled(current_params.bottom_face.enabled)
             self._sync_release_asset_button_state()
 
     def _sync_transform_panel_visibility(self):
@@ -2192,6 +2199,7 @@ class MainWindow(QMainWindow):
             self.canvas.fit_view()
             self.project_panel.update_contours(self.contours)
             self.param_panel.set_params(self.slice_params)
+            self._sync_params_from_panel()
             self._sync_canvas_platform_size(self.slice_params)
             self._refresh_prime_tower_overlay(self.slice_params)
 
@@ -2275,7 +2283,7 @@ class MainWindow(QMainWindow):
 
         try:
             # 获取当前参数
-            current_params = self.param_panel.get_params()
+            current_params = self._sync_params_from_panel()
 
             # 获取项目名称
             project_name = Path(file_path).stem
@@ -2679,6 +2687,8 @@ class MainWindow(QMainWindow):
 
     def _on_screw_hole_tool(self):
         """Toggle manual screw-hole editing mode."""
+        current_params = self._sync_params_from_panel()
+        self._refresh_prime_tower_overlay(current_params)
         if self.canvas.current_tool == "screw_hole":
             self._exit_screw_hole_mode()
             return
@@ -2691,7 +2701,7 @@ class MainWindow(QMainWindow):
             )
             return
 
-        if not self.slice_params.bottom_face.enabled:
+        if not current_params.bottom_face.enabled:
             QMessageBox.information(
                 self,
                 self.tr("Info"),
@@ -3466,8 +3476,9 @@ class MainWindow(QMainWindow):
                 # 更新参数面板
                 if hasattr(self, 'param_panel') and self.param_panel:
                     self.param_panel.set_params(saved_params)
-                self._sync_canvas_platform_size(saved_params)
-                self._refresh_prime_tower_overlay(saved_params)
+                    self._sync_params_from_panel()
+                self._sync_canvas_platform_size(self.slice_params)
+                self._refresh_prime_tower_overlay(self.slice_params)
                 self._update_status(self.tr("Loaded saved parameters"))
 
     def _save_current_params(self):
