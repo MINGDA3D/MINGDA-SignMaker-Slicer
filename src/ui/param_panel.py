@@ -1773,7 +1773,7 @@ class ParamPanel(QWidget):
 
         self.panel_step_width = self._create_double_spinbox()
         self.panel_step_width.setRange(0.5, 20)
-        self.panel_step_width.setValue(3)
+        self.panel_step_width.setValue(1.8)
         self.panel_step_width.setSuffix(" mm")
         self.panel_step_width.setEnabled(False)
         self.panel_step_width.valueChanged.connect(self._on_param_changed)
@@ -1811,7 +1811,7 @@ class ParamPanel(QWidget):
 
         self.baseplate_step_width = self._create_double_spinbox()
         self.baseplate_step_width.setRange(0.5, 20)
-        self.baseplate_step_width.setValue(3)
+        self.baseplate_step_width.setValue(1.8)
         self.baseplate_step_width.setSuffix(" mm")
         self.baseplate_step_width.setEnabled(False)
         self.baseplate_step_width.valueChanged.connect(self._on_param_changed)

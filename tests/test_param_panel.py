@@ -564,6 +564,17 @@ def test_step_speed_roundtrips_through_print_settings(qapp):
     assert restored.step.print_speed == pytest.approx(41.0)
 
 
+def test_step_width_defaults_to_one_point_eight_mm(qapp):
+    panel = ParamPanel()
+
+    assert panel.panel_step_width.value() == pytest.approx(1.8)
+    assert panel.baseplate_step_width.value() == pytest.approx(1.8)
+
+    restored = panel.get_params()
+    assert restored.step.panel_step_width == pytest.approx(1.8)
+    assert restored.step.baseplate_step_width == pytest.approx(1.8)
+
+
 def test_skirt_wall_gap_is_clamped_to_one_mm_in_ui(qapp):
     panel = ParamPanel()
 

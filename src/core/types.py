@@ -869,13 +869,13 @@ class StepParams:
     # 面板台阶（顶部）- 用于安装面板
     panel_step_enabled: bool = False
     panel_step_height: float = 28.0     # 面板厚度/台阶高度 (mm)
-    panel_step_width: float = 3.0       # 台阶向内延伸宽度 (mm)
+    panel_step_width: float = 1.8       # 台阶向内延伸宽度 (mm)
     panel_step_is_v_groove: bool = False  # 是否为V槽
 
     # 底板台阶（底部）- 用于安装底板
     baseplate_step_enabled: bool = False
     baseplate_step_height: float = 3.0  # 底板厚度/台阶高度 (mm)
-    baseplate_step_width: float = 3.0   # 台阶向内延伸宽度 (mm)
+    baseplate_step_width: float = 1.8   # 台阶向内延伸宽度 (mm)
     baseplate_step_is_v_groove: bool = False  # 是否为V槽
 
     # 自定义台阶列表
@@ -884,10 +884,10 @@ class StepParams:
     # 兼容旧参数（将逐步弃用）
     top_step_enabled: bool = False
     top_step_height: float = 2.0
-    top_step_width: float = 3.0
+    top_step_width: float = 1.8
     bottom_groove_enabled: bool = False
     bottom_groove_height: float = 2.0
-    bottom_groove_depth: float = 3.0
+    bottom_groove_depth: float = 1.8
 
     # 打印参数
     step_thickness: float = 0.3        # 台阶层高（用于V槽分层）
@@ -1580,7 +1580,7 @@ def deserialize_params(data: dict) -> SliceParams:
                 panel_step_layers,
                 params.shell.layer_height,
             )
-        params.step.panel_step_width = step_data.get("panel_step_width", 3.0)
+        params.step.panel_step_width = step_data.get("panel_step_width", 1.8)
         params.step.panel_step_is_v_groove = step_data.get("panel_step_is_v_groove", False)
         params.step.baseplate_step_enabled = step_data.get("baseplate_step_enabled", False)
         baseplate_step_layers = step_data.get("baseplate_step_layers")
@@ -1589,7 +1589,7 @@ def deserialize_params(data: dict) -> SliceParams:
                 baseplate_step_layers,
                 params.shell.layer_height,
             )
-        params.step.baseplate_step_width = step_data.get("baseplate_step_width", 3.0)
+        params.step.baseplate_step_width = step_data.get("baseplate_step_width", 1.8)
         params.step.baseplate_step_is_v_groove = step_data.get("baseplate_step_is_v_groove", False)
         params.step.top_step_enabled = step_data.get("top_step_enabled", params.step.panel_step_enabled)
         top_step_layers = step_data.get("top_step_layers", panel_step_layers)
