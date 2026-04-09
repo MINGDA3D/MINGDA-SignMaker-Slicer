@@ -4,37 +4,37 @@
 <context>
     <name>Canvas2D</name>
     <message>
-        <location filename="../src/ui/canvas_2d.py" line="1945"/>
+        <location filename="../src/ui/canvas_2d.py" line="2124"/>
         <source>Delete</source>
         <translation>Supprimer</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_2d.py" line="1953"/>
+        <location filename="../src/ui/canvas_2d.py" line="2132"/>
         <source>Mirror</source>
         <translation>Miroir</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_2d.py" line="1954"/>
+        <location filename="../src/ui/canvas_2d.py" line="2133"/>
         <source>Mirror X</source>
         <translation>Miroir X</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_2d.py" line="1956"/>
+        <location filename="../src/ui/canvas_2d.py" line="2135"/>
         <source>Mirror Y</source>
         <translation>Miroir Y</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_2d.py" line="1963"/>
+        <location filename="../src/ui/canvas_2d.py" line="2142"/>
         <source>Select All</source>
         <translation>Tout sélectionner</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_2d.py" line="1971"/>
+        <location filename="../src/ui/canvas_2d.py" line="2150"/>
         <source>Fit View</source>
         <translation>Ajuster la vue</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_2d.py" line="1976"/>
+        <location filename="../src/ui/canvas_2d.py" line="2155"/>
         <source>Reset View</source>
         <translation>Réinitialiser la vue</translation>
     </message>
@@ -42,69 +42,74 @@
 <context>
     <name>CanvasToolbar</name>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="57"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="58"/>
         <source>Move</source>
         <translation>Déplacer</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="62"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="63"/>
         <source>Rotate</source>
         <translation>Rotation</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="67"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="68"/>
         <source>Scale</source>
         <translation>Échelle</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="75"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="76"/>
         <source>Mirror Horizontal</source>
         <translation>Miroir horizontal</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="79"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="80"/>
         <source>Mirror Vertical</source>
         <translation>Miroir vertical</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="86"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="87"/>
         <source>Intersection</source>
         <translation>Intersection</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="90"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="91"/>
         <source>Difference</source>
         <translation>Différence</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="97"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="98"/>
         <source>Group</source>
         <translation>Grouper</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="101"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="102"/>
         <source>Ungroup</source>
         <translation>Dégrouper</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="107"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="108"/>
         <source>Explode Asset</source>
         <translation>Décomposer la ressource</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="116"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="117"/>
         <source>Text</source>
         <translation>Texte</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="123"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="124"/>
         <source>Start Point</source>
         <translation>Point de départ</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="128"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="129"/>
         <source>Print Order</source>
         <translation>Ordre d&apos;impression</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/canvas_toolbar.py" line="134"/>
+        <source>Screw Hole</source>
+        <translation>Trou de vis</translation>
     </message>
 </context>
 <context>
@@ -161,864 +166,912 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../src/ui/main_window.py" line="164"/>
+        <location filename="../src/ui/main_window.py" line="171"/>
         <source>MINGDA SignMaker - LED Sign Letter Slicer</source>
         <translation>MINGDA SignMaker - Trancheur pour lettres lumineuses LED</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="176"/>
+        <location filename="../src/ui/main_window.py" line="183"/>
         <source>Title Bar</source>
         <translation>Barre de titre</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="214"/>
+        <location filename="../src/ui/main_window.py" line="221"/>
         <source>File(&amp;F)</source>
         <translation>Fichier(&amp;F)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="217"/>
-        <location filename="../src/ui/main_window.py" line="1656"/>
+        <location filename="../src/ui/main_window.py" line="224"/>
+        <location filename="../src/ui/main_window.py" line="1750"/>
         <source>New Project</source>
         <translation>Nouveau projet</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="223"/>
+        <location filename="../src/ui/main_window.py" line="230"/>
         <source>Open DXF/SVG...</source>
         <translation>Ouvrir DXF/SVG...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="231"/>
-        <location filename="../src/ui/main_window.py" line="2159"/>
+        <location filename="../src/ui/main_window.py" line="238"/>
+        <location filename="../src/ui/main_window.py" line="2257"/>
         <source>Save Project</source>
         <translation>Enregistrer le projet</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="237"/>
+        <location filename="../src/ui/main_window.py" line="244"/>
         <source>Save As...</source>
         <translation>Enregistrer sous...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="250"/>
-        <location filename="../src/ui/main_window.py" line="2259"/>
+        <location filename="../src/ui/main_window.py" line="257"/>
+        <location filename="../src/ui/main_window.py" line="2357"/>
         <source>Export STL...</source>
         <translation>Exporter STL...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="258"/>
-        <location filename="../src/ui/main_window.py" line="820"/>
+        <location filename="../src/ui/main_window.py" line="265"/>
+        <location filename="../src/ui/main_window.py" line="840"/>
         <source>Exit</source>
         <translation>Quitter</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="822"/>
+        <location filename="../src/ui/main_window.py" line="842"/>
         <source>The current project has unsaved changes. Do you want to save before exiting?</source>
         <translation>Le projet actuel contient des modifications non enregistrées. Voulez-vous enregistrer avant de quitter ?</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="825"/>
+        <location filename="../src/ui/main_window.py" line="845"/>
         <source>Save</source>
         <translation>Enregistrer</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="829"/>
+        <location filename="../src/ui/main_window.py" line="849"/>
         <source>Discard</source>
         <translation>Ignorer</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="833"/>
+        <location filename="../src/ui/main_window.py" line="853"/>
         <source>Cancel</source>
         <translation>Annuler</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="264"/>
+        <location filename="../src/ui/main_window.py" line="271"/>
         <source>Edit(&amp;E)</source>
         <translation>Édition(&amp;E)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="244"/>
-        <location filename="../src/ui/main_window.py" line="2258"/>
+        <location filename="../src/ui/main_window.py" line="251"/>
+        <location filename="../src/ui/main_window.py" line="2356"/>
         <source>Export G-code...</source>
         <translation>Exporter le G-code...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="266"/>
+        <location filename="../src/ui/main_window.py" line="273"/>
         <source>Undo</source>
         <translation>Annuler</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="271"/>
+        <location filename="../src/ui/main_window.py" line="278"/>
         <source>Redo</source>
         <translation>Rétablir</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="278"/>
+        <location filename="../src/ui/main_window.py" line="285"/>
         <source>Select All</source>
         <translation>Tout sélectionner</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="282"/>
+        <location filename="../src/ui/main_window.py" line="289"/>
         <source>Delete</source>
         <translation>Supprimer</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="287"/>
+        <location filename="../src/ui/main_window.py" line="294"/>
         <source>View(&amp;V)</source>
         <translation>Affichage(&amp;V)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="289"/>
+        <location filename="../src/ui/main_window.py" line="296"/>
         <source>2D View</source>
         <translation>Vue 2D</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="294"/>
+        <location filename="../src/ui/main_window.py" line="301"/>
         <source>3D View</source>
         <translation>Vue 3D</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="301"/>
+        <location filename="../src/ui/main_window.py" line="308"/>
         <source>Fit to Window</source>
         <translation>Ajuster à la fenêtre</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="306"/>
+        <location filename="../src/ui/main_window.py" line="313"/>
         <source>Zoom In</source>
         <translation>Agrandir</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="310"/>
+        <location filename="../src/ui/main_window.py" line="317"/>
         <source>Zoom Out</source>
         <translation>Réduire</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="322"/>
+        <location filename="../src/ui/main_window.py" line="329"/>
         <source>Preview G-code</source>
         <translation>Aperçu G-code</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="327"/>
+        <location filename="../src/ui/main_window.py" line="334"/>
         <source>Help(&amp;H)</source>
         <translation>Aide(&amp;H)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="329"/>
+        <location filename="../src/ui/main_window.py" line="336"/>
         <source>About</source>
         <translation>À propos</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="454"/>
-        <location filename="../src/ui/main_window.py" line="2777"/>
+        <location filename="../src/ui/main_window.py" line="461"/>
+        <location filename="../src/ui/main_window.py" line="3003"/>
         <source>Scale</source>
         <translation>Mise à l&apos;échelle</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="573"/>
-        <location filename="../src/ui/main_window.py" line="1271"/>
-        <location filename="../src/ui/main_window.py" line="2769"/>
+        <location filename="../src/ui/main_window.py" line="580"/>
+        <location filename="../src/ui/main_window.py" line="1360"/>
+        <location filename="../src/ui/main_window.py" line="2995"/>
         <source>Arrow keys: 1mm, Shift+Arrow: 10mm</source>
         <translation>Flèches : 1 mm, Maj+Flèche : 10 mm</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="721"/>
-        <location filename="../src/ui/main_window.py" line="2617"/>
-        <location filename="../src/ui/main_window.py" line="2680"/>
-        <location filename="../src/ui/main_window.py" line="3000"/>
+        <location filename="../src/ui/main_window.py" line="729"/>
+        <location filename="../src/ui/main_window.py" line="2752"/>
+        <location filename="../src/ui/main_window.py" line="2840"/>
+        <location filename="../src/ui/main_window.py" line="2904"/>
+        <location filename="../src/ui/main_window.py" line="3226"/>
         <source>Ready</source>
         <translation>Prêt</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="755"/>
+        <location filename="../src/ui/main_window.py" line="767"/>
         <source>Executed: </source>
         <translation>Exécuté : </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="758"/>
+        <location filename="../src/ui/main_window.py" line="770"/>
         <source>Undone: </source>
         <translation>Annulé : </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="761"/>
+        <location filename="../src/ui/main_window.py" line="773"/>
         <source>Redone: </source>
         <translation>Rétabli : </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1115"/>
-        <location filename="../src/ui/main_window.py" line="1788"/>
+        <location filename="../src/ui/main_window.py" line="1204"/>
+        <location filename="../src/ui/main_window.py" line="1882"/>
         <source>Asset</source>
         <translation>Ressource</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1266"/>
-        <location filename="../src/ui/main_window.py" line="2765"/>
+        <location filename="../src/ui/main_window.py" line="1355"/>
+        <location filename="../src/ui/main_window.py" line="2991"/>
         <source>Position</source>
         <translation>Position</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1355"/>
-        <location filename="../src/ui/main_window.py" line="1368"/>
+        <location filename="../src/ui/main_window.py" line="1444"/>
+        <location filename="../src/ui/main_window.py" line="1457"/>
         <source>Loading 3D preview...</source>
         <translation>Chargement de l&apos;aperçu 3D...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1389"/>
+        <location filename="../src/ui/main_window.py" line="1478"/>
         <source>3D preview loading failed</source>
         <translation>Échec du chargement de l&apos;aperçu 3D</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1393"/>
+        <location filename="../src/ui/main_window.py" line="1482"/>
         <source>Failed to prepare 3D preview:</source>
         <translation>Impossible de préparer l&apos;aperçu 3D :</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1552"/>
+        <location filename="../src/ui/main_window.py" line="1644"/>
         <source>The selected recent project is no longer available and has been removed from the list.</source>
         <translation>Le projet récent sélectionné n’est plus disponible et a été supprimé de la liste.</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1591"/>
+        <location filename="../src/ui/main_window.py" line="1684"/>
         <source>Home</source>
         <translation>Accueil</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1598"/>
+        <location filename="../src/ui/main_window.py" line="1691"/>
         <source>Project Edit</source>
         <translation>Édition de projet</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1392"/>
-        <location filename="../src/ui/main_window.py" line="1607"/>
+        <location filename="../src/ui/main_window.py" line="1481"/>
+        <location filename="../src/ui/main_window.py" line="1700"/>
         <source>3D Preview</source>
         <translation>Aperçu 3D</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1637"/>
+        <location filename="../src/ui/main_window.py" line="1730"/>
         <source>Settings feature under development...</source>
         <translation>Fonction paramètres en développement...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1639"/>
+        <location filename="../src/ui/main_window.py" line="1732"/>
         <source>Help feature under development...</source>
         <translation>Fonction aide en développement...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1655"/>
+        <location filename="../src/ui/main_window.py" line="1749"/>
         <source>MINGDA SignMaker - New Project</source>
         <translation>MINGDA SignMaker - Nouveau projet</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1667"/>
+        <location filename="../src/ui/main_window.py" line="1761"/>
         <source>Open File</source>
         <translation>Ouvrir un fichier</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1849"/>
+        <location filename="../src/ui/main_window.py" line="1943"/>
         <source>Unsupported Format</source>
         <translation>Format non pris en charge</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1849"/>
+        <location filename="../src/ui/main_window.py" line="1943"/>
         <source>Format not supported: </source>
         <translation>Format non pris en charge : </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2050"/>
+        <location filename="../src/ui/main_window.py" line="2146"/>
         <source>Load </source>
         <translation>Charger </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2071"/>
+        <location filename="../src/ui/main_window.py" line="2167"/>
         <source>Loaded: {file}, {count} contours</source>
         <translation>Chargé : {file}, {count} contours</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1858"/>
-        <location filename="../src/ui/main_window.py" line="2134"/>
+        <location filename="../src/ui/main_window.py" line="1952"/>
+        <location filename="../src/ui/main_window.py" line="2232"/>
         <source>Load Failed</source>
         <translation>Échec du chargement</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1859"/>
+        <location filename="../src/ui/main_window.py" line="1953"/>
         <source>Failed to load file:</source>
         <translation>Impossible de charger le fichier :</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1682"/>
-        <location filename="../src/ui/main_window.py" line="2161"/>
+        <location filename="../src/ui/main_window.py" line="1776"/>
+        <location filename="../src/ui/main_window.py" line="2259"/>
         <source>SignMaker Project (*.smp);;All Files (*)</source>
         <translation>Projet SignMaker (*.smp);;Tous les fichiers (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="315"/>
+        <location filename="../src/ui/main_window.py" line="322"/>
         <source>Process(&amp;P)</source>
         <translation>Traiter(&amp;P)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1669"/>
+        <location filename="../src/ui/main_window.py" line="1763"/>
         <source>Supported Files (*.dxf *.svg *.smp);;SignMaker Project (*.smp);;DXF Files (*.dxf);;SVG Files (*.svg);;All Files (*)</source>
         <translation>Fichiers pris en charge (*.dxf *.svg *.smp);;Projet SignMaker (*.smp);;Fichiers DXF (*.dxf);;Fichiers SVG (*.svg);;Tous les fichiers (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1551"/>
-        <location filename="../src/ui/main_window.py" line="1680"/>
+        <location filename="../src/ui/main_window.py" line="1643"/>
+        <location filename="../src/ui/main_window.py" line="1774"/>
         <source>Open Project</source>
         <translation>Ouvrir le projet</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2121"/>
+        <location filename="../src/ui/main_window.py" line="2219"/>
         <source>Project loaded: {name}, {count} contours</source>
         <translation>Projet chargé : {name}, {count} contours</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2134"/>
+        <location filename="../src/ui/main_window.py" line="2232"/>
         <source>Failed to load project:</source>
         <translation>Impossible de charger le projet :</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2216"/>
+        <location filename="../src/ui/main_window.py" line="2314"/>
         <source>Project saved: </source>
         <translation>Projet enregistré : </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2226"/>
+        <location filename="../src/ui/main_window.py" line="2324"/>
         <source>Save Failed</source>
         <translation>Échec de l&apos;enregistrement</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2226"/>
+        <location filename="../src/ui/main_window.py" line="2324"/>
         <source>Failed to save project:</source>
         <translation>Impossible d&apos;enregistrer le projet :</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2261"/>
+        <location filename="../src/ui/main_window.py" line="2359"/>
         <source>Export Baseplate DXF...</source>
         <translation>Exporter DXF de base...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2262"/>
+        <location filename="../src/ui/main_window.py" line="2360"/>
         <source>Export Panel DXF...</source>
         <translation>Exporter DXF de panneau...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1042"/>
-        <location filename="../src/ui/main_window.py" line="2176"/>
-        <location filename="../src/ui/main_window.py" line="2269"/>
-        <location filename="../src/ui/main_window.py" line="2335"/>
-        <location filename="../src/ui/main_window.py" line="2385"/>
-        <location filename="../src/ui/main_window.py" line="2421"/>
-        <location filename="../src/ui/main_window.py" line="2487"/>
-        <location filename="../src/ui/main_window.py" line="2595"/>
-        <location filename="../src/ui/main_window.py" line="2632"/>
-        <location filename="../src/ui/main_window.py" line="3013"/>
-        <location filename="../src/ui/main_window.py" line="3038"/>
-        <location filename="../src/ui/main_window.py" line="3074"/>
-        <location filename="../src/ui/main_window.py" line="3111"/>
-        <location filename="../src/ui/main_window.py" line="3141"/>
+        <location filename="../src/ui/main_window.py" line="1131"/>
+        <location filename="../src/ui/main_window.py" line="2274"/>
+        <location filename="../src/ui/main_window.py" line="2367"/>
+        <location filename="../src/ui/main_window.py" line="2433"/>
+        <location filename="../src/ui/main_window.py" line="2483"/>
+        <location filename="../src/ui/main_window.py" line="2519"/>
+        <location filename="../src/ui/main_window.py" line="2588"/>
+        <location filename="../src/ui/main_window.py" line="2699"/>
+        <location filename="../src/ui/main_window.py" line="2707"/>
+        <location filename="../src/ui/main_window.py" line="2817"/>
+        <location filename="../src/ui/main_window.py" line="2855"/>
+        <location filename="../src/ui/main_window.py" line="3240"/>
+        <location filename="../src/ui/main_window.py" line="3266"/>
+        <location filename="../src/ui/main_window.py" line="3303"/>
+        <location filename="../src/ui/main_window.py" line="3341"/>
+        <location filename="../src/ui/main_window.py" line="3372"/>
         <source>Info</source>
         <translation>Information</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2269"/>
-        <location filename="../src/ui/main_window.py" line="2335"/>
+        <location filename="../src/ui/main_window.py" line="2367"/>
+        <location filename="../src/ui/main_window.py" line="2433"/>
         <source>Please process first</source>
         <translation>Veuillez d&apos;abord effectuer le traitement</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2313"/>
-        <location filename="../src/ui/main_window.py" line="2369"/>
-        <location filename="../src/ui/main_window.py" line="2407"/>
-        <location filename="../src/ui/main_window.py" line="2443"/>
+        <location filename="../src/ui/main_window.py" line="2411"/>
+        <location filename="../src/ui/main_window.py" line="2467"/>
+        <location filename="../src/ui/main_window.py" line="2505"/>
+        <location filename="../src/ui/main_window.py" line="2541"/>
         <source>Export Success</source>
         <translation>Exportation réussie</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2320"/>
-        <location filename="../src/ui/main_window.py" line="2372"/>
-        <location filename="../src/ui/main_window.py" line="2414"/>
-        <location filename="../src/ui/main_window.py" line="2416"/>
-        <location filename="../src/ui/main_window.py" line="2450"/>
-        <location filename="../src/ui/main_window.py" line="2452"/>
+        <location filename="../src/ui/main_window.py" line="2418"/>
+        <location filename="../src/ui/main_window.py" line="2470"/>
+        <location filename="../src/ui/main_window.py" line="2512"/>
+        <location filename="../src/ui/main_window.py" line="2514"/>
+        <location filename="../src/ui/main_window.py" line="2548"/>
+        <location filename="../src/ui/main_window.py" line="2550"/>
         <source>Export Failed</source>
         <translation>Échec de l&apos;exportation</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2340"/>
+        <location filename="../src/ui/main_window.py" line="2438"/>
         <source>Export STL</source>
         <translation>Exporter STL</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2342"/>
+        <location filename="../src/ui/main_window.py" line="2440"/>
         <source>STL Files (*.stl);;All Files (*)</source>
         <translation>Fichiers STL (*.stl);;Tous les fichiers (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2368"/>
+        <location filename="../src/ui/main_window.py" line="2466"/>
         <source>STL exported: </source>
         <translation>STL exporté : </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2369"/>
+        <location filename="../src/ui/main_window.py" line="2467"/>
         <source>STL saved to:</source>
         <translation>STL enregistré dans :</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2372"/>
+        <location filename="../src/ui/main_window.py" line="2470"/>
         <source>Failed to export STL:</source>
         <translation>Impossible d&apos;exporter le STL :</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2385"/>
-        <location filename="../src/ui/main_window.py" line="2421"/>
-        <location filename="../src/ui/main_window.py" line="2487"/>
+        <location filename="../src/ui/main_window.py" line="2483"/>
+        <location filename="../src/ui/main_window.py" line="2519"/>
+        <location filename="../src/ui/main_window.py" line="2588"/>
         <source>Please import a DXF file first</source>
         <translation>Veuillez d&apos;abord importer un fichier DXF</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2177"/>
+        <location filename="../src/ui/main_window.py" line="2275"/>
         <source>Please import or create graphics before saving</source>
         <translation>Importez ou créez des graphiques avant d&apos;enregistrer</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="929"/>
-        <location filename="../src/ui/main_window.py" line="1060"/>
+        <location filename="../src/ui/main_window.py" line="985"/>
+        <source>{count} screw holes are invalid</source>
+        <translation>{count} trous de vis sont invalides</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1014"/>
+        <location filename="../src/ui/main_window.py" line="1149"/>
         <source>Explode Asset</source>
         <translation>Décomposer la ressource</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1043"/>
+        <location filename="../src/ui/main_window.py" line="1132"/>
         <source>Please select an imported asset first</source>
         <translation>Veuillez d’abord sélectionner une ressource importée</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2280"/>
+        <location filename="../src/ui/main_window.py" line="2378"/>
         <source>Export Blocked</source>
         <translation>Export bloqué</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2281"/>
+        <location filename="../src/ui/main_window.py" line="2379"/>
         <source>Cannot export G-code:</source>
         <translation>Impossible d&apos;exporter le G-code :</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2289"/>
+        <location filename="../src/ui/main_window.py" line="2387"/>
         <source>Export G-code</source>
         <translation>Exporter le G-code</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2291"/>
+        <location filename="../src/ui/main_window.py" line="2389"/>
         <source>G-code Files (*.gcode);;All Files (*)</source>
         <translation>Fichiers G-code (*.gcode);;Tous les fichiers (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2310"/>
+        <location filename="../src/ui/main_window.py" line="2408"/>
         <source>G-code exported: </source>
         <translation>G-code exporté :</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2314"/>
+        <location filename="../src/ui/main_window.py" line="2412"/>
         <source>G-code saved to:</source>
         <translation>G-code enregistré dans :</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2321"/>
+        <location filename="../src/ui/main_window.py" line="2419"/>
         <source>Failed to export G-code:</source>
         <translation>Échec de l&apos;export du G-code :</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2326"/>
+        <location filename="../src/ui/main_window.py" line="2424"/>
         <source>Exporting G-code...</source>
         <translation>Export du G-code...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2390"/>
+        <location filename="../src/ui/main_window.py" line="2488"/>
         <source>Export Baseplate DXF</source>
         <translation>Exporter DXF de la plaque de base</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2392"/>
-        <location filename="../src/ui/main_window.py" line="2428"/>
+        <location filename="../src/ui/main_window.py" line="2490"/>
+        <location filename="../src/ui/main_window.py" line="2526"/>
         <source>DXF Files (*.dxf);;All Files (*)</source>
         <translation>Fichiers DXF (*.dxf);;Tous les fichiers (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2405"/>
+        <location filename="../src/ui/main_window.py" line="2503"/>
         <source>Baseplate DXF exported: </source>
         <translation>DXF de la plaque de base exporté : </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2408"/>
+        <location filename="../src/ui/main_window.py" line="2506"/>
         <source>Baseplate DXF saved to:</source>
         <translation>DXF de la plaque de base enregistré dans :</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2414"/>
+        <location filename="../src/ui/main_window.py" line="2512"/>
         <source>Failed to generate baseplate contour</source>
         <translation>Impossible de générer le contour de la plaque de base</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2416"/>
+        <location filename="../src/ui/main_window.py" line="2514"/>
         <source>Failed to export baseplate DXF:</source>
         <translation>Impossible d&apos;exporter le DXF de la plaque de base :</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2426"/>
+        <location filename="../src/ui/main_window.py" line="2524"/>
         <source>Export Panel DXF</source>
         <translation>Exporter DXF du panneau</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2441"/>
+        <location filename="../src/ui/main_window.py" line="2539"/>
         <source>Panel DXF exported: </source>
         <translation>DXF du panneau exporté : </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2444"/>
+        <location filename="../src/ui/main_window.py" line="2542"/>
         <source>Panel DXF saved to:</source>
         <translation>DXF du panneau enregistré dans :</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2450"/>
+        <location filename="../src/ui/main_window.py" line="2548"/>
         <source>Failed to generate panel contour</source>
         <translation>Impossible de générer le contour du panneau</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2452"/>
+        <location filename="../src/ui/main_window.py" line="2550"/>
         <source>Failed to export panel DXF:</source>
         <translation>Impossible d&apos;exporter le DXF du panneau :</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2467"/>
+        <location filename="../src/ui/main_window.py" line="2566"/>
         <source>Nothing to undo</source>
         <translation>Rien à annuler</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2482"/>
+        <location filename="../src/ui/main_window.py" line="2582"/>
         <source>Nothing to redo</source>
         <translation>Rien à rétablir</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2499"/>
-        <location filename="../src/ui/main_window.py" line="2513"/>
+        <location filename="../src/ui/main_window.py" line="2600"/>
+        <location filename="../src/ui/main_window.py" line="2614"/>
         <source>Processing Blocked</source>
         <translation>Traitement bloqué</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2501"/>
+        <location filename="../src/ui/main_window.py" line="2602"/>
         <source>Some contours exceed the platform size. Please move or scale them back inside the platform before processing.</source>
         <translation>Certains contours dépassent la taille du plateau. Veuillez les déplacer ou les redimensionner afin qu&apos;ils restent dans le plateau avant de lancer le traitement.</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2505"/>
+        <location filename="../src/ui/main_window.py" line="2606"/>
         <source>Processing blocked: contours exceed platform size</source>
         <translation>Traitement bloqué : des contours dépassent la taille du plateau</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2633"/>
+        <location filename="../src/ui/main_window.py" line="2700"/>
+        <source>No contours available for screw-hole editing</source>
+        <translation>Aucun contour disponible pour modifier les trous de vis</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2708"/>
+        <source>Enable Bottom Face before editing screw holes</source>
+        <translation>Activez le fond avant de modifier les trous de vis</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2724"/>
+        <source>Edit Screw Holes</source>
+        <translation>Modifier les trous de vis</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2734"/>
+        <source>Click a screw hole to select it, click empty space to add, Delete to remove, Esc to finish</source>
+        <translation>Cliquez sur un trou de vis pour le sélectionner, cliquez sur une zone vide pour en ajouter un, appuyez sur Suppr pour supprimer, puis sur Échap pour terminer</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2760"/>
+        <source>Click inside a valid bottom-face region</source>
+        <translation>Cliquez dans une zone valide de la face inférieure</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2770"/>
+        <source>Screw hole added</source>
+        <translation>Trou de vis ajouté</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2790"/>
+        <source>Screw hole updated</source>
+        <translation>Trou de vis mis à jour</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2806"/>
+        <source>Screw hole removed</source>
+        <translation>Trou de vis supprimé</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2856"/>
         <source>No contours available for print order selection</source>
         <translation>Aucun contour disponible pour définir l&apos;ordre d&apos;impression</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2646"/>
+        <location filename="../src/ui/main_window.py" line="2870"/>
         <source>Set Print Order</source>
         <translation>Définir l&apos;ordre d&apos;impression</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2654"/>
+        <location filename="../src/ui/main_window.py" line="2878"/>
         <source>Click contours or holes in desired print order, Esc to finish</source>
         <translation>Cliquez sur les contours ou les trous dans l&apos;ordre d&apos;impression souhaité, Échap pour terminer</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2705"/>
+        <location filename="../src/ui/main_window.py" line="2929"/>
         <source>Print order updated</source>
         <translation>Ordre d&apos;impression mis à jour</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3165"/>
+        <location filename="../src/ui/main_window.py" line="3396"/>
         <source>Text</source>
         <translation>Texte</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3171"/>
+        <location filename="../src/ui/main_window.py" line="3402"/>
         <source>Add Contours</source>
         <translation>Ajouter des contours</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3209"/>
+        <location filename="../src/ui/main_window.py" line="3440"/>
         <source>Open Tutorial Failed</source>
         <translation>Ouverture du tutoriel impossible</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3210"/>
+        <location filename="../src/ui/main_window.py" line="3441"/>
         <source>Failed to open the tutorial playlist in the default browser.</source>
         <translation>Impossible d’ouvrir la playlist du tutoriel dans le navigateur par défaut.</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3250"/>
+        <location filename="../src/ui/main_window.py" line="3482"/>
         <source>Loaded saved parameters</source>
         <translation>Paramètres sauvegardés chargés</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2563"/>
+        <location filename="../src/ui/main_window.py" line="2665"/>
         <source>Switched to {view} view</source>
         <translation>Basculé vers la vue {view}</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2771"/>
+        <location filename="../src/ui/main_window.py" line="2997"/>
         <source>Rotation</source>
         <translation>Rotation</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2790"/>
+        <location filename="../src/ui/main_window.py" line="3016"/>
         <source>Tool: </source>
         <translation>Outil : </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2840"/>
+        <location filename="../src/ui/main_window.py" line="3066"/>
         <source>Move to: X={x:.2f}, Y={y:.2f}</source>
         <translation>Déplacer vers : X={x:.2f}, Y={y:.2f}</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2850"/>
+        <location filename="../src/ui/main_window.py" line="3076"/>
         <source>Rotation: {angle:.2f}°</source>
         <translation>Rotation : {angle:.2f}°</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2926"/>
-        <location filename="../src/ui/main_window.py" line="2964"/>
-        <location filename="../src/ui/main_window.py" line="2987"/>
+        <location filename="../src/ui/main_window.py" line="3152"/>
+        <location filename="../src/ui/main_window.py" line="3190"/>
+        <location filename="../src/ui/main_window.py" line="3213"/>
         <source>Scale: {px:.1f}% x {py:.1f}%</source>
         <translation>Échelle : {px:.1f}% x {py:.1f}%</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3013"/>
+        <location filename="../src/ui/main_window.py" line="3240"/>
         <source>Please select a contour first</source>
         <translation>Veuillez d&apos;abord sélectionner un contour</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3030"/>
+        <location filename="../src/ui/main_window.py" line="3257"/>
         <source>Mirror {axis} complete</source>
         <translation>Miroir {axis} terminé</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3039"/>
-        <location filename="../src/ui/main_window.py" line="3075"/>
-        <location filename="../src/ui/main_window.py" line="3112"/>
+        <location filename="../src/ui/main_window.py" line="3267"/>
+        <location filename="../src/ui/main_window.py" line="3304"/>
+        <location filename="../src/ui/main_window.py" line="3342"/>
         <source>Please select at least two contours</source>
         <translation>Veuillez sélectionner au moins deux contours</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3051"/>
-        <location filename="../src/ui/main_window.py" line="3059"/>
+        <location filename="../src/ui/main_window.py" line="3279"/>
+        <location filename="../src/ui/main_window.py" line="3287"/>
         <source>Intersection</source>
         <translation>Intersection</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3087"/>
-        <location filename="../src/ui/main_window.py" line="3095"/>
+        <location filename="../src/ui/main_window.py" line="3316"/>
+        <location filename="../src/ui/main_window.py" line="3324"/>
         <source>Difference</source>
         <translation>Différence</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3122"/>
+        <location filename="../src/ui/main_window.py" line="3352"/>
         <source>Already grouped</source>
         <translation>Déjà groupé</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="927"/>
-        <location filename="../src/ui/main_window.py" line="3125"/>
+        <location filename="../src/ui/main_window.py" line="1012"/>
+        <location filename="../src/ui/main_window.py" line="3355"/>
         <source>Group</source>
         <translation>Grouper</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3142"/>
+        <location filename="../src/ui/main_window.py" line="3373"/>
         <source>Please select a grouped contour first</source>
         <translation>Veuillez d’abord sélectionner un contour groupé</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="928"/>
-        <location filename="../src/ui/main_window.py" line="3146"/>
+        <location filename="../src/ui/main_window.py" line="1013"/>
+        <location filename="../src/ui/main_window.py" line="3377"/>
         <source>Ungroup</source>
         <translation>Dégrouper</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3176"/>
+        <location filename="../src/ui/main_window.py" line="3407"/>
         <source>Text added</source>
         <translation>Texte ajouté</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3178"/>
+        <location filename="../src/ui/main_window.py" line="3409"/>
         <source>Error</source>
         <translation>Erreur</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3184"/>
+        <location filename="../src/ui/main_window.py" line="3415"/>
         <source>About MINGDA SignMaker</source>
         <translation>À propos de MINGDA SignMaker</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3186"/>
+        <location filename="../src/ui/main_window.py" line="3417"/>
         <source>Professional LED Sign Letter 3D Printing Slicer</source>
         <translation>Trancheur professionnel pour impression 3D de lettres lumineuses LED</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3187"/>
+        <location filename="../src/ui/main_window.py" line="3418"/>
         <source>Version: </source>
         <translation>Version : </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3189"/>
+        <location filename="../src/ui/main_window.py" line="3420"/>
         <source>Features:</source>
         <translation>Fonctionnalités :</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3191"/>
+        <location filename="../src/ui/main_window.py" line="3422"/>
         <source>DXF/SVG file import</source>
         <translation>Importation de fichiers DXF/SVG</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3192"/>
+        <location filename="../src/ui/main_window.py" line="3423"/>
         <source>Straight/Bevel/Custom edges</source>
         <translation>Bords droits/biseautés/personnalisés</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3193"/>
+        <location filename="../src/ui/main_window.py" line="3424"/>
         <source>Multi-color printing support</source>
         <translation>Prise en charge de l&apos;impression multicolore</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3194"/>
+        <location filename="../src/ui/main_window.py" line="3425"/>
         <source>Step/V-groove</source>
         <translation>Marche/Rainure en V</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3195"/>
+        <location filename="../src/ui/main_window.py" line="3426"/>
         <source>Anti-warping skirt</source>
         <translation>Jupe anti-déformation</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3196"/>
+        <location filename="../src/ui/main_window.py" line="3427"/>
         <source>Connected letters</source>
         <translation>Lettres connectées</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3221"/>
+        <location filename="../src/ui/main_window.py" line="3452"/>
         <source>Language Changed</source>
         <translation>Langue modifiée</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3222"/>
+        <location filename="../src/ui/main_window.py" line="3453"/>
         <source>Language has been changed to {lang}. Please restart the application for full effect.</source>
         <translation>La langue a été changée en {lang}. Veuillez redémarrer l&apos;application pour appliquer complètement.</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3229"/>
+        <location filename="../src/ui/main_window.py" line="3460"/>
         <source>Language Change Failed</source>
         <translation>Échec du changement de langue</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3230"/>
+        <location filename="../src/ui/main_window.py" line="3461"/>
         <source>Translation file for {lang} is not available yet.</source>
         <translation>Le fichier de traduction pour {lang} n&apos;est pas encore disponible.</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="429"/>
+        <location filename="../src/ui/main_window.py" line="436"/>
         <source>Angle</source>
         <translation>Angle</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2775"/>
+        <location filename="../src/ui/main_window.py" line="3001"/>
         <source>Drag grabber on ring to rotate</source>
         <translation>Glisser la poignée sur l&apos;anneau pour pivoter</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="493"/>
+        <location filename="../src/ui/main_window.py" line="500"/>
         <source>Size</source>
         <translation>Taille</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="536"/>
+        <location filename="../src/ui/main_window.py" line="543"/>
         <source>Uniform Scale</source>
         <translation>Échelle uniforme</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2781"/>
+        <location filename="../src/ui/main_window.py" line="3007"/>
         <source>Drag to scale, input exact values above</source>
         <translation>Glisser pour redimensionner, saisir les valeurs exactes ci-dessus</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1854"/>
+        <location filename="../src/ui/main_window.py" line="1948"/>
         <source>Loading file...</source>
         <translation>Chargement du fichier...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2376"/>
+        <location filename="../src/ui/main_window.py" line="2474"/>
         <source>Exporting STL...</source>
         <translation>Exportation STL...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="317"/>
+        <location filename="../src/ui/main_window.py" line="324"/>
         <source>Start Processing</source>
         <translation>Lancer le traitement</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1603"/>
-        <location filename="../src/ui/main_window.py" line="2544"/>
+        <location filename="../src/ui/main_window.py" line="1696"/>
+        <location filename="../src/ui/main_window.py" line="2645"/>
         <source>Processing...</source>
         <translation>Traitement...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2531"/>
+        <location filename="../src/ui/main_window.py" line="2632"/>
         <source>Processing complete: {layers} layers, estimated time: {time:.1f} minutes</source>
         <translation>Traitement terminé : {layers} couches, temps estimé : {time:.1f} minutes</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2539"/>
+        <location filename="../src/ui/main_window.py" line="2640"/>
         <source>Processing Failed</source>
         <translation>Échec du traitement</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2539"/>
+        <location filename="../src/ui/main_window.py" line="2640"/>
         <source>Error during processing:</source>
         <translation>Erreur lors du traitement :</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2540"/>
+        <location filename="../src/ui/main_window.py" line="2641"/>
         <source>Processing failed</source>
         <translation>Échec du traitement</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2409"/>
-        <location filename="../src/ui/main_window.py" line="2445"/>
+        <location filename="../src/ui/main_window.py" line="2507"/>
+        <location filename="../src/ui/main_window.py" line="2543"/>
         <source>Outer clearance: </source>
         <translation>Jeu du contour exterieur : </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2410"/>
-        <location filename="../src/ui/main_window.py" line="2446"/>
+        <location filename="../src/ui/main_window.py" line="2508"/>
+        <location filename="../src/ui/main_window.py" line="2544"/>
         <source>Hole clearance: </source>
         <translation>Jeu des trous : </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2411"/>
-        <location filename="../src/ui/main_window.py" line="2447"/>
+        <location filename="../src/ui/main_window.py" line="2509"/>
+        <location filename="../src/ui/main_window.py" line="2545"/>
         <source>Laser kerf: </source>
         <translation>Trait de coupe laser : </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2596"/>
+        <location filename="../src/ui/main_window.py" line="2818"/>
         <source>No contours available for start point selection</source>
         <translation>Aucun contour disponible pour sélectionner un point de départ</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2607"/>
+        <location filename="../src/ui/main_window.py" line="2830"/>
         <source>Click a corner on any contour or hole, Esc to exit</source>
         <translation>Cliquez sur un angle de n&apos;importe quel contour ou trou, puis appuyez sur Échap pour quitter</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2736"/>
+        <location filename="../src/ui/main_window.py" line="2960"/>
         <source>Set Start Point</source>
         <translation>Définir le point de départ</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2747"/>
+        <location filename="../src/ui/main_window.py" line="2971"/>
         <source>Start point updated</source>
         <translation>Point de départ mis à jour</translation>
     </message>
@@ -1162,7 +1215,7 @@
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="566"/>
-        <location filename="../src/ui/param_panel.py" line="2909"/>
+        <location filename="../src/ui/param_panel.py" line="2923"/>
         <source>No profile selected</source>
         <translation>Aucun profil sélectionné</translation>
     </message>
@@ -1187,203 +1240,203 @@
         <translation>Épaisseur inférieure :</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="672"/>
+        <location filename="../src/ui/param_panel.py" line="683"/>
         <source>Light Slot</source>
         <translation>Rainure lumineuse</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="676"/>
+        <location filename="../src/ui/param_panel.py" line="687"/>
         <source>Enable Light Slot</source>
         <translation>Activer la rainure lumineuse</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="690"/>
+        <location filename="../src/ui/param_panel.py" line="701"/>
         <source>Slot Width:</source>
         <translation>Largeur de rainure :</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="695"/>
+        <location filename="../src/ui/param_panel.py" line="706"/>
         <source>Slot Depth:</source>
         <translation>Profondeur de rainure :</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="704"/>
+        <location filename="../src/ui/param_panel.py" line="715"/>
         <source>Floor Layers:</source>
         <translation>Couches de fond :</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="713"/>
-        <location filename="../src/ui/param_panel.py" line="1942"/>
+        <location filename="../src/ui/param_panel.py" line="724"/>
+        <location filename="../src/ui/param_panel.py" line="1953"/>
         <source>Wall Gap:</source>
         <translation>Écart à la paroi :</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="717"/>
+        <location filename="../src/ui/param_panel.py" line="728"/>
         <source>Outer Slot</source>
         <translation>Rainure extérieure</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="723"/>
+        <location filename="../src/ui/param_panel.py" line="734"/>
         <source>Hole Slot</source>
         <translation>Rainure des trous</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="729"/>
+        <location filename="../src/ui/param_panel.py" line="740"/>
         <source>Auto Skip Small Holes</source>
         <translation>Ignorer automatiquement les petits trous</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="747"/>
+        <location filename="../src/ui/param_panel.py" line="758"/>
         <source>Min Hole Span:</source>
         <translation>Portée min. du trou :</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="782"/>
+        <location filename="../src/ui/param_panel.py" line="793"/>
         <source>Top Face</source>
         <translation>Face supérieure</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="787"/>
+        <location filename="../src/ui/param_panel.py" line="798"/>
         <source>Enable Top Face</source>
         <translation>Activer la face supérieure</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="804"/>
+        <location filename="../src/ui/param_panel.py" line="815"/>
         <source>Top Thickness:</source>
         <translation>Épaisseur supérieure :</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1314"/>
+        <location filename="../src/ui/param_panel.py" line="1325"/>
         <source>Machine G-code</source>
         <translation>G-code machine</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1321"/>
+        <location filename="../src/ui/param_panel.py" line="1332"/>
         <source>Machine start G-code</source>
         <translation>G-code de début machine</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1338"/>
+        <location filename="../src/ui/param_panel.py" line="1349"/>
         <source>Machine end G-code</source>
         <translation>G-code de fin machine</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1755"/>
+        <location filename="../src/ui/param_panel.py" line="1766"/>
         <source>Step/V-Groove</source>
         <translation>Marche/Rainure en V</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1760"/>
+        <location filename="../src/ui/param_panel.py" line="1771"/>
         <source>Enable Panel Step (Top)</source>
         <translation>Activer la marche du panneau (haut)</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1772"/>
-        <location filename="../src/ui/param_panel.py" line="1810"/>
+        <location filename="../src/ui/param_panel.py" line="1783"/>
+        <location filename="../src/ui/param_panel.py" line="1821"/>
         <source>Step Height:</source>
         <translation>Hauteur de marche :</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1780"/>
-        <location filename="../src/ui/param_panel.py" line="1818"/>
+        <location filename="../src/ui/param_panel.py" line="1791"/>
+        <location filename="../src/ui/param_panel.py" line="1829"/>
         <source>Step Width:</source>
         <translation>Largeur de marche :</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1782"/>
-        <location filename="../src/ui/param_panel.py" line="1820"/>
+        <location filename="../src/ui/param_panel.py" line="1793"/>
+        <location filename="../src/ui/param_panel.py" line="1831"/>
         <source>V-Groove</source>
         <translation>Rainure en V</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1802"/>
+        <location filename="../src/ui/param_panel.py" line="1813"/>
         <source>Enable Baseplate Step (Bottom)</source>
         <translation>Activer la marche de la plaque de base (bas)</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1906"/>
+        <location filename="../src/ui/param_panel.py" line="1917"/>
         <source>Anti-Warping Skirt</source>
         <translation>Jupe anti-déformation</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1911"/>
+        <location filename="../src/ui/param_panel.py" line="1922"/>
         <source>Enable Anti-Warping Skirt</source>
         <translation>Activer la jupe anti-déformation</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1925"/>
+        <location filename="../src/ui/param_panel.py" line="1936"/>
         <source>Skirt Height:</source>
         <translation>Hauteur de jupe :</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1956"/>
+        <location filename="../src/ui/param_panel.py" line="1967"/>
         <source>Skirt Sides:</source>
         <translation>Côtés de jupe :</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1976"/>
+        <location filename="../src/ui/param_panel.py" line="1987"/>
         <source>Connected Letters</source>
         <translation>Lettres connectées</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1981"/>
+        <location filename="../src/ui/param_panel.py" line="1992"/>
         <source>Enable Connected Letters</source>
         <translation>Activer les lettres connectées</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1990"/>
+        <location filename="../src/ui/param_panel.py" line="2001"/>
         <source>Triangle</source>
         <translation>Triangle</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1991"/>
+        <location filename="../src/ui/param_panel.py" line="2002"/>
         <source>Diamond</source>
         <translation>Losange</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1994"/>
+        <location filename="../src/ui/param_panel.py" line="2005"/>
         <source>Connection Type:</source>
         <translation>Type de connexion :</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1997"/>
+        <location filename="../src/ui/param_panel.py" line="2008"/>
         <source>Auto Detect Connection Points</source>
         <translation>Détection automatique des points de connexion</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2010"/>
+        <location filename="../src/ui/param_panel.py" line="2021"/>
         <source>Connection Width:</source>
         <translation>Largeur de connexion :</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2022"/>
+        <location filename="../src/ui/param_panel.py" line="2033"/>
         <source>Bevel Height:</source>
         <translation>Hauteur du biseau :</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2034"/>
+        <location filename="../src/ui/param_panel.py" line="2045"/>
         <source>Base Height:</source>
         <translation>Hauteur de base :</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2043"/>
+        <location filename="../src/ui/param_panel.py" line="2054"/>
         <source>Support Offset:</source>
         <translation>Décalage de support :</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2079"/>
+        <location filename="../src/ui/param_panel.py" line="2090"/>
         <source>Edge Wrap/Outline</source>
         <translation>Enveloppe/Contour de bord</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2084"/>
+        <location filename="../src/ui/param_panel.py" line="2095"/>
         <source>Enable Edge Wrap</source>
         <translation>Activer l&apos;enveloppe de bord</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1951"/>
-        <location filename="../src/ui/param_panel.py" line="2093"/>
-        <location filename="../src/ui/param_panel.py" line="2145"/>
+        <location filename="../src/ui/param_panel.py" line="1962"/>
+        <location filename="../src/ui/param_panel.py" line="2104"/>
+        <location filename="../src/ui/param_panel.py" line="2156"/>
         <source>Inner</source>
         <translation>Intérieur</translation>
     </message>
@@ -1398,411 +1451,416 @@
         <translation>Vitesse, température, refroidissement, points de changement de couleur et commandes de début/fin d&apos;impression.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="881"/>
+        <location filename="../src/ui/param_panel.py" line="635"/>
+        <source>Screw Hole Diameter:</source>
+        <translation>Diamètre du trou de vis :</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="892"/>
         <source>Color Change</source>
         <translation>Changement de couleur</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="885"/>
+        <location filename="../src/ui/param_panel.py" line="896"/>
         <source>Enable Color Change</source>
         <translation>Activer le changement de couleur</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="894"/>
+        <location filename="../src/ui/param_panel.py" line="905"/>
         <source>Initial color comes from Start G-code. Each change point runs the selected T macro.</source>
         <translation>La couleur initiale provient du G-code de démarrage. Chaque point de changement exécute la macro T sélectionnée.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="902"/>
+        <location filename="../src/ui/param_panel.py" line="913"/>
         <source>Change At Height</source>
         <translation>Changer à la hauteur</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="903"/>
+        <location filename="../src/ui/param_panel.py" line="914"/>
         <source>Macro Index</source>
         <translation>Index de macro</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="904"/>
+        <location filename="../src/ui/param_panel.py" line="915"/>
         <source>Preview</source>
         <translation>Aperçu</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="923"/>
+        <location filename="../src/ui/param_panel.py" line="934"/>
         <source>Add Change Point</source>
         <translation>Ajouter un point de changement</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="928"/>
+        <location filename="../src/ui/param_panel.py" line="939"/>
         <source>Remove Selected</source>
         <translation>Supprimer la sélection</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1050"/>
+        <location filename="../src/ui/param_panel.py" line="1061"/>
         <source>Color change disabled.</source>
         <translation>Changement de couleur désactivé.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1056"/>
+        <location filename="../src/ui/param_panel.py" line="1067"/>
         <source>Initial color comes from Start G-code. No automatic changes are configured.</source>
         <translation>La couleur initiale provient du G-code de démarrage. Aucun changement automatique n&apos;est configuré.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1063"/>
+        <location filename="../src/ui/param_panel.py" line="1074"/>
         <source>At {height:.2f}mm -&gt; {command}</source>
         <translation>À {height:.2f} mm -&gt; {command}</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1072"/>
+        <location filename="../src/ui/param_panel.py" line="1083"/>
         <source>Prime Tower</source>
         <translation>Tour de purge</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1076"/>
+        <location filename="../src/ui/param_panel.py" line="1087"/>
         <source>Enable Prime Tower</source>
         <translation>Activer la tour de purge</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1084"/>
+        <location filename="../src/ui/param_panel.py" line="1095"/>
         <source>Prime tower geometry is defined by its center point in bed coordinates.</source>
         <translation>La géométrie de la tour de purge est définie par son point central dans les coordonnées du plateau.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1103"/>
+        <location filename="../src/ui/param_panel.py" line="1114"/>
         <source>Center X:</source>
         <translation>Centre X :</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1112"/>
+        <location filename="../src/ui/param_panel.py" line="1123"/>
         <source>Center Y:</source>
         <translation>Centre Y :</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1122"/>
+        <location filename="../src/ui/param_panel.py" line="1133"/>
         <source>Tower Width:</source>
         <translation>Largeur de la tour :</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1132"/>
+        <location filename="../src/ui/param_panel.py" line="1143"/>
         <source>Tower Depth:</source>
         <translation>Profondeur de la tour :</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1141"/>
+        <location filename="../src/ui/param_panel.py" line="1152"/>
         <source>Infill Density:</source>
         <translation>Densité de remplissage :</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1195"/>
+        <location filename="../src/ui/param_panel.py" line="1206"/>
         <source>Printer Profile</source>
         <translation>Profil d&apos;imprimante</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1206"/>
+        <location filename="../src/ui/param_panel.py" line="1217"/>
         <source>New</source>
         <translation>Nouveau</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1211"/>
+        <location filename="../src/ui/param_panel.py" line="1222"/>
         <source>Duplicate</source>
         <translation>Dupliquer</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1216"/>
+        <location filename="../src/ui/param_panel.py" line="1227"/>
         <source>Rename</source>
         <translation>Renommer</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1221"/>
+        <location filename="../src/ui/param_panel.py" line="1232"/>
         <source>Delete</source>
         <translation>Supprimer</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1226"/>
+        <location filename="../src/ui/param_panel.py" line="1237"/>
         <source>Set Default</source>
         <translation>Définir par défaut</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1244"/>
+        <location filename="../src/ui/param_panel.py" line="1255"/>
         <source>Printable Area X:</source>
         <translation>Zone imprimable X:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1250"/>
+        <location filename="../src/ui/param_panel.py" line="1261"/>
         <source>Printable Area Y:</source>
         <translation>Zone imprimable Y:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1256"/>
+        <location filename="../src/ui/param_panel.py" line="1267"/>
         <source>Printable Area Z:</source>
         <translation>Zone imprimable Z:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1263"/>
+        <location filename="../src/ui/param_panel.py" line="1274"/>
         <source>Nozzle Diameter:</source>
         <translation>Diamètre de buse:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1270"/>
+        <location filename="../src/ui/param_panel.py" line="1281"/>
         <source>Filament Diameter:</source>
         <translation>Diamètre du filament:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1277"/>
+        <location filename="../src/ui/param_panel.py" line="1288"/>
         <source>Retract Length:</source>
         <translation>Longueur de rétractation:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1283"/>
+        <location filename="../src/ui/param_panel.py" line="1294"/>
         <source>Retract Speed:</source>
         <translation>Vitesse de rétractation:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1290"/>
+        <location filename="../src/ui/param_panel.py" line="1301"/>
         <source>Short Z-Hop:</source>
         <translation>Z-hop court :</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1297"/>
+        <location filename="../src/ui/param_panel.py" line="1308"/>
         <source>Long Z-Hop:</source>
         <translation>Z-hop long :</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1303"/>
+        <location filename="../src/ui/param_panel.py" line="1314"/>
         <source>Long Travel Threshold:</source>
         <translation>Seuil des longs déplacements:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1307"/>
+        <location filename="../src/ui/param_panel.py" line="1318"/>
         <source>Color Change Template:</source>
         <translation>Modèle de changement de couleur:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1325"/>
+        <location filename="../src/ui/param_panel.py" line="1336"/>
         <source>Edit Start G-code</source>
         <translation>Modifier le G-code de démarrage</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1327"/>
+        <location filename="../src/ui/param_panel.py" line="1338"/>
         <source>Start G-code</source>
         <translation>G-code de démarrage</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1342"/>
+        <location filename="../src/ui/param_panel.py" line="1353"/>
         <source>Edit End G-code</source>
         <translation>Modifier le G-code de fin</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1344"/>
+        <location filename="../src/ui/param_panel.py" line="1355"/>
         <source>End G-code</source>
         <translation>G-code de fin</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1375"/>
+        <location filename="../src/ui/param_panel.py" line="1386"/>
         <source>{name} (Project Snapshot)</source>
         <translation>{name} (Instantané du projet)</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1420"/>
+        <location filename="../src/ui/param_panel.py" line="1431"/>
         <source>Using embedded project profile snapshot.</source>
         <translation>Utilisation de l&apos;instantané de profil de projet intégré.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1422"/>
+        <location filename="../src/ui/param_panel.py" line="1433"/>
         <source>Profile changes are saved immediately.</source>
         <translation>Les modifications du profil sont enregistrées immédiatement.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1592"/>
+        <location filename="../src/ui/param_panel.py" line="1603"/>
         <source>New Printer Profile</source>
         <translation>Nouveau profil d&apos;imprimante</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1593"/>
-        <location filename="../src/ui/param_panel.py" line="1639"/>
+        <location filename="../src/ui/param_panel.py" line="1604"/>
+        <location filename="../src/ui/param_panel.py" line="1650"/>
         <source>Profile Name:</source>
         <translation>Nom du profil :</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1613"/>
+        <location filename="../src/ui/param_panel.py" line="1624"/>
         <source>Duplicate Printer Profile</source>
         <translation>Dupliquer le profil d&apos;imprimante</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1614"/>
+        <location filename="../src/ui/param_panel.py" line="1625"/>
         <source>New Profile Name:</source>
         <translation>Nouveau nom du profil :</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1615"/>
+        <location filename="../src/ui/param_panel.py" line="1626"/>
         <source>{name} Copy</source>
         <translation>Copie de {name}</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1638"/>
+        <location filename="../src/ui/param_panel.py" line="1649"/>
         <source>Rename Printer Profile</source>
         <translation>Renommer le profil d&apos;imprimante</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1659"/>
+        <location filename="../src/ui/param_panel.py" line="1670"/>
         <source>Delete Printer Profile</source>
         <translation>Supprimer le profil d&apos;imprimante</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1660"/>
+        <location filename="../src/ui/param_panel.py" line="1671"/>
         <source>Delete printer profile &apos;{name}&apos;?</source>
         <translation>Supprimer le profil d&apos;imprimante &apos;{name}&apos; ?</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1701"/>
+        <location filename="../src/ui/param_panel.py" line="1712"/>
         <source>Empty</source>
         <translation>Vide</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1704"/>
+        <location filename="../src/ui/param_panel.py" line="1715"/>
         <source>{first} (+{count} more lines)</source>
         <translation>{first} (+{count} lignes de plus)</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1719"/>
-        <location filename="../src/ui/param_panel.py" line="2721"/>
+        <location filename="../src/ui/param_panel.py" line="1730"/>
+        <location filename="../src/ui/param_panel.py" line="2734"/>
         <source>Klipper Profile</source>
         <translation>Profil Klipper</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1946"/>
-        <location filename="../src/ui/param_panel.py" line="2094"/>
-        <location filename="../src/ui/param_panel.py" line="2146"/>
+        <location filename="../src/ui/param_panel.py" line="1957"/>
+        <location filename="../src/ui/param_panel.py" line="2105"/>
+        <location filename="../src/ui/param_panel.py" line="2157"/>
         <source>Outer</source>
         <translation>Extérieur</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2105"/>
+        <location filename="../src/ui/param_panel.py" line="2116"/>
         <source>Wrap Direction:</source>
         <translation>Direction de l&apos;enveloppe :</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2113"/>
+        <location filename="../src/ui/param_panel.py" line="2124"/>
         <source>Wrap Width:</source>
         <translation>Largeur de l&apos;enveloppe :</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2121"/>
+        <location filename="../src/ui/param_panel.py" line="2132"/>
         <source>Wrap Height:</source>
         <translation>Hauteur de l&apos;enveloppe :</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2136"/>
+        <location filename="../src/ui/param_panel.py" line="2147"/>
         <source>Enable Outline</source>
         <translation>Activer le contour</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2157"/>
+        <location filename="../src/ui/param_panel.py" line="2168"/>
         <source>Outline Direction:</source>
         <translation>Direction du contour :</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2165"/>
+        <location filename="../src/ui/param_panel.py" line="2176"/>
         <source>Outline Width:</source>
         <translation>Largeur du contour :</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2173"/>
+        <location filename="../src/ui/param_panel.py" line="2184"/>
         <source>Outline Height:</source>
         <translation>Hauteur du contour :</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2181"/>
+        <location filename="../src/ui/param_panel.py" line="2192"/>
         <source>Outline Offset:</source>
         <translation>Décalage du contour :</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2197"/>
+        <location filename="../src/ui/param_panel.py" line="2208"/>
         <source>Speed Settings</source>
         <translation>Paramètres de vitesse</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2207"/>
+        <location filename="../src/ui/param_panel.py" line="2218"/>
         <source>Print Speed:</source>
         <translation>Vitesse d&apos;impression :</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2215"/>
+        <location filename="../src/ui/param_panel.py" line="2226"/>
         <source>Travel Speed:</source>
         <translation>Vitesse de déplacement :</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2223"/>
+        <location filename="../src/ui/param_panel.py" line="2234"/>
         <source>First Layer Speed:</source>
         <translation>Vitesse de la première couche :</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2225"/>
+        <location filename="../src/ui/param_panel.py" line="2236"/>
         <source>Skirt Speed:</source>
         <translation>Vitesse de la jupe:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2226"/>
+        <location filename="../src/ui/param_panel.py" line="2237"/>
         <source>Step Speed:</source>
         <translation>Vitesse de la marche:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2232"/>
+        <location filename="../src/ui/param_panel.py" line="2243"/>
         <source>Temperature Settings</source>
         <translation>Paramètres de température</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2241"/>
+        <location filename="../src/ui/param_panel.py" line="2252"/>
         <source>First Layer Nozzle Temperature:</source>
         <translation>Température de buse de la première couche:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2248"/>
+        <location filename="../src/ui/param_panel.py" line="2259"/>
         <source>Other Layers Nozzle Temperature:</source>
         <translation>Température de buse des autres couches:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2255"/>
+        <location filename="../src/ui/param_panel.py" line="2266"/>
         <source>First Layer Bed Temperature:</source>
         <translation>Température du plateau de la première couche:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2262"/>
+        <location filename="../src/ui/param_panel.py" line="2273"/>
         <source>Other Layers Bed Temperature:</source>
         <translation>Température du plateau des autres couches:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2268"/>
+        <location filename="../src/ui/param_panel.py" line="2279"/>
         <source>Cooling Settings</source>
         <translation>Paramètres de refroidissement</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2277"/>
+        <location filename="../src/ui/param_panel.py" line="2288"/>
         <source>First Layer Fan Speed:</source>
         <translation>Vitesse du ventilateur de la première couche :</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2284"/>
+        <location filename="../src/ui/param_panel.py" line="2295"/>
         <source>Other Layers Fan Speed:</source>
         <translation>Vitesse du ventilateur des autres couches :</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2860"/>
+        <location filename="../src/ui/param_panel.py" line="2874"/>
         <source>Import Custom Edge DXF</source>
         <translation>Importer un DXF de bord personnalisé</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2862"/>
+        <location filename="../src/ui/param_panel.py" line="2876"/>
         <source>DXF Files (*.dxf);;All Files (*.*)</source>
         <translation>Fichiers DXF (*.dxf);;Tous les fichiers (*.*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2881"/>
+        <location filename="../src/ui/param_panel.py" line="2895"/>
         <source>Import Success</source>
         <translation>Importation réussie</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2882"/>
+        <location filename="../src/ui/param_panel.py" line="2896"/>
         <source>Imported custom edge profile: {name}
 Size: {width:.1f} x {height:.1f} mm
 Control points: {points}</source>
@@ -1811,19 +1869,19 @@ Taille : {width:.1f} x {height:.1f} mm
 Points de contrôle : {points}</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2893"/>
+        <location filename="../src/ui/param_panel.py" line="2907"/>
         <source>Import Failed</source>
         <translation>Échec de l&apos;importation</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2894"/>
+        <location filename="../src/ui/param_panel.py" line="2908"/>
         <source>Failed to import DXF file:
 {error}</source>
         <translation>Impossible d&apos;importer le fichier DXF :
 {error}</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2905"/>
+        <location filename="../src/ui/param_panel.py" line="2919"/>
         <source> ({count} points)</source>
         <translation> ({count} points)</translation>
     </message>

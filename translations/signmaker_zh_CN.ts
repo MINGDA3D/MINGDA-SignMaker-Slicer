@@ -4,37 +4,37 @@
 <context>
     <name>Canvas2D</name>
     <message>
-        <location filename="../src/ui/canvas_2d.py" line="1945"/>
+        <location filename="../src/ui/canvas_2d.py" line="2124"/>
         <source>Delete</source>
         <translation>删除</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_2d.py" line="1953"/>
+        <location filename="../src/ui/canvas_2d.py" line="2132"/>
         <source>Mirror</source>
         <translation>镜像</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_2d.py" line="1954"/>
+        <location filename="../src/ui/canvas_2d.py" line="2133"/>
         <source>Mirror X</source>
         <translation>X轴镜像</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_2d.py" line="1956"/>
+        <location filename="../src/ui/canvas_2d.py" line="2135"/>
         <source>Mirror Y</source>
         <translation>Y轴镜像</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_2d.py" line="1963"/>
+        <location filename="../src/ui/canvas_2d.py" line="2142"/>
         <source>Select All</source>
         <translation>全选</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_2d.py" line="1971"/>
+        <location filename="../src/ui/canvas_2d.py" line="2150"/>
         <source>Fit View</source>
         <translation>适应视图</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_2d.py" line="1976"/>
+        <location filename="../src/ui/canvas_2d.py" line="2155"/>
         <source>Reset View</source>
         <translation>重置视图</translation>
     </message>
@@ -42,69 +42,74 @@
 <context>
     <name>CanvasToolbar</name>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="57"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="58"/>
         <source>Move</source>
         <translation>移动</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="62"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="63"/>
         <source>Rotate</source>
         <translation>旋转</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="67"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="68"/>
         <source>Scale</source>
         <translation>缩放</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="75"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="76"/>
         <source>Mirror Horizontal</source>
         <translation>水平镜像</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="79"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="80"/>
         <source>Mirror Vertical</source>
         <translation>垂直镜像</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="86"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="87"/>
         <source>Intersection</source>
         <translation>交集</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="90"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="91"/>
         <source>Difference</source>
         <translation>差集</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="97"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="98"/>
         <source>Group</source>
         <translation>组合</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="101"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="102"/>
         <source>Ungroup</source>
         <translation>取消编组</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="107"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="108"/>
         <source>Explode Asset</source>
         <translation>分解导入对象</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="116"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="117"/>
         <source>Text</source>
         <translation>文字</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="123"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="124"/>
         <source>Start Point</source>
         <translation>起始点</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="128"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="129"/>
         <source>Print Order</source>
         <translation>打印顺序</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/canvas_toolbar.py" line="134"/>
+        <source>Screw Hole</source>
+        <translation>螺丝孔</translation>
     </message>
 </context>
 <context>
@@ -161,864 +166,912 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../src/ui/main_window.py" line="164"/>
+        <location filename="../src/ui/main_window.py" line="171"/>
         <source>MINGDA SignMaker - LED Sign Letter Slicer</source>
         <translation>MINGDA SignMaker - 发光字切片软件</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="176"/>
+        <location filename="../src/ui/main_window.py" line="183"/>
         <source>Title Bar</source>
         <translation>标题栏</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="214"/>
+        <location filename="../src/ui/main_window.py" line="221"/>
         <source>File(&amp;F)</source>
         <translation>文件(&amp;F)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="217"/>
-        <location filename="../src/ui/main_window.py" line="1656"/>
+        <location filename="../src/ui/main_window.py" line="224"/>
+        <location filename="../src/ui/main_window.py" line="1750"/>
         <source>New Project</source>
         <translation>新建项目</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="223"/>
+        <location filename="../src/ui/main_window.py" line="230"/>
         <source>Open DXF/SVG...</source>
         <translation>打开DXF/SVG...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="231"/>
-        <location filename="../src/ui/main_window.py" line="2159"/>
+        <location filename="../src/ui/main_window.py" line="238"/>
+        <location filename="../src/ui/main_window.py" line="2257"/>
         <source>Save Project</source>
         <translation>保存项目</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="237"/>
+        <location filename="../src/ui/main_window.py" line="244"/>
         <source>Save As...</source>
         <translation>另存为...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="250"/>
-        <location filename="../src/ui/main_window.py" line="2259"/>
+        <location filename="../src/ui/main_window.py" line="257"/>
+        <location filename="../src/ui/main_window.py" line="2357"/>
         <source>Export STL...</source>
         <translation>导出STL...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="258"/>
-        <location filename="../src/ui/main_window.py" line="820"/>
+        <location filename="../src/ui/main_window.py" line="265"/>
+        <location filename="../src/ui/main_window.py" line="840"/>
         <source>Exit</source>
         <translation>退出</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="822"/>
+        <location filename="../src/ui/main_window.py" line="842"/>
         <source>The current project has unsaved changes. Do you want to save before exiting?</source>
         <translation>当前项目有未保存的更改，退出前是否保存？</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="825"/>
+        <location filename="../src/ui/main_window.py" line="845"/>
         <source>Save</source>
         <translation>保存</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="829"/>
+        <location filename="../src/ui/main_window.py" line="849"/>
         <source>Discard</source>
         <translation>丢弃</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="833"/>
+        <location filename="../src/ui/main_window.py" line="853"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="264"/>
+        <location filename="../src/ui/main_window.py" line="271"/>
         <source>Edit(&amp;E)</source>
         <translation>编辑(&amp;E)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="244"/>
-        <location filename="../src/ui/main_window.py" line="2258"/>
+        <location filename="../src/ui/main_window.py" line="251"/>
+        <location filename="../src/ui/main_window.py" line="2356"/>
         <source>Export G-code...</source>
         <translation>导出 G-code...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="266"/>
+        <location filename="../src/ui/main_window.py" line="273"/>
         <source>Undo</source>
         <translation>撤销</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="271"/>
+        <location filename="../src/ui/main_window.py" line="278"/>
         <source>Redo</source>
         <translation>重做</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="278"/>
+        <location filename="../src/ui/main_window.py" line="285"/>
         <source>Select All</source>
         <translation>全选</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="282"/>
+        <location filename="../src/ui/main_window.py" line="289"/>
         <source>Delete</source>
         <translation>删除</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="287"/>
+        <location filename="../src/ui/main_window.py" line="294"/>
         <source>View(&amp;V)</source>
         <translation>视图(&amp;V)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="289"/>
+        <location filename="../src/ui/main_window.py" line="296"/>
         <source>2D View</source>
         <translation>2D视图</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="294"/>
+        <location filename="../src/ui/main_window.py" line="301"/>
         <source>3D View</source>
         <translation>3D视图</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="301"/>
+        <location filename="../src/ui/main_window.py" line="308"/>
         <source>Fit to Window</source>
         <translation>适应画面</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="306"/>
+        <location filename="../src/ui/main_window.py" line="313"/>
         <source>Zoom In</source>
         <translation>放大</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="310"/>
+        <location filename="../src/ui/main_window.py" line="317"/>
         <source>Zoom Out</source>
         <translation>缩小</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="315"/>
+        <location filename="../src/ui/main_window.py" line="322"/>
         <source>Process(&amp;P)</source>
         <translation>处理(&amp;P)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="317"/>
+        <location filename="../src/ui/main_window.py" line="324"/>
         <source>Start Processing</source>
         <translation>开始处理</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="322"/>
+        <location filename="../src/ui/main_window.py" line="329"/>
         <source>Preview G-code</source>
         <translation>预览G-code</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="327"/>
+        <location filename="../src/ui/main_window.py" line="334"/>
         <source>Help(&amp;H)</source>
         <translation>帮助(&amp;H)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="329"/>
+        <location filename="../src/ui/main_window.py" line="336"/>
         <source>About</source>
         <translation>关于</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="721"/>
-        <location filename="../src/ui/main_window.py" line="2617"/>
-        <location filename="../src/ui/main_window.py" line="2680"/>
-        <location filename="../src/ui/main_window.py" line="3000"/>
+        <location filename="../src/ui/main_window.py" line="729"/>
+        <location filename="../src/ui/main_window.py" line="2752"/>
+        <location filename="../src/ui/main_window.py" line="2840"/>
+        <location filename="../src/ui/main_window.py" line="2904"/>
+        <location filename="../src/ui/main_window.py" line="3226"/>
         <source>Ready</source>
         <translation>就绪</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="755"/>
+        <location filename="../src/ui/main_window.py" line="767"/>
         <source>Executed: </source>
         <translation>执行: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="758"/>
+        <location filename="../src/ui/main_window.py" line="770"/>
         <source>Undone: </source>
         <translation>撤销: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="761"/>
+        <location filename="../src/ui/main_window.py" line="773"/>
         <source>Redone: </source>
         <translation>重做: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1115"/>
-        <location filename="../src/ui/main_window.py" line="1788"/>
+        <location filename="../src/ui/main_window.py" line="1204"/>
+        <location filename="../src/ui/main_window.py" line="1882"/>
         <source>Asset</source>
         <translation>导入对象</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1355"/>
-        <location filename="../src/ui/main_window.py" line="1368"/>
+        <location filename="../src/ui/main_window.py" line="1444"/>
+        <location filename="../src/ui/main_window.py" line="1457"/>
         <source>Loading 3D preview...</source>
         <translation>正在加载 3D 预览...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1389"/>
+        <location filename="../src/ui/main_window.py" line="1478"/>
         <source>3D preview loading failed</source>
         <translation>3D 预览加载失败</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1393"/>
+        <location filename="../src/ui/main_window.py" line="1482"/>
         <source>Failed to prepare 3D preview:</source>
         <translation>准备 3D 预览失败:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1552"/>
+        <location filename="../src/ui/main_window.py" line="1644"/>
         <source>The selected recent project is no longer available and has been removed from the list.</source>
         <translation>所选最近项目已不可用，已从列表中移除。</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1591"/>
+        <location filename="../src/ui/main_window.py" line="1684"/>
         <source>Home</source>
         <translation>首页</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1598"/>
+        <location filename="../src/ui/main_window.py" line="1691"/>
         <source>Project Edit</source>
         <translation>项目编辑</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1392"/>
-        <location filename="../src/ui/main_window.py" line="1607"/>
+        <location filename="../src/ui/main_window.py" line="1481"/>
+        <location filename="../src/ui/main_window.py" line="1700"/>
         <source>3D Preview</source>
         <translation>3D预览</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1637"/>
+        <location filename="../src/ui/main_window.py" line="1730"/>
         <source>Settings feature under development...</source>
         <translation>设置功能开发中...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1639"/>
+        <location filename="../src/ui/main_window.py" line="1732"/>
         <source>Help feature under development...</source>
         <translation>帮助功能开发中...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1655"/>
+        <location filename="../src/ui/main_window.py" line="1749"/>
         <source>MINGDA SignMaker - New Project</source>
         <translation>MINGDA SignMaker - 新项目</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1667"/>
+        <location filename="../src/ui/main_window.py" line="1761"/>
         <source>Open File</source>
         <translation>打开文件</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3250"/>
+        <location filename="../src/ui/main_window.py" line="3482"/>
         <source>Loaded saved parameters</source>
         <translation>已加载保存的参数</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1849"/>
+        <location filename="../src/ui/main_window.py" line="1943"/>
         <source>Unsupported Format</source>
         <translation>不支持的格式</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1849"/>
+        <location filename="../src/ui/main_window.py" line="1943"/>
         <source>Format not supported: </source>
         <translation>暂不支持此格式: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2050"/>
+        <location filename="../src/ui/main_window.py" line="2146"/>
         <source>Load </source>
         <translation>加载 </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2071"/>
+        <location filename="../src/ui/main_window.py" line="2167"/>
         <source>Loaded: {file}, {count} contours</source>
         <translation>已加载: {file}, {count} 个轮廓</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1858"/>
-        <location filename="../src/ui/main_window.py" line="2134"/>
+        <location filename="../src/ui/main_window.py" line="1952"/>
+        <location filename="../src/ui/main_window.py" line="2232"/>
         <source>Load Failed</source>
         <translation>加载失败</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1859"/>
+        <location filename="../src/ui/main_window.py" line="1953"/>
         <source>Failed to load file:</source>
         <translation>无法加载文件:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1682"/>
-        <location filename="../src/ui/main_window.py" line="2161"/>
+        <location filename="../src/ui/main_window.py" line="1776"/>
+        <location filename="../src/ui/main_window.py" line="2259"/>
         <source>SignMaker Project (*.smp);;All Files (*)</source>
         <translation>SignMaker项目 (*.smp);;所有文件 (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2216"/>
+        <location filename="../src/ui/main_window.py" line="2314"/>
         <source>Project saved: </source>
         <translation>项目已保存: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1551"/>
-        <location filename="../src/ui/main_window.py" line="1680"/>
+        <location filename="../src/ui/main_window.py" line="1643"/>
+        <location filename="../src/ui/main_window.py" line="1774"/>
         <source>Open Project</source>
         <translation>打开项目</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2121"/>
+        <location filename="../src/ui/main_window.py" line="2219"/>
         <source>Project loaded: {name}, {count} contours</source>
         <translation>项目已加载: {name}, {count} 个轮廓</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2134"/>
+        <location filename="../src/ui/main_window.py" line="2232"/>
         <source>Failed to load project:</source>
         <translation>无法加载项目:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2226"/>
+        <location filename="../src/ui/main_window.py" line="2324"/>
         <source>Save Failed</source>
         <translation>保存失败</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2226"/>
+        <location filename="../src/ui/main_window.py" line="2324"/>
         <source>Failed to save project:</source>
         <translation>无法保存项目:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1669"/>
+        <location filename="../src/ui/main_window.py" line="1763"/>
         <source>Supported Files (*.dxf *.svg *.smp);;SignMaker Project (*.smp);;DXF Files (*.dxf);;SVG Files (*.svg);;All Files (*)</source>
         <translation>支持的文件 (*.dxf *.svg *.smp);;SignMaker项目 (*.smp);;DXF文件 (*.dxf);;SVG文件 (*.svg);;所有文件 (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2261"/>
+        <location filename="../src/ui/main_window.py" line="2359"/>
         <source>Export Baseplate DXF...</source>
         <translation>导出底板DXF...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2262"/>
+        <location filename="../src/ui/main_window.py" line="2360"/>
         <source>Export Panel DXF...</source>
         <translation>导出面板DXF...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1042"/>
-        <location filename="../src/ui/main_window.py" line="2176"/>
-        <location filename="../src/ui/main_window.py" line="2269"/>
-        <location filename="../src/ui/main_window.py" line="2335"/>
-        <location filename="../src/ui/main_window.py" line="2385"/>
-        <location filename="../src/ui/main_window.py" line="2421"/>
-        <location filename="../src/ui/main_window.py" line="2487"/>
-        <location filename="../src/ui/main_window.py" line="2595"/>
-        <location filename="../src/ui/main_window.py" line="2632"/>
-        <location filename="../src/ui/main_window.py" line="3013"/>
-        <location filename="../src/ui/main_window.py" line="3038"/>
-        <location filename="../src/ui/main_window.py" line="3074"/>
-        <location filename="../src/ui/main_window.py" line="3111"/>
-        <location filename="../src/ui/main_window.py" line="3141"/>
+        <location filename="../src/ui/main_window.py" line="1131"/>
+        <location filename="../src/ui/main_window.py" line="2274"/>
+        <location filename="../src/ui/main_window.py" line="2367"/>
+        <location filename="../src/ui/main_window.py" line="2433"/>
+        <location filename="../src/ui/main_window.py" line="2483"/>
+        <location filename="../src/ui/main_window.py" line="2519"/>
+        <location filename="../src/ui/main_window.py" line="2588"/>
+        <location filename="../src/ui/main_window.py" line="2699"/>
+        <location filename="../src/ui/main_window.py" line="2707"/>
+        <location filename="../src/ui/main_window.py" line="2817"/>
+        <location filename="../src/ui/main_window.py" line="2855"/>
+        <location filename="../src/ui/main_window.py" line="3240"/>
+        <location filename="../src/ui/main_window.py" line="3266"/>
+        <location filename="../src/ui/main_window.py" line="3303"/>
+        <location filename="../src/ui/main_window.py" line="3341"/>
+        <location filename="../src/ui/main_window.py" line="3372"/>
         <source>Info</source>
         <translation>提示</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2269"/>
-        <location filename="../src/ui/main_window.py" line="2335"/>
+        <location filename="../src/ui/main_window.py" line="2367"/>
+        <location filename="../src/ui/main_window.py" line="2433"/>
         <source>Please process first</source>
         <translation>请先进行处理</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2313"/>
-        <location filename="../src/ui/main_window.py" line="2369"/>
-        <location filename="../src/ui/main_window.py" line="2407"/>
-        <location filename="../src/ui/main_window.py" line="2443"/>
+        <location filename="../src/ui/main_window.py" line="2411"/>
+        <location filename="../src/ui/main_window.py" line="2467"/>
+        <location filename="../src/ui/main_window.py" line="2505"/>
+        <location filename="../src/ui/main_window.py" line="2541"/>
         <source>Export Success</source>
         <translation>导出成功</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2320"/>
-        <location filename="../src/ui/main_window.py" line="2372"/>
-        <location filename="../src/ui/main_window.py" line="2414"/>
-        <location filename="../src/ui/main_window.py" line="2416"/>
-        <location filename="../src/ui/main_window.py" line="2450"/>
-        <location filename="../src/ui/main_window.py" line="2452"/>
+        <location filename="../src/ui/main_window.py" line="2418"/>
+        <location filename="../src/ui/main_window.py" line="2470"/>
+        <location filename="../src/ui/main_window.py" line="2512"/>
+        <location filename="../src/ui/main_window.py" line="2514"/>
+        <location filename="../src/ui/main_window.py" line="2548"/>
+        <location filename="../src/ui/main_window.py" line="2550"/>
         <source>Export Failed</source>
         <translation>导出失败</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2340"/>
+        <location filename="../src/ui/main_window.py" line="2438"/>
         <source>Export STL</source>
         <translation>导出STL</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2342"/>
+        <location filename="../src/ui/main_window.py" line="2440"/>
         <source>STL Files (*.stl);;All Files (*)</source>
         <translation>STL文件 (*.stl);;所有文件 (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2368"/>
+        <location filename="../src/ui/main_window.py" line="2466"/>
         <source>STL exported: </source>
         <translation>STL已导出: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2369"/>
+        <location filename="../src/ui/main_window.py" line="2467"/>
         <source>STL saved to:</source>
         <translation>STL已保存到:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2372"/>
+        <location filename="../src/ui/main_window.py" line="2470"/>
         <source>Failed to export STL:</source>
         <translation>无法导出STL:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2385"/>
-        <location filename="../src/ui/main_window.py" line="2421"/>
-        <location filename="../src/ui/main_window.py" line="2487"/>
+        <location filename="../src/ui/main_window.py" line="2483"/>
+        <location filename="../src/ui/main_window.py" line="2519"/>
+        <location filename="../src/ui/main_window.py" line="2588"/>
         <source>Please import a DXF file first</source>
         <translation>请先导入DXF文件</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2177"/>
+        <location filename="../src/ui/main_window.py" line="2275"/>
         <source>Please import or create graphics before saving</source>
         <translation>请先导入或创建图形后再保存</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2390"/>
+        <location filename="../src/ui/main_window.py" line="2488"/>
         <source>Export Baseplate DXF</source>
         <translation>导出底板DXF</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2392"/>
-        <location filename="../src/ui/main_window.py" line="2428"/>
+        <location filename="../src/ui/main_window.py" line="2490"/>
+        <location filename="../src/ui/main_window.py" line="2526"/>
         <source>DXF Files (*.dxf);;All Files (*)</source>
         <translation>DXF文件 (*.dxf);;所有文件 (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2405"/>
+        <location filename="../src/ui/main_window.py" line="2503"/>
         <source>Baseplate DXF exported: </source>
         <translation>底板DXF已导出: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2408"/>
+        <location filename="../src/ui/main_window.py" line="2506"/>
         <source>Baseplate DXF saved to:</source>
         <translation>底板DXF已保存到:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2414"/>
+        <location filename="../src/ui/main_window.py" line="2512"/>
         <source>Failed to generate baseplate contour</source>
         <translation>无法生成底板轮廓</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2416"/>
+        <location filename="../src/ui/main_window.py" line="2514"/>
         <source>Failed to export baseplate DXF:</source>
         <translation>无法导出底板DXF:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2426"/>
+        <location filename="../src/ui/main_window.py" line="2524"/>
         <source>Export Panel DXF</source>
         <translation>导出面板DXF</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2441"/>
+        <location filename="../src/ui/main_window.py" line="2539"/>
         <source>Panel DXF exported: </source>
         <translation>面板DXF已导出: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2444"/>
+        <location filename="../src/ui/main_window.py" line="2542"/>
         <source>Panel DXF saved to:</source>
         <translation>面板DXF已保存到:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2450"/>
+        <location filename="../src/ui/main_window.py" line="2548"/>
         <source>Failed to generate panel contour</source>
         <translation>无法生成面板轮廓</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2452"/>
+        <location filename="../src/ui/main_window.py" line="2550"/>
         <source>Failed to export panel DXF:</source>
         <translation>无法导出面板DXF:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2467"/>
+        <location filename="../src/ui/main_window.py" line="2566"/>
         <source>Nothing to undo</source>
         <translation>没有可撤销的操作</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2482"/>
+        <location filename="../src/ui/main_window.py" line="2582"/>
         <source>Nothing to redo</source>
         <translation>没有可重做的操作</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1603"/>
-        <location filename="../src/ui/main_window.py" line="2544"/>
+        <location filename="../src/ui/main_window.py" line="1696"/>
+        <location filename="../src/ui/main_window.py" line="2645"/>
         <source>Processing...</source>
         <translation>正在处理...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2531"/>
+        <location filename="../src/ui/main_window.py" line="2632"/>
         <source>Processing complete: {layers} layers, estimated time: {time:.1f} minutes</source>
         <translation>处理完成: {layers} 层, 预计时间: {time:.1f} 分钟</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2539"/>
+        <location filename="../src/ui/main_window.py" line="2640"/>
         <source>Processing Failed</source>
         <translation>处理失败</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2539"/>
+        <location filename="../src/ui/main_window.py" line="2640"/>
         <source>Error during processing:</source>
         <translation>处理过程中发生错误:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2540"/>
+        <location filename="../src/ui/main_window.py" line="2641"/>
         <source>Processing failed</source>
         <translation>处理失败</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2563"/>
+        <location filename="../src/ui/main_window.py" line="2665"/>
         <source>Switched to {view} view</source>
         <translation>切换到{view}视图</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2790"/>
+        <location filename="../src/ui/main_window.py" line="3016"/>
         <source>Tool: </source>
         <translation>工具: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2840"/>
+        <location filename="../src/ui/main_window.py" line="3066"/>
         <source>Move to: X={x:.2f}, Y={y:.2f}</source>
         <translation>移动到: X={x:.2f}, Y={y:.2f}</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2850"/>
+        <location filename="../src/ui/main_window.py" line="3076"/>
         <source>Rotation: {angle:.2f}°</source>
         <translation>旋转: {angle:.2f}°</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2926"/>
-        <location filename="../src/ui/main_window.py" line="2964"/>
-        <location filename="../src/ui/main_window.py" line="2987"/>
+        <location filename="../src/ui/main_window.py" line="3152"/>
+        <location filename="../src/ui/main_window.py" line="3190"/>
+        <location filename="../src/ui/main_window.py" line="3213"/>
         <source>Scale: {px:.1f}% x {py:.1f}%</source>
         <translation>缩放: {px:.1f}% x {py:.1f}%</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3013"/>
+        <location filename="../src/ui/main_window.py" line="3240"/>
         <source>Please select a contour first</source>
         <translation>请先选中轮廓</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3030"/>
+        <location filename="../src/ui/main_window.py" line="3257"/>
         <source>Mirror {axis} complete</source>
         <translation>镜像 {axis} 完成</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3039"/>
-        <location filename="../src/ui/main_window.py" line="3075"/>
-        <location filename="../src/ui/main_window.py" line="3112"/>
+        <location filename="../src/ui/main_window.py" line="3267"/>
+        <location filename="../src/ui/main_window.py" line="3304"/>
+        <location filename="../src/ui/main_window.py" line="3342"/>
         <source>Please select at least two contours</source>
         <translation>请至少选择两个轮廓</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3051"/>
-        <location filename="../src/ui/main_window.py" line="3059"/>
+        <location filename="../src/ui/main_window.py" line="3279"/>
+        <location filename="../src/ui/main_window.py" line="3287"/>
         <source>Intersection</source>
         <translation>交集</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3087"/>
-        <location filename="../src/ui/main_window.py" line="3095"/>
+        <location filename="../src/ui/main_window.py" line="3316"/>
+        <location filename="../src/ui/main_window.py" line="3324"/>
         <source>Difference</source>
         <translation>差集</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3122"/>
+        <location filename="../src/ui/main_window.py" line="3352"/>
         <source>Already grouped</source>
         <translation>已编组</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="927"/>
-        <location filename="../src/ui/main_window.py" line="3125"/>
+        <location filename="../src/ui/main_window.py" line="1012"/>
+        <location filename="../src/ui/main_window.py" line="3355"/>
         <source>Group</source>
         <translation>组合</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3142"/>
+        <location filename="../src/ui/main_window.py" line="3373"/>
         <source>Please select a grouped contour first</source>
         <translation>请先选择一个已编组的轮廓</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="928"/>
-        <location filename="../src/ui/main_window.py" line="3146"/>
+        <location filename="../src/ui/main_window.py" line="1013"/>
+        <location filename="../src/ui/main_window.py" line="3377"/>
         <source>Ungroup</source>
         <translation>取消编组</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="929"/>
-        <location filename="../src/ui/main_window.py" line="1060"/>
+        <location filename="../src/ui/main_window.py" line="985"/>
+        <source>{count} screw holes are invalid</source>
+        <translation>有 {count} 个螺丝孔无效</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1014"/>
+        <location filename="../src/ui/main_window.py" line="1149"/>
         <source>Explode Asset</source>
         <translation>分解导入对象</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1043"/>
+        <location filename="../src/ui/main_window.py" line="1132"/>
         <source>Please select an imported asset first</source>
         <translation>请先选择一个导入对象</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2280"/>
+        <location filename="../src/ui/main_window.py" line="2378"/>
         <source>Export Blocked</source>
         <translation>导出被阻止</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2281"/>
+        <location filename="../src/ui/main_window.py" line="2379"/>
         <source>Cannot export G-code:</source>
         <translation>无法导出 G-code:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2289"/>
+        <location filename="../src/ui/main_window.py" line="2387"/>
         <source>Export G-code</source>
         <translation>导出 G-code</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2291"/>
+        <location filename="../src/ui/main_window.py" line="2389"/>
         <source>G-code Files (*.gcode);;All Files (*)</source>
         <translation>G-code 文件 (*.gcode);;所有文件 (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2310"/>
+        <location filename="../src/ui/main_window.py" line="2408"/>
         <source>G-code exported: </source>
         <translation>G-code 已导出: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2314"/>
+        <location filename="../src/ui/main_window.py" line="2412"/>
         <source>G-code saved to:</source>
         <translation>G-code 已保存到:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2321"/>
+        <location filename="../src/ui/main_window.py" line="2419"/>
         <source>Failed to export G-code:</source>
         <translation>导出 G-code 失败:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2326"/>
+        <location filename="../src/ui/main_window.py" line="2424"/>
         <source>Exporting G-code...</source>
         <translation>正在导出 G-code...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2499"/>
-        <location filename="../src/ui/main_window.py" line="2513"/>
+        <location filename="../src/ui/main_window.py" line="2600"/>
+        <location filename="../src/ui/main_window.py" line="2614"/>
         <source>Processing Blocked</source>
         <translation>处理被阻止</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2501"/>
+        <location filename="../src/ui/main_window.py" line="2602"/>
         <source>Some contours exceed the platform size. Please move or scale them back inside the platform before processing.</source>
         <translation>部分轮廓超出画布尺寸。请先将其移动或缩放回画布范围内，再进行处理。</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2505"/>
+        <location filename="../src/ui/main_window.py" line="2606"/>
         <source>Processing blocked: contours exceed platform size</source>
         <translation>处理被阻止：轮廓超出画布尺寸</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2596"/>
+        <location filename="../src/ui/main_window.py" line="2700"/>
+        <source>No contours available for screw-hole editing</source>
+        <translation>没有可用于编辑螺丝孔的轮廓</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2708"/>
+        <source>Enable Bottom Face before editing screw holes</source>
+        <translation>编辑螺丝孔前请先启用封底</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2724"/>
+        <source>Edit Screw Holes</source>
+        <translation>编辑螺丝孔</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2734"/>
+        <source>Click a screw hole to select it, click empty space to add, Delete to remove, Esc to finish</source>
+        <translation>点击螺丝孔可选中，点击空白处可添加，按 Delete 删除，按 Esc 完成</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2760"/>
+        <source>Click inside a valid bottom-face region</source>
+        <translation>请在有效的封底区域内点击</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2770"/>
+        <source>Screw hole added</source>
+        <translation>已添加螺丝孔</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2790"/>
+        <source>Screw hole updated</source>
+        <translation>已更新螺丝孔</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2806"/>
+        <source>Screw hole removed</source>
+        <translation>已删除螺丝孔</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2818"/>
         <source>No contours available for start point selection</source>
         <translation>当前没有可供设置起始点的轮廓</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2607"/>
+        <location filename="../src/ui/main_window.py" line="2830"/>
         <source>Click a corner on any contour or hole, Esc to exit</source>
         <translation>点击任意轮廓或内孔的尖角设置起始点，按 Esc 退出</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2633"/>
+        <location filename="../src/ui/main_window.py" line="2856"/>
         <source>No contours available for print order selection</source>
         <translation>没有可用于设置打印顺序的轮廓</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2646"/>
+        <location filename="../src/ui/main_window.py" line="2870"/>
         <source>Set Print Order</source>
         <translation>设置打印顺序</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2654"/>
+        <location filename="../src/ui/main_window.py" line="2878"/>
         <source>Click contours or holes in desired print order, Esc to finish</source>
         <translation>按所需打印顺序点击轮廓或孔，按 Esc 完成</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2705"/>
+        <location filename="../src/ui/main_window.py" line="2929"/>
         <source>Print order updated</source>
         <translation>打印顺序已更新</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2736"/>
+        <location filename="../src/ui/main_window.py" line="2960"/>
         <source>Set Start Point</source>
         <translation>设置起始点</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2747"/>
+        <location filename="../src/ui/main_window.py" line="2971"/>
         <source>Start point updated</source>
         <translation>起始点已更新</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3165"/>
+        <location filename="../src/ui/main_window.py" line="3396"/>
         <source>Text</source>
         <translation>文字</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3171"/>
+        <location filename="../src/ui/main_window.py" line="3402"/>
         <source>Add Contours</source>
         <translation>添加轮廓</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3176"/>
+        <location filename="../src/ui/main_window.py" line="3407"/>
         <source>Text added</source>
         <translation>文字已添加</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3178"/>
+        <location filename="../src/ui/main_window.py" line="3409"/>
         <source>Error</source>
         <translation>错误</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3184"/>
+        <location filename="../src/ui/main_window.py" line="3415"/>
         <source>About MINGDA SignMaker</source>
         <translation>关于 MINGDA SignMaker</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3186"/>
+        <location filename="../src/ui/main_window.py" line="3417"/>
         <source>Professional LED Sign Letter 3D Printing Slicer</source>
         <translation>专业发光字3D打印切片软件</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3187"/>
+        <location filename="../src/ui/main_window.py" line="3418"/>
         <source>Version: </source>
         <translation>版本: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3189"/>
+        <location filename="../src/ui/main_window.py" line="3420"/>
         <source>Features:</source>
         <translation>功能特性:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3191"/>
+        <location filename="../src/ui/main_window.py" line="3422"/>
         <source>DXF/SVG file import</source>
         <translation>DXF/SVG文件导入</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3192"/>
+        <location filename="../src/ui/main_window.py" line="3423"/>
         <source>Straight/Bevel/Custom edges</source>
         <translation>直边/斜边/异形边</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3193"/>
+        <location filename="../src/ui/main_window.py" line="3424"/>
         <source>Multi-color printing support</source>
         <translation>多色打印支持</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3194"/>
+        <location filename="../src/ui/main_window.py" line="3425"/>
         <source>Step/V-groove</source>
         <translation>台阶/V槽</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3195"/>
+        <location filename="../src/ui/main_window.py" line="3426"/>
         <source>Anti-warping skirt</source>
         <translation>防翘裙边</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3196"/>
+        <location filename="../src/ui/main_window.py" line="3427"/>
         <source>Connected letters</source>
         <translation>连襟字</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3209"/>
+        <location filename="../src/ui/main_window.py" line="3440"/>
         <source>Open Tutorial Failed</source>
         <translation>打开教程失败</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3210"/>
+        <location filename="../src/ui/main_window.py" line="3441"/>
         <source>Failed to open the tutorial playlist in the default browser.</source>
         <translation>无法在默认浏览器中打开教程播放列表。</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3221"/>
+        <location filename="../src/ui/main_window.py" line="3452"/>
         <source>Language Changed</source>
         <translation>语言已更改</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3222"/>
+        <location filename="../src/ui/main_window.py" line="3453"/>
         <source>Language has been changed to {lang}. Please restart the application for full effect.</source>
         <translation>语言已更改为 {lang}。请重启应用程序以完全生效。</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3229"/>
+        <location filename="../src/ui/main_window.py" line="3460"/>
         <source>Language Change Failed</source>
         <translation>语言更改失败</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3230"/>
+        <location filename="../src/ui/main_window.py" line="3461"/>
         <source>Translation file for {lang} is not available yet.</source>
         <translation>{lang} 的翻译文件尚不可用。</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="573"/>
-        <location filename="../src/ui/main_window.py" line="1271"/>
-        <location filename="../src/ui/main_window.py" line="2769"/>
+        <location filename="../src/ui/main_window.py" line="580"/>
+        <location filename="../src/ui/main_window.py" line="1360"/>
+        <location filename="../src/ui/main_window.py" line="2995"/>
         <source>Arrow keys: 1mm, Shift+Arrow: 10mm</source>
         <translation>方向键: 1mm, Shift+方向键: 10mm</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2771"/>
+        <location filename="../src/ui/main_window.py" line="2997"/>
         <source>Rotation</source>
         <translation>旋转</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="454"/>
-        <location filename="../src/ui/main_window.py" line="2777"/>
+        <location filename="../src/ui/main_window.py" line="461"/>
+        <location filename="../src/ui/main_window.py" line="3003"/>
         <source>Scale</source>
         <translation>缩放</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1266"/>
-        <location filename="../src/ui/main_window.py" line="2765"/>
+        <location filename="../src/ui/main_window.py" line="1355"/>
+        <location filename="../src/ui/main_window.py" line="2991"/>
         <source>Position</source>
         <translation>位置</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="429"/>
+        <location filename="../src/ui/main_window.py" line="436"/>
         <source>Angle</source>
         <translation>角度</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2775"/>
+        <location filename="../src/ui/main_window.py" line="3001"/>
         <source>Drag grabber on ring to rotate</source>
         <translation>拖拽圆环上的手柄进行旋转</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="493"/>
+        <location filename="../src/ui/main_window.py" line="500"/>
         <source>Size</source>
         <translation>尺寸</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="536"/>
+        <location filename="../src/ui/main_window.py" line="543"/>
         <source>Uniform Scale</source>
         <translation>等比缩放</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2781"/>
+        <location filename="../src/ui/main_window.py" line="3007"/>
         <source>Drag to scale, input exact values above</source>
         <translation>拖拽缩放，或在上方输入精确值</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1854"/>
+        <location filename="../src/ui/main_window.py" line="1948"/>
         <source>Loading file...</source>
         <translation>正在加载文件...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2376"/>
+        <location filename="../src/ui/main_window.py" line="2474"/>
         <source>Exporting STL...</source>
         <translation>正在导出STL...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2409"/>
-        <location filename="../src/ui/main_window.py" line="2445"/>
+        <location filename="../src/ui/main_window.py" line="2507"/>
+        <location filename="../src/ui/main_window.py" line="2543"/>
         <source>Outer clearance: </source>
         <translation>外轮廓公差: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2410"/>
-        <location filename="../src/ui/main_window.py" line="2446"/>
+        <location filename="../src/ui/main_window.py" line="2508"/>
+        <location filename="../src/ui/main_window.py" line="2544"/>
         <source>Hole clearance: </source>
         <translation>内孔公差: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2411"/>
-        <location filename="../src/ui/main_window.py" line="2447"/>
+        <location filename="../src/ui/main_window.py" line="2509"/>
+        <location filename="../src/ui/main_window.py" line="2545"/>
         <source>Laser kerf: </source>
         <translation>激光切缝: </translation>
     </message>
@@ -1162,7 +1215,7 @@
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="566"/>
-        <location filename="../src/ui/param_panel.py" line="2909"/>
+        <location filename="../src/ui/param_panel.py" line="2923"/>
         <source>No profile selected</source>
         <translation>未选择轮廓</translation>
     </message>
@@ -1187,203 +1240,203 @@
         <translation>底面厚度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="672"/>
+        <location filename="../src/ui/param_panel.py" line="683"/>
         <source>Light Slot</source>
         <translation>灯槽</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="676"/>
+        <location filename="../src/ui/param_panel.py" line="687"/>
         <source>Enable Light Slot</source>
         <translation>启用灯槽</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="690"/>
+        <location filename="../src/ui/param_panel.py" line="701"/>
         <source>Slot Width:</source>
         <translation>灯槽宽度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="695"/>
+        <location filename="../src/ui/param_panel.py" line="706"/>
         <source>Slot Depth:</source>
         <translation>灯槽深度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="704"/>
+        <location filename="../src/ui/param_panel.py" line="715"/>
         <source>Floor Layers:</source>
         <translation>底部层数:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="713"/>
-        <location filename="../src/ui/param_panel.py" line="1942"/>
+        <location filename="../src/ui/param_panel.py" line="724"/>
+        <location filename="../src/ui/param_panel.py" line="1953"/>
         <source>Wall Gap:</source>
         <translation>壁边间隙:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="717"/>
+        <location filename="../src/ui/param_panel.py" line="728"/>
         <source>Outer Slot</source>
         <translation>外轮廓灯槽</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="723"/>
+        <location filename="../src/ui/param_panel.py" line="734"/>
         <source>Hole Slot</source>
         <translation>内孔灯槽</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="729"/>
+        <location filename="../src/ui/param_panel.py" line="740"/>
         <source>Auto Skip Small Holes</source>
         <translation>自动跳过小孔</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="747"/>
+        <location filename="../src/ui/param_panel.py" line="758"/>
         <source>Min Hole Span:</source>
         <translation>最小孔跨度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="782"/>
+        <location filename="../src/ui/param_panel.py" line="793"/>
         <source>Top Face</source>
         <translation>顶面封闭</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="787"/>
+        <location filename="../src/ui/param_panel.py" line="798"/>
         <source>Enable Top Face</source>
         <translation>启用顶面封闭</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="804"/>
+        <location filename="../src/ui/param_panel.py" line="815"/>
         <source>Top Thickness:</source>
         <translation>顶面厚度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1314"/>
+        <location filename="../src/ui/param_panel.py" line="1325"/>
         <source>Machine G-code</source>
         <translation>机器 G-code</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1321"/>
+        <location filename="../src/ui/param_panel.py" line="1332"/>
         <source>Machine start G-code</source>
         <translation>机器起始 G-code</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1338"/>
+        <location filename="../src/ui/param_panel.py" line="1349"/>
         <source>Machine end G-code</source>
         <translation>机器结束 G-code</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1755"/>
+        <location filename="../src/ui/param_panel.py" line="1766"/>
         <source>Step/V-Groove</source>
         <translation>台阶/V槽</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1760"/>
+        <location filename="../src/ui/param_panel.py" line="1771"/>
         <source>Enable Panel Step (Top)</source>
         <translation>启用面板台阶（顶部）</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1772"/>
-        <location filename="../src/ui/param_panel.py" line="1810"/>
+        <location filename="../src/ui/param_panel.py" line="1783"/>
+        <location filename="../src/ui/param_panel.py" line="1821"/>
         <source>Step Height:</source>
         <translation>台阶高度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1780"/>
-        <location filename="../src/ui/param_panel.py" line="1818"/>
+        <location filename="../src/ui/param_panel.py" line="1791"/>
+        <location filename="../src/ui/param_panel.py" line="1829"/>
         <source>Step Width:</source>
         <translation>台阶宽度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1782"/>
-        <location filename="../src/ui/param_panel.py" line="1820"/>
+        <location filename="../src/ui/param_panel.py" line="1793"/>
+        <location filename="../src/ui/param_panel.py" line="1831"/>
         <source>V-Groove</source>
         <translation>V型槽</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1802"/>
+        <location filename="../src/ui/param_panel.py" line="1813"/>
         <source>Enable Baseplate Step (Bottom)</source>
         <translation>启用底板台阶（底部）</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1906"/>
+        <location filename="../src/ui/param_panel.py" line="1917"/>
         <source>Anti-Warping Skirt</source>
         <translation>防翘裙边</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1911"/>
+        <location filename="../src/ui/param_panel.py" line="1922"/>
         <source>Enable Anti-Warping Skirt</source>
         <translation>启用防翘裙边</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1925"/>
+        <location filename="../src/ui/param_panel.py" line="1936"/>
         <source>Skirt Height:</source>
         <translation>裙边高度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1956"/>
+        <location filename="../src/ui/param_panel.py" line="1967"/>
         <source>Skirt Sides:</source>
         <translation>裙边方向:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1976"/>
+        <location filename="../src/ui/param_panel.py" line="1987"/>
         <source>Connected Letters</source>
         <translation>连襟字</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1981"/>
+        <location filename="../src/ui/param_panel.py" line="1992"/>
         <source>Enable Connected Letters</source>
         <translation>启用连襟字</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1990"/>
+        <location filename="../src/ui/param_panel.py" line="2001"/>
         <source>Triangle</source>
         <translation>三角形连襟</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1991"/>
+        <location filename="../src/ui/param_panel.py" line="2002"/>
         <source>Diamond</source>
         <translation>菱形连襟</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1994"/>
+        <location filename="../src/ui/param_panel.py" line="2005"/>
         <source>Connection Type:</source>
         <translation>连襟类型:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1997"/>
+        <location filename="../src/ui/param_panel.py" line="2008"/>
         <source>Auto Detect Connection Points</source>
         <translation>自动检测连接点</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2010"/>
+        <location filename="../src/ui/param_panel.py" line="2021"/>
         <source>Connection Width:</source>
         <translation>连襟宽度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2022"/>
+        <location filename="../src/ui/param_panel.py" line="2033"/>
         <source>Bevel Height:</source>
         <translation>斜边高度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2034"/>
+        <location filename="../src/ui/param_panel.py" line="2045"/>
         <source>Base Height:</source>
         <translation>底座高度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2043"/>
+        <location filename="../src/ui/param_panel.py" line="2054"/>
         <source>Support Offset:</source>
         <translation>支撑偏移:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2079"/>
+        <location filename="../src/ui/param_panel.py" line="2090"/>
         <source>Edge Wrap/Outline</source>
         <translation>包边勾边</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2084"/>
+        <location filename="../src/ui/param_panel.py" line="2095"/>
         <source>Enable Edge Wrap</source>
         <translation>启用包边</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1951"/>
-        <location filename="../src/ui/param_panel.py" line="2093"/>
-        <location filename="../src/ui/param_panel.py" line="2145"/>
+        <location filename="../src/ui/param_panel.py" line="1962"/>
+        <location filename="../src/ui/param_panel.py" line="2104"/>
+        <location filename="../src/ui/param_panel.py" line="2156"/>
         <source>Inner</source>
         <translation>内部</translation>
     </message>
@@ -1398,411 +1451,416 @@
         <translation>速度、温度、冷却、换色点以及打印开始/结束命令。</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="881"/>
+        <location filename="../src/ui/param_panel.py" line="635"/>
+        <source>Screw Hole Diameter:</source>
+        <translation>螺丝孔直径:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="892"/>
         <source>Color Change</source>
         <translation>换色设置</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="885"/>
+        <location filename="../src/ui/param_panel.py" line="896"/>
         <source>Enable Color Change</source>
         <translation>启用换色</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="894"/>
+        <location filename="../src/ui/param_panel.py" line="905"/>
         <source>Initial color comes from Start G-code. Each change point runs the selected T macro.</source>
         <translation>初始颜色由 Start G-code 决定。每个换色点会执行所选的 T 宏命令。</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="902"/>
+        <location filename="../src/ui/param_panel.py" line="913"/>
         <source>Change At Height</source>
         <translation>换色高度</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="903"/>
+        <location filename="../src/ui/param_panel.py" line="914"/>
         <source>Macro Index</source>
         <translation>宏序号</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="904"/>
+        <location filename="../src/ui/param_panel.py" line="915"/>
         <source>Preview</source>
         <translation>预览</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="923"/>
+        <location filename="../src/ui/param_panel.py" line="934"/>
         <source>Add Change Point</source>
         <translation>添加换色点</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="928"/>
+        <location filename="../src/ui/param_panel.py" line="939"/>
         <source>Remove Selected</source>
         <translation>删除所选</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1050"/>
+        <location filename="../src/ui/param_panel.py" line="1061"/>
         <source>Color change disabled.</source>
         <translation>已禁用换色。</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1056"/>
+        <location filename="../src/ui/param_panel.py" line="1067"/>
         <source>Initial color comes from Start G-code. No automatic changes are configured.</source>
         <translation>初始颜色由 Start G-code 决定。当前未配置自动换色。</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1063"/>
+        <location filename="../src/ui/param_panel.py" line="1074"/>
         <source>At {height:.2f}mm -&gt; {command}</source>
         <translation>{height:.2f}mm -&gt; {command}</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1072"/>
+        <location filename="../src/ui/param_panel.py" line="1083"/>
         <source>Prime Tower</source>
         <translation>擦料塔</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1076"/>
+        <location filename="../src/ui/param_panel.py" line="1087"/>
         <source>Enable Prime Tower</source>
         <translation>启用擦料塔</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1084"/>
+        <location filename="../src/ui/param_panel.py" line="1095"/>
         <source>Prime tower geometry is defined by its center point in bed coordinates.</source>
         <translation>擦料塔几何体以热床坐标中的中心点定义。</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1103"/>
+        <location filename="../src/ui/param_panel.py" line="1114"/>
         <source>Center X:</source>
         <translation>中心 X：</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1112"/>
+        <location filename="../src/ui/param_panel.py" line="1123"/>
         <source>Center Y:</source>
         <translation>中心 Y：</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1122"/>
+        <location filename="../src/ui/param_panel.py" line="1133"/>
         <source>Tower Width:</source>
         <translation>塔宽：</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1132"/>
+        <location filename="../src/ui/param_panel.py" line="1143"/>
         <source>Tower Depth:</source>
         <translation>塔深：</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1141"/>
+        <location filename="../src/ui/param_panel.py" line="1152"/>
         <source>Infill Density:</source>
         <translation>填充密度：</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1195"/>
+        <location filename="../src/ui/param_panel.py" line="1206"/>
         <source>Printer Profile</source>
         <translation>打印机档案</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1206"/>
+        <location filename="../src/ui/param_panel.py" line="1217"/>
         <source>New</source>
         <translation>新建</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1211"/>
+        <location filename="../src/ui/param_panel.py" line="1222"/>
         <source>Duplicate</source>
         <translation>复制</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1216"/>
+        <location filename="../src/ui/param_panel.py" line="1227"/>
         <source>Rename</source>
         <translation>重命名</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1221"/>
+        <location filename="../src/ui/param_panel.py" line="1232"/>
         <source>Delete</source>
         <translation>删除</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1226"/>
+        <location filename="../src/ui/param_panel.py" line="1237"/>
         <source>Set Default</source>
         <translation>设为默认</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1244"/>
+        <location filename="../src/ui/param_panel.py" line="1255"/>
         <source>Printable Area X:</source>
         <translation>打印范围 X:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1250"/>
+        <location filename="../src/ui/param_panel.py" line="1261"/>
         <source>Printable Area Y:</source>
         <translation>打印范围 Y:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1256"/>
+        <location filename="../src/ui/param_panel.py" line="1267"/>
         <source>Printable Area Z:</source>
         <translation>打印范围 Z:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1263"/>
+        <location filename="../src/ui/param_panel.py" line="1274"/>
         <source>Nozzle Diameter:</source>
         <translation>喷嘴直径:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1270"/>
+        <location filename="../src/ui/param_panel.py" line="1281"/>
         <source>Filament Diameter:</source>
         <translation>耗材直径:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1277"/>
+        <location filename="../src/ui/param_panel.py" line="1288"/>
         <source>Retract Length:</source>
         <translation>回抽长度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1283"/>
+        <location filename="../src/ui/param_panel.py" line="1294"/>
         <source>Retract Speed:</source>
         <translation>回抽速度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1290"/>
+        <location filename="../src/ui/param_panel.py" line="1301"/>
         <source>Short Z-Hop:</source>
         <translation>短距离 Z 抬升:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1297"/>
+        <location filename="../src/ui/param_panel.py" line="1308"/>
         <source>Long Z-Hop:</source>
         <translation>长距离 Z 抬升:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1303"/>
+        <location filename="../src/ui/param_panel.py" line="1314"/>
         <source>Long Travel Threshold:</source>
         <translation>长距离移动阈值:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1307"/>
+        <location filename="../src/ui/param_panel.py" line="1318"/>
         <source>Color Change Template:</source>
         <translation>换色模板:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1325"/>
+        <location filename="../src/ui/param_panel.py" line="1336"/>
         <source>Edit Start G-code</source>
         <translation>编辑起始 G-code</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1327"/>
+        <location filename="../src/ui/param_panel.py" line="1338"/>
         <source>Start G-code</source>
         <translation>起始 G-code</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1342"/>
+        <location filename="../src/ui/param_panel.py" line="1353"/>
         <source>Edit End G-code</source>
         <translation>编辑结束 G-code</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1344"/>
+        <location filename="../src/ui/param_panel.py" line="1355"/>
         <source>End G-code</source>
         <translation>结束 G-code</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1375"/>
+        <location filename="../src/ui/param_panel.py" line="1386"/>
         <source>{name} (Project Snapshot)</source>
         <translation>{name}（项目快照）</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1420"/>
+        <location filename="../src/ui/param_panel.py" line="1431"/>
         <source>Using embedded project profile snapshot.</source>
         <translation>正在使用项目内嵌的打印机档案快照。</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1422"/>
+        <location filename="../src/ui/param_panel.py" line="1433"/>
         <source>Profile changes are saved immediately.</source>
         <translation>档案修改会立即保存。</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1592"/>
+        <location filename="../src/ui/param_panel.py" line="1603"/>
         <source>New Printer Profile</source>
         <translation>新建打印机档案</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1593"/>
-        <location filename="../src/ui/param_panel.py" line="1639"/>
+        <location filename="../src/ui/param_panel.py" line="1604"/>
+        <location filename="../src/ui/param_panel.py" line="1650"/>
         <source>Profile Name:</source>
         <translation>档案名称:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1613"/>
+        <location filename="../src/ui/param_panel.py" line="1624"/>
         <source>Duplicate Printer Profile</source>
         <translation>复制打印机档案</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1614"/>
+        <location filename="../src/ui/param_panel.py" line="1625"/>
         <source>New Profile Name:</source>
         <translation>新档案名称:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1615"/>
+        <location filename="../src/ui/param_panel.py" line="1626"/>
         <source>{name} Copy</source>
         <translation>{name} 副本</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1638"/>
+        <location filename="../src/ui/param_panel.py" line="1649"/>
         <source>Rename Printer Profile</source>
         <translation>重命名打印机档案</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1659"/>
+        <location filename="../src/ui/param_panel.py" line="1670"/>
         <source>Delete Printer Profile</source>
         <translation>删除打印机档案</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1660"/>
+        <location filename="../src/ui/param_panel.py" line="1671"/>
         <source>Delete printer profile &apos;{name}&apos;?</source>
         <translation>确定删除打印机档案“{name}”吗？</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1701"/>
+        <location filename="../src/ui/param_panel.py" line="1712"/>
         <source>Empty</source>
         <translation>空</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1704"/>
+        <location filename="../src/ui/param_panel.py" line="1715"/>
         <source>{first} (+{count} more lines)</source>
         <translation>{first}（另有 {count} 行）</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1719"/>
-        <location filename="../src/ui/param_panel.py" line="2721"/>
+        <location filename="../src/ui/param_panel.py" line="1730"/>
+        <location filename="../src/ui/param_panel.py" line="2734"/>
         <source>Klipper Profile</source>
         <translation>Klipper 档案</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1946"/>
-        <location filename="../src/ui/param_panel.py" line="2094"/>
-        <location filename="../src/ui/param_panel.py" line="2146"/>
+        <location filename="../src/ui/param_panel.py" line="1957"/>
+        <location filename="../src/ui/param_panel.py" line="2105"/>
+        <location filename="../src/ui/param_panel.py" line="2157"/>
         <source>Outer</source>
         <translation>外部</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2105"/>
+        <location filename="../src/ui/param_panel.py" line="2116"/>
         <source>Wrap Direction:</source>
         <translation>包边方向:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2113"/>
+        <location filename="../src/ui/param_panel.py" line="2124"/>
         <source>Wrap Width:</source>
         <translation>包边宽度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2121"/>
+        <location filename="../src/ui/param_panel.py" line="2132"/>
         <source>Wrap Height:</source>
         <translation>包边高度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2136"/>
+        <location filename="../src/ui/param_panel.py" line="2147"/>
         <source>Enable Outline</source>
         <translation>启用勾边</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2157"/>
+        <location filename="../src/ui/param_panel.py" line="2168"/>
         <source>Outline Direction:</source>
         <translation>勾边方向:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2165"/>
+        <location filename="../src/ui/param_panel.py" line="2176"/>
         <source>Outline Width:</source>
         <translation>勾边宽度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2173"/>
+        <location filename="../src/ui/param_panel.py" line="2184"/>
         <source>Outline Height:</source>
         <translation>勾边高度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2181"/>
+        <location filename="../src/ui/param_panel.py" line="2192"/>
         <source>Outline Offset:</source>
         <translation>勾边偏移:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2197"/>
+        <location filename="../src/ui/param_panel.py" line="2208"/>
         <source>Speed Settings</source>
         <translation>速度设置</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2207"/>
+        <location filename="../src/ui/param_panel.py" line="2218"/>
         <source>Print Speed:</source>
         <translation>打印速度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2215"/>
+        <location filename="../src/ui/param_panel.py" line="2226"/>
         <source>Travel Speed:</source>
         <translation>空走速度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2223"/>
+        <location filename="../src/ui/param_panel.py" line="2234"/>
         <source>First Layer Speed:</source>
         <translation>首层速度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2225"/>
+        <location filename="../src/ui/param_panel.py" line="2236"/>
         <source>Skirt Speed:</source>
         <translation>裙边速度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2226"/>
+        <location filename="../src/ui/param_panel.py" line="2237"/>
         <source>Step Speed:</source>
         <translation>台阶速度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2232"/>
+        <location filename="../src/ui/param_panel.py" line="2243"/>
         <source>Temperature Settings</source>
         <translation>温度设置</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2241"/>
+        <location filename="../src/ui/param_panel.py" line="2252"/>
         <source>First Layer Nozzle Temperature:</source>
         <translation>首层喷嘴温度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2248"/>
+        <location filename="../src/ui/param_panel.py" line="2259"/>
         <source>Other Layers Nozzle Temperature:</source>
         <translation>其他层喷嘴温度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2255"/>
+        <location filename="../src/ui/param_panel.py" line="2266"/>
         <source>First Layer Bed Temperature:</source>
         <translation>首层热床温度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2262"/>
+        <location filename="../src/ui/param_panel.py" line="2273"/>
         <source>Other Layers Bed Temperature:</source>
         <translation>其他层热床温度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2268"/>
+        <location filename="../src/ui/param_panel.py" line="2279"/>
         <source>Cooling Settings</source>
         <translation>冷却设置</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2277"/>
+        <location filename="../src/ui/param_panel.py" line="2288"/>
         <source>First Layer Fan Speed:</source>
         <translation>首层风扇速度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2284"/>
+        <location filename="../src/ui/param_panel.py" line="2295"/>
         <source>Other Layers Fan Speed:</source>
         <translation>其他层风扇速度:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2860"/>
+        <location filename="../src/ui/param_panel.py" line="2874"/>
         <source>Import Custom Edge DXF</source>
         <translation>导入异形边DXF</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2862"/>
+        <location filename="../src/ui/param_panel.py" line="2876"/>
         <source>DXF Files (*.dxf);;All Files (*.*)</source>
         <translation>DXF文件 (*.dxf);;所有文件 (*.*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2881"/>
+        <location filename="../src/ui/param_panel.py" line="2895"/>
         <source>Import Success</source>
         <translation>导入成功</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2882"/>
+        <location filename="../src/ui/param_panel.py" line="2896"/>
         <source>Imported custom edge profile: {name}
 Size: {width:.1f} x {height:.1f} mm
 Control points: {points}</source>
@@ -1811,19 +1869,19 @@ Control points: {points}</source>
 控制点: {points} 个</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2893"/>
+        <location filename="../src/ui/param_panel.py" line="2907"/>
         <source>Import Failed</source>
         <translation>导入失败</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2894"/>
+        <location filename="../src/ui/param_panel.py" line="2908"/>
         <source>Failed to import DXF file:
 {error}</source>
         <translation>无法导入DXF文件:
 {error}</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2905"/>
+        <location filename="../src/ui/param_panel.py" line="2919"/>
         <source> ({count} points)</source>
         <translation> ({count}点)</translation>
     </message>
