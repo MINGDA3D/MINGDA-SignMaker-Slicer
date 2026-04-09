@@ -38,13 +38,6 @@ DEFAULT_FILAMENT_DENSITY = 1.24
 
 class GCodeValidationError(ValueError):
     """导出前校验失败。"""
-
-
-def _tr(message: str) -> str:
-    """Translate G-code validation messages through Qt."""
-    return QCoreApplication.translate("GCodeWriter", message)
-
-
 class GCodeWriter:
     """Klipper 单喷头 G-code 生成器。"""
 
@@ -149,7 +142,10 @@ class GCodeWriter:
         if color_enabled:
             if not change_points:
                 raise GCodeValidationError(
-                    _tr("Color change is enabled but no change points are configured.")
+                    QCoreApplication.translate(
+                        "GCodeWriter",
+                        "Color change is enabled but no change points are configured.",
+                    )
                 )
 
             previous_height = None

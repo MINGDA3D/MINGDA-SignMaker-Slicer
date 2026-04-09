@@ -95,6 +95,7 @@ ZH_CN_REQUIRED = {
         "Klipper Profile",
         "Temperature Settings",
         "Cooling Settings",
+        "Skirt Speed:",
         "First Layer Nozzle Temperature:",
         "Other Layers Nozzle Temperature:",
         "First Layer Bed Temperature:",
@@ -106,7 +107,6 @@ ZH_CN_REQUIRED = {
         "Loading 3D preview...",
     },
     "TitleBar": {
-        "Export G-code",
         "Export G-code...",
     },
     "GCodeWriter": {

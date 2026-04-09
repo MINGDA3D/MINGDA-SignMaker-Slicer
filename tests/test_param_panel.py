@@ -495,17 +495,21 @@ def test_wrap_outline_mutual_exclusive_updates_control_enabled_state(qapp):
     assert panel.outline_offset.isEnabled() is False
 
 
-def test_skirt_group_shows_only_requested_visible_fields(qapp):
+def test_skirt_group_hides_legacy_fields_and_moves_speed_to_print_settings(qapp):
     panel = ParamPanel()
     skirt_group = next(group for group in panel._primary_groups if group.title() == "Anti-Warping Skirt")
+    speed_group = next(group for group in panel._primary_groups if group.title() == "Speed Settings")
 
-    labels = {label.text() for label in skirt_group.findChildren(QLabel)}
+    skirt_labels = {label.text() for label in skirt_group.findChildren(QLabel)}
+    speed_labels = {label.text() for label in speed_group.findChildren(QLabel)}
 
-    assert "Skirt Height:" in labels
-    assert "Skirt Speed:" in labels
-    assert "Wall Gap:" in labels
-    assert "Skirt Width:" not in labels
-    assert "Trapezoid Interval:" not in labels
+    assert "Skirt Height:" in skirt_labels
+    assert "Wall Gap:" in skirt_labels
+    assert "Skirt Speed:" not in skirt_labels
+    assert "Skirt Width:" not in skirt_labels
+    assert "Trapezoid Interval:" not in skirt_labels
+    assert "Skirt Speed:" in speed_labels
+    assert _owning_group(panel.skirt_speed) is panel.speed_group
 
 
 def test_hidden_skirt_width_interval_and_visible_speed_are_preserved(qapp):

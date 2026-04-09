@@ -1912,7 +1912,6 @@ class ParamPanel(QWidget):
         self.skirt_speed.setSuffix(" mm/s")
         self.skirt_speed.setEnabled(False)
         self.skirt_speed.valueChanged.connect(self._on_param_changed)
-        form.addRow(self.tr("Skirt Speed:"), self.skirt_speed)
 
         self.skirt_offset = self._create_double_spinbox()
         self.skirt_offset.setRange(0, 1.0)
@@ -2203,6 +2202,8 @@ class ParamPanel(QWidget):
         self.first_layer_speed.setSuffix(" mm/s")
         self.first_layer_speed.valueChanged.connect(self._on_param_changed)
         layout.addRow(self.tr("First Layer Speed:"), self.first_layer_speed)
+
+        layout.addRow(self.tr("Skirt Speed:"), self.skirt_speed)
 
         return group
 
