@@ -4,6 +4,7 @@ import os
 import pytest
 from PySide6.QtCore import QEvent, QPointF, Qt
 from PySide6.QtGui import QKeyEvent
+from PySide6.QtTest import QTest
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
@@ -540,7 +541,17 @@ def test_screw_hole_delete_key_removes_only_active_hole(qapp):
     _enable_bottom_face(window)
 
     window._on_screw_hole_tool()
-    window.canvas.set_active_screw_hole((0, 0))
+    window.show()
+    window.canvas.repaint()
+    qapp.processEvents()
+
+    click_pos = window.canvas._world_to_screen(QPointF(10.0, 10.0)).toPoint()
+    QTest.mouseClick(window.canvas, Qt.MouseButton.LeftButton, Qt.KeyboardModifier.NoModifier, click_pos)
+    qapp.processEvents()
+
+    assert window.canvas.current_tool == "screw_hole"
+    assert window.canvas._selected_screw_hole == (0, 0)
+    assert window.canvas.selected_indices == []
 
     delete_event = QKeyEvent(
         QEvent.Type.KeyPress,
@@ -551,6 +562,32 @@ def test_screw_hole_delete_key_removes_only_active_hole(qapp):
 
     assert len(window.contours) == 1
     assert window.contours[0].screw_hole_centers == []
+
+    window.deleteLater()
+
+
+def test_screw_hole_click_keeps_edit_mode_and_does_not_select_contour(qapp):
+    window = MainWindow()
+    contour = _rect_contour(0, 0, 40, 40, "A")
+    contour.screw_hole_centers = [Point(10.0, 10.0)]
+    window.contours = [contour]
+    window.canvas.set_contours(window.contours, center_on_platform=False)
+    window.project_panel.update_contours(window.contours)
+    _enable_bottom_face(window)
+
+    window._on_screw_hole_tool()
+    window.show()
+    window.canvas.repaint()
+    qapp.processEvents()
+
+    click_pos = window.canvas._world_to_screen(QPointF(10.0, 10.0)).toPoint()
+    QTest.mouseClick(window.canvas, Qt.MouseButton.LeftButton, Qt.KeyboardModifier.NoModifier, click_pos)
+    qapp.processEvents()
+
+    assert window.canvas.current_tool == "screw_hole"
+    assert window.canvas_toolbar.btn_screw_hole.isChecked() is True
+    assert window.canvas._selected_screw_hole == (0, 0)
+    assert window.canvas.selected_indices == []
 
     window.deleteLater()
 

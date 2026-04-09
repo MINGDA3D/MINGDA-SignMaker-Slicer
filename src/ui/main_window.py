@@ -1304,7 +1304,7 @@ class MainWindow(QMainWindow):
         )
 
         if active_mode is None:
-            if self.canvas.current_tool in {"start_point", "print_order"}:
+            if self.canvas.current_tool in {"start_point", "print_order", "screw_hole"}:
                 self.canvas_toolbar._set_tool_checked(self.canvas.current_tool)
                 self.canvas.set_tool(self.canvas.current_tool)
                 return
@@ -1333,7 +1333,7 @@ class MainWindow(QMainWindow):
             # 恢复新选中轮廓的变换状态
             new_id = self._get_selected_contour_id()
             self._restore_contour_transform(new_id)
-            if self.canvas.current_tool in {"start_point", "print_order"}:
+            if self.canvas.current_tool in {"start_point", "print_order", "screw_hole"}:
                 self.transform_panel.setVisible(False)
                 self._sync_release_asset_button_state()
                 return
@@ -2716,11 +2716,12 @@ class MainWindow(QMainWindow):
         self.canvas_toolbar._set_tool_checked("screw_hole")
         self.canvas.set_tool("screw_hole")
         self.canvas.set_active_screw_hole(None)
+        self.canvas.set_selected_indices([], update_view=False)
         self.transform_panel.setVisible(False)
         self._refresh_screw_hole_overlay()
         self.canvas.setFocus()
         self._update_status(
-            self.tr("Click to add screw holes, drag to move, Delete to remove, Esc to finish")
+            self.tr("Click a screw hole to select it, click empty space to add, Delete to remove, Esc to finish")
         )
 
     def _exit_screw_hole_mode(self, commit: bool = True):
@@ -2753,7 +2754,6 @@ class MainWindow(QMainWindow):
         contour.screw_hole_centers.append(Point(x, y))
         self._screw_hole_session_dirty = True
         self._invalidate_processed_result()
-        self._apply_contour_selection([contour_index])
         self._refresh_screw_hole_overlay()
         self.canvas.set_active_screw_hole((contour_index, len(contour.screw_hole_centers) - 1))
         self.canvas.update()
@@ -2774,7 +2774,6 @@ class MainWindow(QMainWindow):
         contour.screw_hole_centers[hole_index] = Point(x, y)
         self._screw_hole_session_dirty = True
         self._invalidate_processed_result()
-        self._apply_contour_selection([contour_index])
         self._refresh_screw_hole_overlay()
         self.canvas.set_active_screw_hole((contour_index, hole_index))
         self.canvas.update()
@@ -2791,7 +2790,6 @@ class MainWindow(QMainWindow):
         contour.screw_hole_centers.pop(hole_index)
         self._screw_hole_session_dirty = True
         self._invalidate_processed_result()
-        self._apply_contour_selection([contour_index])
         self._refresh_screw_hole_overlay()
         self.canvas.set_active_screw_hole(None)
         self.canvas.update()
