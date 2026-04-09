@@ -2210,4 +2210,45 @@ Control points: {points}</source>
         <translation>Разложить ресурс</translation>
     </message>
 </context>
+
+
+<context>
+    <name>DongleGuard</name>
+    <message>
+        <source>Failed to load USB dongle runtime library. The application cannot start.&#10;Please verify the system environment or rebuild the dongle module and try again.</source>
+        <translation>Не удалось загрузить библиотеку среды выполнения USB-ключа. Приложение не может быть запущено.&#10;Проверьте системную среду или пересоберите модуль ключа и повторите попытку.</translation>
+    </message>
+    <message>
+        <source>USB dongle validation module is missing from this build. The application cannot start.&#10;Please rebuild with CODE_DOG=1 and include native/softkey_bridge.dll.</source>
+        <translation>В этой сборке отсутствует модуль проверки USB-ключа. Приложение не может быть запущено.&#10;Пересоберите приложение с CODE_DOG=1 и включите native/softkey_bridge.dll.</translation>
+    </message>
+    <message>
+        <source>USB dongle validation module received invalid arguments. The application cannot start.</source>
+        <translation>Модуль проверки USB-ключа получил неверные параметры. Приложение не может быть запущено.</translation>
+    </message>
+    <message>
+        <source>USB dongle validation module initialization failed. Error code: {code}</source>
+        <translation>Не удалось инициализировать модуль проверки USB-ключа. Код ошибки: {code}</translation>
+    </message>
+    <message>
+        <source>USB dongle not found. Please insert it and try again.</source>
+        <translation>USB-ключ не найден. Подключите его и повторите попытку.</translation>
+    </message>
+    <message>
+        <source>USB dongle was removed. The application will now exit.&#10;Please reinsert it and try again.</source>
+        <translation>USB-ключ был отключен. Приложение будет закрыто.&#10;Подключите его снова и повторите попытку.</translation>
+    </message>
+    <message>
+        <source>USB dongle communication failed. Please check the connection and try again.&#10;Error code: {code}</source>
+        <translation>Сбой связи с USB-ключом. Проверьте подключение и повторите попытку.&#10;Код ошибки: {code}</translation>
+    </message>
+    <message>
+        <source>USB dongle communication error detected. The application will now exit.&#10;Error code: {code}</source>
+        <translation>Обнаружена ошибка связи с USB-ключом. Приложение будет закрыто.&#10;Код ошибки: {code}</translation>
+    </message>
+    <message>
+        <source>USB dongle validation failed. Error code: {code}</source>
+        <translation>Проверка USB-ключа не пройдена. Код ошибки: {code}</translation>
+    </message>
+</context>
 </TS>

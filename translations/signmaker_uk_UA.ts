@@ -2210,4 +2210,45 @@ Control points: {points}</source>
         <translation>Розкласти ресурс</translation>
     </message>
 </context>
+
+
+<context>
+    <name>DongleGuard</name>
+    <message>
+        <source>Failed to load USB dongle runtime library. The application cannot start.&#10;Please verify the system environment or rebuild the dongle module and try again.</source>
+        <translation>Не вдалося завантажити бібліотеку часу виконання USB-ключа. Програму неможливо запустити.&#10;Перевірте системне середовище або перебудуйте модуль ключа й спробуйте ще раз.</translation>
+    </message>
+    <message>
+        <source>USB dongle validation module is missing from this build. The application cannot start.&#10;Please rebuild with CODE_DOG=1 and include native/softkey_bridge.dll.</source>
+        <translation>У цій збірці відсутній модуль перевірки USB-ключа. Програму неможливо запустити.&#10;Перебудуйте програму з CODE_DOG=1 і додайте native/softkey_bridge.dll.</translation>
+    </message>
+    <message>
+        <source>USB dongle validation module received invalid arguments. The application cannot start.</source>
+        <translation>Модуль перевірки USB-ключа отримав некоректні аргументи. Програму неможливо запустити.</translation>
+    </message>
+    <message>
+        <source>USB dongle validation module initialization failed. Error code: {code}</source>
+        <translation>Не вдалося ініціалізувати модуль перевірки USB-ключа. Код помилки: {code}</translation>
+    </message>
+    <message>
+        <source>USB dongle not found. Please insert it and try again.</source>
+        <translation>USB-ключ не знайдено. Підключіть його й повторіть спробу.</translation>
+    </message>
+    <message>
+        <source>USB dongle was removed. The application will now exit.&#10;Please reinsert it and try again.</source>
+        <translation>USB-ключ було від'єднано. Програму буде закрито.&#10;Підключіть його знову й повторіть спробу.</translation>
+    </message>
+    <message>
+        <source>USB dongle communication failed. Please check the connection and try again.&#10;Error code: {code}</source>
+        <translation>Помилка зв'язку з USB-ключем. Перевірте підключення й повторіть спробу.&#10;Код помилки: {code}</translation>
+    </message>
+    <message>
+        <source>USB dongle communication error detected. The application will now exit.&#10;Error code: {code}</source>
+        <translation>Виявлено помилку зв'язку з USB-ключем. Програму буде закрито.&#10;Код помилки: {code}</translation>
+    </message>
+    <message>
+        <source>USB dongle validation failed. Error code: {code}</source>
+        <translation>Перевірка USB-ключа не пройдена. Код помилки: {code}</translation>
+    </message>
+</context>
 </TS>

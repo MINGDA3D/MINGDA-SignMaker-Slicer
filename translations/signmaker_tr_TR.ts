@@ -2210,4 +2210,45 @@ Kontrol noktalari: {points}</translation>
         <translation>Varlığı parçala</translation>
     </message>
 </context>
+
+
+<context>
+    <name>DongleGuard</name>
+    <message>
+        <source>Failed to load USB dongle runtime library. The application cannot start.&#10;Please verify the system environment or rebuild the dongle module and try again.</source>
+        <translation>USB dongle çalışma zamanı kitaplığı yüklenemedi. Uygulama başlatılamıyor.&#10;Lütfen sistem ortamını doğrulayın veya dongle modülünü yeniden derleyip tekrar deneyin.</translation>
+    </message>
+    <message>
+        <source>USB dongle validation module is missing from this build. The application cannot start.&#10;Please rebuild with CODE_DOG=1 and include native/softkey_bridge.dll.</source>
+        <translation>Bu derlemede USB dongle doğrulama modülü bulunmuyor. Uygulama başlatılamıyor.&#10;Lütfen CODE_DOG=1 ile yeniden derleyin ve native/softkey_bridge.dll dosyasını ekleyin.</translation>
+    </message>
+    <message>
+        <source>USB dongle validation module received invalid arguments. The application cannot start.</source>
+        <translation>USB dongle doğrulama modülü geçersiz argümanlar aldı. Uygulama başlatılamıyor.</translation>
+    </message>
+    <message>
+        <source>USB dongle validation module initialization failed. Error code: {code}</source>
+        <translation>USB dongle doğrulama modülü başlatılamadı. Hata kodu: {code}</translation>
+    </message>
+    <message>
+        <source>USB dongle not found. Please insert it and try again.</source>
+        <translation>USB dongle bulunamadı. Lütfen takıp tekrar deneyin.</translation>
+    </message>
+    <message>
+        <source>USB dongle was removed. The application will now exit.&#10;Please reinsert it and try again.</source>
+        <translation>USB dongle çıkarıldı. Uygulama şimdi kapanacak.&#10;Lütfen yeniden takıp tekrar deneyin.</translation>
+    </message>
+    <message>
+        <source>USB dongle communication failed. Please check the connection and try again.&#10;Error code: {code}</source>
+        <translation>USB dongle iletişimi başarısız oldu. Lütfen bağlantıyı kontrol edip tekrar deneyin.&#10;Hata kodu: {code}</translation>
+    </message>
+    <message>
+        <source>USB dongle communication error detected. The application will now exit.&#10;Error code: {code}</source>
+        <translation>USB dongle iletişim hatası algılandı. Uygulama şimdi kapanacak.&#10;Hata kodu: {code}</translation>
+    </message>
+    <message>
+        <source>USB dongle validation failed. Error code: {code}</source>
+        <translation>USB dongle doğrulaması başarısız oldu. Hata kodu: {code}</translation>
+    </message>
+</context>
 </TS>

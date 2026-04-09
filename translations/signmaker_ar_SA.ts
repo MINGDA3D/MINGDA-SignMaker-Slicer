@@ -2210,4 +2210,45 @@ Control points: {points}</source>
         <translation>تفكيك الأصل</translation>
     </message>
 </context>
+
+
+<context>
+    <name>DongleGuard</name>
+    <message>
+        <source>Failed to load USB dongle runtime library. The application cannot start.&#10;Please verify the system environment or rebuild the dongle module and try again.</source>
+        <translation>تعذر تحميل مكتبة وقت التشغيل الخاصة بدونجل USB. لا يمكن بدء التطبيق.&#10;يرجى التحقق من بيئة النظام أو إعادة بناء وحدة الدونجل ثم المحاولة مرة أخرى.</translation>
+    </message>
+    <message>
+        <source>USB dongle validation module is missing from this build. The application cannot start.&#10;Please rebuild with CODE_DOG=1 and include native/softkey_bridge.dll.</source>
+        <translation>وحدة التحقق من دونجل USB غير موجودة في هذا البناء. لا يمكن بدء التطبيق.&#10;يرجى إعادة البناء باستخدام CODE_DOG=1 وتضمين native/softkey_bridge.dll.</translation>
+    </message>
+    <message>
+        <source>USB dongle validation module received invalid arguments. The application cannot start.</source>
+        <translation>تلقت وحدة التحقق من دونجل USB معاملات غير صالحة. لا يمكن بدء التطبيق.</translation>
+    </message>
+    <message>
+        <source>USB dongle validation module initialization failed. Error code: {code}</source>
+        <translation>فشل تهيئة وحدة التحقق من دونجل USB. رمز الخطأ: {code}</translation>
+    </message>
+    <message>
+        <source>USB dongle not found. Please insert it and try again.</source>
+        <translation>لم يتم العثور على دونجل USB. يرجى توصيله ثم المحاولة مرة أخرى.</translation>
+    </message>
+    <message>
+        <source>USB dongle was removed. The application will now exit.&#10;Please reinsert it and try again.</source>
+        <translation>تمت إزالة دونجل USB. سيتم إنهاء التطبيق الآن.&#10;يرجى إعادة توصيله ثم المحاولة مرة أخرى.</translation>
+    </message>
+    <message>
+        <source>USB dongle communication failed. Please check the connection and try again.&#10;Error code: {code}</source>
+        <translation>فشل الاتصال بدونجل USB. يرجى التحقق من الاتصال ثم المحاولة مرة أخرى.&#10;رمز الخطأ: {code}</translation>
+    </message>
+    <message>
+        <source>USB dongle communication error detected. The application will now exit.&#10;Error code: {code}</source>
+        <translation>تم اكتشاف خطأ في الاتصال بدونجل USB. سيتم إنهاء التطبيق الآن.&#10;رمز الخطأ: {code}</translation>
+    </message>
+    <message>
+        <source>USB dongle validation failed. Error code: {code}</source>
+        <translation>فشل التحقق من دونجل USB. رمز الخطأ: {code}</translation>
+    </message>
+</context>
 </TS>

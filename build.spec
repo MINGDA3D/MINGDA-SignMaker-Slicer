@@ -9,10 +9,15 @@ MINGDA SignMaker - PyInstaller打包配置
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path('.').absolute()))
+
+from tools.build_softkey_bridge import collect_code_dog_artifacts
+
 block_cipher = None
 
 # 项目根目录
 PROJECT_ROOT = Path('.').absolute()
+CODE_DOG_ARTIFACTS = collect_code_dog_artifacts(PROJECT_ROOT)
 
 # Collect data files
 datas = [
@@ -24,7 +29,14 @@ datas = [
     ('VERSION', '.'),
 ]
 
+if CODE_DOG_ARTIFACTS.marker_file is not None:
+    datas.append((str(CODE_DOG_ARTIFACTS.marker_file), 'runtime'))
+
 # Resources already added above, no need for additional logo path
+
+binaries = []
+if CODE_DOG_ARTIFACTS.bridge_dll is not None:
+    binaries.append((str(CODE_DOG_ARTIFACTS.bridge_dll), 'native'))
 
 # 收集所有隐藏导入
 hiddenimports = [
@@ -52,7 +64,7 @@ hiddenimports = [
 a = Analysis(
     ['main.py'],
     pathex=[str(PROJECT_ROOT)],
-    binaries=[],
+    binaries=binaries,
     datas=datas,
     hiddenimports=hiddenimports,
     hookspath=[],

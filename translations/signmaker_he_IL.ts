@@ -2210,4 +2210,45 @@ Control points: {points}</source>
         <translation>פרק נכס</translation>
     </message>
 </context>
+
+
+<context>
+    <name>DongleGuard</name>
+    <message>
+        <source>Failed to load USB dongle runtime library. The application cannot start.&#10;Please verify the system environment or rebuild the dongle module and try again.</source>
+        <translation>לא ניתן לטעון את ספריית זמן הריצה של דונגל ה-USB. לא ניתן להפעיל את היישום.&#10;יש לבדוק את סביבת המערכת או לבנות מחדש את מודול הדונגל ולנסות שוב.</translation>
+    </message>
+    <message>
+        <source>USB dongle validation module is missing from this build. The application cannot start.&#10;Please rebuild with CODE_DOG=1 and include native/softkey_bridge.dll.</source>
+        <translation>מודול אימות דונגל ה-USB חסר בבנייה זו. לא ניתן להפעיל את היישום.&#10;יש לבנות מחדש עם CODE_DOG=1 ולכלול את native/softkey_bridge.dll.</translation>
+    </message>
+    <message>
+        <source>USB dongle validation module received invalid arguments. The application cannot start.</source>
+        <translation>מודול אימות דונגל ה-USB קיבל ארגומנטים לא תקינים. לא ניתן להפעיל את היישום.</translation>
+    </message>
+    <message>
+        <source>USB dongle validation module initialization failed. Error code: {code}</source>
+        <translation>אתחול מודול אימות דונגל ה-USB נכשל. קוד שגיאה: {code}</translation>
+    </message>
+    <message>
+        <source>USB dongle not found. Please insert it and try again.</source>
+        <translation>דונגל ה-USB לא נמצא. יש לחבר אותו ולנסות שוב.</translation>
+    </message>
+    <message>
+        <source>USB dongle was removed. The application will now exit.&#10;Please reinsert it and try again.</source>
+        <translation>דונגל ה-USB נותק. היישום ייסגר כעת.&#10;יש לחבר אותו מחדש ולנסות שוב.</translation>
+    </message>
+    <message>
+        <source>USB dongle communication failed. Please check the connection and try again.&#10;Error code: {code}</source>
+        <translation>התקשורת עם דונגל ה-USB נכשלה. יש לבדוק את החיבור ולנסות שוב.&#10;קוד שגיאה: {code}</translation>
+    </message>
+    <message>
+        <source>USB dongle communication error detected. The application will now exit.&#10;Error code: {code}</source>
+        <translation>זוהתה שגיאת תקשורת עם דונגל ה-USB. היישום ייסגר כעת.&#10;קוד שגיאה: {code}</translation>
+    </message>
+    <message>
+        <source>USB dongle validation failed. Error code: {code}</source>
+        <translation>אימות דונגל ה-USB נכשל. קוד שגיאה: {code}</translation>
+    </message>
+</context>
 </TS>

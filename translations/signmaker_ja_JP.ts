@@ -2210,4 +2210,45 @@ Control points: {points}</source>
         <translation>アセットを分解</translation>
     </message>
 </context>
+
+
+<context>
+    <name>DongleGuard</name>
+    <message>
+        <source>Failed to load USB dongle runtime library. The application cannot start.&#10;Please verify the system environment or rebuild the dongle module and try again.</source>
+        <translation>USBドングルのランタイムライブラリを読み込めないため、アプリケーションを起動できません。&#10;システム環境を確認するか、ドングルモジュールを再ビルドしてから再試行してください。</translation>
+    </message>
+    <message>
+        <source>USB dongle validation module is missing from this build. The application cannot start.&#10;Please rebuild with CODE_DOG=1 and include native/softkey_bridge.dll.</source>
+        <translation>このビルドにはUSBドングル検証モジュールが含まれていないため、アプリケーションを起動できません。&#10;CODE_DOG=1 を指定して再ビルドし、native/softkey_bridge.dll を含めてください。</translation>
+    </message>
+    <message>
+        <source>USB dongle validation module received invalid arguments. The application cannot start.</source>
+        <translation>USBドングル検証モジュールに無効な引数が渡されたため、アプリケーションを起動できません。</translation>
+    </message>
+    <message>
+        <source>USB dongle validation module initialization failed. Error code: {code}</source>
+        <translation>USBドングル検証モジュールの初期化に失敗しました。エラーコード: {code}</translation>
+    </message>
+    <message>
+        <source>USB dongle not found. Please insert it and try again.</source>
+        <translation>USBドングルが見つかりません。挿入してから再試行してください。</translation>
+    </message>
+    <message>
+        <source>USB dongle was removed. The application will now exit.&#10;Please reinsert it and try again.</source>
+        <translation>USBドングルが取り外されました。アプリケーションを終了します。&#10;再度挿入してから再試行してください。</translation>
+    </message>
+    <message>
+        <source>USB dongle communication failed. Please check the connection and try again.&#10;Error code: {code}</source>
+        <translation>USBドングルとの通信に失敗しました。接続を確認してから再試行してください。&#10;エラーコード: {code}</translation>
+    </message>
+    <message>
+        <source>USB dongle communication error detected. The application will now exit.&#10;Error code: {code}</source>
+        <translation>USBドングルとの通信エラーが検出されたため、アプリケーションを終了します。&#10;エラーコード: {code}</translation>
+    </message>
+    <message>
+        <source>USB dongle validation failed. Error code: {code}</source>
+        <translation>USBドングルの検証に失敗しました。エラーコード: {code}</translation>
+    </message>
+</context>
 </TS>

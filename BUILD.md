@@ -13,6 +13,20 @@ build.bat
 python build.py
 ```
 
+如果需要启用 USB 加密锁存在性校验，请在构建前设置 `CODE_DOG=1`：
+
+```powershell
+$env:CODE_DOG = '1'
+python build.py
+```
+
+如果只需要单独编译本地桥接库，可以运行：
+
+```powershell
+$env:CODE_DOG = '1'
+python tools/build_softkey_bridge.py
+```
+
 ### Linux/Mac用户
 ```bash
 python build.py

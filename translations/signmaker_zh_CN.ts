@@ -2210,4 +2210,45 @@ Control points: {points}</source>
         <translation>分解导入对象</translation>
     </message>
 </context>
+
+
+<context>
+    <name>DongleGuard</name>
+    <message>
+        <source>Failed to load USB dongle runtime library. The application cannot start.&#10;Please verify the system environment or rebuild the dongle module and try again.</source>
+        <translation>USB 加密锁底层库加载失败，程序无法启动。&#10;请检查当前系统环境或重新构建加密锁模块后重试。</translation>
+    </message>
+    <message>
+        <source>USB dongle validation module is missing from this build. The application cannot start.&#10;Please rebuild with CODE_DOG=1 and include native/softkey_bridge.dll.</source>
+        <translation>当前构建未包含 USB 加密锁校验模块，程序无法启动。&#10;请使用 CODE_DOG=1 重新构建，并确保包含 native/softkey_bridge.dll。</translation>
+    </message>
+    <message>
+        <source>USB dongle validation module received invalid arguments. The application cannot start.</source>
+        <translation>USB 加密锁校验模块参数错误，程序无法启动。</translation>
+    </message>
+    <message>
+        <source>USB dongle validation module initialization failed. Error code: {code}</source>
+        <translation>USB 加密锁校验模块初始化失败。错误码：{code}</translation>
+    </message>
+    <message>
+        <source>USB dongle not found. Please insert it and try again.</source>
+        <translation>未找到加密锁，请插入后重试。</translation>
+    </message>
+    <message>
+        <source>USB dongle was removed. The application will now exit.&#10;Please reinsert it and try again.</source>
+        <translation>检测到加密锁已断开，程序即将退出。&#10;请重新插入后重试。</translation>
+    </message>
+    <message>
+        <source>USB dongle communication failed. Please check the connection and try again.&#10;Error code: {code}</source>
+        <translation>加密锁通信失败，请检查连接后重试。&#10;错误码：{code}</translation>
+    </message>
+    <message>
+        <source>USB dongle communication error detected. The application will now exit.&#10;Error code: {code}</source>
+        <translation>检测到加密锁通信异常，程序即将退出。&#10;错误码：{code}</translation>
+    </message>
+    <message>
+        <source>USB dongle validation failed. Error code: {code}</source>
+        <translation>加密锁校验失败。错误码：{code}</translation>
+    </message>
+</context>
 </TS>

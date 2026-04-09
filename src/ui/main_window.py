@@ -97,6 +97,7 @@ from src.i18n import (
     init_translation_manager, get_translation_manager,
     SUPPORTED_LANGUAGES, RTL_LANGUAGES
 )
+from src.license_guard import DongleGuard, is_code_dog_enabled
 
 TUTORIAL_PLAYLIST_URL = (
     "https://youtube.com/playlist?list=PL1DS2s3xcuH3Nz3ZEUHmyzfmk7BfvvIt1"
@@ -3527,10 +3528,20 @@ def main():
     # 加载保存的语言偏好（默认中文）
     translation_manager.load_language(translation_manager.get_current_language())
 
+    dongle_guard: Optional[DongleGuard] = None
+    if is_code_dog_enabled():
+        dongle_guard = DongleGuard(app)
+        if not dongle_guard.initialize():
+            sys.exit(1)
+
     window = MainWindow()
 
     # 恢复窗口状态（使用 QSettings）
     window._restore_window_state()
+
+    if dongle_guard is not None:
+        dongle_guard.attach_window(window)
+        dongle_guard.start_monitoring()
 
     window.show()
 

@@ -1,11 +1,28 @@
 # -*- mode: python ; coding: utf-8 -*-
 
+from pathlib import Path
+import sys
+
+sys.path.insert(0, str(Path('.').absolute()))
+
+from tools.build_softkey_bridge import collect_code_dog_artifacts
+
+PROJECT_ROOT = Path('.').absolute()
+CODE_DOG_ARTIFACTS = collect_code_dog_artifacts(PROJECT_ROOT)
+
+datas = [('resources', 'resources'), ('translations/*.qm', 'translations'), ('VERSION', '.')]
+if CODE_DOG_ARTIFACTS.marker_file is not None:
+    datas.append((str(CODE_DOG_ARTIFACTS.marker_file), 'runtime'))
+
+binaries = []
+if CODE_DOG_ARTIFACTS.bridge_dll is not None:
+    binaries.append((str(CODE_DOG_ARTIFACTS.bridge_dll), 'native'))
 
 a = Analysis(
     ['main.py'],
     pathex=[],
-    binaries=[],
-    datas=[('resources', 'resources'), ('translations/*.qm', 'translations'), ('VERSION', '.')],
+    binaries=binaries,
+    datas=datas,
     hiddenimports=['PySide6.QtSvg', 'PySide6.QtOpenGL', 'PySide6.QtOpenGLWidgets', 'ezdxf', 'pyclipper', 'svgpathtools', 'numpy', 'OpenGL', 'OpenGL.GL', 'OpenGL.GLU', 'shapely', 'trimesh', 'mapbox_earcut', 'freetype'],
     hookspath=[],
     hooksconfig={},

@@ -2210,4 +2210,45 @@ Control points: {points}</source>
         <translation>에셋 분해</translation>
     </message>
 </context>
+
+
+<context>
+    <name>DongleGuard</name>
+    <message>
+        <source>Failed to load USB dongle runtime library. The application cannot start.&#10;Please verify the system environment or rebuild the dongle module and try again.</source>
+        <translation>USB 동글 런타임 라이브러리를 로드할 수 없어 애플리케이션을 시작할 수 없습니다.&#10;시스템 환경을 확인하거나 동글 모듈을 다시 빌드한 뒤 다시 시도해 주세요.</translation>
+    </message>
+    <message>
+        <source>USB dongle validation module is missing from this build. The application cannot start.&#10;Please rebuild with CODE_DOG=1 and include native/softkey_bridge.dll.</source>
+        <translation>이 빌드에는 USB 동글 검증 모듈이 포함되어 있지 않아 애플리케이션을 시작할 수 없습니다.&#10;CODE_DOG=1로 다시 빌드하고 native/softkey_bridge.dll을 포함해 주세요.</translation>
+    </message>
+    <message>
+        <source>USB dongle validation module received invalid arguments. The application cannot start.</source>
+        <translation>USB 동글 검증 모듈에 잘못된 인수가 전달되어 애플리케이션을 시작할 수 없습니다.</translation>
+    </message>
+    <message>
+        <source>USB dongle validation module initialization failed. Error code: {code}</source>
+        <translation>USB 동글 검증 모듈 초기화에 실패했습니다. 오류 코드: {code}</translation>
+    </message>
+    <message>
+        <source>USB dongle not found. Please insert it and try again.</source>
+        <translation>USB 동글을 찾을 수 없습니다. 꽂은 후 다시 시도해 주세요.</translation>
+    </message>
+    <message>
+        <source>USB dongle was removed. The application will now exit.&#10;Please reinsert it and try again.</source>
+        <translation>USB 동글이 제거되었습니다. 애플리케이션이 종료됩니다.&#10;다시 꽂은 후 다시 시도해 주세요.</translation>
+    </message>
+    <message>
+        <source>USB dongle communication failed. Please check the connection and try again.&#10;Error code: {code}</source>
+        <translation>USB 동글 통신에 실패했습니다. 연결을 확인한 후 다시 시도해 주세요.&#10;오류 코드: {code}</translation>
+    </message>
+    <message>
+        <source>USB dongle communication error detected. The application will now exit.&#10;Error code: {code}</source>
+        <translation>USB 동글 통신 오류가 감지되어 애플리케이션이 종료됩니다.&#10;오류 코드: {code}</translation>
+    </message>
+    <message>
+        <source>USB dongle validation failed. Error code: {code}</source>
+        <translation>USB 동글 검증에 실패했습니다. 오류 코드: {code}</translation>
+    </message>
+</context>
 </TS>

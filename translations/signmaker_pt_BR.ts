@@ -2210,4 +2210,45 @@ Pontos de controle: {points}</translation>
         <translation>Explodir recurso</translation>
     </message>
 </context>
+
+
+<context>
+    <name>DongleGuard</name>
+    <message>
+        <source>Failed to load USB dongle runtime library. The application cannot start.&#10;Please verify the system environment or rebuild the dongle module and try again.</source>
+        <translation>Não foi possível carregar a biblioteca de execução do dongle USB. O aplicativo não pode ser iniciado.&#10;Verifique o ambiente do sistema ou reconstrua o módulo do dongle e tente novamente.</translation>
+    </message>
+    <message>
+        <source>USB dongle validation module is missing from this build. The application cannot start.&#10;Please rebuild with CODE_DOG=1 and include native/softkey_bridge.dll.</source>
+        <translation>Este build não inclui o módulo de validação do dongle USB. O aplicativo não pode ser iniciado.&#10;Reconstrua com CODE_DOG=1 e inclua native/softkey_bridge.dll.</translation>
+    </message>
+    <message>
+        <source>USB dongle validation module received invalid arguments. The application cannot start.</source>
+        <translation>O módulo de validação do dongle USB recebeu argumentos inválidos. O aplicativo não pode ser iniciado.</translation>
+    </message>
+    <message>
+        <source>USB dongle validation module initialization failed. Error code: {code}</source>
+        <translation>Falha ao inicializar o módulo de validação do dongle USB. Código de erro: {code}</translation>
+    </message>
+    <message>
+        <source>USB dongle not found. Please insert it and try again.</source>
+        <translation>Dongle USB não encontrado. Insira-o e tente novamente.</translation>
+    </message>
+    <message>
+        <source>USB dongle was removed. The application will now exit.&#10;Please reinsert it and try again.</source>
+        <translation>O dongle USB foi removido. O aplicativo será encerrado agora.&#10;Insira-o novamente e tente outra vez.</translation>
+    </message>
+    <message>
+        <source>USB dongle communication failed. Please check the connection and try again.&#10;Error code: {code}</source>
+        <translation>Falha na comunicação com o dongle USB. Verifique a conexão e tente novamente.&#10;Código de erro: {code}</translation>
+    </message>
+    <message>
+        <source>USB dongle communication error detected. The application will now exit.&#10;Error code: {code}</source>
+        <translation>Foi detectado um erro de comunicação com o dongle USB. O aplicativo será encerrado agora.&#10;Código de erro: {code}</translation>
+    </message>
+    <message>
+        <source>USB dongle validation failed. Error code: {code}</source>
+        <translation>Falha na validação do dongle USB. Código de erro: {code}</translation>
+    </message>
+</context>
 </TS>

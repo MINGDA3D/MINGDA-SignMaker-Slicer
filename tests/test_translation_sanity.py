@@ -113,6 +113,17 @@ ZH_CN_REQUIRED = {
     "GCodeWriter": {
         "Color change is enabled but no change points are configured.",
     },
+    "DongleGuard": {
+        "Failed to load USB dongle runtime library. The application cannot start.\nPlease verify the system environment or rebuild the dongle module and try again.",
+        "USB dongle validation module is missing from this build. The application cannot start.\nPlease rebuild with CODE_DOG=1 and include native/softkey_bridge.dll.",
+        "USB dongle validation module received invalid arguments. The application cannot start.",
+        "USB dongle validation module initialization failed. Error code: {code}",
+        "USB dongle not found. Please insert it and try again.",
+        "USB dongle was removed. The application will now exit.\nPlease reinsert it and try again.",
+        "USB dongle communication failed. Please check the connection and try again.\nError code: {code}",
+        "USB dongle communication error detected. The application will now exit.\nError code: {code}",
+        "USB dongle validation failed. Error code: {code}",
+    },
 }
 
 SECONDARY_LOCALE_MUST_DIFFER_FROM_SOURCE = {

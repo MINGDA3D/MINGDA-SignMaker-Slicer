@@ -10,9 +10,13 @@ import subprocess
 import sys
 from pathlib import Path
 
+from tools.build_softkey_bridge import collect_code_dog_artifacts
+
+
 def build():
     """构建exe文件"""
     project_root = Path(__file__).parent
+    code_dog_artifacts = collect_code_dog_artifacts(project_root)
 
     # PyInstaller参数
     args = [
@@ -49,6 +53,11 @@ def build():
         # 入口文件
         str(project_root / "main.py"),
     ]
+
+    if code_dog_artifacts.bridge_dll is not None:
+        args.append(f"--add-binary={code_dog_artifacts.bridge_dll};native")
+    if code_dog_artifacts.marker_file is not None:
+        args.append(f"--add-data={code_dog_artifacts.marker_file};runtime")
 
     print("Building MINGDA SignMaker...")
     print(f"Command: {' '.join(args[2:])}")
