@@ -13,7 +13,21 @@ build.bat
 python build.py
 ```
 
-如果需要启用 USB 加密锁存在性校验，请在构建前设置 `CODE_DOG=1`：
+如果你直接使用 `PyInstaller` 和 `SignMaker Slicer.spec` 打包，推荐使用以下命令。
+
+普通版：
+
+```powershell
+.\.venv\Scripts\python -m PyInstaller --clean --noconfirm "SignMaker Slicer.spec"
+```
+
+加密狗版：
+
+```powershell
+$env:CODE_DOG = '1'; .\.venv\Scripts\python -m PyInstaller --clean --noconfirm "SignMaker Slicer.spec"
+```
+
+如果仍然使用封装脚本，也可以在构建前设置 `CODE_DOG=1`：
 
 ```powershell
 $env:CODE_DOG = '1'
@@ -75,12 +89,16 @@ dist/SignMaker/
 
 如果自动打包脚本有问题，可以手动执行：
 
-```bash
-# 1. 安装PyInstaller
-pip install pyinstaller
+```powershell
+# 1. 安装 PyInstaller
+.\.venv\Scripts\python -m pip install pyinstaller
 
-# 2. 运行打包
-pyinstaller build.spec
+# 2. 打包普通版
+.\.venv\Scripts\python -m PyInstaller --clean --noconfirm "SignMaker Slicer.spec"
+
+# 3. 打包加密狗版
+$env:CODE_DOG = '1'
+.\.venv\Scripts\python -m PyInstaller --clean --noconfirm "SignMaker Slicer.spec"
 ```
 
 ## 打包配置
