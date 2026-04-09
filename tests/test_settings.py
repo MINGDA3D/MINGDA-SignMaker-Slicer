@@ -73,6 +73,7 @@ class TestSerializeParams:
         assert restored.shell.edge_type == EdgeType.STRAIGHT
         assert restored.skirt.enabled is False
         assert restored.skirt.speed == pytest.approx(20.0)
+        assert restored.skirt.offset == pytest.approx(0.12)
         assert restored.step.print_speed == pytest.approx(30.0)
 
     def test_deserialize_custom_params(self):

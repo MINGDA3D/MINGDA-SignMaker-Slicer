@@ -574,6 +574,13 @@ def test_skirt_wall_gap_is_clamped_to_one_mm_in_ui(qapp):
     assert panel.get_params().skirt.offset == pytest.approx(1.0)
 
 
+def test_skirt_wall_gap_defaults_to_point_twelve_mm(qapp):
+    panel = ParamPanel()
+
+    assert panel.skirt_offset.value() == pytest.approx(0.12)
+    assert panel.get_params().skirt.offset == pytest.approx(0.12)
+
+
 def test_step_speed_stays_enabled_while_any_step_toggle_remains_active(qapp):
     panel = ParamPanel()
 

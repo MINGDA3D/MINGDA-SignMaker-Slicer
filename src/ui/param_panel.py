@@ -1934,7 +1934,7 @@ class ParamPanel(QWidget):
 
         self.skirt_offset = self._create_double_spinbox()
         self.skirt_offset.setRange(0, 1.0)
-        self.skirt_offset.setValue(0)
+        self.skirt_offset.setValue(0.12)
         self.skirt_offset.setSingleStep(0.1)
         self.skirt_offset.setSuffix(" mm")
         self.skirt_offset.setEnabled(False)
