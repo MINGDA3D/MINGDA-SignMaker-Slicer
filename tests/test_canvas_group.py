@@ -2,8 +2,8 @@ import math
 import os
 
 import pytest
-from PySide6.QtCore import QEvent, QPointF, Qt
-from PySide6.QtGui import QKeyEvent
+from PySide6.QtCore import QEvent, QPointF, QSize, Qt
+from PySide6.QtGui import QIcon, QKeyEvent
 from PySide6.QtTest import QTest
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
@@ -19,6 +19,7 @@ from src.core.types import (
     resolve_contour_start_point_index,
 )
 from src.ui.canvas_2d import Canvas2D
+from src.ui.canvas_toolbar import CanvasToolbar
 from src.ui.main_window import MainWindow
 from src.ui.project_panel import _ProjectListItem
 
@@ -371,6 +372,35 @@ def test_start_point_mode_toggles_from_toolbar_and_escape(qapp):
     window.deleteLater()
 
 
+def test_screw_hole_button_uses_distinct_disabled_icon_variant(qapp):
+    toolbar = CanvasToolbar()
+
+    normal = toolbar.btn_screw_hole.icon().pixmap(
+        QSize(36, 36),
+        QIcon.Mode.Normal,
+        QIcon.State.Off,
+    )
+    toolbar.set_screw_hole_enabled(False)
+    disabled = toolbar.btn_screw_hole.icon().pixmap(
+        QSize(36, 36),
+        QIcon.Mode.Disabled,
+        QIcon.State.Off,
+    )
+
+    assert toolbar.btn_screw_hole.isEnabled() is False
+    assert not disabled.isNull()
+
+    normal_image = normal.toImage()
+    disabled_image = disabled.toImage()
+    assert any(
+        normal_image.pixel(x, y) != disabled_image.pixel(x, y)
+        for y in range(normal_image.height())
+        for x in range(normal_image.width())
+    )
+
+    toolbar.deleteLater()
+
+
 def test_start_point_click_updates_only_target_contour_and_is_undoable(qapp):
     window = MainWindow()
     window.contours = [
@@ -607,6 +637,26 @@ def test_screw_hole_target_prefers_smallest_nested_contour(qapp):
 
     assert window.contours[0].screw_hole_centers == []
     assert window.contours[1].screw_hole_centers == [Point(30.0, 30.0)]
+
+    window.deleteLater()
+
+
+def test_deleting_contour_clears_its_screw_hole_overlay(qapp):
+    window = MainWindow()
+    contour = _rect_contour(0, 0, 40, 40, "A")
+    contour.screw_hole_centers = [Point(10.0, 10.0)]
+    window.contours = [contour]
+    window.canvas.set_contours(window.contours, center_on_platform=False)
+    window.project_panel.update_contours(window.contours)
+    _enable_bottom_face(window)
+
+    window._refresh_screw_hole_overlay()
+    assert len(window.canvas._screw_hole_overlay) == 1
+
+    window._on_delete_requested([0])
+
+    assert window.contours == []
+    assert window.canvas._screw_hole_overlay == []
 
     window.deleteLater()
 

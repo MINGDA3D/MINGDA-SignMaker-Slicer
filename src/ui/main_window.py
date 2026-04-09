@@ -1105,6 +1105,7 @@ class MainWindow(QMainWindow):
         # 清除选择
         self.canvas.set_selected_indices([])
         self.project_panel.update_contours(self.contours)
+        self._refresh_prime_tower_overlay()
 
     def _on_contour_deleted(self, index: int):
         """处理项目面板的删除请求"""

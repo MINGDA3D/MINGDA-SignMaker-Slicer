@@ -9,8 +9,8 @@ MINGDA SignMaker - 画布工具栏
 from PySide6.QtWidgets import (
     QWidget, QHBoxLayout, QPushButton, QFrame, QLabel
 )
-from PySide6.QtCore import Qt, Signal
-from PySide6.QtGui import QIcon
+from PySide6.QtCore import Qt, Signal, QSize
+from PySide6.QtGui import QIcon, QImage, QPixmap
 
 from .theme import COLORS
 
@@ -43,7 +43,30 @@ class CanvasToolbar(QWidget):
 
     def _get_icon(self, name: str) -> QIcon:
         """获取图标"""
-        return QIcon(f":/icons/icons/{name}")
+        icon = QIcon(f":/icons/icons/{name}")
+        disabled_pixmap = self._build_disabled_icon_pixmap(icon)
+        if not disabled_pixmap.isNull():
+            icon.addPixmap(disabled_pixmap, QIcon.Mode.Disabled, QIcon.State.Off)
+            icon.addPixmap(disabled_pixmap, QIcon.Mode.Disabled, QIcon.State.On)
+        return icon
+
+    @staticmethod
+    def _build_disabled_icon_pixmap(icon: QIcon, size: QSize = QSize(36, 36)) -> QPixmap:
+        """Create a clearly dimmed disabled icon variant."""
+        base = icon.pixmap(size, QIcon.Mode.Normal, QIcon.State.Off)
+        if base.isNull():
+            return base
+
+        image = base.toImage().convertToFormat(QImage.Format.Format_ARGB32)
+        for y in range(image.height()):
+            for x in range(image.width()):
+                color = image.pixelColor(x, y)
+                if color.alpha() == 0:
+                    continue
+                gray = int(color.red() * 0.299 + color.green() * 0.587 + color.blue() * 0.114)
+                color.setRgb(gray, gray, gray, max(0, min(255, int(color.alpha() * 0.55))))
+                image.setPixelColor(x, y, color)
+        return QPixmap.fromImage(image)
 
     def _init_ui(self):
         """初始化UI"""
@@ -143,7 +166,6 @@ class CanvasToolbar(QWidget):
 
     def _create_icon_button(self, icon_name: str, tooltip: str) -> QPushButton:
         """创建图标按钮"""
-        from PySide6.QtCore import QSize
         btn = QPushButton()
         btn.setObjectName("iconButton")
         btn.setToolTip(tooltip)
@@ -186,6 +208,10 @@ class CanvasToolbar(QWidget):
             QPushButton#iconButton:hover {{
                 background-color: {COLORS.editor_canvas_bg};
                 border-color: {COLORS.editor_canvas_toolbar_accent};
+            }}
+            QPushButton#iconButton:disabled {{
+                background-color: transparent;
+                border-color: transparent;
             }}
             QPushButton#iconButton:pressed {{
                 background-color: #30363D;
