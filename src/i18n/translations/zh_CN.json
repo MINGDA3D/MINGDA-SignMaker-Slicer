@@ -263,6 +263,7 @@
     "print_speed": "打印速度:",
     "travel_speed": "空驶速度:",
     "first_layer_speed": "首层速度:",
+    "step_speed": "台阶速度:",
     "infill_speed": "填充速度:",
     "wall_speed": "外壁速度:",
     "inner_wall_speed": "内壁速度:"

@@ -512,6 +512,21 @@ def test_skirt_group_hides_legacy_fields_and_moves_speed_to_print_settings(qapp)
     assert _owning_group(panel.skirt_speed) is panel.speed_group
 
 
+def test_step_group_keeps_geometry_fields_and_moves_speed_to_print_settings(qapp):
+    panel = ParamPanel()
+    step_group = next(group for group in panel._primary_groups if group.title() == "Step/V-Groove")
+    speed_group = next(group for group in panel._primary_groups if group.title() == "Speed Settings")
+
+    step_labels = {label.text() for label in step_group.findChildren(QLabel)}
+    speed_labels = {label.text() for label in speed_group.findChildren(QLabel)}
+
+    assert "Step Height:" in step_labels
+    assert "Step Width:" in step_labels
+    assert "Step Speed:" not in step_labels
+    assert "Step Speed:" in speed_labels
+    assert _owning_group(panel.step_speed) is panel.speed_group
+
+
 def test_hidden_skirt_width_interval_and_visible_speed_are_preserved(qapp):
     panel = ParamPanel()
     params = SliceParams()
@@ -534,6 +549,21 @@ def test_hidden_skirt_width_interval_and_visible_speed_are_preserved(qapp):
     assert restored.skirt.offset == pytest.approx(0.6)
 
 
+def test_step_speed_roundtrips_through_print_settings(qapp):
+    panel = ParamPanel()
+    params = SliceParams()
+    params.step.panel_step_enabled = True
+    params.step.print_speed = 34.0
+
+    panel.set_params(params)
+    assert panel.step_speed.isEnabled() is True
+
+    panel.step_speed.setValue(41.0)
+    restored = panel.get_params()
+
+    assert restored.step.print_speed == pytest.approx(41.0)
+
+
 def test_skirt_wall_gap_is_clamped_to_one_mm_in_ui(qapp):
     panel = ParamPanel()
 
@@ -542,6 +572,20 @@ def test_skirt_wall_gap_is_clamped_to_one_mm_in_ui(qapp):
 
     assert panel.skirt_offset.value() == pytest.approx(1.0)
     assert panel.get_params().skirt.offset == pytest.approx(1.0)
+
+
+def test_step_speed_stays_enabled_while_any_step_toggle_remains_active(qapp):
+    panel = ParamPanel()
+
+    panel.panel_step_enabled.setChecked(True)
+    panel.baseplate_step_enabled.setChecked(True)
+    assert panel.step_speed.isEnabled() is True
+
+    panel.panel_step_enabled.setChecked(False)
+    assert panel.step_speed.isEnabled() is True
+
+    panel.baseplate_step_enabled.setChecked(False)
+    assert panel.step_speed.isEnabled() is False
 
 
 @pytest.mark.parametrize(
@@ -557,11 +601,11 @@ def test_skirt_wall_gap_is_clamped_to_one_mm_in_ui(qapp):
         ),
         (
             lambda p: setattr(p.step, "panel_step_enabled", True),
-            ("panel_step_height", "panel_step_width", "panel_step_v_groove"),
+            ("panel_step_height", "panel_step_width", "panel_step_v_groove", "step_speed"),
         ),
         (
             lambda p: setattr(p.step, "baseplate_step_enabled", True),
-            ("baseplate_step_height", "baseplate_step_width", "baseplate_step_v_groove"),
+            ("baseplate_step_height", "baseplate_step_width", "baseplate_step_v_groove", "step_speed"),
         ),
         (
             lambda p: setattr(p.bottom_face, "enabled", True),

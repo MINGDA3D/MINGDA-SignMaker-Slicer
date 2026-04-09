@@ -96,6 +96,7 @@ ZH_CN_REQUIRED = {
         "Temperature Settings",
         "Cooling Settings",
         "Skirt Speed:",
+        "Step Speed:",
         "First Layer Nozzle Temperature:",
         "Other Layers Nozzle Temperature:",
         "First Layer Bed Temperature:",

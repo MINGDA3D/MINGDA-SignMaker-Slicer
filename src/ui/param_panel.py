@@ -1824,6 +1824,14 @@ class ParamPanel(QWidget):
 
         layout.addLayout(form2)
 
+        self.step_speed = self._create_double_spinbox(decimals=1)
+        self.step_speed.setRange(5.0, 200.0)
+        self.step_speed.setValue(30.0)
+        self.step_speed.setSingleStep(1.0)
+        self.step_speed.setSuffix(" mm/s")
+        self.step_speed.setEnabled(False)
+        self.step_speed.valueChanged.connect(self._on_param_changed)
+
         self.baseplate_step_enabled.stateChanged.connect(
             lambda: self._toggle_baseplate_step_controls(self.baseplate_step_enabled.isChecked())
         )
@@ -1875,12 +1883,23 @@ class ParamPanel(QWidget):
         self.panel_step_height.setEnabled(enabled)
         self.panel_step_width.setEnabled(enabled)
         self.panel_step_v_groove.setEnabled(enabled)
+        self._sync_step_speed_control_state()
 
     def _toggle_baseplate_step_controls(self, enabled: bool):
         """切换底板台阶控件的启用状态"""
         self.baseplate_step_height.setEnabled(enabled)
         self.baseplate_step_width.setEnabled(enabled)
         self.baseplate_step_v_groove.setEnabled(enabled)
+
+        self._sync_step_speed_control_state()
+
+    def _sync_step_speed_control_state(self) -> None:
+        """Keep the shared step speed control enabled while any step mode is active."""
+        if not hasattr(self, "step_speed"):
+            return
+        self.step_speed.setEnabled(
+            self.panel_step_enabled.isChecked() or self.baseplate_step_enabled.isChecked()
+        )
 
     def _create_skirt_group(self) -> QGroupBox:
         """创建防翘裙边参数组"""
@@ -2204,6 +2223,7 @@ class ParamPanel(QWidget):
         layout.addRow(self.tr("First Layer Speed:"), self.first_layer_speed)
 
         layout.addRow(self.tr("Skirt Speed:"), self.skirt_speed)
+        layout.addRow(self.tr("Step Speed:"), self.step_speed)
 
         return group
 
@@ -2325,6 +2345,7 @@ class ParamPanel(QWidget):
             self.panel_step_width,
             self.baseplate_step_height,
             self.baseplate_step_width,
+            self.step_speed,
             self.bottom_face_thickness,
             self.light_slot_width,
             self.light_slot_depth,
@@ -2472,6 +2493,7 @@ class ParamPanel(QWidget):
         self._params.step.bottom_groove_enabled = self.baseplate_step_enabled.isChecked()
         self._params.step.bottom_groove_height = self._layers_to_mm(self.baseplate_step_height.value())
         self._params.step.bottom_groove_depth = self.baseplate_step_width.value()
+        self._params.step.print_speed = self.step_speed.value()
 
         # 启用台阶总开关
         self._params.step.enabled = (
@@ -2622,6 +2644,7 @@ class ParamPanel(QWidget):
             self.first_layer_fan_percent, self.other_layer_fan_percent,
             self.skirt_enabled, self.skirt_height, self.skirt_speed, self.skirt_offset,
             self.skirt_outer_enabled, self.skirt_inner_enabled,
+            self.step_speed,
             self.connected_enabled, self.connected_type, self.connected_auto_detect,
             self.connected_width, self.connected_height, self.connected_base_height,
             self.connected_support_offset,
@@ -2680,6 +2703,7 @@ class ParamPanel(QWidget):
         self.print_speed.setValue(int(params.speed.print_speed))
         self.travel_speed.setValue(int(params.speed.travel_speed))
         self.first_layer_speed.setValue(int(params.speed.first_layer_speed))
+        self.step_speed.setValue(params.step.print_speed)
         self.first_layer_nozzle_temp.setValue(int(params.gcode.first_layer_nozzle_temp))
         self.other_layer_nozzle_temp.setValue(int(params.gcode.other_layer_nozzle_temp))
         self.first_layer_bed_temp.setValue(int(params.gcode.first_layer_bed_temp))

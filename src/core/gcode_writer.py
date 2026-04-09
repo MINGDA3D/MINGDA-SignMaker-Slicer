@@ -651,6 +651,12 @@ class GCodeWriter:
             and self._slice_params.skirt.speed > 0
         ):
             return self._slice_params.skirt.speed
+        if (
+            role in {PathRole.STEP, PathRole.V_GROOVE}
+            and self._slice_params is not None
+            and self._slice_params.step.print_speed > 0
+        ):
+            return self._slice_params.step.print_speed
 
         speed_multipliers = {
             PathRole.WALL: 0.8,

@@ -168,6 +168,53 @@ def _first_print_feedrate_for_role(lines: list[str], role: str) -> int:
     raise AssertionError(f"Could not find print move for role {role}.")
 
 
+@pytest.mark.parametrize(
+    ("path_role", "role_name"),
+    [
+        (PathRole.STEP, "STEP"),
+        (PathRole.V_GROOVE, "V_GROOVE"),
+    ],
+)
+def test_gcode_uses_dedicated_step_speed_for_step_related_paths(path_role, role_name):
+    params = SliceParams()
+    params.shell.layer_height = 0.3
+    params.speed.first_layer_speed = 12.0
+    params.speed.print_speed = 70.0
+    params.step.print_speed = 34.0
+    profile = PrinterProfile(start_gcode="G28", end_gcode="M400")
+
+    step_path = _square_path()
+    step_path.role = path_role
+    wall_path = _square_path()
+    result = SliceResult(
+        layers=[
+            Layer(
+                z_height=0.0,
+                layer_height=0.3,
+                extruder=ExtruderType.EXTRUDER_1,
+                color_index=0,
+                paths=[step_path, wall_path],
+            )
+        ],
+        total_layers=1,
+        total_height=0.3,
+        estimated_time=5.0,
+        estimated_filament=0.1,
+    )
+
+    lines = GCodeWriter(params.gcode).generate(
+        result,
+        slice_params=params,
+        printer_profile=profile,
+    )
+
+    layer0_index = lines.index("; Layer 0 at Z=0.30mm")
+    layer0_lines = lines[layer0_index + 1:]
+
+    assert _first_print_feedrate_for_role(layer0_lines, role_name) == 2040
+    assert _first_print_feedrate_for_role(layer0_lines, "WALL") != 2040
+
+
 def test_single_color_gcode_uses_relative_extrusion_without_tool_macros():
     params = SliceParams()
     profile = PrinterProfile(start_gcode="G28", end_gcode="M400")

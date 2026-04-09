@@ -46,6 +46,7 @@ class TestSerializeParams:
         params.skirt.enabled = True
         params.skirt.width = 10.0
         params.skirt.speed = 27.0
+        params.step.print_speed = 36.0
 
         data = serialize_params(params)
 
@@ -58,6 +59,7 @@ class TestSerializeParams:
         assert data["skirt"]["enabled"] is True
         assert data["skirt"]["width"] == 10.0
         assert data["skirt"]["speed"] == pytest.approx(27.0)
+        assert data["step"]["print_speed"] == pytest.approx(36.0)
 
     def test_deserialize_default_params(self):
         """测试反序列化默认参数"""
@@ -71,6 +73,7 @@ class TestSerializeParams:
         assert restored.shell.edge_type == EdgeType.STRAIGHT
         assert restored.skirt.enabled is False
         assert restored.skirt.speed == pytest.approx(20.0)
+        assert restored.step.print_speed == pytest.approx(30.0)
 
     def test_deserialize_custom_params(self):
         """测试反序列化自定义参数"""
@@ -80,6 +83,7 @@ class TestSerializeParams:
         params.shell.edge_type = EdgeType.BEVELED
         params.step.enabled = True
         params.step.panel_step_enabled = True
+        params.step.print_speed = 36.0
         params.speed.print_speed = 80.0
         params.skirt.enabled = True
         params.skirt.speed = 27.0
@@ -92,6 +96,7 @@ class TestSerializeParams:
         assert restored.shell.edge_type == EdgeType.BEVELED
         assert restored.step.enabled is True
         assert restored.step.panel_step_enabled is True
+        assert restored.step.print_speed == pytest.approx(36.0)
         assert restored.speed.print_speed == 80.0
         assert restored.skirt.speed == pytest.approx(27.0)
 
@@ -681,6 +686,7 @@ class TestPresetManagerFull:
         params.skirt.enabled = True
         params.skirt.width = 8.0
         params.step.panel_step_enabled = True
+        params.step.print_speed = 36.0
         params.speed.print_speed = 60.0
 
         pm.save_preset_full("测试预设", params, "这是一个测试预设")
@@ -692,6 +698,7 @@ class TestPresetManagerFull:
         assert loaded.skirt.enabled is True
         assert loaded.skirt.width == 8.0
         assert loaded.step.panel_step_enabled is True
+        assert loaded.step.print_speed == pytest.approx(36.0)
         assert loaded.speed.print_speed == 60.0
 
         with open(Path(temp_presets_dir) / "测试预设.preset", "r", encoding="utf-8") as f:
