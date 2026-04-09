@@ -158,10 +158,10 @@ class Canvas2D(QWidget):
         self.start_point_color = QColor(COLORS.accent_success)
         self.start_point_candidate_color = QColor(COLORS.accent_primary)
         self.start_point_hover_color = QColor(COLORS.accent_warning)
-        self.screw_hole_color = QColor(COLORS.accent_primary)
+        self.screw_hole_color = QColor("#D7DEE8")
         self.screw_hole_invalid_color = QColor(COLORS.accent_error)
-        self.screw_hole_selected_color = QColor(COLORS.accent_success)
-        self.screw_hole_hover_color = QColor(COLORS.accent_warning)
+        self.screw_hole_selected_color = QColor("#F5F8FC")
+        self.screw_hole_hover_color = QColor("#E8EEF5")
         self.transform_handle_color = QColor(COLORS.accent_primary)
         self.rotate_gizmo_color = QColor(88, 166, 255, 180)  # 旋转圆环颜色
         self.rotate_arc_color = QColor(88, 166, 255, 120)    # 旋转角度弧颜色
@@ -1014,12 +1014,12 @@ class Canvas2D(QWidget):
                 halo_color = QColor(
                     self.screw_hole_selected_color if is_selected else self.screw_hole_hover_color
                 )
-                halo_color.setAlpha(180 if is_selected else 140)
+                halo_color.setAlpha(200 if is_selected else 150)
                 halo_pen = QPen(halo_color)
-                halo_pen.setWidthF((3.6 if is_selected else 2.4) / scale)
+                halo_pen.setWidthF((3.4 if is_selected else 2.3) / scale)
                 painter.setPen(halo_pen)
                 painter.setBrush(Qt.BrushStyle.NoBrush)
-                halo_padding = (8.0 if is_selected else 5.0) / scale
+                halo_padding = (6.0 if is_selected else 4.0) / scale
                 painter.drawEllipse(
                     QPointF(center.x, center.y),
                     radius + halo_padding,
@@ -1031,33 +1031,17 @@ class Canvas2D(QWidget):
                 if is_selected
                 else (self.screw_hole_hover_color if is_hovered else base_color)
             )
-            fill_color.setAlpha(55 if is_selected else (35 if is_hovered else 0))
+            fill_color.setAlpha(72 if is_selected else (40 if is_hovered else (18 if is_valid else 22)))
             painter.setPen(Qt.PenStyle.NoPen)
             painter.setBrush(QBrush(fill_color))
             painter.drawEllipse(QPointF(center.x, center.y), radius, radius)
 
             outline_pen = QPen(base_color)
-            outline_pen.setStyle(
-                Qt.PenStyle.SolidLine if self.current_tool == "screw_hole" else Qt.PenStyle.DashLine
-            )
-            outline_pen.setWidthF((2.8 if is_selected else (2.1 if is_hovered else 1.6)) / scale)
+            outline_pen.setStyle(Qt.PenStyle.SolidLine)
+            outline_pen.setWidthF((2.6 if is_selected else (2.0 if is_hovered else 1.7)) / scale)
             painter.setPen(outline_pen)
             painter.setBrush(Qt.BrushStyle.NoBrush)
             painter.drawEllipse(QPointF(center.x, center.y), radius, radius)
-
-            cross_color = self.screw_hole_selected_color if is_selected else base_color
-            cross_pen = QPen(cross_color)
-            cross_pen.setWidthF((2.0 if is_selected else 1.4) / scale)
-            painter.setPen(cross_pen)
-            cross_half = max(radius * 0.3, 2.0 / scale)
-            painter.drawLine(center.x - cross_half, center.y, center.x + cross_half, center.y)
-            painter.drawLine(center.x, center.y - cross_half, center.x, center.y + cross_half)
-
-            if is_selected:
-                center_dot_radius = max(radius * 0.14, 2.6 / scale)
-                painter.setPen(Qt.PenStyle.NoPen)
-                painter.setBrush(QBrush(self.screw_hole_selected_color))
-                painter.drawEllipse(QPointF(center.x, center.y), center_dot_radius, center_dot_radius)
 
     # =========================================================================
     # 绘制
