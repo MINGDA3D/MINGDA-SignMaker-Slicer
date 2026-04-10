@@ -159,7 +159,9 @@ class StepMeshBuilder:
                 meshes.append(outer_mesh)
 
         for hole in contour.holes:
-            hole_inner_coords = [(p.x, p.y) for p in hole.points]
+            hole_wall_results = self.path_offset.offset(hole, wall_thickness)
+            hole_wall_path = hole_wall_results[0] if hole_wall_results else hole
+            hole_inner_coords = [(p.x, p.y) for p in hole_wall_path.points]
             if hole_inner_coords and hole_inner_coords[0] != hole_inner_coords[-1]:
                 hole_inner_coords.append(hole_inner_coords[0])
 
@@ -207,6 +209,7 @@ class StepMeshBuilder:
                 wall_inner_coords = self._calculate_inner_wall_from_path(
                     wall_path,
                     wall_path.line_width if wall_path.line_width > 0.0 else params.shell.line_width,
+                    reference_path=path,
                 )
                 mesh = self._create_thin_step_ring(
                     wall_inner_coords,
@@ -440,12 +443,43 @@ class StepMeshBuilder:
         return closest_idx
 
     def _calculate_inner_wall_from_path(
-        self, wall_path: LayerPath, wall_thickness: float
+        self,
+        wall_path: LayerPath,
+        wall_thickness: float,
+        reference_path: Optional[LayerPath] = None,
     ) -> List[tuple]:
-        """从WALL路径计算壁的内边缘
+        """从WALL路径计算朝向台阶空腔一侧的壁边缘
 
-        WALL路径通常是壁的内边缘，直接使用即可
+        切片里的 WALL 路径是壁的中心线。外轮廓需要回退半个线宽，
+        内孔则需要前进半个线宽，才能还原出台阶真正依附的空腔侧边缘。
         """
+        inner_path = CorePath(points=wall_path.points)
+        half_wall = max(wall_thickness, 0.0) / 2.0
+
+        if half_wall > 1e-6:
+            offset_distance = -half_wall
+            if reference_path is not None and reference_path.points:
+                offset_distance = half_wall if self._is_hole_step_path(reference_path, wall_path) else -half_wall
+
+            inner_results = self.path_offset.offset(inner_path, offset_distance)
+            if inner_results:
+                if reference_path is not None and reference_path.points:
+                    reference_centroid = self._calculate_centroid(reference_path.points)
+                    chosen_path = min(
+                        inner_results,
+                        key=lambda candidate: self._distance_between_points(
+                            reference_centroid,
+                            candidate.centroid,
+                        ),
+                    )
+                else:
+                    chosen_path = max(inner_results, key=lambda candidate: abs(candidate.area))
+
+                inner_coords = [(p.x, p.y) for p in chosen_path.points]
+                if inner_coords and inner_coords[0] != inner_coords[-1]:
+                    inner_coords.append(inner_coords[0])
+                return inner_coords
+
         inner_coords = [(p.x, p.y) for p in wall_path.points]
         if inner_coords and inner_coords[0] != inner_coords[-1]:
             inner_coords.append(inner_coords[0])

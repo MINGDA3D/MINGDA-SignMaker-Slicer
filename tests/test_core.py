@@ -1065,7 +1065,7 @@ class TestSliceEngineWithSteps:
         )
         assert max_line_width >= shell_line_width * 0.9
 
-    def test_hole_step_width_matches_configured_opening_span(self, engine, contour_with_hole):
+    def test_hole_step_width_matches_configured_support_span(self, engine, contour_with_hole):
         """回归测试：内孔 STEP 应从开口边界向实体侧延伸配置宽度"""
         params = SliceParams()
         params.shell.height = 1.0
@@ -1099,11 +1099,12 @@ class TestSliceEngineWithSteps:
 
         hole_wall_min_x = min(point.x for point in hole_wall.points)
         hole_boundary_min_x = min(point.x for point in contour_with_hole.holes[0].points)
+        hole_wall_outer_edge = hole_boundary_min_x - params.shell.wall_thickness
 
         # hole wall centerline must move into the solid, not into the empty hole.
         assert hole_wall_min_x == pytest.approx(29.4)
 
-        hole_step_opening_edge = max(
+        hole_step_wall_edge = max(
             min(point.x for point in path.points) + path.line_width / 2
             for path in hole_step_paths
         )
@@ -1111,8 +1112,8 @@ class TestSliceEngineWithSteps:
             min(point.x for point in path.points) - path.line_width / 2
             for path in hole_step_paths
         )
-        assert hole_step_opening_edge == pytest.approx(hole_boundary_min_x, abs=1e-3)
-        assert hole_boundary_min_x - hole_step_solid_edge == pytest.approx(3.0, abs=1e-3)
+        assert hole_step_wall_edge == pytest.approx(hole_wall_outer_edge, abs=1e-3)
+        assert hole_wall_outer_edge - hole_step_solid_edge == pytest.approx(3.0, abs=1e-3)
 
     def test_beveled_edge_with_steps_regression(self, engine, simple_contour):
         """回归测试：斜边字+台阶组合，防止台阶悬空问题"""
@@ -1256,6 +1257,103 @@ class TestStepMeshBuilder:
         ]).difference(ShapelyPolygon(hole_coords))
 
         assert ring_geometry.area == pytest.approx(expected_region.area, rel=1e-6)
+
+    def test_flat_hole_step_mesh_uses_hole_wall_outer_edge(self, step_mesh_builder):
+        contour = Contour(
+            outer=normalize_path(Path(points=[
+                Point(0.0, 0.0),
+                Point(100.0, 0.0),
+                Point(100.0, 100.0),
+                Point(0.0, 100.0),
+            ], is_closed=True, path_type=PathType.OUTER)),
+            holes=[normalize_path(Path(points=[
+                Point(30.0, 30.0),
+                Point(70.0, 30.0),
+                Point(70.0, 70.0),
+                Point(30.0, 70.0),
+            ], is_closed=True, path_type=PathType.INNER))],
+        )
+
+        meshes = step_mesh_builder._build_flat_step_meshes_for_contour(
+            contour,
+            step_width=3.0,
+            step_thickness=0.4,
+            z_position=0.0,
+            wall_thickness=1.2,
+        )
+
+        assert len(meshes) == 2
+
+        hole_mesh = max(meshes, key=lambda mesh: mesh.bounds[0][0])
+        assert hole_mesh.bounds[0][0] == pytest.approx(25.8, abs=1e-3)
+        assert hole_mesh.bounds[1][0] == pytest.approx(74.2, abs=1e-3)
+
+    def test_v_groove_uses_wall_inner_edge_instead_of_wall_centerline(self, step_mesh_builder):
+        contour = Contour(
+            outer=normalize_path(Path(points=[
+                Point(0.0, 0.0),
+                Point(100.0, 0.0),
+                Point(100.0, 100.0),
+                Point(0.0, 100.0),
+            ], is_closed=True, path_type=PathType.OUTER)),
+            holes=[normalize_path(Path(points=[
+                Point(30.0, 30.0),
+                Point(70.0, 30.0),
+                Point(70.0, 70.0),
+                Point(30.0, 70.0),
+            ], is_closed=True, path_type=PathType.INNER))],
+        )
+        params = SliceParams()
+        params.shell.height = 1.0
+        params.shell.layer_height = 1.0
+        params.shell.wall_thickness = 1.2
+        params.shell.wall_count = 1
+        params.step.baseplate_step_enabled = True
+        params.step.baseplate_step_height = 1.0
+        params.step.baseplate_step_width = 3.0
+        params.step.baseplate_step_is_v_groove = True
+
+        result = SliceEngine().slice([contour], params)
+        layer = result.layers[0]
+
+        wall_paths = [path for path in layer.paths if path.role == PathRole.WALL]
+        groove_paths = [path for path in layer.paths if path.role == PathRole.V_GROOVE]
+
+        assert len(wall_paths) == 2
+        assert len(groove_paths) == 2
+
+        outer_wall = max(
+            wall_paths,
+            key=lambda path: (max(p.x for p in path.points) - min(p.x for p in path.points)),
+        )
+        hole_wall = min(
+            wall_paths,
+            key=lambda path: (max(p.x for p in path.points) - min(p.x for p in path.points)),
+        )
+        outer_groove = max(
+            groove_paths,
+            key=lambda path: (max(p.x for p in path.points) - min(p.x for p in path.points)),
+        )
+        hole_groove = min(
+            groove_paths,
+            key=lambda path: (max(p.x for p in path.points) - min(p.x for p in path.points)),
+        )
+
+        outer_inner_coords = step_mesh_builder._calculate_inner_wall_from_path(
+            outer_wall,
+            outer_wall.line_width,
+            reference_path=outer_groove,
+        )
+        hole_inner_coords = step_mesh_builder._calculate_inner_wall_from_path(
+            hole_wall,
+            hole_wall.line_width,
+            reference_path=hole_groove,
+        )
+
+        assert min(x for x, _y in outer_inner_coords[:-1]) == pytest.approx(1.2, abs=1e-3)
+        assert max(x for x, _y in outer_inner_coords[:-1]) == pytest.approx(98.8, abs=1e-3)
+        assert min(x for x, _y in hole_inner_coords[:-1]) == pytest.approx(28.8, abs=1e-3)
+        assert max(x for x, _y in hole_inner_coords[:-1]) == pytest.approx(71.2, abs=1e-3)
 
     def test_build_uses_sliced_v_groove_layers_for_sloped_mesh(self, step_mesh_builder):
         contour = Contour(

@@ -132,9 +132,10 @@ class StepGenerator:
         paths.extend(
             self._create_hole_step_paths_for_centerline(
                 contour=contour,
-                center_from_hole_boundary=width / 2,
+                center_from_hole_wall_outer_edge=width / 2,
                 line_width=width,
                 role=role,
+                wall_thickness=wall_thickness,
                 extruder=extruder,
                 speed_multiplier=speed_multiplier,
             )
@@ -178,21 +179,23 @@ class StepGenerator:
     def _create_hole_step_paths_for_centerline(
         self,
         contour: Contour,
-        center_from_hole_boundary: float,
+        center_from_hole_wall_outer_edge: float,
         line_width: float,
         role: PathRole,
+        wall_thickness: float,
         extruder: ExtruderType,
         speed_multiplier: float,
     ) -> List[LayerPath]:
-        """Create one pass for each hole centered at the requested distance from the opening boundary."""
+        """Create one pass for each hole centered at the requested distance from the cavity-facing wall edge."""
         if line_width <= 0.0:
             return []
 
+        hole_centerline_offset = max(wall_thickness, 0.0) + center_from_hole_wall_outer_edge
         paths: List[LayerPath] = []
 
         for hole in contour.holes:
             for hole_path in self.path_offset.offset(
-                hole, center_from_hole_boundary, JoinType.MITER
+                hole, hole_centerline_offset, JoinType.MITER
             ):
                 paths.append(
                 LayerPath(
@@ -261,7 +264,7 @@ class StepGenerator:
         extrusion_width: float,
         path_line_width: float = 0.0,
     ) -> List[Tuple[float, float]]:
-        """Build hole-step passes anchored at the opening boundary and overlapping inward."""
+        """Build hole-step passes anchored at the hole wall's cavity-facing edge and overlapping outward."""
         if step_width <= 0.0:
             return []
 
@@ -336,9 +339,10 @@ class StepGenerator:
             paths.extend(
                 self._create_hole_step_paths_for_centerline(
                     contour=contour,
-                    center_from_hole_boundary=center_from_hole_boundary,
+                    center_from_hole_wall_outer_edge=center_from_hole_boundary,
                     line_width=pass_width,
                     role=role,
+                    wall_thickness=wall_thickness,
                     extruder=extruder,
                     speed_multiplier=speed_multiplier,
                 )
