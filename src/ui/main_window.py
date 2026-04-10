@@ -1661,6 +1661,31 @@ class MainWindow(QMainWindow):
         if folder_path.exists():
             QDesktopServices.openUrl(QUrl.fromLocalFile(str(folder_path)))
 
+    def _open_user_config_directory(self):
+        """Open the user config directory in the default file manager."""
+        config_dir = (
+            self.settings_manager.get_config_dir()
+            if self.settings_manager
+            else SettingsManager._get_default_config_dir()
+        )
+
+        try:
+            config_dir.mkdir(parents=True, exist_ok=True)
+        except OSError:
+            QMessageBox.warning(
+                self,
+                self.tr("Show Configuration Folder Failed"),
+                self.tr("Failed to show the configuration folder in the file manager."),
+            )
+            return
+
+        if not QDesktopServices.openUrl(QUrl.fromLocalFile(str(config_dir))):
+            QMessageBox.warning(
+                self,
+                self.tr("Show Configuration Folder Failed"),
+                self.tr("Failed to show the configuration folder in the file manager."),
+            )
+
     def _remove_recent_project(self, file_path: str):
         """Remove a single project from the home-page recent-project list."""
         if not self.settings_manager or not file_path:
@@ -1717,6 +1742,7 @@ class MainWindow(QMainWindow):
             "export_stl": self._on_export_stl,
             "export_baseplate": self._on_export_baseplate,
             "export_panel": self._on_export_panel,
+            "open_user_config_dir": self._open_user_config_directory,
             "tutorial": self._open_tutorial,
             "about": self._on_about,
             "quit": self.close,

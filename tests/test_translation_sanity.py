@@ -27,6 +27,8 @@ ZH_CN_REQUIRED = {
         "Difference",
         "Group",
         "Version: ",
+        "Show Configuration Folder Failed",
+        "Failed to show the configuration folder in the file manager.",
     },
     "ParamPanel": {
         "2D Vector Settings",
@@ -109,6 +111,7 @@ ZH_CN_REQUIRED = {
     },
     "TitleBar": {
         "Export G-code...",
+        "Show Configuration Folder",
     },
     "GCodeWriter": {
         "Color change is enabled but no change points are configured.",

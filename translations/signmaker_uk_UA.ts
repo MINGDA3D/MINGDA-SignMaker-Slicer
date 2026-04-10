@@ -42,74 +42,132 @@
 <context>
     <name>CanvasToolbar</name>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="58"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="81"/>
         <source>Move</source>
         <translation>Перемістити</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="63"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="86"/>
         <source>Rotate</source>
         <translation>Повернути</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="68"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="91"/>
         <source>Scale</source>
         <translation>Масштабувати</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="76"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="99"/>
         <source>Mirror Horizontal</source>
         <translation>Віддзеркалити горизонтально</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="80"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="103"/>
         <source>Mirror Vertical</source>
         <translation>Віддзеркалити вертикально</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="87"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="110"/>
         <source>Intersection</source>
         <translation>Перетин</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="91"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="114"/>
         <source>Difference</source>
         <translation>Різниця</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="98"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="121"/>
         <source>Group</source>
         <translation>Згрупувати</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="102"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="125"/>
         <source>Ungroup</source>
         <translation>Розгрупувати</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="108"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="131"/>
         <source>Explode Asset</source>
         <translation>Розкласти ресурс</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="117"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="140"/>
         <source>Text</source>
         <translation>Текст</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="124"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="147"/>
         <source>Start Point</source>
         <translation>Початкова точка</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="129"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="152"/>
         <source>Print Order</source>
         <translation>Порядок друку</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="134"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="157"/>
         <source>Screw Hole</source>
         <translation>Отвір під гвинт</translation>
+    </message>
+</context>
+<context>
+    <name>DongleGuard</name>
+    <message>
+        <location filename="../src/license_guard/dongle_guard.py" line="132"/>
+        <source>Failed to load USB dongle runtime library. The application cannot start.
+Please verify the system environment or rebuild the dongle module and try again.</source>
+        <translation>Не вдалося завантажити бібліотеку часу виконання USB-ключа. Програму неможливо запустити.
+Перевірте системне середовище або перебудуйте модуль ключа й спробуйте ще раз.</translation>
+    </message>
+    <message>
+        <location filename="../src/license_guard/dongle_guard.py" line="141"/>
+        <source>USB dongle validation module is missing from this build. The application cannot start.
+Please rebuild with CODE_DOG=1 and include native/softkey_bridge.dll.</source>
+        <translation>У цій збірці відсутній модуль перевірки USB-ключа. Програму неможливо запустити.
+Перебудуйте програму з CODE_DOG=1 і додайте native/softkey_bridge.dll.</translation>
+    </message>
+    <message>
+        <location filename="../src/license_guard/dongle_guard.py" line="147"/>
+        <source>USB dongle validation module received invalid arguments. The application cannot start.</source>
+        <translation>Модуль перевірки USB-ключа отримав некоректні аргументи. Програму неможливо запустити.</translation>
+    </message>
+    <message>
+        <location filename="../src/license_guard/dongle_guard.py" line="151"/>
+        <source>USB dongle validation module initialization failed. Error code: {code}</source>
+        <translation>Не вдалося ініціалізувати модуль перевірки USB-ключа. Код помилки: {code}</translation>
+    </message>
+    <message>
+        <location filename="../src/license_guard/dongle_guard.py" line="158"/>
+        <source>USB dongle not found. Please insert it and try again.</source>
+        <translation>USB-ключ не знайдено. Підключіть його й повторіть спробу.</translation>
+    </message>
+    <message>
+        <location filename="../src/license_guard/dongle_guard.py" line="160"/>
+        <source>USB dongle was removed. The application will now exit.
+Please reinsert it and try again.</source>
+        <translation>USB-ключ було від&apos;єднано. Програму буде закрито.
+Підключіть його знову й повторіть спробу.</translation>
+    </message>
+    <message>
+        <location filename="../src/license_guard/dongle_guard.py" line="167"/>
+        <source>USB dongle communication failed. Please check the connection and try again.
+Error code: {code}</source>
+        <translation>Помилка зв&apos;язку з USB-ключем. Перевірте підключення й повторіть спробу.
+Код помилки: {code}</translation>
+    </message>
+    <message>
+        <location filename="../src/license_guard/dongle_guard.py" line="171"/>
+        <source>USB dongle communication error detected. The application will now exit.
+Error code: {code}</source>
+        <translation>Виявлено помилку зв&apos;язку з USB-ключем. Програму буде закрито.
+Код помилки: {code}</translation>
+    </message>
+    <message>
+        <location filename="../src/license_guard/dongle_guard.py" line="175"/>
+        <source>USB dongle validation failed. Error code: {code}</source>
+        <translation>Перевірка USB-ключа не пройдена. Код помилки: {code}</translation>
     </message>
 </context>
 <context>
@@ -166,912 +224,924 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../src/ui/main_window.py" line="171"/>
+        <location filename="../src/ui/main_window.py" line="172"/>
         <source>MINGDA SignMaker - LED Sign Letter Slicer</source>
         <translation>MINGDA SignMaker - Слайсер для світлових букв</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="183"/>
+        <location filename="../src/ui/main_window.py" line="184"/>
         <source>Title Bar</source>
         <translation>Панель заголовка</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="221"/>
+        <location filename="../src/ui/main_window.py" line="222"/>
         <source>File(&amp;F)</source>
         <translation>Файл(&amp;F)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="224"/>
-        <location filename="../src/ui/main_window.py" line="1750"/>
+        <location filename="../src/ui/main_window.py" line="225"/>
+        <location filename="../src/ui/main_window.py" line="1780"/>
         <source>New Project</source>
         <translation>Новий проект</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="230"/>
+        <location filename="../src/ui/main_window.py" line="231"/>
         <source>Open DXF/SVG...</source>
         <translation>Відкрити DXF/SVG...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="238"/>
-        <location filename="../src/ui/main_window.py" line="2257"/>
+        <location filename="../src/ui/main_window.py" line="239"/>
+        <location filename="../src/ui/main_window.py" line="2287"/>
         <source>Save Project</source>
         <translation>Зберегти проект</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="244"/>
+        <location filename="../src/ui/main_window.py" line="245"/>
         <source>Save As...</source>
         <translation>Зберегти як...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="257"/>
-        <location filename="../src/ui/main_window.py" line="2357"/>
+        <location filename="../src/ui/main_window.py" line="258"/>
+        <location filename="../src/ui/main_window.py" line="2387"/>
         <source>Export STL...</source>
         <translation>Експорт STL...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="265"/>
-        <location filename="../src/ui/main_window.py" line="840"/>
+        <location filename="../src/ui/main_window.py" line="266"/>
+        <location filename="../src/ui/main_window.py" line="843"/>
         <source>Exit</source>
         <translation>Вихід</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="842"/>
+        <location filename="../src/ui/main_window.py" line="845"/>
         <source>The current project has unsaved changes. Do you want to save before exiting?</source>
         <translation>У поточному проєкті є незбережені зміни. Зберегти перед виходом?</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="845"/>
+        <location filename="../src/ui/main_window.py" line="848"/>
         <source>Save</source>
         <translation>Зберегти</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="849"/>
+        <location filename="../src/ui/main_window.py" line="852"/>
         <source>Discard</source>
         <translation>Відхилити</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="853"/>
+        <location filename="../src/ui/main_window.py" line="856"/>
         <source>Cancel</source>
         <translation>Скасувати</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="271"/>
+        <location filename="../src/ui/main_window.py" line="272"/>
         <source>Edit(&amp;E)</source>
         <translation>Редагування(&amp;E)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="251"/>
-        <location filename="../src/ui/main_window.py" line="2356"/>
+        <location filename="../src/ui/main_window.py" line="252"/>
+        <location filename="../src/ui/main_window.py" line="2386"/>
         <source>Export G-code...</source>
         <translation>Експортувати G-code...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="273"/>
+        <location filename="../src/ui/main_window.py" line="274"/>
         <source>Undo</source>
         <translation>Скасувати</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="278"/>
+        <location filename="../src/ui/main_window.py" line="279"/>
         <source>Redo</source>
         <translation>Повторити</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="285"/>
+        <location filename="../src/ui/main_window.py" line="286"/>
         <source>Select All</source>
         <translation>Вибрати все</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="289"/>
+        <location filename="../src/ui/main_window.py" line="290"/>
         <source>Delete</source>
         <translation>Видалити</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="294"/>
+        <location filename="../src/ui/main_window.py" line="295"/>
         <source>View(&amp;V)</source>
         <translation>Вигляд(&amp;V)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="296"/>
+        <location filename="../src/ui/main_window.py" line="297"/>
         <source>2D View</source>
         <translation>2D вигляд</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="301"/>
+        <location filename="../src/ui/main_window.py" line="302"/>
         <source>3D View</source>
         <translation>3D вигляд</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="308"/>
+        <location filename="../src/ui/main_window.py" line="309"/>
         <source>Fit to Window</source>
         <translation>Підігнати під вікно</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="313"/>
+        <location filename="../src/ui/main_window.py" line="314"/>
         <source>Zoom In</source>
         <translation>Збільшити</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="317"/>
+        <location filename="../src/ui/main_window.py" line="318"/>
         <source>Zoom Out</source>
         <translation>Зменшити</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="329"/>
+        <location filename="../src/ui/main_window.py" line="330"/>
         <source>Preview G-code</source>
         <translation>Попередній перегляд G-code</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="334"/>
+        <location filename="../src/ui/main_window.py" line="335"/>
         <source>Help(&amp;H)</source>
         <translation>Довідка(&amp;H)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="336"/>
+        <location filename="../src/ui/main_window.py" line="337"/>
         <source>About</source>
         <translation>Про програму</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="461"/>
-        <location filename="../src/ui/main_window.py" line="3003"/>
+        <location filename="../src/ui/main_window.py" line="462"/>
+        <location filename="../src/ui/main_window.py" line="3033"/>
         <source>Scale</source>
         <translation>Масштаб</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="580"/>
-        <location filename="../src/ui/main_window.py" line="1360"/>
-        <location filename="../src/ui/main_window.py" line="2995"/>
+        <location filename="../src/ui/main_window.py" line="581"/>
+        <location filename="../src/ui/main_window.py" line="1364"/>
+        <location filename="../src/ui/main_window.py" line="3025"/>
         <source>Arrow keys: 1mm, Shift+Arrow: 10mm</source>
         <translation>Стрілки: 1 мм, Shift+стрілка: 10 мм</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="729"/>
-        <location filename="../src/ui/main_window.py" line="2752"/>
-        <location filename="../src/ui/main_window.py" line="2840"/>
-        <location filename="../src/ui/main_window.py" line="2904"/>
-        <location filename="../src/ui/main_window.py" line="3226"/>
+        <location filename="../src/ui/main_window.py" line="730"/>
+        <location filename="../src/ui/main_window.py" line="2782"/>
+        <location filename="../src/ui/main_window.py" line="2870"/>
+        <location filename="../src/ui/main_window.py" line="2934"/>
+        <location filename="../src/ui/main_window.py" line="3256"/>
         <source>Ready</source>
         <translation>Готово</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="767"/>
+        <location filename="../src/ui/main_window.py" line="768"/>
         <source>Executed: </source>
         <translation>Виконано: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="770"/>
+        <location filename="../src/ui/main_window.py" line="771"/>
         <source>Undone: </source>
         <translation>Скасовано: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="773"/>
+        <location filename="../src/ui/main_window.py" line="774"/>
         <source>Redone: </source>
         <translation>Повторено: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1204"/>
-        <location filename="../src/ui/main_window.py" line="1882"/>
+        <location filename="../src/ui/main_window.py" line="1208"/>
+        <location filename="../src/ui/main_window.py" line="1912"/>
         <source>Asset</source>
         <translation>Асет</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1355"/>
-        <location filename="../src/ui/main_window.py" line="2991"/>
+        <location filename="../src/ui/main_window.py" line="1359"/>
+        <location filename="../src/ui/main_window.py" line="3021"/>
         <source>Position</source>
         <translation>Позиція</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1444"/>
-        <location filename="../src/ui/main_window.py" line="1457"/>
+        <location filename="../src/ui/main_window.py" line="1448"/>
+        <location filename="../src/ui/main_window.py" line="1461"/>
         <source>Loading 3D preview...</source>
         <translation>Завантаження 3D-перегляду...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1478"/>
+        <location filename="../src/ui/main_window.py" line="1482"/>
         <source>3D preview loading failed</source>
         <translation>Не вдалося завантажити 3D-перегляд</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1482"/>
+        <location filename="../src/ui/main_window.py" line="1486"/>
         <source>Failed to prepare 3D preview:</source>
         <translation>Не вдалося підготувати 3D-перегляд:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1644"/>
+        <location filename="../src/ui/main_window.py" line="1648"/>
         <source>The selected recent project is no longer available and has been removed from the list.</source>
         <translation>Вибраний нещодавній проєкт більше недоступний і був видалений зі списку.</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1684"/>
+        <location filename="../src/ui/main_window.py" line="1713"/>
         <source>Home</source>
         <translation>Головна</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1691"/>
+        <location filename="../src/ui/main_window.py" line="1720"/>
         <source>Project Edit</source>
         <translation>Редагування проекту</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1481"/>
-        <location filename="../src/ui/main_window.py" line="1700"/>
+        <location filename="../src/ui/main_window.py" line="1485"/>
+        <location filename="../src/ui/main_window.py" line="1729"/>
         <source>3D Preview</source>
         <translation>3D попередній перегляд</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1730"/>
+        <location filename="../src/ui/main_window.py" line="1760"/>
         <source>Settings feature under development...</source>
         <translation>Функція налаштувань у розробці...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1732"/>
+        <location filename="../src/ui/main_window.py" line="1762"/>
         <source>Help feature under development...</source>
         <translation>Функція довідки у розробці...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1749"/>
+        <location filename="../src/ui/main_window.py" line="1779"/>
         <source>MINGDA SignMaker - New Project</source>
         <translation>MINGDA SignMaker - Новий проект</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1761"/>
+        <location filename="../src/ui/main_window.py" line="1791"/>
         <source>Open File</source>
         <translation>Відкрити файл</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1943"/>
+        <location filename="../src/ui/main_window.py" line="1973"/>
         <source>Unsupported Format</source>
         <translation>Непідтримуваний формат</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1943"/>
+        <location filename="../src/ui/main_window.py" line="1973"/>
         <source>Format not supported: </source>
         <translation>Формат не підтримується: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2146"/>
+        <location filename="../src/ui/main_window.py" line="2176"/>
         <source>Load </source>
         <translation>Завантажити </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2167"/>
+        <location filename="../src/ui/main_window.py" line="2197"/>
         <source>Loaded: {file}, {count} contours</source>
         <translation>Завантажено: {file}, {count} контурів</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1952"/>
-        <location filename="../src/ui/main_window.py" line="2232"/>
+        <location filename="../src/ui/main_window.py" line="1982"/>
+        <location filename="../src/ui/main_window.py" line="2262"/>
         <source>Load Failed</source>
         <translation>Помилка завантаження</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1953"/>
+        <location filename="../src/ui/main_window.py" line="1983"/>
         <source>Failed to load file:</source>
         <translation>Не вдалося завантажити файл:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1776"/>
-        <location filename="../src/ui/main_window.py" line="2259"/>
+        <location filename="../src/ui/main_window.py" line="1806"/>
+        <location filename="../src/ui/main_window.py" line="2289"/>
         <source>SignMaker Project (*.smp);;All Files (*)</source>
         <translation>Проект SignMaker (*.smp);;Усі файли (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="322"/>
+        <location filename="../src/ui/main_window.py" line="323"/>
         <source>Process(&amp;P)</source>
         <translation>Обробити(&amp;P)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1763"/>
+        <location filename="../src/ui/main_window.py" line="1793"/>
         <source>Supported Files (*.dxf *.svg *.smp);;SignMaker Project (*.smp);;DXF Files (*.dxf);;SVG Files (*.svg);;All Files (*)</source>
         <translation>Підтримувані файли (*.dxf *.svg *.smp);;Проєкт SignMaker (*.smp);;Файли DXF (*.dxf);;Файли SVG (*.svg);;Усі файли (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1643"/>
-        <location filename="../src/ui/main_window.py" line="1774"/>
+        <location filename="../src/ui/main_window.py" line="1647"/>
+        <location filename="../src/ui/main_window.py" line="1804"/>
         <source>Open Project</source>
         <translation>Відкрити проєкт</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2219"/>
+        <location filename="../src/ui/main_window.py" line="2249"/>
         <source>Project loaded: {name}, {count} contours</source>
         <translation>Проєкт завантажено: {name}, контурів: {count}</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2232"/>
+        <location filename="../src/ui/main_window.py" line="2262"/>
         <source>Failed to load project:</source>
         <translation>Не вдалося завантажити проєкт:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2314"/>
+        <location filename="../src/ui/main_window.py" line="2344"/>
         <source>Project saved: </source>
         <translation>Проект збережено: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2324"/>
+        <location filename="../src/ui/main_window.py" line="2354"/>
         <source>Save Failed</source>
         <translation>Не вдалося зберегти</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2324"/>
+        <location filename="../src/ui/main_window.py" line="2354"/>
         <source>Failed to save project:</source>
         <translation>Не вдалося зберегти проєкт:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2359"/>
+        <location filename="../src/ui/main_window.py" line="2389"/>
         <source>Export Baseplate DXF...</source>
         <translation>Експорт DXF основи...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2360"/>
+        <location filename="../src/ui/main_window.py" line="2390"/>
         <source>Export Panel DXF...</source>
         <translation>Експорт DXF панелі...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1131"/>
-        <location filename="../src/ui/main_window.py" line="2274"/>
-        <location filename="../src/ui/main_window.py" line="2367"/>
-        <location filename="../src/ui/main_window.py" line="2433"/>
-        <location filename="../src/ui/main_window.py" line="2483"/>
-        <location filename="../src/ui/main_window.py" line="2519"/>
-        <location filename="../src/ui/main_window.py" line="2588"/>
-        <location filename="../src/ui/main_window.py" line="2699"/>
-        <location filename="../src/ui/main_window.py" line="2707"/>
-        <location filename="../src/ui/main_window.py" line="2817"/>
-        <location filename="../src/ui/main_window.py" line="2855"/>
-        <location filename="../src/ui/main_window.py" line="3240"/>
-        <location filename="../src/ui/main_window.py" line="3266"/>
-        <location filename="../src/ui/main_window.py" line="3303"/>
-        <location filename="../src/ui/main_window.py" line="3341"/>
-        <location filename="../src/ui/main_window.py" line="3372"/>
+        <location filename="../src/ui/main_window.py" line="1135"/>
+        <location filename="../src/ui/main_window.py" line="2304"/>
+        <location filename="../src/ui/main_window.py" line="2397"/>
+        <location filename="../src/ui/main_window.py" line="2463"/>
+        <location filename="../src/ui/main_window.py" line="2513"/>
+        <location filename="../src/ui/main_window.py" line="2549"/>
+        <location filename="../src/ui/main_window.py" line="2618"/>
+        <location filename="../src/ui/main_window.py" line="2729"/>
+        <location filename="../src/ui/main_window.py" line="2737"/>
+        <location filename="../src/ui/main_window.py" line="2847"/>
+        <location filename="../src/ui/main_window.py" line="2885"/>
+        <location filename="../src/ui/main_window.py" line="3270"/>
+        <location filename="../src/ui/main_window.py" line="3296"/>
+        <location filename="../src/ui/main_window.py" line="3333"/>
+        <location filename="../src/ui/main_window.py" line="3371"/>
+        <location filename="../src/ui/main_window.py" line="3402"/>
         <source>Info</source>
         <translation>Інформація</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2367"/>
-        <location filename="../src/ui/main_window.py" line="2433"/>
+        <location filename="../src/ui/main_window.py" line="2397"/>
+        <location filename="../src/ui/main_window.py" line="2463"/>
         <source>Please process first</source>
         <translation>Спочатку виконайте обробку</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2411"/>
-        <location filename="../src/ui/main_window.py" line="2467"/>
-        <location filename="../src/ui/main_window.py" line="2505"/>
-        <location filename="../src/ui/main_window.py" line="2541"/>
+        <location filename="../src/ui/main_window.py" line="2441"/>
+        <location filename="../src/ui/main_window.py" line="2497"/>
+        <location filename="../src/ui/main_window.py" line="2535"/>
+        <location filename="../src/ui/main_window.py" line="2571"/>
         <source>Export Success</source>
         <translation>Успішний експорт</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2418"/>
-        <location filename="../src/ui/main_window.py" line="2470"/>
-        <location filename="../src/ui/main_window.py" line="2512"/>
-        <location filename="../src/ui/main_window.py" line="2514"/>
-        <location filename="../src/ui/main_window.py" line="2548"/>
-        <location filename="../src/ui/main_window.py" line="2550"/>
+        <location filename="../src/ui/main_window.py" line="2448"/>
+        <location filename="../src/ui/main_window.py" line="2500"/>
+        <location filename="../src/ui/main_window.py" line="2542"/>
+        <location filename="../src/ui/main_window.py" line="2544"/>
+        <location filename="../src/ui/main_window.py" line="2578"/>
+        <location filename="../src/ui/main_window.py" line="2580"/>
         <source>Export Failed</source>
         <translation>Помилка експорту</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2438"/>
+        <location filename="../src/ui/main_window.py" line="2468"/>
         <source>Export STL</source>
         <translation>Експорт STL</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2440"/>
+        <location filename="../src/ui/main_window.py" line="2470"/>
         <source>STL Files (*.stl);;All Files (*)</source>
         <translation>STL файли (*.stl);;Усі файли (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2466"/>
+        <location filename="../src/ui/main_window.py" line="2496"/>
         <source>STL exported: </source>
         <translation>STL експортовано: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2467"/>
+        <location filename="../src/ui/main_window.py" line="2497"/>
         <source>STL saved to:</source>
         <translation>STL збережено до:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2470"/>
+        <location filename="../src/ui/main_window.py" line="2500"/>
         <source>Failed to export STL:</source>
         <translation>Не вдалося експортувати STL:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2483"/>
-        <location filename="../src/ui/main_window.py" line="2519"/>
-        <location filename="../src/ui/main_window.py" line="2588"/>
+        <location filename="../src/ui/main_window.py" line="2513"/>
+        <location filename="../src/ui/main_window.py" line="2549"/>
+        <location filename="../src/ui/main_window.py" line="2618"/>
         <source>Please import a DXF file first</source>
         <translation>Спочатку імпортуйте DXF файл</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2275"/>
+        <location filename="../src/ui/main_window.py" line="2305"/>
         <source>Please import or create graphics before saving</source>
         <translation>Перед збереженням імпортуйте або створіть графіку</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="985"/>
+        <location filename="../src/ui/main_window.py" line="988"/>
         <source>{count} screw holes are invalid</source>
         <translation>Виявлено {count} некоректних отворів під гвинт</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1014"/>
-        <location filename="../src/ui/main_window.py" line="1149"/>
+        <location filename="../src/ui/main_window.py" line="1017"/>
+        <location filename="../src/ui/main_window.py" line="1153"/>
         <source>Explode Asset</source>
         <translation>Розкласти ресурс</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1132"/>
+        <location filename="../src/ui/main_window.py" line="1136"/>
         <source>Please select an imported asset first</source>
         <translation>Спочатку виберіть імпортований ресурс</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2378"/>
+        <location filename="../src/ui/main_window.py" line="1677"/>
+        <location filename="../src/ui/main_window.py" line="1685"/>
+        <source>Show Configuration Folder Failed</source>
+        <translation>Не вдалося показати папку конфігурації</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1678"/>
+        <location filename="../src/ui/main_window.py" line="1686"/>
+        <source>Failed to show the configuration folder in the file manager.</source>
+        <translation>Не вдалося показати папку конфігурації у файловому менеджері.</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2408"/>
         <source>Export Blocked</source>
         <translation>Експорт заблоковано</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2379"/>
+        <location filename="../src/ui/main_window.py" line="2409"/>
         <source>Cannot export G-code:</source>
         <translation>Неможливо експортувати G-code:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2387"/>
+        <location filename="../src/ui/main_window.py" line="2417"/>
         <source>Export G-code</source>
         <translation>Експортувати G-code</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2389"/>
+        <location filename="../src/ui/main_window.py" line="2419"/>
         <source>G-code Files (*.gcode);;All Files (*)</source>
         <translation>Файли G-code (*.gcode);;Усі файли (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2408"/>
+        <location filename="../src/ui/main_window.py" line="2438"/>
         <source>G-code exported: </source>
         <translation>G-code експортовано: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2412"/>
+        <location filename="../src/ui/main_window.py" line="2442"/>
         <source>G-code saved to:</source>
         <translation>G-code збережено до:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2419"/>
+        <location filename="../src/ui/main_window.py" line="2449"/>
         <source>Failed to export G-code:</source>
         <translation>Не вдалося експортувати G-code:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2424"/>
+        <location filename="../src/ui/main_window.py" line="2454"/>
         <source>Exporting G-code...</source>
         <translation>Експорт G-code...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2488"/>
+        <location filename="../src/ui/main_window.py" line="2518"/>
         <source>Export Baseplate DXF</source>
         <translation>Експорт DXF підкладки</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2490"/>
-        <location filename="../src/ui/main_window.py" line="2526"/>
+        <location filename="../src/ui/main_window.py" line="2520"/>
+        <location filename="../src/ui/main_window.py" line="2556"/>
         <source>DXF Files (*.dxf);;All Files (*)</source>
         <translation>DXF файли (*.dxf);;Усі файли (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2503"/>
+        <location filename="../src/ui/main_window.py" line="2533"/>
         <source>Baseplate DXF exported: </source>
         <translation>DXF підкладки експортовано: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2506"/>
+        <location filename="../src/ui/main_window.py" line="2536"/>
         <source>Baseplate DXF saved to:</source>
         <translation>DXF підкладки збережено до:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2512"/>
+        <location filename="../src/ui/main_window.py" line="2542"/>
         <source>Failed to generate baseplate contour</source>
         <translation>Не вдалося згенерувати контур підкладки</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2514"/>
+        <location filename="../src/ui/main_window.py" line="2544"/>
         <source>Failed to export baseplate DXF:</source>
         <translation>Не вдалося експортувати DXF підкладки:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2524"/>
+        <location filename="../src/ui/main_window.py" line="2554"/>
         <source>Export Panel DXF</source>
         <translation>Експорт DXF панелі</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2539"/>
+        <location filename="../src/ui/main_window.py" line="2569"/>
         <source>Panel DXF exported: </source>
         <translation>DXF панелі експортовано: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2542"/>
+        <location filename="../src/ui/main_window.py" line="2572"/>
         <source>Panel DXF saved to:</source>
         <translation>DXF панелі збережено до:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2548"/>
+        <location filename="../src/ui/main_window.py" line="2578"/>
         <source>Failed to generate panel contour</source>
         <translation>Не вдалося згенерувати контур панелі</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2550"/>
+        <location filename="../src/ui/main_window.py" line="2580"/>
         <source>Failed to export panel DXF:</source>
         <translation>Не вдалося експортувати DXF панелі:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2566"/>
+        <location filename="../src/ui/main_window.py" line="2596"/>
         <source>Nothing to undo</source>
         <translation>Немає дій для скасування</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2582"/>
+        <location filename="../src/ui/main_window.py" line="2612"/>
         <source>Nothing to redo</source>
         <translation>Немає дій для повторення</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2600"/>
-        <location filename="../src/ui/main_window.py" line="2614"/>
+        <location filename="../src/ui/main_window.py" line="2630"/>
+        <location filename="../src/ui/main_window.py" line="2644"/>
         <source>Processing Blocked</source>
         <translation>Обробку заблоковано</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2602"/>
+        <location filename="../src/ui/main_window.py" line="2632"/>
         <source>Some contours exceed the platform size. Please move or scale them back inside the platform before processing.</source>
         <translation>Деякі контури виходять за межі робочої області. Перед обробкою перемістіть або зменште їх, щоб вони повністю були в межах робочої області.</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2606"/>
+        <location filename="../src/ui/main_window.py" line="2636"/>
         <source>Processing blocked: contours exceed platform size</source>
         <translation>Обробку заблоковано: контури виходять за межі робочої області</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2700"/>
+        <location filename="../src/ui/main_window.py" line="2730"/>
         <source>No contours available for screw-hole editing</source>
         <translation>Немає контурів для редагування отворів під гвинт</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2708"/>
+        <location filename="../src/ui/main_window.py" line="2738"/>
         <source>Enable Bottom Face before editing screw holes</source>
         <translation>Перш ніж редагувати отвори під гвинт, увімкніть нижню поверхню</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2724"/>
+        <location filename="../src/ui/main_window.py" line="2754"/>
         <source>Edit Screw Holes</source>
         <translation>Редагування отворів під гвинт</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2734"/>
+        <location filename="../src/ui/main_window.py" line="2764"/>
         <source>Click a screw hole to select it, click empty space to add, Delete to remove, Esc to finish</source>
         <translation>Клацніть отвір під гвинт, щоб вибрати його; клацніть порожнє місце, щоб додати; натисніть Delete, щоб видалити; натисніть Esc, щоб завершити</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2760"/>
+        <location filename="../src/ui/main_window.py" line="2790"/>
         <source>Click inside a valid bottom-face region</source>
         <translation>Клацніть у межах допустимої області нижньої поверхні</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2770"/>
+        <location filename="../src/ui/main_window.py" line="2800"/>
         <source>Screw hole added</source>
         <translation>Отвір під гвинт додано</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2790"/>
+        <location filename="../src/ui/main_window.py" line="2820"/>
         <source>Screw hole updated</source>
         <translation>Отвір під гвинт оновлено</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2806"/>
+        <location filename="../src/ui/main_window.py" line="2836"/>
         <source>Screw hole removed</source>
         <translation>Отвір під гвинт видалено</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2856"/>
+        <location filename="../src/ui/main_window.py" line="2886"/>
         <source>No contours available for print order selection</source>
         <translation>Немає контурів для налаштування порядку друку</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2870"/>
+        <location filename="../src/ui/main_window.py" line="2900"/>
         <source>Set Print Order</source>
         <translation>Задати порядок друку</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2878"/>
+        <location filename="../src/ui/main_window.py" line="2908"/>
         <source>Click contours or holes in desired print order, Esc to finish</source>
         <translation>Клацайте контури або отвори в потрібному порядку друку, натисніть Esc для завершення</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2929"/>
+        <location filename="../src/ui/main_window.py" line="2959"/>
         <source>Print order updated</source>
         <translation>Порядок друку оновлено</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3396"/>
+        <location filename="../src/ui/main_window.py" line="3426"/>
         <source>Text</source>
         <translation>Текст</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3402"/>
+        <location filename="../src/ui/main_window.py" line="3432"/>
         <source>Add Contours</source>
         <translation>Додати контури</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3440"/>
+        <location filename="../src/ui/main_window.py" line="3470"/>
         <source>Open Tutorial Failed</source>
         <translation>Не вдалося відкрити відеоуроки</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3441"/>
+        <location filename="../src/ui/main_window.py" line="3471"/>
         <source>Failed to open the tutorial playlist in the default browser.</source>
         <translation>Не вдалося відкрити плейлист з відеоуроками у типовому браузері.</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3482"/>
+        <location filename="../src/ui/main_window.py" line="3512"/>
         <source>Loaded saved parameters</source>
         <translation>Завантажено збережені параметри</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2665"/>
+        <location filename="../src/ui/main_window.py" line="2695"/>
         <source>Switched to {view} view</source>
         <translation>Перемкнуто на вигляд {view}</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2997"/>
+        <location filename="../src/ui/main_window.py" line="3027"/>
         <source>Rotation</source>
         <translation>Обертання</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3016"/>
+        <location filename="../src/ui/main_window.py" line="3046"/>
         <source>Tool: </source>
         <translation>Інструмент: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3066"/>
+        <location filename="../src/ui/main_window.py" line="3096"/>
         <source>Move to: X={x:.2f}, Y={y:.2f}</source>
         <translation>Перемістити до: X={x:.2f}, Y={y:.2f}</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3076"/>
+        <location filename="../src/ui/main_window.py" line="3106"/>
         <source>Rotation: {angle:.2f}°</source>
         <translation>Обертання: {angle:.2f}°</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3152"/>
-        <location filename="../src/ui/main_window.py" line="3190"/>
-        <location filename="../src/ui/main_window.py" line="3213"/>
+        <location filename="../src/ui/main_window.py" line="3182"/>
+        <location filename="../src/ui/main_window.py" line="3220"/>
+        <location filename="../src/ui/main_window.py" line="3243"/>
         <source>Scale: {px:.1f}% x {py:.1f}%</source>
         <translation>Масштаб: {px:.1f}% x {py:.1f}%</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3240"/>
+        <location filename="../src/ui/main_window.py" line="3270"/>
         <source>Please select a contour first</source>
         <translation>Спочатку виберіть контур</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3257"/>
+        <location filename="../src/ui/main_window.py" line="3287"/>
         <source>Mirror {axis} complete</source>
         <translation>Дзеркальне відображення {axis} завершено</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3267"/>
-        <location filename="../src/ui/main_window.py" line="3304"/>
-        <location filename="../src/ui/main_window.py" line="3342"/>
+        <location filename="../src/ui/main_window.py" line="3297"/>
+        <location filename="../src/ui/main_window.py" line="3334"/>
+        <location filename="../src/ui/main_window.py" line="3372"/>
         <source>Please select at least two contours</source>
         <translation>Будь ласка, виберіть щонайменше два контури</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3279"/>
-        <location filename="../src/ui/main_window.py" line="3287"/>
+        <location filename="../src/ui/main_window.py" line="3309"/>
+        <location filename="../src/ui/main_window.py" line="3317"/>
         <source>Intersection</source>
         <translation>Перетин</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3316"/>
-        <location filename="../src/ui/main_window.py" line="3324"/>
+        <location filename="../src/ui/main_window.py" line="3346"/>
+        <location filename="../src/ui/main_window.py" line="3354"/>
         <source>Difference</source>
         <translation>Різниця</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3352"/>
+        <location filename="../src/ui/main_window.py" line="3382"/>
         <source>Already grouped</source>
         <translation>Уже згруповано</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1012"/>
-        <location filename="../src/ui/main_window.py" line="3355"/>
+        <location filename="../src/ui/main_window.py" line="1015"/>
+        <location filename="../src/ui/main_window.py" line="3385"/>
         <source>Group</source>
         <translation>Згрупувати</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3373"/>
+        <location filename="../src/ui/main_window.py" line="3403"/>
         <source>Please select a grouped contour first</source>
         <translation>Спочатку виберіть згрупований контур</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1013"/>
-        <location filename="../src/ui/main_window.py" line="3377"/>
+        <location filename="../src/ui/main_window.py" line="1016"/>
+        <location filename="../src/ui/main_window.py" line="3407"/>
         <source>Ungroup</source>
         <translation>Розгрупувати</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3407"/>
+        <location filename="../src/ui/main_window.py" line="3437"/>
         <source>Text added</source>
         <translation>Текст додано</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3409"/>
+        <location filename="../src/ui/main_window.py" line="3439"/>
         <source>Error</source>
         <translation>Помилка</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3415"/>
+        <location filename="../src/ui/main_window.py" line="3445"/>
         <source>About MINGDA SignMaker</source>
         <translation>Про MINGDA SignMaker</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3417"/>
+        <location filename="../src/ui/main_window.py" line="3447"/>
         <source>Professional LED Sign Letter 3D Printing Slicer</source>
         <translation>Професійний слайсер для 3D-друку світлових букв</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3418"/>
+        <location filename="../src/ui/main_window.py" line="3448"/>
         <source>Version: </source>
         <translation>Версія: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3420"/>
+        <location filename="../src/ui/main_window.py" line="3450"/>
         <source>Features:</source>
         <translation>Можливості:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3422"/>
+        <location filename="../src/ui/main_window.py" line="3452"/>
         <source>DXF/SVG file import</source>
         <translation>Імпорт файлів DXF/SVG</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3423"/>
+        <location filename="../src/ui/main_window.py" line="3453"/>
         <source>Straight/Bevel/Custom edges</source>
         <translation>Прямий/Скошений/Довільний краї</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3424"/>
+        <location filename="../src/ui/main_window.py" line="3454"/>
         <source>Multi-color printing support</source>
         <translation>Підтримка багатокольорового друку</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3425"/>
+        <location filename="../src/ui/main_window.py" line="3455"/>
         <source>Step/V-groove</source>
         <translation>Сходинка/V-паз</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3426"/>
+        <location filename="../src/ui/main_window.py" line="3456"/>
         <source>Anti-warping skirt</source>
         <translation>Антидеформаційна спідниця</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3427"/>
+        <location filename="../src/ui/main_window.py" line="3457"/>
         <source>Connected letters</source>
         <translation>З&apos;єднані букви</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3452"/>
+        <location filename="../src/ui/main_window.py" line="3482"/>
         <source>Language Changed</source>
         <translation>Мову змінено</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3453"/>
+        <location filename="../src/ui/main_window.py" line="3483"/>
         <source>Language has been changed to {lang}. Please restart the application for full effect.</source>
         <translation>Мову змінено на {lang}. Перезапустіть програму для повного застосування.</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3460"/>
+        <location filename="../src/ui/main_window.py" line="3490"/>
         <source>Language Change Failed</source>
         <translation>Не вдалося змінити мову</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3461"/>
+        <location filename="../src/ui/main_window.py" line="3491"/>
         <source>Translation file for {lang} is not available yet.</source>
         <translation>Файл перекладу для {lang} ще недоступний.</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="436"/>
+        <location filename="../src/ui/main_window.py" line="437"/>
         <source>Angle</source>
         <translation>Кут</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3001"/>
+        <location filename="../src/ui/main_window.py" line="3031"/>
         <source>Drag grabber on ring to rotate</source>
         <translation>Перетягніть захоплювач на кільці для обертання</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="500"/>
+        <location filename="../src/ui/main_window.py" line="501"/>
         <source>Size</source>
         <translation>Розмір</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="543"/>
+        <location filename="../src/ui/main_window.py" line="544"/>
         <source>Uniform Scale</source>
         <translation>Рівномірне масштабування</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3007"/>
+        <location filename="../src/ui/main_window.py" line="3037"/>
         <source>Drag to scale, input exact values above</source>
         <translation>Перетягніть для масштабування, введіть точні значення вище</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1948"/>
+        <location filename="../src/ui/main_window.py" line="1978"/>
         <source>Loading file...</source>
         <translation>Завантаження файлу...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2474"/>
+        <location filename="../src/ui/main_window.py" line="2504"/>
         <source>Exporting STL...</source>
         <translation>Експорт STL...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="324"/>
+        <location filename="../src/ui/main_window.py" line="325"/>
         <source>Start Processing</source>
         <translation>Почати обробку</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1696"/>
-        <location filename="../src/ui/main_window.py" line="2645"/>
+        <location filename="../src/ui/main_window.py" line="1725"/>
+        <location filename="../src/ui/main_window.py" line="2675"/>
         <source>Processing...</source>
         <translation>Обробка...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2632"/>
+        <location filename="../src/ui/main_window.py" line="2662"/>
         <source>Processing complete: {layers} layers, estimated time: {time:.1f} minutes</source>
         <translation>Обробку завершено: {layers} шарів, орієнтовний час: {time:.1f} хвилин</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2640"/>
+        <location filename="../src/ui/main_window.py" line="2670"/>
         <source>Processing Failed</source>
         <translation>Помилка обробки</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2640"/>
+        <location filename="../src/ui/main_window.py" line="2670"/>
         <source>Error during processing:</source>
         <translation>Помилка під час обробки:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2641"/>
+        <location filename="../src/ui/main_window.py" line="2671"/>
         <source>Processing failed</source>
         <translation>Обробка не вдалася</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2507"/>
-        <location filename="../src/ui/main_window.py" line="2543"/>
+        <location filename="../src/ui/main_window.py" line="2537"/>
+        <location filename="../src/ui/main_window.py" line="2573"/>
         <source>Outer clearance: </source>
         <translation>Зовнішній зазор: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2508"/>
-        <location filename="../src/ui/main_window.py" line="2544"/>
+        <location filename="../src/ui/main_window.py" line="2538"/>
+        <location filename="../src/ui/main_window.py" line="2574"/>
         <source>Hole clearance: </source>
         <translation>Зазор отворів: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2509"/>
-        <location filename="../src/ui/main_window.py" line="2545"/>
+        <location filename="../src/ui/main_window.py" line="2539"/>
+        <location filename="../src/ui/main_window.py" line="2575"/>
         <source>Laser kerf: </source>
         <translation>Ширина лазерного різу: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2818"/>
+        <location filename="../src/ui/main_window.py" line="2848"/>
         <source>No contours available for start point selection</source>
         <translation>Немає контурів для вибору початкової точки</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2830"/>
+        <location filename="../src/ui/main_window.py" line="2860"/>
         <source>Click a corner on any contour or hole, Esc to exit</source>
         <translation>Клацніть кут будь-якого контуру або отвору, натисніть Esc для виходу</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2960"/>
+        <location filename="../src/ui/main_window.py" line="2990"/>
         <source>Set Start Point</source>
         <translation>Задати початкову точку</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2971"/>
+        <location filename="../src/ui/main_window.py" line="3001"/>
         <source>Start point updated</source>
         <translation>Початкову точку оновлено</translation>
     </message>
@@ -2121,58 +2191,63 @@ Control points: {points}</source>
         <translation>Обробка</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="421"/>
+        <location filename="../src/ui/title_bar.py" line="498"/>
         <source>New Project</source>
         <translation>Новий проект</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="422"/>
+        <location filename="../src/ui/title_bar.py" line="499"/>
         <source>Open File...</source>
         <translation>Відкрити файл...</translation>
     </message>
     <message>
         <location filename="../src/ui/title_bar.py" line="88"/>
-        <location filename="../src/ui/title_bar.py" line="425"/>
+        <location filename="../src/ui/title_bar.py" line="502"/>
         <source>Save Project</source>
         <translation>Зберегти проект</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="428"/>
+        <location filename="../src/ui/title_bar.py" line="505"/>
         <source>Export G-code...</source>
         <translation>Експортувати G-code...</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="429"/>
+        <location filename="../src/ui/title_bar.py" line="506"/>
         <source>Export STL...</source>
         <translation>Експорт STL...</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="431"/>
+        <location filename="../src/ui/title_bar.py" line="508"/>
         <source>Export Baseplate DXF...</source>
         <translation>Експорт DXF основи...</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="432"/>
+        <location filename="../src/ui/title_bar.py" line="509"/>
         <source>Export Panel DXF...</source>
         <translation>Експорт DXF панелі...</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="451"/>
+        <location filename="../src/ui/title_bar.py" line="528"/>
+        <source>Show Configuration Folder</source>
+        <translation>Показати папку конфігурації</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/title_bar.py" line="529"/>
         <source>Tutorial</source>
         <translation>Відеоуроки</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="454"/>
+        <location filename="../src/ui/title_bar.py" line="532"/>
         <source>About</source>
         <translation>Про програму</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="456"/>
+        <location filename="../src/ui/title_bar.py" line="534"/>
         <source>Exit</source>
         <translation>Вихід</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="436"/>
+        <location filename="../src/ui/title_bar.py" line="513"/>
         <source>Language</source>
         <translation>Мова</translation>
     </message>
@@ -2187,12 +2262,12 @@ Control points: {points}</source>
         <translation>Експорт проекту</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="423"/>
+        <location filename="../src/ui/title_bar.py" line="500"/>
         <source>Open Project...</source>
         <translation>Відкрити проект...</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="426"/>
+        <location filename="../src/ui/title_bar.py" line="503"/>
         <source>Save As...</source>
         <translation>Зберегти як...</translation>
     </message>
@@ -2208,47 +2283,6 @@ Control points: {points}</source>
         <location filename="../src/ui/project_panel.py" line="134"/>
         <source>Explode Asset</source>
         <translation>Розкласти ресурс</translation>
-    </message>
-</context>
-
-
-<context>
-    <name>DongleGuard</name>
-    <message>
-        <source>Failed to load USB dongle runtime library. The application cannot start.&#10;Please verify the system environment or rebuild the dongle module and try again.</source>
-        <translation>Не вдалося завантажити бібліотеку часу виконання USB-ключа. Програму неможливо запустити.&#10;Перевірте системне середовище або перебудуйте модуль ключа й спробуйте ще раз.</translation>
-    </message>
-    <message>
-        <source>USB dongle validation module is missing from this build. The application cannot start.&#10;Please rebuild with CODE_DOG=1 and include native/softkey_bridge.dll.</source>
-        <translation>У цій збірці відсутній модуль перевірки USB-ключа. Програму неможливо запустити.&#10;Перебудуйте програму з CODE_DOG=1 і додайте native/softkey_bridge.dll.</translation>
-    </message>
-    <message>
-        <source>USB dongle validation module received invalid arguments. The application cannot start.</source>
-        <translation>Модуль перевірки USB-ключа отримав некоректні аргументи. Програму неможливо запустити.</translation>
-    </message>
-    <message>
-        <source>USB dongle validation module initialization failed. Error code: {code}</source>
-        <translation>Не вдалося ініціалізувати модуль перевірки USB-ключа. Код помилки: {code}</translation>
-    </message>
-    <message>
-        <source>USB dongle not found. Please insert it and try again.</source>
-        <translation>USB-ключ не знайдено. Підключіть його й повторіть спробу.</translation>
-    </message>
-    <message>
-        <source>USB dongle was removed. The application will now exit.&#10;Please reinsert it and try again.</source>
-        <translation>USB-ключ було від'єднано. Програму буде закрито.&#10;Підключіть його знову й повторіть спробу.</translation>
-    </message>
-    <message>
-        <source>USB dongle communication failed. Please check the connection and try again.&#10;Error code: {code}</source>
-        <translation>Помилка зв'язку з USB-ключем. Перевірте підключення й повторіть спробу.&#10;Код помилки: {code}</translation>
-    </message>
-    <message>
-        <source>USB dongle communication error detected. The application will now exit.&#10;Error code: {code}</source>
-        <translation>Виявлено помилку зв'язку з USB-ключем. Програму буде закрито.&#10;Код помилки: {code}</translation>
-    </message>
-    <message>
-        <source>USB dongle validation failed. Error code: {code}</source>
-        <translation>Перевірка USB-ключа не пройдена. Код помилки: {code}</translation>
     </message>
 </context>
 </TS>

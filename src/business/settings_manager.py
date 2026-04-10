@@ -451,6 +451,10 @@ class SettingsManager:
         """设置文字生成的字符间距"""
         self._qsettings.setValue("TextGen/spacing", spacing)
 
+    def get_config_dir(self) -> Path:
+        """Return the current user config directory."""
+        return self._config_dir.resolve(strict=False)
+
     # =========================================================================
     # 参数备份/恢复（便于迁移）
     # =========================================================================

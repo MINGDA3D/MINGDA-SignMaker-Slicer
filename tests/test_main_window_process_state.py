@@ -955,3 +955,33 @@ def test_menu_tutorial_opens_default_browser(qapp, monkeypatch):
         assert opened_urls == [TUTORIAL_PLAYLIST_URL]
     finally:
         window.deleteLater()
+
+
+def test_menu_open_user_config_directory_opens_config_folder(
+    qapp, monkeypatch, workspace_tmp_dir
+):
+    from src.business.settings_manager import init_settings_manager as real_init_settings_manager
+
+    settings_dir = workspace_tmp_dir / "config"
+    monkeypatch.setattr(
+        "src.ui.main_window.init_settings_manager",
+        lambda: real_init_settings_manager(str(settings_dir)),
+    )
+    window = MainWindow()
+    opened_urls = []
+
+    try:
+        monkeypatch.setattr(
+            "src.ui.main_window.QDesktopServices.openUrl",
+            lambda url: opened_urls.append(url.toLocalFile()) or True,
+        )
+
+        assert not settings_dir.exists()
+
+        window._on_menu_action("open_user_config_dir")
+
+        assert settings_dir.exists()
+        assert len(opened_urls) == 1
+        assert FsPath(opened_urls[0]).resolve() == settings_dir.resolve()
+    finally:
+        window.deleteLater()

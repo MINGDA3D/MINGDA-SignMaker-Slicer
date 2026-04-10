@@ -549,6 +549,13 @@ class TestSettingsManagerWithQt:
         assert sm._config_dir == expected_dir
         assert sm._params_file == expected_dir / "slice_params.json"
 
+    def test_get_config_dir_returns_resolved_config_path(self, qapp, temp_config_dir):
+        from src.business.settings_manager import SettingsManager
+
+        sm = SettingsManager(temp_config_dir)
+
+        assert sm.get_config_dir() == Path(temp_config_dir).resolve()
+
     def test_get_last_params_migrates_legacy_file(self, qapp, temp_config_dir):
         """测试会从旧的应用目录配置文件迁移到新目录"""
         from src.business.settings_manager import SettingsManager

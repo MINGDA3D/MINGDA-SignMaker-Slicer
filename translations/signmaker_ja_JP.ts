@@ -42,74 +42,132 @@
 <context>
     <name>CanvasToolbar</name>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="58"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="81"/>
         <source>Move</source>
         <translation>移動</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="63"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="86"/>
         <source>Rotate</source>
         <translation>回転</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="68"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="91"/>
         <source>Scale</source>
         <translation>拡大縮小</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="76"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="99"/>
         <source>Mirror Horizontal</source>
         <translation>水平反転</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="80"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="103"/>
         <source>Mirror Vertical</source>
         <translation>垂直反転</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="87"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="110"/>
         <source>Intersection</source>
         <translation>交差</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="91"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="114"/>
         <source>Difference</source>
         <translation>差分</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="98"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="121"/>
         <source>Group</source>
         <translation>グループ化</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="102"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="125"/>
         <source>Ungroup</source>
         <translation>グループ解除</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="108"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="131"/>
         <source>Explode Asset</source>
         <translation>アセットを分解</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="117"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="140"/>
         <source>Text</source>
         <translation>テキスト</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="124"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="147"/>
         <source>Start Point</source>
         <translation>開始点</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="129"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="152"/>
         <source>Print Order</source>
         <translation>印刷順序</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="134"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="157"/>
         <source>Screw Hole</source>
         <translation>ネジ穴</translation>
+    </message>
+</context>
+<context>
+    <name>DongleGuard</name>
+    <message>
+        <location filename="../src/license_guard/dongle_guard.py" line="132"/>
+        <source>Failed to load USB dongle runtime library. The application cannot start.
+Please verify the system environment or rebuild the dongle module and try again.</source>
+        <translation>USBドングルのランタイムライブラリを読み込めないため、アプリケーションを起動できません。
+システム環境を確認するか、ドングルモジュールを再ビルドしてから再試行してください。</translation>
+    </message>
+    <message>
+        <location filename="../src/license_guard/dongle_guard.py" line="141"/>
+        <source>USB dongle validation module is missing from this build. The application cannot start.
+Please rebuild with CODE_DOG=1 and include native/softkey_bridge.dll.</source>
+        <translation>このビルドにはUSBドングル検証モジュールが含まれていないため、アプリケーションを起動できません。
+CODE_DOG=1 を指定して再ビルドし、native/softkey_bridge.dll を含めてください。</translation>
+    </message>
+    <message>
+        <location filename="../src/license_guard/dongle_guard.py" line="147"/>
+        <source>USB dongle validation module received invalid arguments. The application cannot start.</source>
+        <translation>USBドングル検証モジュールに無効な引数が渡されたため、アプリケーションを起動できません。</translation>
+    </message>
+    <message>
+        <location filename="../src/license_guard/dongle_guard.py" line="151"/>
+        <source>USB dongle validation module initialization failed. Error code: {code}</source>
+        <translation>USBドングル検証モジュールの初期化に失敗しました。エラーコード: {code}</translation>
+    </message>
+    <message>
+        <location filename="../src/license_guard/dongle_guard.py" line="158"/>
+        <source>USB dongle not found. Please insert it and try again.</source>
+        <translation>USBドングルが見つかりません。挿入してから再試行してください。</translation>
+    </message>
+    <message>
+        <location filename="../src/license_guard/dongle_guard.py" line="160"/>
+        <source>USB dongle was removed. The application will now exit.
+Please reinsert it and try again.</source>
+        <translation>USBドングルが取り外されました。アプリケーションを終了します。
+再度挿入してから再試行してください。</translation>
+    </message>
+    <message>
+        <location filename="../src/license_guard/dongle_guard.py" line="167"/>
+        <source>USB dongle communication failed. Please check the connection and try again.
+Error code: {code}</source>
+        <translation>USBドングルとの通信に失敗しました。接続を確認してから再試行してください。
+エラーコード: {code}</translation>
+    </message>
+    <message>
+        <location filename="../src/license_guard/dongle_guard.py" line="171"/>
+        <source>USB dongle communication error detected. The application will now exit.
+Error code: {code}</source>
+        <translation>USBドングルとの通信エラーが検出されたため、アプリケーションを終了します。
+エラーコード: {code}</translation>
+    </message>
+    <message>
+        <location filename="../src/license_guard/dongle_guard.py" line="175"/>
+        <source>USB dongle validation failed. Error code: {code}</source>
+        <translation>USBドングルの検証に失敗しました。エラーコード: {code}</translation>
     </message>
 </context>
 <context>
@@ -166,912 +224,924 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../src/ui/main_window.py" line="171"/>
+        <location filename="../src/ui/main_window.py" line="172"/>
         <source>MINGDA SignMaker - LED Sign Letter Slicer</source>
         <translation>MINGDA SignMaker - LED看板文字スライサー</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="183"/>
+        <location filename="../src/ui/main_window.py" line="184"/>
         <source>Title Bar</source>
         <translation>タイトルバー</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="221"/>
+        <location filename="../src/ui/main_window.py" line="222"/>
         <source>File(&amp;F)</source>
         <translation>ファイル(&amp;F)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="224"/>
-        <location filename="../src/ui/main_window.py" line="1750"/>
+        <location filename="../src/ui/main_window.py" line="225"/>
+        <location filename="../src/ui/main_window.py" line="1780"/>
         <source>New Project</source>
         <translation>新規プロジェクト</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="230"/>
+        <location filename="../src/ui/main_window.py" line="231"/>
         <source>Open DXF/SVG...</source>
         <translation>DXF/SVGを開く...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="238"/>
-        <location filename="../src/ui/main_window.py" line="2257"/>
+        <location filename="../src/ui/main_window.py" line="239"/>
+        <location filename="../src/ui/main_window.py" line="2287"/>
         <source>Save Project</source>
         <translation>プロジェクトを保存</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="244"/>
+        <location filename="../src/ui/main_window.py" line="245"/>
         <source>Save As...</source>
         <translation>名前を付けて保存...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="257"/>
-        <location filename="../src/ui/main_window.py" line="2357"/>
+        <location filename="../src/ui/main_window.py" line="258"/>
+        <location filename="../src/ui/main_window.py" line="2387"/>
         <source>Export STL...</source>
         <translation>STLをエクスポート...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="265"/>
-        <location filename="../src/ui/main_window.py" line="840"/>
+        <location filename="../src/ui/main_window.py" line="266"/>
+        <location filename="../src/ui/main_window.py" line="843"/>
         <source>Exit</source>
         <translation>終了</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="842"/>
+        <location filename="../src/ui/main_window.py" line="845"/>
         <source>The current project has unsaved changes. Do you want to save before exiting?</source>
         <translation>現在のプロジェクトには未保存の変更があります。終了する前に保存しますか？</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="845"/>
+        <location filename="../src/ui/main_window.py" line="848"/>
         <source>Save</source>
         <translation>保存</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="849"/>
+        <location filename="../src/ui/main_window.py" line="852"/>
         <source>Discard</source>
         <translation>破棄</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="853"/>
+        <location filename="../src/ui/main_window.py" line="856"/>
         <source>Cancel</source>
         <translation>キャンセル</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="271"/>
+        <location filename="../src/ui/main_window.py" line="272"/>
         <source>Edit(&amp;E)</source>
         <translation>編集(&amp;E)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="251"/>
-        <location filename="../src/ui/main_window.py" line="2356"/>
+        <location filename="../src/ui/main_window.py" line="252"/>
+        <location filename="../src/ui/main_window.py" line="2386"/>
         <source>Export G-code...</source>
         <translation>G-codeをエクスポート...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="273"/>
+        <location filename="../src/ui/main_window.py" line="274"/>
         <source>Undo</source>
         <translation>元に戻す</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="278"/>
+        <location filename="../src/ui/main_window.py" line="279"/>
         <source>Redo</source>
         <translation>やり直し</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="285"/>
+        <location filename="../src/ui/main_window.py" line="286"/>
         <source>Select All</source>
         <translation>すべて選択</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="289"/>
+        <location filename="../src/ui/main_window.py" line="290"/>
         <source>Delete</source>
         <translation>削除</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="294"/>
+        <location filename="../src/ui/main_window.py" line="295"/>
         <source>View(&amp;V)</source>
         <translation>表示(&amp;V)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="296"/>
+        <location filename="../src/ui/main_window.py" line="297"/>
         <source>2D View</source>
         <translation>2Dビュー</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="301"/>
+        <location filename="../src/ui/main_window.py" line="302"/>
         <source>3D View</source>
         <translation>3Dビュー</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="308"/>
+        <location filename="../src/ui/main_window.py" line="309"/>
         <source>Fit to Window</source>
         <translation>ウィンドウに合わせる</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="313"/>
+        <location filename="../src/ui/main_window.py" line="314"/>
         <source>Zoom In</source>
         <translation>拡大</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="317"/>
+        <location filename="../src/ui/main_window.py" line="318"/>
         <source>Zoom Out</source>
         <translation>縮小</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="329"/>
+        <location filename="../src/ui/main_window.py" line="330"/>
         <source>Preview G-code</source>
         <translation>G-codeプレビュー</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="334"/>
+        <location filename="../src/ui/main_window.py" line="335"/>
         <source>Help(&amp;H)</source>
         <translation>ヘルプ(&amp;H)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="336"/>
+        <location filename="../src/ui/main_window.py" line="337"/>
         <source>About</source>
         <translation>について</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="461"/>
-        <location filename="../src/ui/main_window.py" line="3003"/>
+        <location filename="../src/ui/main_window.py" line="462"/>
+        <location filename="../src/ui/main_window.py" line="3033"/>
         <source>Scale</source>
         <translation>拡大縮小</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="580"/>
-        <location filename="../src/ui/main_window.py" line="1360"/>
-        <location filename="../src/ui/main_window.py" line="2995"/>
+        <location filename="../src/ui/main_window.py" line="581"/>
+        <location filename="../src/ui/main_window.py" line="1364"/>
+        <location filename="../src/ui/main_window.py" line="3025"/>
         <source>Arrow keys: 1mm, Shift+Arrow: 10mm</source>
         <translation>矢印キー: 1mm、Shift+矢印: 10mm</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="729"/>
-        <location filename="../src/ui/main_window.py" line="2752"/>
-        <location filename="../src/ui/main_window.py" line="2840"/>
-        <location filename="../src/ui/main_window.py" line="2904"/>
-        <location filename="../src/ui/main_window.py" line="3226"/>
+        <location filename="../src/ui/main_window.py" line="730"/>
+        <location filename="../src/ui/main_window.py" line="2782"/>
+        <location filename="../src/ui/main_window.py" line="2870"/>
+        <location filename="../src/ui/main_window.py" line="2934"/>
+        <location filename="../src/ui/main_window.py" line="3256"/>
         <source>Ready</source>
         <translation>準備完了</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="767"/>
+        <location filename="../src/ui/main_window.py" line="768"/>
         <source>Executed: </source>
         <translation>実行: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="770"/>
+        <location filename="../src/ui/main_window.py" line="771"/>
         <source>Undone: </source>
         <translation>取り消し: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="773"/>
+        <location filename="../src/ui/main_window.py" line="774"/>
         <source>Redone: </source>
         <translation>やり直し: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1204"/>
-        <location filename="../src/ui/main_window.py" line="1882"/>
+        <location filename="../src/ui/main_window.py" line="1208"/>
+        <location filename="../src/ui/main_window.py" line="1912"/>
         <source>Asset</source>
         <translation>アセット</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1355"/>
-        <location filename="../src/ui/main_window.py" line="2991"/>
+        <location filename="../src/ui/main_window.py" line="1359"/>
+        <location filename="../src/ui/main_window.py" line="3021"/>
         <source>Position</source>
         <translation>位置</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1444"/>
-        <location filename="../src/ui/main_window.py" line="1457"/>
+        <location filename="../src/ui/main_window.py" line="1448"/>
+        <location filename="../src/ui/main_window.py" line="1461"/>
         <source>Loading 3D preview...</source>
         <translation>3Dプレビューを読み込み中...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1478"/>
+        <location filename="../src/ui/main_window.py" line="1482"/>
         <source>3D preview loading failed</source>
         <translation>3Dプレビューの読み込みに失敗しました</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1482"/>
+        <location filename="../src/ui/main_window.py" line="1486"/>
         <source>Failed to prepare 3D preview:</source>
         <translation>3Dプレビューの準備に失敗しました:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1644"/>
+        <location filename="../src/ui/main_window.py" line="1648"/>
         <source>The selected recent project is no longer available and has been removed from the list.</source>
         <translation>選択した最近のプロジェクトは利用できなくなったため、一覧から削除されました。</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1684"/>
+        <location filename="../src/ui/main_window.py" line="1713"/>
         <source>Home</source>
         <translation>ホーム</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1691"/>
+        <location filename="../src/ui/main_window.py" line="1720"/>
         <source>Project Edit</source>
         <translation>プロジェクト編集</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1481"/>
-        <location filename="../src/ui/main_window.py" line="1700"/>
+        <location filename="../src/ui/main_window.py" line="1485"/>
+        <location filename="../src/ui/main_window.py" line="1729"/>
         <source>3D Preview</source>
         <translation>3Dプレビュー</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1730"/>
+        <location filename="../src/ui/main_window.py" line="1760"/>
         <source>Settings feature under development...</source>
         <translation>設定機能は開発中です...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1732"/>
+        <location filename="../src/ui/main_window.py" line="1762"/>
         <source>Help feature under development...</source>
         <translation>ヘルプ機能は開発中です...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1749"/>
+        <location filename="../src/ui/main_window.py" line="1779"/>
         <source>MINGDA SignMaker - New Project</source>
         <translation>MINGDA SignMaker - 新規プロジェクト</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1761"/>
+        <location filename="../src/ui/main_window.py" line="1791"/>
         <source>Open File</source>
         <translation>ファイルを開く</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1943"/>
+        <location filename="../src/ui/main_window.py" line="1973"/>
         <source>Unsupported Format</source>
         <translation>サポートされていない形式</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1943"/>
+        <location filename="../src/ui/main_window.py" line="1973"/>
         <source>Format not supported: </source>
         <translation>サポートされていない形式: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2146"/>
+        <location filename="../src/ui/main_window.py" line="2176"/>
         <source>Load </source>
         <translation>読み込み </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2167"/>
+        <location filename="../src/ui/main_window.py" line="2197"/>
         <source>Loaded: {file}, {count} contours</source>
         <translation>読み込み完了: {file}, {count} 個の輪郭</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1952"/>
-        <location filename="../src/ui/main_window.py" line="2232"/>
+        <location filename="../src/ui/main_window.py" line="1982"/>
+        <location filename="../src/ui/main_window.py" line="2262"/>
         <source>Load Failed</source>
         <translation>読み込み失敗</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1953"/>
+        <location filename="../src/ui/main_window.py" line="1983"/>
         <source>Failed to load file:</source>
         <translation>ファイルの読み込みに失敗:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1776"/>
-        <location filename="../src/ui/main_window.py" line="2259"/>
+        <location filename="../src/ui/main_window.py" line="1806"/>
+        <location filename="../src/ui/main_window.py" line="2289"/>
         <source>SignMaker Project (*.smp);;All Files (*)</source>
         <translation>SignMakerプロジェクト (*.smp);;すべてのファイル (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="322"/>
+        <location filename="../src/ui/main_window.py" line="323"/>
         <source>Process(&amp;P)</source>
         <translation>処理(&amp;P)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1763"/>
+        <location filename="../src/ui/main_window.py" line="1793"/>
         <source>Supported Files (*.dxf *.svg *.smp);;SignMaker Project (*.smp);;DXF Files (*.dxf);;SVG Files (*.svg);;All Files (*)</source>
         <translation>対応ファイル (*.dxf *.svg *.smp);;SignMaker プロジェクト (*.smp);;DXF ファイル (*.dxf);;SVG ファイル (*.svg);;すべてのファイル (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1643"/>
-        <location filename="../src/ui/main_window.py" line="1774"/>
+        <location filename="../src/ui/main_window.py" line="1647"/>
+        <location filename="../src/ui/main_window.py" line="1804"/>
         <source>Open Project</source>
         <translation>プロジェクトを開く</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2219"/>
+        <location filename="../src/ui/main_window.py" line="2249"/>
         <source>Project loaded: {name}, {count} contours</source>
         <translation>プロジェクトを読み込みました: {name}、{count} 個の輪郭</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2232"/>
+        <location filename="../src/ui/main_window.py" line="2262"/>
         <source>Failed to load project:</source>
         <translation>プロジェクトの読み込みに失敗しました:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2314"/>
+        <location filename="../src/ui/main_window.py" line="2344"/>
         <source>Project saved: </source>
         <translation>プロジェクト保存完了: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2324"/>
+        <location filename="../src/ui/main_window.py" line="2354"/>
         <source>Save Failed</source>
         <translation>保存に失敗</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2324"/>
+        <location filename="../src/ui/main_window.py" line="2354"/>
         <source>Failed to save project:</source>
         <translation>プロジェクトの保存に失敗しました:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2359"/>
+        <location filename="../src/ui/main_window.py" line="2389"/>
         <source>Export Baseplate DXF...</source>
         <translation>ベースプレートDXFをエクスポート...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2360"/>
+        <location filename="../src/ui/main_window.py" line="2390"/>
         <source>Export Panel DXF...</source>
         <translation>パネルDXFをエクスポート...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1131"/>
-        <location filename="../src/ui/main_window.py" line="2274"/>
-        <location filename="../src/ui/main_window.py" line="2367"/>
-        <location filename="../src/ui/main_window.py" line="2433"/>
-        <location filename="../src/ui/main_window.py" line="2483"/>
-        <location filename="../src/ui/main_window.py" line="2519"/>
-        <location filename="../src/ui/main_window.py" line="2588"/>
-        <location filename="../src/ui/main_window.py" line="2699"/>
-        <location filename="../src/ui/main_window.py" line="2707"/>
-        <location filename="../src/ui/main_window.py" line="2817"/>
-        <location filename="../src/ui/main_window.py" line="2855"/>
-        <location filename="../src/ui/main_window.py" line="3240"/>
-        <location filename="../src/ui/main_window.py" line="3266"/>
-        <location filename="../src/ui/main_window.py" line="3303"/>
-        <location filename="../src/ui/main_window.py" line="3341"/>
-        <location filename="../src/ui/main_window.py" line="3372"/>
+        <location filename="../src/ui/main_window.py" line="1135"/>
+        <location filename="../src/ui/main_window.py" line="2304"/>
+        <location filename="../src/ui/main_window.py" line="2397"/>
+        <location filename="../src/ui/main_window.py" line="2463"/>
+        <location filename="../src/ui/main_window.py" line="2513"/>
+        <location filename="../src/ui/main_window.py" line="2549"/>
+        <location filename="../src/ui/main_window.py" line="2618"/>
+        <location filename="../src/ui/main_window.py" line="2729"/>
+        <location filename="../src/ui/main_window.py" line="2737"/>
+        <location filename="../src/ui/main_window.py" line="2847"/>
+        <location filename="../src/ui/main_window.py" line="2885"/>
+        <location filename="../src/ui/main_window.py" line="3270"/>
+        <location filename="../src/ui/main_window.py" line="3296"/>
+        <location filename="../src/ui/main_window.py" line="3333"/>
+        <location filename="../src/ui/main_window.py" line="3371"/>
+        <location filename="../src/ui/main_window.py" line="3402"/>
         <source>Info</source>
         <translation>情報</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2367"/>
-        <location filename="../src/ui/main_window.py" line="2433"/>
+        <location filename="../src/ui/main_window.py" line="2397"/>
+        <location filename="../src/ui/main_window.py" line="2463"/>
         <source>Please process first</source>
         <translation>先に処理を実行してください</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2411"/>
-        <location filename="../src/ui/main_window.py" line="2467"/>
-        <location filename="../src/ui/main_window.py" line="2505"/>
-        <location filename="../src/ui/main_window.py" line="2541"/>
+        <location filename="../src/ui/main_window.py" line="2441"/>
+        <location filename="../src/ui/main_window.py" line="2497"/>
+        <location filename="../src/ui/main_window.py" line="2535"/>
+        <location filename="../src/ui/main_window.py" line="2571"/>
         <source>Export Success</source>
         <translation>エクスポート成功</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2418"/>
-        <location filename="../src/ui/main_window.py" line="2470"/>
-        <location filename="../src/ui/main_window.py" line="2512"/>
-        <location filename="../src/ui/main_window.py" line="2514"/>
-        <location filename="../src/ui/main_window.py" line="2548"/>
-        <location filename="../src/ui/main_window.py" line="2550"/>
+        <location filename="../src/ui/main_window.py" line="2448"/>
+        <location filename="../src/ui/main_window.py" line="2500"/>
+        <location filename="../src/ui/main_window.py" line="2542"/>
+        <location filename="../src/ui/main_window.py" line="2544"/>
+        <location filename="../src/ui/main_window.py" line="2578"/>
+        <location filename="../src/ui/main_window.py" line="2580"/>
         <source>Export Failed</source>
         <translation>エクスポート失敗</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2438"/>
+        <location filename="../src/ui/main_window.py" line="2468"/>
         <source>Export STL</source>
         <translation>STLをエクスポート</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2440"/>
+        <location filename="../src/ui/main_window.py" line="2470"/>
         <source>STL Files (*.stl);;All Files (*)</source>
         <translation>STLファイル (*.stl);;すべてのファイル (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2466"/>
+        <location filename="../src/ui/main_window.py" line="2496"/>
         <source>STL exported: </source>
         <translation>STLエクスポート完了: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2467"/>
+        <location filename="../src/ui/main_window.py" line="2497"/>
         <source>STL saved to:</source>
         <translation>STL保存先:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2470"/>
+        <location filename="../src/ui/main_window.py" line="2500"/>
         <source>Failed to export STL:</source>
         <translation>STLのエクスポートに失敗:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2483"/>
-        <location filename="../src/ui/main_window.py" line="2519"/>
-        <location filename="../src/ui/main_window.py" line="2588"/>
+        <location filename="../src/ui/main_window.py" line="2513"/>
+        <location filename="../src/ui/main_window.py" line="2549"/>
+        <location filename="../src/ui/main_window.py" line="2618"/>
         <source>Please import a DXF file first</source>
         <translation>先にDXFファイルをインポートしてください</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2275"/>
+        <location filename="../src/ui/main_window.py" line="2305"/>
         <source>Please import or create graphics before saving</source>
         <translation>保存する前に図形をインポートまたは作成してください</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="985"/>
+        <location filename="../src/ui/main_window.py" line="988"/>
         <source>{count} screw holes are invalid</source>
         <translation>無効なネジ穴が {count} 個あります</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1014"/>
-        <location filename="../src/ui/main_window.py" line="1149"/>
+        <location filename="../src/ui/main_window.py" line="1017"/>
+        <location filename="../src/ui/main_window.py" line="1153"/>
         <source>Explode Asset</source>
         <translation>アセットを分解</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1132"/>
+        <location filename="../src/ui/main_window.py" line="1136"/>
         <source>Please select an imported asset first</source>
         <translation>先にインポート済みのアセットを選択してください</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2378"/>
+        <location filename="../src/ui/main_window.py" line="1677"/>
+        <location filename="../src/ui/main_window.py" line="1685"/>
+        <source>Show Configuration Folder Failed</source>
+        <translation>設定フォルダーを表示できませんでした</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1678"/>
+        <location filename="../src/ui/main_window.py" line="1686"/>
+        <source>Failed to show the configuration folder in the file manager.</source>
+        <translation>ファイルマネージャーで設定フォルダーを表示できませんでした。</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2408"/>
         <source>Export Blocked</source>
         <translation>エクスポート不可</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2379"/>
+        <location filename="../src/ui/main_window.py" line="2409"/>
         <source>Cannot export G-code:</source>
         <translation>G-code をエクスポートできません:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2387"/>
+        <location filename="../src/ui/main_window.py" line="2417"/>
         <source>Export G-code</source>
         <translation>G-codeをエクスポート</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2389"/>
+        <location filename="../src/ui/main_window.py" line="2419"/>
         <source>G-code Files (*.gcode);;All Files (*)</source>
         <translation>G-code ファイル (*.gcode);;すべてのファイル (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2408"/>
+        <location filename="../src/ui/main_window.py" line="2438"/>
         <source>G-code exported: </source>
         <translation>G-code をエクスポートしました: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2412"/>
+        <location filename="../src/ui/main_window.py" line="2442"/>
         <source>G-code saved to:</source>
         <translation>G-code の保存先:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2419"/>
+        <location filename="../src/ui/main_window.py" line="2449"/>
         <source>Failed to export G-code:</source>
         <translation>G-code のエクスポートに失敗しました:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2424"/>
+        <location filename="../src/ui/main_window.py" line="2454"/>
         <source>Exporting G-code...</source>
         <translation>G-code をエクスポート中...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2488"/>
+        <location filename="../src/ui/main_window.py" line="2518"/>
         <source>Export Baseplate DXF</source>
         <translation>ベースプレートDXFをエクスポート</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2490"/>
-        <location filename="../src/ui/main_window.py" line="2526"/>
+        <location filename="../src/ui/main_window.py" line="2520"/>
+        <location filename="../src/ui/main_window.py" line="2556"/>
         <source>DXF Files (*.dxf);;All Files (*)</source>
         <translation>DXFファイル (*.dxf);;すべてのファイル (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2503"/>
+        <location filename="../src/ui/main_window.py" line="2533"/>
         <source>Baseplate DXF exported: </source>
         <translation>ベースプレートDXFエクスポート完了: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2506"/>
+        <location filename="../src/ui/main_window.py" line="2536"/>
         <source>Baseplate DXF saved to:</source>
         <translation>ベースプレートDXF保存先:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2512"/>
+        <location filename="../src/ui/main_window.py" line="2542"/>
         <source>Failed to generate baseplate contour</source>
         <translation>ベースプレート輪郭の生成に失敗</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2514"/>
+        <location filename="../src/ui/main_window.py" line="2544"/>
         <source>Failed to export baseplate DXF:</source>
         <translation>ベースプレートDXFのエクスポートに失敗:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2524"/>
+        <location filename="../src/ui/main_window.py" line="2554"/>
         <source>Export Panel DXF</source>
         <translation>パネルDXFをエクスポート</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2539"/>
+        <location filename="../src/ui/main_window.py" line="2569"/>
         <source>Panel DXF exported: </source>
         <translation>パネルDXFエクスポート完了: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2542"/>
+        <location filename="../src/ui/main_window.py" line="2572"/>
         <source>Panel DXF saved to:</source>
         <translation>パネルDXF保存先:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2548"/>
+        <location filename="../src/ui/main_window.py" line="2578"/>
         <source>Failed to generate panel contour</source>
         <translation>パネル輪郭の生成に失敗</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2550"/>
+        <location filename="../src/ui/main_window.py" line="2580"/>
         <source>Failed to export panel DXF:</source>
         <translation>パネルDXFのエクスポートに失敗:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2566"/>
+        <location filename="../src/ui/main_window.py" line="2596"/>
         <source>Nothing to undo</source>
         <translation>取り消す操作がありません</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2582"/>
+        <location filename="../src/ui/main_window.py" line="2612"/>
         <source>Nothing to redo</source>
         <translation>やり直す操作がありません</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2600"/>
-        <location filename="../src/ui/main_window.py" line="2614"/>
+        <location filename="../src/ui/main_window.py" line="2630"/>
+        <location filename="../src/ui/main_window.py" line="2644"/>
         <source>Processing Blocked</source>
         <translation>処理をブロックしました</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2602"/>
+        <location filename="../src/ui/main_window.py" line="2632"/>
         <source>Some contours exceed the platform size. Please move or scale them back inside the platform before processing.</source>
         <translation>一部の輪郭がプラットフォーム範囲を超えています。処理を行う前に、プラットフォーム内に収まるよう移動または拡大縮小してください。</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2606"/>
+        <location filename="../src/ui/main_window.py" line="2636"/>
         <source>Processing blocked: contours exceed platform size</source>
         <translation>処理をブロックしました: 輪郭がプラットフォーム範囲を超えています</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2700"/>
+        <location filename="../src/ui/main_window.py" line="2730"/>
         <source>No contours available for screw-hole editing</source>
         <translation>ネジ穴を編集できる輪郭がありません</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2708"/>
+        <location filename="../src/ui/main_window.py" line="2738"/>
         <source>Enable Bottom Face before editing screw holes</source>
         <translation>ネジ穴を編集する前に Bottom Face を有効にしてください</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2724"/>
+        <location filename="../src/ui/main_window.py" line="2754"/>
         <source>Edit Screw Holes</source>
         <translation>ネジ穴を編集</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2734"/>
+        <location filename="../src/ui/main_window.py" line="2764"/>
         <source>Click a screw hole to select it, click empty space to add, Delete to remove, Esc to finish</source>
         <translation>ネジ穴をクリックして選択し、空白部分をクリックして追加し、Delete で削除、Esc で終了します</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2760"/>
+        <location filename="../src/ui/main_window.py" line="2790"/>
         <source>Click inside a valid bottom-face region</source>
         <translation>有効な Bottom Face 領域内をクリックしてください</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2770"/>
+        <location filename="../src/ui/main_window.py" line="2800"/>
         <source>Screw hole added</source>
         <translation>ネジ穴を追加しました</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2790"/>
+        <location filename="../src/ui/main_window.py" line="2820"/>
         <source>Screw hole updated</source>
         <translation>ネジ穴を更新しました</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2806"/>
+        <location filename="../src/ui/main_window.py" line="2836"/>
         <source>Screw hole removed</source>
         <translation>ネジ穴を削除しました</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2856"/>
+        <location filename="../src/ui/main_window.py" line="2886"/>
         <source>No contours available for print order selection</source>
         <translation>印刷順序を設定できる輪郭がありません</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2870"/>
+        <location filename="../src/ui/main_window.py" line="2900"/>
         <source>Set Print Order</source>
         <translation>印刷順序を設定</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2878"/>
+        <location filename="../src/ui/main_window.py" line="2908"/>
         <source>Click contours or holes in desired print order, Esc to finish</source>
         <translation>希望する印刷順序で輪郭または穴をクリックし、Escで終了</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2929"/>
+        <location filename="../src/ui/main_window.py" line="2959"/>
         <source>Print order updated</source>
         <translation>印刷順序を更新しました</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3396"/>
+        <location filename="../src/ui/main_window.py" line="3426"/>
         <source>Text</source>
         <translation>テキスト</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3402"/>
+        <location filename="../src/ui/main_window.py" line="3432"/>
         <source>Add Contours</source>
         <translation>輪郭を追加</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3440"/>
+        <location filename="../src/ui/main_window.py" line="3470"/>
         <source>Open Tutorial Failed</source>
         <translation>チュートリアルを開けませんでした</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3441"/>
+        <location filename="../src/ui/main_window.py" line="3471"/>
         <source>Failed to open the tutorial playlist in the default browser.</source>
         <translation>デフォルトのブラウザーでチュートリアル再生リストを開けませんでした。</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3482"/>
+        <location filename="../src/ui/main_window.py" line="3512"/>
         <source>Loaded saved parameters</source>
         <translation>保存されたパラメータを読み込みました</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2665"/>
+        <location filename="../src/ui/main_window.py" line="2695"/>
         <source>Switched to {view} view</source>
         <translation>{view}ビューに切り替えました</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2997"/>
+        <location filename="../src/ui/main_window.py" line="3027"/>
         <source>Rotation</source>
         <translation>回転</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3016"/>
+        <location filename="../src/ui/main_window.py" line="3046"/>
         <source>Tool: </source>
         <translation>ツール: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3066"/>
+        <location filename="../src/ui/main_window.py" line="3096"/>
         <source>Move to: X={x:.2f}, Y={y:.2f}</source>
         <translation>移動先: X={x:.2f}, Y={y:.2f}</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3076"/>
+        <location filename="../src/ui/main_window.py" line="3106"/>
         <source>Rotation: {angle:.2f}°</source>
         <translation>回転: {angle:.2f}°</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3152"/>
-        <location filename="../src/ui/main_window.py" line="3190"/>
-        <location filename="../src/ui/main_window.py" line="3213"/>
+        <location filename="../src/ui/main_window.py" line="3182"/>
+        <location filename="../src/ui/main_window.py" line="3220"/>
+        <location filename="../src/ui/main_window.py" line="3243"/>
         <source>Scale: {px:.1f}% x {py:.1f}%</source>
         <translation>スケール: {px:.1f}% x {py:.1f}%</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3240"/>
+        <location filename="../src/ui/main_window.py" line="3270"/>
         <source>Please select a contour first</source>
         <translation>先に輪郭を選択してください</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3257"/>
+        <location filename="../src/ui/main_window.py" line="3287"/>
         <source>Mirror {axis} complete</source>
         <translation>{axis}ミラーリング完了</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3267"/>
-        <location filename="../src/ui/main_window.py" line="3304"/>
-        <location filename="../src/ui/main_window.py" line="3342"/>
+        <location filename="../src/ui/main_window.py" line="3297"/>
+        <location filename="../src/ui/main_window.py" line="3334"/>
+        <location filename="../src/ui/main_window.py" line="3372"/>
         <source>Please select at least two contours</source>
         <translation>少なくとも2つの輪郭を選択してください</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3279"/>
-        <location filename="../src/ui/main_window.py" line="3287"/>
+        <location filename="../src/ui/main_window.py" line="3309"/>
+        <location filename="../src/ui/main_window.py" line="3317"/>
         <source>Intersection</source>
         <translation>交差</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3316"/>
-        <location filename="../src/ui/main_window.py" line="3324"/>
+        <location filename="../src/ui/main_window.py" line="3346"/>
+        <location filename="../src/ui/main_window.py" line="3354"/>
         <source>Difference</source>
         <translation>差分</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3352"/>
+        <location filename="../src/ui/main_window.py" line="3382"/>
         <source>Already grouped</source>
         <translation>すでにグループ化されています</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1012"/>
-        <location filename="../src/ui/main_window.py" line="3355"/>
+        <location filename="../src/ui/main_window.py" line="1015"/>
+        <location filename="../src/ui/main_window.py" line="3385"/>
         <source>Group</source>
         <translation>グループ化</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3373"/>
+        <location filename="../src/ui/main_window.py" line="3403"/>
         <source>Please select a grouped contour first</source>
         <translation>先にグループ化された輪郭を選択してください</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1013"/>
-        <location filename="../src/ui/main_window.py" line="3377"/>
+        <location filename="../src/ui/main_window.py" line="1016"/>
+        <location filename="../src/ui/main_window.py" line="3407"/>
         <source>Ungroup</source>
         <translation>グループ解除</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3407"/>
+        <location filename="../src/ui/main_window.py" line="3437"/>
         <source>Text added</source>
         <translation>テキストを追加しました</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3409"/>
+        <location filename="../src/ui/main_window.py" line="3439"/>
         <source>Error</source>
         <translation>エラー</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3415"/>
+        <location filename="../src/ui/main_window.py" line="3445"/>
         <source>About MINGDA SignMaker</source>
         <translation>MINGDA SignMakerについて</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3417"/>
+        <location filename="../src/ui/main_window.py" line="3447"/>
         <source>Professional LED Sign Letter 3D Printing Slicer</source>
         <translation>プロフェッショナルLED看板文字3Dプリントスライサー</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3418"/>
+        <location filename="../src/ui/main_window.py" line="3448"/>
         <source>Version: </source>
         <translation>バージョン: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3420"/>
+        <location filename="../src/ui/main_window.py" line="3450"/>
         <source>Features:</source>
         <translation>機能:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3422"/>
+        <location filename="../src/ui/main_window.py" line="3452"/>
         <source>DXF/SVG file import</source>
         <translation>DXF/SVGファイルインポート</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3423"/>
+        <location filename="../src/ui/main_window.py" line="3453"/>
         <source>Straight/Bevel/Custom edges</source>
         <translation>直線/斜め/カスタムエッジ</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3424"/>
+        <location filename="../src/ui/main_window.py" line="3454"/>
         <source>Multi-color printing support</source>
         <translation>マルチカラー印刷対応</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3425"/>
+        <location filename="../src/ui/main_window.py" line="3455"/>
         <source>Step/V-groove</source>
         <translation>ステップ/V溝</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3426"/>
+        <location filename="../src/ui/main_window.py" line="3456"/>
         <source>Anti-warping skirt</source>
         <translation>反り防止スカート</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3427"/>
+        <location filename="../src/ui/main_window.py" line="3457"/>
         <source>Connected letters</source>
         <translation>連結文字</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3452"/>
+        <location filename="../src/ui/main_window.py" line="3482"/>
         <source>Language Changed</source>
         <translation>言語が変更されました</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3453"/>
+        <location filename="../src/ui/main_window.py" line="3483"/>
         <source>Language has been changed to {lang}. Please restart the application for full effect.</source>
         <translation>言語が{lang}に変更されました。完全に反映するにはアプリケーションを再起動してください。</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3460"/>
+        <location filename="../src/ui/main_window.py" line="3490"/>
         <source>Language Change Failed</source>
         <translation>言語変更失敗</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3461"/>
+        <location filename="../src/ui/main_window.py" line="3491"/>
         <source>Translation file for {lang} is not available yet.</source>
         <translation>{lang}の翻訳ファイルはまだ利用できません。</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="436"/>
+        <location filename="../src/ui/main_window.py" line="437"/>
         <source>Angle</source>
         <translation>角度</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3001"/>
+        <location filename="../src/ui/main_window.py" line="3031"/>
         <source>Drag grabber on ring to rotate</source>
         <translation>リング上のハンドルをドラッグして回転</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="500"/>
+        <location filename="../src/ui/main_window.py" line="501"/>
         <source>Size</source>
         <translation>サイズ</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="543"/>
+        <location filename="../src/ui/main_window.py" line="544"/>
         <source>Uniform Scale</source>
         <translation>均一スケール</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3007"/>
+        <location filename="../src/ui/main_window.py" line="3037"/>
         <source>Drag to scale, input exact values above</source>
         <translation>ドラッグしてスケール、上に正確な値を入力</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1948"/>
+        <location filename="../src/ui/main_window.py" line="1978"/>
         <source>Loading file...</source>
         <translation>ファイルを読み込み中...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2474"/>
+        <location filename="../src/ui/main_window.py" line="2504"/>
         <source>Exporting STL...</source>
         <translation>STLをエクスポート中...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="324"/>
+        <location filename="../src/ui/main_window.py" line="325"/>
         <source>Start Processing</source>
         <translation>処理開始</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1696"/>
-        <location filename="../src/ui/main_window.py" line="2645"/>
+        <location filename="../src/ui/main_window.py" line="1725"/>
+        <location filename="../src/ui/main_window.py" line="2675"/>
         <source>Processing...</source>
         <translation>処理中...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2632"/>
+        <location filename="../src/ui/main_window.py" line="2662"/>
         <source>Processing complete: {layers} layers, estimated time: {time:.1f} minutes</source>
         <translation>処理完了: {layers} 層, 推定時間: {time:.1f} 分</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2640"/>
+        <location filename="../src/ui/main_window.py" line="2670"/>
         <source>Processing Failed</source>
         <translation>処理失敗</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2640"/>
+        <location filename="../src/ui/main_window.py" line="2670"/>
         <source>Error during processing:</source>
         <translation>処理中にエラーが発生:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2641"/>
+        <location filename="../src/ui/main_window.py" line="2671"/>
         <source>Processing failed</source>
         <translation>処理失敗</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2507"/>
-        <location filename="../src/ui/main_window.py" line="2543"/>
+        <location filename="../src/ui/main_window.py" line="2537"/>
+        <location filename="../src/ui/main_window.py" line="2573"/>
         <source>Outer clearance: </source>
         <translation>外形クリアランス: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2508"/>
-        <location filename="../src/ui/main_window.py" line="2544"/>
+        <location filename="../src/ui/main_window.py" line="2538"/>
+        <location filename="../src/ui/main_window.py" line="2574"/>
         <source>Hole clearance: </source>
         <translation>穴クリアランス: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2509"/>
-        <location filename="../src/ui/main_window.py" line="2545"/>
+        <location filename="../src/ui/main_window.py" line="2539"/>
+        <location filename="../src/ui/main_window.py" line="2575"/>
         <source>Laser kerf: </source>
         <translation>レーザーカーフ: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2818"/>
+        <location filename="../src/ui/main_window.py" line="2848"/>
         <source>No contours available for start point selection</source>
         <translation>開始点を選択できる輪郭がありません</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2830"/>
+        <location filename="../src/ui/main_window.py" line="2860"/>
         <source>Click a corner on any contour or hole, Esc to exit</source>
         <translation>任意の輪郭または穴の角をクリックし、Escで終了します</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2960"/>
+        <location filename="../src/ui/main_window.py" line="2990"/>
         <source>Set Start Point</source>
         <translation>開始点を設定</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2971"/>
+        <location filename="../src/ui/main_window.py" line="3001"/>
         <source>Start point updated</source>
         <translation>開始点を更新しました</translation>
     </message>
@@ -2121,58 +2191,63 @@ Control points: {points}</source>
         <translation>処理</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="421"/>
+        <location filename="../src/ui/title_bar.py" line="498"/>
         <source>New Project</source>
         <translation>新規プロジェクト</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="422"/>
+        <location filename="../src/ui/title_bar.py" line="499"/>
         <source>Open File...</source>
         <translation>ファイルを開く...</translation>
     </message>
     <message>
         <location filename="../src/ui/title_bar.py" line="88"/>
-        <location filename="../src/ui/title_bar.py" line="425"/>
+        <location filename="../src/ui/title_bar.py" line="502"/>
         <source>Save Project</source>
         <translation>プロジェクトを保存</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="428"/>
+        <location filename="../src/ui/title_bar.py" line="505"/>
         <source>Export G-code...</source>
         <translation>G-codeをエクスポート...</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="429"/>
+        <location filename="../src/ui/title_bar.py" line="506"/>
         <source>Export STL...</source>
         <translation>STLをエクスポート...</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="431"/>
+        <location filename="../src/ui/title_bar.py" line="508"/>
         <source>Export Baseplate DXF...</source>
         <translation>ベースプレートDXFをエクスポート...</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="432"/>
+        <location filename="../src/ui/title_bar.py" line="509"/>
         <source>Export Panel DXF...</source>
         <translation>パネルDXFをエクスポート...</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="451"/>
+        <location filename="../src/ui/title_bar.py" line="528"/>
+        <source>Show Configuration Folder</source>
+        <translation>設定フォルダーを表示</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/title_bar.py" line="529"/>
         <source>Tutorial</source>
         <translation>チュートリアル</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="454"/>
+        <location filename="../src/ui/title_bar.py" line="532"/>
         <source>About</source>
         <translation>について</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="456"/>
+        <location filename="../src/ui/title_bar.py" line="534"/>
         <source>Exit</source>
         <translation>終了</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="436"/>
+        <location filename="../src/ui/title_bar.py" line="513"/>
         <source>Language</source>
         <translation>言語</translation>
     </message>
@@ -2187,12 +2262,12 @@ Control points: {points}</source>
         <translation>プロジェクトをエクスポート</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="423"/>
+        <location filename="../src/ui/title_bar.py" line="500"/>
         <source>Open Project...</source>
         <translation>プロジェクトを開く...</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="426"/>
+        <location filename="../src/ui/title_bar.py" line="503"/>
         <source>Save As...</source>
         <translation>名前を付けて保存...</translation>
     </message>
@@ -2208,47 +2283,6 @@ Control points: {points}</source>
         <location filename="../src/ui/project_panel.py" line="134"/>
         <source>Explode Asset</source>
         <translation>アセットを分解</translation>
-    </message>
-</context>
-
-
-<context>
-    <name>DongleGuard</name>
-    <message>
-        <source>Failed to load USB dongle runtime library. The application cannot start.&#10;Please verify the system environment or rebuild the dongle module and try again.</source>
-        <translation>USBドングルのランタイムライブラリを読み込めないため、アプリケーションを起動できません。&#10;システム環境を確認するか、ドングルモジュールを再ビルドしてから再試行してください。</translation>
-    </message>
-    <message>
-        <source>USB dongle validation module is missing from this build. The application cannot start.&#10;Please rebuild with CODE_DOG=1 and include native/softkey_bridge.dll.</source>
-        <translation>このビルドにはUSBドングル検証モジュールが含まれていないため、アプリケーションを起動できません。&#10;CODE_DOG=1 を指定して再ビルドし、native/softkey_bridge.dll を含めてください。</translation>
-    </message>
-    <message>
-        <source>USB dongle validation module received invalid arguments. The application cannot start.</source>
-        <translation>USBドングル検証モジュールに無効な引数が渡されたため、アプリケーションを起動できません。</translation>
-    </message>
-    <message>
-        <source>USB dongle validation module initialization failed. Error code: {code}</source>
-        <translation>USBドングル検証モジュールの初期化に失敗しました。エラーコード: {code}</translation>
-    </message>
-    <message>
-        <source>USB dongle not found. Please insert it and try again.</source>
-        <translation>USBドングルが見つかりません。挿入してから再試行してください。</translation>
-    </message>
-    <message>
-        <source>USB dongle was removed. The application will now exit.&#10;Please reinsert it and try again.</source>
-        <translation>USBドングルが取り外されました。アプリケーションを終了します。&#10;再度挿入してから再試行してください。</translation>
-    </message>
-    <message>
-        <source>USB dongle communication failed. Please check the connection and try again.&#10;Error code: {code}</source>
-        <translation>USBドングルとの通信に失敗しました。接続を確認してから再試行してください。&#10;エラーコード: {code}</translation>
-    </message>
-    <message>
-        <source>USB dongle communication error detected. The application will now exit.&#10;Error code: {code}</source>
-        <translation>USBドングルとの通信エラーが検出されたため、アプリケーションを終了します。&#10;エラーコード: {code}</translation>
-    </message>
-    <message>
-        <source>USB dongle validation failed. Error code: {code}</source>
-        <translation>USBドングルの検証に失敗しました。エラーコード: {code}</translation>
     </message>
 </context>
 </TS>
