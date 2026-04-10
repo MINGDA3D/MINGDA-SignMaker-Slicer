@@ -792,7 +792,9 @@ class MainWindow(QMainWindow):
 
     def _sync_export_stl_state(self):
         """根据当前处理结果同步导出按钮状态。"""
-        if hasattr(self, "title_bar") and hasattr(self.title_bar, "btn_export_stl"):
+        if hasattr(self, "title_bar") and hasattr(self.title_bar, "set_primary_export_enabled"):
+            self.title_bar.set_primary_export_enabled(True)
+        elif hasattr(self, "title_bar") and hasattr(self.title_bar, "btn_export_stl"):
             self.title_bar.btn_export_stl.setEnabled(True)
 
     def _sync_params_from_panel(self) -> SliceParams:

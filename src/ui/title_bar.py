@@ -176,13 +176,25 @@ class TitleBar(QWidget):
         self.btn_slice.clicked.connect(self.slice_clicked.emit)
         action_layout.addWidget(self.btn_slice)
 
-        self.btn_export_stl = QToolButton()
-        self.btn_export_stl.setObjectName("primaryButton")
-        self.btn_export_stl.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextOnly)
-        self.btn_export_stl.setPopupMode(QToolButton.ToolButtonPopupMode.MenuButtonPopup)
+        self.export_button_group = QWidget()
+        export_layout = QHBoxLayout(self.export_button_group)
+        export_layout.setContentsMargins(0, 0, 0, 0)
+        export_layout.setSpacing(0)
+        export_layout.setAlignment(Qt.AlignmentFlag.AlignVCenter)
+
+        self.btn_export_options = QToolButton()
+        self.btn_export_options.setObjectName("splitPrimaryMenuButton")
+        self.btn_export_options.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextOnly)
+        self.btn_export_options.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
+        self.btn_export_options.setText("▼")
+        self.btn_export_options.setCursor(Qt.CursorShape.PointingHandCursor)
+
+        self.btn_export_stl = QPushButton()
+        self.btn_export_stl.setObjectName("splitPrimaryMainButton")
         self.btn_export_stl.setCursor(Qt.CursorShape.PointingHandCursor)
         self.btn_export_stl.clicked.connect(self._on_primary_export_clicked)
-        self._export_menu = QMenu(self.btn_export_stl)
+        self._export_menu = QMenu(self.btn_export_options)
+        self._apply_menu_style(self._export_menu)
         self._export_action_group = QActionGroup(self)
         self._export_action_group.setExclusive(True)
         self._export_gcode_action = QAction(
@@ -201,10 +213,12 @@ class TitleBar(QWidget):
         self._export_stl_action.triggered.connect(self._on_export_stl_selected)
         self._export_action_group.addAction(self._export_stl_action)
         self._export_menu.addAction(self._export_stl_action)
-        self.btn_export_stl.setMenu(self._export_menu)
+        self.btn_export_options.setMenu(self._export_menu)
         self._current_primary_export_format = self.EXPORT_GCODE
         self.set_primary_export_format(self.EXPORT_GCODE)
-        action_layout.addWidget(self.btn_export_stl)
+        export_layout.addWidget(self.btn_export_options)
+        export_layout.addWidget(self.btn_export_stl)
+        action_layout.addWidget(self.export_button_group)
 
         layout.addWidget(action_container)
 
@@ -219,6 +233,31 @@ class TitleBar(QWidget):
         )
         sep.setFixedWidth(1)
         return sep
+
+    def _apply_menu_style(self, menu: QMenu):
+        """Apply the shared dark popup-menu styling."""
+        menu.setStyleSheet("""
+            QMenu {
+                background-color: #161B22;
+                border: 1px solid #30363D;
+                border-radius: 6px;
+                padding: 4px;
+            }
+            QMenu::item {
+                background-color: transparent;
+                color: #C9D1D9;
+                padding: 8px 16px;
+                border-radius: 4px;
+            }
+            QMenu::item:selected {
+                background-color: #21262D;
+            }
+            QMenu::separator {
+                height: 1px;
+                background-color: #30363D;
+                margin: 4px 8px;
+            }
+        """)
 
     def _apply_styles(self):
         """应用样式"""
@@ -301,7 +340,9 @@ class TitleBar(QWidget):
                 color: #FFFFFF;
                 border: none;
                 border-radius: 4px;
-                padding: 6px 16px;
+                min-height: 36px;
+                max-height: 36px;
+                padding: 0 18px;
                 font-size: 12px;
                 font-weight: 500;
             }}
@@ -325,6 +366,57 @@ class TitleBar(QWidget):
                 subcontrol-position: center right;
                 right: 8px;
             }}
+
+            /* Export split button */
+            QPushButton#splitPrimaryMainButton,
+            QToolButton#splitPrimaryMenuButton {{
+                background-color: #238636;
+                color: #FFFFFF;
+                border: none;
+                min-height: 36px;
+                max-height: 36px;
+                font-size: 12px;
+                font-weight: 500;
+            }}
+            QPushButton#splitPrimaryMainButton {{
+                border-top-right-radius: 4px;
+                border-bottom-right-radius: 4px;
+                border-top-left-radius: 0;
+                border-bottom-left-radius: 0;
+                padding: 0 18px;
+            }}
+            QToolButton#splitPrimaryMenuButton {{
+                border-top-left-radius: 4px;
+                border-bottom-left-radius: 4px;
+                border-top-right-radius: 0;
+                border-bottom-right-radius: 0;
+                min-width: 38px;
+                max-width: 38px;
+                border-right: 1px solid #196C2E;
+                padding: 0;
+                font-size: 11px;
+                font-weight: 700;
+            }}
+            QPushButton#splitPrimaryMainButton:hover,
+            QToolButton#splitPrimaryMenuButton:hover {{
+                background-color: #2EA043;
+            }}
+            QPushButton#splitPrimaryMainButton:pressed,
+            QToolButton#splitPrimaryMenuButton:pressed {{
+                background-color: #196C2E;
+            }}
+            QPushButton#splitPrimaryMainButton:disabled,
+            QToolButton#splitPrimaryMenuButton:disabled {{
+                background-color: #2D333B;
+                color: #6E7681;
+            }}
+            QToolButton#splitPrimaryMenuButton:disabled {{
+                border-right: 1px solid #444C56;
+            }}
+            QToolButton#splitPrimaryMenuButton::menu-indicator {{
+                image: none;
+                width: 0;
+            }}
         """)
 
     def _translate_export_text(self, export_format: str) -> str:
@@ -346,8 +438,14 @@ class TitleBar(QWidget):
         self._current_primary_export_format = normalized
         self.btn_export_stl.setText(self._translate_export_text(normalized))
         self.btn_export_stl.setToolTip(self.btn_export_stl.text())
+        self.btn_export_options.setToolTip(self.btn_export_stl.text())
         self._export_gcode_action.setChecked(normalized == self.EXPORT_GCODE)
         self._export_stl_action.setChecked(normalized == self.EXPORT_STL)
+
+    def set_primary_export_enabled(self, enabled: bool):
+        """Enable or disable the export split button as a group."""
+        self.btn_export_stl.setEnabled(enabled)
+        self.btn_export_options.setEnabled(enabled)
 
     def _select_primary_export_format(self, export_format: str):
         """Update the selected primary export format without running an export."""
@@ -395,28 +493,7 @@ class TitleBar(QWidget):
     def _show_menu(self):
         """显示菜单"""
         menu = QMenu(self)
-        menu.setStyleSheet("""
-            QMenu {
-                background-color: #161B22;
-                border: 1px solid #30363D;
-                border-radius: 6px;
-                padding: 4px;
-            }
-            QMenu::item {
-                background-color: transparent;
-                color: #C9D1D9;
-                padding: 8px 16px;
-                border-radius: 4px;
-            }
-            QMenu::item:selected {
-                background-color: #21262D;
-            }
-            QMenu::separator {
-                height: 1px;
-                background-color: #30363D;
-                margin: 4px 8px;
-            }
-        """)
+        self._apply_menu_style(menu)
 
         menu.addAction(self.tr("New Project"), lambda: self.menu_action.emit("new"))
         menu.addAction(self.tr("Open File..."), lambda: self.menu_action.emit("open"))

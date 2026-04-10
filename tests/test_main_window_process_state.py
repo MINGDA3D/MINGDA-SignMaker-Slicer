@@ -228,6 +228,7 @@ def test_title_bar_primary_export_button_tracks_selected_format(qapp):
         title_bar.export_stl_clicked.connect(lambda: triggered.append("stl"))
 
         assert title_bar.get_primary_export_format() == TitleBar.EXPORT_GCODE
+        assert title_bar.btn_export_options.menu() is title_bar._export_menu
         title_bar.btn_export_stl.click()
         assert triggered == ["gcode"]
 
@@ -239,6 +240,36 @@ def test_title_bar_primary_export_button_tracks_selected_format(qapp):
 
         title_bar.btn_export_stl.click()
         assert triggered[-1] == "stl"
+    finally:
+        title_bar.deleteLater()
+
+
+def test_title_bar_export_split_buttons_share_enabled_state(qapp):
+    title_bar = TitleBar()
+
+    try:
+        title_bar.set_primary_export_enabled(False)
+
+        assert title_bar.btn_export_stl.isEnabled() is False
+        assert title_bar.btn_export_options.isEnabled() is False
+
+        title_bar.set_primary_export_enabled(True)
+
+        assert title_bar.btn_export_stl.isEnabled() is True
+        assert title_bar.btn_export_options.isEnabled() is True
+    finally:
+        title_bar.deleteLater()
+
+
+def test_title_bar_primary_action_buttons_share_same_height(qapp):
+    title_bar = TitleBar()
+
+    try:
+        title_bar.show()
+        qapp.processEvents()
+
+        assert title_bar.btn_slice.height() == title_bar.btn_export_options.height()
+        assert title_bar.btn_slice.height() == title_bar.btn_export_stl.height()
     finally:
         title_bar.deleteLater()
 
