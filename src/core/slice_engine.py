@@ -17,6 +17,8 @@ from copy import deepcopy
 from typing import List, Dict, Optional
 from dataclasses import dataclass, field
 
+from shapely.geometry import LineString, Polygon
+
 from .types import (
     Point, Path, Contour, Layer, LayerPath, LayerInfo,
     PathType, PathRole, EdgeType, ExtruderType, BevelDirection,
@@ -1260,7 +1262,10 @@ class SliceEngine:
         clipped_segments = self._clip_lines_to_contour(scan_lines, contour)
 
         # 连接相邻线段
-        connected_paths = self._connect_fill_segments(clipped_segments)
+        connected_paths = self._connect_fill_segments(
+            clipped_segments,
+            fill_geometry=self._contour_to_polygon_geometry(contour),
+        )
 
         # 创建LayerPath对象
         paths = []
@@ -1292,38 +1297,75 @@ class SliceEngine:
             裁剪后的线段列表
         """
         clipped = []
+        polygon = self._contour_to_polygon_geometry(contour)
+        if polygon is None:
+            return clipped
 
         for start, end in lines:
-            # 与外轮廓求交
-            intersections = self._line_polygon_intersections(
-                start, end, contour.outer
+            scan_line = LineString([(start.x, start.y), (end.x, end.y)])
+            intersection = polygon.intersection(scan_line)
+            clipped.extend(
+                self._extract_line_segments_from_geometry(intersection, start)
             )
 
-            # 配对交点形成线段
-            if len(intersections) >= 2:
-                intersections.sort(
-                    key=lambda p: (p.x - start.x) ** 2 + (p.y - start.y) ** 2
-                )
-                for i in range(0, len(intersections) - 1, 2):
-                    seg_start = intersections[i]
-                    seg_end = intersections[i + 1]
-
-                    # 检查是否需要排除内孔区域
-                    if contour.holes:
-                        # 简化处理：如果线段中点在任意内孔内，则跳过
-                        mid_x = (seg_start.x + seg_end.x) / 2
-                        mid_y = (seg_start.y + seg_end.y) / 2
-                        in_hole = False
-                        for hole in contour.holes:
-                            if self._point_in_polygon(Point(mid_x, mid_y), hole):
-                                in_hole = True
-                                break
-                        if not in_hole:
-                            clipped.append((seg_start, seg_end))
-                    else:
-                        clipped.append((seg_start, seg_end))
-
         return clipped
+
+    def _contour_to_polygon_geometry(self, contour: Contour) -> Optional[Polygon]:
+        """Build a shapely polygon so fill clipping respects holes exactly."""
+        outer_coords = [(point.x, point.y) for point in contour.outer.points]
+        if len(outer_coords) < 3:
+            return None
+
+        hole_coords = []
+        for hole in contour.holes:
+            coords = [(point.x, point.y) for point in hole.points]
+            if len(coords) >= 3:
+                hole_coords.append(coords)
+
+        polygon = Polygon(outer_coords, hole_coords)
+        if not polygon.is_valid:
+            polygon = polygon.buffer(0)
+        if polygon.is_empty or polygon.area < 1e-6:
+            return None
+        return polygon
+
+    def _extract_line_segments_from_geometry(
+        self,
+        geometry,
+        scan_start: Point,
+    ) -> List[tuple[Point, Point]]:
+        """Flatten shapely intersections back into ordered printable segments."""
+        if geometry.is_empty:
+            return []
+
+        if geometry.geom_type == "LineString":
+            coords = list(geometry.coords)
+            if len(coords) < 2 or geometry.length <= 1e-6:
+                return []
+            start = Point(coords[0][0], coords[0][1])
+            end = Point(coords[-1][0], coords[-1][1])
+            if (
+                (end.x - scan_start.x) ** 2 + (end.y - scan_start.y) ** 2
+                < (start.x - scan_start.x) ** 2 + (start.y - scan_start.y) ** 2
+            ):
+                start, end = end, start
+            return [(start, end)]
+
+        if geometry.geom_type in {"MultiLineString", "GeometryCollection"}:
+            segments: List[tuple[Point, Point]] = []
+            for child in geometry.geoms:
+                segments.extend(
+                    self._extract_line_segments_from_geometry(child, scan_start)
+                )
+            segments.sort(
+                key=lambda segment: (
+                    (segment[0].x - scan_start.x) ** 2
+                    + (segment[0].y - scan_start.y) ** 2
+                )
+            )
+            return segments
+
+        return []
 
     def _line_polygon_intersections(self, start: Point, end: Point,
                                     polygon) -> List[Point]:
@@ -1391,7 +1433,11 @@ class SliceEngine:
 
         return inside
 
-    def _connect_fill_segments(self, segments: List[tuple]) -> List[List[Point]]:
+    def _connect_fill_segments(
+        self,
+        segments: List[tuple],
+        fill_geometry: Optional[Polygon] = None,
+    ) -> List[List[Point]]:
         """
         连接相邻线段减少空走
 
@@ -1426,7 +1472,14 @@ class SliceEngine:
                     (start.y - last_point.y) ** 2
                 )
 
-                if distance > 5:  # 超过阈值，开始新路径
+                can_connect = distance <= 5
+                if can_connect and fill_geometry is not None and distance > 1e-6:
+                    connector = LineString(
+                        [(last_point.x, last_point.y), (start.x, start.y)]
+                    )
+                    can_connect = fill_geometry.buffer(1e-6).covers(connector)
+
+                if not can_connect:  # 超过阈值或连接线离开合法填充区域，开始新路径
                     if len(current_path) >= 2:
                         connected.append(current_path)
                     current_path = [start, end]

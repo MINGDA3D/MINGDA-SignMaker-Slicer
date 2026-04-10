@@ -1,4 +1,6 @@
 import pytest
+from shapely.geometry import LineString
+from shapely.ops import unary_union
 
 from src.core.bottom_face_geometry import BottomFaceGeometryBuilder
 from src.core.path_offset import PathOffset
@@ -85,6 +87,30 @@ def test_slice_engine_emits_bottom_face_hole_boundary_paths():
     ]
 
     assert any(path.is_closed for path in bottom_face_paths)
+
+
+def test_slice_engine_bottom_face_fill_does_not_bridge_manual_screw_hole():
+    contour = _rect_contour(0.0, 0.0, 100.0, 60.0)
+    contour.screw_hole_centers = [Point(50.0, 30.0)]
+    params = _bottom_face_params()
+    params.bottom_face.screw_hole_diameter = 8.0
+
+    result = SliceEngine().slice([contour], params)
+    first_layer = result.layers[0]
+    bottom_face_fill_paths = [
+        path
+        for path in first_layer.paths
+        if path.role == PathRole.FILL_BOTTOM_FACE and not path.is_closed
+    ]
+    geometry = BottomFaceGeometryBuilder(PathOffset()).build(contour, params)
+    fill_region = unary_union(geometry.fill_polygons)
+
+    assert bottom_face_fill_paths
+
+    for path in bottom_face_fill_paths:
+        for start, end in zip(path.points, path.points[1:]):
+            segment = LineString([(start.x, start.y), (end.x, end.y)])
+            assert fill_region.buffer(1e-6).covers(segment)
 
 
 def test_bottom_face_mesh_volume_decreases_when_screw_hole_is_added():
