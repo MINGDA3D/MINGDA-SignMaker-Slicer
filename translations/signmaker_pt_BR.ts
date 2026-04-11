@@ -2050,6 +2050,34 @@ Pontos de controle: {points}</translation>
     </message>
 </context>
 <context>
+    <name>PrimeTowerGenerator</name>
+    <message>
+        <location filename="../src/core/prime_tower.py" line="107"/>
+        <source>Prime tower width and depth must be greater than zero.</source>
+        <translation>A largura e a profundidade da torre de purga devem ser maiores que zero.</translation>
+    </message>
+    <message>
+        <location filename="../src/core/prime_tower.py" line="115"/>
+        <source>Prime tower infill density must stay between 10% and 80%.</source>
+        <translation>A densidade de preenchimento da torre de purga deve permanecer entre 10% e 80%.</translation>
+    </message>
+    <message>
+        <location filename="../src/core/prime_tower.py" line="130"/>
+        <source>Prime tower size must be large enough for two walls and sparse infill.</source>
+        <translation>O tamanho da torre de purga deve ser suficiente para duas paredes e preenchimento esparso.</translation>
+    </message>
+    <message>
+        <location filename="../src/core/prime_tower.py" line="145"/>
+        <source>Prime tower must stay within the printer bed.</source>
+        <translation>A torre de purga deve permanecer dentro da mesa de impressão.</translation>
+    </message>
+    <message>
+        <location filename="../src/core/prime_tower.py" line="155"/>
+        <source>Prime tower overlaps existing printable geometry.</source>
+        <translation>A torre de purga se sobrepõe à geometria imprimível existente.</translation>
+    </message>
+</context>
+<context>
     <name>ProjectCard</name>
     <message>
         <location filename="../src/ui/home_page.py" line="199"/>

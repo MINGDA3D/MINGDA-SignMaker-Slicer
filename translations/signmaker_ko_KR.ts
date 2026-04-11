@@ -2050,6 +2050,34 @@ Control points: {points}</source>
     </message>
 </context>
 <context>
+    <name>PrimeTowerGenerator</name>
+    <message>
+        <location filename="../src/core/prime_tower.py" line="107"/>
+        <source>Prime tower width and depth must be greater than zero.</source>
+        <translation>프라임 타워의 너비와 깊이는 0보다 커야 합니다.</translation>
+    </message>
+    <message>
+        <location filename="../src/core/prime_tower.py" line="115"/>
+        <source>Prime tower infill density must stay between 10% and 80%.</source>
+        <translation>프라임 타워의 인필 밀도는 10%에서 80% 사이여야 합니다.</translation>
+    </message>
+    <message>
+        <location filename="../src/core/prime_tower.py" line="130"/>
+        <source>Prime tower size must be large enough for two walls and sparse infill.</source>
+        <translation>프라임 타워 크기는 두 개의 벽과 성긴 인필을 수용할 수 있을 만큼 충분히 커야 합니다.</translation>
+    </message>
+    <message>
+        <location filename="../src/core/prime_tower.py" line="145"/>
+        <source>Prime tower must stay within the printer bed.</source>
+        <translation>프라임 타워는 프린터 베드 내부에 있어야 합니다.</translation>
+    </message>
+    <message>
+        <location filename="../src/core/prime_tower.py" line="155"/>
+        <source>Prime tower overlaps existing printable geometry.</source>
+        <translation>프라임 타워가 기존 인쇄 가능 형상과 겹칩니다.</translation>
+    </message>
+</context>
+<context>
     <name>ProjectCard</name>
     <message>
         <location filename="../src/ui/home_page.py" line="199"/>

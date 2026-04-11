@@ -2050,6 +2050,34 @@ Control points: {points}</source>
     </message>
 </context>
 <context>
+    <name>PrimeTowerGenerator</name>
+    <message>
+        <location filename="../src/core/prime_tower.py" line="107"/>
+        <source>Prime tower width and depth must be greater than zero.</source>
+        <translation>רוחב ועומק מגדל הפריים חייבים להיות גדולים מאפס.</translation>
+    </message>
+    <message>
+        <location filename="../src/core/prime_tower.py" line="115"/>
+        <source>Prime tower infill density must stay between 10% and 80%.</source>
+        <translation>צפיפות המילוי של מגדל הפריים חייבת להישאר בין 10% ל-80%.</translation>
+    </message>
+    <message>
+        <location filename="../src/core/prime_tower.py" line="130"/>
+        <source>Prime tower size must be large enough for two walls and sparse infill.</source>
+        <translation>גודל מגדל הפריים חייב להספיק לשתי דפנות ולמילוי דליל.</translation>
+    </message>
+    <message>
+        <location filename="../src/core/prime_tower.py" line="145"/>
+        <source>Prime tower must stay within the printer bed.</source>
+        <translation>מגדל הפריים חייב להישאר בתוך משטח ההדפסה.</translation>
+    </message>
+    <message>
+        <location filename="../src/core/prime_tower.py" line="155"/>
+        <source>Prime tower overlaps existing printable geometry.</source>
+        <translation>מגדל הפריים חופף לגאומטריה קיימת הניתנת להדפסה.</translation>
+    </message>
+</context>
+<context>
     <name>ProjectCard</name>
     <message>
         <location filename="../src/ui/home_page.py" line="199"/>

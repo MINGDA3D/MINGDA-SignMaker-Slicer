@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
 <TS version="2.1" language="ar-SA">
 <context>
@@ -2050,6 +2050,34 @@ Control points: {points}</source>
     </message>
 </context>
 <context>
+    <name>PrimeTowerGenerator</name>
+    <message>
+        <location filename="../src/core/prime_tower.py" line="107"/>
+        <source>Prime tower width and depth must be greater than zero.</source>
+        <translation>يجب أن يكون عرض وعمق برج التنظيف أكبر من الصفر.</translation>
+    </message>
+    <message>
+        <location filename="../src/core/prime_tower.py" line="115"/>
+        <source>Prime tower infill density must stay between 10% and 80%.</source>
+        <translation>يجب أن تظل كثافة حشو برج التنظيف بين 10% و80%.</translation>
+    </message>
+    <message>
+        <location filename="../src/core/prime_tower.py" line="130"/>
+        <source>Prime tower size must be large enough for two walls and sparse infill.</source>
+        <translation>يجب أن يكون حجم برج التنظيف كافيًا لجدارين وحشو خفيف.</translation>
+    </message>
+    <message>
+        <location filename="../src/core/prime_tower.py" line="145"/>
+        <source>Prime tower must stay within the printer bed.</source>
+        <translation>يجب أن يبقى برج التنظيف داخل سرير الطابعة.</translation>
+    </message>
+    <message>
+        <location filename="../src/core/prime_tower.py" line="155"/>
+        <source>Prime tower overlaps existing printable geometry.</source>
+        <translation>يتداخل برج التنظيف مع هندسة قابلة للطباعة موجودة.</translation>
+    </message>
+</context>
+<context>
     <name>ProjectCard</name>
     <message>
         <location filename="../src/ui/home_page.py" line="199"/>
@@ -2286,3 +2314,4 @@ Control points: {points}</source>
     </message>
 </context>
 </TS>
+

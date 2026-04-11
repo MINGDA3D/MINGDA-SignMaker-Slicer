@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Callable, List, Optional
 
+from PySide6.QtCore import QCoreApplication
 from shapely.geometry import LineString, LinearRing, Polygon
 from shapely.ops import unary_union
 from shapely.validation import make_valid
@@ -102,10 +103,20 @@ class PrimeTowerGenerator:
             return
 
         if prime_tower.width <= 0.0 or prime_tower.depth <= 0.0:
-            raise PrimeTowerValidationError("Prime tower width and depth must be greater than zero.")
+            raise PrimeTowerValidationError(
+                QCoreApplication.translate(
+                    "PrimeTowerGenerator",
+                    "Prime tower width and depth must be greater than zero.",
+                )
+            )
 
         if not 10 <= int(prime_tower.infill_density_percent) <= 80:
-            raise PrimeTowerValidationError("Prime tower infill density must stay between 10% and 80%.")
+            raise PrimeTowerValidationError(
+                QCoreApplication.translate(
+                    "PrimeTowerGenerator",
+                    "Prime tower infill density must stay between 10% and 80%.",
+                )
+            )
 
         line_width = resolve_shell_line_width(
             params.shell.line_width,
@@ -116,7 +127,10 @@ class PrimeTowerGenerator:
         minimum_dimension = self.WALL_COUNT * 2 * line_width
         if prime_tower.width <= minimum_dimension or prime_tower.depth <= minimum_dimension:
             raise PrimeTowerValidationError(
-                "Prime tower size must be large enough for two walls and sparse infill."
+                QCoreApplication.translate(
+                    "PrimeTowerGenerator",
+                    "Prime tower size must be large enough for two walls and sparse infill.",
+                )
             )
 
         min_x, min_y, max_x, max_y = self.get_bounds(params)
@@ -127,12 +141,22 @@ class PrimeTowerGenerator:
             or max_x > float(machine.bed_width)
             or max_y > float(machine.bed_depth)
         ):
-            raise PrimeTowerValidationError("Prime tower must stay within the printer bed.")
+            raise PrimeTowerValidationError(
+                QCoreApplication.translate(
+                    "PrimeTowerGenerator",
+                    "Prime tower must stay within the printer bed.",
+                )
+            )
 
         footprint = self.build_footprint_polygon(params)
         if occupancy_geometry is not None and not occupancy_geometry.is_empty:
             if footprint.intersects(occupancy_geometry):
-                raise PrimeTowerValidationError("Prime tower overlaps existing printable geometry.")
+                raise PrimeTowerValidationError(
+                    QCoreApplication.translate(
+                        "PrimeTowerGenerator",
+                        "Prime tower overlaps existing printable geometry.",
+                    )
+                )
 
     def generate_layer_paths(
         self,

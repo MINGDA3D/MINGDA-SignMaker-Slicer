@@ -663,13 +663,13 @@ Code d&apos;erreur : {code}</translation>
         <location filename="../src/ui/main_window.py" line="1677"/>
         <location filename="../src/ui/main_window.py" line="1685"/>
         <source>Show Configuration Folder Failed</source>
-        <translation>Échec de l'affichage du dossier de configuration</translation>
+        <translation>Échec de l&apos;affichage du dossier de configuration</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="1678"/>
         <location filename="../src/ui/main_window.py" line="1686"/>
         <source>Failed to show the configuration folder in the file manager.</source>
-        <translation>Impossible d'afficher le dossier de configuration dans le gestionnaire de fichiers.</translation>
+        <translation>Impossible d&apos;afficher le dossier de configuration dans le gestionnaire de fichiers.</translation>
     </message>
     <message>
         <location filename="../src/ui/main_window.py" line="2408"/>
@@ -2047,6 +2047,34 @@ Points de contrôle : {points}</translation>
         <location filename="../src/ui/preview_3d.py" line="1352"/>
         <source>透</source>
         <translation>Iso</translation>
+    </message>
+</context>
+<context>
+    <name>PrimeTowerGenerator</name>
+    <message>
+        <location filename="../src/core/prime_tower.py" line="107"/>
+        <source>Prime tower width and depth must be greater than zero.</source>
+        <translation>La largeur et la profondeur de la tour de purge doivent être supérieures à zéro.</translation>
+    </message>
+    <message>
+        <location filename="../src/core/prime_tower.py" line="115"/>
+        <source>Prime tower infill density must stay between 10% and 80%.</source>
+        <translation>La densité de remplissage de la tour de purge doit rester comprise entre 10 % et 80 %.</translation>
+    </message>
+    <message>
+        <location filename="../src/core/prime_tower.py" line="130"/>
+        <source>Prime tower size must be large enough for two walls and sparse infill.</source>
+        <translation>La taille de la tour de purge doit être suffisante pour deux parois et un remplissage clairsemé.</translation>
+    </message>
+    <message>
+        <location filename="../src/core/prime_tower.py" line="145"/>
+        <source>Prime tower must stay within the printer bed.</source>
+        <translation>La tour de purge doit rester dans les limites du plateau d'impression.</translation>
+    </message>
+    <message>
+        <location filename="../src/core/prime_tower.py" line="155"/>
+        <source>Prime tower overlaps existing printable geometry.</source>
+        <translation>La tour de purge chevauche une géométrie imprimable existante.</translation>
     </message>
 </context>
 <context>

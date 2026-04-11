@@ -116,6 +116,13 @@ ZH_CN_REQUIRED = {
     "GCodeWriter": {
         "Color change is enabled but no change points are configured.",
     },
+    "PrimeTowerGenerator": {
+        "Prime tower width and depth must be greater than zero.",
+        "Prime tower infill density must stay between 10% and 80%.",
+        "Prime tower size must be large enough for two walls and sparse infill.",
+        "Prime tower must stay within the printer bed.",
+        "Prime tower overlaps existing printable geometry.",
+    },
     "DongleGuard": {
         "Failed to load USB dongle runtime library. The application cannot start.\nPlease verify the system environment or rebuild the dongle module and try again.",
         "USB dongle validation module is missing from this build. The application cannot start.\nPlease rebuild with CODE_DOG=1 and include native/softkey_bridge.dll.",
