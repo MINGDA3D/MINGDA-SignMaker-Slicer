@@ -41,7 +41,6 @@ from .stl import (
     EdgeWrapMeshBuilder,
     StepMeshBuilder,
     SkirtMeshBuilder,
-    PrimeTowerMeshBuilder,
     ConnectedMeshBuilder,
     BottomFaceMeshBuilder,
     LightSlotMeshBuilder,
@@ -67,7 +66,6 @@ class STLWriter:
         self.edge_wrap_builder = EdgeWrapMeshBuilder(self.path_offset, wall_thickness)
         self.step_builder = StepMeshBuilder(self.path_offset)
         self.skirt_builder = SkirtMeshBuilder(self.path_offset)
-        self.prime_tower_builder = PrimeTowerMeshBuilder()
         self.connected_builder = ConnectedMeshBuilder(self.path_offset)
         self.bottom_face_builder = BottomFaceMeshBuilder(self.path_offset)
         self.light_slot_builder = LightSlotMeshBuilder(self.path_offset)
@@ -93,10 +91,6 @@ class STLWriter:
         if shell_mesh is not None:
             meshes.append(shell_mesh)
 
-        if params and params.prime_tower.enabled:
-            prime_tower_mesh = self.prime_tower_builder.build(result.layers)
-            if prime_tower_mesh is not None:
-                meshes.append(prime_tower_mesh)
 
         # 以下功能需要轮廓和参数
         if contours and params:

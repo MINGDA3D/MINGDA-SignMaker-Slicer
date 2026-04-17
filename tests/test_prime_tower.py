@@ -233,7 +233,7 @@ def test_preview_builds_prime_tower_mesh_part(qapp):
     assert tower_vertices[:, 2].max() == pytest.approx(1.0, abs=1e-6)
 
 
-def test_stl_export_includes_prime_tower_geometry(workspace_tmp_dir):
+def test_stl_export_excludes_prime_tower_geometry(workspace_tmp_dir):
     contour = _rect_contour(10.0, 10.0, 40.0, 40.0)
     params_without_tower = _base_params()
     params_without_tower.prime_tower.enabled = False
@@ -252,5 +252,8 @@ def test_stl_export_includes_prime_tower_geometry(workspace_tmp_dir):
     without_tower_mesh = trimesh.load(str(without_tower_path), force="mesh")
     with_tower_mesh = trimesh.load(str(with_tower_path), force="mesh")
 
-    assert with_tower_mesh.bounds[1][0] > without_tower_mesh.bounds[1][0] + 50.0
-    assert with_tower_mesh.bounds[1][1] > without_tower_mesh.bounds[1][1] + 50.0
+    assert with_tower_mesh.bounds[0][0] == pytest.approx(without_tower_mesh.bounds[0][0], abs=1e-6)
+    assert with_tower_mesh.bounds[0][1] == pytest.approx(without_tower_mesh.bounds[0][1], abs=1e-6)
+    assert with_tower_mesh.bounds[1][0] == pytest.approx(without_tower_mesh.bounds[1][0], abs=1e-6)
+    assert with_tower_mesh.bounds[1][1] == pytest.approx(without_tower_mesh.bounds[1][1], abs=1e-6)
+    assert with_tower_mesh.volume == pytest.approx(without_tower_mesh.volume, rel=1e-6, abs=1e-6)
