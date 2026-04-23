@@ -278,6 +278,11 @@ Error code: {code}</source>
         <translation>当前项目有未保存的更改，退出前是否保存？</translation>
     </message>
     <message>
+        <location filename="../src/ui/main_window.py" line="885"/>
+        <source>The current project has unsaved changes. Do you want to save before creating a new project?</source>
+        <translation>当前项目有未保存的更改，新建项目前是否保存？</translation>
+    </message>
+    <message>
         <location filename="../src/ui/main_window.py" line="848"/>
         <source>Save</source>
         <translation>保存</translation>

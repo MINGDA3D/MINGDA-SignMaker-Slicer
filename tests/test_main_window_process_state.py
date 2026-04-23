@@ -412,6 +412,54 @@ def test_close_confirmation_uses_custom_translated_buttons(qapp, monkeypatch):
         window.deleteLater()
 
 
+def test_new_project_confirmation_uses_new_project_context(qapp, monkeypatch):
+    window = MainWindow()
+    captured = {}
+
+    try:
+        def _fake_exec(message_box):
+            captured["title"] = message_box.windowTitle()
+            captured["text"] = message_box.text()
+            captured["texts"] = {button.text() for button in message_box.buttons()}
+            return 0
+
+        monkeypatch.setattr("src.ui.main_window.QMessageBox.exec", _fake_exec)
+
+        assert window._confirm_new_project_with_unsaved_changes() == QMessageBox.StandardButton.Cancel
+        assert captured["title"] == window.tr("New Project")
+        assert captured["text"] == window.tr(
+            "The current project has unsaved changes. Do you want to save before creating a new project?"
+        )
+        assert captured["texts"] == {
+            window.tr("Save"),
+            window.tr("Discard"),
+            window.tr("Cancel"),
+        }
+    finally:
+        window.deleteLater()
+
+
+def test_unsaved_changes_include_active_edit_sessions(qapp):
+    window = MainWindow()
+
+    try:
+        window.contours = [_rect_contour(0, 0, 10, 10, "A")]
+        window._print_order_session_initial_tokens = window._snapshot_loop_print_orders()
+        window.contours[0].outer.print_order = 1
+
+        assert window._has_unsaved_project_changes() is True
+
+        window._set_project_save_point()
+
+        assert window._has_unsaved_project_changes() is False
+
+        window._screw_hole_session_dirty = True
+
+        assert window._has_unsaved_project_changes() is True
+    finally:
+        window.deleteLater()
+
+
 def test_close_with_unsaved_changes_saves_current_project(qapp, monkeypatch, workspace_tmp_dir):
     window = MainWindow()
     saved_paths = []
@@ -441,6 +489,39 @@ def test_close_with_unsaved_changes_saves_current_project(qapp, monkeypatch, wor
         window.deleteLater()
 
 
+def test_new_project_with_unsaved_changes_saves_current_project(qapp, monkeypatch, workspace_tmp_dir):
+    window = MainWindow()
+    saved_paths = []
+
+    try:
+        window.contours = [_rect_contour(0, 0, 10, 10, "A")]
+        window.param_panel.height_spin.setValue(window.param_panel.height_spin.value() + 1.0)
+        project_path = workspace_tmp_dir / "dirty_project.smp"
+        window.current_file = str(project_path)
+
+        monkeypatch.setattr(
+            window,
+            "_confirm_new_project_with_unsaved_changes",
+            lambda: QMessageBox.StandardButton.Save,
+        )
+
+        def _fake_save(file_path: str) -> bool:
+            saved_paths.append(file_path)
+            window._set_project_save_point()
+            return True
+
+        monkeypatch.setattr(window, "_save_project", _fake_save)
+
+        window._on_new_project()
+
+        assert saved_paths == [str(project_path)]
+        assert window.contours == []
+        assert window.current_file is None
+        assert window._has_unsaved_project_changes() is False
+    finally:
+        window.deleteLater()
+
+
 def test_close_with_unsaved_changes_uses_save_as_for_non_project_path(qapp, monkeypatch):
     window = MainWindow()
     save_as_calls = []
@@ -465,6 +546,31 @@ def test_close_with_unsaved_changes_uses_save_as_for_non_project_path(qapp, monk
         assert window._handle_unsaved_changes_before_close() is True
         assert save_as_calls == [True]
     finally:
+        window.deleteLater()
+
+
+def test_new_project_with_unsaved_changes_can_cancel(qapp, monkeypatch):
+    window = MainWindow()
+    original_contours = [_rect_contour(0, 0, 10, 10, "A")]
+
+    try:
+        window.contours = list(original_contours)
+        window.current_file = "dirty_project.smp"
+        window.param_panel.height_spin.setValue(window.param_panel.height_spin.value() + 1.0)
+
+        monkeypatch.setattr(
+            window,
+            "_confirm_new_project_with_unsaved_changes",
+            lambda: QMessageBox.StandardButton.Cancel,
+        )
+
+        window._on_new_project()
+
+        assert window.contours == original_contours
+        assert window.current_file == "dirty_project.smp"
+        assert window._has_unsaved_project_changes() is True
+    finally:
+        window._set_project_save_point()
         window.deleteLater()
 
 

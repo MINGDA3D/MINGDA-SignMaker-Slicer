@@ -278,6 +278,11 @@ Fehlercode: {code}</translation>
         <translation>Das aktuelle Projekt enthält ungespeicherte Änderungen. Möchten Sie vor dem Beenden speichern?</translation>
     </message>
     <message>
+        <location filename="../src/ui/main_window.py" line="885"/>
+        <source>The current project has unsaved changes. Do you want to save before creating a new project?</source>
+        <translation>Das aktuelle Projekt enthält ungespeicherte Änderungen. Möchten Sie vor dem Erstellen eines neuen Projekts speichern?</translation>
+    </message>
+    <message>
         <location filename="../src/ui/main_window.py" line="848"/>
         <source>Save</source>
         <translation>Speichern</translation>

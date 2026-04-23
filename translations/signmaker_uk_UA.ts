@@ -278,6 +278,11 @@ Error code: {code}</source>
         <translation>У поточному проєкті є незбережені зміни. Зберегти перед виходом?</translation>
     </message>
     <message>
+        <location filename="../src/ui/main_window.py" line="885"/>
+        <source>The current project has unsaved changes. Do you want to save before creating a new project?</source>
+        <translation>У поточному проєкті є незбережені зміни. Зберегти перед створенням нового проєкту?</translation>
+    </message>
+    <message>
         <location filename="../src/ui/main_window.py" line="848"/>
         <source>Save</source>
         <translation>Зберегти</translation>

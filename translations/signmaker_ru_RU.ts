@@ -278,6 +278,11 @@ Error code: {code}</source>
         <translation>В текущем проекте есть несохранённые изменения. Сохранить перед выходом?</translation>
     </message>
     <message>
+        <location filename="../src/ui/main_window.py" line="885"/>
+        <source>The current project has unsaved changes. Do you want to save before creating a new project?</source>
+        <translation>В текущем проекте есть несохранённые изменения. Сохранить перед созданием нового проекта?</translation>
+    </message>
+    <message>
         <location filename="../src/ui/main_window.py" line="848"/>
         <source>Save</source>
         <translation>Сохранить</translation>

@@ -15,7 +15,7 @@ from datetime import datetime
 import re
 import sys
 from pathlib import Path
-from typing import Optional, List
+from typing import Callable, Optional, List
 
 from shapely.geometry import Point as ShapelyPoint
 
@@ -826,24 +826,60 @@ class MainWindow(QMainWindow):
             self._params_modified = True
         self.canvas.update()
 
+    def _has_uncommitted_print_order_changes(self) -> bool:
+        """Return whether the active print-order session has unsaved edits."""
+        initial_tokens = self._print_order_session_initial_tokens
+        if initial_tokens is None:
+            return False
+        return self._snapshot_loop_print_orders() != initial_tokens
+
     def _has_unsaved_project_changes(self) -> bool:
         """Return whether the current project has unsaved changes."""
-        return self.undo_manager.is_modified or self._params_modified
+        return (
+            self.undo_manager.is_modified
+            or self._params_modified
+            or self._has_uncommitted_print_order_changes()
+            or self._screw_hole_session_dirty
+        )
+
+    def _refresh_active_edit_session_save_points(self) -> None:
+        """Reset active edit-session baselines after saving the current state."""
+        if self._print_order_session_initial_tokens is not None:
+            self._print_order_session_initial_order = build_loop_order(self.contours)
+            self._print_order_session_initial_tokens = self._snapshot_loop_print_orders()
+            self._print_order_session_picked = []
+            if self._print_order_session_command is not None:
+                self._print_order_session_command = TransformCommand(
+                    self.contours,
+                    list(range(len(self.contours))),
+                    self.tr("Set Print Order"),
+                )
+
+        if self._screw_hole_session_command is not None:
+            self._screw_hole_session_dirty = False
+            self._screw_hole_session_command = TransformCommand(
+                self.contours,
+                list(range(len(self.contours))),
+                self.tr("Edit Screw Holes"),
+            )
 
     def _set_project_save_point(self) -> None:
         """Mark the current project state as saved."""
         self.undo_manager.set_save_point()
+        self._refresh_active_edit_session_save_points()
         self._params_modified = False
         self.project_manager.is_modified = False
 
-    def _confirm_close_with_unsaved_changes(self) -> QMessageBox.StandardButton:
-        """Ask the user how to handle unsaved changes before closing."""
+    def _confirm_unsaved_changes(
+        self,
+        title: str,
+        message: str,
+    ) -> QMessageBox.StandardButton:
+        """Ask the user how to handle unsaved changes for the current action."""
         message_box = QMessageBox(self)
         message_box.setIcon(QMessageBox.Icon.Warning)
-        message_box.setWindowTitle(self.tr("Exit"))
-        message_box.setText(
-            self.tr("The current project has unsaved changes. Do you want to save before exiting?")
-        )
+        message_box.setWindowTitle(title)
+        message_box.setText(message)
         save_button = message_box.addButton(
             self.tr("Save"),
             QMessageBox.ButtonRole.AcceptRole,
@@ -867,12 +903,29 @@ class MainWindow(QMainWindow):
             return QMessageBox.StandardButton.Discard
         return QMessageBox.StandardButton.Cancel
 
-    def _handle_unsaved_changes_before_close(self) -> bool:
-        """Handle unsaved project changes before the window closes."""
+    def _confirm_close_with_unsaved_changes(self) -> QMessageBox.StandardButton:
+        """Ask the user how to handle unsaved changes before closing."""
+        return self._confirm_unsaved_changes(
+            self.tr("Exit"),
+            self.tr("The current project has unsaved changes. Do you want to save before exiting?"),
+        )
+
+    def _confirm_new_project_with_unsaved_changes(self) -> QMessageBox.StandardButton:
+        """Ask the user how to handle unsaved changes before creating a new project."""
+        return self._confirm_unsaved_changes(
+            self.tr("New Project"),
+            self.tr("The current project has unsaved changes. Do you want to save before creating a new project?"),
+        )
+
+    def _handle_unsaved_project_changes(
+        self,
+        confirm_dialog: Callable[[], QMessageBox.StandardButton],
+    ) -> bool:
+        """Handle unsaved project changes before the next destructive action."""
         if not self._has_unsaved_project_changes():
             return True
 
-        choice = self._confirm_close_with_unsaved_changes()
+        choice = confirm_dialog()
         if choice == QMessageBox.StandardButton.Cancel:
             return False
         if choice == QMessageBox.StandardButton.Discard:
@@ -883,6 +936,18 @@ class MainWindow(QMainWindow):
 
         self._on_save_as()
         return not self._has_unsaved_project_changes()
+
+    def _handle_unsaved_changes_before_close(self) -> bool:
+        """Handle unsaved project changes before the window closes."""
+        return self._handle_unsaved_project_changes(
+            self._confirm_close_with_unsaved_changes,
+        )
+
+    def _handle_unsaved_changes_before_new_project(self) -> bool:
+        """Handle unsaved project changes before creating a new project."""
+        return self._handle_unsaved_project_changes(
+            self._confirm_new_project_with_unsaved_changes,
+        )
 
     def _sync_canvas_platform_size(self, params: Optional[SliceParams] = None) -> None:
         """å°†ç”»å¸ƒå¹³å°å°ºå¯¸åŒæ­¥åˆ°å½“å‰æœºå™¨å‚æ•°ã€‚"""
@@ -1763,6 +1828,9 @@ class MainWindow(QMainWindow):
 
     def _on_new_project(self):
         """新建项目"""
+        if not self._handle_unsaved_changes_before_new_project():
+            return
+
         self._exit_print_order_mode(commit=False)
         self._exit_screw_hole_mode(commit=False)
         # 清空撤销历史

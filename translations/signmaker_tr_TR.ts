@@ -278,6 +278,11 @@ Hata kodu: {code}</translation>
         <translation>Geçerli projede kaydedilmemiş değişiklikler var. Çıkmadan önce kaydetmek istiyor musunuz?</translation>
     </message>
     <message>
+        <location filename="../src/ui/main_window.py" line="885"/>
+        <source>The current project has unsaved changes. Do you want to save before creating a new project?</source>
+        <translation>Geçerli projede kaydedilmemiş değişiklikler var. Yeni bir proje oluşturmadan önce kaydetmek istiyor musunuz?</translation>
+    </message>
+    <message>
         <location filename="../src/ui/main_window.py" line="848"/>
         <source>Save</source>
         <translation>Kaydet</translation>

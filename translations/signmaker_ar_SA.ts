@@ -278,6 +278,11 @@ Error code: {code}</source>
         <translation>يحتوي المشروع الحالي على تغييرات غير محفوظة. هل تريد الحفظ قبل الخروج؟</translation>
     </message>
     <message>
+        <location filename="../src/ui/main_window.py" line="885"/>
+        <source>The current project has unsaved changes. Do you want to save before creating a new project?</source>
+        <translation>يحتوي المشروع الحالي على تغييرات غير محفوظة. هل تريد الحفظ قبل إنشاء مشروع جديد؟</translation>
+    </message>
+    <message>
         <location filename="../src/ui/main_window.py" line="848"/>
         <source>Save</source>
         <translation>حفظ</translation>

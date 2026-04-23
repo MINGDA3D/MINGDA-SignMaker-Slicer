@@ -278,6 +278,11 @@ Error code: {code}</source>
         <translation>לפרויקט הנוכחי יש שינויים שלא נשמרו. האם לשמור לפני היציאה?</translation>
     </message>
     <message>
+        <location filename="../src/ui/main_window.py" line="885"/>
+        <source>The current project has unsaved changes. Do you want to save before creating a new project?</source>
+        <translation>לפרויקט הנוכחי יש שינויים שלא נשמרו. האם לשמור לפני יצירת פרויקט חדש?</translation>
+    </message>
+    <message>
         <location filename="../src/ui/main_window.py" line="848"/>
         <source>Save</source>
         <translation>שמור</translation>

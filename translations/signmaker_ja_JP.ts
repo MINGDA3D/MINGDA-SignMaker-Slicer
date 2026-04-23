@@ -278,6 +278,11 @@ Error code: {code}</source>
         <translation>現在のプロジェクトには未保存の変更があります。終了する前に保存しますか？</translation>
     </message>
     <message>
+        <location filename="../src/ui/main_window.py" line="885"/>
+        <source>The current project has unsaved changes. Do you want to save before creating a new project?</source>
+        <translation>現在のプロジェクトには未保存の変更があります。新しいプロジェクトを作成する前に保存しますか？</translation>
+    </message>
+    <message>
         <location filename="../src/ui/main_window.py" line="848"/>
         <source>Save</source>
         <translation>保存</translation>

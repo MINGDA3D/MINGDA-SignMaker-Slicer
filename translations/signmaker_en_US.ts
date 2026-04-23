@@ -278,6 +278,11 @@ Error code: {code}</translation>
         <translation>The current project has unsaved changes. Do you want to save before exiting?</translation>
     </message>
     <message>
+        <location filename="../src/ui/main_window.py" line="885"/>
+        <source>The current project has unsaved changes. Do you want to save before creating a new project?</source>
+        <translation>The current project has unsaved changes. Do you want to save before creating a new project?</translation>
+    </message>
+    <message>
         <location filename="../src/ui/main_window.py" line="848"/>
         <source>Save</source>
         <translation>Save</translation>
