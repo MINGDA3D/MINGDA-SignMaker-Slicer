@@ -282,6 +282,14 @@ class SettingsManager:
         """设置是否显示3D预览"""
         self._qsettings.setValue("UI/show_3d_preview", show)
 
+    def get_transform_uniform_scale(self) -> bool:
+        """获取变换面板中的等比缩放复选框状态。"""
+        return self._qsettings.value("UI/transform_uniform_scale", True, type=bool)
+
+    def set_transform_uniform_scale(self, enabled: bool):
+        """保存变换面板中的等比缩放复选框状态。"""
+        self._qsettings.setValue("UI/transform_uniform_scale", bool(enabled))
+
     def get_active_printer_profile_id(self) -> str:
         """获取当前激活的打印机档案 ID。"""
         return self._qsettings.value("PrinterProfile/active_id", "", type=str)

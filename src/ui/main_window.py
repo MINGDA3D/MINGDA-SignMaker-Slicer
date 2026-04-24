@@ -542,7 +542,12 @@ class MainWindow(QMainWindow):
 
         # Uniform Scale 复选框
         self.uniform_scale_cb = QCheckBox(self.tr("Uniform Scale"))
-        self.uniform_scale_cb.setChecked(True)
+        saved_uniform_scale = (
+            self.settings_manager.get_transform_uniform_scale()
+            if self.settings_manager
+            else True
+        )
+        self.uniform_scale_cb.setChecked(saved_uniform_scale)
         self.uniform_scale_cb.setStyleSheet("""
             QCheckBox {
                 color: #8B949E;
@@ -561,6 +566,7 @@ class MainWindow(QMainWindow):
                 border-color: #58A6FF;
             }
         """)
+        self.uniform_scale_cb.stateChanged.connect(self._on_uniform_scale_changed)
         scale_main_layout.addWidget(self.uniform_scale_cb)
 
         self.scale_widget.setVisible(False)
@@ -796,6 +802,13 @@ class MainWindow(QMainWindow):
             self.title_bar.set_primary_export_enabled(True)
         elif hasattr(self, "title_bar") and hasattr(self.title_bar, "btn_export_stl"):
             self.title_bar.btn_export_stl.setEnabled(True)
+
+    def _on_uniform_scale_changed(self):
+        """Persist the transform panel uniform-scale checkbox state."""
+        if self.settings_manager:
+            self.settings_manager.set_transform_uniform_scale(
+                self.uniform_scale_cb.isChecked()
+            )
 
     def _sync_params_from_panel(self) -> SliceParams:
         """Sync the cached slice params from the visible parameter panel without side effects."""

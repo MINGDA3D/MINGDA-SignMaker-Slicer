@@ -664,6 +664,34 @@ class TestSettingsManagerWithQt:
 
         assert sm.get_primary_export_format() == "gcode"
 
+    def test_transform_uniform_scale_defaults_to_true(self, qapp):
+        from src.business.settings_manager import SettingsManager
+
+        config_dir = Path.cwd() / f".tmp_uniform_scale_settings_{uuid.uuid4().hex}"
+        config_dir.mkdir(parents=True, exist_ok=True)
+        try:
+            sm = SettingsManager(str(config_dir))
+
+            assert sm.get_transform_uniform_scale() is True
+        finally:
+            shutil.rmtree(config_dir, ignore_errors=True)
+
+    def test_transform_uniform_scale_persists(self, qapp):
+        from src.business.settings_manager import SettingsManager
+
+        config_dir = Path.cwd() / f".tmp_uniform_scale_settings_{uuid.uuid4().hex}"
+        config_dir.mkdir(parents=True, exist_ok=True)
+        try:
+            sm = SettingsManager(str(config_dir))
+            sm.set_transform_uniform_scale(False)
+
+            sm2 = SettingsManager(str(config_dir))
+
+            assert sm.get_transform_uniform_scale() is False
+            assert sm2.get_transform_uniform_scale() is False
+        finally:
+            shutil.rmtree(config_dir, ignore_errors=True)
+
 
 class TestPresetManagerFull:
     """预设管理器完整参数测试"""

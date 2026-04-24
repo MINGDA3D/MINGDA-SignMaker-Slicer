@@ -103,6 +103,18 @@ def _mark_processed(window: MainWindow) -> None:
     window._sync_export_stl_state()
 
 
+def _apply_checkbox_states(panel, checkbox_states: dict[str, bool]) -> None:
+    for name, checked in checkbox_states.items():
+        getattr(panel, name).setChecked(checked)
+
+
+def _read_checkbox_states(panel, checkbox_names: list[str]) -> dict[str, bool]:
+    return {
+        name: getattr(panel, name).isChecked()
+        for name in checkbox_names
+    }
+
+
 def test_export_requires_reprocess_after_param_change(qapp, monkeypatch):
     window = MainWindow()
     messages = []
@@ -142,6 +154,38 @@ def test_transform_panel_uses_guarded_spinboxes(qapp):
         assert isinstance(window.scale_h, GuardedDoubleSpinBox)
     finally:
         window.deleteLater()
+
+
+def test_uniform_scale_checkbox_persists_across_restart(qapp, monkeypatch, workspace_tmp_dir):
+    from src.business.settings_manager import init_settings_manager as real_init_settings_manager
+
+    settings_dir = workspace_tmp_dir / "config"
+
+    monkeypatch.setattr(
+        "src.ui.main_window.init_settings_manager",
+        lambda: real_init_settings_manager(str(settings_dir)),
+    )
+
+    first_window = MainWindow()
+
+    try:
+        assert first_window.uniform_scale_cb.isChecked() is True
+
+        first_window.uniform_scale_cb.setChecked(False)
+        qapp.processEvents()
+        assert first_window.uniform_scale_cb.isChecked() is False
+
+        first_window.close()
+        qapp.processEvents()
+    finally:
+        first_window.deleteLater()
+
+    second_window = MainWindow()
+
+    try:
+        assert second_window.uniform_scale_cb.isChecked() is False
+    finally:
+        second_window.deleteLater()
 
 
 def test_default_gcode_export_filename_includes_profile_name_and_sanitizes_invalid_chars(qapp):
@@ -360,6 +404,98 @@ def test_screw_hole_button_follows_restored_bottom_face_checkbox_state(
         assert second_window._sync_params_from_panel().bottom_face.enabled is True
     finally:
         second_window.deleteLater()
+
+
+@pytest.mark.parametrize(
+    ("initial_states", "updated_states"),
+    [
+        (
+            {"bottom_face_enabled": True},
+            {"bottom_face_enabled": False},
+        ),
+        (
+            {"panel_step_enabled": True},
+            {"panel_step_enabled": False},
+        ),
+        (
+            {"baseplate_step_enabled": True},
+            {"baseplate_step_enabled": False},
+        ),
+        (
+            {"connected_enabled": True, "connected_auto_detect": True},
+            {"connected_enabled": True, "connected_auto_detect": False},
+        ),
+        (
+            {
+                "light_slot_enabled": True,
+                "light_slot_outer_enabled": True,
+                "light_slot_hole_enabled": True,
+                "light_slot_auto_skip_small_holes": True,
+            },
+            {
+                "light_slot_enabled": True,
+                "light_slot_outer_enabled": False,
+                "light_slot_hole_enabled": False,
+                "light_slot_auto_skip_small_holes": False,
+            },
+        ),
+    ],
+)
+def test_checkbox_clears_persist_across_restart(
+    qapp,
+    monkeypatch,
+    workspace_tmp_dir,
+    initial_states,
+    updated_states,
+):
+    from src.business.settings_manager import init_settings_manager as real_init_settings_manager
+
+    settings_dir = workspace_tmp_dir / "config"
+    tracked_names = list(dict.fromkeys([*initial_states.keys(), *updated_states.keys()]))
+
+    monkeypatch.setattr(
+        "src.ui.main_window.init_settings_manager",
+        lambda: real_init_settings_manager(str(settings_dir)),
+    )
+
+    first_window = MainWindow()
+
+    try:
+        _apply_checkbox_states(first_window.param_panel, initial_states)
+        qapp.processEvents()
+        assert _read_checkbox_states(first_window.param_panel, tracked_names) == {
+            name: initial_states.get(name, updated_states.get(name))
+            for name in tracked_names
+        }
+
+        first_window.close()
+        qapp.processEvents()
+    finally:
+        first_window.deleteLater()
+
+    second_window = MainWindow()
+
+    try:
+        assert _read_checkbox_states(second_window.param_panel, tracked_names) == {
+            name: initial_states.get(name, updated_states.get(name))
+            for name in tracked_names
+        }
+
+        _apply_checkbox_states(second_window.param_panel, updated_states)
+        qapp.processEvents()
+        assert _read_checkbox_states(second_window.param_panel, tracked_names) == updated_states
+
+        second_window.close()
+        qapp.processEvents()
+    finally:
+        second_window.deleteLater()
+
+    third_window = MainWindow()
+
+    try:
+        assert _read_checkbox_states(third_window.param_panel, tracked_names) == updated_states
+    finally:
+        third_window.deleteLater()
 
 
 def test_save_project_blocked_when_canvas_has_no_graphics(qapp, monkeypatch):
