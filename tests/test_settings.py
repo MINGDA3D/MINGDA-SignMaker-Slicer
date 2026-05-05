@@ -34,6 +34,8 @@ class TestSerializeParams:
         assert "wall_thickness" not in data["shell"]
         assert "height" not in data["shell"]
         assert data["shell"]["edge_type"] == "STRAIGHT"
+        assert data["shell"]["u_arc_height"] == pytest.approx(3.0)
+        assert data["bottom_face"]["thickness_layers"] == 2
 
     def test_serialize_custom_params(self):
         """测试序列化自定义参数"""
@@ -61,6 +63,20 @@ class TestSerializeParams:
         assert data["skirt"]["speed"] == pytest.approx(27.0)
         assert data["step"]["print_speed"] == pytest.approx(36.0)
 
+    def test_serialize_deserialize_u_shape_edge_params(self):
+        """测试 U 形边参数序列化/反序列化。"""
+        params = SliceParams()
+        params.shell.edge_type = EdgeType.U_SHAPED
+        params.shell.u_arc_height = 4.5
+
+        data = serialize_params(params)
+        restored = deserialize_params(data)
+
+        assert data["shell"]["edge_type"] == "U_SHAPED"
+        assert data["shell"]["u_arc_height"] == pytest.approx(4.5)
+        assert restored.shell.edge_type == EdgeType.U_SHAPED
+        assert restored.shell.u_arc_height == pytest.approx(4.5)
+
     def test_deserialize_default_params(self):
         """测试反序列化默认参数"""
         params = SliceParams()
@@ -71,6 +87,8 @@ class TestSerializeParams:
         assert restored.shell.line_width == pytest.approx(0.6)
         assert restored.shell.wall_thickness == pytest.approx(0.6)
         assert restored.shell.edge_type == EdgeType.STRAIGHT
+        assert restored.shell.u_arc_height == pytest.approx(3.0)
+        assert restored.bottom_face.thickness == pytest.approx(0.6)
         assert restored.skirt.enabled is False
         assert restored.skirt.speed == pytest.approx(20.0)
         assert restored.skirt.offset == pytest.approx(0.12)

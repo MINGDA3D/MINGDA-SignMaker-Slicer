@@ -13,6 +13,8 @@ from .types import (
     EdgeWrapParams, PanelParams, BaseplateParams, GridParams,
     LayoutParams, SpeedParams, GCodeParams, MachineParams, PrinterProfile,
     FillConfig, LayerConfig,
+    calculate_u_shape_offset_at_z, is_bottom_face_effective,
+    resolve_bottom_face_thickness,
     # 结果类型
     SliceResult, ProjectData, ProjectMeta, Project
 )
@@ -42,6 +44,8 @@ __all__ = [
     'EdgeWrapParams', 'PanelParams', 'BaseplateParams', 'GridParams',
     'LayoutParams', 'SpeedParams', 'GCodeParams', 'MachineParams', 'PrinterProfile',
     'FillConfig', 'LayerConfig',
+    'calculate_u_shape_offset_at_z', 'is_bottom_face_effective',
+    'resolve_bottom_face_thickness',
     # 结果类型
     'SliceResult', 'ProjectData', 'ProjectMeta', 'Project',
     # 核心类

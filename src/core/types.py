@@ -53,6 +53,7 @@ class EdgeType(Enum):
     STRAIGHT = auto()   # 直边
     BEVELED = auto()    # 斜边
     CUSTOM = auto()     # 异形边（自定义轮廓）
+    U_SHAPED = auto()   # U形边（底面封闭 + 圆弧外扩）
 
 
 class EdgeProfileType(Enum):
@@ -811,6 +812,9 @@ class ShellParams:
     # 异形边轮廓
     edge_profile: Optional[EdgeProfile] = None
 
+    # U形边参数
+    u_arc_height: float = 3.0         # U形底部圆弧高度/半径 (mm)，默认10层
+
     # 预打边线（安全线）
     safety_line_count: int = 0        # 安全线数量
     safety_line_offset: float = 5.0   # 安全线偏移距离
@@ -1035,7 +1039,7 @@ class BottomFaceParams:
     只需设置底面厚度，其他参数自动计算。
     """
     enabled: bool = False               # 是否启用底面封闭
-    thickness: float = 1.0              # 底面厚度 (mm)，层数自动根据层高计算
+    thickness: float = 0.6              # 底面厚度 (mm)，默认2层
 
 
     screw_hole_diameter: float = 4.0
@@ -1199,6 +1203,31 @@ class SliceParams:
     speed: SpeedParams = field(default_factory=SpeedParams)
     gcode: GCodeParams = field(default_factory=GCodeParams)
     machine: MachineParams = field(default_factory=MachineParams)
+
+
+def calculate_u_shape_offset_at_z(z: float, shell: ShellParams) -> float:
+    """Return the outward U-shape contour offset at the given height."""
+    arc_height = max(0.0, shell.u_arc_height)
+    if arc_height <= 0.0:
+        return 0.0
+
+    z = max(0.0, min(z, shell.height))
+    if z >= arc_height:
+        return arc_height
+
+    return math.sqrt(max(0.0, (2.0 * arc_height * z) - (z * z)))
+
+
+def is_bottom_face_effective(params: SliceParams) -> bool:
+    """U-shaped edges always have a closed bottom face."""
+    return params.bottom_face.enabled or params.shell.edge_type == EdgeType.U_SHAPED
+
+
+def resolve_bottom_face_thickness(params: SliceParams) -> float:
+    """Return the printable bottom-face thickness for explicit or U-shaped bottom closure."""
+    if is_bottom_face_effective(params):
+        return max(0.0, params.bottom_face.thickness)
+    return 0.0
 
 
 # =============================================================================
@@ -1533,6 +1562,7 @@ def deserialize_params(data: dict) -> SliceParams:
         )
         params.shell.baseplate_thickness = shell_data.get("baseplate_thickness", 10.0)
         params.shell.panel_thickness = shell_data.get("panel_thickness", 3.0)
+        params.shell.u_arc_height = shell_data.get("u_arc_height", 3.0)
         params.shell.dxf_outer_clearance = shell_data.get("dxf_outer_clearance", 1.0)
         params.shell.dxf_hole_clearance = shell_data.get("dxf_hole_clearance", 1.0)
         params.shell.dxf_laser_kerf = shell_data.get("dxf_laser_kerf", 0.0)

@@ -4,7 +4,7 @@ from PySide6.QtGui import QWheelEvent
 from PySide6.QtWidgets import QApplication, QHeaderView, QLabel, QPlainTextEdit, QPushButton, QVBoxLayout, QWidget
 
 from src.business.printer_profile_manager import DEFAULT_PRINTER_PROFILE_SPECS
-from src.core.types import ColorChangePoint, EdgeDirection, PrinterProfile, SliceParams
+from src.core.types import ColorChangePoint, EdgeDirection, EdgeType, PrinterProfile, SliceParams
 from src.ui.param_panel import ParamPanel
 from src.ui.widgets import GuardedComboBox, GuardedDoubleSpinBox, GuardedSpinBox
 
@@ -394,6 +394,16 @@ def test_width_line_defaults_to_twice_layer_height_and_updates_with_layer_height
     assert panel.width_line_spin.value() == pytest.approx(0.8)
 
 
+def test_u_shape_and_bottom_face_default_layer_values(qapp):
+    panel = ParamPanel()
+    params = panel.get_params()
+
+    assert panel.u_arc_height_spin.value() == 10
+    assert panel.bottom_face_thickness.value() == 2
+    assert params.shell.u_arc_height == pytest.approx(3.0)
+    assert params.bottom_face.thickness == pytest.approx(0.6)
+
+
 def test_width_line_can_be_manually_overridden_and_layer_height_change_recomputes_it(qapp):
     panel = ParamPanel()
 
@@ -445,6 +455,29 @@ def test_wall_thickness_is_derived_from_width_line_and_wall_count(qapp):
 
     assert not hasattr(panel, "wall_thickness_spin")
     assert params.shell.wall_thickness == pytest.approx(2.4)
+
+
+def test_u_shape_edge_roundtrips_arc_height_as_layer_count(qapp):
+    panel = ParamPanel()
+    params = SliceParams()
+    params.shell.layer_height = 0.5
+    params.shell.edge_type = EdgeType.U_SHAPED
+    params.shell.u_arc_height = 2.5
+    params.bottom_face.enabled = False
+    params.bottom_face.thickness = 1.5
+
+    panel.set_params(params)
+    restored = panel.get_params()
+
+    assert panel.u_shape_params_widget.isHidden() is False
+    assert panel.u_arc_height_spin.value() == 5
+    assert panel.bottom_face_thickness.value() == 3
+    assert panel.bottom_face_thickness.isEnabled() is True
+    assert panel.bottom_face_screw_hole_diameter.isEnabled() is True
+    assert restored.shell.edge_type == EdgeType.U_SHAPED
+    assert restored.shell.u_arc_height == pytest.approx(2.5)
+    assert restored.bottom_face.enabled is False
+    assert restored.bottom_face.thickness == pytest.approx(1.5)
 
 
 def test_set_params_recomputes_wall_thickness_from_line_width_and_wall_count(qapp):

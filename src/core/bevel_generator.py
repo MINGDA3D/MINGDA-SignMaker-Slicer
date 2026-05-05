@@ -6,7 +6,8 @@
 
 from typing import Optional, List
 from src.core.types import (
-    Contour, ShellParams, EdgeType, EdgeProfile, Point
+    Contour, ShellParams, EdgeType, EdgeProfile, Point,
+    calculate_u_shape_offset_at_z,
 )
 from src.core.path_offset import PathOffset
 
@@ -36,6 +37,8 @@ class BevelGenerator:
             return self._apply_beveled_edge(contour, z, params)
         elif params.edge_type == EdgeType.CUSTOM:
             return self._apply_custom_edge(contour, z, params)
+        elif params.edge_type == EdgeType.U_SHAPED:
+            return self._apply_u_shaped_edge(contour, z, params)
         else:
             return contour
 
@@ -82,6 +85,13 @@ class BevelGenerator:
             return contour
 
         # 应用偏移
+        return self.path_offset.offset_contour(contour, offset)
+
+    def _apply_u_shaped_edge(self, contour: Contour, z: float,
+                             params: ShellParams) -> Optional[Contour]:
+        offset = calculate_u_shape_offset_at_z(z, params)
+        if abs(offset) < 0.001:
+            return contour
         return self.path_offset.offset_contour(contour, offset)
 
     def _apply_custom_edge(self, contour: Contour, z: float,
@@ -159,6 +169,8 @@ class BevelGenerator:
                     offset = progress * params.bevel_width
                 else:
                     offset = params.bevel_width
+            elif params.edge_type == EdgeType.U_SHAPED:
+                offset = calculate_u_shape_offset_at_z(z, params)
             else:
                 offset = 0
 
@@ -188,5 +200,8 @@ class BevelGenerator:
         elif params.edge_type == EdgeType.CUSTOM and params.edge_profile:
             normalized_z = z / params.height if params.height > 0 else 0
             return self._interpolate_profile(params.edge_profile, normalized_z)
+
+        elif params.edge_type == EdgeType.U_SHAPED:
+            return calculate_u_shape_offset_at_z(z, params)
 
         return 0

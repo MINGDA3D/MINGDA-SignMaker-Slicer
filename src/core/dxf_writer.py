@@ -14,7 +14,8 @@ import ezdxf
 
 from .types import (
     Point, Path as ContourPath, Contour, SliceParams,
-    EdgeType, BevelDirection, JoinType, resolve_shell_wall_thickness
+    EdgeType, BevelDirection, JoinType, resolve_shell_wall_thickness,
+    calculate_u_shape_offset_at_z,
 )
 from .path_offset import PathOffset
 
@@ -186,6 +187,9 @@ class DXFWriter:
         if abs(offset) < 0.001:
             return self._copy_contour(contour)
 
+        if shell.edge_type == EdgeType.U_SHAPED:
+            return self.path_offset.offset_contour(contour, offset, JoinType.MITER)
+
         return self._offset_contour_same_direction(contour, offset)
 
     def _get_edge_offset_at_z(self, z: float, shell) -> float:
@@ -205,6 +209,9 @@ class DXFWriter:
                 shell.bevel_width,
                 shell.height
             )
+
+        if shell.edge_type == EdgeType.U_SHAPED:
+            return calculate_u_shape_offset_at_z(z, shell)
 
         return 0.0
 

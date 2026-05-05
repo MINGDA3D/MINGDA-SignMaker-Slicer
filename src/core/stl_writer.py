@@ -33,7 +33,7 @@ from typing import List, Optional
 
 import trimesh
 
-from .types import Contour, SliceResult, SliceParams
+from .types import Contour, SliceResult, SliceParams, is_bottom_face_effective
 from .path_offset import PathOffset
 from .stl import (
     MeshUtils,
@@ -164,7 +164,7 @@ class STLWriter:
                     meshes.append(connected_mesh)
 
             # 7. 构建底面封闭网格
-            if params.bottom_face.enabled:
+            if is_bottom_face_effective(params):
                 bottom_face_mesh = self.bottom_face_builder.build(
                     source_bottom_contours, params
                 )

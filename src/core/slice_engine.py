@@ -26,6 +26,8 @@ from .types import (
     SliceResult, EdgeProfile, InterpolationType, resolve_shell_line_width,
     resolve_shell_wall_thickness, resolve_contour_start_point_index,
     resolve_path_start_point_index,
+    calculate_u_shape_offset_at_z, is_bottom_face_effective,
+    resolve_bottom_face_thickness,
 )
 from .path_offset import PathOffset, JoinType
 from .print_order import build_loop_order
@@ -187,8 +189,9 @@ class SliceEngine:
 
         # 底面层数（根据厚度自动计算）
         bottom_face_layer_count = 0
-        if params.bottom_face.enabled:
-            bottom_face_layer_count = max(1, int(params.bottom_face.thickness / layer_height + 0.5))
+        bottom_face_thickness = resolve_bottom_face_thickness(params)
+        if is_bottom_face_effective(params) and bottom_face_thickness > 0.0:
+            bottom_face_layer_count = max(1, int(bottom_face_thickness / layer_height + 0.5))
 
         # 顶面层数（根据厚度自动计算）
         top_face_layer_count = 0
@@ -217,7 +220,7 @@ class SliceEngine:
                                           params.edge_wrap.outline_enabled)
 
             # 检查是否底面层
-            has_bottom_face = (i < bottom_face_layer_count) and params.bottom_face.enabled
+            has_bottom_face = (i < bottom_face_layer_count) and is_bottom_face_effective(params)
 
             # 检查是否顶面层
             has_top_face = (i >= layer_count - top_face_layer_count) and params.top_face.enabled
@@ -535,6 +538,8 @@ class SliceEngine:
             return self._apply_beveled_edge(contour, z, params)
         elif params.edge_type == EdgeType.CUSTOM:
             return self._apply_custom_edge(contour, z, params)
+        elif params.edge_type == EdgeType.U_SHAPED:
+            return self._apply_u_shaped_edge(contour, z, params)
         else:
             return contour
 
@@ -670,6 +675,15 @@ class SliceEngine:
 
         # 应用偏移（异形边需要同方向偏移，让整个字形缩放）
         return self._offset_contour_same_direction(contour, offset)
+
+    def _apply_u_shaped_edge(self, contour: Contour, z: float,
+                              params: ShellParams) -> Optional[Contour]:
+        """Apply the U-shaped bottom arc: outer expands outward, holes shrink inward."""
+        offset = calculate_u_shape_offset_at_z(z, params)
+        if abs(offset) < 0.001:
+            return contour
+
+        return self.path_offset.offset_contour(contour, offset, JoinType.MITER)
 
     def _interpolate_profile_legacy(self, profile, normalized_z: float) -> float:
         """在异形边轮廓中插值（旧格式兼容）"""
@@ -1055,9 +1069,7 @@ class SliceEngine:
             底面填充路径列表
         """
         paths = []
-        bottom_params = params.bottom_face
-
-        if not bottom_params.enabled:
+        if not is_bottom_face_effective(params):
             return paths
 
         del light_slot_geometry

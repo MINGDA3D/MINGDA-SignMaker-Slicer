@@ -10,7 +10,7 @@ from shapely.validation import make_valid
 
 from .light_slot_geometry import LightSlotGeometryBuilder
 from .path_offset import PathOffset
-from .types import Contour, Path, PathType, Point, SliceParams
+from .types import Contour, Path, PathType, Point, SliceParams, is_bottom_face_effective
 
 
 @dataclass
@@ -54,7 +54,7 @@ class BottomFaceGeometryBuilder:
         self.light_slot_geometry_builder = LightSlotGeometryBuilder(path_offset)
 
     def build(self, contour: Contour, params: SliceParams) -> BottomFaceGeometry:
-        if not params.bottom_face.enabled:
+        if not is_bottom_face_effective(params):
             return BottomFaceGeometry()
 
         light_slot_geometry = self.light_slot_geometry_builder.build(contour, params)

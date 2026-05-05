@@ -72,6 +72,7 @@ from src.core.print_order import (
 from src.core.types import (
     get_contour_user_start_point_index,
     get_path_user_start_point_index,
+    is_bottom_face_effective,
     resolve_shell_wall_thickness,
     set_contour_user_start_point_index,
     set_path_user_start_point_index,
@@ -830,7 +831,7 @@ class MainWindow(QMainWindow):
     def _on_params_changed(self):
         """参数变化后，当前处理结果失效。"""
         self._sync_params_from_panel()
-        if self.canvas.current_tool == "screw_hole" and not self.slice_params.bottom_face.enabled:
+        if self.canvas.current_tool == "screw_hole" and not is_bottom_face_effective(self.slice_params):
             self._exit_screw_hole_mode()
         self._sync_canvas_platform_size(self.slice_params)
         self._refresh_prime_tower_overlay(self.slice_params)
@@ -1015,9 +1016,10 @@ class MainWindow(QMainWindow):
 
         target_params = params or self._sync_params_from_panel()
         self._cached_screw_hole_geometries = {}
+        bottom_face_available = is_bottom_face_effective(target_params)
         if hasattr(self, "canvas_toolbar"):
-            self.canvas_toolbar.set_screw_hole_enabled(target_params.bottom_face.enabled)
-        if not target_params.bottom_face.enabled or not self.contours:
+            self.canvas_toolbar.set_screw_hole_enabled(bottom_face_available)
+        if not bottom_face_available or not self.contours:
             self.canvas.set_screw_hole_overlay(None)
             return
 
@@ -1575,7 +1577,7 @@ class MainWindow(QMainWindow):
             self.canvas_toolbar.setVisible(
                 self.current_main_view == "editor" and self.current_view == "2d"
             )
-            self.canvas_toolbar.set_screw_hole_enabled(current_params.bottom_face.enabled)
+            self.canvas_toolbar.set_screw_hole_enabled(is_bottom_face_effective(current_params))
             self._sync_release_asset_button_state()
 
     def _sync_transform_panel_visibility(self):
@@ -2812,7 +2814,7 @@ class MainWindow(QMainWindow):
             )
             return
 
-        if not current_params.bottom_face.enabled:
+        if not is_bottom_face_effective(current_params):
             QMessageBox.information(
                 self,
                 self.tr("Info"),

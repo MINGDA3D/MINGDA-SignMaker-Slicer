@@ -54,6 +54,7 @@ from src.core.types import (
     SliceParams,
     SliceResult,
     resolve_shell_wall_thickness,
+    is_bottom_face_effective,
 )
 
 
@@ -348,7 +349,7 @@ class Preview3DWidget(QOpenGLWidget):
             connected_mesh = connected_builder.build(contours, params)
             Preview3DWidget._append_mesh_part(parts, "connected", connected_mesh, CONNECTED_COLOR)
 
-        if params.bottom_face.enabled:
+        if is_bottom_face_effective(params):
             bottom_face_mesh = bottom_face_builder.build(source_bottom_contours, params)
             Preview3DWidget._append_mesh_part(parts, "bottom_face", bottom_face_mesh, WALL_COLOR)
 
