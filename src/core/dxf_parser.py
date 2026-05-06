@@ -9,7 +9,7 @@ MINGDA SignMaker - DXF文件解析模块
 
 from __future__ import annotations
 import math
-from typing import List, Tuple, Optional, Dict
+from typing import List, Tuple, Optional, Dict, Set
 from pathlib import Path as FilePath
 
 import ezdxf
@@ -153,6 +153,7 @@ class DXFParser:
 
     def _parse_modelspace(self, msp) -> List[Contour]:
         normal_paths: List[Path] = []
+        line_paths: List[Path] = []
         special_paths: Dict[PathType, List[Path]] = {
             PathType.CONNECTED: [],
             PathType.HOLE: [],
@@ -167,13 +168,17 @@ class DXFParser:
                 continue
 
             path = self._parse_entity(entity)
-            if not path or len(path.points) < 3:
+            if not path:
                 continue
 
-            if path.path_type in special_paths:
-                special_paths[path.path_type].append(path)
-            elif path.is_closed:
-                normal_paths.append(path)
+            if entity_type == 'LINE' and len(path.points) == 2:
+                line_paths.append(path)
+                continue
+
+            self._add_closed_path(path, normal_paths, special_paths)
+
+        for path in self._stitch_line_paths(line_paths):
+            self._add_closed_path(path, normal_paths, special_paths)
 
         contours.extend(classify_paths_by_nesting(normal_paths))
 
@@ -184,6 +189,111 @@ class DXFParser:
             contour.patterns = list(patterns)
 
         return contours
+
+    def _add_closed_path(
+        self,
+        path: Path,
+        normal_paths: List[Path],
+        special_paths: Dict[PathType, List[Path]],
+    ) -> None:
+        if len(path.points) < 3:
+            return
+
+        if path.path_type in special_paths:
+            special_paths[path.path_type].append(path)
+        elif path.is_closed:
+            normal_paths.append(path)
+
+    def _stitch_line_paths(self, line_paths: List[Path]) -> List[Path]:
+        """Join connected LINE entities into closed loops."""
+        if not line_paths:
+            return []
+
+        paths_by_style: Dict[Tuple[PathType, Tuple[int, int, int]], List[Path]] = {}
+        for path in line_paths:
+            paths_by_style.setdefault((path.path_type, path.color), []).append(path)
+
+        stitched: List[Path] = []
+        for group in paths_by_style.values():
+            stitched.extend(self._stitch_line_group(group))
+        return stitched
+
+    def _stitch_line_group(self, line_paths: List[Path]) -> List[Path]:
+        endpoint_map: Dict[Tuple[int, int], List[Tuple[int, int]]] = {}
+        segments: List[Tuple[Point, Point, Path]] = []
+
+        for path in line_paths:
+            if len(path.points) != 2:
+                continue
+
+            start, end = path.points
+            if self._points_close(start, end):
+                continue
+
+            index = len(segments)
+            segments.append((start, end, path))
+            endpoint_map.setdefault(self._point_key(start), []).append((index, 0))
+            endpoint_map.setdefault(self._point_key(end), []).append((index, 1))
+
+        unused: Set[int] = set(range(len(segments)))
+        stitched: List[Path] = []
+
+        while unused:
+            current_index = unused.pop()
+            start, end, source_path = segments[current_index]
+            points = [Point(start.x, start.y), Point(end.x, end.y)]
+            start_key = self._point_key(start)
+            current_key = self._point_key(end)
+
+            while current_key != start_key:
+                next_index, endpoint = self._next_unused_segment(
+                    current_key, endpoint_map, unused
+                )
+                if next_index is None:
+                    break
+
+                unused.remove(next_index)
+                next_start, next_end, _ = segments[next_index]
+                next_point = next_end if endpoint == 0 else next_start
+                points.append(Point(next_point.x, next_point.y))
+                current_key = self._point_key(next_point)
+
+            if current_key != start_key or len(points) < 4:
+                continue
+
+            points.pop()
+            if len(points) < 3:
+                continue
+
+            path = Path(
+                points=points,
+                path_type=source_path.path_type,
+                color=source_path.color,
+                is_closed=True,
+            )
+            if abs(path.area) > 1e-6:
+                stitched.append(path)
+
+        return stitched
+
+    def _next_unused_segment(
+        self,
+        point_key: Tuple[int, int],
+        endpoint_map: Dict[Tuple[int, int], List[Tuple[int, int]]],
+        unused: Set[int],
+    ) -> Tuple[Optional[int], Optional[int]]:
+        for segment_index, endpoint in endpoint_map.get(point_key, []):
+            if segment_index in unused:
+                return segment_index, endpoint
+        return None, None
+
+    def _point_key(self, point: Point) -> Tuple[int, int]:
+        tolerance = self.CLOSURE_TOLERANCE
+        return (round(point.x / tolerance), round(point.y / tolerance))
+
+    def _points_close(self, first: Point, second: Point) -> bool:
+        dist_sq = (first.x - second.x) ** 2 + (first.y - second.y) ** 2
+        return dist_sq <= self.CLOSURE_TOLERANCE ** 2
 
     def _extract_all_paths(self, msp) -> List[Path]:
         """提取模型空间中的所有路径"""
@@ -491,11 +601,12 @@ class DXFParser:
         end = entity.dxf.end
 
         color = self._get_entity_color(entity)
+        path_type = self._determine_path_type(color)
 
         # 单独的直线无法形成闭合路径，返回两点
         return Path(
             points=[Point(start.x, start.y), Point(end.x, end.y)],
-            path_type=PathType.OUTER,
+            path_type=path_type,
             color=color,
             is_closed=False
         )

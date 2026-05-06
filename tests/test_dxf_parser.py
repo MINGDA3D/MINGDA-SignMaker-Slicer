@@ -70,3 +70,50 @@ def test_parse_hatch_prefers_explicit_shell_loops(parser):
 
     assert len(contours) == 2
     assert [len(contour.holes) for contour in contours] == [1, 0]
+
+
+def test_parse_connected_line_segments_as_closed_contour(parser):
+    doc = ezdxf.new("R2010")
+    msp = doc.modelspace()
+    msp.add_line((0, 0), (10, 0))
+    msp.add_line((10, 10), (0, 10))
+    msp.add_line((10, 0), (10, 10))
+    msp.add_line((0, 10), (0, 0))
+
+    contours = parser.parse_from_bytes(_to_dxf_bytes(doc))
+
+    assert len(contours) == 1
+    assert contours[0].outer.bounds == pytest.approx((0, 0, 10, 10))
+
+
+def test_parse_nested_line_segment_loops_as_hole(parser):
+    doc = ezdxf.new("R2010")
+    msp = doc.modelspace()
+    for start, end in [
+        ((0, 0), (100, 0)),
+        ((100, 0), (100, 100)),
+        ((100, 100), (0, 100)),
+        ((0, 100), (0, 0)),
+        ((25, 25), (75, 25)),
+        ((75, 75), (25, 75)),
+        ((75, 25), (75, 75)),
+        ((25, 75), (25, 25)),
+    ]:
+        msp.add_line(start, end)
+
+    contours = parser.parse_from_bytes(_to_dxf_bytes(doc))
+
+    assert len(contours) == 1
+    assert len(contours[0].holes) == 1
+
+
+def test_parse_open_line_segments_are_ignored(parser):
+    doc = ezdxf.new("R2010")
+    msp = doc.modelspace()
+    msp.add_line((0, 0), (10, 0))
+    msp.add_line((10, 0), (10, 10))
+    msp.add_line((10, 10), (0, 10))
+
+    contours = parser.parse_from_bytes(_to_dxf_bytes(doc))
+
+    assert contours == []
