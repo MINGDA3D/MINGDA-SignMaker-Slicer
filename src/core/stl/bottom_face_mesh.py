@@ -86,7 +86,12 @@ class BottomFaceMeshBuilder:
                 continue
 
             for contour in contours:
-                transformed_contour = self._u_shaped_contour_at_z(contour, z_offset, params)
+                transformed_contour = self._u_shaped_contour_at_z(
+                    contour,
+                    z_offset,
+                    params,
+                    flat_height=thickness,
+                )
                 if transformed_contour is None:
                     continue
                 meshes.extend(
@@ -105,8 +110,9 @@ class BottomFaceMeshBuilder:
         contour: Contour,
         z: float,
         params: SliceParams,
+        flat_height: float = 0.0,
     ) -> Optional[Contour]:
-        offset = calculate_u_shape_offset_at_z(z, params.shell)
+        offset = calculate_u_shape_offset_at_z(z, params.shell, flat_height)
         if abs(offset) < 0.001:
             return contour
         return self.path_offset.offset_contour(contour, offset, JoinType.MITER)

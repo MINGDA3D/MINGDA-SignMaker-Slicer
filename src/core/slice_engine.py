@@ -331,8 +331,15 @@ class SliceEngine:
         bottom_reference_contours: List[Optional[Contour]] = []
         light_slot_geometries: List[Optional[LightSlotGeometry]] = []
 
+        u_flat_height = resolve_bottom_face_thickness(params)
+
         for contour in contours:
-            modified_contour = self._apply_edge_profile(contour, info.z_height, params.shell)
+            modified_contour = self._apply_edge_profile(
+                contour,
+                info.z_height,
+                params.shell,
+                u_flat_height=u_flat_height,
+            )
             modified_contours.append(modified_contour)
 
             if modified_contour is None:
@@ -349,7 +356,10 @@ class SliceEngine:
             )
             if needs_bottom_reference:
                 bottom_reference_contour = self._apply_edge_profile(
-                    contour, 0.0, params.shell
+                    contour,
+                    0.0,
+                    params.shell,
+                    u_flat_height=u_flat_height,
                 ) or modified_contour
                 light_slot_geometry = self.light_slot_geometry_builder.build(
                     bottom_reference_contour,
@@ -477,7 +487,12 @@ class SliceEngine:
 
         connected_contours: List[Contour] = []
         for contour in contours:
-            base_contour = self._apply_edge_profile(contour, 0.0, params.shell)
+            base_contour = self._apply_edge_profile(
+                contour,
+                0.0,
+                params.shell,
+                u_flat_height=resolve_bottom_face_thickness(params),
+            )
             if base_contour is not None:
                 connected_contours.append(base_contour)
 
@@ -519,8 +534,13 @@ class SliceEngine:
             params.connected,
         )
 
-    def _apply_edge_profile(self, contour: Contour, z: float,
-                             params: ShellParams) -> Optional[Contour]:
+    def _apply_edge_profile(
+        self,
+        contour: Contour,
+        z: float,
+        params: ShellParams,
+        u_flat_height: float = 0.0,
+    ) -> Optional[Contour]:
         """
         根据边缘类型和高度应用轮廓变换
 
@@ -539,7 +559,7 @@ class SliceEngine:
         elif params.edge_type == EdgeType.CUSTOM:
             return self._apply_custom_edge(contour, z, params)
         elif params.edge_type == EdgeType.U_SHAPED:
-            return self._apply_u_shaped_edge(contour, z, params)
+            return self._apply_u_shaped_edge(contour, z, params, u_flat_height)
         else:
             return contour
 
@@ -676,10 +696,15 @@ class SliceEngine:
         # 应用偏移（异形边需要同方向偏移，让整个字形缩放）
         return self._offset_contour_same_direction(contour, offset)
 
-    def _apply_u_shaped_edge(self, contour: Contour, z: float,
-                              params: ShellParams) -> Optional[Contour]:
+    def _apply_u_shaped_edge(
+        self,
+        contour: Contour,
+        z: float,
+        params: ShellParams,
+        flat_height: float = 0.0,
+    ) -> Optional[Contour]:
         """Apply the U-shaped bottom arc: outer expands outward, holes shrink inward."""
-        offset = calculate_u_shape_offset_at_z(z, params)
+        offset = calculate_u_shape_offset_at_z(z, params, flat_height)
         if abs(offset) < 0.001:
             return contour
 

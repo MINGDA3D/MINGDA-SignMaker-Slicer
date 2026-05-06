@@ -1205,17 +1205,49 @@ class SliceParams:
     machine: MachineParams = field(default_factory=MachineParams)
 
 
-def calculate_u_shape_offset_at_z(z: float, shell: ShellParams) -> float:
-    """Return the outward U-shape contour offset at the given height."""
+def calculate_u_shape_offset_at_z(
+    z: float,
+    shell: ShellParams,
+    flat_height: float = 0.0,
+) -> float:
+    """Return the outward U-shape contour offset at the given height.
+
+    ``flat_height`` is the bottom section that should stay vertical before the
+    U profile starts. A mathematical quarter circle in the original direction
+    starts with an infinite horizontal step at layer granularity, which can
+    leave unsupported gaps. Use the same outward U direction with a finite
+    printable slope and clamp the first layer step to the resolved line width.
+    """
     arc_height = max(0.0, shell.u_arc_height)
     if arc_height <= 0.0:
         return 0.0
 
     z = max(0.0, min(z, shell.height))
-    if z >= arc_height:
+    arc_z = z - max(0.0, flat_height)
+    if arc_z <= 0.0:
+        return 0.0
+    if arc_z >= arc_height:
         return arc_height
 
-    return math.sqrt(max(0.0, (2.0 * arc_height * z) - (z * z)))
+    progress = arc_z / arc_height
+    exponent = 2.0
+
+    layer_height = max(0.0, shell.layer_height)
+    if layer_height > 0.0:
+        layer_progress = min(1.0, layer_height / arc_height)
+        line_width = resolve_shell_line_width(
+            shell.line_width,
+            shell.layer_height,
+            wall_thickness=shell.wall_thickness,
+            wall_count=shell.wall_count,
+        )
+        max_first_offset = max(0.0, line_width)
+        if 0.0 < layer_progress < 1.0 and 0.0 < max_first_offset < arc_height:
+            max_fraction = min(0.98, max_first_offset / arc_height)
+            max_exponent = math.log(1.0 - max_fraction) / math.log(1.0 - layer_progress)
+            exponent = min(exponent, max(1.0, max_exponent))
+
+    return arc_height * (1.0 - ((1.0 - progress) ** exponent))
 
 
 def is_bottom_face_effective(params: SliceParams) -> bool:

@@ -33,7 +33,13 @@ from typing import List, Optional
 
 import trimesh
 
-from .types import Contour, SliceResult, SliceParams, is_bottom_face_effective
+from .types import (
+    Contour,
+    SliceResult,
+    SliceParams,
+    is_bottom_face_effective,
+    resolve_bottom_face_thickness,
+)
 from .path_offset import PathOffset
 from .stl import (
     MeshUtils,
@@ -112,14 +118,25 @@ class STLWriter:
             if params.step.panel_step_enabled or params.step.baseplate_step_enabled:
                 panel_z = params.step.panel_step_height
                 baseplate_z = params.step.baseplate_step_height
+                u_flat_height = resolve_bottom_face_thickness(params)
 
                 for c in contours:
                     if params.step.panel_step_enabled:
-                        pc = temp_engine._apply_edge_profile(c, panel_z, params.shell)
+                        pc = temp_engine._apply_edge_profile(
+                            c,
+                            panel_z,
+                            params.shell,
+                            u_flat_height=u_flat_height,
+                        )
                         if pc:
                             panel_contours.append(pc)
                     if params.step.baseplate_step_enabled:
-                        bc = temp_engine._apply_edge_profile(c, baseplate_z, params.shell)
+                        bc = temp_engine._apply_edge_profile(
+                            c,
+                            baseplate_z,
+                            params.shell,
+                            u_flat_height=u_flat_height,
+                        )
                         if bc:
                             baseplate_contours.append(bc)
 
@@ -204,8 +221,14 @@ class STLWriter:
                                        temp_engine, params: SliceParams) -> List[Contour]:
         """在指定高度应用边缘轮廓变换，供 STL 附加特征与真实壁位对齐。"""
         transformed_contours = []
+        u_flat_height = resolve_bottom_face_thickness(params)
         for contour in contours:
-            transformed = temp_engine._apply_edge_profile(contour, z, params.shell)
+            transformed = temp_engine._apply_edge_profile(
+                contour,
+                z,
+                params.shell,
+                u_flat_height=u_flat_height,
+            )
             if transformed:
                 transformed_contours.append(transformed)
         return transformed_contours

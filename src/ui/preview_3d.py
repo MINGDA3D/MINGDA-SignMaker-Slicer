@@ -54,6 +54,7 @@ from src.core.types import (
     SliceParams,
     SliceResult,
     resolve_shell_wall_thickness,
+    resolve_bottom_face_thickness,
     is_bottom_face_effective,
 )
 
@@ -314,16 +315,27 @@ class Preview3DWidget(QOpenGLWidget):
 
         panel_contours: List[Contour] = []
         baseplate_contours: List[Contour] = []
+        u_flat_height = resolve_bottom_face_thickness(params)
         if params.step.panel_step_enabled or params.step.baseplate_step_enabled:
             panel_z = params.step.panel_step_height
             baseplate_z = params.step.baseplate_step_height
             for contour in contours:
                 if params.step.panel_step_enabled:
-                    panel_contour = temp_engine._apply_edge_profile(contour, panel_z, params.shell)
+                    panel_contour = temp_engine._apply_edge_profile(
+                        contour,
+                        panel_z,
+                        params.shell,
+                        u_flat_height=u_flat_height,
+                    )
                     if panel_contour is not None:
                         panel_contours.append(panel_contour)
                 if params.step.baseplate_step_enabled:
-                    baseplate_contour = temp_engine._apply_edge_profile(contour, baseplate_z, params.shell)
+                    baseplate_contour = temp_engine._apply_edge_profile(
+                        contour,
+                        baseplate_z,
+                        params.shell,
+                        u_flat_height=u_flat_height,
+                    )
                     if baseplate_contour is not None:
                         baseplate_contours.append(baseplate_contour)
 
@@ -420,8 +432,14 @@ class Preview3DWidget(QOpenGLWidget):
     ) -> List[Contour]:
         """Apply edge transforms at a target height to match STL mesh logic."""
         transformed_contours: List[Contour] = []
+        u_flat_height = resolve_bottom_face_thickness(params)
         for contour in contours:
-            transformed = temp_engine._apply_edge_profile(contour, z, params.shell)
+            transformed = temp_engine._apply_edge_profile(
+                contour,
+                z,
+                params.shell,
+                u_flat_height=u_flat_height,
+            )
             if transformed is not None:
                 transformed_contours.append(transformed)
         return transformed_contours

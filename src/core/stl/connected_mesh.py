@@ -14,7 +14,8 @@ import trimesh
 
 from ..types import (
     Contour, SliceParams, ConnectedParams, Point,
-    EdgeType, BevelDirection, JoinType, calculate_u_shape_offset_at_z
+    EdgeType, BevelDirection, JoinType, calculate_u_shape_offset_at_z,
+    resolve_bottom_face_thickness,
 )
 from ..path_offset import PathOffset
 from ..connected_generator import ConnectedGenerator, ConnectionBridge
@@ -123,7 +124,11 @@ class ConnectedMeshBuilder:
         if shell.edge_type == EdgeType.CUSTOM:
             offset = self._calculate_custom_edge_offset_at_z(z, shell)
         elif shell.edge_type == EdgeType.U_SHAPED:
-            offset = calculate_u_shape_offset_at_z(z, shell)
+            offset = calculate_u_shape_offset_at_z(
+                z,
+                shell,
+                resolve_bottom_face_thickness(params),
+            )
         else:
             offset = self._calculate_bevel_offset_at_z(z, shell)
 
