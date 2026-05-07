@@ -36,6 +36,7 @@ from .edge_profile_generator import EdgeProfileGenerator
 from .skirt_generator import SkirtGenerator
 from .connected_generator import ConnectedGenerator, ConnectionBridge
 from .bottom_face_geometry import BottomFaceGeometryBuilder
+from .top_face_geometry import TopFaceGeometryBuilder
 from .light_slot_geometry import LightSlotGeometry, LightSlotGeometryBuilder
 from .prime_tower import PrimeTowerGenerator
 
@@ -63,6 +64,7 @@ class SliceEngine:
         self.skirt_generator = SkirtGenerator()
         self.connected_generator = ConnectedGenerator(self.path_offset)
         self.bottom_face_geometry_builder = BottomFaceGeometryBuilder(self.path_offset)
+        self.top_face_geometry_builder = TopFaceGeometryBuilder(self.path_offset)
         self.light_slot_geometry_builder = LightSlotGeometryBuilder(self.path_offset)
         self.prime_tower_generator = PrimeTowerGenerator(self.path_offset)
 
@@ -1193,46 +1195,21 @@ class SliceEngine:
         if not top_params.enabled:
             return paths
 
-        # 固定填充参数
         fill_line_width = resolve_shell_line_width(
             params.shell.line_width,
             params.shell.layer_height,
             wall_thickness=params.shell.wall_thickness,
             wall_count=params.shell.wall_count,
         )
-        fill_spacing = fill_line_width  # 100%密度：间距等于线宽
-
-        # 计算填充区域（内缩壁厚）
-        inset_distance = resolve_shell_wall_thickness(
-            params.shell.line_width,
-            params.shell.wall_count,
-            params.shell.layer_height,
-            wall_thickness=params.shell.wall_thickness,
+        geometry = self.top_face_geometry_builder.build(contour, params)
+        paths.extend(
+            self._generate_fill_paths_for_polygons(
+                geometry.fill_polygons,
+                info,
+                fill_line_width,
+                PathRole.FILL_TOP_FACE,
+            )
         )
-
-        # 计算填充角度（每层交替90度）
-        layer_index = int(info.z_height / info.layer_height)
-        fill_angle = 45.0 + (layer_index * 90.0)
-
-        # 内缩轮廓
-        inset_contour = self.path_offset.offset_contour(contour, -inset_distance)
-        if not inset_contour:
-            return paths
-
-        # 生成填充线
-        fill_paths = self._generate_line_fill(
-            inset_contour,
-            fill_spacing,
-            fill_angle,
-            fill_line_width,
-            info.extruder
-        )
-
-        # 设置路径角色
-        for path in fill_paths:
-            path.role = PathRole.FILL_TOP_FACE
-
-        paths.extend(fill_paths)
 
         return paths
 

@@ -9,15 +9,11 @@ from __future__ import annotations
 from typing import List, Optional
 
 import trimesh
-from shapely.geometry import Polygon as ShapelyPolygon
-from shapely.validation import make_valid
 
+from ..top_face_geometry import TopFaceGeometryBuilder
 from ..types import (
     Contour,
     SliceParams,
-    EdgeType,
-    BevelDirection,
-    resolve_shell_wall_thickness,
 )
 from ..path_offset import PathOffset
 from .mesh_utils import MeshUtils
@@ -35,6 +31,7 @@ class TopFaceMeshBuilder:
         """
         self.path_offset = path_offset
         self.mesh_utils = MeshUtils()
+        self.top_face_geometry_builder = TopFaceGeometryBuilder(path_offset)
 
     def build(self, contours: List[Contour],
               params: SliceParams) -> Optional[trimesh.Trimesh]:
@@ -66,69 +63,15 @@ class TopFaceMeshBuilder:
         # 顶面的Z起始位置
         z_start = total_height - thickness
 
-        # 计算内缩距离（所有壁的总宽度）
-        inset_distance = resolve_shell_wall_thickness(
-            params.shell.line_width,
-            params.shell.wall_count,
-            params.shell.layer_height,
-            wall_thickness=params.shell.wall_thickness,
-        )
-
         for contour in contours:
             try:
-                # 内缩外轮廓
-                inset_outer = self.path_offset.offset(contour.outer, -inset_distance)
-                if not inset_outer:
-                    continue
-
-                for outer_path in inset_outer:
-                    outer_coords = [(p.x, p.y) for p in outer_path.points]
-                    if len(outer_coords) < 3:
-                        continue
-
-                    # 内缩内孔（使用负偏移，和墙壁生成保持一致）
-                    hole_coords_list = []
-                    for hole in contour.holes:
-                        # 内孔也向内收缩（负偏移），和墙壁生成方向一致
-                        inset_holes = self.path_offset.offset(hole, -inset_distance)
-                        for inset_hole in inset_holes:
-                            hole_coords = [(p.x, p.y) for p in inset_hole.points]
-                            if len(hole_coords) >= 3:
-                                hole_coords_list.append(hole_coords)
-
-                    # 创建Shapely多边形
-                    try:
-                        if hole_coords_list:
-                            polygon = ShapelyPolygon(outer_coords, hole_coords_list)
-                        else:
-                            polygon = ShapelyPolygon(outer_coords)
-
-                        # 验证多边形
-                        if not polygon.is_valid:
-                            polygon = make_valid(polygon)
-
-                        if polygon.is_empty or polygon.area < 1e-6:
-                            continue
-
-                        # 处理MultiPolygon情况
-                        if polygon.geom_type == 'MultiPolygon':
-                            for geom in polygon.geoms:
-                                if geom.area >= 1e-6:
-                                    mesh = self.mesh_utils.extrude_polygon(
-                                        geom, thickness, z_offset=z_start
-                                    )
-                                    if mesh is not None:
-                                        meshes.append(mesh)
-                        else:
-                            mesh = self.mesh_utils.extrude_polygon(
-                                polygon, thickness, z_offset=z_start
-                            )
-                            if mesh is not None:
-                                meshes.append(mesh)
-
-                    except Exception as e:
-                        print(f"警告：创建顶面多边形失败: {e}")
-                        continue
+                geometry = self.top_face_geometry_builder.build(contour, params)
+                for polygon in geometry.fill_polygons:
+                    mesh = self.mesh_utils.extrude_polygon(
+                        polygon, thickness, z_offset=z_start
+                    )
+                    if mesh is not None:
+                        meshes.append(mesh)
 
             except Exception as e:
                 print(f"警告：处理轮廓顶面失败: {e}")
