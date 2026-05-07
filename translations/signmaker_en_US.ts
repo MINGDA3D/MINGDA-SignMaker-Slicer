@@ -1229,6 +1229,11 @@ Error code: {code}</translation>
         <translation>Beveled</translation>
     </message>
     <message>
+        <location filename="../src/ui/param_panel.py" line="482"/>
+        <source>U Shape</source>
+        <translation>U Shape</translation>
+    </message>
+    <message>
         <location filename="../src/ui/param_panel.py" line="479"/>
         <source>Custom</source>
         <translation>Custom</translation>
@@ -1272,6 +1277,11 @@ Error code: {code}</translation>
         <location filename="../src/ui/param_panel.py" line="533"/>
         <source>Panel Thickness:</source>
         <translation>Panel Thickness:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="556"/>
+        <source>Arc Height:</source>
+        <translation>Arc Height:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="545"/>

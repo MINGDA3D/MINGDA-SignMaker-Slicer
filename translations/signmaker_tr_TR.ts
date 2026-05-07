@@ -1229,6 +1229,11 @@ Hata kodu: {code}</translation>
         <translation>Egimli</translation>
     </message>
     <message>
+        <location filename="../src/ui/param_panel.py" line="482"/>
+        <source>U Shape</source>
+        <translation>U Sekli</translation>
+    </message>
+    <message>
         <location filename="../src/ui/param_panel.py" line="479"/>
         <source>Custom</source>
         <translation>Ozel</translation>
@@ -1272,6 +1277,11 @@ Hata kodu: {code}</translation>
         <location filename="../src/ui/param_panel.py" line="533"/>
         <source>Panel Thickness:</source>
         <translation>Panel Kalinligi:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="556"/>
+        <source>Arc Height:</source>
+        <translation>Yay Yuksekligi:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="545"/>

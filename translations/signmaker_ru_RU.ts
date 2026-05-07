@@ -1229,6 +1229,11 @@ Error code: {code}</source>
         <translation>Скошенный</translation>
     </message>
     <message>
+        <location filename="../src/ui/param_panel.py" line="482"/>
+        <source>U Shape</source>
+        <translation>U-образный</translation>
+    </message>
+    <message>
         <location filename="../src/ui/param_panel.py" line="479"/>
         <source>Custom</source>
         <translation>Произвольный</translation>
@@ -1272,6 +1277,11 @@ Error code: {code}</source>
         <location filename="../src/ui/param_panel.py" line="533"/>
         <source>Panel Thickness:</source>
         <translation>Толщина панели:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="556"/>
+        <source>Arc Height:</source>
+        <translation>Высота дуги:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="545"/>

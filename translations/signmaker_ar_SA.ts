@@ -1229,6 +1229,11 @@ Error code: {code}</source>
         <translation>مشطوف</translation>
     </message>
     <message>
+        <location filename="../src/ui/param_panel.py" line="482"/>
+        <source>U Shape</source>
+        <translation>شكل U</translation>
+    </message>
+    <message>
         <location filename="../src/ui/param_panel.py" line="479"/>
         <source>Custom</source>
         <translation>مخصص</translation>
@@ -1272,6 +1277,11 @@ Error code: {code}</source>
         <location filename="../src/ui/param_panel.py" line="533"/>
         <source>Panel Thickness:</source>
         <translation>سمك اللوحة الأمامية:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="556"/>
+        <source>Arc Height:</source>
+        <translation>ارتفاع القوس:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="545"/>
@@ -2319,4 +2329,3 @@ Control points: {points}</source>
     </message>
 </context>
 </TS>
-

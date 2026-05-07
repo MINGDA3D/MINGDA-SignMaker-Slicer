@@ -1229,6 +1229,11 @@ Codice di errore: {code}</translation>
         <translation>Smussato</translation>
     </message>
     <message>
+        <location filename="../src/ui/param_panel.py" line="482"/>
+        <source>U Shape</source>
+        <translation>Forma a U</translation>
+    </message>
+    <message>
         <location filename="../src/ui/param_panel.py" line="479"/>
         <source>Custom</source>
         <translation>Personalizzato</translation>
@@ -1272,6 +1277,11 @@ Codice di errore: {code}</translation>
         <location filename="../src/ui/param_panel.py" line="533"/>
         <source>Panel Thickness:</source>
         <translation>Spessore pannello:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="556"/>
+        <source>Arc Height:</source>
+        <translation>Altezza arco:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="545"/>

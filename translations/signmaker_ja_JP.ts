@@ -1229,6 +1229,11 @@ Error code: {code}</source>
         <translation>斜め</translation>
     </message>
     <message>
+        <location filename="../src/ui/param_panel.py" line="482"/>
+        <source>U Shape</source>
+        <translation>U字形</translation>
+    </message>
+    <message>
         <location filename="../src/ui/param_panel.py" line="479"/>
         <source>Custom</source>
         <translation>カスタム</translation>
@@ -1272,6 +1277,11 @@ Error code: {code}</source>
         <location filename="../src/ui/param_panel.py" line="533"/>
         <source>Panel Thickness:</source>
         <translation>パネル厚さ:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="556"/>
+        <source>Arc Height:</source>
+        <translation>円弧高さ:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="545"/>

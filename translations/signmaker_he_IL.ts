@@ -1229,6 +1229,11 @@ Error code: {code}</source>
         <translation>משופע</translation>
     </message>
     <message>
+        <location filename="../src/ui/param_panel.py" line="482"/>
+        <source>U Shape</source>
+        <translation>צורת U</translation>
+    </message>
+    <message>
         <location filename="../src/ui/param_panel.py" line="479"/>
         <source>Custom</source>
         <translation>מותאם אישית</translation>
@@ -1272,6 +1277,11 @@ Error code: {code}</source>
         <location filename="../src/ui/param_panel.py" line="533"/>
         <source>Panel Thickness:</source>
         <translation>עובי פאנל:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="556"/>
+        <source>Arc Height:</source>
+        <translation>גובה הקשת:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="545"/>

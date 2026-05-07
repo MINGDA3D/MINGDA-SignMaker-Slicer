@@ -1229,6 +1229,11 @@ Fehlercode: {code}</translation>
         <translation>Abgeschraegt</translation>
     </message>
     <message>
+        <location filename="../src/ui/param_panel.py" line="482"/>
+        <source>U Shape</source>
+        <translation>U-Form</translation>
+    </message>
+    <message>
         <location filename="../src/ui/param_panel.py" line="479"/>
         <source>Custom</source>
         <translation>Benutzerdefiniert</translation>
@@ -1272,6 +1277,11 @@ Fehlercode: {code}</translation>
         <location filename="../src/ui/param_panel.py" line="533"/>
         <source>Panel Thickness:</source>
         <translation>Frontplattendicke:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="556"/>
+        <source>Arc Height:</source>
+        <translation>Bogenhoehe:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="545"/>

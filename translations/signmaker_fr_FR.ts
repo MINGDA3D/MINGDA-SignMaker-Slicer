@@ -1229,6 +1229,11 @@ Code d&apos;erreur : {code}</translation>
         <translation>Biseauté</translation>
     </message>
     <message>
+        <location filename="../src/ui/param_panel.py" line="482"/>
+        <source>U Shape</source>
+        <translation>Forme en U</translation>
+    </message>
+    <message>
         <location filename="../src/ui/param_panel.py" line="479"/>
         <source>Custom</source>
         <translation>Personnalisé</translation>
@@ -1272,6 +1277,11 @@ Code d&apos;erreur : {code}</translation>
         <location filename="../src/ui/param_panel.py" line="533"/>
         <source>Panel Thickness:</source>
         <translation>Épaisseur du panneau :</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="556"/>
+        <source>Arc Height:</source>
+        <translation>Hauteur d&apos;arc :</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="545"/>

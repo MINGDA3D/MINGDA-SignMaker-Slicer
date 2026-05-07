@@ -1229,6 +1229,11 @@ Error code: {code}</source>
         <translation>斜边</translation>
     </message>
     <message>
+        <location filename="../src/ui/param_panel.py" line="482"/>
+        <source>U Shape</source>
+        <translation>U形边</translation>
+    </message>
+    <message>
         <location filename="../src/ui/param_panel.py" line="479"/>
         <source>Custom</source>
         <translation>异形边</translation>
@@ -1272,6 +1277,11 @@ Error code: {code}</source>
         <location filename="../src/ui/param_panel.py" line="533"/>
         <source>Panel Thickness:</source>
         <translation>面板厚度:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="556"/>
+        <source>Arc Height:</source>
+        <translation>圆弧高度:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="545"/>

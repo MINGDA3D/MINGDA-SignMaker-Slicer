@@ -1229,6 +1229,11 @@ Código de error: {code}</translation>
         <translation>Biselado</translation>
     </message>
     <message>
+        <location filename="../src/ui/param_panel.py" line="482"/>
+        <source>U Shape</source>
+        <translation>Forma en U</translation>
+    </message>
+    <message>
         <location filename="../src/ui/param_panel.py" line="479"/>
         <source>Custom</source>
         <translation>Personalizado</translation>
@@ -1272,6 +1277,11 @@ Código de error: {code}</translation>
         <location filename="../src/ui/param_panel.py" line="533"/>
         <source>Panel Thickness:</source>
         <translation>Grosor del panel:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="556"/>
+        <source>Arc Height:</source>
+        <translation>Altura del arco:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="545"/>

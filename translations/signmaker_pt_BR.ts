@@ -1229,6 +1229,11 @@ Código de erro: {code}</translation>
         <translation>Chanfrada</translation>
     </message>
     <message>
+        <location filename="../src/ui/param_panel.py" line="482"/>
+        <source>U Shape</source>
+        <translation>Formato em U</translation>
+    </message>
+    <message>
         <location filename="../src/ui/param_panel.py" line="479"/>
         <source>Custom</source>
         <translation>Personalizada</translation>
@@ -1272,6 +1277,11 @@ Código de erro: {code}</translation>
         <location filename="../src/ui/param_panel.py" line="533"/>
         <source>Panel Thickness:</source>
         <translation>Espessura do painel:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="556"/>
+        <source>Arc Height:</source>
+        <translation>Altura do arco:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="545"/>
