@@ -88,11 +88,11 @@ def test_u_shape_offset_uses_printable_arc_then_straight():
     assert calculate_u_shape_offset_at_z(5.0, params.shell) == pytest.approx(5.0)
     assert calculate_u_shape_offset_at_z(8.0, params.shell) == pytest.approx(5.0)
     mid_offset = calculate_u_shape_offset_at_z(2.5, params.shell)
-    assert mid_offset > 5.0 * 0.5
+    assert mid_offset == pytest.approx(5.0 * 0.5)
     assert mid_offset < 5.0
 
 
-def test_u_shape_offset_limits_first_layer_without_flattening_arc():
+def test_u_shape_offset_limits_each_layer_to_half_line_width():
     params = _u_shape_params()
     params.shell.layer_height = 0.3
     params.shell.line_width = 0.6
@@ -101,15 +101,25 @@ def test_u_shape_offset_limits_first_layer_without_flattening_arc():
         params.shell.layer_height,
         params.shell,
     )
-    early_delta = calculate_u_shape_offset_at_z(0.6, params.shell) - (
-        calculate_u_shape_offset_at_z(0.3, params.shell)
-    )
-    later_delta = calculate_u_shape_offset_at_z(3.6, params.shell) - (
-        calculate_u_shape_offset_at_z(3.3, params.shell)
-    )
+    max_layer_overhang = params.shell.line_width * 0.5
 
-    assert 0.0 < first_layer_offset <= params.shell.line_width
-    assert early_delta > later_delta
+    previous_offset = calculate_u_shape_offset_at_z(0.0, params.shell)
+    for layer_index in range(1, 30):
+        z = layer_index * params.shell.layer_height
+        offset = calculate_u_shape_offset_at_z(z, params.shell)
+        assert offset - previous_offset <= max_layer_overhang + 1e-6
+        previous_offset = offset
+
+    assert 0.0 < first_layer_offset <= max_layer_overhang
+
+
+def test_u_shape_offset_extends_transition_when_half_line_width_requires_it():
+    params = _u_shape_params()
+    params.shell.layer_height = 1.0
+    params.shell.line_width = 1.0
+
+    assert calculate_u_shape_offset_at_z(5.0, params.shell) == pytest.approx(2.5)
+    assert calculate_u_shape_offset_at_z(10.0, params.shell) == pytest.approx(5.0)
 
 
 def test_u_shape_contour_applies_printable_arc_to_outer_and_holes():
@@ -133,6 +143,7 @@ def test_u_shape_contour_applies_printable_arc_to_outer_and_holes():
 
 def test_u_shape_offset_stays_flat_for_bottom_thickness_then_arcs():
     params = _u_shape_params()
+    params.shell.height = 12.0
     flat_height = 2.0
 
     assert calculate_u_shape_offset_at_z(
@@ -151,12 +162,12 @@ def test_u_shape_offset_stays_flat_for_bottom_thickness_then_arcs():
         flat_height,
     ) == pytest.approx(0.0)
     first_arc_offset = calculate_u_shape_offset_at_z(3.0, params.shell, flat_height)
-    assert 0.0 < first_arc_offset <= params.shell.line_width
+    assert 0.0 < first_arc_offset <= params.shell.line_width * 0.5
     mid_offset = calculate_u_shape_offset_at_z(4.5, params.shell, flat_height)
-    assert mid_offset >= 5.0 * 0.5
+    assert mid_offset == pytest.approx(1.25)
     assert mid_offset < 5.0
     assert calculate_u_shape_offset_at_z(
-        7.0,
+        12.0,
         params.shell,
         flat_height,
     ) == pytest.approx(5.0)
@@ -176,10 +187,10 @@ def test_u_shape_expands_outer_and_shrinks_holes():
     assert straight_part is not None
     assert bottom.outer.bounds == pytest.approx((0.0, 0.0, 100.0, 100.0))
     assert bottom.holes[0].bounds == pytest.approx((30.0, 30.0, 70.0, 70.0))
-    assert arc_top.outer.bounds == pytest.approx((-5.0, -5.0, 105.0, 105.0))
-    assert arc_top.holes[0].bounds == pytest.approx((35.0, 35.0, 65.0, 65.0))
-    assert straight_part.outer.bounds == pytest.approx(arc_top.outer.bounds)
-    assert straight_part.holes[0].bounds == pytest.approx(arc_top.holes[0].bounds)
+    assert arc_top.outer.bounds == pytest.approx((-2.5, -2.5, 102.5, 102.5))
+    assert arc_top.holes[0].bounds == pytest.approx((32.5, 32.5, 67.5, 67.5))
+    assert straight_part.outer.bounds == pytest.approx((-5.0, -5.0, 105.0, 105.0))
+    assert straight_part.holes[0].bounds == pytest.approx((35.0, 35.0, 65.0, 65.0))
 
 
 def test_u_shape_bottom_layers_keep_same_profile_before_arc():
