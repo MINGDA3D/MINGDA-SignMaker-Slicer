@@ -786,11 +786,11 @@ class LayerInfo:
 @dataclass
 class ShellParams:
     """字壳工艺参数"""
-    height: float = 30.0              # 字壳高度 (mm)
+    height: float = 50.0              # 字壳高度 (mm)
     layer_height: float = 0.3         # 层高 (mm)
     line_width: float = 0.0           # 线宽 (mm), <= 0 时自动使用 layer_height * 2
     wall_thickness: float = 0.0       # 总壁厚 (mm), 由 wall_count * line_width 推导
-    wall_count: int = 1               # 壁数量（走线次数）
+    wall_count: int = 2               # 壁数量（走线次数）
     wall_offset: float = 0.0          # 壁偏移
 
     # 边缘类型
@@ -801,8 +801,8 @@ class ShellParams:
     bevel_direction: BevelDirection = BevelDirection.TOP_SMALL  # 斜边方向
 
     # 底板和面板厚度
-    baseplate_thickness: float = 10.0  # 底板厚度 (mm) - 底部直边区域高度
-    panel_thickness: float = 3.0       # 面板厚度 (mm) - 顶部直边区域高度
+    baseplate_thickness: float = 9.0   # 底板厚度 (mm) - 底部直边区域高度
+    panel_thickness: float = 9.0       # 面板厚度 (mm) - 顶部直边区域高度
 
     # DXF 导出补偿
     dxf_outer_clearance: float = 1.0   # 外轮廓安装公差：向内缩 (mm)
@@ -813,7 +813,7 @@ class ShellParams:
     edge_profile: Optional[EdgeProfile] = None
 
     # U形边参数
-    u_arc_height: float = 3.0         # U形底部圆弧高度/半径 (mm)，默认10层
+    u_arc_height: float = 6.0         # U形底部圆弧高度/半径 (mm)，默认20层
 
     # 预打边线（安全线）
     safety_line_count: int = 0        # 安全线数量
@@ -875,7 +875,7 @@ class StepParams:
 
     # 面板台阶（顶部）- 用于安装面板
     panel_step_enabled: bool = False
-    panel_step_height: float = 28.0     # 面板厚度/台阶高度 (mm)
+    panel_step_height: float = 47.0     # 面板厚度/台阶高度 (mm)
     panel_step_width: float = 1.8       # 台阶向内延伸宽度 (mm)
     panel_step_is_v_groove: bool = False  # 是否为V槽
 
@@ -961,8 +961,8 @@ class ConnectedParams:
     enabled: bool = False
     type: str = "triangle"              # 连襟类型: "triangle" 或 "diamond"
     width: float = 5.0                  # 连襟宽度 (mm) - 连接桥的宽度
-    height: float = 5.0                 # 斜边高度 (mm) - 顶部斜边的高度
-    base_height: float = 5.0            # 底座高度 (mm) - 底部直边的高度
+    height: float = 4.5                 # 斜边高度 (mm) - 顶部斜边的高度
+    base_height: float = 4.5            # 底座高度 (mm) - 底部直边的高度
     support_offset: float = 2.5         # 支撑偏移 (mm) - 与字壳边缘的距离
     auto_detect: bool = True            # 自动检测连接点
 
@@ -975,13 +975,13 @@ class ConnectedParams:
 class EdgeWrapParams:
     """包边/勾边参数"""
     wrap_enabled: bool = False        # 包边开启
-    wrap_width: float = 2.0           # 包边宽度
+    wrap_width: float = 3.0           # 包边宽度
     wrap_height: float = 3.0          # 包边高度
     wrap_direction: EdgeDirection = EdgeDirection.INNER  # 包边方向
 
     outline_enabled: bool = False     # 勾边开启
-    outline_width: float = 1.0        # 勾边宽度
-    outline_height: float = 1.0       # 勾边高度（厚度）
+    outline_width: float = 3.0        # 勾边宽度
+    outline_height: float = 3.0       # 勾边高度（厚度）
     outline_offset: float = 0.0       # 勾边偏移
     outline_direction: EdgeDirection = EdgeDirection.INNER  # 勾边方向
 
@@ -1039,19 +1039,19 @@ class BottomFaceParams:
     只需设置底面厚度，其他参数自动计算。
     """
     enabled: bool = False               # 是否启用底面封闭
-    thickness: float = 0.6              # 底面厚度 (mm)，默认2层
+    thickness: float = 0.9              # 底面厚度 (mm)
 
 
-    screw_hole_diameter: float = 4.0
+    screw_hole_diameter: float = 5.0
 
 
 @dataclass
 class LightSlotParams:
     """底部灯槽参数"""
     enabled: bool = False
-    width: float = 8.0
-    depth: float = 3.0
-    floor_layers: int = 2
+    width: float = 7.8
+    depth: float = 6.0
+    floor_layers: int = 5
     wall_gap: float = 0.0
     outer_enabled: bool = True
     hole_enabled: bool = True
@@ -1067,7 +1067,7 @@ class TopFaceParams:
     只需设置顶面厚度，其他参数自动计算。
     """
     enabled: bool = False               # 是否启用顶面封闭
-    thickness: float = 1.0              # 顶面厚度 (mm)，层数自动根据层高计算
+    thickness: float = 2.4              # 顶面厚度 (mm)，层数自动根据层高计算
 
 
 @dataclass
@@ -1564,7 +1564,7 @@ def deserialize_params(data: dict) -> SliceParams:
         shell_data = data["shell"]
         _reject_legacy_layer_key("shell", shell_data, "height", "height_layers")
         params.shell.layer_height = shell_data.get("layer_height", 0.3)
-        params.shell.wall_count = max(1, int(shell_data.get("wall_count", 1)))
+        params.shell.wall_count = max(1, int(shell_data.get("wall_count", params.shell.wall_count)))
         params.shell.line_width = resolve_shell_line_width(
             shell_data.get("line_width", 0.0),
             params.shell.layer_height,
@@ -1588,9 +1588,9 @@ def deserialize_params(data: dict) -> SliceParams:
         params.shell.bevel_direction = _deserialize_enum(
             BevelDirection, shell_data.get("bevel_direction", "TOP_SMALL")
         )
-        params.shell.baseplate_thickness = shell_data.get("baseplate_thickness", 10.0)
-        params.shell.panel_thickness = shell_data.get("panel_thickness", 3.0)
-        params.shell.u_arc_height = shell_data.get("u_arc_height", 3.0)
+        params.shell.baseplate_thickness = shell_data.get("baseplate_thickness", params.shell.baseplate_thickness)
+        params.shell.panel_thickness = shell_data.get("panel_thickness", params.shell.panel_thickness)
+        params.shell.u_arc_height = shell_data.get("u_arc_height", params.shell.u_arc_height)
         params.shell.dxf_outer_clearance = shell_data.get("dxf_outer_clearance", 1.0)
         params.shell.dxf_hole_clearance = shell_data.get("dxf_hole_clearance", 1.0)
         params.shell.dxf_laser_kerf = shell_data.get("dxf_laser_kerf", 0.0)
@@ -1729,7 +1729,7 @@ def deserialize_params(data: dict) -> SliceParams:
         _reject_legacy_key("connected", conn_data, "bridge_height", "height_layers")
         params.connected.enabled = conn_data.get("enabled", False)
         params.connected.type = conn_data.get("type", "triangle")
-        params.connected.width = conn_data.get("width", 15.0)
+        params.connected.width = conn_data.get("width", params.connected.width)
         if "height_layers" in conn_data:
             params.connected.height = _layers_to_height(
                 conn_data["height_layers"],
@@ -1749,14 +1749,14 @@ def deserialize_params(data: dict) -> SliceParams:
     if "edge_wrap" in data:
         wrap_data = data["edge_wrap"]
         params.edge_wrap.wrap_enabled = wrap_data.get("wrap_enabled", False)
-        params.edge_wrap.wrap_width = wrap_data.get("wrap_width", 2.0)
+        params.edge_wrap.wrap_width = wrap_data.get("wrap_width", params.edge_wrap.wrap_width)
         params.edge_wrap.wrap_height = wrap_data.get("wrap_height", 3.0)
         params.edge_wrap.wrap_direction = _deserialize_enum(
             EdgeDirection, wrap_data.get("wrap_direction", "INNER")
         )
         params.edge_wrap.outline_enabled = wrap_data.get("outline_enabled", False)
-        params.edge_wrap.outline_width = wrap_data.get("outline_width", 1.0)
-        params.edge_wrap.outline_height = wrap_data.get("outline_height", 1.0)
+        params.edge_wrap.outline_width = wrap_data.get("outline_width", params.edge_wrap.outline_width)
+        params.edge_wrap.outline_height = wrap_data.get("outline_height", params.edge_wrap.outline_height)
         params.edge_wrap.outline_offset = wrap_data.get("outline_offset", 0.0)
         params.edge_wrap.outline_direction = _deserialize_enum(
             EdgeDirection, wrap_data.get("outline_direction", "INNER")
@@ -1802,7 +1802,7 @@ def deserialize_params(data: dict) -> SliceParams:
         bf_data = data["bottom_face"]
         _reject_legacy_layer_key("bottom_face", bf_data, "thickness", "thickness_layers")
         params.bottom_face.enabled = bf_data.get("enabled", False)
-        params.bottom_face.screw_hole_diameter = bf_data.get("screw_hole_diameter", 4.0)
+        params.bottom_face.screw_hole_diameter = bf_data.get("screw_hole_diameter", params.bottom_face.screw_hole_diameter)
         if "thickness_layers" in bf_data:
             params.bottom_face.thickness = _layers_to_height(
                 bf_data["thickness_layers"],
@@ -1814,13 +1814,13 @@ def deserialize_params(data: dict) -> SliceParams:
         light_slot_data = data["light_slot"]
         _reject_legacy_layer_key("light_slot", light_slot_data, "depth", "depth_layers")
         params.light_slot.enabled = light_slot_data.get("enabled", False)
-        params.light_slot.width = light_slot_data.get("width", 8.0)
+        params.light_slot.width = light_slot_data.get("width", params.light_slot.width)
         if "depth_layers" in light_slot_data:
             params.light_slot.depth = _layers_to_height(
                 light_slot_data["depth_layers"],
                 params.shell.layer_height,
             )
-        params.light_slot.floor_layers = light_slot_data.get("floor_layers", 2)
+        params.light_slot.floor_layers = light_slot_data.get("floor_layers", params.light_slot.floor_layers)
         params.light_slot.wall_gap = light_slot_data.get("wall_gap", 0.0)
         params.light_slot.outer_enabled = light_slot_data.get("outer_enabled", True)
         params.light_slot.hole_enabled = light_slot_data.get("hole_enabled", True)

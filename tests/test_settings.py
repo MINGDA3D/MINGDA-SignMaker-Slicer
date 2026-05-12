@@ -29,13 +29,17 @@ class TestSerializeParams:
         assert "speed" in data
         assert "gcode" in data
         assert "machine" in data
-        assert data["shell"]["height_layers"] == 100
+        assert data["shell"]["height_layers"] == 167
         assert data["shell"]["line_width"] == pytest.approx(0.6)
+        assert data["shell"]["wall_count"] == 2
         assert "wall_thickness" not in data["shell"]
         assert "height" not in data["shell"]
         assert data["shell"]["edge_type"] == "STRAIGHT"
-        assert data["shell"]["u_arc_height"] == pytest.approx(3.0)
-        assert data["bottom_face"]["thickness_layers"] == 2
+        assert data["shell"]["u_arc_height"] == pytest.approx(6.0)
+        assert data["bottom_face"]["thickness_layers"] == 3
+        assert data["top_face"]["thickness_layers"] == 8
+        assert data["light_slot"]["depth_layers"] == 20
+        assert data["light_slot"]["floor_layers"] == 5
 
     def test_serialize_custom_params(self):
         """测试序列化自定义参数"""
@@ -83,12 +87,17 @@ class TestSerializeParams:
         data = serialize_params(params)
         restored = deserialize_params(data)
 
-        assert restored.shell.height == 30.0
+        assert restored.shell.height == pytest.approx(50.1)
         assert restored.shell.line_width == pytest.approx(0.6)
-        assert restored.shell.wall_thickness == pytest.approx(0.6)
+        assert restored.shell.wall_thickness == pytest.approx(1.2)
         assert restored.shell.edge_type == EdgeType.STRAIGHT
-        assert restored.shell.u_arc_height == pytest.approx(3.0)
-        assert restored.bottom_face.thickness == pytest.approx(0.6)
+        assert restored.shell.u_arc_height == pytest.approx(6.0)
+        assert restored.bottom_face.thickness == pytest.approx(0.9)
+        assert restored.bottom_face.screw_hole_diameter == pytest.approx(5.0)
+        assert restored.light_slot.width == pytest.approx(7.8)
+        assert restored.light_slot.depth == pytest.approx(6.0)
+        assert restored.light_slot.floor_layers == 5
+        assert restored.top_face.thickness == pytest.approx(2.4)
         assert restored.skirt.enabled is False
         assert restored.skirt.speed == pytest.approx(20.0)
         assert restored.skirt.offset == pytest.approx(0.12)
@@ -134,7 +143,7 @@ class TestSerializeParams:
 
         assert restored.shell.height == pytest.approx(45.0)
         assert restored.shell.line_width == pytest.approx(0.9)
-        assert restored.shell.wall_thickness == pytest.approx(0.9)
+        assert restored.shell.wall_thickness == pytest.approx(1.8)
 
     def test_deserialize_legacy_wall_thickness_migrates_to_line_width(self):
         """测试旧 shell 数据仅保存 wall_thickness 时会迁移为 line_width * wall_count。"""
@@ -294,9 +303,9 @@ class TestSerializeParams:
     def test_deserialize_empty_dict(self):
         """测试反序列化空字典"""
         restored = deserialize_params({})
-        assert restored.shell.height == 30.0  # 默认值
+        assert restored.shell.height == 50.0  # 默认值
         assert restored.shell.line_width == pytest.approx(0.6)
-        assert restored.shell.wall_thickness == pytest.approx(0.6)
+        assert restored.shell.wall_thickness == pytest.approx(1.2)
 
     def test_deserialize_partial_data(self):
         """测试反序列化部分数据"""
@@ -566,6 +575,20 @@ class TestSettingsManagerWithQt:
         expected_dir = expected_root / SettingsManager.ORGANIZATION / SettingsManager.APPLICATION
         assert sm._config_dir == expected_dir
         assert sm._params_file == expected_dir / "slice_params.json"
+
+    def test_source_tree_config_is_not_auto_migrated(self, qapp, temp_config_dir, monkeypatch):
+        from src.business.settings_manager import SettingsManager
+
+        expected_root = Path(temp_config_dir) / "app_config_root"
+        monkeypatch.setattr(
+            "src.business.settings_manager.QStandardPaths.writableLocation",
+            lambda *_: str(expected_root)
+        )
+        monkeypatch.setattr("src.business.settings_manager.sys.frozen", False, raising=False)
+
+        sm = SettingsManager()
+
+        assert sm._legacy_params_files == []
 
     def test_get_config_dir_returns_resolved_config_path(self, qapp, temp_config_dir):
         from src.business.settings_manager import SettingsManager

@@ -74,12 +74,10 @@ class SettingsManager:
     def _get_legacy_params_files(self) -> List[Path]:
         """返回旧版本可能使用过的参数文件位置。
 
-        旧逻辑把参数固定写到项目/应用目录下的 config 目录。
-        新版本优先使用用户配置目录，但仍尝试迁移旧文件。
+        旧逻辑把参数固定写到应用目录下的 config 目录。
+        新版本优先使用用户配置目录；打包后仍尝试迁移旧安装目录文件。
         """
-        legacy_dirs = [
-            Path(__file__).resolve().parent.parent.parent / "config",
-        ]
+        legacy_dirs = []
         if getattr(sys, "frozen", False):
             legacy_dirs.append(Path(sys.executable).resolve().parent / "config")
 

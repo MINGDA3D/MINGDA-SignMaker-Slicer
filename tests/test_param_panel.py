@@ -394,14 +394,67 @@ def test_width_line_defaults_to_twice_layer_height_and_updates_with_layer_height
     assert panel.width_line_spin.value() == pytest.approx(0.8)
 
 
-def test_u_shape_and_bottom_face_default_layer_values(qapp):
+def test_vector_defaults_match_requested_values(qapp):
     panel = ParamPanel()
     params = panel.get_params()
 
-    assert panel.u_arc_height_spin.value() == 10
-    assert panel.bottom_face_thickness.value() == 2
-    assert params.shell.u_arc_height == pytest.approx(3.0)
-    assert params.bottom_face.thickness == pytest.approx(0.6)
+    assert panel.height_spin.value() == pytest.approx(50.0)
+    assert panel.layer_height_spin.value() == pytest.approx(0.3)
+    assert panel.width_line_spin.value() == pytest.approx(0.6)
+    assert panel.wall_count_spin.value() == 2
+    assert panel.edge_type_combo.currentData() == EdgeType.STRAIGHT
+    assert panel.bevel_params_widget.isHidden() is True
+    assert panel.panel_step_enabled.isChecked() is False
+    assert panel.baseplate_step_enabled.isChecked() is False
+    assert panel.skirt_enabled.isChecked() is False
+    assert panel.connected_enabled.isChecked() is False
+    assert panel.bevel_width_spin.value() == pytest.approx(5.0)
+    assert panel.baseplate_spin.value() == 30
+    assert panel.panel_thickness_spin.value() == 30
+    assert panel.wrap_width.value() == pytest.approx(3.0)
+    assert panel.wrap_height.value() == pytest.approx(3.0)
+    assert panel.outline_width.value() == pytest.approx(3.0)
+    assert panel.outline_height.value() == pytest.approx(3.0)
+    assert panel.outline_offset.value() == pytest.approx(0.0)
+    assert panel.panel_step_height.value() == pytest.approx(47.0)
+    assert panel.baseplate_step_height.value() == 10
+    assert panel.skirt_height.value() == pytest.approx(0.3)
+    assert panel.skirt_offset.value() == pytest.approx(0.12)
+    assert panel.top_face_thickness.value() == 8
+    assert panel.u_arc_height_spin.value() == 20
+    assert panel.bottom_face_thickness.value() == 3
+    assert panel.bottom_face_screw_hole_diameter.value() == pytest.approx(5.0)
+    assert panel.connected_type.currentData() == "triangle"
+    assert panel.connected_width.value() == pytest.approx(5.0)
+    assert panel.connected_height.value() == 15
+    assert panel.connected_base_height.value() == 15
+    assert panel.connected_support_offset.value() == pytest.approx(2.5)
+    assert panel.light_slot_width.value() == pytest.approx(7.8)
+    assert panel.light_slot_depth.value() == 20
+    assert panel.light_slot_floor_layers.value() == 5
+    assert panel.light_slot_wall_gap.value() == pytest.approx(0.0)
+
+    assert params.shell.height == pytest.approx(50.0)
+    assert params.shell.wall_count == 2
+    assert params.shell.wall_thickness == pytest.approx(1.2)
+    assert params.shell.edge_type == EdgeType.STRAIGHT
+    assert params.step.panel_step_enabled is False
+    assert params.step.baseplate_step_enabled is False
+    assert params.skirt.enabled is False
+    assert params.connected.enabled is False
+    assert params.shell.baseplate_thickness == pytest.approx(9.0)
+    assert params.shell.panel_thickness == pytest.approx(9.0)
+    assert params.shell.u_arc_height == pytest.approx(6.0)
+    assert params.step.panel_step_height == pytest.approx(47.0)
+    assert params.step.baseplate_step_height == pytest.approx(3.0)
+    assert params.top_face.thickness == pytest.approx(2.4)
+    assert params.bottom_face.thickness == pytest.approx(0.9)
+    assert params.bottom_face.screw_hole_diameter == pytest.approx(5.0)
+    assert params.connected.height == pytest.approx(4.5)
+    assert params.connected.base_height == pytest.approx(4.5)
+    assert params.light_slot.width == pytest.approx(7.8)
+    assert params.light_slot.depth == pytest.approx(6.0)
+    assert params.light_slot.floor_layers == 5
 
 
 def test_width_line_can_be_manually_overridden_and_layer_height_change_recomputes_it(qapp):
