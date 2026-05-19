@@ -106,7 +106,7 @@ class GCodeWriter:
             self.current_layer_height = layer.layer_height
             lines.extend(self._write_layer(layer, is_first=(layer_index == 0)))
 
-        lines.extend(self._write_footer())
+        lines.extend(self._write_footer(result))
         return lines
 
     @classmethod
@@ -309,6 +309,335 @@ class GCodeWriter:
             "",
         ]
 
+    def _write_orca_config_block(self, result: SliceResult) -> List[str]:
+        config_entries = self._orca_config_entries(result)
+        lines = ["; CONFIG_BLOCK_START"]
+        lines.extend(
+            f"; {key} = {self._format_config_value(value)}"
+            for key, value in config_entries
+        )
+        lines.append("; CONFIG_BLOCK_END")
+        return lines
+
+    def _orca_config_entries(self, result: SliceResult) -> List[tuple[str, object]]:
+        layer_height = self._config_layer_height(result)
+        line_width = self._config_line_width(result, layer_height)
+        wall_loops = self._config_wall_loops()
+        top_layers = self._config_feature_layers(
+            self._slice_params.top_face.thickness
+            if self._slice_params and self._slice_params.top_face.enabled
+            else 0.0,
+            layer_height,
+        )
+        bottom_layers = self._config_feature_layers(
+            self._slice_params.bottom_face.thickness
+            if self._slice_params and self._slice_params.bottom_face.enabled
+            else 0.0,
+            layer_height,
+        )
+        skirt_loops = 1 if self._slice_params and self._slice_params.skirt.enabled else 0
+        skirt_height = self._config_feature_layers(
+            self._slice_params.skirt.height
+            if self._slice_params and self._slice_params.skirt.enabled
+            else 0.0,
+            layer_height,
+        )
+        nozzle_diameter = max(self.profile.nozzle_diameter, 0.005)
+        filament_diameter = max(self.profile.filament_diameter, 1.0)
+        printable_area = self._config_printable_area()
+        filament_used_mm = max(result.estimated_filament, 0.0) * 1000.0
+        filament_weight = self._estimate_filament_weight_g(result, filament_diameter)
+
+        return [
+            ("printer_technology", "FFF"),
+            ("printable_area", printable_area),
+            ("bed_shape", printable_area),
+            ("printable_height", self.profile.bed_height),
+            ("printer_model", self.profile.name or "Klipper"),
+            ("printer_notes", APP_NAME),
+            ("printer_settings_id", self.profile.name or "Klipper"),
+            ("print_settings_id", APP_NAME),
+            ("filament_settings_id", "Generic PLA"),
+            ("physical_printer_preset", self.profile.name or "Klipper"),
+            ("printer_preset", self.profile.name or "Klipper"),
+            ("print_preset", APP_NAME),
+            ("filament_preset", "Generic PLA"),
+            ("gcode_flavor", "klipper"),
+            ("machine_start_gcode", self._config_script_value(self.profile.start_gcode)),
+            ("machine_end_gcode", self._config_script_value(self.profile.end_gcode)),
+            ("machine_pause_gcode", "PAUSE"),
+            ("before_layer_change_gcode", ""),
+            ("layer_change_gcode", ""),
+            ("change_filament_gcode", self.profile.color_change_command_template),
+            ("layer_height", layer_height),
+            ("initial_layer_print_height", layer_height),
+            ("first_layer_height", layer_height),
+            ("line_width", line_width),
+            ("initial_layer_line_width", line_width),
+            ("inner_wall_line_width", line_width),
+            ("outer_wall_line_width", line_width),
+            ("top_surface_line_width", line_width),
+            ("sparse_infill_line_width", line_width),
+            ("internal_solid_infill_line_width", line_width),
+            ("support_line_width", line_width),
+            ("wall_loops", wall_loops),
+            ("top_shell_layers", top_layers),
+            ("top_shell_thickness", top_layers * layer_height),
+            ("bottom_shell_layers", bottom_layers),
+            ("bottom_shell_thickness", bottom_layers * layer_height),
+            ("nozzle_diameter", nozzle_diameter),
+            ("nozzle_type", "undefine"),
+            ("nozzle_height", 4.0),
+            ("default_nozzle_volume_type", "Standard"),
+            ("extruder_type", "Direct Drive"),
+            ("filament_diameter", filament_diameter),
+            ("filament_density", DEFAULT_FILAMENT_DENSITY),
+            ("filament_cost", 20.0),
+            ("filament_type", "PLA"),
+            ("filament_notes", ""),
+            ("filament_flow_ratio", 1.0),
+            ("filament_max_volumetric_speed", 0.0),
+            ("filament_retraction_length", self.profile.retract_length),
+            ("filament_retraction_speed", self.profile.retract_speed),
+            ("filament_deretraction_speed", self.profile.retract_speed),
+            ("filament_retract_before_wipe", "70%"),
+            ("filament_retraction_minimum_travel", 1.0),
+            ("filament_retract_when_changing_layer", 0),
+            ("filament_wipe", 0),
+            ("filament_wipe_distance", 2.0),
+            ("filament_z_hop", self.profile.z_hop_short),
+            ("nozzle_temperature_initial_layer", self._first_layer_nozzle_temp()),
+            ("nozzle_temperature", self._other_layer_nozzle_temp()),
+            ("nozzle_temperature_range_low", max(self._other_layer_nozzle_temp() - 20, 0)),
+            ("nozzle_temperature_range_high", self._other_layer_nozzle_temp() + 20),
+            ("first_layer_temperature", self._first_layer_nozzle_temp()),
+            ("first_layer_bed_temperature", self._first_layer_bed_temp()),
+            ("chamber_temperature", 0),
+            ("overall_chamber_temperature", 0),
+            ("fan_min_speed", self._first_layer_fan_percent()),
+            ("fan_max_speed", self._other_layer_fan_percent()),
+            ("full_fan_speed_layer", 0),
+            ("close_fan_the_first_x_layers", 1),
+            ("fan_cooling_layer_time", 60),
+            ("slow_down_for_layer_cooling", 1),
+            ("slow_down_min_speed", 10),
+            ("reduce_fan_stop_start_freq", 0),
+            ("dont_slow_down_outer_wall", 0),
+            ("initial_layer_speed", self._first_layer_speed()),
+            ("initial_layer_infill_speed", self._first_layer_speed()),
+            ("outer_wall_speed", max(self._print_speed() * 0.8, 1.0)),
+            ("inner_wall_speed", max(self._print_speed() * 0.8, 1.0)),
+            ("small_perimeter_speed", max(self._print_speed() * 0.6, 1.0)),
+            ("small_perimeter_threshold", 0),
+            ("sparse_infill_speed", self._print_speed()),
+            ("internal_solid_infill_speed", self._print_speed()),
+            ("top_surface_speed", max(self._print_speed() * 0.6, 1.0)),
+            ("bridge_speed", max(self._print_speed() * 0.5, 1.0)),
+            ("gap_infill_speed", max(self._print_speed() * 0.6, 1.0)),
+            ("support_speed", max(self._print_speed() * 0.8, 1.0)),
+            ("support_interface_speed", max(self._print_speed() * 0.8, 1.0)),
+            ("travel_speed", self._travel_speed()),
+            ("travel_speed_z", 0),
+            ("default_acceleration", 500),
+            ("initial_layer_acceleration", 500),
+            ("outer_wall_acceleration", 500),
+            ("inner_wall_acceleration", 500),
+            ("sparse_infill_acceleration", 500),
+            ("internal_solid_infill_acceleration", 500),
+            ("top_surface_acceleration", 500),
+            ("bridge_acceleration", 500),
+            ("travel_acceleration", 500),
+            ("machine_max_acceleration_x", 500),
+            ("machine_max_acceleration_y", 500),
+            ("machine_max_acceleration_z", 100),
+            ("machine_max_acceleration_e", 5000),
+            ("machine_max_speed_x", 500),
+            ("machine_max_speed_y", 500),
+            ("machine_max_speed_z", 20),
+            ("machine_max_speed_e", 60),
+            ("machine_max_jerk_x", 10),
+            ("machine_max_jerk_y", 10),
+            ("machine_max_jerk_z", 0.4),
+            ("machine_max_jerk_e", 5),
+            ("retraction_length", self.profile.retract_length),
+            ("retraction_speed", self.profile.retract_speed),
+            ("deretraction_speed", self.profile.retract_speed),
+            ("retraction_minimum_travel", 1.0),
+            ("retract_when_changing_layer", 0),
+            ("wipe", 0),
+            ("wipe_distance", 2.0),
+            ("retract_before_wipe", "70%"),
+            ("z_hop", self.profile.z_hop_short),
+            ("z_hop_types", "Normal Lift"),
+            ("use_firmware_retraction", 0),
+            ("extruder_clearance_radius", 70),
+            ("extruder_clearance_height_to_rod", 30),
+            ("extruder_clearance_height_to_lid", 90),
+            ("sparse_infill_density", "15%"),
+            ("sparse_infill_pattern", "rectilinear"),
+            ("sparse_infill_angle", 45),
+            ("top_surface_pattern", "monotonic"),
+            ("bottom_surface_pattern", "monotonic"),
+            ("internal_solid_infill_pattern", "rectilinear"),
+            ("fill_angle", 45),
+            ("infill_direction", 45),
+            ("infill_wall_overlap", "15%"),
+            ("detect_thin_wall", 0),
+            ("xy_hole_compensation", 0),
+            ("xy_contour_compensation", 0),
+            ("elefant_foot_compensation", 0),
+            ("elefant_foot_compensation_layers", 1),
+            ("elefant_foot_layers_density", "100%"),
+            ("seam_position", "aligned"),
+            ("seam_slope_type", "none"),
+            ("role_based_wipe_speed", 0),
+            ("perimeter_generator", "classic"),
+            ("wall_distribution_count", 1),
+            ("wall_sequence", "inner wall/outer wall"),
+            ("wall_direction", "ccw"),
+            ("ensure_vertical_shell_thickness", "ensure_all"),
+            ("slice_closing_radius", 0.049),
+            ("slicing_mode", "regular"),
+            ("bridge_flow", 1.0),
+            ("internal_bridge_flow", 1.0),
+            ("bridge_angle", 0),
+            ("max_bridge_length", 0),
+            ("brim_type", "no_brim"),
+            ("brim_width", 0),
+            ("brim_object_gap", 0),
+            ("brim_ears", 0),
+            ("skirt_type", "combined"),
+            ("skirt_loops", skirt_loops),
+            ("skirt_height", skirt_height),
+            ("skirt_distance", 5.0),
+            ("draft_shield", "disabled"),
+            ("spiral_mode", 0),
+            ("fuzzy_skin", "none"),
+            ("fuzzy_skin_thickness", 0.1),
+            ("fuzzy_skin_point_distance", 0.3),
+            ("fuzzy_skin_first_layer", 0),
+            ("fuzzy_skin_mode", "displacement"),
+            ("fuzzy_skin_noise_type", "classic"),
+            ("ironing_type", "no ironing"),
+            ("ironing_flow", "10%"),
+            ("ironing_spacing", 0.1),
+            ("ironing_speed", 15),
+            ("ironing_angle", 0),
+            ("ironing_pattern", "rectilinear"),
+            ("enable_support", 0),
+            ("support_type", "normal(auto)"),
+            ("support_style", "grid"),
+            ("support_threshold_angle", 30),
+            ("support_angle", 0),
+            ("support_top_z_distance", 0.2),
+            ("support_bottom_z_distance", 0.2),
+            ("support_object_xy_distance", 0.35),
+            ("support_on_build_plate_only", 0),
+            ("support_base_pattern", "rectilinear"),
+            ("enable_support_interface", 0),
+            ("support_interface_pattern", "auto"),
+            ("support_interface_spacing", 0.5),
+            ("support_filament", 0),
+            ("support_interface_filament", 0),
+            ("flush_multiplier", 1.0),
+            ("flush_into_infill", 0),
+            ("flush_into_objects", 0),
+            ("flush_into_support", 0),
+            ("wipe_tower", 0),
+            ("timelapse_type", "0"),
+            ("print_sequence", "by layer"),
+            ("complete_objects", 0),
+            ("avoid_crossing_wall", 0),
+            ("avoid_crossing_wall_max_detour", 0),
+            ("arc_fitting", 0),
+            ("enable_arc_fitting", 0),
+            ("resolution", 0),
+            ("used_filament", filament_used_mm),
+            ("total_weight", filament_weight),
+            ("total_cost", 0),
+            ("print_time_sec", str(int(round(result.estimated_time)))),
+            ("normal_print_time", self._format_duration(result.estimated_time)),
+            ("silent_print_time", self._format_duration(result.estimated_time)),
+        ]
+
+    def _config_layer_height(self, result: SliceResult) -> float:
+        if self._slice_params is not None and self._slice_params.shell.layer_height > 0:
+            return self._slice_params.shell.layer_height
+        if result.layers and result.layers[0].layer_height > 0:
+            return result.layers[0].layer_height
+        return 0.3
+
+    def _config_line_width(self, result: SliceResult, layer_height: float) -> float:
+        if self._slice_params is not None and self._slice_params.shell.line_width > 0:
+            return self._slice_params.shell.line_width
+
+        for layer in result.layers:
+            for path in layer.paths:
+                if path.line_width > 0:
+                    return path.line_width
+
+        return max(layer_height * 2.0, self.profile.nozzle_diameter)
+
+    def _config_wall_loops(self) -> int:
+        if self._slice_params is not None:
+            return max(1, int(self._slice_params.shell.wall_count))
+        return 2
+
+    @staticmethod
+    def _config_feature_layers(height: float, layer_height: float) -> int:
+        if height <= 0 or layer_height <= 0:
+            return 0
+        return max(1, int(math.ceil(height / layer_height)))
+
+    def _config_printable_area(self) -> str:
+        width = max(self.profile.bed_width, 1.0)
+        depth = max(self.profile.bed_depth, 1.0)
+        return (
+            "0x0,"
+            f"{self._format_config_value(width)}x0,"
+            f"{self._format_config_value(width)}x{self._format_config_value(depth)},"
+            f"0x{self._format_config_value(depth)}"
+        )
+
+    @staticmethod
+    def _format_config_value(value: object) -> str:
+        if isinstance(value, bool):
+            return "1" if value else "0"
+        if isinstance(value, int):
+            return str(value)
+        if isinstance(value, float):
+            formatted = f"{value:.4f}".rstrip("0").rstrip(".")
+            return formatted or "0"
+        return str(value)
+
+    @staticmethod
+    def _config_script_value(script: str) -> str:
+        return (
+            script.strip()
+            .replace("\\", "\\\\")
+            .replace("\r\n", "\\n")
+            .replace("\n", "\\n")
+            .replace("\r", "\\n")
+        )
+
+    @staticmethod
+    def _format_duration(seconds: float) -> str:
+        total_seconds = max(0, int(round(seconds)))
+        hours = total_seconds // 3600
+        minutes = (total_seconds % 3600) // 60
+        remaining_seconds = total_seconds % 60
+        return f"{hours}h {minutes}m {remaining_seconds}s"
+
+    @staticmethod
+    def _estimate_filament_weight_g(
+        result: SliceResult,
+        filament_diameter: float,
+    ) -> float:
+        length_mm = max(result.estimated_filament, 0.0) * 1000.0
+        filament_area = math.pi * (filament_diameter / 2.0) ** 2
+        volume_mm3 = length_mm * filament_area
+        return volume_mm3 * DEFAULT_FILAMENT_DENSITY / 1000.0
+
     def _write_thumbnail_blocks(self, contours: Optional[List[Contour]]) -> List[str]:
         if not contours:
             return []
@@ -500,7 +829,7 @@ class GCodeWriter:
 
         return lines
 
-    def _write_footer(self) -> List[str]:
+    def _write_footer(self, result: SliceResult) -> List[str]:
         lines = [
             "",
             "; --- End sequence ---",
@@ -524,9 +853,15 @@ class GCodeWriter:
                 "M140 S0 ; Turn off bed",
                 "M84 ; Disable motors",
                 "",
-                "; === End of file ===",
+                "; --- Print statistics ---",
+                f"; total filament used [mm] = {self._format_config_value(result.estimated_filament * 1000.0)}",
+                f"; total layers count = {result.total_layers}",
+                f"; estimated printing time (normal mode) = {self._format_duration(result.estimated_time)}",
+                "",
             ]
         )
+        lines.extend(self._write_orca_config_block(result))
+        lines.extend(["", "; === End of file ==="])
         return lines
 
     def _write_script_block(

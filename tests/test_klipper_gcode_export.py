@@ -156,6 +156,12 @@ def _extract_thumbnail_blocks(lines: list[str]) -> list[dict[str, str | int]]:
     return blocks
 
 
+def _extract_config_block(lines: list[str]) -> list[str]:
+    start = lines.index("; CONFIG_BLOCK_START")
+    end = lines.index("; CONFIG_BLOCK_END")
+    return lines[start + 1:end]
+
+
 def _first_print_feedrate_for_role(lines: list[str], role: str) -> int:
     for index, line in enumerate(lines):
         if not line.startswith(f"; {role} path"):
@@ -243,11 +249,68 @@ def test_single_color_gcode_uses_relative_extrusion_without_tool_macros():
     )
     assert "; HEADER_BLOCK_START" in lines
     assert "; HEADER_BLOCK_END" in lines
+    assert "; CONFIG_BLOCK_START" in lines
+    assert "; CONFIG_BLOCK_END" in lines
     assert any(line.startswith("; total layer number: 1") for line in lines)
     assert any(line.startswith("; filament_density: 1.24") for line in lines)
     assert any(line.startswith("; filament_diameter: 1.75") for line in lines)
     assert any(line.startswith("; max_z_height: 0.30") for line in lines)
+    config_lines = _extract_config_block(lines)
+    config_pairs = [line for line in config_lines if line.startswith("; ") and " = " in line]
+    assert len(config_pairs) >= 80
+    assert "; layer_height = 0.3" in config_lines
+    assert "; first_layer_bed_temperature = 60" in config_lines
+    assert "; gcode_flavor = klipper" in config_lines
     assert macro_lines == []
+
+
+def test_orca_config_block_maps_current_machine_and_print_settings():
+    params = SliceParams()
+    params.shell.layer_height = 0.4
+    params.shell.line_width = 1.1
+    params.shell.wall_count = 3
+    params.gcode.first_layer_nozzle_temp = 235
+    params.gcode.other_layer_nozzle_temp = 220
+    params.gcode.first_layer_bed_temp = 65
+    params.speed.first_layer_speed = 18.0
+    params.speed.print_speed = 54.0
+    params.speed.travel_speed = 160.0
+    profile = PrinterProfile(
+        name="MINGDA Test",
+        bed_width=900.0,
+        bed_depth=1300.0,
+        bed_height=120.0,
+        nozzle_diameter=1.0,
+        filament_diameter=2.85,
+        retract_length=1.6,
+        retract_speed=35.0,
+        start_gcode="START_PRINT\nG28",
+        end_gcode="END_PRINT",
+    )
+
+    lines = GCodeWriter(params.gcode).generate(
+        _build_result([0.0], layer_height=0.4),
+        slice_params=params,
+        printer_profile=profile,
+    )
+
+    config_lines = _extract_config_block(lines)
+
+    assert lines.index("; CONFIG_BLOCK_START") > lines.index("; --- Print statistics ---")
+    assert "; printable_area = 0x0,900x0,900x1300,0x1300" in config_lines
+    assert "; printable_height = 120" in config_lines
+    assert "; layer_height = 0.4" in config_lines
+    assert "; initial_layer_print_height = 0.4" in config_lines
+    assert "; line_width = 1.1" in config_lines
+    assert "; wall_loops = 3" in config_lines
+    assert "; nozzle_diameter = 1" in config_lines
+    assert "; filament_diameter = 2.85" in config_lines
+    assert "; first_layer_temperature = 235" in config_lines
+    assert "; first_layer_bed_temperature = 65" in config_lines
+    assert "; initial_layer_speed = 18" in config_lines
+    assert "; travel_speed = 160" in config_lines
+    assert "; retraction_length = 1.6" in config_lines
+    assert "; machine_start_gcode = START_PRINT\\nG28" in config_lines
 
 
 def test_start_and_end_gcode_templates_expand_using_current_print_settings():
