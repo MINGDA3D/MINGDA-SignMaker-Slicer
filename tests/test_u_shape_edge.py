@@ -79,20 +79,21 @@ def _u_shape_params() -> SliceParams:
     return params
 
 
-def test_u_shape_offset_uses_printable_arc_then_straight():
+def test_u_shape_offset_uses_curved_arc_then_straight():
     params = _u_shape_params()
     params.shell.layer_height = 0.3
     params.shell.line_width = 0.6
 
     assert calculate_u_shape_offset_at_z(0.0, params.shell) == pytest.approx(0.0)
-    assert calculate_u_shape_offset_at_z(5.0, params.shell) == pytest.approx(5.0)
-    assert calculate_u_shape_offset_at_z(8.0, params.shell) == pytest.approx(5.0)
+    assert calculate_u_shape_offset_at_z(5.0, params.shell) == pytest.approx(3.75)
+    assert calculate_u_shape_offset_at_z(10.0, params.shell) == pytest.approx(5.0)
     mid_offset = calculate_u_shape_offset_at_z(2.5, params.shell)
-    assert mid_offset == pytest.approx(5.0 * 0.5)
+    assert mid_offset == pytest.approx(2.1875)
     assert mid_offset < 5.0
+    assert mid_offset < 5.0 * 0.5
 
 
-def test_u_shape_offset_limits_each_layer_to_half_line_width():
+def test_u_shape_offset_keeps_layer_overhang_printable_with_default_line_width():
     params = _u_shape_params()
     params.shell.layer_height = 0.3
     params.shell.line_width = 0.6
@@ -110,10 +111,10 @@ def test_u_shape_offset_limits_each_layer_to_half_line_width():
         assert offset - previous_offset <= max_layer_overhang + 1e-6
         previous_offset = offset
 
-    assert 0.0 < first_layer_offset <= max_layer_overhang
+    assert 0.0 < first_layer_offset < max_layer_overhang
 
 
-def test_u_shape_offset_extends_transition_when_half_line_width_requires_it():
+def test_u_shape_offset_falls_back_to_safe_slope_when_curve_needs_more_height():
     params = _u_shape_params()
     params.shell.layer_height = 1.0
     params.shell.line_width = 1.0

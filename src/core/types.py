@@ -1210,26 +1210,27 @@ def calculate_u_shape_offset_at_z(
     shell: ShellParams,
     flat_height: float = 0.0,
 ) -> float:
-    """Return the outward U-shape contour offset at the given height.
+    """Return the outward curved U-shape contour offset at the given height.
 
     ``flat_height`` is the bottom section that should stay vertical before the
-    U profile starts. A mathematical quarter circle in the original direction
-    starts with an infinite horizontal step at layer granularity, which can
-    leave unsupported gaps. Keep the same outward U direction, but limit each
-    layer's horizontal overhang so at least half of the line width remains
-    supported by the previous layer.
+    U profile starts. The preferred profile is a smooth curve, but it is only
+    used when the line width and available shell height can support it. If a
+    curved transition would exceed half-line-width overhang per layer, the
+    function falls back to the safest printable slope instead of forcing
+    unsupported material.
     """
     arc_height = max(0.0, shell.u_arc_height)
     if arc_height <= 0.0:
         return 0.0
 
     z = max(0.0, min(z, shell.height))
-    arc_z = z - max(0.0, flat_height)
+    flat_height = max(0.0, flat_height)
+    arc_z = z - flat_height
     if arc_z <= 0.0:
         return 0.0
-    progress = min(1.0, arc_z / arc_height)
-    target_offset = arc_height * (1.0 - ((1.0 - progress) ** 2.0))
 
+    transition_height = arc_height
+    safe_slope = 0.0
     layer_height = max(0.0, shell.layer_height)
     if layer_height > 0.0:
         line_width = resolve_shell_line_width(
@@ -1239,9 +1240,23 @@ def calculate_u_shape_offset_at_z(
             wall_count=shell.wall_count,
         )
         max_layer_overhang = max(0.0, line_width * 0.5)
-        if max_layer_overhang > 0.0:
-            printable_offset_cap = max_layer_overhang * (arc_z / layer_height)
-            target_offset = min(target_offset, printable_offset_cap)
+        safe_slope = max_layer_overhang / layer_height
+
+    if safe_slope > 0.0:
+        available_height = max(0.0, shell.height - flat_height)
+        min_linear_height = arc_height / safe_slope
+        preferred_curve_power = 2.0
+
+        if available_height + 1e-9 <= min_linear_height:
+            return min(arc_height, arc_z * safe_slope)
+
+        curve_power = min(preferred_curve_power, available_height / min_linear_height)
+        transition_height = max(arc_height, min_linear_height * curve_power)
+    else:
+        curve_power = 2.0
+
+    progress = min(1.0, arc_z / transition_height)
+    target_offset = arc_height * (1.0 - ((1.0 - progress) ** curve_power))
 
     return min(arc_height, target_offset)
 
