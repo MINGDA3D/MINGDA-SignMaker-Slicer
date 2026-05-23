@@ -1189,6 +1189,11 @@ Error code: {code}</source>
         <translation>높이는 레이어 수 * 레이어 높이로 계산됩니다.</translation>
     </message>
     <message>
+        <location filename="../src/ui/param_panel.py" line="354"/>
+        <source>layers</source>
+        <translation>레이어</translation>
+    </message>
+    <message>
         <location filename="../src/ui/param_panel.py" line="425"/>
         <source>Shell Settings</source>
         <translation>쉘 설정</translation>
@@ -1282,6 +1287,11 @@ Error code: {code}</source>
         <location filename="../src/ui/param_panel.py" line="556"/>
         <source>Arc Height:</source>
         <translation>호 높이:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="561"/>
+        <source>Bottom Layers:</source>
+        <translation>바닥 레이어 수:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="545"/>

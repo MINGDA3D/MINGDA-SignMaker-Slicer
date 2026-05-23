@@ -677,6 +677,7 @@ class ParamPanel(QWidget):
         )
         # 与 Baseplate Step (Bottom) 互斥
         self.bottom_face_enabled.stateChanged.connect(self._on_bottom_face_toggled)
+        self._sync_bottom_face_availability()
 
         return group
 
@@ -707,8 +708,29 @@ class ParamPanel(QWidget):
                 self.light_slot_enabled.blockSignals(False)
                 self._on_param_changed()
 
+    def _is_u_shape_edge_selected(self) -> bool:
+        return (
+            hasattr(self, "edge_type_combo")
+            and self.edge_type_combo.currentData() == EdgeType.U_SHAPED
+        )
+
+    def _sync_bottom_face_availability(self) -> None:
+        """Apply edge-type restrictions to explicit bottom-face controls."""
+        if not hasattr(self, "bottom_face_enabled"):
+            return
+
+        is_u_shape = self._is_u_shape_edge_selected()
+        if is_u_shape and self.bottom_face_enabled.isChecked():
+            self.bottom_face_enabled.blockSignals(True)
+            self.bottom_face_enabled.setChecked(False)
+            self.bottom_face_enabled.blockSignals(False)
+
+        self.bottom_face_enabled.setEnabled(not is_u_shape)
+        self._toggle_bottom_face_controls(self.bottom_face_enabled.isChecked())
+
     def _toggle_bottom_face_controls(self, enabled: bool):
         """切换底面封闭控件的启用状态"""
+        enabled = enabled and not self._is_u_shape_edge_selected()
         self.bottom_face_thickness.setEnabled(enabled)
         self.bottom_face_screw_hole_diameter.setEnabled(enabled)
 
@@ -2338,7 +2360,7 @@ class ParamPanel(QWidget):
         self.bevel_params_widget.setVisible(edge_type == EdgeType.BEVELED)
         self.u_shape_params_widget.setVisible(edge_type == EdgeType.U_SHAPED)
         self.custom_edge_widget.setVisible(edge_type == EdgeType.CUSTOM)
-        self._toggle_bottom_face_controls(self.bottom_face_enabled.isChecked())
+        self._sync_bottom_face_availability()
 
         # 如果切换到异形边且没有选择预设，自动加载默认预设
         if edge_type == EdgeType.CUSTOM and self._current_profile is None:
@@ -2609,7 +2631,10 @@ class ParamPanel(QWidget):
         apply_printer_profile_to_params(self._params, self._profile_from_form())
 
         # 底面封闭参数
-        self._params.bottom_face.enabled = self.bottom_face_enabled.isChecked()
+        self._params.bottom_face.enabled = (
+            self.bottom_face_enabled.isChecked()
+            and self._params.shell.edge_type != EdgeType.U_SHAPED
+        )
         self._params.bottom_face.thickness = self._layers_to_mm(self.bottom_face_thickness.value())
         self._params.bottom_face.screw_hole_diameter = self.bottom_face_screw_hole_diameter.value()
 
@@ -2890,7 +2915,7 @@ class ParamPanel(QWidget):
         self._toggle_baseplate_step_controls(baseplate_step_enabled)
         self._toggle_color_change_controls(params.color.enabled)
         self._toggle_prime_tower_controls(prime_tower_enabled)
-        self._toggle_bottom_face_controls(bottom_face_enabled)
+        self._sync_bottom_face_availability()
         self._toggle_light_slot_controls(light_slot_enabled)
         self._toggle_top_face_controls(top_face_enabled)
         self._sync_layer_based_controls()

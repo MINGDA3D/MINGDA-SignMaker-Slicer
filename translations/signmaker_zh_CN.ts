@@ -1189,6 +1189,11 @@ Error code: {code}</source>
         <translation>高度由层数 * 层高计算得出。</translation>
     </message>
     <message>
+        <location filename="../src/ui/param_panel.py" line="354"/>
+        <source>layers</source>
+        <translation>层</translation>
+    </message>
+    <message>
         <location filename="../src/ui/param_panel.py" line="425"/>
         <source>Shell Settings</source>
         <translation>字壳工艺</translation>
@@ -1282,6 +1287,11 @@ Error code: {code}</source>
         <location filename="../src/ui/param_panel.py" line="556"/>
         <source>Arc Height:</source>
         <translation>圆弧高度:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="561"/>
+        <source>Bottom Layers:</source>
+        <translation>底部层数:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="545"/>

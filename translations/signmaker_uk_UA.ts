@@ -1189,6 +1189,11 @@ Error code: {code}</source>
         <translation>Висота обчислюється як кількість шарів * висота шару.</translation>
     </message>
     <message>
+        <location filename="../src/ui/param_panel.py" line="354"/>
+        <source>layers</source>
+        <translation>шарів</translation>
+    </message>
+    <message>
         <location filename="../src/ui/param_panel.py" line="425"/>
         <source>Shell Settings</source>
         <translation>Налаштування оболонки</translation>
@@ -1282,6 +1287,11 @@ Error code: {code}</source>
         <location filename="../src/ui/param_panel.py" line="556"/>
         <source>Arc Height:</source>
         <translation>Висота дуги:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="561"/>
+        <source>Bottom Layers:</source>
+        <translation>Шари дна:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="545"/>

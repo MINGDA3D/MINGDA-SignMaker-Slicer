@@ -1189,6 +1189,11 @@ Código de error: {code}</translation>
         <translation>La altura se calcula como número de capas * altura de capa.</translation>
     </message>
     <message>
+        <location filename="../src/ui/param_panel.py" line="354"/>
+        <source>layers</source>
+        <translation>capas</translation>
+    </message>
+    <message>
         <location filename="../src/ui/param_panel.py" line="425"/>
         <source>Shell Settings</source>
         <translation>Configuracion de carcasa</translation>
@@ -1282,6 +1287,11 @@ Código de error: {code}</translation>
         <location filename="../src/ui/param_panel.py" line="556"/>
         <source>Arc Height:</source>
         <translation>Altura del arco:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="561"/>
+        <source>Bottom Layers:</source>
+        <translation>Capas de fondo:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="545"/>

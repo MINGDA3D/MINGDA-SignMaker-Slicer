@@ -1189,6 +1189,11 @@ Code d&apos;erreur : {code}</translation>
         <translation>La hauteur est calculée par nombre de couches * hauteur de couche.</translation>
     </message>
     <message>
+        <location filename="../src/ui/param_panel.py" line="354"/>
+        <source>layers</source>
+        <translation>couches</translation>
+    </message>
+    <message>
         <location filename="../src/ui/param_panel.py" line="425"/>
         <source>Shell Settings</source>
         <translation>Paramètres de coque</translation>
@@ -1282,6 +1287,11 @@ Code d&apos;erreur : {code}</translation>
         <location filename="../src/ui/param_panel.py" line="556"/>
         <source>Arc Height:</source>
         <translation>Hauteur d&apos;arc :</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="561"/>
+        <source>Bottom Layers:</source>
+        <translation>Couches de fond :</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="545"/>

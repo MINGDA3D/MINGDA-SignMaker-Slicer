@@ -1189,6 +1189,11 @@ Código de erro: {code}</translation>
         <translation>A altura é calculada como número de camadas * altura da camada.</translation>
     </message>
     <message>
+        <location filename="../src/ui/param_panel.py" line="354"/>
+        <source>layers</source>
+        <translation>camadas</translation>
+    </message>
+    <message>
         <location filename="../src/ui/param_panel.py" line="425"/>
         <source>Shell Settings</source>
         <translation>Configuracoes de carcaca</translation>
@@ -1282,6 +1287,11 @@ Código de erro: {code}</translation>
         <location filename="../src/ui/param_panel.py" line="556"/>
         <source>Arc Height:</source>
         <translation>Altura do arco:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="561"/>
+        <source>Bottom Layers:</source>
+        <translation>Camadas do fundo:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="545"/>

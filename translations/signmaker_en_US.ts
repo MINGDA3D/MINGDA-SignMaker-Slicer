@@ -1189,6 +1189,11 @@ Error code: {code}</translation>
         <translation>Height is derived from layer count * layer height.</translation>
     </message>
     <message>
+        <location filename="../src/ui/param_panel.py" line="354"/>
+        <source>layers</source>
+        <translation>layers</translation>
+    </message>
+    <message>
         <location filename="../src/ui/param_panel.py" line="425"/>
         <source>Shell Settings</source>
         <translation>Shell Settings</translation>
@@ -1282,6 +1287,11 @@ Error code: {code}</translation>
         <location filename="../src/ui/param_panel.py" line="556"/>
         <source>Arc Height:</source>
         <translation>Arc Height:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="561"/>
+        <source>Bottom Layers:</source>
+        <translation>Bottom Layers:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="545"/>

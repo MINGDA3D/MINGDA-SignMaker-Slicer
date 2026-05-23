@@ -1189,6 +1189,11 @@ Hata kodu: {code}</translation>
         <translation>Yükseklik, katman sayısı * katman yüksekliği ile hesaplanır.</translation>
     </message>
     <message>
+        <location filename="../src/ui/param_panel.py" line="354"/>
+        <source>layers</source>
+        <translation>katman</translation>
+    </message>
+    <message>
         <location filename="../src/ui/param_panel.py" line="425"/>
         <source>Shell Settings</source>
         <translation>Kabuk Ayarlari</translation>
@@ -1282,6 +1287,11 @@ Hata kodu: {code}</translation>
         <location filename="../src/ui/param_panel.py" line="556"/>
         <source>Arc Height:</source>
         <translation>Yay Yuksekligi:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="561"/>
+        <source>Bottom Layers:</source>
+        <translation>Taban katmanları:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="545"/>

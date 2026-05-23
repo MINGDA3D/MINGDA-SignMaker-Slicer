@@ -1189,6 +1189,11 @@ Error code: {code}</source>
         <translation>يتم حساب الارتفاع من عدد الطبقات * ارتفاع الطبقة.</translation>
     </message>
     <message>
+        <location filename="../src/ui/param_panel.py" line="354"/>
+        <source>layers</source>
+        <translation>طبقات</translation>
+    </message>
+    <message>
         <location filename="../src/ui/param_panel.py" line="425"/>
         <source>Shell Settings</source>
         <translation>إعدادات الغلاف</translation>
@@ -1282,6 +1287,11 @@ Error code: {code}</source>
         <location filename="../src/ui/param_panel.py" line="556"/>
         <source>Arc Height:</source>
         <translation>ارتفاع القوس:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="561"/>
+        <source>Bottom Layers:</source>
+        <translation>طبقات القاع:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="545"/>
