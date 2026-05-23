@@ -39,6 +39,7 @@ from .types import (
     SliceParams,
     is_bottom_face_effective,
     resolve_bottom_face_thickness,
+    resolve_u_shape_profile_start_z,
 )
 from .path_offset import PathOffset
 from .stl import (
@@ -118,7 +119,7 @@ class STLWriter:
             if params.step.panel_step_enabled or params.step.baseplate_step_enabled:
                 panel_z = params.step.panel_step_height
                 baseplate_z = params.step.baseplate_step_height
-                u_flat_height = resolve_bottom_face_thickness(params)
+                u_flat_height = resolve_u_shape_profile_start_z(params.shell)
 
                 for c in contours:
                     if params.step.panel_step_enabled:
@@ -221,7 +222,7 @@ class STLWriter:
                                        temp_engine, params: SliceParams) -> List[Contour]:
         """在指定高度应用边缘轮廓变换，供 STL 附加特征与真实壁位对齐。"""
         transformed_contours = []
-        u_flat_height = resolve_bottom_face_thickness(params)
+        u_flat_height = resolve_u_shape_profile_start_z(params.shell)
         for contour in contours:
             transformed = temp_engine._apply_edge_profile(
                 contour,

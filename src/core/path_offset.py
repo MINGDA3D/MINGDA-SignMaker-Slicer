@@ -152,6 +152,91 @@ class PathOffset:
             print_order=contour.print_order,
         )
 
+    def offset_contour_outer_expand_holes_shrink(
+        self,
+        contour: Contour,
+        distance: float,
+        join_type: JoinType = JoinType.MITER,
+    ) -> Optional[Contour]:
+        """Offset a contour for U-shaped edges independent of path winding.
+
+        The desired geometry is always:
+        - outer loop expands outward
+        - hole loops shrink inward
+
+        Pyclipper's positive/negative offset direction depends on loop winding,
+        so this method picks the signed offset by comparing resulting areas.
+        """
+        distance = abs(distance)
+        outer_results = self._offset_path_by_area(
+            contour.outer,
+            distance,
+            expand=True,
+            join_type=join_type,
+        )
+        if not outer_results:
+            return None
+
+        new_outer = max(outer_results, key=lambda path: abs(path.area))
+
+        new_holes = []
+        for hole in contour.holes:
+            hole_results = self._offset_path_by_area(
+                hole,
+                distance,
+                expand=False,
+                join_type=join_type,
+            )
+            new_holes.extend(hole_results)
+
+        return Contour(
+            outer=new_outer,
+            holes=new_holes,
+            connected_frames=contour.connected_frames,
+            patterns=contour.patterns,
+            screw_hole_centers=[Point(point.x, point.y) for point in contour.screw_hole_centers],
+            name=contour.name,
+            asset_id=contour.asset_id,
+            asset_name=contour.asset_name,
+            group_id=contour.group_id,
+            start_point_index=contour.start_point_index,
+            print_order=contour.print_order,
+        )
+
+    def _offset_path_by_area(
+        self,
+        path: Path,
+        distance: float,
+        expand: bool,
+        join_type: JoinType,
+    ) -> List[Path]:
+        """Choose positive or negative offset by whether area grows or shrinks."""
+        original_area = abs(path.area)
+        candidates = []
+        for signed_distance in (distance, -distance):
+            results = self.offset(path, signed_distance, join_type)
+            if results:
+                candidates.append(results)
+
+        if not candidates:
+            return []
+
+        def total_area(paths: List[Path]) -> float:
+            return sum(abs(result.area) for result in paths)
+
+        if expand:
+            return max(candidates, key=total_area)
+
+        shrink_candidates = [
+            results
+            for results in candidates
+            if total_area(results) <= original_area + 1e-6
+        ]
+        if not shrink_candidates:
+            return []
+
+        return min(shrink_candidates, key=total_area)
+
     def multi_offset(self, path: Path, distances: List[float],
                      join_type: JoinType = JoinType.MITER) -> List[List[Path]]:
         """

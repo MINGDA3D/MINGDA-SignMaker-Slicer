@@ -92,7 +92,7 @@ class BevelGenerator:
         offset = calculate_u_shape_offset_at_z(z, params)
         if abs(offset) < 0.001:
             return contour
-        return self.path_offset.offset_contour(contour, offset)
+        return self.path_offset.offset_contour_outer_expand_holes_shrink(contour, offset)
 
     def _apply_custom_edge(self, contour: Contour, z: float,
                            params: ShellParams) -> Optional[Contour]:

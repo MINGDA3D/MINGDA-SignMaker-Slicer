@@ -422,6 +422,7 @@ def test_vector_defaults_match_requested_values(qapp):
     assert panel.skirt_offset.value() == pytest.approx(0.12)
     assert panel.top_face_thickness.value() == 8
     assert panel.u_arc_height_spin.value() == 20
+    assert panel.u_bottom_layers_spin.value() == 3
     assert panel.bottom_face_thickness.value() == 3
     assert panel.bottom_face_screw_hole_diameter.value() == pytest.approx(5.0)
     assert panel.connected_type.currentData() == "triangle"
@@ -445,6 +446,7 @@ def test_vector_defaults_match_requested_values(qapp):
     assert params.shell.baseplate_thickness == pytest.approx(9.0)
     assert params.shell.panel_thickness == pytest.approx(9.0)
     assert params.shell.u_arc_height == pytest.approx(6.0)
+    assert params.shell.u_bottom_layers == 3
     assert params.step.panel_step_height == pytest.approx(47.0)
     assert params.step.baseplate_step_height == pytest.approx(3.0)
     assert params.top_face.thickness == pytest.approx(2.4)
@@ -516,6 +518,7 @@ def test_u_shape_edge_roundtrips_arc_height_as_layer_count(qapp):
     params.shell.layer_height = 0.5
     params.shell.edge_type = EdgeType.U_SHAPED
     params.shell.u_arc_height = 2.5
+    params.shell.u_bottom_layers = 4
     params.bottom_face.enabled = False
     params.bottom_face.thickness = 1.5
 
@@ -524,11 +527,13 @@ def test_u_shape_edge_roundtrips_arc_height_as_layer_count(qapp):
 
     assert panel.u_shape_params_widget.isHidden() is False
     assert panel.u_arc_height_spin.value() == 5
+    assert panel.u_bottom_layers_spin.value() == 4
     assert panel.bottom_face_thickness.value() == 3
-    assert panel.bottom_face_thickness.isEnabled() is True
-    assert panel.bottom_face_screw_hole_diameter.isEnabled() is True
+    assert panel.bottom_face_thickness.isEnabled() is False
+    assert panel.bottom_face_screw_hole_diameter.isEnabled() is False
     assert restored.shell.edge_type == EdgeType.U_SHAPED
     assert restored.shell.u_arc_height == pytest.approx(2.5)
+    assert restored.shell.u_bottom_layers == 4
     assert restored.bottom_face.enabled is False
     assert restored.bottom_face.thickness == pytest.approx(1.5)
 

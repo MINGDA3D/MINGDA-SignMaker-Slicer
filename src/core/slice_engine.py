@@ -27,7 +27,8 @@ from .types import (
     resolve_shell_wall_thickness, resolve_contour_start_point_index,
     resolve_path_start_point_index,
     calculate_u_shape_offset_at_z, is_bottom_face_effective,
-    resolve_bottom_face_thickness,
+    resolve_bottom_face_thickness, resolve_u_shape_profile_start_z,
+    U_SHAPE_FINE_LAYER_HEIGHT,
 )
 from .path_offset import PathOffset, JoinType
 from .print_order import build_loop_order
@@ -181,7 +182,8 @@ class SliceEngine:
         """
         layer_height = params.shell.layer_height
         total_height = params.shell.height
-        layer_count = max(1, int(total_height / layer_height))
+        layer_spans = self._build_layer_spans(params, layer_height, total_height)
+        layer_count = len(layer_spans)
         skirt_layer_count = self._get_skirt_layer_count(params, layer_height, layer_count)
 
         change_points = self._build_color_change_points(params)
@@ -201,8 +203,8 @@ class SliceEngine:
             top_face_layer_count = max(1, int(params.top_face.thickness / layer_height + 0.5))
 
         layer_infos = []
-        for i in range(layer_count):
-            z = i * layer_height
+        use_height_based_features = params.shell.edge_type == EdgeType.U_SHAPED
+        for i, (z, current_layer_height) in enumerate(layer_spans):
 
             # 单喷头 Klipper：始终使用逻辑上的单喷头，颜色仅作为换色槽位
             extruder = ExtruderType.EXTRUDER_1
@@ -222,14 +224,26 @@ class SliceEngine:
                                           params.edge_wrap.outline_enabled)
 
             # 检查是否底面层
-            has_bottom_face = (i < bottom_face_layer_count) and is_bottom_face_effective(params)
+            if use_height_based_features:
+                has_bottom_face = (
+                    is_bottom_face_effective(params)
+                    and z < bottom_face_thickness - 1e-6
+                )
+            else:
+                has_bottom_face = (i < bottom_face_layer_count) and is_bottom_face_effective(params)
 
             # 检查是否顶面层
-            has_top_face = (i >= layer_count - top_face_layer_count) and params.top_face.enabled
+            if use_height_based_features:
+                has_top_face = (
+                    params.top_face.enabled
+                    and z >= total_height - params.top_face.thickness - 1e-6
+                )
+            else:
+                has_top_face = (i >= layer_count - top_face_layer_count) and params.top_face.enabled
 
             info = LayerInfo(
                 z_height=z,
-                layer_height=layer_height,
+                layer_height=current_layer_height,
                 extruder=extruder,
                 color_index=color_index,
                 is_first_layer=is_first,
@@ -243,6 +257,45 @@ class SliceEngine:
             layer_infos.append(info)
 
         return layer_infos
+
+    def _build_layer_spans(
+        self,
+        params: SliceParams,
+        layer_height: float,
+        total_height: float,
+    ) -> List[tuple[float, float]]:
+        """Build layer bottom Z values and per-layer heights."""
+        if layer_height <= 0.0 or total_height <= 0.0:
+            return [(0.0, max(layer_height, total_height, 0.0))]
+
+        if params.shell.edge_type != EdgeType.U_SHAPED:
+            layer_count = max(1, int(total_height / layer_height))
+            return [(i * layer_height, layer_height) for i in range(layer_count)]
+
+        bottom_height = min(total_height, resolve_bottom_face_thickness(params))
+        profile_start_z = min(total_height, resolve_u_shape_profile_start_z(params.shell))
+        arc_height = max(0.0, params.shell.u_arc_height)
+        arc_end = min(total_height, profile_start_z + arc_height)
+        fine_end = max(bottom_height, arc_end)
+        fine_layer_height = min(layer_height, U_SHAPE_FINE_LAYER_HEIGHT)
+
+        spans: List[tuple[float, float]] = []
+        z = 0.0
+
+        def append_until(end_z: float, step_height: float) -> None:
+            nonlocal z
+            step_height = max(step_height, 0.001)
+            end_z = min(max(end_z, 0.0), total_height)
+            while z < end_z - 1e-9:
+                current_height = min(step_height, end_z - z)
+                spans.append((round(z, 6), round(current_height, 6)))
+                z += current_height
+                z = round(z, 6)
+
+        append_until(fine_end, fine_layer_height)
+        append_until(total_height, layer_height)
+
+        return spans or [(0.0, min(layer_height, total_height))]
 
     @staticmethod
     def _get_skirt_layer_count(
@@ -333,7 +386,7 @@ class SliceEngine:
         bottom_reference_contours: List[Optional[Contour]] = []
         light_slot_geometries: List[Optional[LightSlotGeometry]] = []
 
-        u_flat_height = resolve_bottom_face_thickness(params)
+        u_flat_height = resolve_u_shape_profile_start_z(params.shell)
 
         for contour in contours:
             modified_contour = self._apply_edge_profile(
@@ -412,8 +465,13 @@ class SliceEngine:
 
             # 4. 生成底面填充（如需要）
             if info.has_bottom_face:
+                bottom_face_contour = (
+                    modified_contour
+                    if params.shell.edge_type == EdgeType.U_SHAPED
+                    else bottom_reference_contour
+                )
                 bottom_face_paths = self._generate_bottom_face_paths(
-                    bottom_reference_contour,
+                    bottom_face_contour,
                     info,
                     params,
                     light_slot_geometry=light_slot_geometry,
@@ -493,7 +551,7 @@ class SliceEngine:
                 contour,
                 0.0,
                 params.shell,
-                u_flat_height=resolve_bottom_face_thickness(params),
+                u_flat_height=resolve_u_shape_profile_start_z(params.shell),
             )
             if base_contour is not None:
                 connected_contours.append(base_contour)
@@ -541,7 +599,7 @@ class SliceEngine:
         contour: Contour,
         z: float,
         params: ShellParams,
-        u_flat_height: float = 0.0,
+        u_flat_height: Optional[float] = None,
     ) -> Optional[Contour]:
         """
         根据边缘类型和高度应用轮廓变换
@@ -703,14 +761,18 @@ class SliceEngine:
         contour: Contour,
         z: float,
         params: ShellParams,
-        flat_height: float = 0.0,
+        flat_height: Optional[float] = None,
     ) -> Optional[Contour]:
         """Apply the U-shaped bottom arc: outer expands outward, holes shrink inward."""
         offset = calculate_u_shape_offset_at_z(z, params, flat_height)
         if abs(offset) < 0.001:
             return contour
 
-        return self.path_offset.offset_contour(contour, offset, JoinType.MITER)
+        return self.path_offset.offset_contour_outer_expand_holes_shrink(
+            contour,
+            offset,
+            JoinType.MITER,
+        )
 
     def _interpolate_profile_legacy(self, profile, normalized_z: float) -> float:
         """在异形边轮廓中插值（旧格式兼容）"""
@@ -1566,7 +1628,6 @@ class SliceEngine:
             ExtruderType.EXTRUDER_2: 0,
             ExtruderType.EXTRUDER_3: 0,
         }
-
         for layer in layers:
             for path in layer.paths:
                 # 计算路径长度

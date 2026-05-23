@@ -15,6 +15,10 @@ import math
 from typing import List, Optional, Tuple, Dict
 from uuid import uuid4
 
+U_SHAPE_FINE_LAYER_HEIGHT = 0.1
+U_SHAPE_PROFILE_START_Z = 0.0
+U_SHAPE_OVERHANG_LINE_WIDTH_RATIO = 0.75
+
 
 # =============================================================================
 # 枚举类型
@@ -814,6 +818,7 @@ class ShellParams:
 
     # U形边参数
     u_arc_height: float = 6.0         # U形底部圆弧高度/半径 (mm)，默认20层
+    u_bottom_layers: int = 3          # U形自带封闭底部层数，默认3层
 
     # 预打边线（安全线）
     safety_line_count: int = 0        # 安全线数量
@@ -1208,57 +1213,64 @@ class SliceParams:
 def calculate_u_shape_offset_at_z(
     z: float,
     shell: ShellParams,
-    flat_height: float = 0.0,
+    flat_height: Optional[float] = None,
 ) -> float:
     """Return the outward curved U-shape contour offset at the given height.
 
-    ``flat_height`` is the bottom section that should stay vertical before the
-    U profile starts. The preferred profile is a smooth curve, but it is only
-    used when the line width and available shell height can support it. If a
-    curved transition would exceed half-line-width overhang per layer, the
-    function falls back to the safest printable slope instead of forcing
-    unsupported material.
+    The closed bottom and the U-shaped profile are independent. The bottom can
+    stay solid for several layers, while the curved profile starts at the build
+    plate by default so the first expanded arc segment is not suspended.
     """
-    arc_height = max(0.0, shell.u_arc_height)
-    if arc_height <= 0.0:
-        return 0.0
+    radius = max(0.0, shell.u_arc_height)
 
     z = max(0.0, min(z, shell.height))
-    flat_height = max(0.0, flat_height)
-    arc_z = z - flat_height
-    if arc_z <= 0.0:
+    profile_start_z = resolve_u_shape_profile_start_z(shell) if flat_height is None else max(0.0, flat_height)
+
+    if z < profile_start_z:
         return 0.0
 
-    transition_height = arc_height
-    safe_slope = 0.0
-    layer_height = max(0.0, shell.layer_height)
-    if layer_height > 0.0:
-        line_width = resolve_shell_line_width(
-            shell.line_width,
-            shell.layer_height,
-            wall_thickness=shell.wall_thickness,
-            wall_count=shell.wall_count,
-        )
-        max_layer_overhang = max(0.0, line_width * 0.5)
-        safe_slope = max_layer_overhang / layer_height
+    if radius <= 0.0:
+        return 0.0
 
-    if safe_slope > 0.0:
-        available_height = max(0.0, shell.height - flat_height)
-        min_linear_height = arc_height / safe_slope
-        preferred_curve_power = 2.0
+    arc_z = z - profile_start_z
 
-        if available_height + 1e-9 <= min_linear_height:
-            return min(arc_height, arc_z * safe_slope)
+    if arc_z >= radius:
+        return radius
 
-        curve_power = min(preferred_curve_power, available_height / min_linear_height)
-        transition_height = max(arc_height, min_linear_height * curve_power)
-    else:
-        curve_power = 2.0
+    effective_layer_height = min(
+        max(shell.layer_height, 0.001),
+        U_SHAPE_FINE_LAYER_HEIGHT,
+    )
+    line_width = resolve_shell_line_width(
+        shell.line_width,
+        shell.layer_height,
+        wall_thickness=shell.wall_thickness,
+        wall_count=shell.wall_count,
+    )
+    max_layer_overhang = max(0.0, line_width) * U_SHAPE_OVERHANG_LINE_WIDTH_RATIO
+    max_start_slope = max_layer_overhang / effective_layer_height
 
-    progress = min(1.0, arc_z / transition_height)
-    target_offset = arc_height * (1.0 - ((1.0 - progress) ** curve_power))
+    if max_start_slope <= 1.0:
+        return min(radius, arc_z)
 
-    return min(arc_height, target_offset)
+    # Use an outward circular arc whose initial tangent is capped by the
+    # printable per-layer overhang, instead of the infinite-slope quarter circle.
+    center_x = radius / (1.0 - max_start_slope)
+    center_z = -max_start_slope * radius / (1.0 - max_start_slope)
+    printable_radius = math.hypot(center_x, center_z)
+    return center_x + math.sqrt(
+        max(0.0, printable_radius * printable_radius - (arc_z - center_z) ** 2)
+    )
+
+
+def resolve_u_shape_profile_start_z(shell: ShellParams) -> float:
+    """Return the Z height where the U-shaped offset profile begins."""
+    return min(max(0.0, shell.height), U_SHAPE_PROFILE_START_Z)
+
+
+def resolve_u_shape_bottom_thickness(shell: ShellParams) -> float:
+    """Return U-shaped edge's own closed-bottom height."""
+    return max(0, int(shell.u_bottom_layers)) * max(0.0, shell.layer_height)
 
 
 def is_bottom_face_effective(params: SliceParams) -> bool:
@@ -1268,7 +1280,9 @@ def is_bottom_face_effective(params: SliceParams) -> bool:
 
 def resolve_bottom_face_thickness(params: SliceParams) -> float:
     """Return the printable bottom-face thickness for explicit or U-shaped bottom closure."""
-    if is_bottom_face_effective(params):
+    if params.shell.edge_type == EdgeType.U_SHAPED:
+        return resolve_u_shape_bottom_thickness(params.shell)
+    if params.bottom_face.enabled:
         return max(0.0, params.bottom_face.thickness)
     return 0.0
 
@@ -1606,6 +1620,7 @@ def deserialize_params(data: dict) -> SliceParams:
         params.shell.baseplate_thickness = shell_data.get("baseplate_thickness", params.shell.baseplate_thickness)
         params.shell.panel_thickness = shell_data.get("panel_thickness", params.shell.panel_thickness)
         params.shell.u_arc_height = shell_data.get("u_arc_height", params.shell.u_arc_height)
+        params.shell.u_bottom_layers = max(0, int(shell_data.get("u_bottom_layers", params.shell.u_bottom_layers)))
         params.shell.dxf_outer_clearance = shell_data.get("dxf_outer_clearance", 1.0)
         params.shell.dxf_hole_clearance = shell_data.get("dxf_hole_clearance", 1.0)
         params.shell.dxf_laser_kerf = shell_data.get("dxf_laser_kerf", 0.0)

@@ -16,7 +16,7 @@ from .types import (
     Point, Path as ContourPath, Contour, SliceParams,
     EdgeType, BevelDirection, JoinType, resolve_shell_wall_thickness,
     calculate_u_shape_offset_at_z,
-    resolve_bottom_face_thickness,
+    resolve_u_shape_profile_start_z,
 )
 from .path_offset import PathOffset
 
@@ -137,7 +137,7 @@ class DXFWriter:
         result = []
         shell = params.shell
 
-        u_flat_height = resolve_bottom_face_thickness(params)
+        u_flat_height = resolve_u_shape_profile_start_z(params.shell)
 
         for contour in contours:
             transformed = self._apply_edge_profile(
@@ -187,7 +187,7 @@ class DXFWriter:
         contour: Contour,
         z: float,
         shell,
-        u_flat_height: float = 0.0,
+        u_flat_height: Optional[float] = None,
     ) -> Optional[Contour]:
         """根据边缘类型计算指定高度处的字壳轮廓。"""
         z = max(0.0, min(z, shell.height))
@@ -197,7 +197,11 @@ class DXFWriter:
             return self._copy_contour(contour)
 
         if shell.edge_type == EdgeType.U_SHAPED:
-            return self.path_offset.offset_contour(contour, offset, JoinType.MITER)
+            return self.path_offset.offset_contour_outer_expand_holes_shrink(
+                contour,
+                offset,
+                JoinType.MITER,
+            )
 
         return self._offset_contour_same_direction(contour, offset)
 
@@ -205,7 +209,7 @@ class DXFWriter:
         self,
         z: float,
         shell,
-        u_flat_height: float = 0.0,
+        u_flat_height: Optional[float] = None,
     ) -> float:
         """计算指定高度处的整体轮廓偏移量。"""
         if shell.edge_type == EdgeType.STRAIGHT:

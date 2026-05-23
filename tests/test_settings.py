@@ -36,6 +36,7 @@ class TestSerializeParams:
         assert "height" not in data["shell"]
         assert data["shell"]["edge_type"] == "STRAIGHT"
         assert data["shell"]["u_arc_height"] == pytest.approx(6.0)
+        assert data["shell"]["u_bottom_layers"] == 3
         assert data["bottom_face"]["thickness_layers"] == 3
         assert data["top_face"]["thickness_layers"] == 8
         assert data["light_slot"]["depth_layers"] == 20
@@ -72,14 +73,17 @@ class TestSerializeParams:
         params = SliceParams()
         params.shell.edge_type = EdgeType.U_SHAPED
         params.shell.u_arc_height = 4.5
+        params.shell.u_bottom_layers = 5
 
         data = serialize_params(params)
         restored = deserialize_params(data)
 
         assert data["shell"]["edge_type"] == "U_SHAPED"
         assert data["shell"]["u_arc_height"] == pytest.approx(4.5)
+        assert data["shell"]["u_bottom_layers"] == 5
         assert restored.shell.edge_type == EdgeType.U_SHAPED
         assert restored.shell.u_arc_height == pytest.approx(4.5)
+        assert restored.shell.u_bottom_layers == 5
 
     def test_deserialize_default_params(self):
         """测试反序列化默认参数"""
@@ -92,6 +96,7 @@ class TestSerializeParams:
         assert restored.shell.wall_thickness == pytest.approx(1.2)
         assert restored.shell.edge_type == EdgeType.STRAIGHT
         assert restored.shell.u_arc_height == pytest.approx(6.0)
+        assert restored.shell.u_bottom_layers == 3
         assert restored.bottom_face.thickness == pytest.approx(0.9)
         assert restored.bottom_face.screw_hole_diameter == pytest.approx(5.0)
         assert restored.light_slot.width == pytest.approx(7.8)

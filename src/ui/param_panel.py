@@ -555,6 +555,11 @@ class ParamPanel(QWidget):
         self.u_arc_height_spin.valueChanged.connect(self._on_param_changed)
         u_shape_layout.addRow(self.tr("Arc Height:"), self.u_arc_height_spin)
 
+        self.u_bottom_layers_spin = self._create_int_spinbox()
+        self._configure_layer_count_spin(self.u_bottom_layers_spin, 1, 100, 3)
+        self.u_bottom_layers_spin.valueChanged.connect(self._on_param_changed)
+        u_shape_layout.addRow(self.tr("Bottom Layers:"), self.u_bottom_layers_spin)
+
         layout.addWidget(self.u_shape_params_widget)
         self.u_shape_params_widget.setVisible(False)
 
@@ -704,11 +709,8 @@ class ParamPanel(QWidget):
 
     def _toggle_bottom_face_controls(self, enabled: bool):
         """切换底面封闭控件的启用状态"""
-        effective_enabled = enabled
-        if hasattr(self, "edge_type_combo"):
-            effective_enabled = effective_enabled or self.edge_type_combo.currentData() == EdgeType.U_SHAPED
-        self.bottom_face_thickness.setEnabled(effective_enabled)
-        self.bottom_face_screw_hole_diameter.setEnabled(effective_enabled)
+        self.bottom_face_thickness.setEnabled(enabled)
+        self.bottom_face_screw_hole_diameter.setEnabled(enabled)
 
     def _create_light_slot_group(self) -> QGroupBox:
         """创建灯槽参数组"""
@@ -2372,6 +2374,7 @@ class ParamPanel(QWidget):
             self.baseplate_spin,
             self.panel_thickness_spin,
             self.u_arc_height_spin,
+            self.u_bottom_layers_spin,
             self.dxf_outer_clearance_spin,
             self.dxf_hole_clearance_spin,
             self.dxf_laser_kerf_spin,
@@ -2493,6 +2496,7 @@ class ParamPanel(QWidget):
         self._params.shell.baseplate_thickness = self._layers_to_mm(self.baseplate_spin.value())
         self._params.shell.panel_thickness = self._layers_to_mm(self.panel_thickness_spin.value())
         self._params.shell.u_arc_height = self._layers_to_mm(self.u_arc_height_spin.value())
+        self._params.shell.u_bottom_layers = self.u_bottom_layers_spin.value()
         self._params.shell.dxf_outer_clearance = self.dxf_outer_clearance_spin.value()
         self._params.shell.dxf_hole_clearance = self.dxf_hole_clearance_spin.value()
         self._params.shell.dxf_laser_kerf = self.dxf_laser_kerf_spin.value()
@@ -2689,7 +2693,7 @@ class ParamPanel(QWidget):
             self.height_spin, self.layer_height_spin, self.width_line_spin,
             self.wall_count_spin, self.edge_type_combo, self.bevel_direction_combo,
             self.bevel_width_spin, self.baseplate_spin, self.panel_thickness_spin,
-            self.u_arc_height_spin,
+            self.u_arc_height_spin, self.u_bottom_layers_spin,
             self.dxf_outer_clearance_spin, self.dxf_hole_clearance_spin, self.dxf_laser_kerf_spin,
             self.print_speed, self.travel_speed, self.first_layer_speed,
             self.first_layer_nozzle_temp, self.other_layer_nozzle_temp,
@@ -2749,6 +2753,7 @@ class ParamPanel(QWidget):
         self.baseplate_spin.setValue(self._height_to_layers(params.shell.baseplate_thickness, minimum=0))
         self.panel_thickness_spin.setValue(self._height_to_layers(params.shell.panel_thickness, minimum=0))
         self.u_arc_height_spin.setValue(self._height_to_layers(params.shell.u_arc_height))
+        self.u_bottom_layers_spin.setValue(max(1, int(params.shell.u_bottom_layers)))
         self.dxf_outer_clearance_spin.setValue(params.shell.dxf_outer_clearance)
         self.dxf_hole_clearance_spin.setValue(params.shell.dxf_hole_clearance)
         self.dxf_laser_kerf_spin.setValue(params.shell.dxf_laser_kerf)

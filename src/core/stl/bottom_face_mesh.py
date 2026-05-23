@@ -17,6 +17,8 @@ from ..types import (
     calculate_u_shape_offset_at_z,
     is_bottom_face_effective,
     resolve_bottom_face_thickness,
+    resolve_u_shape_profile_start_z,
+    U_SHAPE_FINE_LAYER_HEIGHT,
 )
 from .mesh_utils import MeshUtils
 
@@ -70,7 +72,8 @@ class BottomFaceMeshBuilder:
         params: SliceParams,
         thickness: float,
     ) -> Optional[trimesh.Trimesh]:
-        layer_height = params.shell.layer_height if params.shell.layer_height > 0 else thickness
+        configured_layer_height = params.shell.layer_height if params.shell.layer_height > 0 else thickness
+        layer_height = min(configured_layer_height, U_SHAPE_FINE_LAYER_HEIGHT)
         if layer_height <= 0:
             return None
 
@@ -90,7 +93,7 @@ class BottomFaceMeshBuilder:
                     contour,
                     z_offset,
                     params,
-                    flat_height=thickness,
+                    flat_height=resolve_u_shape_profile_start_z(params.shell),
                 )
                 if transformed_contour is None:
                     continue
@@ -115,7 +118,11 @@ class BottomFaceMeshBuilder:
         offset = calculate_u_shape_offset_at_z(z, params.shell, flat_height)
         if abs(offset) < 0.001:
             return contour
-        return self.path_offset.offset_contour(contour, offset, JoinType.MITER)
+        return self.path_offset.offset_contour_outer_expand_holes_shrink(
+            contour,
+            offset,
+            JoinType.MITER,
+        )
 
     def _build_bottom_face_meshes_for_contour(
         self,

@@ -14,7 +14,8 @@ from .types import (
     LayoutParams, SpeedParams, GCodeParams, MachineParams, PrinterProfile,
     FillConfig, LayerConfig,
     calculate_u_shape_offset_at_z, is_bottom_face_effective,
-    resolve_bottom_face_thickness,
+    resolve_bottom_face_thickness, resolve_u_shape_bottom_thickness,
+    resolve_u_shape_profile_start_z,
     # 结果类型
     SliceResult, ProjectData, ProjectMeta, Project
 )
@@ -45,7 +46,8 @@ __all__ = [
     'LayoutParams', 'SpeedParams', 'GCodeParams', 'MachineParams', 'PrinterProfile',
     'FillConfig', 'LayerConfig',
     'calculate_u_shape_offset_at_z', 'is_bottom_face_effective',
-    'resolve_bottom_face_thickness',
+    'resolve_bottom_face_thickness', 'resolve_u_shape_bottom_thickness',
+    'resolve_u_shape_profile_start_z',
     # 结果类型
     'SliceResult', 'ProjectData', 'ProjectMeta', 'Project',
     # 核心类
