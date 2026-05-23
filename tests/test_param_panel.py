@@ -422,6 +422,7 @@ def test_vector_defaults_match_requested_values(qapp):
     assert panel.skirt_offset.value() == pytest.approx(0.12)
     assert panel.top_face_thickness.value() == 8
     assert panel.u_arc_height_spin.value() == 20
+    assert panel.u_bottom_layers_spin.minimum() == 0
     assert panel.u_bottom_layers_spin.value() == 3
     assert panel.bottom_face_thickness.value() == 3
     assert panel.bottom_face_screw_hole_diameter.value() == pytest.approx(5.0)
@@ -512,13 +513,13 @@ def test_wall_thickness_is_derived_from_width_line_and_wall_count(qapp):
     assert params.shell.wall_thickness == pytest.approx(2.4)
 
 
-def test_u_shape_edge_roundtrips_arc_height_as_layer_count(qapp):
+def test_u_shape_edge_roundtrips_arc_height_and_zero_bottom_layers(qapp):
     panel = ParamPanel()
     params = SliceParams()
     params.shell.layer_height = 0.5
     params.shell.edge_type = EdgeType.U_SHAPED
     params.shell.u_arc_height = 2.5
-    params.shell.u_bottom_layers = 4
+    params.shell.u_bottom_layers = 0
     params.bottom_face.enabled = False
     params.bottom_face.thickness = 1.5
 
@@ -527,7 +528,7 @@ def test_u_shape_edge_roundtrips_arc_height_as_layer_count(qapp):
 
     assert panel.u_shape_params_widget.isHidden() is False
     assert panel.u_arc_height_spin.value() == 5
-    assert panel.u_bottom_layers_spin.value() == 4
+    assert panel.u_bottom_layers_spin.value() == 0
     assert panel.bottom_face_enabled.isChecked() is False
     assert panel.bottom_face_enabled.isEnabled() is False
     assert panel.bottom_face_thickness.value() == 3
@@ -535,7 +536,7 @@ def test_u_shape_edge_roundtrips_arc_height_as_layer_count(qapp):
     assert panel.bottom_face_screw_hole_diameter.isEnabled() is False
     assert restored.shell.edge_type == EdgeType.U_SHAPED
     assert restored.shell.u_arc_height == pytest.approx(2.5)
-    assert restored.shell.u_bottom_layers == 4
+    assert restored.shell.u_bottom_layers == 0
     assert restored.bottom_face.enabled is False
     assert restored.bottom_face.thickness == pytest.approx(1.5)
 

@@ -556,7 +556,7 @@ class ParamPanel(QWidget):
         u_shape_layout.addRow(self.tr("Arc Height:"), self.u_arc_height_spin)
 
         self.u_bottom_layers_spin = self._create_int_spinbox()
-        self._configure_layer_count_spin(self.u_bottom_layers_spin, 1, 100, 3)
+        self._configure_layer_count_spin(self.u_bottom_layers_spin, 0, 100, 3)
         self.u_bottom_layers_spin.valueChanged.connect(self._on_param_changed)
         u_shape_layout.addRow(self.tr("Bottom Layers:"), self.u_bottom_layers_spin)
 
@@ -2778,7 +2778,7 @@ class ParamPanel(QWidget):
         self.baseplate_spin.setValue(self._height_to_layers(params.shell.baseplate_thickness, minimum=0))
         self.panel_thickness_spin.setValue(self._height_to_layers(params.shell.panel_thickness, minimum=0))
         self.u_arc_height_spin.setValue(self._height_to_layers(params.shell.u_arc_height))
-        self.u_bottom_layers_spin.setValue(max(1, int(params.shell.u_bottom_layers)))
+        self.u_bottom_layers_spin.setValue(max(0, int(params.shell.u_bottom_layers)))
         self.dxf_outer_clearance_spin.setValue(params.shell.dxf_outer_clearance)
         self.dxf_hole_clearance_spin.setValue(params.shell.dxf_hole_clearance)
         self.dxf_laser_kerf_spin.setValue(params.shell.dxf_laser_kerf)
