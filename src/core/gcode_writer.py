@@ -702,7 +702,12 @@ class GCodeWriter:
         if not path.points:
             return []
 
-        lines = [f"; {path.role.name} path, {len(path.points)} points"]
+        lines = [
+            f";TYPE:{path.role.name}",
+            f";WIDTH:{path.line_width:.3f}",
+            f";HEIGHT:{self.current_layer_height:.3f}",
+            f"; {path.role.name} path, {len(path.points)} points",
+        ]
         start = path.points[0]
         lines.extend(self._write_travel(start, z))
 
