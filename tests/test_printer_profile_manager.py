@@ -122,6 +122,19 @@ def test_large_ad_series_profiles_use_requested_bed_exclude_area(temp_profile_di
     assert all(profile.bed_exclude_area == MINGDA_BED_EXCLUDE_AREA_800X1200 for profile in profiles)
 
 
+def test_renamed_large_ad_series_profile_names_are_seeded(temp_profile_dir):
+    manager = PrinterProfileManager(config_dir=str(temp_profile_dir))
+
+    names = {profile.name for profile in manager.list_profiles()}
+
+    assert "MINGDA AD-F6 Pro 0.4mm Nozzle" in names
+    assert "MINGDA AD-F6 Pro 0.6mm Nozzle" in names
+    assert "MINGDA AD-F6 Pro 0.8mm Nozzle" in names
+    assert "MINGDA AD-F10 Ultra 0.4mm Nozzle" in names
+    assert "MINGDA AD-F10 Ultra 0.6mm Nozzle" in names
+    assert "MINGDA AD-F10 Ultra 0.8mm Nozzle" in names
+
+
 def test_manager_upgrades_legacy_builtin_start_and_end_gcode_defaults(temp_profile_dir):
     config_path = temp_profile_dir / PrinterProfileManager.FILE_NAME
     config_path.write_text(
