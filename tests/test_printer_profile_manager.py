@@ -10,6 +10,10 @@ from src.business.printer_profile_manager import (
     PrinterProfileManager,
     deserialize_printer_profile,
 )
+from src.core.types import (
+    MINGDA_BED_EXCLUDE_AREA_800X1200,
+    default_bed_exclude_area_for_bed,
+)
 
 
 @pytest.fixture
@@ -36,6 +40,10 @@ def test_manager_seeds_only_requested_builtin_profiles(temp_profile_dir):
         (spec["bed_width"], spec["bed_depth"], spec["nozzle_diameter"])
         for spec in DEFAULT_PRINTER_PROFILE_SPECS
     ]
+    assert [profile.bed_exclude_area for profile in profiles] == [
+        default_bed_exclude_area_for_bed(spec["bed_width"], spec["bed_depth"])
+        for spec in DEFAULT_PRINTER_PROFILE_SPECS
+    ]
     assert all(
         profile.start_gcode
         == "START_PRINT EXTRUDER={nozzle_temperature_initial_layer[0]} "
@@ -46,7 +54,7 @@ def test_manager_seeds_only_requested_builtin_profiles(temp_profile_dir):
     assert manager.get_default_profile_id() == DEFAULT_PRINTER_PROFILE_SPECS[0]["id"]
 
 
-def test_manager_discards_non_builtin_profiles_and_keeps_only_builtin_twelve(temp_profile_dir):
+def test_manager_discards_non_builtin_profiles_and_keeps_only_builtin_profiles(temp_profile_dir):
     config_path = temp_profile_dir / PrinterProfileManager.FILE_NAME
     config_path.write_text(
         json.dumps(
@@ -82,7 +90,7 @@ def test_manager_discards_non_builtin_profiles_and_keeps_only_builtin_twelve(tem
 
     profiles = manager.list_profiles()
 
-    assert len(profiles) == 12
+    assert len(profiles) == len(DEFAULT_PRINTER_PROFILE_SPECS)
     assert [profile.id for profile in profiles] == [
         spec["id"] for spec in DEFAULT_PRINTER_PROFILE_SPECS
     ]
@@ -94,6 +102,24 @@ def test_manager_discards_non_builtin_profiles_and_keeps_only_builtin_twelve(tem
     assert [profile["id"] for profile in saved_data["profiles"]] == [
         spec["id"] for spec in DEFAULT_PRINTER_PROFILE_SPECS
     ]
+
+
+def test_large_ad_series_profiles_use_requested_bed_exclude_area(temp_profile_dir):
+    manager = PrinterProfileManager(config_dir=str(temp_profile_dir))
+
+    profiles = [
+        profile
+        for profile in manager.list_profiles()
+        if (
+            "AD-F4 Mini" not in profile.name
+            and any(model in profile.name for model in ("AD-F4", "AD-F6", "AD-F10"))
+        )
+    ]
+
+    assert len(profiles) == 12
+    assert all(profile.bed_width == 800.0 for profile in profiles)
+    assert all(profile.bed_depth == 1200.0 for profile in profiles)
+    assert all(profile.bed_exclude_area == MINGDA_BED_EXCLUDE_AREA_800X1200 for profile in profiles)
 
 
 def test_manager_upgrades_legacy_builtin_start_and_end_gcode_defaults(temp_profile_dir):

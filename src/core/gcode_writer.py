@@ -29,6 +29,7 @@ from .types import (
     PrinterProfile,
     SliceParams,
     SliceResult,
+    format_bed_exclude_area_for_config,
 )
 
 THUMBNAIL_SIZES = ((32, 32), (300, 300))
@@ -175,6 +176,7 @@ class GCodeWriter:
             bed_width=slice_params.machine.bed_width,
             bed_depth=slice_params.machine.bed_depth,
             bed_height=slice_params.machine.bed_height,
+            bed_exclude_area=list(slice_params.machine.bed_exclude_area),
             nozzle_diameter=slice_params.machine.nozzle_diameter,
             filament_diameter=slice_params.gcode.filament_diameter,
             retract_length=slice_params.gcode.retract_length,
@@ -345,6 +347,7 @@ class GCodeWriter:
         nozzle_diameter = max(self.profile.nozzle_diameter, 0.005)
         filament_diameter = max(self.profile.filament_diameter, 1.0)
         printable_area = self._config_printable_area()
+        bed_exclude_area = self._config_bed_exclude_area()
         filament_used_mm = max(result.estimated_filament, 0.0) * 1000.0
         filament_weight = self._estimate_filament_weight_g(result, filament_diameter)
 
@@ -352,6 +355,7 @@ class GCodeWriter:
             ("printer_technology", "FFF"),
             ("printable_area", printable_area),
             ("bed_shape", printable_area),
+            ("bed_exclude_area", bed_exclude_area),
             ("printable_height", self.profile.bed_height),
             ("printer_model", self.profile.name or "Klipper"),
             ("printer_notes", APP_NAME),
@@ -598,6 +602,9 @@ class GCodeWriter:
             f"{self._format_config_value(width)}x{self._format_config_value(depth)},"
             f"0x{self._format_config_value(depth)}"
         )
+
+    def _config_bed_exclude_area(self) -> str:
+        return format_bed_exclude_area_for_config(self.profile.bed_exclude_area)
 
     @staticmethod
     def _format_config_value(value: object) -> str:

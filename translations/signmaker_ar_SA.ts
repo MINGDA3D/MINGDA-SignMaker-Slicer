@@ -1150,6 +1150,16 @@ Error code: {code}</source>
         <source>Start point updated</source>
         <translation>تم تحديث نقطة البداية</translation>
     </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2717"/>
+        <source>Some contours exceed the platform size or overlap a bed exclude area. Please move or scale them back into the printable area before processing.</source>
+        <translation>بعض الحدود تتجاوز حجم المنصة أو تتداخل مع منطقة مستثناة من سرير الطباعة. انقلها أو غيّر حجمها لتعود داخل المنطقة القابلة للطباعة قبل المعالجة.</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2721"/>
+        <source>Processing blocked: contours outside printable area</source>
+        <translation>تم حظر المعالجة: الحدود خارج المنطقة القابلة للطباعة</translation>
+    </message>
 </context>
 <context>
     <name>ParamPanel</name>
@@ -1999,6 +2009,21 @@ Control points: {points}</source>
         <location filename="../src/ui/param_panel.py" line="604"/>
         <source>Laser Kerf:</source>
         <translation>عرض شق الليزر:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="1332"/>
+        <source>One polygon per line: 0x0,70x0,70x70,0x70</source>
+        <translation>مضلع واحد في كل سطر: 0x0,70x0,70x70,0x70</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="1335"/>
+        <source>Orca-style bed exclude area. Use XxY points separated by commas; put each region on its own line.</source>
+        <translation>منطقة مستثناة من سرير الطباعة بتنسيق Orca. استخدم نقاط XxY مفصولة بفواصل؛ ضع كل منطقة في سطر منفصل.</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="1338"/>
+        <source>Bed Exclude Area:</source>
+        <translation>المنطقة المستثناة من سرير الطباعة:</translation>
     </message>
 </context>
 <context>

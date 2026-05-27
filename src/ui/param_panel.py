@@ -28,6 +28,10 @@ from src.core.types import (
     SliceParams, EdgeType, ExtruderType, EdgeDirection, BevelDirection,
     EdgeProfile, PrinterProfile, ColorChangePoint, default_shell_line_width, resolve_shell_line_width,
     resolve_shell_wall_thickness,
+    default_bed_exclude_area_for_bed,
+    format_bed_exclude_area_for_editor,
+    is_default_bed_exclude_area,
+    normalize_bed_exclude_area,
 )
 from src.core.prime_tower import PrimeTowerGenerator
 from src.business.settings_manager import get_settings_manager
@@ -1322,6 +1326,17 @@ class ParamPanel(QWidget):
         self.profile_bed_height.valueChanged.connect(self._on_printer_profile_field_changed)
         form.addRow(self.tr("Printable Area Z:"), self.profile_bed_height)
 
+        self.profile_bed_exclude_area = QPlainTextEdit()
+        self.profile_bed_exclude_area.setFixedHeight(92)
+        self.profile_bed_exclude_area.setPlaceholderText(
+            self.tr("One polygon per line: 0x0,70x0,70x70,0x70")
+        )
+        self.profile_bed_exclude_area.setToolTip(
+            self.tr("Orca-style bed exclude area. Use XxY points separated by commas; put each region on its own line.")
+        )
+        self.profile_bed_exclude_area.textChanged.connect(self._on_printer_profile_field_changed)
+        form.addRow(self.tr("Bed Exclude Area:"), self.profile_bed_exclude_area)
+
         self.profile_nozzle_diameter = self._create_double_spinbox(3)
         self.profile_nozzle_diameter.setRange(0.1, 5.0)
         self.profile_nozzle_diameter.setSingleStep(0.05)
@@ -1495,6 +1510,7 @@ class ParamPanel(QWidget):
             self.profile_bed_width,
             self.profile_bed_depth,
             self.profile_bed_height,
+            self.profile_bed_exclude_area,
             self.profile_nozzle_diameter,
             self.profile_filament_diameter,
             self.profile_retract_length,
@@ -1513,6 +1529,9 @@ class ParamPanel(QWidget):
             self.profile_bed_width.setValue(profile.bed_width)
             self.profile_bed_depth.setValue(profile.bed_depth)
             self.profile_bed_height.setValue(profile.bed_height)
+            self.profile_bed_exclude_area.setPlainText(
+                format_bed_exclude_area_for_editor(profile.bed_exclude_area)
+            )
             self.profile_nozzle_diameter.setValue(profile.nozzle_diameter)
             self.profile_filament_diameter.setValue(profile.filament_diameter)
             self.profile_retract_length.setValue(profile.retract_length)
@@ -1592,6 +1611,9 @@ class ParamPanel(QWidget):
         profile.bed_width = self.profile_bed_width.value()
         profile.bed_depth = self.profile_bed_depth.value()
         profile.bed_height = self.profile_bed_height.value()
+        profile.bed_exclude_area = normalize_bed_exclude_area(
+            self.profile_bed_exclude_area.toPlainText()
+        )
         profile.nozzle_diameter = self.profile_nozzle_diameter.value()
         profile.filament_diameter = self.profile_filament_diameter.value()
         profile.retract_length = self.profile_retract_length.value()
@@ -1638,9 +1660,35 @@ class ParamPanel(QWidget):
         self._update_profile_action_buttons()
         self._on_param_changed()
 
+    def _refresh_default_bed_exclude_area_for_current_bed(self):
+        if not hasattr(self, "profile_bed_exclude_area"):
+            return
+
+        current_text = self.profile_bed_exclude_area.toPlainText()
+        current_area = normalize_bed_exclude_area(current_text)
+        if current_area and not is_default_bed_exclude_area(current_area):
+            return
+
+        default_area = default_bed_exclude_area_for_bed(
+            self.profile_bed_width.value(),
+            self.profile_bed_depth.value(),
+        )
+        new_text = format_bed_exclude_area_for_editor(default_area)
+        if current_text.strip() == new_text.strip():
+            return
+
+        self.profile_bed_exclude_area.blockSignals(True)
+        try:
+            self.profile_bed_exclude_area.setPlainText(new_text)
+        finally:
+            self.profile_bed_exclude_area.blockSignals(False)
+
     def _on_printer_profile_field_changed(self):
         if self._updating_profile_ui:
             return
+        sender = self.sender()
+        if sender is self.profile_bed_width or sender is self.profile_bed_depth:
+            self._refresh_default_bed_exclude_area_for_current_bed()
         self._update_prime_tower_coordinate_ranges()
         self._persist_profile_form_edits()
         self._on_param_changed()

@@ -1150,6 +1150,16 @@ Hata kodu: {code}</translation>
         <source>Start point updated</source>
         <translation>Başlangıç noktası güncellendi</translation>
     </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2717"/>
+        <source>Some contours exceed the platform size or overlap a bed exclude area. Please move or scale them back into the printable area before processing.</source>
+        <translation>Bazı konturlar platform boyutunu aşıyor veya tabla hariç tutma alanıyla çakışıyor. İşlemeden önce bunları yazdırılabilir alanın içine taşıyın veya ölçeklendirin.</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2721"/>
+        <source>Processing blocked: contours outside printable area</source>
+        <translation>İşleme engellendi: konturlar yazdırılabilir alanın dışında</translation>
+    </message>
 </context>
 <context>
     <name>ParamPanel</name>
@@ -1999,6 +2009,21 @@ Kontrol noktalari: {points}</translation>
         <location filename="../src/ui/param_panel.py" line="604"/>
         <source>Laser Kerf:</source>
         <translation>Lazer kesim payi:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="1332"/>
+        <source>One polygon per line: 0x0,70x0,70x70,0x70</source>
+        <translation>Her satıra bir çokgen: 0x0,70x0,70x70,0x70</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="1335"/>
+        <source>Orca-style bed exclude area. Use XxY points separated by commas; put each region on its own line.</source>
+        <translation>Orca biçiminde tabla hariç tutma alanı. Virgülle ayrılmış XxY noktaları kullanın; her bölgeyi ayrı satıra yazın.</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="1338"/>
+        <source>Bed Exclude Area:</source>
+        <translation>Tabla hariç tutma alanı:</translation>
     </message>
 </context>
 <context>

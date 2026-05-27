@@ -12,12 +12,155 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from enum import Enum, auto
 import math
-from typing import List, Optional, Tuple, Dict
+import re
+from typing import List, Optional, Tuple, Dict, Sequence, Union
 from uuid import uuid4
 
 U_SHAPE_FINE_LAYER_HEIGHT = 0.1
 U_SHAPE_PROFILE_START_Z = 0.0
 U_SHAPE_OVERHANG_LINE_WIDTH_RATIO = 0.75
+MINGDA_BED_EXCLUDE_AREA_800X1200 = [
+    "0x1130,70x1130,70x1200,0x1200",
+    "730x1130,800x1130,800x1200,730x1200",
+    "0x0,70x0,70x70,0x70",
+    "630x0,800x0,800x100,630x100",
+    "70x0,630x0,630x20,70x20",
+]
+
+_BED_POINT_RE = re.compile(
+    r"^\s*([+-]?(?:\d+(?:\.\d*)?|\.\d+))\s*x\s*([+-]?(?:\d+(?:\.\d*)?|\.\d+))\s*$",
+    re.IGNORECASE,
+)
+
+
+def _format_bed_coord(value: float) -> str:
+    formatted = f"{float(value):.4f}".rstrip("0").rstrip(".")
+    return formatted or "0"
+
+
+def _format_bed_point(x: float, y: float) -> str:
+    return f"{_format_bed_coord(x)}x{_format_bed_coord(y)}"
+
+
+def _format_bed_exclude_rect(min_x: float, min_y: float, max_x: float, max_y: float) -> str:
+    return ",".join(
+        [
+            _format_bed_point(min_x, min_y),
+            _format_bed_point(max_x, min_y),
+            _format_bed_point(max_x, max_y),
+            _format_bed_point(min_x, max_y),
+        ]
+    )
+
+
+def default_bed_exclude_area_for_bed(bed_width: float, bed_depth: float) -> List[str]:
+    """Return MINGDA default bed-exclude polygons in Orca-style point format."""
+    width = float(bed_width)
+    depth = float(bed_depth)
+    if math.isclose(width, 800.0, abs_tol=1e-6) and math.isclose(depth, 1200.0, abs_tol=1e-6):
+        return list(MINGDA_BED_EXCLUDE_AREA_800X1200)
+
+    known_bed = (
+        math.isclose(width, 600.0, abs_tol=1e-6)
+        and math.isclose(depth, 800.0, abs_tol=1e-6)
+    )
+    if not known_bed:
+        return []
+
+    rear_corner = 70.0
+    left_front_width = 70.0
+    left_front_depth = 70.0
+    right_front_width = 170.0
+    right_front_depth = 100.0
+    front_strip_depth = 20.0
+
+    right_front_min_x = max(0.0, width - right_front_width)
+    right_rear_min_x = max(0.0, width - rear_corner)
+    rear_min_y = max(0.0, depth - rear_corner)
+
+    rects = [
+        (0.0, rear_min_y, min(rear_corner, width), depth),
+        (right_rear_min_x, rear_min_y, width, depth),
+        (0.0, 0.0, min(left_front_width, width), min(left_front_depth, depth)),
+        (right_front_min_x, 0.0, width, min(right_front_depth, depth)),
+    ]
+
+    front_strip_min_x = min(left_front_width, width)
+    front_strip_max_x = max(front_strip_min_x, right_front_min_x)
+    if front_strip_max_x > front_strip_min_x:
+        rects.append(
+            (
+                front_strip_min_x,
+                0.0,
+                front_strip_max_x,
+                min(front_strip_depth, depth),
+            )
+        )
+
+    return [
+        _format_bed_exclude_rect(min_x, min_y, max_x, max_y)
+        for min_x, min_y, max_x, max_y in rects
+        if max_x > min_x and max_y > min_y
+    ]
+
+
+BedExcludeAreaInput = Union[str, Sequence[str], None]
+
+
+def _split_bed_exclude_text(text: str) -> List[str]:
+    normalized = text.replace("\r\n", "\n").replace("\r", "\n")
+    parts: List[str] = []
+    for line in normalized.splitlines():
+        parts.extend(part.strip() for part in line.split(";") if part.strip())
+    return parts
+
+
+def _is_bed_point_token(value: str) -> bool:
+    return _BED_POINT_RE.match(value.strip()) is not None
+
+
+def normalize_bed_exclude_area(value: BedExcludeAreaInput) -> List[str]:
+    """Normalize bed-exclude data to one Orca-style polygon string per item."""
+    if value is None:
+        return []
+
+    if isinstance(value, str):
+        entries = _split_bed_exclude_text(value)
+    else:
+        raw_entries = [str(item).strip() for item in value if str(item).strip()]
+        if raw_entries and all(_is_bed_point_token(item) for item in raw_entries):
+            entries = [",".join(raw_entries)]
+        else:
+            entries = []
+            for item in raw_entries:
+                entries.extend(_split_bed_exclude_text(item))
+
+    normalized: List[str] = []
+    for entry in entries:
+        tokens = [token.strip() for token in entry.split(",") if token.strip()]
+        if len(tokens) < 3:
+            continue
+        if not all(_is_bed_point_token(token) for token in tokens):
+            continue
+        normalized.append(",".join(tokens))
+    return normalized
+
+
+def format_bed_exclude_area_for_editor(value: BedExcludeAreaInput) -> str:
+    return "\n".join(normalize_bed_exclude_area(value))
+
+
+def format_bed_exclude_area_for_config(value: BedExcludeAreaInput) -> str:
+    normalized = normalize_bed_exclude_area(value)
+    return ";".join(normalized) if normalized else "0x0"
+
+
+def is_default_bed_exclude_area(value: BedExcludeAreaInput) -> bool:
+    normalized = normalize_bed_exclude_area(value)
+    return normalized in (
+        default_bed_exclude_area_for_bed(800.0, 1200.0),
+        default_bed_exclude_area_for_bed(600.0, 800.0),
+    )
 
 
 # =============================================================================
@@ -136,6 +279,33 @@ class Point:
     def to_int_tuple(self, scale: float = 1000) -> Tuple[int, int]:
         """转换为整数元组（用于pyclipper）"""
         return (int(self.x * scale), int(self.y * scale))
+
+
+def _polygon_signed_area(points: Sequence[Point]) -> float:
+    if len(points) < 3:
+        return 0.0
+    area = 0.0
+    for i, point in enumerate(points):
+        next_point = points[(i + 1) % len(points)]
+        area += point.x * next_point.y
+        area -= next_point.x * point.y
+    return area / 2.0
+
+
+def parse_bed_exclude_area(value: BedExcludeAreaInput) -> List[List[Point]]:
+    """Parse Orca-style bed-exclude polygons into point lists."""
+    polygons: List[List[Point]] = []
+    for entry in normalize_bed_exclude_area(value):
+        points: List[Point] = []
+        for token in entry.split(","):
+            match = _BED_POINT_RE.match(token)
+            if match is None:
+                points = []
+                break
+            points.append(Point(float(match.group(1)), float(match.group(2))))
+        if len(points) >= 3 and abs(_polygon_signed_area(points)) > 1e-9:
+            polygons.append(points)
+    return polygons
 
 
 @dataclass
@@ -1164,6 +1334,9 @@ class MachineParams:
     bed_width: float = 800.0    # 发光字专用打印平台宽度
     bed_depth: float = 1200.0   # 发光字专用打印平台深度
     bed_height: float = 100.0   # 发光字打印高度
+    bed_exclude_area: List[str] = field(
+        default_factory=lambda: default_bed_exclude_area_for_bed(800.0, 1200.0)
+    )
     nozzle_diameter: float = 0.8
     extruder_count: int = 2
 
@@ -1176,6 +1349,7 @@ class PrinterProfile:
     bed_width: float = 800.0
     bed_depth: float = 1200.0
     bed_height: float = 100.0
+    bed_exclude_area: List[str] = field(default_factory=list)
     nozzle_diameter: float = 0.8
     filament_diameter: float = 1.75
     retract_length: float = 2.0
@@ -1955,6 +2129,15 @@ def deserialize_params(data: dict) -> SliceParams:
         params.machine.bed_width = machine_data.get("bed_width", 800.0)
         params.machine.bed_depth = machine_data.get("bed_depth", 1200.0)
         params.machine.bed_height = machine_data.get("bed_height", 100.0)
+        if "bed_exclude_area" in machine_data:
+            params.machine.bed_exclude_area = normalize_bed_exclude_area(
+                machine_data.get("bed_exclude_area")
+            )
+        else:
+            params.machine.bed_exclude_area = default_bed_exclude_area_for_bed(
+                params.machine.bed_width,
+                params.machine.bed_depth,
+            )
         params.machine.nozzle_diameter = machine_data.get("nozzle_diameter", 0.8)
         params.machine.extruder_count = machine_data.get("extruder_count", 2)
 

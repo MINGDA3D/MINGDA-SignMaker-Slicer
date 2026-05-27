@@ -14,6 +14,8 @@ from typing import Dict, List, Optional
 from src.core.types import (
     PrinterProfile,
     SliceParams,
+    default_bed_exclude_area_for_bed,
+    normalize_bed_exclude_area,
     normalize_default_gcode_scripts,
 )
 
@@ -65,6 +67,27 @@ DEFAULT_PRINTER_PROFILE_SPECS = (
     {
         "id": "builtin-mignda-ad-f4-0p8",
         "name": "MIGNDA AD-F4 0.8mm Nozzle",
+        "bed_width": 800.0,
+        "bed_depth": 1200.0,
+        "nozzle_diameter": 0.8,
+    },
+    {
+        "id": "builtin-mignda-ad-f4-pro-0p4",
+        "name": "MIGNDA AD-F4 Pro 0.4mm Nozzle",
+        "bed_width": 800.0,
+        "bed_depth": 1200.0,
+        "nozzle_diameter": 0.4,
+    },
+    {
+        "id": "builtin-mignda-ad-f4-pro-0p6",
+        "name": "MIGNDA AD-F4 Pro 0.6mm Nozzle",
+        "bed_width": 800.0,
+        "bed_depth": 1200.0,
+        "nozzle_diameter": 0.6,
+    },
+    {
+        "id": "builtin-mignda-ad-f4-pro-0p8",
+        "name": "MIGNDA AD-F4 Pro 0.8mm Nozzle",
         "bed_width": 800.0,
         "bed_depth": 1200.0,
         "nozzle_diameter": 0.8,
@@ -125,6 +148,10 @@ def _build_profile_from_spec(spec: dict) -> PrinterProfile:
         name=spec["name"],
         bed_width=spec["bed_width"],
         bed_depth=spec["bed_depth"],
+        bed_exclude_area=default_bed_exclude_area_for_bed(
+            spec["bed_width"],
+            spec["bed_depth"],
+        ),
         nozzle_diameter=spec["nozzle_diameter"],
     )
 
@@ -137,22 +164,33 @@ def serialize_printer_profile(profile: PrinterProfile) -> dict:
 def deserialize_printer_profile(data: dict) -> PrinterProfile:
     """Restore a printer profile from a dict."""
     if not data:
+        bed_width = DEFAULT_PRINTER_PROFILE_SPECS[0]["bed_width"]
+        bed_depth = DEFAULT_PRINTER_PROFILE_SPECS[0]["bed_depth"]
         return PrinterProfile(
             name=DEFAULT_PRINTER_PROFILE_NAME,
-            bed_width=DEFAULT_PRINTER_PROFILE_SPECS[0]["bed_width"],
-            bed_depth=DEFAULT_PRINTER_PROFILE_SPECS[0]["bed_depth"],
+            bed_width=bed_width,
+            bed_depth=bed_depth,
+            bed_exclude_area=default_bed_exclude_area_for_bed(bed_width, bed_depth),
             nozzle_diameter=DEFAULT_PRINTER_PROFILE_SPECS[0]["nozzle_diameter"],
         )
     start_gcode, end_gcode = normalize_default_gcode_scripts(
         data.get("start_gcode", DEFAULT_BUILTIN_START_GCODE),
         data.get("end_gcode", DEFAULT_BUILTIN_END_GCODE),
     )
+    bed_width = float(data.get("bed_width", DEFAULT_PRINTER_PROFILE_SPECS[0]["bed_width"]))
+    bed_depth = float(data.get("bed_depth", DEFAULT_PRINTER_PROFILE_SPECS[0]["bed_depth"]))
+    if "bed_exclude_area" in data:
+        bed_exclude_area = normalize_bed_exclude_area(data.get("bed_exclude_area"))
+    else:
+        bed_exclude_area = default_bed_exclude_area_for_bed(bed_width, bed_depth)
+
     return PrinterProfile(
         id=data.get("id", PrinterProfile().id),
         name=data.get("name", DEFAULT_PRINTER_PROFILE_NAME),
-        bed_width=float(data.get("bed_width", DEFAULT_PRINTER_PROFILE_SPECS[0]["bed_width"])),
-        bed_depth=float(data.get("bed_depth", DEFAULT_PRINTER_PROFILE_SPECS[0]["bed_depth"])),
+        bed_width=bed_width,
+        bed_depth=bed_depth,
         bed_height=float(data.get("bed_height", 100.0)),
+        bed_exclude_area=bed_exclude_area,
         nozzle_diameter=float(
             data.get("nozzle_diameter", DEFAULT_PRINTER_PROFILE_SPECS[0]["nozzle_diameter"])
         ),
@@ -179,6 +217,7 @@ def apply_printer_profile_to_params(params: SliceParams, profile: PrinterProfile
     params.machine.bed_width = profile.bed_width
     params.machine.bed_depth = profile.bed_depth
     params.machine.bed_height = profile.bed_height
+    params.machine.bed_exclude_area = list(profile.bed_exclude_area)
     params.machine.nozzle_diameter = profile.nozzle_diameter
     params.machine.extruder_count = 1
 
@@ -207,6 +246,7 @@ def printer_profile_from_params(
         bed_width=params.machine.bed_width,
         bed_depth=params.machine.bed_depth,
         bed_height=params.machine.bed_height,
+        bed_exclude_area=list(params.machine.bed_exclude_area),
         nozzle_diameter=params.machine.nozzle_diameter,
         filament_diameter=params.gcode.filament_diameter,
         retract_length=params.gcode.retract_length,

@@ -1150,6 +1150,16 @@ Codice di errore: {code}</translation>
         <source>Start point updated</source>
         <translation>Punto iniziale aggiornato</translation>
     </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2717"/>
+        <source>Some contours exceed the platform size or overlap a bed exclude area. Please move or scale them back into the printable area before processing.</source>
+        <translation>Alcuni contorni superano le dimensioni della piattaforma o si sovrappongono a un'area esclusa del piano. Spostali o ridimensionali nell'area stampabile prima di procedere.</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2721"/>
+        <source>Processing blocked: contours outside printable area</source>
+        <translation>Elaborazione bloccata: contorni fuori dall'area stampabile</translation>
+    </message>
 </context>
 <context>
     <name>ParamPanel</name>
@@ -1999,6 +2009,21 @@ Punti di controllo: {points}</translation>
         <location filename="../src/ui/param_panel.py" line="604"/>
         <source>Laser Kerf:</source>
         <translation>Kerf laser:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="1332"/>
+        <source>One polygon per line: 0x0,70x0,70x70,0x70</source>
+        <translation>Un poligono per riga: 0x0,70x0,70x70,0x70</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="1335"/>
+        <source>Orca-style bed exclude area. Use XxY points separated by commas; put each region on its own line.</source>
+        <translation>Area esclusa dal piano in formato Orca. Usa punti XxY separati da virgole; inserisci ogni area su una riga separata.</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="1338"/>
+        <source>Bed Exclude Area:</source>
+        <translation>Area esclusa dal piano:</translation>
     </message>
 </context>
 <context>

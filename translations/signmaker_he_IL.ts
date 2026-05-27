@@ -1150,6 +1150,16 @@ Error code: {code}</source>
         <source>Start point updated</source>
         <translation>נקודת ההתחלה עודכנה</translation>
     </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2717"/>
+        <source>Some contours exceed the platform size or overlap a bed exclude area. Please move or scale them back into the printable area before processing.</source>
+        <translation>חלק מקווי המתאר חורגים מגודל המשטח או חופפים לאזור מוחרג. העבר או שנה את קנה המידה שלהם בחזרה לאזור הניתן להדפסה לפני העיבוד.</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2721"/>
+        <source>Processing blocked: contours outside printable area</source>
+        <translation>העיבוד נחסם: קווי המתאר מחוץ לאזור ההדפסה</translation>
+    </message>
 </context>
 <context>
     <name>ParamPanel</name>
@@ -1999,6 +2009,21 @@ Control points: {points}</source>
         <location filename="../src/ui/param_panel.py" line="604"/>
         <source>Laser Kerf:</source>
         <translation>רוחב חיתוך לייזר:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="1332"/>
+        <source>One polygon per line: 0x0,70x0,70x70,0x70</source>
+        <translation>מצולע אחד בכל שורה: 0x0,70x0,70x70,0x70</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="1335"/>
+        <source>Orca-style bed exclude area. Use XxY points separated by commas; put each region on its own line.</source>
+        <translation>אזור מוחרג ממשטח ההדפסה בסגנון Orca. השתמש בנקודות XxY המופרדות בפסיקים; שים כל אזור בשורה נפרדת.</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="1338"/>
+        <source>Bed Exclude Area:</source>
+        <translation>אזור מוחרג במשטח ההדפסה:</translation>
     </message>
 </context>
 <context>

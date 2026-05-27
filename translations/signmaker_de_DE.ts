@@ -1150,6 +1150,16 @@ Fehlercode: {code}</translation>
         <source>Start point updated</source>
         <translation>Startpunkt aktualisiert</translation>
     </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2717"/>
+        <source>Some contours exceed the platform size or overlap a bed exclude area. Please move or scale them back into the printable area before processing.</source>
+        <translation>Einige Konturen überschreiten die Plattformgröße oder überlappen einen ausgeschlossenen Druckbettbereich. Verschieben oder skalieren Sie sie vor der Verarbeitung zurück in den druckbaren Bereich.</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2721"/>
+        <source>Processing blocked: contours outside printable area</source>
+        <translation>Verarbeitung blockiert: Konturen außerhalb des druckbaren Bereichs</translation>
+    </message>
 </context>
 <context>
     <name>ParamPanel</name>
@@ -1999,6 +2009,21 @@ Kontrollpunkte: {points}</translation>
         <location filename="../src/ui/param_panel.py" line="604"/>
         <source>Laser Kerf:</source>
         <translation>Laser-Schnittfuge:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="1332"/>
+        <source>One polygon per line: 0x0,70x0,70x70,0x70</source>
+        <translation>Ein Polygon pro Zeile: 0x0,70x0,70x70,0x70</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="1335"/>
+        <source>Orca-style bed exclude area. Use XxY points separated by commas; put each region on its own line.</source>
+        <translation>Orca-artiger ausgeschlossener Druckbettbereich. Verwenden Sie durch Kommas getrennte XxY-Punkte; jede Region in eine eigene Zeile.</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="1338"/>
+        <source>Bed Exclude Area:</source>
+        <translation>Ausgeschlossener Druckbettbereich:</translation>
     </message>
 </context>
 <context>

@@ -4,7 +4,14 @@ from PySide6.QtGui import QWheelEvent
 from PySide6.QtWidgets import QApplication, QHeaderView, QLabel, QPlainTextEdit, QPushButton, QVBoxLayout, QWidget
 
 from src.business.printer_profile_manager import DEFAULT_PRINTER_PROFILE_SPECS
-from src.core.types import ColorChangePoint, EdgeDirection, EdgeType, PrinterProfile, SliceParams
+from src.core.types import (
+    ColorChangePoint,
+    EdgeDirection,
+    EdgeType,
+    PrinterProfile,
+    SliceParams,
+    format_bed_exclude_area_for_editor,
+)
 from src.ui.param_panel import ParamPanel
 from src.ui.widgets import GuardedComboBox, GuardedDoubleSpinBox, GuardedSpinBox
 
@@ -829,6 +836,7 @@ def test_load_project_printer_profile_uses_embedded_snapshot(qapp):
         name="Embedded Klipper",
         bed_width=950.0,
         bed_depth=1350.0,
+        bed_exclude_area=["0x0,10x0,10x10,0x10"],
         start_gcode="G28\nT0",
         end_gcode="M400",
         color_change_command_template="MACRO_{index}",
@@ -841,8 +849,12 @@ def test_load_project_printer_profile_uses_embedded_snapshot(qapp):
     assert panel.get_active_printer_profile_id() == "project-profile"
     assert panel.profile_bed_width.value() == pytest.approx(950.0)
     assert panel.profile_bed_depth.value() == pytest.approx(1350.0)
+    assert panel.profile_bed_exclude_area.toPlainText() == format_bed_exclude_area_for_editor(
+        snapshot.bed_exclude_area
+    )
     assert panel.profile_color_change_template.text() == "MACRO_{index}"
     assert active_profile.name == "Embedded Klipper"
+    assert active_profile.bed_exclude_area == snapshot.bed_exclude_area
     assert active_profile.start_gcode == "G28\nT0"
     assert active_profile.end_gcode == "M400"
     assert panel.profile_rename_btn.isEnabled() is False

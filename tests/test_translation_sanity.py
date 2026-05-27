@@ -29,6 +29,8 @@ ZH_CN_REQUIRED = {
         "Version: ",
         "Show Configuration Folder Failed",
         "Failed to show the configuration folder in the file manager.",
+        "Some contours exceed the platform size or overlap a bed exclude area. Please move or scale them back into the printable area before processing.",
+        "Processing blocked: contours outside printable area",
     },
     "ParamPanel": {
         "2D Vector Settings",
@@ -75,6 +77,9 @@ ZH_CN_REQUIRED = {
         "Printable Area X:",
         "Printable Area Y:",
         "Printable Area Z:",
+        "One polygon per line: 0x0,70x0,70x70,0x70",
+        "Orca-style bed exclude area. Use XxY points separated by commas; put each region on its own line.",
+        "Bed Exclude Area:",
         "Nozzle Diameter:",
         "Filament Diameter:",
         "Retract Length:",

@@ -975,6 +975,7 @@ class MainWindow(QMainWindow):
             or abs(self.canvas.platform_height - height) > 1e-6
         ):
             self.canvas.set_platform_size(width, height, self.canvas.grid_spacing)
+        self.canvas.set_unprintable_regions(machine.bed_exclude_area)
 
     def _get_prime_tower_validation_error(
         self,
@@ -1505,6 +1506,7 @@ class MainWindow(QMainWindow):
             machine.bed_width,
             machine.bed_depth,
             machine.bed_height,
+            machine.bed_exclude_area,
         )
 
         target_result = self.slice_result
@@ -2712,11 +2714,11 @@ class MainWindow(QMainWindow):
                 self,
                 self.tr("Processing Blocked"),
                 self.tr(
-                    "Some contours exceed the platform size. Please move or scale them back inside the platform before processing."
+                    "Some contours exceed the platform size or overlap a bed exclude area. Please move or scale them back into the printable area before processing."
                 ),
             )
             self._update_status(
-                self.tr("Processing blocked: contours exceed platform size")
+                self.tr("Processing blocked: contours outside printable area")
             )
             return
 

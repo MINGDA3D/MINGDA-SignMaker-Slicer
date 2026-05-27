@@ -299,6 +299,7 @@ def test_orca_config_block_maps_current_machine_and_print_settings():
 
     assert lines.index("; CONFIG_BLOCK_START") > lines.index("; --- Print statistics ---")
     assert "; printable_area = 0x0,900x0,900x1300,0x1300" in config_lines
+    assert "; bed_exclude_area = 0x0" in config_lines
     assert "; printable_height = 120" in config_lines
     assert "; layer_height = 0.4" in config_lines
     assert "; initial_layer_print_height = 0.4" in config_lines

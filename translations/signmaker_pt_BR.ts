@@ -1150,6 +1150,16 @@ Código de erro: {code}</translation>
         <source>Start point updated</source>
         <translation>Ponto inicial atualizado</translation>
     </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2717"/>
+        <source>Some contours exceed the platform size or overlap a bed exclude area. Please move or scale them back into the printable area before processing.</source>
+        <translation>Alguns contornos excedem o tamanho da plataforma ou se sobrepõem a uma área excluída da mesa. Mova-os ou redimensione-os de volta para a área imprimível antes de processar.</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2721"/>
+        <source>Processing blocked: contours outside printable area</source>
+        <translation>Processamento bloqueado: contornos fora da área imprimível</translation>
+    </message>
 </context>
 <context>
     <name>ParamPanel</name>
@@ -1999,6 +2009,21 @@ Pontos de controle: {points}</translation>
         <location filename="../src/ui/param_panel.py" line="604"/>
         <source>Laser Kerf:</source>
         <translation>Kerf do laser:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="1332"/>
+        <source>One polygon per line: 0x0,70x0,70x70,0x70</source>
+        <translation>Um polígono por linha: 0x0,70x0,70x70,0x70</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="1335"/>
+        <source>Orca-style bed exclude area. Use XxY points separated by commas; put each region on its own line.</source>
+        <translation>Área excluída da mesa no formato Orca. Use pontos XxY separados por vírgulas; coloque cada região em uma linha própria.</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="1338"/>
+        <source>Bed Exclude Area:</source>
+        <translation>Área excluída da mesa:</translation>
     </message>
 </context>
 <context>

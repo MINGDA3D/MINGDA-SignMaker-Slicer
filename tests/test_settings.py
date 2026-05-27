@@ -12,6 +12,7 @@ from pathlib import Path
 
 from src.core.types import (
     ColorChangePoint, SliceParams, EdgeType, BevelDirection,
+    default_bed_exclude_area_for_bed,
     serialize_params, deserialize_params
 )
 from src.business.preset_manager import PresetManager
@@ -41,6 +42,7 @@ class TestSerializeParams:
         assert data["top_face"]["thickness_layers"] == 8
         assert data["light_slot"]["depth_layers"] == 20
         assert data["light_slot"]["floor_layers"] == 5
+        assert data["machine"]["bed_exclude_area"] == default_bed_exclude_area_for_bed(800.0, 1200.0)
 
     def test_serialize_custom_params(self):
         """测试序列化自定义参数"""
@@ -304,6 +306,21 @@ class TestSerializeParams:
         assert restored.gcode.first_layer_fan_percent == 30
         assert restored.gcode.other_layer_fan_percent == 80
         assert restored.machine.bed_width == 500.0
+
+    def test_bed_exclude_area_defaults_follow_supported_machine_sizes(self):
+        data = {
+            "machine": {
+                "bed_width": 600.0,
+                "bed_depth": 800.0,
+                "bed_height": 100.0,
+            }
+        }
+
+        restored = deserialize_params(data)
+
+        assert restored.machine.bed_exclude_area == default_bed_exclude_area_for_bed(600.0, 800.0)
+        assert "430x0,600x0,600x100,430x100" in restored.machine.bed_exclude_area
+        assert "70x0,430x0,430x20,70x20" in restored.machine.bed_exclude_area
 
     def test_deserialize_empty_dict(self):
         """测试反序列化空字典"""

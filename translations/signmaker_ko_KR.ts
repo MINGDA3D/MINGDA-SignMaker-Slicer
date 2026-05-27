@@ -1150,6 +1150,16 @@ Error code: {code}</source>
         <source>Start point updated</source>
         <translation>시작점이 업데이트되었습니다</translation>
     </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2717"/>
+        <source>Some contours exceed the platform size or overlap a bed exclude area. Please move or scale them back into the printable area before processing.</source>
+        <translation>일부 윤곽이 플랫폼 크기를 벗어나거나 베드 제외 영역과 겹칩니다. 처리하기 전에 인쇄 가능 영역 안으로 이동하거나 크기를 조정하세요.</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2721"/>
+        <source>Processing blocked: contours outside printable area</source>
+        <translation>처리가 차단됨: 윤곽이 인쇄 가능 영역 밖에 있습니다</translation>
+    </message>
 </context>
 <context>
     <name>ParamPanel</name>
@@ -1999,6 +2009,21 @@ Control points: {points}</source>
         <location filename="../src/ui/param_panel.py" line="604"/>
         <source>Laser Kerf:</source>
         <translation>레이저 커프:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="1332"/>
+        <source>One polygon per line: 0x0,70x0,70x70,0x70</source>
+        <translation>한 줄에 하나의 다각형: 0x0,70x0,70x70,0x70</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="1335"/>
+        <source>Orca-style bed exclude area. Use XxY points separated by commas; put each region on its own line.</source>
+        <translation>Orca 형식의 베드 제외 영역입니다. 쉼표로 구분된 XxY 점을 사용하고 각 영역은 한 줄에 하나씩 입력하세요.</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="1338"/>
+        <source>Bed Exclude Area:</source>
+        <translation>베드 제외 영역:</translation>
     </message>
 </context>
 <context>

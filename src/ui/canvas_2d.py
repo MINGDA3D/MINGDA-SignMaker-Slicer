@@ -35,6 +35,8 @@ from src.core.types import (
     get_path_start_point_candidate_indices,
     resolve_path_start_point_index,
     normalize_contour_start_point_index,
+    parse_bed_exclude_area,
+    BedExcludeAreaInput,
 )
 from src.utils.geometry import normalize_path, point_in_polygon
 from .theme import COLORS
@@ -99,6 +101,7 @@ class Canvas2D(QWidget):
         self.slice_result = None
         self.prime_tower_bounds: Optional[Tuple[float, float, float, float]] = None
         self.prime_tower_invalid = False
+        self.unprintable_polygons: List[List[Point]] = parse_bed_exclude_area(None)
         self._path_offset = PathOffset()
 
         # 交互状态
@@ -154,6 +157,8 @@ class Canvas2D(QWidget):
         self.hole_color = QColor(COLORS.accent_warning)
         self.selected_color = QColor(COLORS.accent_primary)
         self.out_of_bounds_color = QColor(COLORS.accent_error)
+        self.unprintable_fill_color = QColor(255, 116, 116, 52)
+        self.unprintable_border_color = QColor(255, 132, 132, 150)
         self.prime_tower_color = QColor(COLORS.accent_primary)
         self.start_point_color = QColor(COLORS.accent_success)
         self.start_point_candidate_color = QColor(COLORS.accent_primary)
@@ -212,6 +217,14 @@ class Canvas2D(QWidget):
         self.platform_height = height
         self.grid_spacing = grid_spacing
         self._init_view()
+        self.update()
+
+    def set_unprintable_regions(self, bed_exclude_area: BedExcludeAreaInput):
+        """Set bed-exclude polygons shown and validated on the 2D platform."""
+        polygons = parse_bed_exclude_area(bed_exclude_area)
+        if polygons == self.unprintable_polygons:
+            return
+        self.unprintable_polygons = polygons
         self.update()
 
     def set_contours(self, contours: List[Contour], center_on_platform: bool = True):
@@ -1160,11 +1173,39 @@ class Canvas2D(QWidget):
                                          int(platform_right), int(y_screen))
 
         # 绘制平台边框
+        self._draw_unprintable_regions(painter, platform_rect)
+
         pen = QPen(self.platform_border_color)
         pen.setWidth(2)
         painter.setPen(pen)
         painter.setBrush(Qt.BrushStyle.NoBrush)
         painter.drawRect(platform_rect)
+
+    def _draw_unprintable_regions(self, painter: QPainter, platform_rect: QRectF):
+        """Draw machine bed-exclude areas over the platform grid."""
+        if not self.unprintable_polygons:
+            return
+
+        painter.save()
+        painter.setClipRect(platform_rect)
+        painter.setBrush(QBrush(self.unprintable_fill_color))
+        pen = QPen(self.unprintable_border_color)
+        pen.setWidthF(1.0)
+        painter.setPen(pen)
+
+        for polygon in self.unprintable_polygons:
+            if len(polygon) < 3:
+                continue
+            path = QPainterPath()
+            first = self._world_to_screen(QPointF(polygon[0].x, polygon[0].y))
+            path.moveTo(first)
+            for point in polygon[1:]:
+                screen_point = self._world_to_screen(QPointF(point.x, point.y))
+                path.lineTo(screen_point)
+            path.closeSubpath()
+            painter.drawPath(path)
+
+        painter.restore()
 
     def _draw_rulers(self, painter: QPainter):
         """绘制标尺（紧贴平台边缘）"""
@@ -1328,6 +1369,86 @@ class Canvas2D(QWidget):
         painter.drawRect(QRectF(min_x, min_y, width, height))
         painter.restore()
 
+    @staticmethod
+    def _bounds_overlap(
+        a: Tuple[float, float, float, float],
+        b: Tuple[float, float, float, float],
+    ) -> bool:
+        return not (a[2] < b[0] or b[2] < a[0] or a[3] < b[1] or b[3] < a[1])
+
+    @staticmethod
+    def _polygon_bounds(points: List[Point]) -> Tuple[float, float, float, float]:
+        xs = [point.x for point in points]
+        ys = [point.y for point in points]
+        return (min(xs), min(ys), max(xs), max(ys))
+
+    @staticmethod
+    def _orientation(a: Point, b: Point, c: Point) -> float:
+        return (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x)
+
+    @staticmethod
+    def _point_on_segment(point: Point, start: Point, end: Point) -> bool:
+        epsilon = 1e-9
+        if abs(Canvas2D._orientation(start, end, point)) > epsilon:
+            return False
+        return (
+            min(start.x, end.x) - epsilon <= point.x <= max(start.x, end.x) + epsilon
+            and min(start.y, end.y) - epsilon <= point.y <= max(start.y, end.y) + epsilon
+        )
+
+    @staticmethod
+    def _segments_intersect(a1: Point, a2: Point, b1: Point, b2: Point) -> bool:
+        epsilon = 1e-9
+        o1 = Canvas2D._orientation(a1, a2, b1)
+        o2 = Canvas2D._orientation(a1, a2, b2)
+        o3 = Canvas2D._orientation(b1, b2, a1)
+        o4 = Canvas2D._orientation(b1, b2, a2)
+
+        if o1 * o2 < -epsilon and o3 * o4 < -epsilon:
+            return True
+        return (
+            Canvas2D._point_on_segment(b1, a1, a2)
+            or Canvas2D._point_on_segment(b2, a1, a2)
+            or Canvas2D._point_on_segment(a1, b1, b2)
+            or Canvas2D._point_on_segment(a2, b1, b2)
+        )
+
+    def _path_intersects_polygon(self, path: Path, polygon: List[Point]) -> bool:
+        if len(path.points) < 2 or len(polygon) < 3:
+            return False
+        if not self._bounds_overlap(path.bounds, self._polygon_bounds(polygon)):
+            return False
+
+        polygon_path = Path(points=polygon)
+        if any(point_in_polygon(point, polygon_path) for point in path.points):
+            return True
+        if any(point_in_polygon(point, path) for point in polygon):
+            return True
+
+        path_edges = [
+            (path.points[i], path.points[(i + 1) % len(path.points)])
+            for i in range(len(path.points))
+        ]
+        polygon_edges = [
+            (polygon[i], polygon[(i + 1) % len(polygon)])
+            for i in range(len(polygon))
+        ]
+        return any(
+            self._segments_intersect(edge_a[0], edge_a[1], edge_b[0], edge_b[1])
+            for edge_a in path_edges
+            for edge_b in polygon_edges
+        )
+
+    def is_contour_in_unprintable_region(self, contour: Contour) -> bool:
+        if not self.unprintable_polygons:
+            return False
+        paths = [contour.outer] + list(contour.holes)
+        return any(
+            self._path_intersects_polygon(path, polygon)
+            for path in paths
+            for polygon in self.unprintable_polygons
+        )
+
     def is_contour_out_of_bounds(self, contour: Contour) -> bool:
         """åˆ¤æ–­è½®å»“æ˜¯å¦è¶…å‡ºå¹³å°è¾¹ç•Œã€‚"""
         bounds = contour.outer.bounds
@@ -1336,6 +1457,7 @@ class Canvas2D(QWidget):
             or bounds[1] < 0
             or bounds[2] > self.platform_width
             or bounds[3] > self.platform_height
+            or self.is_contour_in_unprintable_region(contour)
         )
 
     def get_out_of_bounds_indices(self) -> List[int]:

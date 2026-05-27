@@ -50,9 +50,12 @@ from src.core.types import (
     Layer,
     LayerPath,
     PathRole,
+    Point,
     ExtruderType,
     SliceParams,
     SliceResult,
+    BedExcludeAreaInput,
+    parse_bed_exclude_area,
     resolve_shell_wall_thickness,
     is_bottom_face_effective,
     resolve_u_shape_profile_start_z,
@@ -176,6 +179,7 @@ class Preview3DWidget(QOpenGLWidget):
         self.bed_height: float = 100.0  # Z方向最大高度
 
         # 模型边界信息
+        self.unprintable_polygons: List[List[Point]] = []
         self.model_center: Tuple[float, float, float] = (0, 0, 0)
         self.model_size: float = 100.0
 
@@ -495,12 +499,23 @@ class Preview3DWidget(QOpenGLWidget):
             self.layer_changed.emit(layer_index)
             self.update()
 
-    def set_bed_size(self, width: float, depth: float, height: float):
+    def set_bed_size(
+        self,
+        width: float,
+        depth: float,
+        height: float,
+        bed_exclude_area: BedExcludeAreaInput = None,
+    ):
         """设置打印平台尺寸"""
         self.bed_width = width
         self.bed_depth = depth
         self.bed_height = height
+        self.unprintable_polygons = parse_bed_exclude_area(bed_exclude_area)
         self._clamp_zoom_in_place()
+        self.update()
+
+    def set_unprintable_regions(self, bed_exclude_area: BedExcludeAreaInput):
+        self.unprintable_polygons = parse_bed_exclude_area(bed_exclude_area)
         self.update()
 
     def reset_view(self):
@@ -795,7 +810,33 @@ class Preview3DWidget(QOpenGLWidget):
         glVertex3f(0, d, 0)
         glEnd()
 
+        self._draw_unprintable_regions()
         glLineWidth(self.line_width)
+
+    def _draw_unprintable_regions(self):
+        """Draw bed-exclude regions as translucent red polygons on the platform."""
+        if not self.unprintable_polygons:
+            return
+
+        z = 0.05
+        glColor4f(1.0, 0.32, 0.32, 0.32)
+        for polygon in self.unprintable_polygons:
+            if len(polygon) < 3:
+                continue
+            glBegin(GL_POLYGON)
+            for point in polygon:
+                glVertex3f(point.x, point.y, z)
+            glEnd()
+
+        glColor4f(1.0, 0.42, 0.42, 0.85)
+        glLineWidth(1.2)
+        for polygon in self.unprintable_polygons:
+            if len(polygon) < 3:
+                continue
+            glBegin(GL_LINE_LOOP)
+            for point in polygon:
+                glVertex3f(point.x, point.y, z + 0.02)
+            glEnd()
 
     def _draw_grid(self):
         """绘制网格（从原点开始，20mm间距）"""
@@ -1541,9 +1582,18 @@ class Preview3D(QWidget):
         """Return whether the current preview mesh cache matches the scene."""
         return self.gl_widget.has_cached_mesh_parts(result, contours, params)
 
-    def set_bed_size(self, width: float, depth: float, height: float):
+    def set_bed_size(
+        self,
+        width: float,
+        depth: float,
+        height: float,
+        bed_exclude_area: BedExcludeAreaInput = None,
+    ):
         """设置打印平台尺寸"""
-        self.gl_widget.set_bed_size(width, depth, height)
+        self.gl_widget.set_bed_size(width, depth, height, bed_exclude_area)
+
+    def set_unprintable_regions(self, bed_exclude_area: BedExcludeAreaInput):
+        self.gl_widget.set_unprintable_regions(bed_exclude_area)
 
     def _update_layer_info(self, total: int, current_index: int):
         """Refresh current/total layer labels."""

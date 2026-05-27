@@ -13,6 +13,7 @@ from src.core.types import (
     Path,
     Point,
     SliceParams,
+    default_bed_exclude_area_for_bed,
     get_contour_user_start_point_index,
     get_path_user_start_point_index,
     resolve_path_start_point_index,
@@ -47,6 +48,20 @@ def _rect_contour(x1: float, y1: float, x2: float, y2: float, name: str = "") ->
         ),
         name=name,
     )
+
+
+def test_canvas_marks_bed_exclude_area_overlap_out_of_bounds(qapp):
+    canvas = Canvas2D()
+    canvas.set_platform_size(800.0, 1200.0)
+    canvas.set_unprintable_regions(default_bed_exclude_area_for_bed(800.0, 1200.0))
+    safe_contour = _rect_contour(100.0, 100.0, 120.0, 120.0)
+    blocked_contour = _rect_contour(640.0, 10.0, 660.0, 30.0)
+
+    canvas.set_contours([safe_contour, blocked_contour], center_on_platform=False)
+
+    assert canvas.is_contour_out_of_bounds(safe_contour) is False
+    assert canvas.is_contour_out_of_bounds(blocked_contour) is True
+    assert canvas.get_out_of_bounds_indices() == [1]
 
 
 def _circle_contour(

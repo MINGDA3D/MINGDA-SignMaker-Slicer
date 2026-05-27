@@ -1150,6 +1150,16 @@ Código de error: {code}</translation>
         <source>Start point updated</source>
         <translation>Punto de inicio actualizado</translation>
     </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2717"/>
+        <source>Some contours exceed the platform size or overlap a bed exclude area. Please move or scale them back into the printable area before processing.</source>
+        <translation>Algunos contornos exceden el tamaño de la plataforma o se superponen con un área excluida de la cama. Muévelos o escálalos de vuelta al área imprimible antes de procesar.</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2721"/>
+        <source>Processing blocked: contours outside printable area</source>
+        <translation>Procesamiento bloqueado: contornos fuera del área imprimible</translation>
+    </message>
 </context>
 <context>
     <name>ParamPanel</name>
@@ -1999,6 +2009,21 @@ Puntos de control: {points}</translation>
         <location filename="../src/ui/param_panel.py" line="604"/>
         <source>Laser Kerf:</source>
         <translation>Ancho de corte laser:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="1332"/>
+        <source>One polygon per line: 0x0,70x0,70x70,0x70</source>
+        <translation>Un polígono por línea: 0x0,70x0,70x70,0x70</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="1335"/>
+        <source>Orca-style bed exclude area. Use XxY points separated by commas; put each region on its own line.</source>
+        <translation>Área excluida de la cama con formato Orca. Usa puntos XxY separados por comas; coloca cada zona en su propia línea.</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="1338"/>
+        <source>Bed Exclude Area:</source>
+        <translation>Área excluida de la cama:</translation>
     </message>
 </context>
 <context>
