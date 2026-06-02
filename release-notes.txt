@@ -1,0 +1,6 @@
+MINGDA SignMaker v0.3.7
+
+- Added online update support. The app can now check for newer versions, show release notes, download the installer, and start the update process.
+- Added localized update messages for all supported languages.
+- Improved update safety by verifying the downloaded installer before installation.
+- Improved Windows startup reliability when launching the app immediately after installation.

@@ -4,8 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from PySide6.QtCore import QThread, Qt, QUrl, Signal
-from PySide6.QtGui import QDesktopServices
+from PySide6.QtCore import QThread, Qt, Signal
 from PySide6.QtWidgets import (
     QDialog,
     QHBoxLayout,
@@ -114,11 +113,6 @@ class UpdateDialog(QDialog):
         button_layout = QHBoxLayout()
         button_layout.addStretch(1)
 
-        self._open_release_button = QPushButton(self.tr("Open Release Page"))
-        self._open_release_button.clicked.connect(self._open_release_page)
-        self._open_release_button.setEnabled(bool(update_info.release_url))
-        button_layout.addWidget(self._open_release_button)
-
         self._later_button = QPushButton(self.tr("Later"))
         self._later_button.clicked.connect(self.reject)
         button_layout.addWidget(self._later_button)
@@ -133,10 +127,6 @@ class UpdateDialog(QDialog):
         button_layout.addWidget(self._run_installer_button)
 
         layout.addLayout(button_layout)
-
-    def _open_release_page(self):
-        if self._update_info.release_url:
-            QDesktopServices.openUrl(QUrl(self._update_info.release_url))
 
     def _start_download(self):
         if self._download_worker and self._download_worker.isRunning():
@@ -157,9 +147,6 @@ class UpdateDialog(QDialog):
     def _set_downloading(self, downloading: bool):
         self._download_button.setEnabled(not downloading)
         self._later_button.setEnabled(not downloading)
-        self._open_release_button.setEnabled(
-            not downloading and bool(self._update_info.release_url)
-        )
         self._progress_bar.setVisible(downloading)
         if downloading:
             self._progress_bar.setRange(0, 0)

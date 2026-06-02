@@ -12,6 +12,7 @@ MINGDA SignMaker - 主窗口
 
 from __future__ import annotations
 from datetime import datetime
+import os
 import re
 import sys
 from pathlib import Path
@@ -3628,9 +3629,33 @@ class MainWindow(QMainWindow):
         self._save_current_params()
         self._save_window_state()
 
-        started = QProcess.startDetached(str(path), [])
+        dll_directory_reset = False
+        if sys.platform == "win32":
+            try:
+                import ctypes
+
+                dll_directory_reset = bool(ctypes.windll.kernel32.SetDllDirectoryW(None))
+            except Exception:
+                dll_directory_reset = False
+
+        previous_reset_env = os.environ.get("PYINSTALLER_RESET_ENVIRONMENT")
+        os.environ["PYINSTALLER_RESET_ENVIRONMENT"] = "1"
+        try:
+            started = QProcess.startDetached(str(path), [], str(path.parent))
+        finally:
+            if previous_reset_env is None:
+                os.environ.pop("PYINSTALLER_RESET_ENVIRONMENT", None)
+            else:
+                os.environ["PYINSTALLER_RESET_ENVIRONMENT"] = previous_reset_env
         if isinstance(started, tuple):
             started = started[0]
+        if not started and dll_directory_reset:
+            meipass = getattr(sys, "_MEIPASS", None)
+            if meipass:
+                try:
+                    ctypes.windll.kernel32.SetDllDirectoryW(str(meipass))
+                except Exception:
+                    pass
         if not started:
             QMessageBox.warning(
                 self,

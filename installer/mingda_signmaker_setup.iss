@@ -85,4 +85,28 @@ Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 
 [Run]
-Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\{#MyAppExeName}"; WorkingDir: "{app}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent; BeforeInstall: PreparePyInstallerLaunch; AfterInstall: ClearPyInstallerLaunch
+
+[Code]
+#ifdef UNICODE
+function SetProcessEnvironmentVariable(lpName: string; lpValue: string): Boolean;
+  external 'SetEnvironmentVariableW@kernel32.dll stdcall';
+function SetProcessDllDirectory(lpPathName: string): Boolean;
+  external 'SetDllDirectoryW@kernel32.dll stdcall';
+#else
+function SetProcessEnvironmentVariable(lpName: string; lpValue: string): Boolean;
+  external 'SetEnvironmentVariableA@kernel32.dll stdcall';
+function SetProcessDllDirectory(lpPathName: string): Boolean;
+  external 'SetDllDirectoryA@kernel32.dll stdcall';
+#endif
+
+procedure PreparePyInstallerLaunch;
+begin
+  SetProcessEnvironmentVariable('PYINSTALLER_RESET_ENVIRONMENT', '1');
+  SetProcessDllDirectory(ExpandConstant('{app}'));
+end;
+
+procedure ClearPyInstallerLaunch;
+begin
+  SetProcessEnvironmentVariable('PYINSTALLER_RESET_ENVIRONMENT', '');
+end;
