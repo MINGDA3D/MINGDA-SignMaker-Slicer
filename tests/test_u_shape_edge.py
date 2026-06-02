@@ -13,6 +13,8 @@ from src.core.types import (
     PathType,
     Point,
     SliceParams,
+    U_SHAPE_FINE_LAYER_HEIGHT,
+    U_SHAPE_OVERHANG_LINE_WIDTH_RATIO,
     calculate_u_shape_offset_at_z,
     is_bottom_face_effective,
 )
@@ -119,8 +121,8 @@ def test_u_shape_offset_uses_curved_arc_then_straight():
     params.shell.layer_height = 0.3
     params.shell.line_width = 0.6
     params.shell.u_bottom_layers = 0
-    max_overhang = params.shell.line_width * 0.75
-    slope = max_overhang / 0.1
+    max_overhang = params.shell.line_width * U_SHAPE_OVERHANG_LINE_WIDTH_RATIO
+    slope = max_overhang / U_SHAPE_FINE_LAYER_HEIGHT
 
     assert calculate_u_shape_offset_at_z(0.0, params.shell) == pytest.approx(0.0)
     assert calculate_u_shape_offset_at_z(0.1, params.shell) == pytest.approx(
@@ -130,7 +132,9 @@ def test_u_shape_offset_uses_curved_arc_then_straight():
         _printable_outward_arc_offset(5.0, 0.2, slope)
     )
     previous_offset = calculate_u_shape_offset_at_z(0.0, params.shell)
-    for z in (0.1, 0.2, 0.3, 0.4, 0.5, 0.6):
+    step_count = int(0.6 / U_SHAPE_FINE_LAYER_HEIGHT)
+    for index in range(1, step_count + 1):
+        z = round(index * U_SHAPE_FINE_LAYER_HEIGHT, 6)
         offset = calculate_u_shape_offset_at_z(z, params.shell)
         assert offset - previous_offset <= max_overhang + 1e-9
         previous_offset = offset
@@ -150,13 +154,13 @@ def test_u_shape_offset_starts_from_build_plate():
     params.shell.u_bottom_layers = 0
 
     first_offset = calculate_u_shape_offset_at_z(0.0, params.shell)
-    second_offset = calculate_u_shape_offset_at_z(0.1, params.shell)
-    third_offset = calculate_u_shape_offset_at_z(0.2, params.shell)
+    second_offset = calculate_u_shape_offset_at_z(U_SHAPE_FINE_LAYER_HEIGHT, params.shell)
+    third_offset = calculate_u_shape_offset_at_z(U_SHAPE_FINE_LAYER_HEIGHT * 2, params.shell)
 
     assert first_offset == pytest.approx(0.0)
     assert second_offset > first_offset
-    assert second_offset - first_offset <= params.shell.line_width * 0.75 + 1e-9
-    assert third_offset - second_offset <= params.shell.line_width * 0.75 + 1e-9
+    assert second_offset - first_offset <= params.shell.line_width * U_SHAPE_OVERHANG_LINE_WIDTH_RATIO + 1e-9
+    assert third_offset - second_offset <= params.shell.line_width * U_SHAPE_OVERHANG_LINE_WIDTH_RATIO + 1e-9
 
 
 def test_u_shape_offset_has_no_single_fine_layer_overhang_jump():
@@ -165,11 +169,12 @@ def test_u_shape_offset_has_no_single_fine_layer_overhang_jump():
     params.shell.line_width = 0.6
     params.shell.u_bottom_layers = 3
 
-    max_delta = params.shell.line_width * 0.75
+    max_delta = params.shell.line_width * U_SHAPE_OVERHANG_LINE_WIDTH_RATIO
     previous_offset = calculate_u_shape_offset_at_z(0.0, params.shell)
 
-    for index in range(1, 51):
-        z = index * 0.1
+    step_count = int(params.shell.u_arc_height / U_SHAPE_FINE_LAYER_HEIGHT)
+    for index in range(1, step_count + 1):
+        z = round(index * U_SHAPE_FINE_LAYER_HEIGHT, 6)
         offset = calculate_u_shape_offset_at_z(z, params.shell)
         assert offset - previous_offset <= max_delta + 1e-9
         previous_offset = offset
@@ -180,7 +185,7 @@ def test_u_shape_offset_keeps_circular_form_while_limiting_initial_slope():
     params.shell.layer_height = 1.0
     params.shell.line_width = 1.0
     params.shell.u_bottom_layers = 0
-    slope = (params.shell.line_width * 0.75) / 0.1
+    slope = (params.shell.line_width * U_SHAPE_OVERHANG_LINE_WIDTH_RATIO) / U_SHAPE_FINE_LAYER_HEIGHT
 
     assert calculate_u_shape_offset_at_z(2.5, params.shell) == pytest.approx(
         _printable_outward_arc_offset(5.0, 2.5, slope)
@@ -234,7 +239,7 @@ def test_u_shape_offset_profile_start_is_independent_from_solid_bottom_height():
     first_layer_offset = calculate_u_shape_offset_at_z(2.0, params.shell, profile_start)
     assert first_layer_offset == pytest.approx(0.0)
     first_arc_offset = calculate_u_shape_offset_at_z(2.2, params.shell, profile_start)
-    slope = (params.shell.line_width * 0.75) / 0.1
+    slope = (params.shell.line_width * U_SHAPE_OVERHANG_LINE_WIDTH_RATIO) / U_SHAPE_FINE_LAYER_HEIGHT
     assert first_arc_offset == pytest.approx(
         _printable_outward_arc_offset(5.0, 0.2, slope)
     )
@@ -358,13 +363,18 @@ def test_u_shape_auto_emits_bottom_face_fill_when_bottom_face_toggle_is_off():
         for layer in result.layers
         if any(path.role == PathRole.FILL_BOTTOM_FACE for path in layer.paths)
     ]
-    assert len(bottom_face_layers) == 9
+    expected_bottom_layers = math.ceil(
+        params.shell.u_bottom_layers * params.shell.layer_height / U_SHAPE_FINE_LAYER_HEIGHT
+    )
+    assert len(bottom_face_layers) == expected_bottom_layers
     assert bottom_face_layers[0].z_height == pytest.approx(0.0)
-    assert bottom_face_layers[-1].z_height == pytest.approx(0.8)
-    assert all(layer.layer_height == pytest.approx(0.1) for layer in bottom_face_layers)
+    assert bottom_face_layers[-1].z_height == pytest.approx(
+        (expected_bottom_layers - 1) * U_SHAPE_FINE_LAYER_HEIGHT
+    )
+    assert all(layer.layer_height == pytest.approx(U_SHAPE_FINE_LAYER_HEIGHT) for layer in bottom_face_layers)
 
 
-def test_u_shape_arc_region_uses_fine_0_1mm_layers():
+def test_u_shape_arc_region_uses_fine_layers():
     contour = _contour_with_hole()
     params = _u_shape_params()
     params.shell.layer_height = 0.3
@@ -382,10 +392,13 @@ def test_u_shape_arc_region_uses_fine_0_1mm_layers():
         if 0.0 <= layer.z_height < 5.0 - 1e-6
     ]
 
-    assert len(arc_layers) == 50
+    expected_arc_layers = math.ceil(params.shell.u_arc_height / U_SHAPE_FINE_LAYER_HEIGHT)
+    assert len(arc_layers) == expected_arc_layers
     assert arc_layers[0].z_height == pytest.approx(0.0)
-    assert arc_layers[-1].z_height == pytest.approx(4.9)
-    assert all(layer.layer_height == pytest.approx(0.1) for layer in arc_layers)
+    assert arc_layers[-1].z_height == pytest.approx(
+        (expected_arc_layers - 1) * U_SHAPE_FINE_LAYER_HEIGHT
+    )
+    assert all(layer.layer_height == pytest.approx(U_SHAPE_FINE_LAYER_HEIGHT) for layer in arc_layers)
 
 
 def test_u_shape_sliced_wall_paths_expand_through_bottom_layers():

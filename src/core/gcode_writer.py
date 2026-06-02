@@ -347,7 +347,8 @@ class GCodeWriter:
         nozzle_diameter = max(self.profile.nozzle_diameter, 0.005)
         filament_diameter = max(self.profile.filament_diameter, 1.0)
         printable_area = self._config_printable_area()
-        bed_exclude_area = self._config_bed_exclude_area()
+        # Temporarily disabled until downstream G-code consumers handle this safely.
+        # bed_exclude_area = self._config_bed_exclude_area()
         filament_used_mm = max(result.estimated_filament, 0.0) * 1000.0
         filament_weight = self._estimate_filament_weight_g(result, filament_diameter)
 
@@ -355,7 +356,7 @@ class GCodeWriter:
             ("printer_technology", "FFF"),
             ("printable_area", printable_area),
             ("bed_shape", printable_area),
-            ("bed_exclude_area", bed_exclude_area),
+            # ("bed_exclude_area", bed_exclude_area),
             ("printable_height", self.profile.bed_height),
             ("printer_model", self.profile.name or "Klipper"),
             ("printer_notes", APP_NAME),

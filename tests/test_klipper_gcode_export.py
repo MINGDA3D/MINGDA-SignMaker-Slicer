@@ -24,6 +24,7 @@ from src.core.types import (
     ProjectMeta,
     SliceParams,
     SliceResult,
+    U_SHAPE_FINE_LAYER_HEIGHT,
     set_contour_user_start_point_index,
     set_path_user_start_point_index,
 )
@@ -299,7 +300,7 @@ def test_orca_config_block_maps_current_machine_and_print_settings():
 
     assert lines.index("; CONFIG_BLOCK_START") > lines.index("; --- Print statistics ---")
     assert "; printable_area = 0x0,900x0,900x1300,0x1300" in config_lines
-    assert "; bed_exclude_area = 0x0" in config_lines
+    assert not any(line.startswith("; bed_exclude_area =") for line in config_lines)
     assert "; printable_height = 120" in config_lines
     assert "; layer_height = 0.4" in config_lines
     assert "; initial_layer_print_height = 0.4" in config_lines
@@ -493,11 +494,12 @@ def test_gcode_emits_per_path_width_and_height_for_u_shape_fine_layers():
         contours=[contour],
     )
 
-    layer0_index = lines.index("; Layer 0 at Z=0.10mm")
+    fine_height = U_SHAPE_FINE_LAYER_HEIGHT
+    layer0_index = lines.index(f"; Layer 0 at Z={fine_height:.2f}mm")
     wall_type_index = lines.index(";TYPE:WALL", layer0_index)
 
     assert lines[wall_type_index + 1] == ";WIDTH:0.600"
-    assert lines[wall_type_index + 2] == ";HEIGHT:0.100"
+    assert lines[wall_type_index + 2] == f";HEIGHT:{fine_height:.3f}"
     assert lines[wall_type_index + 3].startswith("; WALL path")
     assert "; layer_height = 0.3" in _extract_config_block(lines)
 
