@@ -527,6 +527,7 @@ class TitleBar(QWidget):
         lang_menu.addAction("Türkçe", lambda: self.menu_action.emit("lang_tr_TR"))
         menu.addAction(self.tr("Show Configuration Folder"), lambda: self.menu_action.emit("open_user_config_dir"))
         menu.addAction(self.tr("Tutorial"), lambda: self.menu_action.emit("tutorial"))
+        menu.addAction(self.tr("Check for Updates"), lambda: self.menu_action.emit("check_updates"))
         menu.addSeparator()
 
         menu.addAction(self.tr("About"), lambda: self.menu_action.emit("about"))

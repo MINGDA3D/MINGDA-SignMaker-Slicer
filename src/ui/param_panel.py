@@ -355,7 +355,7 @@ class ParamPanel(QWidget):
         """Initialize a layer-count spinbox with a consistent suffix/tooltip."""
         spinbox.setRange(minimum, maximum)
         spinbox.setValue(value)
-        spinbox.setSuffix(f" {self.tr('layers')}")
+        spinbox.setSuffix(" " + self.tr("layers"))
         spinbox.setEnabled(enabled)
         spinbox.setToolTip(
             self.tr("Height is derived from layer count * layer height.")
@@ -769,7 +769,7 @@ class ParamPanel(QWidget):
         self.light_slot_floor_layers.setRange(1, 100)
         self.light_slot_floor_layers.setValue(5)
         self.light_slot_floor_layers.setSingleStep(1)
-        self.light_slot_floor_layers.setSuffix(f" {self.tr('layers')}")
+        self.light_slot_floor_layers.setSuffix(" " + self.tr("layers"))
         self.light_slot_floor_layers.setEnabled(False)
         self.light_slot_floor_layers.valueChanged.connect(self._on_param_changed)
         form.addRow(self.tr("Floor Layers:"), self.light_slot_floor_layers)

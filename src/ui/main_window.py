@@ -26,7 +26,7 @@ from PySide6.QtWidgets import (
     QMessageBox, QSizePolicy, QDoubleSpinBox, QSpinBox, QStackedWidget,
     QGraphicsDropShadowEffect, QCheckBox
 )
-from PySide6.QtCore import Qt, Signal, QSize, QPoint, QTimer, QUrl
+from PySide6.QtCore import Qt, Signal, QSize, QPoint, QTimer, QUrl, QProcess
 from PySide6.QtGui import QAction, QDesktopServices, QIcon, QKeySequence, QPixmap, QFont, QColor
 
 from .theme import get_stylesheet, COLORS, LAYOUT
@@ -47,6 +47,8 @@ from .project_preview import (
     render_project_preview_png,
 )
 from .busy_dialog import run_async, WorkerThread
+from .update_dialog import UpdateDialog
+from .update_messages import translate_update_error
 
 from src.app_info import APP_NAME, get_app_version
 from src.core import (
@@ -88,6 +90,10 @@ from src.business.undo_manager import (
 from src.business.settings_manager import (
     SettingsManager, init_settings_manager, get_settings_manager
 )
+from src.business.update_manager import (
+    UpdateInfo,
+    UpdateManager,
+)
 from src.business.project_manager import ProjectManager
 from src.business.project_format import (
     get_project_info,
@@ -127,9 +133,11 @@ class MainWindow(QMainWindow):
         self.slice_params = SliceParams()
         self.slice_result: Optional[SliceResult] = None
         self._preview_mesh_worker: Optional[WorkerThread] = None
+        self._update_check_worker: Optional[WorkerThread] = None
         self._preview_mesh_loading_key = None
         self.current_file: Optional[str] = None
         self._params_modified = False
+        self._update_manager = self._create_update_manager()
 
         # 核心组件
         self.dxf_parser = DXFParser()
@@ -167,6 +175,14 @@ class MainWindow(QMainWindow):
         # 加载保存的参数
         self._load_saved_params()
         self._refresh_home_recent_projects()
+        self._schedule_startup_update_check()
+
+    def _create_update_manager(self) -> UpdateManager:
+        cache_dir = self.settings_manager.get_config_dir() / "updates"
+        return UpdateManager(
+            current_version=get_app_version(),
+            cache_dir=cache_dir,
+        )
 
     def _init_window(self):
         """初始化窗口属性"""
@@ -334,6 +350,12 @@ class MainWindow(QMainWindow):
 
         # === 帮助菜单 ===
         help_menu = menubar.addMenu(self.tr("Help(&H)"))
+
+        check_updates_action = QAction(self.tr("Check for Updates"), self)
+        check_updates_action.triggered.connect(self._on_check_updates)
+        help_menu.addAction(check_updates_action)
+
+        help_menu.addSeparator()
 
         about_action = QAction(self.tr("About"), self)
         about_action.triggered.connect(self._on_about)
@@ -1826,6 +1848,7 @@ class MainWindow(QMainWindow):
             "export_panel": self._on_export_panel,
             "open_user_config_dir": self._open_user_config_directory,
             "tutorial": self._open_tutorial,
+            "check_updates": self._on_check_updates,
             "about": self._on_about,
             "quit": self.close,
         }
@@ -3522,6 +3545,101 @@ class MainWindow(QMainWindow):
                     self._update_status(self.tr("Text added"))
         except Exception as e:
             QMessageBox.critical(self, self.tr("Error"), f"{self.tr('Failed to open text dialog')}: {str(e)}")
+
+    def _schedule_startup_update_check(self):
+        """Check for updates once after the main window has started."""
+        QTimer.singleShot(3000, lambda: self._check_for_updates(automatic=True))
+
+    def _on_check_updates(self):
+        """Manually check for online updates."""
+        self._check_for_updates(automatic=False)
+
+    def _check_for_updates(self, *, automatic: bool):
+        if automatic:
+            if (
+                self._update_check_worker is not None
+                and self._update_check_worker.isRunning()
+            ):
+                return
+            worker = WorkerThread(self._update_manager.check_for_update, self)
+            self._update_check_worker = worker
+            worker.finished_result.connect(
+                lambda result: self._handle_update_check_result(result, automatic=True)
+            )
+            worker.error_occurred.connect(
+                lambda message: self._handle_update_check_error(message, automatic=True)
+            )
+            worker.finished.connect(lambda: self._clear_update_check_worker(worker))
+            worker.start()
+            return
+
+        run_async(
+            self,
+            self.tr("Checking for updates..."),
+            self._update_manager.check_for_update,
+            lambda result: self._handle_update_check_result(result, automatic=False),
+            lambda message: self._handle_update_check_error(message, automatic=False),
+        )
+
+    def _clear_update_check_worker(self, worker: WorkerThread):
+        if self._update_check_worker is worker:
+            self._update_check_worker = None
+
+    def _handle_update_check_result(
+        self,
+        update_info: Optional[UpdateInfo],
+        *,
+        automatic: bool,
+    ):
+        if update_info is None:
+            if not automatic:
+                QMessageBox.information(
+                    self,
+                    self.tr("No Updates Available"),
+                    self.tr("You are using the latest version."),
+                )
+            return
+
+        dialog = UpdateDialog(update_info, self._update_manager, self)
+        dialog.install_requested.connect(self._run_update_installer)
+        dialog.exec()
+
+    def _handle_update_check_error(self, message: str, *, automatic: bool):
+        if automatic:
+            return
+        QMessageBox.warning(
+            self,
+            self.tr("Update Check Failed"),
+            translate_update_error(message),
+        )
+
+    def _run_update_installer(self, installer_path: object):
+        path = Path(installer_path)
+        if not path.exists():
+            QMessageBox.warning(
+                self,
+                self.tr("Installer Not Found"),
+                self.tr("The downloaded update installer no longer exists."),
+            )
+            return
+
+        if not self._handle_unsaved_changes_before_close():
+            return
+        self._save_current_params()
+        self._save_window_state()
+
+        started = QProcess.startDetached(str(path), [])
+        if isinstance(started, tuple):
+            started = started[0]
+        if not started:
+            QMessageBox.warning(
+                self,
+                self.tr("Run Installer Failed"),
+                self.tr("Failed to start the update installer."),
+            )
+            return
+
+        QApplication.quit()
 
     def _on_about(self):
         """关于对话框"""

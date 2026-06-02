@@ -9,6 +9,11 @@ from pathlib import Path
 
 APP_NAME = "MINGDA SignMaker"
 VERSION_ENV_VAR = "MINGDA_SIGNMAKER_VERSION"
+UPDATE_MANIFEST_URL_ENV_VAR = "MINGDA_SIGNMAKER_UPDATE_URL"
+DEFAULT_UPDATE_MANIFEST_URL = (
+    "https://github.com/mingda3d/MINGDA-SignMaker-Slicer/"
+    "releases/latest/download/signmaker-update.json"
+)
 DEFAULT_VERSION = "0.0.0"
 VERSION_FILE_NAME = "VERSION"
 DISTRIBUTION_NAMES = (
@@ -50,3 +55,11 @@ def get_app_version() -> str:
             return file_version
 
     return DEFAULT_VERSION
+
+
+def get_update_manifest_url() -> str:
+    """Return the update manifest URL configured for this build."""
+    env_url = os.environ.get(UPDATE_MANIFEST_URL_ENV_VAR, "").strip()
+    if env_url:
+        return env_url
+    return DEFAULT_UPDATE_MANIFEST_URL

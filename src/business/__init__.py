@@ -11,6 +11,7 @@ from .printer_profile_manager import PrinterProfileManager
 from .settings_manager import (
     SettingsManager, init_settings_manager, get_settings_manager
 )
+from .update_manager import UpdateManager, UpdateInfo, UpdateAsset
 from .undo_manager import (
     UndoManager, Command, CompositeCommand,
     MoveCommand, RotateCommand, ScaleCommand, MirrorCommand,
@@ -22,6 +23,7 @@ from .undo_manager import (
 __all__ = [
     'SliceManager', 'ProjectManager', 'PresetManager', 'PrinterProfileManager',
     'SettingsManager', 'init_settings_manager', 'get_settings_manager',
+    'UpdateManager', 'UpdateInfo', 'UpdateAsset',
     'UndoManager', 'Command', 'CompositeCommand',
     'MoveCommand', 'RotateCommand', 'ScaleCommand', 'MirrorCommand',
     'DeleteCommand', 'AddContoursCommand', 'ReplaceContoursCommand',
