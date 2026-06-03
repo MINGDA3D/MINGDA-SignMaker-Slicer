@@ -1,6 +1,6 @@
-MINGDA SignMaker v0.3.7
+MINGDA SignMaker v0.3.8
 
-- Added online update support. The app can now check for newer versions, show release notes, download the installer, and start the update process.
-- Added localized update messages for all supported languages.
-- Improved update safety by verifying the downloaded installer before installation.
-- Improved Windows startup reliability when launching the app immediately after installation.
+- Temporarily disabled bed_exclude_area output in the Orca/Klipper G-code config block to improve downstream compatibility.
+- Improved U-shaped edge slicing with finer 0.05 mm transition layers and smaller per-layer overhang expansion.
+- Updated G-code and U-shaped edge regression coverage for the new fine-layer behavior.
+- Synchronized the packaged application version to 0.3.8.
