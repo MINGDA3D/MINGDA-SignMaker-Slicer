@@ -1020,10 +1020,10 @@ class ColorParams:
 class PrimeTowerParams:
     """Prime tower parameters."""
     enabled: bool = False
-    center_x: float = 770.0
-    center_y: float = 1170.0
-    width: float = 20.0
-    depth: float = 20.0
+    center_x: float = 500.0
+    center_y: float = 300.0
+    width: float = 100.0
+    depth: float = 100.0
     infill_density_percent: int = 20
 
 

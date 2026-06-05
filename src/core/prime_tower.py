@@ -32,7 +32,8 @@ class PrimeTowerGenerator:
     """Generate prime tower geometry from slice parameters."""
 
     WALL_COUNT = 2
-    DEFAULT_MARGIN = 20.0
+    DEFAULT_CENTER_X = 500.0
+    DEFAULT_CENTER_Y = 300.0
 
     def __init__(self, path_offset: PathOffset):
         self.path_offset = path_offset
@@ -41,12 +42,12 @@ class PrimeTowerGenerator:
     def default_center(
         cls,
         machine: MachineParams,
-        width: float = 20.0,
-        depth: float = 20.0,
+        width: float = 100.0,
+        depth: float = 100.0,
     ) -> tuple[float, float]:
         return (
-            max(width / 2.0, float(machine.bed_width) - cls.DEFAULT_MARGIN - width / 2.0),
-            max(depth / 2.0, float(machine.bed_depth) - cls.DEFAULT_MARGIN - depth / 2.0),
+            cls.DEFAULT_CENTER_X,
+            cls.DEFAULT_CENTER_Y,
         )
 
     @staticmethod
