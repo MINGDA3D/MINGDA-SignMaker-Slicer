@@ -1203,33 +1203,33 @@ Codice di errore: {code}</translation>
     <name>ParamPanel</name>
     <message>
         <location filename="../src/ui/param_panel.py" line="87"/>
-        <source>Parameters</source>
-        <translation>Parametri</translation>
+        <source>Settings</source>
+        <translation>Impostazioni</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="197"/>
-        <source>2D Vector Settings</source>
-        <translation>Impostazioni vettoriali 2D</translation>
+        <source>Shape</source>
+        <translation>Forma</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="199"/>
-        <source>Contour shaping, shell geometry, wraps, slots, and DXF output.</source>
-        <translation>Modellazione contorni, geometria guscio, avvolgimenti, scanalature e output DXF.</translation>
+        <source>Geometry and sign shell settings</source>
+        <translation>Impostazioni di geometria e guscio dell&apos;insegna</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="188"/>
-        <source>Machine Settings</source>
-        <translation>Impostazioni macchina</translation>
+        <source>Machine</source>
+        <translation>Macchina</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="190"/>
-        <source>Printer profile, printable area, nozzle, and material-related hardware values.</source>
-        <translation>Profilo stampante, area stampabile, ugello e valori hardware relativi al materiale.</translation>
+        <source>Printer profile and hardware settings</source>
+        <translation>Impostazioni profilo stampante e hardware</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="206"/>
-        <source>Print Settings</source>
-        <translation>Impostazioni di stampa</translation>
+        <source>Print</source>
+        <translation>Stampa</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="361"/>
@@ -1585,8 +1585,8 @@ Codice di errore: {code}</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="208"/>
-        <source>Speed, temperature, cooling, color-change points, and start/end print commands.</source>
-        <translation>Velocità, temperatura, raffreddamento, punti di cambio colore e comandi di avvio/fine stampa.</translation>
+        <source>Speed, temperature, cooling, color, and G-code settings</source>
+        <translation>Impostazioni di velocità, temperatura, raffreddamento, colore e G-code</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="358"/>

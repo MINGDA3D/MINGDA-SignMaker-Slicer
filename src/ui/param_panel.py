@@ -20,7 +20,7 @@ from PySide6.QtWidgets import (
     QPushButton, QFormLayout, QRadioButton, QButtonGroup,
     QSpinBox, QDoubleSpinBox, QAbstractSpinBox, QTableWidget,
     QTableWidgetItem, QHeaderView, QAbstractItemView, QInputDialog,
-    QSizePolicy, QMessageBox, QLineEdit, QPlainTextEdit
+    QSizePolicy, QMessageBox, QLineEdit, QPlainTextEdit, QTabWidget
 )
 from PySide6.QtCore import Qt, Signal, QCoreApplication
 
@@ -48,7 +48,7 @@ from src.ui.widgets import (
     GuardedDoubleSpinBox,
     GuardedSpinBox,
 )
-from .theme import COLORS, LAYOUT
+from .theme import COLORS
 
 
 class ParamPanel(QWidget):
@@ -84,7 +84,7 @@ class ParamPanel(QWidget):
         layout.setSpacing(0)
 
         # 标题
-        title = QLabel(self.tr("Parameters"))
+        title = QLabel(self.tr("Settings"))
         title.setProperty("heading", True)
         title.setStyleSheet(f"""
             padding: 12px 12px 12px 14px;
@@ -95,30 +95,6 @@ class ParamPanel(QWidget):
             font-weight: bold;
         """)
         layout.addWidget(title)
-
-        # 滚动区域
-        scroll = QScrollArea()
-        scroll.setWidgetResizable(True)
-        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        scroll.setStyleSheet(f"""
-            QScrollArea {{
-                background-color: {COLORS.editor_sidebar_left_bg};
-                border: none;
-            }}
-            QScrollArea > QWidget > QWidget {{
-                background-color: {COLORS.editor_sidebar_left_bg};
-            }}
-        """)
-        layout.addWidget(scroll)
-
-        # 滚动内容
-        content = QWidget()
-        content.setStyleSheet(
-            f"background-color: {COLORS.editor_sidebar_left_bg};"
-        )
-        content_layout = QVBoxLayout(content)
-        content_layout.setContentsMargins(12, 12, 12, 12)
-        content_layout.setSpacing(12)
 
         # 添加一级参数分组
         self.shell_group = self._create_shell_group()
@@ -159,7 +135,7 @@ class ParamPanel(QWidget):
             self.dxf_export_group,
         ]
 
-        self._vector_groups = [
+        self._shape_groups = [
             self.shell_group,
             self.edge_group,
             self.edge_wrap_group,
@@ -171,6 +147,7 @@ class ParamPanel(QWidget):
             self.light_slot_group,
             self.dxf_export_group,
         ]
+        self._vector_groups = self._shape_groups
         self._machine_groups = [
             self.printer_profile_group,
         ]
@@ -184,148 +161,122 @@ class ParamPanel(QWidget):
         ]
         self._primary_sections = [
             {
-                "key": "machine",
-                "title": self.tr("Machine Settings"),
-                "description": self.tr(
-                    "Printer profile, printable area, nozzle, and material-related hardware values."
+                "key": "shape",
+                "title": self.tr("Shape"),
+                "tooltip": self.tr(
+                    "Geometry and sign shell settings"
                 ),
-                "accent": COLORS.editor_sidebar_right_accent,
+                "groups": self._shape_groups,
+            },
+            {
+                "key": "machine",
+                "title": self.tr("Machine"),
+                "tooltip": self.tr(
+                    "Printer profile and hardware settings"
+                ),
                 "groups": self._machine_groups,
             },
             {
-                "key": "vector",
-                "title": self.tr("2D Vector Settings"),
-                "description": self.tr(
-                    "Contour shaping, shell geometry, wraps, slots, and DXF output."
-                ),
-                "accent": COLORS.editor_canvas_toolbar_accent,
-                "groups": self._vector_groups,
-            },
-            {
                 "key": "print",
-                "title": self.tr("Print Settings"),
-                "description": self.tr(
-                    "Speed, temperature, cooling, color-change points, and start/end print commands."
+                "title": self.tr("Print"),
+                "tooltip": self.tr(
+                    "Speed, temperature, cooling, color, and G-code settings"
                 ),
-                "accent": COLORS.accent_warning,
                 "groups": self._print_groups,
             },
         ]
 
+        self.primary_tabs = QTabWidget()
+        self.primary_tabs.setObjectName("primarySettingsTabs")
+        self.primary_tabs.setDocumentMode(True)
+        self.primary_tabs.setTabPosition(QTabWidget.TabPosition.North)
+        self.primary_tabs.setUsesScrollButtons(False)
+        self.primary_tabs.setStyleSheet(f"""
+            QTabWidget#primarySettingsTabs {{
+                background-color: {COLORS.editor_sidebar_left_bg};
+                border: none;
+            }}
+            QTabWidget#primarySettingsTabs::pane {{
+                background-color: {COLORS.editor_sidebar_left_bg};
+                border: none;
+                padding: 0;
+                margin: 0;
+            }}
+            QTabWidget#primarySettingsTabs QTabBar::tab {{
+                background-color: transparent;
+                border: none;
+                border-bottom: 2px solid transparent;
+                color: {COLORS.text_muted};
+                font-size: 12px;
+                font-weight: 500;
+                min-width: 64px;
+                padding: 10px 10px 8px 10px;
+            }}
+            QTabWidget#primarySettingsTabs QTabBar::tab:selected {{
+                color: {COLORS.text_primary};
+                border-bottom: 2px solid {COLORS.editor_canvas_toolbar_accent};
+                font-weight: 600;
+            }}
+            QTabWidget#primarySettingsTabs QTabBar::tab:hover:!selected {{
+                background-color: transparent;
+                color: {COLORS.text_secondary};
+            }}
+        """)
+        self._primary_tabs = self.primary_tabs
         self._section_widgets = []
         self._section_widgets_by_key = {}
         for section in self._primary_sections:
-            section_widget = self._create_settings_section(
+            tab_page = self._create_settings_tab_page(
                 key=section["key"],
-                title=section["title"],
-                description=section["description"],
-                accent_color=section["accent"],
                 groups=section["groups"],
             )
-            self._section_widgets.append(section_widget)
-            self._section_widgets_by_key[section["key"]] = section_widget
-            content_layout.addWidget(section_widget)
-            self._set_section_expanded(section["key"], True)
+            self._section_widgets.append(tab_page)
+            self._section_widgets_by_key[section["key"]] = tab_page
+            tab_index = self.primary_tabs.addTab(tab_page, section["title"])
+            self.primary_tabs.setTabToolTip(tab_index, section["tooltip"])
 
-        content_layout.addStretch()
-
-        scroll.setWidget(content)
+        self.primary_tabs.setCurrentIndex(0)
+        layout.addWidget(self.primary_tabs, 1)
         self._sync_layer_based_controls()
         self._update_prime_tower_coordinate_ranges()
 
-    def _create_settings_section(
+    def _create_settings_tab_page(
         self,
         *,
         key: str,
-        title: str,
-        description: str,
-        accent_color: str,
         groups: list[QGroupBox],
-    ) -> QFrame:
-        """Create a higher-level settings section that groups related parameter cards."""
-        section = QFrame()
-        section.setObjectName(f"{key}SettingsSection")
-        section.setStyleSheet(
-            f"""
-            QFrame#{section.objectName()} {{
-                background-color: {COLORS.bg_primary};
-                border: 1px solid {COLORS.border_default};
-                border-radius: {LAYOUT.radius_lg}px;
+    ) -> QScrollArea:
+        """Create one scrollable top-level settings tab."""
+        scroll = QScrollArea()
+        scroll.setObjectName(f"{key}SettingsTab")
+        scroll.setWidgetResizable(True)
+        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        scroll.setStyleSheet(f"""
+            QScrollArea#{scroll.objectName()} {{
+                background-color: {COLORS.editor_sidebar_left_bg};
+                border: none;
             }}
-            """
-        )
+            QScrollArea#{scroll.objectName()} > QWidget > QWidget {{
+                background-color: {COLORS.editor_sidebar_left_bg};
+            }}
+        """)
 
-        layout = QVBoxLayout(section)
-        layout.setContentsMargins(12, 12, 12, 12)
-        layout.setSpacing(10)
+        content = QWidget()
+        content.setObjectName(f"{key}SettingsTabContent")
+        content.setStyleSheet(f"background-color: {COLORS.editor_sidebar_left_bg};")
 
-        section_body = QWidget()
-        body_layout = QVBoxLayout(section_body)
-        body_layout.setContentsMargins(0, 0, 0, 0)
-        body_layout.setSpacing(10)
-
-        description_label = QLabel(description)
-        description_label.setWordWrap(True)
-        description_label.setStyleSheet(
-            f"""
-            color: {COLORS.text_muted};
-            font-size: 11px;
-            padding-left: 14px;
-            """
-        )
-        body_layout.addWidget(description_label)
+        content_layout = QVBoxLayout(content)
+        content_layout.setContentsMargins(12, 12, 12, 12)
+        content_layout.setSpacing(12)
 
         for group in groups:
-            body_layout.addWidget(group)
+            content_layout.addWidget(group)
+        content_layout.addStretch()
 
-        section_button = QPushButton()
-        section_button.setObjectName(f"{key}SectionToggle")
-        section_button.setFlat(True)
-        section_button.setCheckable(True)
-        section_button.setChecked(True)
-        section_button.setCursor(Qt.CursorShape.PointingHandCursor)
-        section_button.setStyleSheet(
-            f"""
-            QPushButton#{section_button.objectName()} {{
-                background-color: transparent;
-                border: none;
-                color: {COLORS.text_primary};
-                font-size: 13px;
-                font-weight: 600;
-                text-align: left;
-                padding: 2px 0 2px 10px;
-                border-left: 4px solid {accent_color};
-            }}
-            QPushButton#{section_button.objectName()}:hover {{
-                color: #FFFFFF;
-            }}
-            """
-        )
-        section_button.clicked.connect(
-            lambda checked, section_key=key: self._set_section_expanded(section_key, checked)
-        )
-        section._toggle_button = section_button
-        section._body = section_body
-        section._section_title = title
-
-        layout.addWidget(section_button)
-        layout.addWidget(section_body)
-
-        return section
-
-    def _set_section_expanded(self, key: str, expanded: bool) -> None:
-        """Expand or collapse a top-level settings section."""
-        section = self._section_widgets_by_key.get(key)
-        if section is None:
-            return
-
-        section._body.setVisible(expanded)
-        section._toggle_button.blockSignals(True)
-        section._toggle_button.setChecked(expanded)
-        section._toggle_button.setText(
-            f"{'-' if expanded else '+'} {section._section_title}"
-        )
-        section._toggle_button.blockSignals(False)
+        scroll.setWidget(content)
+        scroll._content = content
+        scroll._groups = groups
+        return scroll
 
     def _create_double_spinbox(self, decimals: int = 2) -> QDoubleSpinBox:
         """Create a standard floating-point input without custom plus/minus buttons."""

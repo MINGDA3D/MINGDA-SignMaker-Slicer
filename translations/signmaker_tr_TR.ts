@@ -1203,33 +1203,33 @@ Hata kodu: {code}</translation>
     <name>ParamPanel</name>
     <message>
         <location filename="../src/ui/param_panel.py" line="87"/>
-        <source>Parameters</source>
-        <translation>Parametreler</translation>
+        <source>Settings</source>
+        <translation>Ayarlar</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="197"/>
-        <source>2D Vector Settings</source>
-        <translation>2D Vektör Ayarları</translation>
+        <source>Shape</source>
+        <translation>Şekil</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="199"/>
-        <source>Contour shaping, shell geometry, wraps, slots, and DXF output.</source>
-        <translation>Kontur şekillendirme, kabuk geometrisi, sargılar, yuvalar ve DXF çıktısı.</translation>
+        <source>Geometry and sign shell settings</source>
+        <translation>Geometri ve tabela kabuğu ayarları</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="188"/>
-        <source>Machine Settings</source>
-        <translation>Makine Ayarları</translation>
+        <source>Machine</source>
+        <translation>Makine</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="190"/>
-        <source>Printer profile, printable area, nozzle, and material-related hardware values.</source>
-        <translation>Yazıcı profili, yazdırılabilir alan, nozul ve malzemeyle ilgili donanım değerleri.</translation>
+        <source>Printer profile and hardware settings</source>
+        <translation>Yazıcı profili ve donanım ayarları</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="206"/>
-        <source>Print Settings</source>
-        <translation>Baskı Ayarları</translation>
+        <source>Print</source>
+        <translation>Baskı</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="361"/>
@@ -1585,8 +1585,8 @@ Hata kodu: {code}</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="208"/>
-        <source>Speed, temperature, cooling, color-change points, and start/end print commands.</source>
-        <translation>Hız, sıcaklık, soğutma, renk değişim noktaları ve baskı başlangıç/bitiş komutları.</translation>
+        <source>Speed, temperature, cooling, color, and G-code settings</source>
+        <translation>Hız, sıcaklık, soğutma, renk ve G-code ayarları</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="358"/>

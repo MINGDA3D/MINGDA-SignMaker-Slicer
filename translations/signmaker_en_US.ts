@@ -1203,33 +1203,33 @@ Error code: {code}</translation>
     <name>ParamPanel</name>
     <message>
         <location filename="../src/ui/param_panel.py" line="87"/>
-        <source>Parameters</source>
-        <translation>Parameters</translation>
+        <source>Settings</source>
+        <translation>Settings</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="197"/>
-        <source>2D Vector Settings</source>
-        <translation>2D Vector Settings</translation>
+        <source>Shape</source>
+        <translation>Shape</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="199"/>
-        <source>Contour shaping, shell geometry, wraps, slots, and DXF output.</source>
-        <translation>Contour shaping, shell geometry, wraps, slots, and DXF output.</translation>
+        <source>Geometry and sign shell settings</source>
+        <translation>Geometry and sign shell settings</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="188"/>
-        <source>Machine Settings</source>
-        <translation>Machine Settings</translation>
+        <source>Machine</source>
+        <translation>Machine</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="190"/>
-        <source>Printer profile, printable area, nozzle, and material-related hardware values.</source>
-        <translation>Printer profile, printable area, nozzle, and material-related hardware values.</translation>
+        <source>Printer profile and hardware settings</source>
+        <translation>Printer profile and hardware settings</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="206"/>
-        <source>Print Settings</source>
-        <translation>Print Settings</translation>
+        <source>Print</source>
+        <translation>Print</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="361"/>
@@ -1585,8 +1585,8 @@ Error code: {code}</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="208"/>
-        <source>Speed, temperature, cooling, color-change points, and start/end print commands.</source>
-        <translation>Speed, temperature, cooling, color-change points, and start/end print commands.</translation>
+        <source>Speed, temperature, cooling, color, and G-code settings</source>
+        <translation>Speed, temperature, cooling, color, and G-code settings</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="358"/>

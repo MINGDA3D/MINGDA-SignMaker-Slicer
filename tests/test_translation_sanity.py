@@ -33,12 +33,13 @@ ZH_CN_REQUIRED = {
         "Processing blocked: contours outside printable area",
     },
     "ParamPanel": {
-        "2D Vector Settings",
-        "Contour shaping, shell geometry, wraps, slots, and DXF output.",
-        "Machine Settings",
-        "Printer profile, printable area, nozzle, and material-related hardware values.",
-        "Print Settings",
-        "Speed, temperature, cooling, color-change points, and start/end print commands.",
+        "Settings",
+        "Shape",
+        "Geometry and sign shell settings",
+        "Machine",
+        "Printer profile and hardware settings",
+        "Print",
+        "Speed, temperature, cooling, color, and G-code settings",
         "Project Snapshot",
         "Edge Type",
         "Edge Type:",
@@ -152,7 +153,7 @@ ZH_CN_REQUIRED = {
 
 SECONDARY_LOCALE_MUST_DIFFER_FROM_SOURCE = {
     "ParamPanel": {
-        "Printer profile, printable area, nozzle, and material-related hardware values.",
+        "Printer profile and hardware settings",
         "Printable Area X:",
         "Printable Area Y:",
         "Printable Area Z:",

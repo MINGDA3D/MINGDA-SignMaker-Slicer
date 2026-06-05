@@ -1203,33 +1203,33 @@ Error code: {code}</source>
     <name>ParamPanel</name>
     <message>
         <location filename="../src/ui/param_panel.py" line="87"/>
-        <source>Parameters</source>
-        <translation>매개변수</translation>
+        <source>Settings</source>
+        <translation>설정</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="197"/>
-        <source>2D Vector Settings</source>
-        <translation>2D 벡터 설정</translation>
+        <source>Shape</source>
+        <translation>형상</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="199"/>
-        <source>Contour shaping, shell geometry, wraps, slots, and DXF output.</source>
-        <translation>윤곽선 가공, 셸 형상, 랩, 슬롯 및 DXF 출력을 설정합니다.</translation>
+        <source>Geometry and sign shell settings</source>
+        <translation>지오메트리 및 간판 쉘 설정</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="188"/>
-        <source>Machine Settings</source>
-        <translation>기계 설정</translation>
+        <source>Machine</source>
+        <translation>장비</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="190"/>
-        <source>Printer profile, printable area, nozzle, and material-related hardware values.</source>
-        <translation>프린터 프로파일, 출력 가능 영역, 노즐 및 재료 관련 하드웨어 값.</translation>
+        <source>Printer profile and hardware settings</source>
+        <translation>프린터 프로필 및 하드웨어 설정</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="206"/>
-        <source>Print Settings</source>
-        <translation>인쇄 설정</translation>
+        <source>Print</source>
+        <translation>인쇄</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="361"/>
@@ -1585,8 +1585,8 @@ Error code: {code}</source>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="208"/>
-        <source>Speed, temperature, cooling, color-change points, and start/end print commands.</source>
-        <translation>속도, 온도, 냉각, 색상 변경 지점 및 시작/종료 출력 명령.</translation>
+        <source>Speed, temperature, cooling, color, and G-code settings</source>
+        <translation>속도, 온도, 냉각, 색상 및 G-code 설정</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="358"/>

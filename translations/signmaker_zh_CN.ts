@@ -1203,33 +1203,33 @@ Error code: {code}</source>
     <name>ParamPanel</name>
     <message>
         <location filename="../src/ui/param_panel.py" line="87"/>
-        <source>Parameters</source>
-        <translation>参数设置</translation>
+        <source>Settings</source>
+        <translation>设置</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="197"/>
-        <source>2D Vector Settings</source>
-        <translation>2D矢量设置</translation>
+        <source>Shape</source>
+        <translation>造型</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="199"/>
-        <source>Contour shaping, shell geometry, wraps, slots, and DXF output.</source>
-        <translation>轮廓整形、字壳几何、包边、灯槽与 DXF 导出。</translation>
+        <source>Geometry and sign shell settings</source>
+        <translation>几何和字壳设置</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="188"/>
-        <source>Machine Settings</source>
-        <translation>机器设置</translation>
+        <source>Machine</source>
+        <translation>设备</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="190"/>
-        <source>Printer profile, printable area, nozzle, and material-related hardware values.</source>
-        <translation>打印机档案、打印范围、喷嘴及材料相关硬件参数。</translation>
+        <source>Printer profile and hardware settings</source>
+        <translation>打印机配置和硬件设置</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="206"/>
-        <source>Print Settings</source>
-        <translation>打印设置</translation>
+        <source>Print</source>
+        <translation>打印</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="361"/>
@@ -1585,8 +1585,8 @@ Error code: {code}</source>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="208"/>
-        <source>Speed, temperature, cooling, color-change points, and start/end print commands.</source>
-        <translation>速度、温度、冷却、换色点以及打印开始/结束命令。</translation>
+        <source>Speed, temperature, cooling, color, and G-code settings</source>
+        <translation>速度、温度、冷却、换色和 G-code 设置</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="358"/>

@@ -1,7 +1,17 @@
 import pytest
 from PySide6.QtCore import QPoint, QPointF, Qt
 from PySide6.QtGui import QWheelEvent
-from PySide6.QtWidgets import QApplication, QHeaderView, QLabel, QPlainTextEdit, QPushButton, QVBoxLayout, QWidget
+from PySide6.QtWidgets import (
+    QApplication,
+    QHeaderView,
+    QLabel,
+    QPlainTextEdit,
+    QPushButton,
+    QScrollArea,
+    QTabWidget,
+    QVBoxLayout,
+    QWidget,
+)
 
 from src.business.printer_profile_manager import DEFAULT_PRINTER_PROFILE_SPECS
 from src.core.types import (
@@ -230,7 +240,7 @@ def test_color_change_preview_cells_are_centered_and_action_buttons_split_to_edg
     assert panel.color_change_actions_layout.itemAt(2).widget() is panel.remove_color_change_btn
 
 
-def test_primary_sections_separate_vector_machine_and_print_settings(qapp):
+def test_primary_sections_separate_shape_machine_and_print_settings(qapp):
     panel = ParamPanel()
 
     assert [
@@ -238,15 +248,8 @@ def test_primary_sections_separate_vector_machine_and_print_settings(qapp):
         for section in panel._primary_sections
     ] == [
         (
-            "machine",
-            "Machine Settings",
-            [
-                "Printer Profile",
-            ],
-        ),
-        (
-            "vector",
-            "2D Vector Settings",
+            "shape",
+            "Shape",
             [
                 "Shell Settings",
                 "Edge Type",
@@ -261,8 +264,15 @@ def test_primary_sections_separate_vector_machine_and_print_settings(qapp):
             ],
         ),
         (
+            "machine",
+            "Machine",
+            [
+                "Printer Profile",
+            ],
+        ),
+        (
             "print",
-            "Print Settings",
+            "Print",
             [
                 "Speed Settings",
                 "Temperature Settings",
@@ -275,24 +285,31 @@ def test_primary_sections_separate_vector_machine_and_print_settings(qapp):
     ]
 
 
-def test_primary_sections_can_be_collapsed_and_expanded(qapp):
+def test_primary_tabs_default_to_shape_and_switch_between_pages(qapp):
     panel = ParamPanel()
-    vector_section = panel._section_widgets_by_key["vector"]
-    toggle_button = vector_section._toggle_button
-    body = vector_section._body
 
-    assert toggle_button.text() == "- 2D Vector Settings"
-    assert body.isHidden() is False
+    assert isinstance(panel.primary_tabs, QTabWidget)
+    assert panel._primary_tabs is panel.primary_tabs
+    assert [panel.primary_tabs.tabText(index) for index in range(panel.primary_tabs.count())] == [
+        "Shape",
+        "Machine",
+        "Print",
+    ]
+    assert panel.primary_tabs.currentIndex() == 0
+    assert panel.primary_tabs.currentWidget() is panel._section_widgets_by_key["shape"]
+    assert all(
+        isinstance(panel._section_widgets_by_key[key], QScrollArea)
+        for key in ("shape", "machine", "print")
+    )
 
-    toggle_button.click()
+    machine_index = panel.primary_tabs.indexOf(panel._section_widgets_by_key["machine"])
+    print_index = panel.primary_tabs.indexOf(panel._section_widgets_by_key["print"])
 
-    assert toggle_button.text() == "+ 2D Vector Settings"
-    assert body.isHidden() is True
+    panel.primary_tabs.setCurrentIndex(machine_index)
+    assert panel.primary_tabs.currentWidget() is panel._section_widgets_by_key["machine"]
 
-    toggle_button.click()
-
-    assert toggle_button.text() == "- 2D Vector Settings"
-    assert body.isHidden() is False
+    panel.primary_tabs.setCurrentIndex(print_index)
+    assert panel.primary_tabs.currentWidget() is panel._section_widgets_by_key["print"]
 
 
 def test_prime_tower_controls_roundtrip_through_print_settings(qapp):
