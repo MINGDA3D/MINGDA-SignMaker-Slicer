@@ -1253,13 +1253,13 @@ Error code: {code}</source>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="462"/>
-        <source>Width Line:</source>
+        <source>Line Width:</source>
         <translation>عرض الخط:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="469"/>
-        <source>Wall Count:</source>
-        <translation>عدد الجدران:</translation>
+        <source>Wall Loops:</source>
+        <translation>حلقات الجدار:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="475"/>
@@ -1374,8 +1374,8 @@ Error code: {code}</source>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="665"/>
-        <source>Bottom Thickness:</source>
-        <translation>سمك القاع:</translation>
+        <source>Bottom Shell Layers:</source>
+        <translation>طبقات الغلاف السفلي:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="743"/>
@@ -1440,8 +1440,8 @@ Error code: {code}</source>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="875"/>
-        <source>Top Thickness:</source>
-        <translation>سمك الأعلى:</translation>
+        <source>Top Shell Layers:</source>
+        <translation>طبقات الغلاف العلوي:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1396"/>

@@ -1253,13 +1253,13 @@ Code d&apos;erreur : {code}</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="462"/>
-        <source>Width Line:</source>
+        <source>Line Width:</source>
         <translation>Largeur de ligne :</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="469"/>
-        <source>Wall Count:</source>
-        <translation>Nombre de parois :</translation>
+        <source>Wall Loops:</source>
+        <translation>Boucles de paroi :</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="475"/>
@@ -1374,8 +1374,8 @@ Code d&apos;erreur : {code}</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="665"/>
-        <source>Bottom Thickness:</source>
-        <translation>Épaisseur inférieure :</translation>
+        <source>Bottom Shell Layers:</source>
+        <translation>Couches de coque inférieures :</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="743"/>
@@ -1440,8 +1440,8 @@ Code d&apos;erreur : {code}</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="875"/>
-        <source>Top Thickness:</source>
-        <translation>Épaisseur supérieure :</translation>
+        <source>Top Shell Layers:</source>
+        <translation>Couches de coque supérieures :</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1396"/>

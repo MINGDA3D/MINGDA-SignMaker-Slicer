@@ -1253,13 +1253,13 @@ Error code: {code}</source>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="462"/>
-        <source>Width Line:</source>
+        <source>Line Width:</source>
         <translation>Ширина линии:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="469"/>
-        <source>Wall Count:</source>
-        <translation>Количество стенок:</translation>
+        <source>Wall Loops:</source>
+        <translation>Контуры стенок:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="475"/>
@@ -1374,8 +1374,8 @@ Error code: {code}</source>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="665"/>
-        <source>Bottom Thickness:</source>
-        <translation>Толщина дна:</translation>
+        <source>Bottom Shell Layers:</source>
+        <translation>Слои нижней оболочки:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="743"/>
@@ -1440,8 +1440,8 @@ Error code: {code}</source>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="875"/>
-        <source>Top Thickness:</source>
-        <translation>Толщина верха:</translation>
+        <source>Top Shell Layers:</source>
+        <translation>Слои верхней оболочки:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1396"/>

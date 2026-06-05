@@ -419,7 +419,7 @@ class ParamPanel(QWidget):
             self.connected_base_height.setMaximum(max_connected_layers)
 
     def _on_layer_height_changed(self, value: float):
-        """Keep Width Line synced to the current Layer Height."""
+        """Keep Line Width synced to the current Layer Height."""
         if hasattr(self, "width_line_spin"):
             self.width_line_spin.blockSignals(True)
             self.width_line_spin.setValue(self._derived_width_line(value))
@@ -459,14 +459,14 @@ class ParamPanel(QWidget):
         self.width_line_spin.setSingleStep(0.05)
         self.width_line_spin.setSuffix(" mm")
         self.width_line_spin.valueChanged.connect(self._on_param_changed)
-        layout.addRow(self.tr("Width Line:"), self.width_line_spin)
+        layout.addRow(self.tr("Line Width:"), self.width_line_spin)
 
         # 壁数量
         self.wall_count_spin = self._create_int_spinbox()
         self.wall_count_spin.setRange(1, 5)
         self.wall_count_spin.setValue(2)
         self.wall_count_spin.valueChanged.connect(self._on_param_changed)
-        layout.addRow(self.tr("Wall Count:"), self.wall_count_spin)
+        layout.addRow(self.tr("Wall Loops:"), self.wall_count_spin)
 
         return group
 
@@ -662,7 +662,7 @@ class ParamPanel(QWidget):
         self.bottom_face_thickness = self._create_int_spinbox()
         self._configure_layer_count_spin(self.bottom_face_thickness, 1, 100, 3, enabled=False)
         self.bottom_face_thickness.valueChanged.connect(self._on_param_changed)
-        form.addRow(self.tr("Bottom Thickness:"), self.bottom_face_thickness)
+        form.addRow(self.tr("Bottom Shell Layers:"), self.bottom_face_thickness)
 
         self.bottom_face_screw_hole_diameter = self._create_double_spinbox()
         self.bottom_face_screw_hole_diameter.setRange(0.1, 100.0)
@@ -872,7 +872,7 @@ class ParamPanel(QWidget):
             enabled=False,
         )
         self.top_face_thickness.valueChanged.connect(self._on_param_changed)
-        form.addRow(self.tr("Top Thickness:"), self.top_face_thickness)
+        form.addRow(self.tr("Top Shell Layers:"), self.top_face_thickness)
 
         layout.addLayout(form)
 

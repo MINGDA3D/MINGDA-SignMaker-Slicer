@@ -1253,13 +1253,13 @@ Código de error: {code}</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="462"/>
-        <source>Width Line:</source>
+        <source>Line Width:</source>
         <translation>Ancho de línea:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="469"/>
-        <source>Wall Count:</source>
-        <translation>Numero de paredes:</translation>
+        <source>Wall Loops:</source>
+        <translation>Bucles de pared:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="475"/>
@@ -1374,8 +1374,8 @@ Código de error: {code}</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="665"/>
-        <source>Bottom Thickness:</source>
-        <translation>Grosor inferior:</translation>
+        <source>Bottom Shell Layers:</source>
+        <translation>Capas de carcasa inferior:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="743"/>
@@ -1440,8 +1440,8 @@ Código de error: {code}</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="875"/>
-        <source>Top Thickness:</source>
-        <translation>Grosor superior:</translation>
+        <source>Top Shell Layers:</source>
+        <translation>Capas de carcasa superior:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1396"/>

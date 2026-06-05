@@ -1253,13 +1253,13 @@ Hata kodu: {code}</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="462"/>
-        <source>Width Line:</source>
+        <source>Line Width:</source>
         <translation>Çizgi Genişliği:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="469"/>
-        <source>Wall Count:</source>
-        <translation>Duvar Sayisi:</translation>
+        <source>Wall Loops:</source>
+        <translation>Duvar Döngüleri:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="475"/>
@@ -1374,8 +1374,8 @@ Hata kodu: {code}</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="665"/>
-        <source>Bottom Thickness:</source>
-        <translation>Alt Kalinlik:</translation>
+        <source>Bottom Shell Layers:</source>
+        <translation>Alt Kabuk Katmanları:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="743"/>
@@ -1440,8 +1440,8 @@ Hata kodu: {code}</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="875"/>
-        <source>Top Thickness:</source>
-        <translation>Ust Kalinlik:</translation>
+        <source>Top Shell Layers:</source>
+        <translation>Üst Kabuk Katmanları:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1396"/>
