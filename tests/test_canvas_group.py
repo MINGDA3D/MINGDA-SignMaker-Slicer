@@ -19,6 +19,7 @@ from src.core.types import (
     resolve_path_start_point_index,
     resolve_contour_start_point_index,
 )
+from src.business.undo_manager import AddContoursCommand
 from src.ui.canvas_2d import Canvas2D
 from src.ui.canvas_toolbar import CanvasToolbar
 from src.ui.main_window import MainWindow
@@ -712,6 +713,46 @@ def test_canvas_transforms_keep_screw_hole_centers_in_sync(qapp):
     mirror_canvas.set_selected_indices([0], update_view=False)
     mirror_canvas.mirror_selected("x")
     assert mirror_canvas.contours[0].screw_hole_centers == [Point(8.0, 4.0)]
+
+
+def test_scale_panel_percent_change_is_undoable_after_adding_contour(qapp):
+    window = MainWindow()
+    contour = _rect_contour(0, 0, 10, 10, "Text")
+
+    def selected_width() -> float:
+        bounds = window.contours[0].outer.bounds
+        return bounds[2] - bounds[0]
+
+    assert window.undo_manager.push(
+        AddContoursCommand(window.contours, [contour], "Add Text")
+    )
+    window.canvas.set_contours(window.contours, center_on_platform=False)
+    window.project_panel.update_contours(window.contours)
+    window.canvas.set_selected_indices([0], update_view=False)
+
+    window._on_scale_tool()
+    window.scale_x_pct.setValue(200.0)
+    window._on_scale_pct_changed(window.scale_x_pct)
+
+    assert len(window.contours) == 1
+    assert selected_width() == pytest.approx(20.0)
+    assert window.undo_manager.get_undo_history(2)[0] == window.tr("Scale")
+
+    window._on_undo()
+
+    assert len(window.contours) == 1
+    assert selected_width() == pytest.approx(10.0)
+    assert window.scale_x_pct.value() == pytest.approx(100.0)
+    assert window.scale_y_pct.value() == pytest.approx(100.0)
+
+    window._on_redo()
+
+    assert len(window.contours) == 1
+    assert selected_width() == pytest.approx(20.0)
+    assert window.scale_x_pct.value() == pytest.approx(200.0)
+    assert window.scale_y_pct.value() == pytest.approx(200.0)
+
+    window.deleteLater()
 
 
 def test_print_order_click_prioritizes_hole_and_commits_as_one_undo_step(qapp):

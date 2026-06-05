@@ -1390,6 +1390,61 @@ class MainWindow(QMainWindow):
                 state = self._get_contour_state(id(self.contours[idx]))
                 state['scale_pct_x'] *= sx
                 state['scale_pct_y'] *= sy
+                if self._scale_original_w is not None:
+                    state['original_w'] = self._scale_original_w
+                if self._scale_original_h is not None:
+                    state['original_h'] = self._scale_original_h
+
+    def _set_selected_scale_state(self, pct_x: float, pct_y: float) -> None:
+        """Store the visible scale percentage for the current selection."""
+        self._scale_pct_x = pct_x
+        self._scale_pct_y = pct_y
+        for idx in self.canvas.selected_indices:
+            if 0 <= idx < len(self.contours):
+                state = self._get_contour_state(id(self.contours[idx]))
+                state['scale_pct_x'] = pct_x
+                state['scale_pct_y'] = pct_y
+                if self._scale_original_w is not None:
+                    state['original_w'] = self._scale_original_w
+                if self._scale_original_h is not None:
+                    state['original_h'] = self._scale_original_h
+
+    def _sync_scale_state_from_geometry(self) -> None:
+        """Rebuild scale percentages after undo/redo restores geometry."""
+        if self.current_transform_mode != "scale" or not self.canvas.selected_indices:
+            return
+
+        bounds = self.canvas.get_selection_bounds()
+        if not bounds:
+            return
+
+        if self._scale_original_w is None or self._scale_original_h is None:
+            self._capture_original_size()
+            return
+
+        original_w = max(self._scale_original_w, 0.01)
+        original_h = max(self._scale_original_h, 0.01)
+        cur_w = max(bounds[2] - bounds[0], 0.01)
+        cur_h = max(bounds[3] - bounds[1], 0.01)
+        self._set_selected_scale_state(
+            cur_w / original_w * 100.0,
+            cur_h / original_h * 100.0,
+        )
+
+    def _sync_after_history_change(self) -> None:
+        """Refresh selection and transform panel after undo/redo."""
+        valid_selection = [
+            idx for idx in self.canvas.selected_indices
+            if 0 <= idx < len(self.contours)
+        ]
+        if valid_selection != self.canvas.selected_indices:
+            self.canvas.set_selected_indices(valid_selection, update_view=False)
+            if not valid_selection:
+                return
+
+        self._sync_scale_state_from_geometry()
+        if self.canvas.selected_indices:
+            self._update_transform_panel_values()
 
     def _restore_contour_transform(self, contour_id: Optional[int]):
         """从 per-contour 字典恢复指定轮廓的变换状态到显示变量"""
@@ -2696,6 +2751,7 @@ class MainWindow(QMainWindow):
             command = self.undo_manager._undo_stack[-1] if self.undo_manager._undo_stack else None
             requires_reprocess = self._command_requires_reprocess(command)
             if self.undo_manager.undo():
+                self._sync_after_history_change()
                 self.canvas.update()
                 self.project_panel.update_contours(self.contours)
                 self._refresh_prime_tower_overlay()
@@ -2712,6 +2768,7 @@ class MainWindow(QMainWindow):
             command = self.undo_manager._redo_stack[-1] if self.undo_manager._redo_stack else None
             requires_reprocess = self._command_requires_reprocess(command)
             if self.undo_manager.redo():
+                self._sync_after_history_change()
                 self.canvas.update()
                 self.project_panel.update_contours(self.contours)
                 self._refresh_prime_tower_overlay()
@@ -3218,17 +3275,23 @@ class MainWindow(QMainWindow):
         """记录当前选中轮廓的尺寸作为缩放基准"""
         bounds = self.canvas.get_selection_bounds()
         if bounds:
-            self._scale_original_w = max(bounds[2] - bounds[0], 0.01)
-            self._scale_original_h = max(bounds[3] - bounds[1], 0.01)
+            current_w = max(bounds[2] - bounds[0], 0.01)
+            current_h = max(bounds[3] - bounds[1], 0.01)
             # 如果轮廓已有累计缩放状态（如之前全选缩放过），保留它
             cid = self._get_selected_contour_id()
-            if cid is not None and cid in self._contour_transforms:
-                state = self._contour_transforms[cid]
+            if cid is not None:
+                state = self._get_contour_state(cid)
+                if state['original_w'] is None:
+                    state['original_w'] = current_w
+                if state['original_h'] is None:
+                    state['original_h'] = current_h
+                self._scale_original_w = state['original_w']
+                self._scale_original_h = state['original_h']
                 self._scale_pct_x = state['scale_pct_x']
                 self._scale_pct_y = state['scale_pct_y']
-                state['original_w'] = self._scale_original_w
-                state['original_h'] = self._scale_original_h
             else:
+                self._scale_original_w = current_w
+                self._scale_original_h = current_h
                 self._scale_pct_x = 100.0
                 self._scale_pct_y = 100.0
 
@@ -3260,6 +3323,24 @@ class MainWindow(QMainWindow):
 
         self._scale_updating = False
 
+    def _apply_scale_with_undo(self, sx: float, sy: float, description: Optional[str] = None) -> bool:
+        """Apply a scale edit from the transform panel and record it for undo."""
+        if not self.canvas.selected_indices or sx <= 0 or sy <= 0:
+            return False
+
+        indices = list(self.canvas.selected_indices)
+        command = TransformCommand(
+            self.contours,
+            indices,
+            description or self.tr("Scale"),
+        )
+        self.canvas.scale_selected_xy(sx, sy)
+        command.capture_after()
+        if not self.undo_manager.push(command, execute=False):
+            return False
+        self._invalidate_processed_result()
+        return True
+
     def _on_scale_pct_changed(self, sender):
         """Scale百分比输入改变"""
         if self._scale_updating or not self.canvas.selected_indices:
@@ -3282,10 +3363,9 @@ class MainWindow(QMainWindow):
         sy = target_pct_y / old_pct_y
 
         if abs(sx - 1.0) > 0.0001 or abs(sy - 1.0) > 0.0001:
-            self.canvas.scale_selected_xy(sx, sy)
-            self._scale_pct_x = target_pct_x
-            self._scale_pct_y = target_pct_y
-            self._update_selected_scale(sx, sy)
+            if not self._apply_scale_with_undo(sx, sy, self.tr("Scale")):
+                return
+            self._set_selected_scale_state(target_pct_x, target_pct_y)
             self._update_scale_panel_values()
             self._update_status(
                 self.tr("Scale: {px:.1f}% x {py:.1f}%").format(
@@ -3320,10 +3400,12 @@ class MainWindow(QMainWindow):
             sy = target_h / cur_h
 
         if abs(sx - 1.0) > 0.0001 or abs(sy - 1.0) > 0.0001:
-            self.canvas.scale_selected_xy(sx, sy)
-            self._scale_pct_x *= sx
-            self._scale_pct_y *= sy
-            self._update_selected_scale(sx, sy)
+            if not self._apply_scale_with_undo(sx, sy, self.tr("Scale")):
+                return
+            self._set_selected_scale_state(
+                self._scale_pct_x * sx,
+                self._scale_pct_y * sy,
+            )
             self._update_scale_panel_values()
             self._update_status(
                 self.tr("Scale: {px:.1f}% x {py:.1f}%").format(
@@ -3343,10 +3425,12 @@ class MainWindow(QMainWindow):
         sy = target_h / cur_h
 
         if abs(sx - 1.0) > 0.0001 or abs(sy - 1.0) > 0.0001:
-            self.canvas.scale_selected_xy(sx, sy)
-            self._scale_pct_x *= sx
-            self._scale_pct_y *= sy
-            self._update_selected_scale(sx, sy)
+            if not self._apply_scale_with_undo(sx, sy, self.tr("Scale")):
+                return
+            self._set_selected_scale_state(
+                self._scale_pct_x * sx,
+                self._scale_pct_y * sy,
+            )
             self._update_scale_panel_values()
             self._update_status(
                 self.tr("Scale: {px:.1f}% x {py:.1f}%").format(

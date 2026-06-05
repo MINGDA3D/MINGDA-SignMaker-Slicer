@@ -340,7 +340,14 @@ class ContourSnapshot:
     def restore_to(self, contours: List['Contour']):
         """恢复快照到轮廓列表"""
         if 0 <= self.index < len(contours):
-            contours[self.index] = deepcopy(self.contour_data)
+            restored = deepcopy(self.contour_data)
+            target = contours[self.index]
+            if hasattr(target, "__dict__") and hasattr(restored, "__dict__"):
+                # Preserve object identity so UI selection/transform state stays attached.
+                target.__dict__.clear()
+                target.__dict__.update(restored.__dict__)
+            else:
+                contours[self.index] = restored
 
 
 class MoveCommand(Command):
