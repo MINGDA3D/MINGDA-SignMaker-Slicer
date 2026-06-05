@@ -575,6 +575,33 @@ def test_new_project_confirmation_uses_new_project_context(qapp, monkeypatch):
         window.deleteLater()
 
 
+def test_open_project_confirmation_uses_open_project_context(qapp, monkeypatch):
+    window = MainWindow()
+    captured = {}
+
+    try:
+        def _fake_exec(message_box):
+            captured["title"] = message_box.windowTitle()
+            captured["text"] = message_box.text()
+            captured["texts"] = {button.text() for button in message_box.buttons()}
+            return 0
+
+        monkeypatch.setattr("src.ui.main_window.QMessageBox.exec", _fake_exec)
+
+        assert window._confirm_open_project_with_unsaved_changes() == QMessageBox.StandardButton.Cancel
+        assert captured["title"] == window.tr("Open Project")
+        assert captured["text"] == window.tr(
+            "The current project has unsaved changes. Do you want to save before opening another project?"
+        )
+        assert captured["texts"] == {
+            window.tr("Save"),
+            window.tr("Discard"),
+            window.tr("Cancel"),
+        }
+    finally:
+        window.deleteLater()
+
+
 def test_unsaved_changes_include_active_edit_sessions(qapp):
     window = MainWindow()
 
@@ -731,6 +758,90 @@ def test_close_with_unsaved_changes_can_cancel_exit(qapp, monkeypatch):
 
         assert window._handle_unsaved_changes_before_close() is False
         assert save_calls == []
+    finally:
+        window._set_project_save_point()
+        window.deleteLater()
+
+
+def test_open_file_smp_with_unsaved_changes_can_cancel(qapp, monkeypatch, workspace_tmp_dir):
+    window = MainWindow()
+    original_contours = [_rect_contour(0, 0, 10, 10, "A")]
+    target_project = workspace_tmp_dir / "target.smp"
+    load_calls = []
+
+    try:
+        window.contours = list(original_contours)
+        window.current_file = str(workspace_tmp_dir / "dirty_project.smp")
+        window.param_panel.height_spin.setValue(window.param_panel.height_spin.value() + 1.0)
+
+        monkeypatch.setattr(
+            "src.ui.main_window.QFileDialog.getOpenFileName",
+            lambda *_args, **_kwargs: (str(target_project), ""),
+        )
+        monkeypatch.setattr(
+            window,
+            "_confirm_open_project_with_unsaved_changes",
+            lambda: QMessageBox.StandardButton.Cancel,
+        )
+        monkeypatch.setattr(
+            window,
+            "_load_project",
+            lambda file_path: load_calls.append(file_path) or True,
+        )
+
+        window._on_open_file()
+
+        assert load_calls == []
+        assert window.contours == original_contours
+        assert window.current_file == str(workspace_tmp_dir / "dirty_project.smp")
+        assert window._has_unsaved_project_changes() is True
+    finally:
+        window._set_project_save_point()
+        window.deleteLater()
+
+
+def test_open_file_smp_with_unsaved_changes_saves_before_loading(
+    qapp,
+    monkeypatch,
+    workspace_tmp_dir,
+):
+    window = MainWindow()
+    current_project = workspace_tmp_dir / "dirty_project.smp"
+    target_project = workspace_tmp_dir / "target.smp"
+    saved_paths = []
+    loaded_paths = []
+
+    try:
+        window.contours = [_rect_contour(0, 0, 10, 10, "A")]
+        window.current_file = str(current_project)
+        window.param_panel.height_spin.setValue(window.param_panel.height_spin.value() + 1.0)
+
+        monkeypatch.setattr(
+            "src.ui.main_window.QFileDialog.getOpenFileName",
+            lambda *_args, **_kwargs: (str(target_project), ""),
+        )
+        monkeypatch.setattr(
+            window,
+            "_confirm_open_project_with_unsaved_changes",
+            lambda: QMessageBox.StandardButton.Save,
+        )
+
+        def _fake_save(file_path: str) -> bool:
+            saved_paths.append(file_path)
+            window._set_project_save_point()
+            return True
+
+        monkeypatch.setattr(window, "_save_project", _fake_save)
+        monkeypatch.setattr(
+            window,
+            "_load_project",
+            lambda file_path: loaded_paths.append(file_path) or True,
+        )
+
+        window._on_open_file()
+
+        assert saved_paths == [str(current_project)]
+        assert loaded_paths == [str(target_project)]
     finally:
         window._set_project_save_point()
         window.deleteLater()

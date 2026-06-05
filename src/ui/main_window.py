@@ -954,6 +954,13 @@ class MainWindow(QMainWindow):
             self.tr("The current project has unsaved changes. Do you want to save before creating a new project?"),
         )
 
+    def _confirm_open_project_with_unsaved_changes(self) -> QMessageBox.StandardButton:
+        """Ask the user how to handle unsaved changes before opening another project."""
+        return self._confirm_unsaved_changes(
+            self.tr("Open Project"),
+            self.tr("The current project has unsaved changes. Do you want to save before opening another project?"),
+        )
+
     def _handle_unsaved_project_changes(
         self,
         confirm_dialog: Callable[[], QMessageBox.StandardButton],
@@ -984,6 +991,12 @@ class MainWindow(QMainWindow):
         """Handle unsaved project changes before creating a new project."""
         return self._handle_unsaved_project_changes(
             self._confirm_new_project_with_unsaved_changes,
+        )
+
+    def _handle_unsaved_changes_before_open_project(self) -> bool:
+        """Handle unsaved project changes before opening another project."""
+        return self._handle_unsaved_project_changes(
+            self._confirm_open_project_with_unsaved_changes,
         )
 
     def _sync_canvas_platform_size(self, params: Optional[SliceParams] = None) -> None:
@@ -1809,6 +1822,9 @@ class MainWindow(QMainWindow):
             )
             return
 
+        if not self._handle_unsaved_changes_before_open_project():
+            return
+
         if not self._load_project(resolved_path) and self.settings_manager:
             self.settings_manager.remove_recent_file(resolved_path)
             self._refresh_home_recent_projects()
@@ -1972,7 +1988,8 @@ class MainWindow(QMainWindow):
 
         if file_path:
             self._remember_last_open_path(file_path)
-            self._load_project(file_path)
+            if self._handle_unsaved_changes_before_open_project():
+                self._load_project(file_path)
 
     @staticmethod
     def _dialog_directory_from_path(file_path: str) -> Optional[str]:
@@ -2126,7 +2143,8 @@ class MainWindow(QMainWindow):
         suffix = path.suffix.lower()
 
         if suffix == '.smp':
-            self._load_project(file_path)
+            if self._handle_unsaved_changes_before_open_project():
+                self._load_project(file_path)
             return
 
         if suffix == '.dxf':

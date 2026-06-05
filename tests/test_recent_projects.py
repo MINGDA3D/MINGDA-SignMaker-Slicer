@@ -12,7 +12,7 @@ os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 from PySide6.QtCore import QPoint, Qt
 from PySide6.QtGui import QContextMenuEvent
 from PySide6.QtTest import QTest
-from PySide6.QtWidgets import QApplication
+from PySide6.QtWidgets import QApplication, QMessageBox
 
 from src.business.project_format import PREVIEW_FILE, save_project
 from src.business.settings_manager import SettingsManager
@@ -421,6 +421,38 @@ def test_home_recent_project_card_opens_target_project(window, workspace_tmp_dir
     qapp.processEvents()
 
     assert opened_paths == [str(project_path.resolve())]
+
+
+def test_recent_project_open_cancel_keeps_project_in_list(window, workspace_tmp_dir, monkeypatch):
+    project_path = _create_project_file(workspace_tmp_dir, "cancel_target.smp", "Cancel Target")
+    load_calls = []
+
+    try:
+        window.settings_manager.add_recent_file(str(project_path))
+        window._refresh_home_recent_projects()
+
+        window.contours = [_rect_contour(0, 0, 10, 10, "A")]
+        window.current_file = str(workspace_tmp_dir / "dirty_project.smp")
+        window.param_panel.height_spin.setValue(window.param_panel.height_spin.value() + 1.0)
+
+        monkeypatch.setattr(
+            window,
+            "_confirm_open_project_with_unsaved_changes",
+            lambda: QMessageBox.StandardButton.Cancel,
+        )
+        monkeypatch.setattr(
+            window,
+            "_load_project",
+            lambda file_path: load_calls.append(file_path) or True,
+        )
+
+        window._open_recent_project(str(project_path))
+
+        assert load_calls == []
+        assert window.settings_manager.get_recent_files() == [str(project_path.resolve())]
+        assert window.home_page._recent_projects[0]["path"] == str(project_path.resolve())
+    finally:
+        window._set_project_save_point()
 
 
 def test_home_clear_all_button_clears_recent_projects(window, workspace_tmp_dir, qapp):
