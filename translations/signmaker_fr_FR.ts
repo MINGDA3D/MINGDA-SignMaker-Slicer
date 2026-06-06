@@ -284,6 +284,11 @@ Code d&apos;erreur : {code}</translation>
         <translation>Le projet actuel contient des modifications non enregistrées. Voulez-vous enregistrer avant de créer un nouveau projet ?</translation>
     </message>
     <message>
+        <location filename="../src/ui/main_window.py" line="961"/>
+        <source>The current project has unsaved changes. Do you want to save before opening another project?</source>
+        <translation>Le projet actuel contient des modifications non enregistrées. Voulez-vous enregistrer avant d'ouvrir un autre projet ?</translation>
+    </message>
+    <message>
         <location filename="../src/ui/main_window.py" line="920"/>
         <source>Save</source>
         <translation>Enregistrer</translation>

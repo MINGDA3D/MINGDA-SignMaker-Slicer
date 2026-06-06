@@ -2283,6 +2283,19 @@ class Canvas2D(QWidget):
         """全选所有轮廓"""
         self.set_selected_indices(list(range(len(self.contours))))
 
+    def delete_current_selection(self) -> bool:
+        """Request deletion for the current editable canvas selection."""
+        if self.current_tool == "screw_hole" and self._selected_screw_hole is not None:
+            contour_index, hole_index = self._selected_screw_hole
+            self.screw_hole_delete_requested.emit(contour_index, hole_index)
+            return True
+
+        if self.selected_indices:
+            self.delete_requested.emit(list(self.selected_indices))
+            return True
+
+        return False
+
     def _set_tool_cursor(self):
         """根据当前工具设置光标"""
         cursors = {
@@ -2298,13 +2311,10 @@ class Canvas2D(QWidget):
 
     def keyPressEvent(self, event: QKeyEvent):
         """键盘事件"""
-        if event.key() == Qt.Key.Key_Delete:
-            # 删除选中
-            if self.current_tool == "screw_hole" and self._selected_screw_hole is not None:
-                contour_index, hole_index = self._selected_screw_hole
-                self.screw_hole_delete_requested.emit(contour_index, hole_index)
-            elif self.selected_indices:
-                self.delete_requested.emit(list(self.selected_indices))
+        if event.key() in (Qt.Key.Key_Delete, Qt.Key.Key_Backspace):
+            if self.delete_current_selection():
+                event.accept()
+                return
         elif event.key() == Qt.Key.Key_Escape:
             if self.current_tool == "start_point":
                 self.start_point_mode_exit_requested.emit()

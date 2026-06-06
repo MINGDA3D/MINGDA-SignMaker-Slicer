@@ -1522,6 +1522,7 @@ class Preview3D(QWidget):
     def set_layer_count(self, total: int, layers: Optional[List[Layer]] = None):
         """Update layer controls without forcing synchronous scene processing."""
         if layers is not None:
+            self.gl_widget.set_layers(layers)
             total = len(layers)
         self._sync_layer_controls(total, total - 1)
         return
@@ -1642,6 +1643,7 @@ class Preview3D(QWidget):
     def set_layer_count(self, total: int, layers: Optional[List[Layer]] = None):
         """Update layer controls without forcing synchronous scene processing."""
         if layers is not None:
+            self.gl_widget.set_layers(layers)
             total = len(layers)
         self._sync_layer_controls(total, total - 1)
 

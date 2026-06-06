@@ -303,10 +303,12 @@ class MainWindow(QMainWindow):
 
         select_all_action = QAction(self.tr("Select All"), self)
         select_all_action.setShortcut(QKeySequence.StandardKey.SelectAll)
+        select_all_action.triggered.connect(self._select_all_canvas_contours)
         edit_menu.addAction(select_all_action)
 
         delete_action = QAction(self.tr("Delete"), self)
         delete_action.setShortcut(QKeySequence.StandardKey.Delete)
+        delete_action.triggered.connect(self._delete_current_canvas_selection)
         edit_menu.addAction(delete_action)
 
         # === 视图菜单 ===
@@ -1575,9 +1577,40 @@ class MainWindow(QMainWindow):
         active_index = valid_indices[0] if valid_indices else None
         self.canvas.set_selected_indices(valid_indices, active_index=active_index)
 
+    def _is_2d_editor_active(self) -> bool:
+        return self.current_main_view == "editor" and self.current_view == "2d"
+
+    def _delete_current_canvas_selection(self) -> bool:
+        """Delete the active shape or edit target in the 2D editor."""
+        if not self._is_2d_editor_active():
+            return False
+        return self.canvas.delete_current_selection()
+
+    def _select_all_canvas_contours(self) -> bool:
+        """Select every contour in the active 2D editor."""
+        if not self._is_2d_editor_active() or not self.contours:
+            return False
+        self._apply_contour_selection(list(range(len(self.contours))))
+        return True
+
     # =========================================================================
     # 事件处理
     # =========================================================================
+
+    def keyPressEvent(self, event):
+        """Handle editor shortcuts that should work beyond canvas focus."""
+        if (
+            event.key() in (Qt.Key.Key_Delete, Qt.Key.Key_Backspace)
+            and self._delete_current_canvas_selection()
+        ):
+            event.accept()
+            return
+
+        if event.matches(QKeySequence.StandardKey.SelectAll) and self._select_all_canvas_contours():
+            event.accept()
+            return
+
+        super().keyPressEvent(event)
 
     def _reset_preview_loading_state(self):
         """Clear any pending non-blocking preview load indicator/state."""
@@ -1613,12 +1646,12 @@ class MainWindow(QMainWindow):
             self.preview_3d.set_loading(False)
             return
 
-        # Avoid synchronous layer processing on first open; show the page immediately.
+        # Show the lightweight layer preview immediately; the solid mesh is an async enhancement.
         self.preview_3d.clear_scene()
         self.preview_3d.set_layer_count(len(target_result.layers), target_result.layers)
+        self.preview_3d.set_loading(False)
 
         if self._preview_mesh_loading_key == loading_key:
-            self.preview_3d.set_loading(True, self.tr("Loading 3D preview..."))
             return
 
         def build_preview_mesh():
@@ -1631,7 +1664,6 @@ class MainWindow(QMainWindow):
         worker = WorkerThread(build_preview_mesh, self)
         self._preview_mesh_worker = worker
         self._preview_mesh_loading_key = loading_key
-        self.preview_3d.set_loading(True, self.tr("Loading 3D preview..."))
 
         def on_success(mesh_parts):
             if self._preview_mesh_loading_key != loading_key:

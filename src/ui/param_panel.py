@@ -191,6 +191,8 @@ class ParamPanel(QWidget):
         self.primary_tabs.setDocumentMode(True)
         self.primary_tabs.setTabPosition(QTabWidget.TabPosition.North)
         self.primary_tabs.setUsesScrollButtons(False)
+        self.primary_tabs.tabBar().setExpanding(True)
+        self.primary_tabs.tabBar().setDrawBase(False)
         self.primary_tabs.setStyleSheet(f"""
             QTabWidget#primarySettingsTabs {{
                 background-color: {COLORS.editor_sidebar_left_bg};
@@ -202,8 +204,20 @@ class ParamPanel(QWidget):
                 padding: 0;
                 margin: 0;
             }}
+            QTabWidget#primarySettingsTabs::tab-bar {{
+                background-color: {COLORS.editor_sidebar_left_bg};
+                border: none;
+            }}
+            QTabWidget#primarySettingsTabs QTabBar {{
+                background-color: {COLORS.editor_sidebar_left_bg};
+                border: none;
+            }}
+            QTabWidget#primarySettingsTabs QTabBar::base {{
+                background-color: {COLORS.editor_sidebar_left_bg};
+                border: none;
+            }}
             QTabWidget#primarySettingsTabs QTabBar::tab {{
-                background-color: transparent;
+                background-color: {COLORS.editor_sidebar_left_bg};
                 border: none;
                 border-bottom: 2px solid transparent;
                 color: {COLORS.text_muted};
@@ -213,12 +227,13 @@ class ParamPanel(QWidget):
                 padding: 10px 10px 8px 10px;
             }}
             QTabWidget#primarySettingsTabs QTabBar::tab:selected {{
+                background-color: {COLORS.editor_sidebar_left_bg};
                 color: {COLORS.text_primary};
                 border-bottom: 2px solid {COLORS.editor_canvas_toolbar_accent};
                 font-weight: 600;
             }}
             QTabWidget#primarySettingsTabs QTabBar::tab:hover:!selected {{
-                background-color: transparent;
+                background-color: {COLORS.editor_list_item_bg};
                 color: {COLORS.text_secondary};
             }}
         """)
@@ -306,7 +321,7 @@ class ParamPanel(QWidget):
         """Initialize a layer-count spinbox with a consistent suffix/tooltip."""
         spinbox.setRange(minimum, maximum)
         spinbox.setValue(value)
-        spinbox.setSuffix(" " + self.tr("layers"))
+        spinbox.setSuffix(f" {self.tr('layers')}")
         spinbox.setEnabled(enabled)
         spinbox.setToolTip(
             self.tr("Height is derived from layer count * layer height.")
@@ -720,7 +735,7 @@ class ParamPanel(QWidget):
         self.light_slot_floor_layers.setRange(1, 100)
         self.light_slot_floor_layers.setValue(5)
         self.light_slot_floor_layers.setSingleStep(1)
-        self.light_slot_floor_layers.setSuffix(" " + self.tr("layers"))
+        self.light_slot_floor_layers.setSuffix(f" {self.tr('layers')}")
         self.light_slot_floor_layers.setEnabled(False)
         self.light_slot_floor_layers.valueChanged.connect(self._on_param_changed)
         form.addRow(self.tr("Floor Layers:"), self.light_slot_floor_layers)

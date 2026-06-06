@@ -120,6 +120,24 @@ Create a release notes text file first, for example:
 release-notes.txt
 ```
 
+Release notes writing rules:
+
+1. Use English only.
+2. Use this exact first-line title format: `MINGDA SignMaker V<version> Official Release`.
+3. Keep the notes concise for the update dialog.
+4. Include only user-visible changes, such as new features, visible workflow improvements, compatibility improvements, or bug fixes users can notice.
+5. Do not mention internal tests, source file changes, implementation details, packaging metadata, version synchronization, hashes, CI, or other maintenance-only work.
+6. Prefer 1 to 3 short bullet points using plain `- ` bullets.
+
+Example:
+
+```text
+MINGDA SignMaker V0.3.8 Official Release
+
+- Improved the bottom arc transition for U-shaped edges for smoother slicing.
+- Improved G-code export compatibility with preview and parsing software.
+```
+
 After the installer exists, generate `signmaker-update.json`:
 
 ```powershell

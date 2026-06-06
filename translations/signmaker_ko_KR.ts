@@ -284,6 +284,11 @@ Error code: {code}</source>
         <translation>현재 프로젝트에 저장되지 않은 변경 사항이 있습니다. 새 프로젝트를 만들기 전에 저장하시겠습니까?</translation>
     </message>
     <message>
+        <location filename="../src/ui/main_window.py" line="961"/>
+        <source>The current project has unsaved changes. Do you want to save before opening another project?</source>
+        <translation>현재 프로젝트에 저장되지 않은 변경 사항이 있습니다. 다른 프로젝트를 열기 전에 저장하시겠습니까?</translation>
+    </message>
+    <message>
         <location filename="../src/ui/main_window.py" line="920"/>
         <source>Save</source>
         <translation>저장</translation>
