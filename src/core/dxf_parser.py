@@ -159,12 +159,12 @@ class DXFParser:
             PathType.HOLE: [],
             PathType.PATTERN: [],
         }
-        contours: List[Contour] = []
+        hatch_contours: List[Contour] = []
 
-        for entity in msp:
+        for entity in self._iter_virtual_entities(msp):
             entity_type = entity.dxftype()
             if entity_type in ('HATCH', 'MPOLYGON'):
-                contours.extend(self._parse_hatch_entity(entity))
+                hatch_contours.extend(self._parse_hatch_entity(entity))
                 continue
 
             path = self._parse_entity(entity)
@@ -180,7 +180,9 @@ class DXFParser:
         for path in self._stitch_line_paths(line_paths):
             self._add_closed_path(path, normal_paths, special_paths)
 
-        contours.extend(classify_paths_by_nesting(normal_paths))
+        contours = self._dedupe_contours(
+            hatch_contours + classify_paths_by_nesting(normal_paths)
+        )
 
         connected_frames = special_paths[PathType.CONNECTED]
         patterns = special_paths[PathType.PATTERN]
@@ -189,6 +191,72 @@ class DXFParser:
             contour.patterns = list(patterns)
 
         return contours
+
+    def _iter_virtual_entities(self, entities):
+        """Yield drawable entities, expanding INSERT block references."""
+        for entity in entities:
+            if entity.dxftype() != 'INSERT':
+                yield entity
+                continue
+
+            try:
+                virtual_entities = list(entity.virtual_entities())
+            except Exception:
+                continue
+
+            yield from self._iter_virtual_entities(virtual_entities)
+
+    def _dedupe_contours(self, contours: List[Contour]) -> List[Contour]:
+        """Remove duplicate outlines emitted by paired HATCH and curve entities."""
+        unique: List[Contour] = []
+
+        for contour in contours:
+            duplicate_index = self._find_duplicate_contour_index(contour, unique)
+            if duplicate_index is None:
+                unique.append(contour)
+                continue
+
+            if self._contour_quality(contour) > self._contour_quality(unique[duplicate_index]):
+                unique[duplicate_index] = contour
+
+        return unique
+
+    def _find_duplicate_contour_index(
+        self,
+        contour: Contour,
+        candidates: List[Contour],
+    ) -> Optional[int]:
+        for index, candidate in enumerate(candidates):
+            if self._paths_same_shape(contour.outer, candidate.outer):
+                return index
+        return None
+
+    def _contour_quality(self, contour: Contour) -> int:
+        point_count = len(contour.outer.points)
+        point_count += sum(len(hole.points) for hole in contour.holes)
+        return len(contour.holes) * 100000 + point_count
+
+    def _paths_same_shape(self, first: Path, second: Path) -> bool:
+        tolerance = max(0.2, self.chord_error * 4)
+        first_bounds = first.bounds
+        second_bounds = second.bounds
+
+        if any(abs(a - b) > tolerance for a, b in zip(first_bounds, second_bounds)):
+            return False
+
+        first_area = abs(first.area)
+        second_area = abs(second.area)
+        area_tolerance = max(1.0, max(first_area, second_area) * 0.005)
+        if abs(first_area - second_area) > area_tolerance:
+            return False
+
+        first_centroid = first.centroid
+        second_centroid = second.centroid
+        centroid_distance = math.sqrt(
+            (first_centroid.x - second_centroid.x) ** 2
+            + (first_centroid.y - second_centroid.y) ** 2
+        )
+        return centroid_distance <= tolerance
 
     def _add_closed_path(
         self,
@@ -316,7 +384,7 @@ class DXFParser:
             index for index, (_, flags) in enumerate(loop_entries)
             if flags & self.HATCH_SHELL_FLAGS
         ]
-        if not shell_indices:
+        if not shell_indices or len(shell_indices) == len(loop_entries):
             return classify_paths_by_nesting([path for path, _ in loop_entries])
 
         grouped_paths: Dict[int, List[Path]] = {
