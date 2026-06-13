@@ -18,12 +18,14 @@ from src.core.types import (
     ColorChangePoint,
     EdgeDirection,
     EdgeType,
+    ManufacturingConstraintError,
     PrinterProfile,
     SliceParams,
     format_bed_exclude_area_for_editor,
+    normalize_slice_params,
 )
 from src.ui.param_panel import ParamPanel
-from src.ui.widgets import GuardedComboBox, GuardedDoubleSpinBox, GuardedSpinBox
+from src.ui.widgets import GuardedComboBox, GuardedDoubleSpinBox
 
 
 @pytest.fixture
@@ -58,6 +60,16 @@ def _dispatch_wheel(widget, delta_y: int = 120) -> None:
     )
     QApplication.sendEvent(widget, event)
     QApplication.processEvents()
+
+
+def _select_nozzle_profile(panel: ParamPanel, nozzle_diameter: float) -> None:
+    spec = next(
+        spec for spec in DEFAULT_PRINTER_PROFILE_SPECS
+        if abs(spec["nozzle_diameter"] - nozzle_diameter) < 1e-9
+    )
+    index = panel.printer_profile_combo.findData(spec["id"])
+    assert index >= 0
+    panel.printer_profile_combo.setCurrentIndex(index)
 
 
 def test_guarded_double_spinbox_ignores_wheel_until_focused(qapp):
@@ -127,9 +139,35 @@ def test_param_panel_uses_guarded_inputs_for_scroll_sensitive_controls(qapp):
     panel = ParamPanel()
 
     assert isinstance(panel.height_spin, GuardedDoubleSpinBox)
-    assert isinstance(panel.wall_count_spin, GuardedSpinBox)
+    assert isinstance(panel.wall_thickness_spin, GuardedDoubleSpinBox)
     assert isinstance(panel.edge_type_combo, GuardedComboBox)
     assert isinstance(panel.printer_profile_combo, GuardedComboBox)
+
+
+def test_wall_thickness_control_uses_mm_without_exposing_wall_loops(qapp):
+    panel = ParamPanel()
+
+    panel.wall_thickness_spin.setValue(12.0)
+
+    assert not hasattr(panel, "wall_count_spin")
+    assert panel.wall_thickness_spin.value() == pytest.approx(12.0)
+
+
+def test_user_visible_param_labels_hide_layer_counts_and_wall_loops(qapp):
+    panel = ParamPanel()
+
+    visible_text = "\n".join(
+        label.text()
+        for label in panel.findChildren(QLabel)
+    )
+
+    assert "Wall Loops:" not in visible_text
+    assert "Bottom Layers:" not in visible_text
+    assert "Bottom Shell Layers:" not in visible_text
+    assert "Floor Layers:" not in visible_text
+    assert "Top Shell Layers:" not in visible_text
+    assert panel.wall_thickness_spin.suffix() == " mm"
+    assert panel.bottom_face_thickness.suffix() == " mm"
 
 
 def test_primary_groups_follow_requested_order(qapp):
@@ -187,19 +225,17 @@ def test_profile_selector_does_not_show_default_suffix(qapp):
 def test_switching_profile_updates_layer_height_and_width_line_when_nozzle_changes(qapp):
     panel = ParamPanel()
 
+    _select_nozzle_profile(panel, 0.4)
     panel.layer_height_spin.setValue(0.2)
     panel.width_line_spin.setValue(0.4)
 
-    target_index = panel.printer_profile_combo.findData(DEFAULT_PRINTER_PROFILE_SPECS[2]["id"])
-    assert target_index >= 0
+    _select_nozzle_profile(panel, 0.6)
 
-    panel.printer_profile_combo.setCurrentIndex(target_index)
-
-    assert panel.profile_nozzle_diameter.value() == pytest.approx(0.8)
-    assert panel.layer_height_spin.value() == pytest.approx(0.4)
-    assert panel.width_line_spin.value() == pytest.approx(0.8)
-    assert panel.get_params().shell.layer_height == pytest.approx(0.4)
-    assert panel.get_params().shell.line_width == pytest.approx(0.8)
+    assert panel.profile_nozzle_diameter.value() == pytest.approx(0.6)
+    assert panel.layer_height_spin.value() == pytest.approx(0.3)
+    assert panel.width_line_spin.value() == pytest.approx(0.6)
+    assert panel.get_params().shell.layer_height == pytest.approx(0.3)
+    assert panel.get_params().shell.line_width == pytest.approx(0.6)
 
 
 def test_print_summary_labels_and_color_change_preview_column_can_shrink_in_narrow_sidebar(qapp):
@@ -422,10 +458,10 @@ def test_vector_defaults_match_requested_values(qapp):
     panel = ParamPanel()
     params = panel.get_params()
 
-    assert panel.height_spin.value() == pytest.approx(50.0)
+    assert panel.height_spin.value() == pytest.approx(50.1)
     assert panel.layer_height_spin.value() == pytest.approx(0.3)
     assert panel.width_line_spin.value() == pytest.approx(0.6)
-    assert panel.wall_count_spin.value() == 2
+    assert panel.wall_thickness_spin.value() == pytest.approx(1.2)
     assert panel.edge_type_combo.currentData() == EdgeType.STRAIGHT
     assert panel.bevel_params_widget.isHidden() is True
     assert panel.panel_step_enabled.isChecked() is False
@@ -433,35 +469,36 @@ def test_vector_defaults_match_requested_values(qapp):
     assert panel.skirt_enabled.isChecked() is False
     assert panel.connected_enabled.isChecked() is False
     assert panel.bevel_width_spin.value() == pytest.approx(5.0)
-    assert panel.baseplate_spin.value() == 30
-    assert panel.panel_thickness_spin.value() == 30
+    assert panel.baseplate_spin.value() == pytest.approx(9.0)
+    assert panel.panel_thickness_spin.value() == pytest.approx(9.0)
     assert panel.wrap_width.value() == pytest.approx(3.0)
     assert panel.wrap_height.value() == pytest.approx(3.0)
     assert panel.outline_width.value() == pytest.approx(3.0)
     assert panel.outline_height.value() == pytest.approx(3.0)
     assert panel.outline_offset.value() == pytest.approx(0.0)
-    assert panel.panel_step_height.value() == pytest.approx(47.0)
-    assert panel.baseplate_step_height.value() == 10
+    assert panel.panel_step_height.value() == pytest.approx(47.1)
+    assert panel.baseplate_step_height.value() == pytest.approx(3.0)
     assert panel.skirt_height.value() == pytest.approx(0.3)
     assert panel.skirt_offset.value() == pytest.approx(0.12)
-    assert panel.top_face_thickness.value() == 8
-    assert panel.u_arc_height_spin.value() == 20
+    assert panel.top_face_thickness.value() == pytest.approx(2.4)
+    assert panel.u_arc_height_spin.value() == pytest.approx(6.0)
     assert panel.u_bottom_layers_spin.minimum() == 0
-    assert panel.u_bottom_layers_spin.value() == 3
-    assert panel.bottom_face_thickness.value() == 3
+    assert panel.u_bottom_layers_spin.value() == pytest.approx(0.9)
+    assert panel.bottom_face_thickness.value() == pytest.approx(0.9)
     assert panel.bottom_face_screw_hole_diameter.value() == pytest.approx(5.0)
     assert panel.connected_type.currentData() == "triangle"
     assert panel.connected_width.value() == pytest.approx(5.0)
-    assert panel.connected_height.value() == 15
-    assert panel.connected_base_height.value() == 15
+    assert panel.connected_height.value() == pytest.approx(4.5)
+    assert panel.connected_base_height.value() == pytest.approx(4.5)
     assert panel.connected_support_offset.value() == pytest.approx(2.5)
     assert panel.light_slot_width.value() == pytest.approx(7.8)
-    assert panel.light_slot_depth.value() == 20
-    assert panel.light_slot_floor_layers.value() == 5
+    assert panel.light_slot_depth.value() == pytest.approx(6.0)
+    assert panel.light_slot_floor_layers.value() == pytest.approx(1.5)
     assert panel.light_slot_wall_gap.value() == pytest.approx(0.0)
 
-    assert params.shell.height == pytest.approx(50.0)
+    assert params.shell.height == pytest.approx(50.1)
     assert params.shell.wall_count == 2
+    assert params.shell.line_width == pytest.approx(0.6)
     assert params.shell.wall_thickness == pytest.approx(1.2)
     assert params.shell.edge_type == EdgeType.STRAIGHT
     assert params.step.panel_step_enabled is False
@@ -472,7 +509,7 @@ def test_vector_defaults_match_requested_values(qapp):
     assert params.shell.panel_thickness == pytest.approx(9.0)
     assert params.shell.u_arc_height == pytest.approx(6.0)
     assert params.shell.u_bottom_layers == 3
-    assert params.step.panel_step_height == pytest.approx(47.0)
+    assert params.step.panel_step_height == pytest.approx(47.1)
     assert params.step.baseplate_step_height == pytest.approx(3.0)
     assert params.top_face.thickness == pytest.approx(2.4)
     assert params.bottom_face.thickness == pytest.approx(0.9)
@@ -486,13 +523,17 @@ def test_vector_defaults_match_requested_values(qapp):
 
 def test_width_line_can_be_manually_overridden_and_layer_height_change_recomputes_it(qapp):
     panel = ParamPanel()
+    _select_nozzle_profile(panel, 0.8)
+    panel.layer_height_spin.setValue(0.3)
 
     panel.width_line_spin.setValue(1.1)
+    assert panel.width_line_spin.value() == pytest.approx(1.1)
     assert panel.get_params().shell.line_width == pytest.approx(1.1)
+    assert panel.get_params().shell.wall_thickness == pytest.approx(2.2)
 
     panel.layer_height_spin.setValue(0.25)
 
-    assert panel.width_line_spin.value() == pytest.approx(0.5)
+    assert panel.width_line_spin.value() == pytest.approx(0.6)
 
 
 def test_shell_height_does_not_change_when_layer_height_changes(qapp):
@@ -518,23 +559,97 @@ def test_set_params_restores_explicit_shell_line_width(qapp):
     panel = ParamPanel()
     params = SliceParams()
     params.shell.layer_height = 0.5
-    params.shell.line_width = 1.3
+    params.shell.line_width = 1.1
+    params.shell.wall_count = 2
 
     panel.set_params(params)
 
-    assert panel.width_line_spin.value() == pytest.approx(1.3)
+    assert panel.width_line_spin.value() == pytest.approx(1.1)
 
 
-def test_wall_thickness_is_derived_from_width_line_and_wall_count(qapp):
+def test_wall_thickness_resolves_wall_count_and_actual_line_width(qapp):
     panel = ParamPanel()
 
-    panel.width_line_spin.setValue(0.8)
-    panel.wall_count_spin.setValue(3)
+    _select_nozzle_profile(panel, 0.8)
+    panel.layer_height_spin.setValue(0.3)
+    panel.width_line_spin.setValue(0.6)
+    panel.wall_thickness_spin.setValue(1.3)
 
     params = panel.get_params()
 
-    assert not hasattr(panel, "wall_thickness_spin")
-    assert params.shell.wall_thickness == pytest.approx(2.4)
+    assert panel.wall_thickness_spin.value() == pytest.approx(1.8)
+    assert params.shell.wall_count == 3
+    assert params.shell.line_width == pytest.approx(0.6)
+    assert params.shell.wall_thickness == pytest.approx(1.8)
+
+
+def test_z_height_inputs_snap_up_to_printable_mm(qapp):
+    panel = ParamPanel()
+
+    panel.layer_height_spin.setValue(0.3)
+    panel.bottom_face_enabled.setChecked(True)
+    panel.bottom_face_thickness.setValue(1.0)
+
+    params = panel.get_params()
+
+    assert panel.bottom_face_thickness.value() == pytest.approx(1.2)
+    assert params.bottom_face.thickness == pytest.approx(1.2)
+
+
+def test_wall_thickness_below_one_line_snaps_up_to_line_width(qapp):
+    params = SliceParams()
+    params.shell.wall_thickness = 0.4
+    params.shell.line_width = 0.6
+    params.shell.layer_height = 0.3
+    params.machine.nozzle_diameter = 0.8
+
+    normalized = normalize_slice_params(params)
+
+    assert normalized.shell.wall_count == 1
+    assert normalized.shell.line_width == pytest.approx(0.6)
+    assert normalized.shell.wall_thickness == pytest.approx(0.6)
+
+
+def test_wall_thickness_above_loop_limit_is_rejected(qapp):
+    params = SliceParams()
+    params.shell.wall_thickness = 60.1
+    params.shell.line_width = 0.6
+    params.shell.layer_height = 0.3
+    params.machine.nozzle_diameter = 0.8
+
+    with pytest.raises(ManufacturingConstraintError, match="0.60-60.00 mm"):
+        normalize_slice_params(params)
+
+
+def test_param_panel_preserves_too_large_wall_thickness_until_strict_validation(qapp):
+    panel = ParamPanel()
+
+    _select_nozzle_profile(panel, 0.8)
+    panel.layer_height_spin.setValue(0.3)
+    panel.width_line_spin.setValue(0.6)
+    panel.wall_thickness_spin.setValue(60.1)
+
+    params = panel.get_params()
+
+    assert panel.wall_thickness_spin.value() == pytest.approx(60.1)
+    assert params.shell.wall_thickness == pytest.approx(60.1)
+    with pytest.raises(ManufacturingConstraintError, match="0.60-60.00 mm"):
+        normalize_slice_params(params)
+
+
+@pytest.mark.parametrize("line_width", [0.4, 1.3])
+def test_invalid_line_width_is_rejected_for_default_nozzle_and_layer_height(
+    qapp,
+    line_width,
+):
+    params = SliceParams()
+    params.shell.wall_thickness = 1.2
+    params.shell.line_width = line_width
+    params.shell.layer_height = 0.3
+    params.machine.nozzle_diameter = 0.8
+
+    with pytest.raises(ManufacturingConstraintError, match="0.60-1.20 mm"):
+        normalize_slice_params(params)
 
 
 def test_u_shape_edge_roundtrips_arc_height_and_zero_bottom_layers(qapp):
@@ -551,11 +666,11 @@ def test_u_shape_edge_roundtrips_arc_height_and_zero_bottom_layers(qapp):
     restored = panel.get_params()
 
     assert panel.u_shape_params_widget.isHidden() is False
-    assert panel.u_arc_height_spin.value() == 5
-    assert panel.u_bottom_layers_spin.value() == 0
+    assert panel.u_arc_height_spin.value() == pytest.approx(2.5)
+    assert panel.u_bottom_layers_spin.value() == pytest.approx(0.0)
     assert panel.bottom_face_enabled.isChecked() is False
     assert panel.bottom_face_enabled.isEnabled() is False
-    assert panel.bottom_face_thickness.value() == 3
+    assert panel.bottom_face_thickness.value() == pytest.approx(1.5)
     assert panel.bottom_face_thickness.isEnabled() is False
     assert panel.bottom_face_screw_hole_diameter.isEnabled() is False
     assert restored.shell.edge_type == EdgeType.U_SHAPED
@@ -606,18 +721,20 @@ def test_set_params_with_u_shape_clears_explicit_bottom_face(qapp):
     assert restored.bottom_face.enabled is False
 
 
-def test_set_params_recomputes_wall_thickness_from_line_width_and_wall_count(qapp):
+def test_set_params_displays_legacy_wall_fields_as_mm_thickness(qapp):
     panel = ParamPanel()
     params = SliceParams()
     params.shell.layer_height = 0.5
     params.shell.line_width = 1.1
     params.shell.wall_count = 2
-    params.shell.wall_thickness = 9.9
 
     panel.set_params(params)
     restored = panel.get_params()
 
     assert panel.width_line_spin.value() == pytest.approx(1.1)
+    assert panel.wall_thickness_spin.value() == pytest.approx(2.2)
+    assert restored.shell.wall_count == 2
+    assert restored.shell.line_width == pytest.approx(1.1)
     assert restored.shell.wall_thickness == pytest.approx(2.2)
 
 
@@ -838,9 +955,9 @@ def test_set_params_restores_color_change_rows_and_summary(qapp):
     second_height = panel.color_change_table.cellWidget(1, 0)
     second_macro = panel.color_change_table.cellWidget(1, 1)
 
-    assert first_height.value() == pytest.approx(10.0)
+    assert first_height.value() == pytest.approx(10.2)
     assert first_macro.value() == 3
-    assert second_height.value() == pytest.approx(20.0)
+    assert second_height.value() == pytest.approx(20.1)
     assert second_macro.value() == 1
     assert "T3" in panel.color_change_summary.text()
     assert "T1" in panel.color_change_summary.text()
@@ -918,7 +1035,7 @@ def test_bottom_face_screw_hole_diameter_roundtrips_with_bottom_face_params(qapp
     assert restored.bottom_face.screw_hole_diameter == pytest.approx(6.5)
 
 
-def test_set_params_restores_light_slot_floor_layers_value(qapp):
+def test_set_params_restores_light_slot_floor_thickness_value(qapp):
     panel = ParamPanel()
     params = SliceParams()
     params.light_slot.enabled = True
@@ -927,10 +1044,10 @@ def test_set_params_restores_light_slot_floor_layers_value(qapp):
     panel.set_params(params)
 
     assert panel.light_slot_floor_layers.isEnabled() is True
-    assert panel.light_slot_floor_layers.value() == 4
+    assert panel.light_slot_floor_layers.value() == pytest.approx(1.2)
 
 
-def test_set_params_converts_layer_based_heights_to_layer_counts(qapp):
+def test_set_params_displays_layer_based_heights_as_mm(qapp):
     panel = ParamPanel()
     params = SliceParams()
     params.shell.layer_height = 0.5
@@ -951,16 +1068,16 @@ def test_set_params_converts_layer_based_heights_to_layer_counts(qapp):
     panel.set_params(params)
 
     assert panel.height_spin.value() == pytest.approx(40.0)
-    assert panel.baseplate_spin.value() == 20
-    assert panel.panel_thickness_spin.value() == 6
+    assert panel.baseplate_spin.value() == pytest.approx(10.0)
+    assert panel.panel_thickness_spin.value() == pytest.approx(3.0)
     assert panel.panel_step_height.value() == pytest.approx(25.0)
-    assert panel.baseplate_step_height.value() == 4
-    assert panel.bottom_face_thickness.value() == 2
-    assert panel.light_slot_depth.value() == 6
-    assert panel.top_face_thickness.value() == 3
+    assert panel.baseplate_step_height.value() == pytest.approx(2.0)
+    assert panel.bottom_face_thickness.value() == pytest.approx(1.0)
+    assert panel.light_slot_depth.value() == pytest.approx(3.0)
+    assert panel.top_face_thickness.value() == pytest.approx(1.5)
 
 
-def test_set_params_converts_connected_heights_to_layer_counts(qapp):
+def test_set_params_displays_connected_heights_as_mm(qapp):
     panel = ParamPanel()
     params = SliceParams()
     params.shell.layer_height = 0.5
@@ -970,35 +1087,35 @@ def test_set_params_converts_connected_heights_to_layer_counts(qapp):
 
     panel.set_params(params)
 
-    assert panel.connected_height.value() == 6
-    assert panel.connected_base_height.value() == 4
+    assert panel.connected_height.value() == pytest.approx(3.0)
+    assert panel.connected_base_height.value() == pytest.approx(2.0)
 
 
-def test_get_params_uses_layer_counts_to_derive_mm_heights(qapp):
+def test_get_params_uses_mm_heights_directly(qapp):
     panel = ParamPanel()
 
     panel.layer_height_spin.setValue(0.25)
     panel.height_spin.setValue(30.0)
-    panel.baseplate_spin.setValue(20)
-    panel.panel_thickness_spin.setValue(8)
+    panel.baseplate_spin.setValue(20.0)
+    panel.panel_thickness_spin.setValue(8.0)
     panel.bottom_face_enabled.setChecked(True)
-    panel.bottom_face_thickness.setValue(4)
+    panel.bottom_face_thickness.setValue(4.0)
     panel.light_slot_enabled.setChecked(True)
-    panel.light_slot_depth.setValue(10)
+    panel.light_slot_depth.setValue(10.0)
     panel.top_face_enabled.setChecked(True)
-    panel.top_face_thickness.setValue(4)
+    panel.top_face_thickness.setValue(4.0)
 
     params = panel.get_params()
 
     assert params.shell.height == pytest.approx(30.0)
-    assert params.shell.baseplate_thickness == pytest.approx(5.0)
-    assert params.shell.panel_thickness == pytest.approx(2.0)
-    assert params.bottom_face.thickness == pytest.approx(1.0)
-    assert params.light_slot.depth == pytest.approx(2.5)
-    assert params.top_face.thickness == pytest.approx(1.0)
+    assert params.shell.baseplate_thickness == pytest.approx(20.0)
+    assert params.shell.panel_thickness == pytest.approx(8.0)
+    assert params.bottom_face.thickness == pytest.approx(4.0)
+    assert params.light_slot.depth == pytest.approx(10.0)
+    assert params.top_face.thickness == pytest.approx(4.0)
 
 
-def test_get_params_uses_layer_counts_for_step_heights(qapp):
+def test_get_params_uses_mm_for_step_heights(qapp):
     panel = ParamPanel()
 
     panel.layer_height_spin.setValue(0.25)
@@ -1006,12 +1123,12 @@ def test_get_params_uses_layer_counts_for_step_heights(qapp):
     panel.panel_step_enabled.setChecked(True)
     panel.panel_step_height.setValue(16.0)
     panel.baseplate_step_enabled.setChecked(True)
-    panel.baseplate_step_height.setValue(8)
+    panel.baseplate_step_height.setValue(8.0)
 
     params = panel.get_params()
 
     assert params.step.panel_step_height == pytest.approx(16.0)
-    assert params.step.baseplate_step_height == pytest.approx(2.0)
+    assert params.step.baseplate_step_height == pytest.approx(8.0)
 
 
 def test_get_params_commits_pending_step_height_text_edits(qapp):
@@ -1029,18 +1146,18 @@ def test_get_params_commits_pending_step_height_text_edits(qapp):
     assert params.shell.layer_height == pytest.approx(0.25)
     assert params.shell.height == pytest.approx(40.0)
     assert params.step.panel_step_height == pytest.approx(24.0)
-    assert params.step.baseplate_step_height == pytest.approx(2.0)
+    assert params.step.baseplate_step_height == pytest.approx(8.0)
 
 
-def test_get_params_uses_layer_counts_for_connected_heights(qapp):
+def test_get_params_uses_mm_for_connected_heights(qapp):
     panel = ParamPanel()
 
     panel.layer_height_spin.setValue(0.25)
     panel.connected_enabled.setChecked(True)
-    panel.connected_height.setValue(12)
-    panel.connected_base_height.setValue(8)
+    panel.connected_height.setValue(12.0)
+    panel.connected_base_height.setValue(8.0)
 
     params = panel.get_params()
 
-    assert params.connected.height == pytest.approx(3.0)
-    assert params.connected.base_height == pytest.approx(2.0)
+    assert params.connected.height == pytest.approx(12.0)
+    assert params.connected.base_height == pytest.approx(8.0)

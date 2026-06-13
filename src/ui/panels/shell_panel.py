@@ -5,6 +5,7 @@
 支持直边、斜边和异形边三种边缘类型。
 """
 
+import math
 from pathlib import Path
 
 from PySide6.QtWidgets import (
@@ -74,10 +75,17 @@ class ShellPanel(QWidget):
         self.layer_height_spin.setSuffix(" mm")
         basic_layout.addRow("层高:", self.layer_height_spin)
 
+        self.line_width_spin = QDoubleSpinBox()
+        self.line_width_spin.setRange(0.1, 3.0)
+        self.line_width_spin.setValue(0.6)
+        self.line_width_spin.setSingleStep(0.05)
+        self.line_width_spin.setSuffix(" mm")
+        basic_layout.addRow("线宽:", self.line_width_spin)
+
         self.wall_thickness_spin = QDoubleSpinBox()
-        self.wall_thickness_spin.setRange(0.5, 5.0)
+        self.wall_thickness_spin.setRange(0.1, 300.0)
         self.wall_thickness_spin.setValue(1.2)
-        self.wall_thickness_spin.setSingleStep(0.1)
+        self.wall_thickness_spin.setSingleStep(self.line_width_spin.value())
         self.wall_thickness_spin.setSuffix(" mm")
         basic_layout.addRow("壁厚:", self.wall_thickness_spin)
 
@@ -147,14 +155,9 @@ class ShellPanel(QWidget):
         layout.addWidget(self.custom_edge_group)
         self.custom_edge_group.setVisible(False)
 
-        # 多层壁厚组
-        wall_group = QGroupBox("多层壁厚")
+        # 走线设置组
+        wall_group = QGroupBox("走线设置")
         wall_layout = QFormLayout(wall_group)
-
-        self.wall_count_spin = QSpinBox()
-        self.wall_count_spin.setRange(1, 5)
-        self.wall_count_spin.setValue(1)
-        wall_layout.addRow("走线次数:", self.wall_count_spin)
 
         self.wall_offset_spin = QDoubleSpinBox()
         self.wall_offset_spin.setRange(0, 5)
@@ -188,11 +191,11 @@ class ShellPanel(QWidget):
         self.bevel_direction_combo.currentIndexChanged.connect(self._emit_params)
         self.height_spin.valueChanged.connect(self._emit_params)
         self.layer_height_spin.valueChanged.connect(self._emit_params)
+        self.line_width_spin.valueChanged.connect(self._on_line_width_changed)
         self.wall_thickness_spin.valueChanged.connect(self._emit_params)
         self.bevel_width_spin.valueChanged.connect(self._emit_params)
         self.baseplate_spin.valueChanged.connect(self._emit_params)
         self.panel_spin.valueChanged.connect(self._emit_params)
-        self.wall_count_spin.valueChanged.connect(self._emit_params)
         self.wall_offset_spin.valueChanged.connect(self._emit_params)
         self.safety_offset_spin.valueChanged.connect(self._emit_params)
         self.safety_count_spin.valueChanged.connect(self._emit_params)
@@ -216,11 +219,36 @@ class ShellPanel(QWidget):
 
         self._emit_params()
 
+    def _on_line_width_changed(self, value: float):
+        self.wall_thickness_spin.setSingleStep(max(float(value), 0.01))
+        self._emit_params()
+
     def _emit_params(self):
         self._params.height = self.height_spin.value()
         self._params.layer_height = self.layer_height_spin.value()
-        self._params.wall_thickness = self.wall_thickness_spin.value()
-        self._params.wall_count = self.wall_count_spin.value()
+        self._params.line_width = self.line_width_spin.value()
+        requested_wall_thickness = self.wall_thickness_spin.value()
+        wall_count = max(
+            1,
+            int(math.ceil((requested_wall_thickness - 1e-9) / self._params.line_width)),
+        )
+        self._params.wall_count = min(wall_count, 100)
+        snapped_wall_thickness = (
+            requested_wall_thickness
+            if wall_count > 100
+            else round(self._params.wall_count * self._params.line_width, 6)
+        )
+        self._params.wall_thickness = snapped_wall_thickness
+        if not math.isclose(
+            self.wall_thickness_spin.value(),
+            snapped_wall_thickness,
+            abs_tol=1e-9,
+        ):
+            self.wall_thickness_spin.blockSignals(True)
+            try:
+                self.wall_thickness_spin.setValue(snapped_wall_thickness)
+            finally:
+                self.wall_thickness_spin.blockSignals(False)
         self._params.wall_offset = self.wall_offset_spin.value()
         self._params.bevel_width = self.bevel_width_spin.value()
         self._params.baseplate_thickness = self.baseplate_spin.value()
@@ -257,8 +285,13 @@ class ShellPanel(QWidget):
     def _update_ui(self):
         self.height_spin.setValue(self._params.height)
         self.layer_height_spin.setValue(self._params.layer_height)
+        self.line_width_spin.setValue(
+            self._params.line_width
+            if self._params.line_width > 0
+            else max(self._params.layer_height, 0.001) * 2.0
+        )
         self.wall_thickness_spin.setValue(self._params.wall_thickness)
-        self.wall_count_spin.setValue(self._params.wall_count)
+        self.wall_thickness_spin.setSingleStep(max(self.line_width_spin.value(), 0.01))
         self.wall_offset_spin.setValue(self._params.wall_offset)
         self.bevel_width_spin.setValue(self._params.bevel_width)
         self.baseplate_spin.setValue(self._params.baseplate_thickness)

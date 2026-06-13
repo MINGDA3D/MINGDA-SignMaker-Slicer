@@ -546,11 +546,11 @@ def test_color_change_command_template_expands_selected_macro_index():
     params = SliceParams()
     params.shell.height = 20.0
     params.color.enabled = True
-    params.color.change_points = [ColorChangePoint(height_mm=10.0, macro_index=7)]
+    params.color.change_points = [ColorChangePoint(height_mm=10.2, macro_index=7)]
     profile = PrinterProfile(color_change_command_template="CHANGE_{index}")
 
     lines = GCodeWriter(params.gcode).generate(
-        _build_result([0.0, 10.0]),
+        _build_result([0.0, 10.2]),
         slice_params=params,
         printer_profile=profile,
     )

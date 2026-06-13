@@ -28,7 +28,7 @@ from .types import (
     resolve_path_start_point_index,
     calculate_u_shape_offset_at_z, is_bottom_face_effective,
     resolve_bottom_face_thickness, resolve_u_shape_profile_start_z,
-    U_SHAPE_FINE_LAYER_HEIGHT,
+    U_SHAPE_FINE_LAYER_HEIGHT, normalize_slice_params,
 )
 from .path_offset import PathOffset, JoinType
 from .print_order import build_loop_order
@@ -89,6 +89,7 @@ class SliceEngine:
         if not contours:
             return SliceResult()
 
+        params = normalize_slice_params(params)
         layer_infos = self._plan_layers(params)
         base_params = params
         if params.prime_tower.enabled:

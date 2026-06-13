@@ -16,6 +16,9 @@ from .types import (
     calculate_u_shape_offset_at_z, is_bottom_face_effective,
     resolve_bottom_face_thickness, resolve_u_shape_bottom_thickness,
     resolve_u_shape_profile_start_z,
+    normalize_slice_params, resolve_shell_wall_plan,
+    wall_thickness_limits, snap_height_up_to_layer_grid,
+    height_to_layer_count_up, ManufacturingConstraintError,
     # 结果类型
     SliceResult, ProjectData, ProjectMeta, Project
 )
@@ -48,6 +51,9 @@ __all__ = [
     'calculate_u_shape_offset_at_z', 'is_bottom_face_effective',
     'resolve_bottom_face_thickness', 'resolve_u_shape_bottom_thickness',
     'resolve_u_shape_profile_start_z',
+    'normalize_slice_params', 'resolve_shell_wall_plan',
+    'wall_thickness_limits', 'snap_height_up_to_layer_grid',
+    'height_to_layer_count_up', 'ManufacturingConstraintError',
     # 结果类型
     'SliceResult', 'ProjectData', 'ProjectMeta', 'Project',
     # 核心类

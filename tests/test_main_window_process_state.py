@@ -115,6 +115,18 @@ def _read_checkbox_states(panel, checkbox_names: list[str]) -> dict[str, bool]:
     }
 
 
+def _use_clean_printable_area(window: MainWindow) -> None:
+    profile = window.param_panel.get_active_printer_profile()
+    profile.id = f"test-clean-profile-{uuid.uuid4().hex}"
+    profile.name = "Test Clean Profile"
+    profile.bed_width = 800.0
+    profile.bed_depth = 1200.0
+    profile.bed_height = 100.0
+    profile.bed_exclude_area = []
+    profile.nozzle_diameter = 0.8
+    window.param_panel.load_project_printer_profile(profile.id, profile)
+
+
 def test_export_requires_reprocess_after_param_change(qapp, monkeypatch):
     window = MainWindow()
     messages = []
@@ -996,6 +1008,7 @@ def test_process_blocked_when_contour_exceeds_platform(qapp, monkeypatch):
     run_async_calls = []
 
     try:
+        _use_clean_printable_area(window)
         window.contours = [_rect_contour(790, 0, 810, 20, "A")]
         window.canvas.set_contours(window.contours, center_on_platform=False)
         window.project_panel.update_contours(window.contours)
@@ -1016,7 +1029,7 @@ def test_process_blocked_when_contour_exceeds_platform(qapp, monkeypatch):
         assert warnings[-1][0][1] == window.tr("Processing Blocked")
         assert "platform size" in warnings[-1][0][2]
         assert window.status_label.text() == window.tr(
-            "Processing blocked: contours exceed platform size"
+            "Processing blocked: contours outside printable area"
         )
     finally:
         window.deleteLater()
@@ -1060,6 +1073,7 @@ def test_process_blocked_when_prime_tower_overlaps_model(qapp, monkeypatch):
     run_async_calls = []
 
     try:
+        _use_clean_printable_area(window)
         window.contours = [_rect_contour(0, 0, 40, 40, "A")]
         window.canvas.set_contours(window.contours, center_on_platform=False)
         window.project_panel.update_contours(window.contours)
@@ -1098,6 +1112,7 @@ def test_process_allows_prime_tower_inside_contour_hole(qapp, monkeypatch):
     run_async_calls = []
 
     try:
+        _use_clean_printable_area(window)
         window.contours = [_rect_contour_with_hole(0, 0, 100, 100, 30, 30, 70, 70, "A")]
         window.canvas.set_contours(window.contours, center_on_platform=False)
         window.project_panel.update_contours(window.contours)
@@ -1133,6 +1148,7 @@ def test_process_blocked_when_prime_tower_touches_model_boundary(qapp, monkeypat
     run_async_calls = []
 
     try:
+        _use_clean_printable_area(window)
         window.contours = [_rect_contour(0, 0, 40, 40, "A")]
         window.canvas.set_contours(window.contours, center_on_platform=False)
         window.project_panel.update_contours(window.contours)
@@ -1170,6 +1186,7 @@ def test_process_uses_lightweight_prime_tower_validation(qapp, monkeypatch):
     heavy_validation_calls = []
 
     try:
+        _use_clean_printable_area(window)
         window.contours = [_rect_contour(0, 0, 40, 40, "A")]
         window.canvas.set_contours(window.contours, center_on_platform=False)
         window.project_panel.update_contours(window.contours)

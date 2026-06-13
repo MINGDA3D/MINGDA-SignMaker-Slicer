@@ -30,6 +30,7 @@ from .types import (
     SliceParams,
     SliceResult,
     format_bed_exclude_area_for_config,
+    normalize_slice_params,
 )
 
 THUMBNAIL_SIZES = ((32, 32), (300, 300))
@@ -72,6 +73,8 @@ class GCodeWriter:
         printer_profile: Optional[PrinterProfile] = None,
         contours: Optional[List[Contour]] = None,
     ) -> List[str]:
+        if slice_params is not None:
+            slice_params = normalize_slice_params(slice_params)
         self.profile = self._resolve_profile(slice_params, printer_profile)
         self._slice_params = slice_params
         self.validate(result, self._slice_params, self.profile)

@@ -22,7 +22,9 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from src.core.types import (
     Point, Point3D, Path, Contour, Layer, LayerPath,
     PathType, PathRole, EdgeType, ExtruderType, BevelDirection,
-    SliceParams, ShellParams, StepParams, StepConfig
+    SliceParams, ShellParams, StepParams, StepConfig,
+    ManufacturingConstraintError, normalize_slice_params,
+    resolve_shell_wall_plan,
 )
 from src.core.path_offset import PathOffset, JoinType
 from src.core.slice_engine import SliceEngine
@@ -369,6 +371,61 @@ class TestGCodeWriter:
 class TestIntegration:
     """集成测试"""
 
+    def test_z_height_params_snap_up_to_layer_grid(self):
+        params = SliceParams()
+        params.shell.layer_height = 0.3
+        params.bottom_face.thickness = 1.0
+
+        normalized = normalize_slice_params(params)
+
+        assert normalized.bottom_face.thickness == pytest.approx(1.2)
+
+    def test_wall_plan_snaps_wall_thickness_to_line_width_grid(self):
+        plan = resolve_shell_wall_plan(
+            wall_thickness=1.3,
+            preferred_line_width=0.6,
+            layer_height=0.3,
+            nozzle_diameter=0.8,
+        )
+
+        assert plan.wall_count == 3
+        assert plan.line_width == pytest.approx(0.6)
+        assert plan.wall_thickness == pytest.approx(1.8)
+
+    def test_wall_plan_rejects_values_above_current_line_width_loop_limit(self):
+        params = SliceParams()
+        params.shell.layer_height = 0.3
+        params.shell.line_width = 0.6
+        params.shell.wall_thickness = 60.1
+        params.machine.nozzle_diameter = 0.8
+
+        with pytest.raises(ManufacturingConstraintError, match="0.60-60.00 mm"):
+            normalize_slice_params(params)
+
+    @pytest.mark.parametrize("line_width", [0.4, 1.3])
+    def test_wall_plan_rejects_line_widths_outside_default_printable_range(self, line_width):
+        params = SliceParams()
+        params.shell.layer_height = 0.3
+        params.shell.line_width = line_width
+        params.shell.wall_thickness = 1.2
+        params.machine.nozzle_diameter = 0.8
+
+        with pytest.raises(ManufacturingConstraintError, match="0.60-1.20 mm"):
+            normalize_slice_params(params)
+
+    def test_effective_wall_params_are_single_normalized_source(self):
+        params = SliceParams()
+        params.shell.layer_height = 0.3
+        params.shell.wall_thickness = 1.3
+        params.shell.line_width = 0.6
+        params.machine.nozzle_diameter = 0.8
+
+        normalized = normalize_slice_params(params)
+
+        assert normalized.shell.wall_count == 3
+        assert normalized.shell.line_width == pytest.approx(0.6)
+        assert normalized.shell.wall_thickness == pytest.approx(1.8)
+
     def test_full_pipeline(self):
         """测试完整流程：轮廓 -> 切片 -> G-code"""
         # 创建轮廓
@@ -397,7 +454,7 @@ class TestIntegration:
         assert len(lines) > 100  # 应该有大量G-code
         assert any("Layer" in line for line in lines)
 
-    def test_slice_engine_uses_shell_line_width_for_wall_paths(self):
+    def test_slice_engine_uses_resolved_line_width_for_wall_paths(self):
         """测试 WALL 路径线宽跟随 shell.line_width，而不是 wall_thickness。"""
         outer = Path(points=[
             Point(0, 0), Point(20, 0), Point(20, 20), Point(0, 20)
@@ -407,7 +464,7 @@ class TestIntegration:
         params = SliceParams()
         params.shell.height = 1.0
         params.shell.layer_height = 0.5
-        params.shell.wall_thickness = 1.2
+        params.shell.wall_thickness = 0.8
         params.shell.line_width = 0.8
 
         engine = SliceEngine()
@@ -418,7 +475,7 @@ class TestIntegration:
         assert wall_paths
         assert wall_paths[0].line_width == pytest.approx(0.8)
 
-    def test_slice_engine_derives_multi_wall_offsets_from_line_width(self):
+    def test_slice_engine_derives_multi_wall_offsets_from_resolved_line_width(self):
         """测试多道壁偏移按 line_width 推导，而不是直接读取旧 wall_thickness。"""
         outer = Path(points=[
             Point(0, 0), Point(20, 0), Point(20, 20), Point(0, 20)
@@ -430,7 +487,7 @@ class TestIntegration:
         params.shell.layer_height = 0.5
         params.shell.line_width = 0.8
         params.shell.wall_count = 2
-        params.shell.wall_thickness = 9.9
+        params.shell.wall_thickness = 1.6
 
         engine = SliceEngine()
         result = engine.slice([contour], params)
@@ -1023,8 +1080,9 @@ class TestSliceEngineWithSteps:
             if any(path.role == PathRole.STEP for path in layer.paths)
         ]
 
-        assert baseplate_step_layers == [pytest.approx(4.8)]
-    @pytest.mark.parametrize("shell_line_width", [0.4, 0.6, 0.8])
+        assert baseplate_step_layers == [pytest.approx(5.1)]
+
+    @pytest.mark.parametrize("shell_line_width", [0.6, 0.8])
     def test_flat_step_support_pass_width_follows_shell_line_width(
         self,
         engine,
@@ -1057,7 +1115,7 @@ class TestSliceEngineWithSteps:
         step_paths = [path for path in first_step_layer.paths if path.role == PathRole.STEP]
 
         assert step_paths
-        assert first_step_layer.z_height == pytest.approx(0.9)
+        assert first_step_layer.z_height == pytest.approx(1.2)
 
         max_line_width = max(path.line_width for path in step_paths)
         assert max_line_width <= (
@@ -1070,7 +1128,8 @@ class TestSliceEngineWithSteps:
         params = SliceParams()
         params.shell.height = 1.0
         params.shell.layer_height = 0.3
-        params.shell.wall_thickness = 1.2
+        params.shell.line_width = 0.6
+        params.shell.wall_thickness = 0.6
         params.shell.wall_count = 1
         params.step.enabled = True
         params.step.steps = [
@@ -1102,7 +1161,7 @@ class TestSliceEngineWithSteps:
         hole_wall_outer_edge = hole_boundary_min_x - params.shell.wall_thickness
 
         # hole wall centerline must move into the solid, not into the empty hole.
-        assert hole_wall_min_x == pytest.approx(29.4)
+        assert hole_wall_min_x == pytest.approx(29.7)
 
         hole_step_wall_edge = max(
             min(point.x for point in path.points) + path.line_width / 2
@@ -1167,6 +1226,8 @@ class TestStepMeshBuilder:
     def test_split_inset_step_ring_preserves_all_holes(self, step_mesh_builder):
         """回归测试：狭窄连接处台阶内缩分裂时，不应错误闭合区域"""
         svg_path = FilePath(__file__).resolve().parent.parent / "Debug" / "LOGO-08.svg"
+        if not svg_path.exists():
+            pytest.skip("Debug/LOGO-08.svg fixture is not available")
         contours = SVGParser().parse(str(svg_path))
 
         for contour in contours:

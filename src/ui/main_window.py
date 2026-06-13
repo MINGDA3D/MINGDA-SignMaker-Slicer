@@ -76,7 +76,8 @@ from src.core.types import (
     get_contour_user_start_point_index,
     get_path_user_start_point_index,
     is_bottom_face_effective,
-    resolve_shell_wall_thickness,
+    ManufacturingConstraintError,
+    normalize_slice_params,
     set_contour_user_start_point_index,
     set_path_user_start_point_index,
 )
@@ -839,8 +840,20 @@ class MainWindow(QMainWindow):
     def _sync_params_from_panel(self) -> SliceParams:
         """Sync the cached slice params from the visible parameter panel without side effects."""
         if hasattr(self, "param_panel") and self.param_panel:
-            self.slice_params = self.param_panel.get_params()
+            self.slice_params = normalize_slice_params(
+                self.param_panel.get_params(),
+                strict_wall=False,
+            )
         return self.slice_params
+
+    def _normalize_params_or_warn(self, params: SliceParams, title: str) -> Optional[SliceParams]:
+        """Return printable params, or show a blocking warning for invalid wall settings."""
+        try:
+            return normalize_slice_params(params)
+        except ManufacturingConstraintError as exc:
+            QMessageBox.warning(self, self.tr(title), str(exc))
+            self._update_status(f"{self.tr(title)}: {exc}")
+            return None
 
     def _invalidate_processed_result(self):
         """清除当前处理结果，要求重新点击 Process。"""
@@ -2611,7 +2624,12 @@ class MainWindow(QMainWindow):
             QMessageBox.information(self, self.tr("Info"), self.tr("Please process first"))
             return
 
-        params = self.param_panel.get_params()
+        params = self._normalize_params_or_warn(
+            self.param_panel.get_params(),
+            "Export Blocked",
+        )
+        if params is None:
+            return
         profile = self.param_panel.get_active_printer_profile()
 
         try:
@@ -2688,18 +2706,18 @@ class MainWindow(QMainWindow):
             file_path = self._ensure_save_file_suffix(file_path, ".stl")
             self._remember_last_save_path(file_path)
             # 获取当前参数
-            params = self.param_panel.get_params()
+            params = self._normalize_params_or_warn(
+                self.param_panel.get_params(),
+                "Export Blocked",
+            )
+            if params is None:
+                return
             slice_result = self.slice_result
             contours = self.contours
 
             def do_export():
                 writer = STLWriter(
-                    wall_thickness=resolve_shell_wall_thickness(
-                        params.shell.line_width,
-                        params.shell.wall_count,
-                        params.shell.layer_height,
-                        wall_thickness=params.shell.wall_thickness,
-                    )
+                    wall_thickness=params.shell.wall_thickness
                 )
                 writer.write(
                     slice_result, file_path,
@@ -2835,7 +2853,12 @@ class MainWindow(QMainWindow):
             return
 
         # 获取参数
-        params = self.param_panel.get_params()
+        params = self._normalize_params_or_warn(
+            self.param_panel.get_params(),
+            "Processing Blocked",
+        )
+        if params is None:
+            return
         self._sync_canvas_platform_size(params)
         self._refresh_prime_tower_overlay(params)
 
@@ -2875,9 +2898,9 @@ class MainWindow(QMainWindow):
                 QTimer.singleShot(0, self._prepare_preview_3d)
 
             # 更新状态
-            msg = self.tr("Processing complete: {layers} layers, estimated time: {time:.1f} minutes").format(
-                layers=self.slice_result.total_layers,
-                time=self.slice_result.estimated_time / 60
+            msg = self.tr("Processing complete: height {height:.2f} mm, estimated time {time:.1f} minutes").format(
+                height=self.slice_result.total_height,
+                time=self.slice_result.estimated_time / 60,
             )
             self._update_status(msg)
             self.slice_completed.emit(self.slice_result)

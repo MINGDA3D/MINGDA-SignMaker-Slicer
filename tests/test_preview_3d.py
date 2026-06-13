@@ -14,7 +14,7 @@ from src.core.types import (
     Point,
     SliceParams,
 )
-from src.ui.preview_3d import Preview3DWidget
+from src.ui.preview_3d import Preview3D, Preview3DWidget
 
 
 @pytest.fixture
@@ -125,6 +125,23 @@ def test_preview_lifts_special_paths_above_wall_plane(qapp):
     assert step_z > wall_z
 
 
+def test_preview_layer_controls_show_z_height_not_layer_numbers(qapp):
+    preview = Preview3D()
+
+    preview.set_layers([
+        Layer(z_height=0.0, layer_height=0.3),
+        Layer(z_height=0.3, layer_height=0.3),
+    ])
+
+    assert preview.layer_current_label.text() == "Z 0.60 mm"
+    assert preview.layer_total_label.text() == "/ 0.60 mm"
+
+    preview.layer_slider.setValue(0)
+
+    assert preview.layer_current_label.text() == "Z 0.30 mm"
+    assert preview.layer_total_label.text() == "/ 0.60 mm"
+
+
 def test_preview_uses_one_color_for_wall_like_roles(qapp):
     widget = Preview3DWidget()
 
@@ -159,6 +176,7 @@ def test_preview_builds_solid_mesh_parts_for_step_and_connected(qapp):
     params = SliceParams()
     params.shell.height = 10.0
     params.shell.layer_height = 1.0
+    params.machine.nozzle_diameter = 1.0
     params.step.panel_step_enabled = True
     params.step.panel_step_height = 3.0
     params.step.panel_step_width = 3.0
@@ -202,12 +220,14 @@ def test_preview_skirt_mesh_respects_breakaway_gap_from_wall(qapp):
     params_no_gap = SliceParams()
     params_no_gap.shell.height = 10.0
     params_no_gap.shell.layer_height = 1.0
+    params_no_gap.machine.nozzle_diameter = 1.0
     params_no_gap.skirt.enabled = True
     params_no_gap.skirt.offset = 0.0
 
     params_gap = SliceParams()
     params_gap.shell.height = 10.0
     params_gap.shell.layer_height = 1.0
+    params_gap.machine.nozzle_diameter = 1.0
     params_gap.skirt.enabled = True
     params_gap.skirt.offset = 0.1
 
@@ -250,6 +270,7 @@ def test_preview_builds_wrap_and_outline_on_bottom_reference(qapp):
     params = SliceParams()
     params.shell.height = 30.0
     params.shell.layer_height = 1.0
+    params.machine.nozzle_diameter = 1.0
     params.shell.edge_type = EdgeType.BEVELED
     params.shell.bevel_direction = BevelDirection.TOP_SMALL
     params.shell.bevel_width = 5.0
@@ -310,6 +331,7 @@ def test_preview_builds_light_slot_mesh_part(qapp):
     params = SliceParams()
     params.shell.height = 10.0
     params.shell.layer_height = 1.0
+    params.machine.nozzle_diameter = 1.0
     params.light_slot.enabled = True
     params.light_slot.width = 8.0
     params.light_slot.depth = 3.0

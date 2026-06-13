@@ -7,6 +7,7 @@ import pytest
 
 from src.business.printer_profile_manager import (
     DEFAULT_PRINTER_PROFILE_SPECS,
+    DEFAULT_PRINTER_PROFILE_SPEC,
     PrinterProfileManager,
     deserialize_printer_profile,
 )
@@ -51,7 +52,7 @@ def test_manager_seeds_only_requested_builtin_profiles(temp_profile_dir):
         for profile in profiles
     )
     assert all(profile.end_gcode == "END_PRINT" for profile in profiles)
-    assert manager.get_default_profile_id() == DEFAULT_PRINTER_PROFILE_SPECS[0]["id"]
+    assert manager.get_default_profile_id() == DEFAULT_PRINTER_PROFILE_SPEC["id"]
 
 
 def test_manager_discards_non_builtin_profiles_and_keeps_only_builtin_profiles(temp_profile_dir):
@@ -96,7 +97,7 @@ def test_manager_discards_non_builtin_profiles_and_keeps_only_builtin_profiles(t
     ]
     assert all(profile.name != "Custom Profile" for profile in profiles)
     assert manager.get_profile(DEFAULT_PRINTER_PROFILE_SPECS[3]["id"]).bed_width == 810.0
-    assert manager.get_default_profile_id() == DEFAULT_PRINTER_PROFILE_SPECS[0]["id"]
+    assert manager.get_default_profile_id() == DEFAULT_PRINTER_PROFILE_SPEC["id"]
 
     saved_data = json.loads(config_path.read_text(encoding="utf-8"))
     assert [profile["id"] for profile in saved_data["profiles"]] == [

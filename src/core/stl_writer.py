@@ -38,6 +38,7 @@ from .types import (
     SliceResult,
     SliceParams,
     is_bottom_face_effective,
+    normalize_slice_params,
     resolve_bottom_face_thickness,
     resolve_u_shape_profile_start_z,
 )
@@ -91,6 +92,12 @@ class STLWriter:
             contours: 原始轮廓列表（用于生成包边）
             params: 切片参数（用于获取包边设置）
         """
+        if params is not None:
+            params = normalize_slice_params(params)
+            self.wall_thickness = params.shell.wall_thickness
+            self.shell_builder.wall_thickness = self.wall_thickness
+            self.edge_wrap_builder.wall_thickness = self.wall_thickness
+
         meshes = []
 
         # 1. 构建字壳网格

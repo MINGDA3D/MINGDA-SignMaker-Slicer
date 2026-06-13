@@ -9,6 +9,7 @@ MINGDA SignMaker - 核心数据类型定义
 """
 
 from __future__ import annotations
+from copy import deepcopy
 from dataclasses import dataclass, field
 from enum import Enum, auto
 import math
@@ -19,6 +20,10 @@ from uuid import uuid4
 U_SHAPE_FINE_LAYER_HEIGHT = 0.05
 U_SHAPE_PROFILE_START_Z = 0.0
 U_SHAPE_OVERHANG_LINE_WIDTH_RATIO = 0.35
+MIN_LINE_WIDTH_NOZZLE_RATIO = 0.75
+MIN_LINE_WIDTH_LAYER_RATIO = 1.20
+MAX_LINE_WIDTH_NOZZLE_RATIO = 1.50
+MAX_WALL_LOOPS = 100
 MINGDA_BED_EXCLUDE_AREA_800X1200 = [
     "0x1130,70x1130,70x1200,0x1200",
     "730x1130,800x1130,800x1200,730x1200",
@@ -964,7 +969,7 @@ class ShellParams:
     layer_height: float = 0.3         # 层高 (mm)
     line_width: float = 0.0           # 线宽 (mm), <= 0 时自动使用 layer_height * 2
     wall_thickness: float = 0.0       # 总壁厚 (mm), 由 wall_count * line_width 推导
-    wall_count: int = 2               # 壁数量（走线次数）
+    wall_count: int = 2               # 内部壁路径数量
     wall_offset: float = 0.0          # 壁偏移
 
     # 边缘类型
@@ -1588,6 +1593,281 @@ def resolve_shell_wall_thickness(
         )
         * effective_wall_count
     )
+
+
+class ManufacturingConstraintError(ValueError):
+    """Raised when user-facing mm parameters cannot be made printable."""
+
+
+@dataclass(frozen=True)
+class ShellWallPlan:
+    """Resolved wall paths for user-facing wall thickness and line width."""
+
+    wall_thickness: float
+    preferred_line_width: float
+    wall_count: int
+    line_width: float
+    min_line_width: float
+    max_line_width: float
+    min_wall_thickness: float
+    max_wall_thickness: float
+    is_valid: bool = True
+
+
+def wall_line_width_limits(nozzle_diameter: float, layer_height: float) -> Tuple[float, float]:
+    """Return printable single-line width bounds for the active nozzle/layer height."""
+    effective_nozzle = max(float(nozzle_diameter), 0.001)
+    effective_layer_height = max(float(layer_height), 0.001)
+    min_line_width = max(
+        MIN_LINE_WIDTH_NOZZLE_RATIO * effective_nozzle,
+        MIN_LINE_WIDTH_LAYER_RATIO * effective_layer_height,
+    )
+    max_line_width = MAX_LINE_WIDTH_NOZZLE_RATIO * effective_nozzle
+    return min_line_width, max_line_width
+
+
+def wall_thickness_limits(nozzle_diameter: float, layer_height: float) -> Tuple[float, float]:
+    """Return the supported user-facing wall thickness range in mm."""
+    min_line_width, max_line_width = wall_line_width_limits(
+        nozzle_diameter,
+        layer_height,
+    )
+    return min_line_width, max_line_width * MAX_WALL_LOOPS
+
+
+def wall_thickness_limits_for_line_width(line_width: float) -> Tuple[float, float]:
+    """Return the supported wall thickness range for a fixed actual line width."""
+    effective_line_width = max(float(line_width), 0.001)
+    return effective_line_width, effective_line_width * MAX_WALL_LOOPS
+
+
+def resolve_shell_wall_plan(
+    wall_thickness: float,
+    preferred_line_width: float,
+    layer_height: float,
+    nozzle_diameter: float,
+    *,
+    strict: bool = True,
+) -> ShellWallPlan:
+    """Resolve user-facing wall settings into printable internal wall paths.
+
+    Line width is treated as the user-selected actual line width. Wall thickness
+    is snapped upward to an integer multiple of that width.
+    """
+    target_thickness = max(float(wall_thickness), 0.0)
+    requested_line_width = max(float(preferred_line_width), 0.001)
+    min_line_width, max_line_width = wall_line_width_limits(
+        nozzle_diameter,
+        layer_height,
+    )
+    tolerance = 1e-9
+    min_wall_thickness, max_wall_thickness = wall_thickness_limits_for_line_width(
+        requested_line_width
+    )
+    line_width_is_valid = (
+        min_line_width - tolerance
+        <= requested_line_width
+        <= max_line_width + tolerance
+    )
+
+    wall_count = height_to_layer_count_up(
+        target_thickness,
+        requested_line_width,
+        minimum=1,
+    )
+    snapped_thickness = round(wall_count * requested_line_width, 6)
+
+    if line_width_is_valid and wall_count <= MAX_WALL_LOOPS:
+        return ShellWallPlan(
+            wall_thickness=snapped_thickness,
+            preferred_line_width=requested_line_width,
+            wall_count=wall_count,
+            line_width=requested_line_width,
+            min_line_width=min_line_width,
+            max_line_width=max_line_width,
+            min_wall_thickness=min_wall_thickness,
+            max_wall_thickness=max_wall_thickness,
+        )
+
+    if strict:
+        if not line_width_is_valid:
+            raise ManufacturingConstraintError(
+                "Line width {line_width:.2f} mm is not printable with the current "
+                "nozzle and layer height. Supported range: {minimum:.2f}-{maximum:.2f} mm."
+                .format(
+                    line_width=requested_line_width,
+                    minimum=min_line_width,
+                    maximum=max_line_width,
+                )
+            )
+        raise ManufacturingConstraintError(
+            "Wall thickness {thickness:.2f} mm is not printable with the current "
+            "line width. Supported range: {minimum:.2f}-{maximum:.2f} mm."
+            .format(
+                thickness=target_thickness,
+                minimum=min_wall_thickness,
+                maximum=max_wall_thickness,
+            )
+        )
+
+    fallback_count = min(max(wall_count, 1), MAX_WALL_LOOPS)
+    fallback_thickness = (
+        target_thickness
+        if wall_count > MAX_WALL_LOOPS
+        else round(fallback_count * requested_line_width, 6)
+    )
+    return ShellWallPlan(
+        wall_thickness=fallback_thickness,
+        preferred_line_width=requested_line_width,
+        wall_count=fallback_count,
+        line_width=requested_line_width,
+        min_line_width=min_line_width,
+        max_line_width=max_line_width,
+        min_wall_thickness=min_wall_thickness,
+        max_wall_thickness=max_wall_thickness,
+        is_valid=False,
+    )
+
+
+def height_to_layer_count_up(height_mm: float, layer_height: float, minimum: int = 0) -> int:
+    """Convert mm into the next printable layer count without rounding down."""
+    if layer_height <= 0:
+        return max(0, minimum)
+    if height_mm <= 0:
+        return max(0, minimum)
+    return max(minimum, int(math.ceil((height_mm - 1e-9) / layer_height)))
+
+
+def snap_height_up_to_layer_grid(
+    height_mm: float,
+    layer_height: float,
+    *,
+    minimum_layers: int = 0,
+) -> float:
+    """Snap a Z-height parameter upward to the active layer-height grid."""
+    if layer_height <= 0:
+        return max(0.0, float(height_mm))
+    layers = height_to_layer_count_up(height_mm, layer_height, minimum_layers)
+    return round(max(0, layers) * layer_height, 6)
+
+
+def normalize_slice_params(params: SliceParams, *, strict_wall: bool = True) -> SliceParams:
+    """Return a copy of params snapped to printable Z values and wall paths."""
+    normalized = deepcopy(params)
+    layer_height = max(normalized.shell.layer_height, 0.001)
+
+    normalized.shell.height = snap_height_up_to_layer_grid(
+        normalized.shell.height,
+        layer_height,
+        minimum_layers=1,
+    )
+    normalized.shell.baseplate_thickness = snap_height_up_to_layer_grid(
+        normalized.shell.baseplate_thickness,
+        layer_height,
+    )
+    normalized.shell.panel_thickness = snap_height_up_to_layer_grid(
+        normalized.shell.panel_thickness,
+        layer_height,
+    )
+    normalized.shell.u_arc_height = snap_height_up_to_layer_grid(
+        normalized.shell.u_arc_height,
+        layer_height,
+        minimum_layers=1,
+    )
+
+    normalized.step.panel_step_height = snap_height_up_to_layer_grid(
+        normalized.step.panel_step_height,
+        layer_height,
+        minimum_layers=1,
+    )
+    normalized.step.baseplate_step_height = snap_height_up_to_layer_grid(
+        normalized.step.baseplate_step_height,
+        layer_height,
+        minimum_layers=1,
+    )
+    normalized.step.top_step_height = snap_height_up_to_layer_grid(
+        normalized.step.top_step_height,
+        layer_height,
+        minimum_layers=1,
+    )
+    normalized.step.bottom_groove_height = snap_height_up_to_layer_grid(
+        normalized.step.bottom_groove_height,
+        layer_height,
+        minimum_layers=1,
+    )
+
+    normalized.connected.height = snap_height_up_to_layer_grid(
+        normalized.connected.height,
+        layer_height,
+        minimum_layers=1,
+    )
+    normalized.connected.base_height = snap_height_up_to_layer_grid(
+        normalized.connected.base_height,
+        layer_height,
+        minimum_layers=1,
+    )
+
+    normalized.skirt.height = snap_height_up_to_layer_grid(
+        normalized.skirt.height,
+        layer_height,
+        minimum_layers=1,
+    )
+    normalized.bottom_face.thickness = snap_height_up_to_layer_grid(
+        normalized.bottom_face.thickness,
+        layer_height,
+        minimum_layers=1,
+    )
+    normalized.light_slot.depth = snap_height_up_to_layer_grid(
+        normalized.light_slot.depth,
+        layer_height,
+        minimum_layers=1,
+    )
+    normalized.top_face.thickness = snap_height_up_to_layer_grid(
+        normalized.top_face.thickness,
+        layer_height,
+        minimum_layers=1,
+    )
+    normalized.color.change_points = [
+        ColorChangePoint(
+            height_mm=snap_height_up_to_layer_grid(
+                point.height_mm,
+                layer_height,
+                minimum_layers=1,
+            ),
+            macro_index=point.macro_index,
+        )
+        for point in normalized.color.change_points
+    ]
+
+    raw_line_width = normalized.shell.line_width
+    line_width = resolve_shell_line_width(
+        normalized.shell.line_width,
+        layer_height,
+        wall_thickness=0.0,
+        wall_count=1,
+    )
+    if raw_line_width <= 0:
+        min_line_width, max_line_width = wall_line_width_limits(
+            normalized.machine.nozzle_diameter,
+            layer_height,
+        )
+        line_width = min(max(line_width, min_line_width), max_line_width)
+    wall_thickness = normalized.shell.wall_thickness
+    if wall_thickness <= 0:
+        wall_thickness = line_width * max(1, int(normalized.shell.wall_count))
+
+    wall_plan = resolve_shell_wall_plan(
+        wall_thickness,
+        line_width,
+        layer_height,
+        normalized.machine.nozzle_diameter,
+        strict=strict_wall,
+    )
+    normalized.shell.wall_thickness = wall_plan.wall_thickness
+    normalized.shell.wall_count = wall_plan.wall_count
+    normalized.shell.line_width = wall_plan.line_width
+
+    return normalized
 
 
 def _reject_legacy_key(section_name: str, section_data: dict, legacy_key: str, replacement_key: str) -> None:

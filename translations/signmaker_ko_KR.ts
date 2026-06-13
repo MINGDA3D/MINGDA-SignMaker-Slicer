@@ -173,7 +173,7 @@ Error code: {code}</source>
 <context>
     <name>GCodeWriter</name>
     <message>
-        <location filename="../src/core/gcode_writer.py" line="146"/>
+        <location filename="../src/core/gcode_writer.py" line="149"/>
         <source>Color change is enabled but no change points are configured.</source>
         <translation>색상 변경이 활성화되어 있지만 변경 지점이 설정되지 않았습니다.</translation>
     </message>
@@ -224,1792 +224,1755 @@ Error code: {code}</source>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../src/ui/main_window.py" line="189"/>
+        <location filename="../src/ui/main_window.py" line="191"/>
         <source>MINGDA SignMaker - LED Sign Letter Slicer</source>
         <translation>MINGDA SignMaker - LED 채널 레터 슬라이서</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="201"/>
+        <location filename="../src/ui/main_window.py" line="203"/>
         <source>Title Bar</source>
         <translation>제목 표시줄</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="239"/>
+        <location filename="../src/ui/main_window.py" line="241"/>
         <source>File(&amp;F)</source>
         <translation>파일(&amp;F)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="242"/>
-        <location filename="../src/ui/main_window.py" line="952"/>
-        <location filename="../src/ui/main_window.py" line="1888"/>
+        <location filename="../src/ui/main_window.py" line="244"/>
+        <location filename="../src/ui/main_window.py" line="968"/>
+        <location filename="../src/ui/main_window.py" line="2005"/>
         <source>New Project</source>
         <translation>새 프로젝트</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="248"/>
+        <location filename="../src/ui/main_window.py" line="250"/>
         <source>Open DXF/SVG...</source>
         <translation>DXF/SVG 열기...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="256"/>
-        <location filename="../src/ui/main_window.py" line="2395"/>
+        <location filename="../src/ui/main_window.py" line="258"/>
+        <location filename="../src/ui/main_window.py" line="2514"/>
         <source>Save Project</source>
         <translation>프로젝트 저장</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="262"/>
+        <location filename="../src/ui/main_window.py" line="264"/>
         <source>Save As...</source>
         <translation>다른 이름으로 저장...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="275"/>
-        <location filename="../src/ui/main_window.py" line="2495"/>
+        <location filename="../src/ui/main_window.py" line="277"/>
+        <location filename="../src/ui/main_window.py" line="2614"/>
         <source>Export STL...</source>
         <translation>STL 내보내기...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="283"/>
-        <location filename="../src/ui/main_window.py" line="945"/>
+        <location filename="../src/ui/main_window.py" line="285"/>
+        <location filename="../src/ui/main_window.py" line="961"/>
         <source>Exit</source>
         <translation>종료</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="946"/>
+        <location filename="../src/ui/main_window.py" line="962"/>
         <source>The current project has unsaved changes. Do you want to save before exiting?</source>
         <translation>현재 프로젝트에 저장되지 않은 변경 사항이 있습니다. 종료하기 전에 저장하시겠습니까?</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="953"/>
+        <location filename="../src/ui/main_window.py" line="969"/>
         <source>The current project has unsaved changes. Do you want to save before creating a new project?</source>
         <translation>현재 프로젝트에 저장되지 않은 변경 사항이 있습니다. 새 프로젝트를 만들기 전에 저장하시겠습니까?</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="961"/>
+        <location filename="../src/ui/main_window.py" line="976"/>
         <source>The current project has unsaved changes. Do you want to save before opening another project?</source>
         <translation>현재 프로젝트에 저장되지 않은 변경 사항이 있습니다. 다른 프로젝트를 열기 전에 저장하시겠습니까?</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="920"/>
+        <location filename="../src/ui/main_window.py" line="936"/>
         <source>Save</source>
         <translation>저장</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="924"/>
+        <location filename="../src/ui/main_window.py" line="940"/>
         <source>Discard</source>
         <translation>버리기</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="928"/>
+        <location filename="../src/ui/main_window.py" line="944"/>
         <source>Cancel</source>
         <translation>취소</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="289"/>
+        <location filename="../src/ui/main_window.py" line="291"/>
         <source>Edit(&amp;E)</source>
         <translation>편집(&amp;E)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="269"/>
-        <location filename="../src/ui/main_window.py" line="2494"/>
+        <location filename="../src/ui/main_window.py" line="271"/>
+        <location filename="../src/ui/main_window.py" line="2613"/>
         <source>Export G-code...</source>
         <translation>G-code 내보내기...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="291"/>
+        <location filename="../src/ui/main_window.py" line="293"/>
         <source>Undo</source>
         <translation>실행 취소</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="296"/>
+        <location filename="../src/ui/main_window.py" line="298"/>
         <source>Redo</source>
         <translation>다시 실행</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="303"/>
+        <location filename="../src/ui/main_window.py" line="305"/>
         <source>Select All</source>
         <translation>모두 선택</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="307"/>
+        <location filename="../src/ui/main_window.py" line="310"/>
         <source>Delete</source>
         <translation>삭제</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="312"/>
+        <location filename="../src/ui/main_window.py" line="316"/>
         <source>View(&amp;V)</source>
         <translation>보기(&amp;V)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="314"/>
+        <location filename="../src/ui/main_window.py" line="318"/>
         <source>2D View</source>
         <translation>2D 보기</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="319"/>
+        <location filename="../src/ui/main_window.py" line="323"/>
         <source>3D View</source>
         <translation>3D 보기</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="326"/>
+        <location filename="../src/ui/main_window.py" line="330"/>
         <source>Fit to Window</source>
         <translation>창에 맞추기</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="331"/>
+        <location filename="../src/ui/main_window.py" line="335"/>
         <source>Zoom In</source>
         <translation>확대</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="335"/>
+        <location filename="../src/ui/main_window.py" line="339"/>
         <source>Zoom Out</source>
         <translation>축소</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="347"/>
+        <location filename="../src/ui/main_window.py" line="351"/>
         <source>Preview G-code</source>
         <translation>G-code 미리보기</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="352"/>
+        <location filename="../src/ui/main_window.py" line="356"/>
         <source>Help(&amp;H)</source>
         <translation>도움말(&amp;H)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="354"/>
+        <location filename="../src/ui/main_window.py" line="358"/>
         <source>Check for Updates</source>
         <translation>업데이트 확인</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="360"/>
+        <location filename="../src/ui/main_window.py" line="364"/>
         <source>About</source>
         <translation>정보</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="485"/>
-        <location filename="../src/ui/main_window.py" line="3141"/>
+        <location filename="../src/ui/main_window.py" line="489"/>
+        <location filename="../src/ui/main_window.py" line="3272"/>
+        <location filename="../src/ui/main_window.py" line="3408"/>
+        <location filename="../src/ui/main_window.py" line="3439"/>
+        <location filename="../src/ui/main_window.py" line="3476"/>
+        <location filename="../src/ui/main_window.py" line="3501"/>
         <source>Scale</source>
         <translation>크기 조정</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="610"/>
-        <location filename="../src/ui/main_window.py" line="1467"/>
-        <location filename="../src/ui/main_window.py" line="3133"/>
+        <location filename="../src/ui/main_window.py" line="614"/>
+        <location filename="../src/ui/main_window.py" line="1551"/>
+        <location filename="../src/ui/main_window.py" line="3264"/>
         <source>Arrow keys: 1mm, Shift+Arrow: 10mm</source>
         <translation>화살표 키: 1mm, Shift+화살표: 10mm</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="759"/>
-        <location filename="../src/ui/main_window.py" line="2890"/>
-        <location filename="../src/ui/main_window.py" line="2978"/>
-        <location filename="../src/ui/main_window.py" line="3042"/>
-        <location filename="../src/ui/main_window.py" line="3364"/>
+        <location filename="../src/ui/main_window.py" line="763"/>
+        <location filename="../src/ui/main_window.py" line="3021"/>
+        <location filename="../src/ui/main_window.py" line="3109"/>
+        <location filename="../src/ui/main_window.py" line="3173"/>
+        <location filename="../src/ui/main_window.py" line="3522"/>
         <source>Ready</source>
         <translation>준비됨</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="797"/>
+        <location filename="../src/ui/main_window.py" line="801"/>
         <source>Executed: </source>
         <translation>실행됨: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="800"/>
+        <location filename="../src/ui/main_window.py" line="804"/>
         <source>Undone: </source>
         <translation>실행 취소됨: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="803"/>
+        <location filename="../src/ui/main_window.py" line="807"/>
         <source>Redone: </source>
         <translation>다시 실행됨: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1311"/>
-        <location filename="../src/ui/main_window.py" line="2020"/>
+        <location filename="../src/ui/main_window.py" line="1340"/>
+        <location filename="../src/ui/main_window.py" line="2138"/>
         <source>Asset</source>
         <translation>에셋</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1462"/>
-        <location filename="../src/ui/main_window.py" line="3129"/>
+        <location filename="../src/ui/main_window.py" line="1546"/>
+        <location filename="../src/ui/main_window.py" line="3260"/>
         <source>Position</source>
         <translation>위치</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1552"/>
-        <location filename="../src/ui/main_window.py" line="1565"/>
-        <source>Loading 3D preview...</source>
-        <translation>3D 미리보기를 불러오는 중...</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.py" line="1586"/>
+        <location filename="../src/ui/main_window.py" line="1700"/>
         <source>3D preview loading failed</source>
         <translation>3D 미리보기를 불러오지 못했습니다</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1590"/>
+        <location filename="../src/ui/main_window.py" line="1704"/>
         <source>Failed to prepare 3D preview:</source>
         <translation>3D 미리보기를 준비하지 못했습니다:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1752"/>
+        <location filename="../src/ui/main_window.py" line="1866"/>
         <source>The selected recent project is no longer available and has been removed from the list.</source>
         <translation>선택한 최근 프로젝트를 더 이상 사용할 수 없어 목록에서 제거했습니다.</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1817"/>
+        <location filename="../src/ui/main_window.py" line="1934"/>
         <source>Home</source>
         <translation>홈</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1824"/>
+        <location filename="../src/ui/main_window.py" line="1941"/>
         <source>Project Edit</source>
         <translation>프로젝트 편집</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1589"/>
-        <location filename="../src/ui/main_window.py" line="1833"/>
+        <location filename="../src/ui/main_window.py" line="1703"/>
+        <location filename="../src/ui/main_window.py" line="1950"/>
         <source>3D Preview</source>
         <translation>3D 미리보기</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1865"/>
+        <location filename="../src/ui/main_window.py" line="1982"/>
         <source>Settings feature under development...</source>
         <translation>설정 기능 개발 중...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1867"/>
+        <location filename="../src/ui/main_window.py" line="1984"/>
         <source>Help feature under development...</source>
         <translation>도움말 기능 개발 중...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1887"/>
+        <location filename="../src/ui/main_window.py" line="2004"/>
         <source>MINGDA SignMaker - New Project</source>
         <translation>MINGDA SignMaker - 새 프로젝트</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1899"/>
+        <location filename="../src/ui/main_window.py" line="2016"/>
         <source>Open File</source>
         <translation>파일 열기</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2081"/>
+        <location filename="../src/ui/main_window.py" line="2200"/>
         <source>Unsupported Format</source>
         <translation>지원되지 않는 형식</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2081"/>
+        <location filename="../src/ui/main_window.py" line="2200"/>
         <source>Format not supported: </source>
         <translation>지원되지 않는 형식: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2284"/>
+        <location filename="../src/ui/main_window.py" line="2403"/>
         <source>Load </source>
         <translation>불러오기 </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2305"/>
+        <location filename="../src/ui/main_window.py" line="2424"/>
         <source>Loaded: {file}, {count} contours</source>
         <translation>불러옴: {file}, {count}개 윤곽선</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2090"/>
-        <location filename="../src/ui/main_window.py" line="2370"/>
+        <location filename="../src/ui/main_window.py" line="2209"/>
+        <location filename="../src/ui/main_window.py" line="2489"/>
         <source>Load Failed</source>
         <translation>불러오기 실패</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2091"/>
+        <location filename="../src/ui/main_window.py" line="2210"/>
         <source>Failed to load file:</source>
         <translation>파일을 불러올 수 없습니다:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1914"/>
-        <location filename="../src/ui/main_window.py" line="2397"/>
+        <location filename="../src/ui/main_window.py" line="2031"/>
+        <location filename="../src/ui/main_window.py" line="2516"/>
         <source>SignMaker Project (*.smp);;All Files (*)</source>
         <translation>SignMaker 프로젝트 (*.smp);;모든 파일 (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="340"/>
+        <location filename="../src/ui/main_window.py" line="344"/>
         <source>Process(&amp;P)</source>
         <translation>처리(&amp;P)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1901"/>
+        <location filename="../src/ui/main_window.py" line="2018"/>
         <source>Supported Files (*.dxf *.svg *.smp);;SignMaker Project (*.smp);;DXF Files (*.dxf);;SVG Files (*.svg);;All Files (*)</source>
         <translation>지원 파일 (*.dxf *.svg *.smp);;SignMaker 프로젝트 (*.smp);;DXF 파일 (*.dxf);;SVG 파일 (*.svg);;모든 파일 (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1751"/>
-        <location filename="../src/ui/main_window.py" line="1912"/>
+        <location filename="../src/ui/main_window.py" line="975"/>
+        <location filename="../src/ui/main_window.py" line="1865"/>
+        <location filename="../src/ui/main_window.py" line="2029"/>
         <source>Open Project</source>
         <translation>프로젝트 열기</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2357"/>
+        <location filename="../src/ui/main_window.py" line="2476"/>
         <source>Project loaded: {name}, {count} contours</source>
         <translation>프로젝트를 불러왔습니다: {name}, 윤곽선 {count}개</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2370"/>
+        <location filename="../src/ui/main_window.py" line="2489"/>
         <source>Failed to load project:</source>
         <translation>프로젝트를 불러오지 못했습니다:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2452"/>
+        <location filename="../src/ui/main_window.py" line="2571"/>
         <source>Project saved: </source>
         <translation>프로젝트 저장됨: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2462"/>
+        <location filename="../src/ui/main_window.py" line="2581"/>
         <source>Save Failed</source>
         <translation>저장 실패</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2462"/>
+        <location filename="../src/ui/main_window.py" line="2581"/>
         <source>Failed to save project:</source>
         <translation>프로젝트를 저장하지 못했습니다:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2497"/>
+        <location filename="../src/ui/main_window.py" line="2616"/>
         <source>Export Baseplate DXF...</source>
         <translation>베이스플레이트 DXF 내보내기...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2498"/>
+        <location filename="../src/ui/main_window.py" line="2617"/>
         <source>Export Panel DXF...</source>
         <translation>패널 DXF 내보내기...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1238"/>
-        <location filename="../src/ui/main_window.py" line="2412"/>
-        <location filename="../src/ui/main_window.py" line="2505"/>
-        <location filename="../src/ui/main_window.py" line="2571"/>
-        <location filename="../src/ui/main_window.py" line="2621"/>
-        <location filename="../src/ui/main_window.py" line="2657"/>
-        <location filename="../src/ui/main_window.py" line="2726"/>
-        <location filename="../src/ui/main_window.py" line="2837"/>
-        <location filename="../src/ui/main_window.py" line="2845"/>
-        <location filename="../src/ui/main_window.py" line="2955"/>
-        <location filename="../src/ui/main_window.py" line="2993"/>
-        <location filename="../src/ui/main_window.py" line="3378"/>
-        <location filename="../src/ui/main_window.py" line="3404"/>
-        <location filename="../src/ui/main_window.py" line="3441"/>
-        <location filename="../src/ui/main_window.py" line="3479"/>
-        <location filename="../src/ui/main_window.py" line="3510"/>
+        <location filename="../src/ui/main_window.py" line="1267"/>
+        <location filename="../src/ui/main_window.py" line="2531"/>
+        <location filename="../src/ui/main_window.py" line="2624"/>
+        <location filename="../src/ui/main_window.py" line="2695"/>
+        <location filename="../src/ui/main_window.py" line="2745"/>
+        <location filename="../src/ui/main_window.py" line="2781"/>
+        <location filename="../src/ui/main_window.py" line="2852"/>
+        <location filename="../src/ui/main_window.py" line="2968"/>
+        <location filename="../src/ui/main_window.py" line="2976"/>
+        <location filename="../src/ui/main_window.py" line="3086"/>
+        <location filename="../src/ui/main_window.py" line="3124"/>
+        <location filename="../src/ui/main_window.py" line="3536"/>
+        <location filename="../src/ui/main_window.py" line="3562"/>
+        <location filename="../src/ui/main_window.py" line="3599"/>
+        <location filename="../src/ui/main_window.py" line="3637"/>
+        <location filename="../src/ui/main_window.py" line="3668"/>
         <source>Info</source>
         <translation>정보</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2505"/>
-        <location filename="../src/ui/main_window.py" line="2571"/>
+        <location filename="../src/ui/main_window.py" line="2624"/>
+        <location filename="../src/ui/main_window.py" line="2695"/>
         <source>Please process first</source>
         <translation>먼저 처리를 수행하세요</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2549"/>
-        <location filename="../src/ui/main_window.py" line="2605"/>
-        <location filename="../src/ui/main_window.py" line="2643"/>
-        <location filename="../src/ui/main_window.py" line="2679"/>
+        <location filename="../src/ui/main_window.py" line="2673"/>
+        <location filename="../src/ui/main_window.py" line="2729"/>
+        <location filename="../src/ui/main_window.py" line="2767"/>
+        <location filename="../src/ui/main_window.py" line="2803"/>
         <source>Export Success</source>
         <translation>내보내기 성공</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2556"/>
-        <location filename="../src/ui/main_window.py" line="2608"/>
-        <location filename="../src/ui/main_window.py" line="2650"/>
-        <location filename="../src/ui/main_window.py" line="2652"/>
-        <location filename="../src/ui/main_window.py" line="2686"/>
-        <location filename="../src/ui/main_window.py" line="2688"/>
+        <location filename="../src/ui/main_window.py" line="2680"/>
+        <location filename="../src/ui/main_window.py" line="2732"/>
+        <location filename="../src/ui/main_window.py" line="2774"/>
+        <location filename="../src/ui/main_window.py" line="2776"/>
+        <location filename="../src/ui/main_window.py" line="2810"/>
+        <location filename="../src/ui/main_window.py" line="2812"/>
         <source>Export Failed</source>
         <translation>내보내기 실패</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2576"/>
+        <location filename="../src/ui/main_window.py" line="2700"/>
         <source>Export STL</source>
         <translation>STL 내보내기</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2578"/>
+        <location filename="../src/ui/main_window.py" line="2702"/>
         <source>STL Files (*.stl);;All Files (*)</source>
         <translation>STL 파일 (*.stl);;모든 파일 (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2604"/>
+        <location filename="../src/ui/main_window.py" line="2728"/>
         <source>STL exported: </source>
         <translation>STL 내보내기 완료: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2605"/>
+        <location filename="../src/ui/main_window.py" line="2729"/>
         <source>STL saved to:</source>
         <translation>STL 저장 위치:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2608"/>
+        <location filename="../src/ui/main_window.py" line="2732"/>
         <source>Failed to export STL:</source>
         <translation>STL을 내보낼 수 없습니다:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2621"/>
-        <location filename="../src/ui/main_window.py" line="2657"/>
-        <location filename="../src/ui/main_window.py" line="2726"/>
+        <location filename="../src/ui/main_window.py" line="2745"/>
+        <location filename="../src/ui/main_window.py" line="2781"/>
+        <location filename="../src/ui/main_window.py" line="2852"/>
         <source>Please import a DXF file first</source>
         <translation>먼저 DXF 파일을 가져오세요</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2413"/>
+        <location filename="../src/ui/main_window.py" line="2532"/>
         <source>Please import or create graphics before saving</source>
         <translation>저장하기 전에 그래픽을 가져오거나 생성하세요</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1091"/>
+        <location filename="../src/ui/main_window.py" line="1120"/>
         <source>{count} screw holes are invalid</source>
         <translation>유효하지 않은 나사 구멍이 {count}개 있습니다</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1120"/>
-        <location filename="../src/ui/main_window.py" line="1256"/>
+        <location filename="../src/ui/main_window.py" line="1149"/>
+        <location filename="../src/ui/main_window.py" line="1285"/>
         <source>Explode Asset</source>
         <translation>에셋 분해</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1239"/>
+        <location filename="../src/ui/main_window.py" line="1268"/>
         <source>Please select an imported asset first</source>
         <translation>먼저 가져온 에셋을 선택하세요</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1781"/>
-        <location filename="../src/ui/main_window.py" line="1789"/>
+        <location filename="../src/ui/main_window.py" line="1898"/>
+        <location filename="../src/ui/main_window.py" line="1906"/>
         <source>Show Configuration Folder Failed</source>
         <translation>설정 폴더를 표시하지 못했습니다</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1782"/>
-        <location filename="../src/ui/main_window.py" line="1790"/>
+        <location filename="../src/ui/main_window.py" line="1899"/>
+        <location filename="../src/ui/main_window.py" line="1907"/>
         <source>Failed to show the configuration folder in the file manager.</source>
         <translation>파일 관리자에서 설정 폴더를 표시하지 못했습니다.</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2516"/>
+        <location filename="../src/ui/main_window.py" line="2640"/>
         <source>Export Blocked</source>
         <translation>내보내기 차단됨</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2517"/>
+        <location filename="../src/ui/main_window.py" line="2641"/>
         <source>Cannot export G-code:</source>
         <translation>G-code를 내보낼 수 없습니다:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2525"/>
+        <location filename="../src/ui/main_window.py" line="2649"/>
         <source>Export G-code</source>
         <translation>G-code 내보내기</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2527"/>
+        <location filename="../src/ui/main_window.py" line="2651"/>
         <source>G-code Files (*.gcode);;All Files (*)</source>
         <translation>G-code 파일 (*.gcode);;모든 파일 (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2546"/>
+        <location filename="../src/ui/main_window.py" line="2670"/>
         <source>G-code exported: </source>
         <translation>G-code를 내보냈습니다: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2550"/>
+        <location filename="../src/ui/main_window.py" line="2674"/>
         <source>G-code saved to:</source>
         <translation>G-code 저장 위치:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2557"/>
+        <location filename="../src/ui/main_window.py" line="2681"/>
         <source>Failed to export G-code:</source>
         <translation>G-code를 내보내지 못했습니다:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2562"/>
+        <location filename="../src/ui/main_window.py" line="2686"/>
         <source>Exporting G-code...</source>
         <translation>G-code를 내보내는 중...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2626"/>
+        <location filename="../src/ui/main_window.py" line="2750"/>
         <source>Export Baseplate DXF</source>
         <translation>베이스플레이트 DXF 내보내기</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2628"/>
-        <location filename="../src/ui/main_window.py" line="2664"/>
+        <location filename="../src/ui/main_window.py" line="2752"/>
+        <location filename="../src/ui/main_window.py" line="2788"/>
         <source>DXF Files (*.dxf);;All Files (*)</source>
         <translation>DXF 파일 (*.dxf);;모든 파일 (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2641"/>
+        <location filename="../src/ui/main_window.py" line="2765"/>
         <source>Baseplate DXF exported: </source>
         <translation>베이스플레이트 DXF 내보내기 완료: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2644"/>
+        <location filename="../src/ui/main_window.py" line="2768"/>
         <source>Baseplate DXF saved to:</source>
         <translation>베이스플레이트 DXF 저장 위치:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2650"/>
+        <location filename="../src/ui/main_window.py" line="2774"/>
         <source>Failed to generate baseplate contour</source>
         <translation>베이스플레이트 윤곽선을 생성할 수 없습니다</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2652"/>
+        <location filename="../src/ui/main_window.py" line="2776"/>
         <source>Failed to export baseplate DXF:</source>
         <translation>베이스플레이트 DXF를 내보낼 수 없습니다:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2662"/>
+        <location filename="../src/ui/main_window.py" line="2786"/>
         <source>Export Panel DXF</source>
         <translation>패널 DXF 내보내기</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2677"/>
+        <location filename="../src/ui/main_window.py" line="2801"/>
         <source>Panel DXF exported: </source>
         <translation>패널 DXF 내보내기 완료: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2680"/>
+        <location filename="../src/ui/main_window.py" line="2804"/>
         <source>Panel DXF saved to:</source>
         <translation>패널 DXF 저장 위치:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2686"/>
+        <location filename="../src/ui/main_window.py" line="2810"/>
         <source>Failed to generate panel contour</source>
         <translation>패널 윤곽선을 생성할 수 없습니다</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2688"/>
+        <location filename="../src/ui/main_window.py" line="2812"/>
         <source>Failed to export panel DXF:</source>
         <translation>패널 DXF를 내보낼 수 없습니다:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2704"/>
+        <location filename="../src/ui/main_window.py" line="2829"/>
         <source>Nothing to undo</source>
         <translation>실행 취소할 항목이 없습니다</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2720"/>
+        <location filename="../src/ui/main_window.py" line="2846"/>
         <source>Nothing to redo</source>
         <translation>다시 실행할 항목이 없습니다</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2738"/>
-        <location filename="../src/ui/main_window.py" line="2752"/>
+        <location filename="../src/ui/main_window.py" line="2869"/>
+        <location filename="../src/ui/main_window.py" line="2883"/>
         <source>Processing Blocked</source>
         <translation>처리가 차단되었습니다</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2838"/>
+        <location filename="../src/ui/main_window.py" line="2969"/>
         <source>No contours available for screw-hole editing</source>
         <translation>나사 구멍을 편집할 수 있는 윤곽선이 없습니다</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2846"/>
+        <location filename="../src/ui/main_window.py" line="2977"/>
         <source>Enable Bottom Face before editing screw holes</source>
         <translation>나사 구멍을 편집하기 전에 Bottom Face를 활성화하세요</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="899"/>
-        <location filename="../src/ui/main_window.py" line="2862"/>
+        <location filename="../src/ui/main_window.py" line="915"/>
+        <location filename="../src/ui/main_window.py" line="2993"/>
         <source>Edit Screw Holes</source>
         <translation>나사 구멍 편집</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2872"/>
+        <location filename="../src/ui/main_window.py" line="3003"/>
         <source>Click a screw hole to select it, click empty space to add, Delete to remove, Esc to finish</source>
         <translation>나사 구멍을 클릭해 선택하고, 빈 공간을 클릭해 추가하고, Delete로 삭제하고, Esc로 종료합니다</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2898"/>
+        <location filename="../src/ui/main_window.py" line="3029"/>
         <source>Click inside a valid bottom-face region</source>
         <translation>유효한 Bottom Face 영역 안을 클릭하세요</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2908"/>
+        <location filename="../src/ui/main_window.py" line="3039"/>
         <source>Screw hole added</source>
         <translation>나사 구멍을 추가했습니다</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2928"/>
+        <location filename="../src/ui/main_window.py" line="3059"/>
         <source>Screw hole updated</source>
         <translation>나사 구멍을 업데이트했습니다</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2944"/>
+        <location filename="../src/ui/main_window.py" line="3075"/>
         <source>Screw hole removed</source>
         <translation>나사 구멍을 삭제했습니다</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2994"/>
+        <location filename="../src/ui/main_window.py" line="3125"/>
         <source>No contours available for print order selection</source>
         <translation>인쇄 순서를 설정할 윤곽선이 없습니다</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="891"/>
-        <location filename="../src/ui/main_window.py" line="3008"/>
+        <location filename="../src/ui/main_window.py" line="907"/>
+        <location filename="../src/ui/main_window.py" line="3139"/>
         <source>Set Print Order</source>
         <translation>인쇄 순서 설정</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3016"/>
+        <location filename="../src/ui/main_window.py" line="3147"/>
         <source>Click contours or holes in desired print order, Esc to finish</source>
         <translation>원하는 인쇄 순서대로 윤곽선 또는 구멍을 클릭하고 Esc로 종료</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3067"/>
+        <location filename="../src/ui/main_window.py" line="3198"/>
         <source>Print order updated</source>
         <translation>인쇄 순서가 업데이트되었습니다</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3534"/>
+        <location filename="../src/ui/main_window.py" line="3692"/>
         <source>Text</source>
         <translation>텍스트</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3540"/>
+        <location filename="../src/ui/main_window.py" line="3698"/>
         <source>Add Contours</source>
         <translation>윤곽선 추가</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3673"/>
+        <location filename="../src/ui/main_window.py" line="3855"/>
         <source>Open Tutorial Failed</source>
         <translation>튜토리얼을 열 수 없습니다</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3674"/>
+        <location filename="../src/ui/main_window.py" line="3856"/>
         <source>Failed to open the tutorial playlist in the default browser.</source>
         <translation>기본 브라우저에서 튜토리얼 재생목록을 열 수 없습니다.</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3715"/>
+        <location filename="../src/ui/main_window.py" line="3897"/>
         <source>Loaded saved parameters</source>
         <translation>저장된 매개변수를 불러왔습니다</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2803"/>
+        <location filename="../src/ui/main_window.py" line="2934"/>
         <source>Switched to {view} view</source>
         <translation>{view} 보기로 전환됨</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3135"/>
+        <location filename="../src/ui/main_window.py" line="3266"/>
         <source>Rotation</source>
         <translation>회전</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3154"/>
+        <location filename="../src/ui/main_window.py" line="3285"/>
         <source>Tool: </source>
         <translation>도구: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3204"/>
+        <location filename="../src/ui/main_window.py" line="3335"/>
         <source>Move to: X={x:.2f}, Y={y:.2f}</source>
         <translation>이동 위치: X={x:.2f}, Y={y:.2f}</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3214"/>
+        <location filename="../src/ui/main_window.py" line="3345"/>
         <source>Rotation: {angle:.2f}°</source>
         <translation>회전: {angle:.2f}°</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3290"/>
-        <location filename="../src/ui/main_window.py" line="3328"/>
-        <location filename="../src/ui/main_window.py" line="3351"/>
+        <location filename="../src/ui/main_window.py" line="3444"/>
+        <location filename="../src/ui/main_window.py" line="3484"/>
+        <location filename="../src/ui/main_window.py" line="3509"/>
         <source>Scale: {px:.1f}% x {py:.1f}%</source>
         <translation>크기: {px:.1f}% x {py:.1f}%</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3378"/>
+        <location filename="../src/ui/main_window.py" line="3536"/>
         <source>Please select a contour first</source>
         <translation>먼저 윤곽선을 선택하세요</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3395"/>
+        <location filename="../src/ui/main_window.py" line="3553"/>
         <source>Mirror {axis} complete</source>
         <translation>{axis} 대칭 완료</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3405"/>
-        <location filename="../src/ui/main_window.py" line="3442"/>
-        <location filename="../src/ui/main_window.py" line="3480"/>
+        <location filename="../src/ui/main_window.py" line="3563"/>
+        <location filename="../src/ui/main_window.py" line="3600"/>
+        <location filename="../src/ui/main_window.py" line="3638"/>
         <source>Please select at least two contours</source>
         <translation>윤곽선 두 개 이상을 선택하세요</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3417"/>
-        <location filename="../src/ui/main_window.py" line="3425"/>
+        <location filename="../src/ui/main_window.py" line="3575"/>
+        <location filename="../src/ui/main_window.py" line="3583"/>
         <source>Intersection</source>
         <translation>교집합</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3454"/>
-        <location filename="../src/ui/main_window.py" line="3462"/>
+        <location filename="../src/ui/main_window.py" line="3612"/>
+        <location filename="../src/ui/main_window.py" line="3620"/>
         <source>Difference</source>
         <translation>차집합</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3490"/>
+        <location filename="../src/ui/main_window.py" line="3648"/>
         <source>Already grouped</source>
         <translation>이미 그룹화되어 있습니다</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1118"/>
-        <location filename="../src/ui/main_window.py" line="3493"/>
+        <location filename="../src/ui/main_window.py" line="1147"/>
+        <location filename="../src/ui/main_window.py" line="3651"/>
         <source>Group</source>
         <translation>그룹화</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3511"/>
+        <location filename="../src/ui/main_window.py" line="3669"/>
         <source>Please select a grouped contour first</source>
         <translation>먼저 그룹화된 윤곽선을 선택하세요</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1119"/>
-        <location filename="../src/ui/main_window.py" line="3515"/>
+        <location filename="../src/ui/main_window.py" line="1148"/>
+        <location filename="../src/ui/main_window.py" line="3673"/>
         <source>Ungroup</source>
         <translation>그룹 해제</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3545"/>
+        <location filename="../src/ui/main_window.py" line="3703"/>
         <source>Text added</source>
         <translation>텍스트를 추가했습니다</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3547"/>
+        <location filename="../src/ui/main_window.py" line="3705"/>
         <source>Error</source>
         <translation>오류</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3578"/>
+        <location filename="../src/ui/main_window.py" line="3736"/>
         <source>Checking for updates...</source>
         <translation>업데이트 확인 중...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3598"/>
+        <location filename="../src/ui/main_window.py" line="3756"/>
         <source>No Updates Available</source>
         <translation>사용 가능한 업데이트 없음</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3599"/>
+        <location filename="../src/ui/main_window.py" line="3757"/>
         <source>You are using the latest version.</source>
         <translation>최신 버전을 사용 중입니다.</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3612"/>
+        <location filename="../src/ui/main_window.py" line="3770"/>
         <source>Update Check Failed</source>
         <translation>업데이트 확인 실패</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3621"/>
+        <location filename="../src/ui/main_window.py" line="3779"/>
         <source>Installer Not Found</source>
         <translation>설치 프로그램을 찾을 수 없음</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3622"/>
+        <location filename="../src/ui/main_window.py" line="3780"/>
         <source>The downloaded update installer no longer exists.</source>
         <translation>다운로드한 업데이트 설치 프로그램이 더 이상 존재하지 않습니다.</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3637"/>
+        <location filename="../src/ui/main_window.py" line="3819"/>
         <source>Run Installer Failed</source>
         <translation>설치 프로그램 실행 실패</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3638"/>
+        <location filename="../src/ui/main_window.py" line="3820"/>
         <source>Failed to start the update installer.</source>
         <translation>업데이트 설치 프로그램을 시작하지 못했습니다.</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3648"/>
+        <location filename="../src/ui/main_window.py" line="3830"/>
         <source>About MINGDA SignMaker</source>
         <translation>MINGDA SignMaker 정보</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3650"/>
+        <location filename="../src/ui/main_window.py" line="3832"/>
         <source>Professional LED Sign Letter 3D Printing Slicer</source>
         <translation>전문 LED 채널 레터 3D 프린팅 슬라이서</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3651"/>
+        <location filename="../src/ui/main_window.py" line="3833"/>
         <source>Version: </source>
         <translation>버전: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3653"/>
+        <location filename="../src/ui/main_window.py" line="3835"/>
         <source>Features:</source>
         <translation>기능:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3655"/>
+        <location filename="../src/ui/main_window.py" line="3837"/>
         <source>DXF/SVG file import</source>
         <translation>DXF/SVG 파일 가져오기</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3656"/>
+        <location filename="../src/ui/main_window.py" line="3838"/>
         <source>Straight/Bevel/Custom edges</source>
         <translation>직선/베벨/사용자 정의 엣지</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3657"/>
+        <location filename="../src/ui/main_window.py" line="3839"/>
         <source>Multi-color printing support</source>
         <translation>다색 인쇄 지원</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3658"/>
+        <location filename="../src/ui/main_window.py" line="3840"/>
         <source>Step/V-groove</source>
         <translation>단/V홈</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3659"/>
+        <location filename="../src/ui/main_window.py" line="3841"/>
         <source>Anti-warping skirt</source>
         <translation>휨 방지 스커트</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3660"/>
+        <location filename="../src/ui/main_window.py" line="3842"/>
         <source>Connected letters</source>
         <translation>연결된 글자</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3685"/>
+        <location filename="../src/ui/main_window.py" line="3867"/>
         <source>Language Changed</source>
         <translation>언어 변경됨</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3686"/>
+        <location filename="../src/ui/main_window.py" line="3868"/>
         <source>Language has been changed to {lang}. Please restart the application for full effect.</source>
         <translation>언어가 {lang}(으)로 변경되었습니다. 완전히 적용하려면 애플리케이션을 다시 시작하세요.</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3693"/>
+        <location filename="../src/ui/main_window.py" line="3875"/>
         <source>Language Change Failed</source>
         <translation>언어 변경 실패</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3694"/>
+        <location filename="../src/ui/main_window.py" line="3876"/>
         <source>Translation file for {lang} is not available yet.</source>
         <translation>{lang} 번역 파일을 아직 사용할 수 없습니다.</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="460"/>
+        <location filename="../src/ui/main_window.py" line="464"/>
         <source>Angle</source>
         <translation>각도</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3139"/>
+        <location filename="../src/ui/main_window.py" line="3270"/>
         <source>Drag grabber on ring to rotate</source>
         <translation>링의 핸들을 드래그하여 회전</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="524"/>
+        <location filename="../src/ui/main_window.py" line="528"/>
         <source>Size</source>
         <translation>크기</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="567"/>
+        <location filename="../src/ui/main_window.py" line="571"/>
         <source>Uniform Scale</source>
         <translation>균일 스케일</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3145"/>
+        <location filename="../src/ui/main_window.py" line="3276"/>
         <source>Drag to scale, input exact values above</source>
         <translation>드래그하여 스케일, 위에 정확한 값 입력</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2086"/>
+        <location filename="../src/ui/main_window.py" line="2205"/>
         <source>Loading file...</source>
         <translation>파일 로딩 중...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2612"/>
+        <location filename="../src/ui/main_window.py" line="2736"/>
         <source>Exporting STL...</source>
         <translation>STL 내보내기 중...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="342"/>
+        <location filename="../src/ui/main_window.py" line="346"/>
         <source>Start Processing</source>
         <translation>처리 시작</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1829"/>
-        <location filename="../src/ui/main_window.py" line="2783"/>
+        <location filename="../src/ui/main_window.py" line="1946"/>
+        <location filename="../src/ui/main_window.py" line="2914"/>
         <source>Processing...</source>
         <translation>처리 중...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2770"/>
-        <source>Processing complete: {layers} layers, estimated time: {time:.1f} minutes</source>
-        <translation>처리 완료: {layers}개 레이어, 예상 시간: {time:.1f}분</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/main_window.py" line="2778"/>
+        <location filename="../src/ui/main_window.py" line="2909"/>
         <source>Processing Failed</source>
         <translation>처리 실패</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2778"/>
+        <location filename="../src/ui/main_window.py" line="2909"/>
         <source>Error during processing:</source>
         <translation>처리 중 오류 발생:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2779"/>
+        <location filename="../src/ui/main_window.py" line="2910"/>
         <source>Processing failed</source>
         <translation>처리 실패</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2645"/>
-        <location filename="../src/ui/main_window.py" line="2681"/>
+        <location filename="../src/ui/main_window.py" line="2769"/>
+        <location filename="../src/ui/main_window.py" line="2805"/>
         <source>Outer clearance: </source>
         <translation>외곽 여유값: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2646"/>
-        <location filename="../src/ui/main_window.py" line="2682"/>
+        <location filename="../src/ui/main_window.py" line="2770"/>
+        <location filename="../src/ui/main_window.py" line="2806"/>
         <source>Hole clearance: </source>
         <translation>구멍 여유값: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2647"/>
-        <location filename="../src/ui/main_window.py" line="2683"/>
+        <location filename="../src/ui/main_window.py" line="2771"/>
+        <location filename="../src/ui/main_window.py" line="2807"/>
         <source>Laser kerf: </source>
         <translation>레이저 커프: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2956"/>
+        <location filename="../src/ui/main_window.py" line="3087"/>
         <source>No contours available for start point selection</source>
         <translation>시작점을 선택할 윤곽선이 없습니다</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2968"/>
+        <location filename="../src/ui/main_window.py" line="3099"/>
         <source>Click a corner on any contour or hole, Esc to exit</source>
         <translation>임의의 윤곽선 또는 구멍의 모서리를 클릭하고 Esc를 눌러 종료하세요</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3098"/>
+        <location filename="../src/ui/main_window.py" line="3229"/>
         <source>Set Start Point</source>
         <translation>시작점 설정</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3109"/>
+        <location filename="../src/ui/main_window.py" line="3240"/>
         <source>Start point updated</source>
         <translation>시작점이 업데이트되었습니다</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2740"/>
+        <location filename="../src/ui/main_window.py" line="2871"/>
         <source>Some contours exceed the platform size or overlap a bed exclude area. Please move or scale them back into the printable area before processing.</source>
         <translation>일부 윤곽이 플랫폼 크기를 벗어나거나 베드 제외 영역과 겹칩니다. 처리하기 전에 인쇄 가능 영역 안으로 이동하거나 크기를 조정하세요.</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2744"/>
+        <location filename="../src/ui/main_window.py" line="2875"/>
         <source>Processing blocked: contours outside printable area</source>
         <translation>처리가 차단됨: 윤곽이 인쇄 가능 영역 밖에 있습니다</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="2901"/>
+        <source>Processing complete: height {height:.2f} mm, estimated time {time:.1f} minutes</source>
+        <translation>Processing complete: height {height:.2f} mm, estimated time {time:.1f} minutes</translation>
     </message>
 </context>
 <context>
     <name>ParamPanel</name>
     <message>
-        <location filename="../src/ui/param_panel.py" line="87"/>
+        <location filename="../src/ui/param_panel.py" line="91"/>
         <source>Settings</source>
         <translation>설정</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="197"/>
+        <location filename="../src/ui/param_panel.py" line="169"/>
         <source>Shape</source>
         <translation>형상</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="199"/>
+        <location filename="../src/ui/param_panel.py" line="171"/>
         <source>Geometry and sign shell settings</source>
         <translation>지오메트리 및 간판 쉘 설정</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="188"/>
+        <location filename="../src/ui/param_panel.py" line="177"/>
         <source>Machine</source>
         <translation>장비</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="190"/>
+        <location filename="../src/ui/param_panel.py" line="179"/>
         <source>Printer profile and hardware settings</source>
         <translation>프린터 프로필 및 하드웨어 설정</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="206"/>
+        <location filename="../src/ui/param_panel.py" line="185"/>
         <source>Print</source>
         <translation>인쇄</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="361"/>
-        <source>Height is derived from layer count * layer height.</source>
-        <translation>높이는 레이어 수 * 레이어 높이로 계산됩니다.</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="432"/>
+        <location filename="../src/ui/param_panel.py" line="477"/>
         <source>Shell Settings</source>
         <translation>쉘 설정</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="444"/>
+        <location filename="../src/ui/param_panel.py" line="489"/>
         <source>Shell Height:</source>
         <translation>쉘 높이:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="453"/>
+        <location filename="../src/ui/param_panel.py" line="498"/>
         <source>Layer Height:</source>
         <translation>레이어 높이:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="462"/>
+        <location filename="../src/ui/param_panel.py" line="507"/>
         <source>Line Width:</source>
         <translation>선 너비:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="469"/>
-        <source>Wall Loops:</source>
-        <translation>벽 루프 수:</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="475"/>
+        <location filename="../src/ui/param_panel.py" line="522"/>
         <source>Edge Type</source>
         <translation>엣지 유형</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="484"/>
+        <location filename="../src/ui/param_panel.py" line="531"/>
         <source>Straight</source>
         <translation>직선</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="485"/>
+        <location filename="../src/ui/param_panel.py" line="532"/>
         <source>Beveled</source>
         <translation>베벨</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="486"/>
+        <location filename="../src/ui/param_panel.py" line="533"/>
         <source>U Shape</source>
         <translation>U형</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="487"/>
+        <location filename="../src/ui/param_panel.py" line="534"/>
         <source>Custom</source>
         <translation>사용자 정의</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="489"/>
+        <location filename="../src/ui/param_panel.py" line="536"/>
         <source>Edge Type:</source>
         <translation>엣지 유형:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="501"/>
+        <location filename="../src/ui/param_panel.py" line="548"/>
         <source>Top Small</source>
         <translation>상단 좁게</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="502"/>
+        <location filename="../src/ui/param_panel.py" line="549"/>
         <source>Top Large</source>
         <translation>상단 넓게</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="504"/>
+        <location filename="../src/ui/param_panel.py" line="551"/>
         <source>Bevel Direction:</source>
         <translation>베벨 방향:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="507"/>
+        <location filename="../src/ui/param_panel.py" line="554"/>
         <source>Original contour is always based on the bottom face (z=0).</source>
         <translation>원본 윤곽은 항상 바닥면(z=0)을 기준으로 합니다.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="519"/>
+        <location filename="../src/ui/param_panel.py" line="566"/>
         <source>Bevel Width:</source>
         <translation>베벨 너비:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="530"/>
+        <location filename="../src/ui/param_panel.py" line="577"/>
         <source>Baseplate Thickness:</source>
         <translation>베이스플레이트 두께:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="541"/>
+        <location filename="../src/ui/param_panel.py" line="588"/>
         <source>Panel Thickness:</source>
         <translation>패널 두께:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="560"/>
+        <location filename="../src/ui/param_panel.py" line="607"/>
         <source>Arc Height:</source>
         <translation>호 높이:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="565"/>
-        <source>Bottom Layers:</source>
-        <translation>바닥 레이어 수:</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="577"/>
+        <location filename="../src/ui/param_panel.py" line="624"/>
         <source>Preset Templates:</source>
         <translation>사전 설정 템플릿:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="589"/>
+        <location filename="../src/ui/param_panel.py" line="636"/>
         <source>Import DXF...</source>
         <translation>DXF 가져오기...</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="590"/>
+        <location filename="../src/ui/param_panel.py" line="637"/>
         <source>Import custom edge profile from DXF file</source>
         <translation>DXF 파일에서 사용자 정의 엣지 프로파일 가져오기</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="598"/>
-        <location filename="../src/ui/param_panel.py" line="3043"/>
+        <location filename="../src/ui/param_panel.py" line="645"/>
+        <location filename="../src/ui/param_panel.py" line="3108"/>
         <source>No profile selected</source>
         <translation>선택된 프로파일 없음</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="600"/>
+        <location filename="../src/ui/param_panel.py" line="647"/>
         <source>Current Profile:</source>
         <translation>현재 프로파일:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="649"/>
+        <location filename="../src/ui/param_panel.py" line="696"/>
         <source>Bottom Face</source>
         <translation>하단면</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="654"/>
+        <location filename="../src/ui/param_panel.py" line="701"/>
         <source>Enable Bottom Face</source>
         <translation>하단면 활성화</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="665"/>
-        <source>Bottom Shell Layers:</source>
-        <translation>하단 쉘 레이어 수:</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="743"/>
+        <location filename="../src/ui/param_panel.py" line="790"/>
         <source>Light Slot</source>
         <translation>라이트 슬롯</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="747"/>
+        <location filename="../src/ui/param_panel.py" line="794"/>
         <source>Enable Light Slot</source>
         <translation>라이트 슬롯 사용</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="761"/>
+        <location filename="../src/ui/param_panel.py" line="808"/>
         <source>Slot Width:</source>
         <translation>슬롯 폭:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="766"/>
+        <location filename="../src/ui/param_panel.py" line="813"/>
         <source>Slot Depth:</source>
         <translation>슬롯 깊이:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="775"/>
-        <source>Floor Layers:</source>
-        <translation>바닥 레이어 수:</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="784"/>
-        <location filename="../src/ui/param_panel.py" line="2057"/>
+        <location filename="../src/ui/param_panel.py" line="827"/>
+        <location filename="../src/ui/param_panel.py" line="2104"/>
         <source>Wall Gap:</source>
         <translation>벽 간격:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="788"/>
+        <location filename="../src/ui/param_panel.py" line="831"/>
         <source>Outer Slot</source>
         <translation>외곽 슬롯</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="794"/>
+        <location filename="../src/ui/param_panel.py" line="837"/>
         <source>Hole Slot</source>
         <translation>홀 슬롯</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="800"/>
+        <location filename="../src/ui/param_panel.py" line="843"/>
         <source>Auto Skip Small Holes</source>
         <translation>작은 홀 자동 건너뛰기</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="818"/>
+        <location filename="../src/ui/param_panel.py" line="861"/>
         <source>Min Hole Span:</source>
         <translation>최소 홀 간격:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="853"/>
+        <location filename="../src/ui/param_panel.py" line="896"/>
         <source>Top Face</source>
         <translation>상단면</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="858"/>
+        <location filename="../src/ui/param_panel.py" line="901"/>
         <source>Enable Top Face</source>
         <translation>상단면 활성화</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="875"/>
-        <source>Top Shell Layers:</source>
-        <translation>상단 쉘 레이어 수:</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="1396"/>
+        <location filename="../src/ui/param_panel.py" line="1439"/>
         <source>Machine G-code</source>
         <translation>장비 G-code</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1403"/>
+        <location filename="../src/ui/param_panel.py" line="1446"/>
         <source>Machine start G-code</source>
         <translation>장비 시작 G-code</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1420"/>
+        <location filename="../src/ui/param_panel.py" line="1463"/>
         <source>Machine end G-code</source>
         <translation>장비 종료 G-code</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1870"/>
+        <location filename="../src/ui/param_panel.py" line="1913"/>
         <source>Step/V-Groove</source>
         <translation>단/V홈</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1875"/>
+        <location filename="../src/ui/param_panel.py" line="1918"/>
         <source>Enable Panel Step (Top)</source>
         <translation>패널 단 활성화 (상단)</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1887"/>
-        <location filename="../src/ui/param_panel.py" line="1925"/>
+        <location filename="../src/ui/param_panel.py" line="1930"/>
+        <location filename="../src/ui/param_panel.py" line="1968"/>
         <source>Step Height:</source>
         <translation>단 높이:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1895"/>
-        <location filename="../src/ui/param_panel.py" line="1933"/>
+        <location filename="../src/ui/param_panel.py" line="1938"/>
+        <location filename="../src/ui/param_panel.py" line="1976"/>
         <source>Step Width:</source>
         <translation>단 너비:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1897"/>
-        <location filename="../src/ui/param_panel.py" line="1935"/>
+        <location filename="../src/ui/param_panel.py" line="1940"/>
+        <location filename="../src/ui/param_panel.py" line="1978"/>
         <source>V-Groove</source>
         <translation>V홈</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1917"/>
+        <location filename="../src/ui/param_panel.py" line="1960"/>
         <source>Enable Baseplate Step (Bottom)</source>
         <translation>베이스플레이트 단 활성화 (하단)</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2021"/>
+        <location filename="../src/ui/param_panel.py" line="2068"/>
         <source>Anti-Warping Skirt</source>
         <translation>휨 방지 스커트</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2026"/>
+        <location filename="../src/ui/param_panel.py" line="2073"/>
         <source>Enable Anti-Warping Skirt</source>
         <translation>휨 방지 스커트 활성화</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2040"/>
+        <location filename="../src/ui/param_panel.py" line="2087"/>
         <source>Skirt Height:</source>
         <translation>스커트 높이:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2071"/>
+        <location filename="../src/ui/param_panel.py" line="2118"/>
         <source>Skirt Sides:</source>
         <translation>스커트 방향:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2091"/>
+        <location filename="../src/ui/param_panel.py" line="2138"/>
         <source>Connected Letters</source>
         <translation>연결된 글자</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2096"/>
+        <location filename="../src/ui/param_panel.py" line="2143"/>
         <source>Enable Connected Letters</source>
         <translation>연결된 글자 활성화</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2105"/>
+        <location filename="../src/ui/param_panel.py" line="2152"/>
         <source>Triangle</source>
         <translation>삼각형</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2106"/>
+        <location filename="../src/ui/param_panel.py" line="2153"/>
         <source>Diamond</source>
         <translation>다이아몬드</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2109"/>
+        <location filename="../src/ui/param_panel.py" line="2156"/>
         <source>Connection Type:</source>
         <translation>연결 유형:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2112"/>
+        <location filename="../src/ui/param_panel.py" line="2159"/>
         <source>Auto Detect Connection Points</source>
         <translation>연결점 자동 감지</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2125"/>
+        <location filename="../src/ui/param_panel.py" line="2172"/>
         <source>Connection Width:</source>
         <translation>연결 너비:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2137"/>
+        <location filename="../src/ui/param_panel.py" line="2184"/>
         <source>Bevel Height:</source>
         <translation>베벨 높이:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2149"/>
+        <location filename="../src/ui/param_panel.py" line="2196"/>
         <source>Base Height:</source>
         <translation>베이스 높이:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2158"/>
+        <location filename="../src/ui/param_panel.py" line="2205"/>
         <source>Support Offset:</source>
         <translation>지지대 오프셋:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2194"/>
+        <location filename="../src/ui/param_panel.py" line="2241"/>
         <source>Edge Wrap/Outline</source>
         <translation>엣지 래핑/윤곽선</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2199"/>
+        <location filename="../src/ui/param_panel.py" line="2246"/>
         <source>Enable Edge Wrap</source>
         <translation>엣지 래핑 활성화</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2066"/>
-        <location filename="../src/ui/param_panel.py" line="2208"/>
-        <location filename="../src/ui/param_panel.py" line="2260"/>
+        <location filename="../src/ui/param_panel.py" line="2113"/>
+        <location filename="../src/ui/param_panel.py" line="2255"/>
+        <location filename="../src/ui/param_panel.py" line="2307"/>
         <source>Inner</source>
         <translation>내부</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="67"/>
+        <location filename="../src/ui/param_panel.py" line="71"/>
         <source>Project Snapshot</source>
         <translation>프로젝트 스냅샷</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="208"/>
+        <location filename="../src/ui/param_panel.py" line="187"/>
         <source>Speed, temperature, cooling, color, and G-code settings</source>
         <translation>속도, 온도, 냉각, 색상 및 G-code 설정</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="358"/>
-        <location filename="../src/ui/param_panel.py" line="772"/>
-        <source>layers</source>
-        <translation>레이어</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="674"/>
+        <location filename="../src/ui/param_panel.py" line="721"/>
         <source>Screw Hole Diameter:</source>
         <translation>나사 구멍 직경:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="952"/>
+        <location filename="../src/ui/param_panel.py" line="995"/>
         <source>Color Change</source>
         <translation>색상 변경</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="956"/>
+        <location filename="../src/ui/param_panel.py" line="999"/>
         <source>Enable Color Change</source>
         <translation>색상 변경 사용</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="965"/>
+        <location filename="../src/ui/param_panel.py" line="1008"/>
         <source>Initial color comes from Start G-code. Each change point runs the selected T macro.</source>
         <translation>초기 색상은 시작 G-code에서 가져옵니다. 각 변경 지점에서 선택한 T 매크로를 실행합니다.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="973"/>
+        <location filename="../src/ui/param_panel.py" line="1016"/>
         <source>Change At Height</source>
         <translation>높이에서 변경</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="974"/>
+        <location filename="../src/ui/param_panel.py" line="1017"/>
         <source>Macro Index</source>
         <translation>매크로 번호</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="975"/>
+        <location filename="../src/ui/param_panel.py" line="1018"/>
         <source>Preview</source>
         <translation>미리보기</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="994"/>
+        <location filename="../src/ui/param_panel.py" line="1037"/>
         <source>Add Change Point</source>
         <translation>변경 지점 추가</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="999"/>
+        <location filename="../src/ui/param_panel.py" line="1042"/>
         <source>Remove Selected</source>
         <translation>선택 항목 제거</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1121"/>
+        <location filename="../src/ui/param_panel.py" line="1164"/>
         <source>Color change disabled.</source>
         <translation>색상 변경이 비활성화되었습니다.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1127"/>
+        <location filename="../src/ui/param_panel.py" line="1170"/>
         <source>Initial color comes from Start G-code. No automatic changes are configured.</source>
         <translation>초기 색상은 시작 G-code에서 가져옵니다. 자동 변경은 설정되어 있지 않습니다.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1134"/>
+        <location filename="../src/ui/param_panel.py" line="1177"/>
         <source>At {height:.2f}mm -&gt; {command}</source>
         <translation>{height:.2f}mm에서 -&gt; {command}</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1143"/>
+        <location filename="../src/ui/param_panel.py" line="1186"/>
         <source>Prime Tower</source>
         <translation>프라임 타워</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1147"/>
+        <location filename="../src/ui/param_panel.py" line="1190"/>
         <source>Enable Prime Tower</source>
         <translation>프라임 타워 사용</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1155"/>
+        <location filename="../src/ui/param_panel.py" line="1198"/>
         <source>Prime tower geometry is defined by its center point in bed coordinates.</source>
         <translation>프라임 타워 형상은 베드 좌표계의 중심점으로 정의됩니다.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1174"/>
+        <location filename="../src/ui/param_panel.py" line="1217"/>
         <source>Center X:</source>
         <translation>중심 X:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1183"/>
+        <location filename="../src/ui/param_panel.py" line="1226"/>
         <source>Center Y:</source>
         <translation>중심 Y:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1193"/>
+        <location filename="../src/ui/param_panel.py" line="1236"/>
         <source>Tower Width:</source>
         <translation>타워 너비:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1203"/>
+        <location filename="../src/ui/param_panel.py" line="1246"/>
         <source>Tower Depth:</source>
         <translation>타워 깊이:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1212"/>
+        <location filename="../src/ui/param_panel.py" line="1255"/>
         <source>Infill Density:</source>
         <translation>충전 밀도:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1266"/>
+        <location filename="../src/ui/param_panel.py" line="1309"/>
         <source>Printer Profile</source>
         <translation>프린터 프로필</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1277"/>
+        <location filename="../src/ui/param_panel.py" line="1320"/>
         <source>New</source>
         <translation>새로 만들기</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1282"/>
+        <location filename="../src/ui/param_panel.py" line="1325"/>
         <source>Duplicate</source>
         <translation>복제</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1287"/>
+        <location filename="../src/ui/param_panel.py" line="1330"/>
         <source>Rename</source>
         <translation>이름 변경</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1292"/>
+        <location filename="../src/ui/param_panel.py" line="1335"/>
         <source>Delete</source>
         <translation>삭제</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1297"/>
+        <location filename="../src/ui/param_panel.py" line="1340"/>
         <source>Set Default</source>
         <translation>기본값으로 설정</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1315"/>
+        <location filename="../src/ui/param_panel.py" line="1358"/>
         <source>Printable Area X:</source>
         <translation>출력 가능 영역 X:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1321"/>
+        <location filename="../src/ui/param_panel.py" line="1364"/>
         <source>Printable Area Y:</source>
         <translation>출력 가능 영역 Y:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1327"/>
+        <location filename="../src/ui/param_panel.py" line="1370"/>
         <source>Printable Area Z:</source>
         <translation>출력 가능 영역 Z:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1345"/>
+        <location filename="../src/ui/param_panel.py" line="1388"/>
         <source>Nozzle Diameter:</source>
         <translation>노즐 지름:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1352"/>
+        <location filename="../src/ui/param_panel.py" line="1395"/>
         <source>Filament Diameter:</source>
         <translation>필라멘트 지름:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1359"/>
+        <location filename="../src/ui/param_panel.py" line="1402"/>
         <source>Retract Length:</source>
         <translation>리트랙트 길이:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1365"/>
+        <location filename="../src/ui/param_panel.py" line="1408"/>
         <source>Retract Speed:</source>
         <translation>리트랙트 속도:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1372"/>
+        <location filename="../src/ui/param_panel.py" line="1415"/>
         <source>Short Z-Hop:</source>
         <translation>짧은 Z-홉:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1379"/>
+        <location filename="../src/ui/param_panel.py" line="1422"/>
         <source>Long Z-Hop:</source>
         <translation>긴 Z-홉:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1385"/>
+        <location filename="../src/ui/param_panel.py" line="1428"/>
         <source>Long Travel Threshold:</source>
         <translation>긴 이동 임계값:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1389"/>
+        <location filename="../src/ui/param_panel.py" line="1432"/>
         <source>Color Change Template:</source>
         <translation>색상 변경 템플릿:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1407"/>
+        <location filename="../src/ui/param_panel.py" line="1450"/>
         <source>Edit Start G-code</source>
         <translation>시작 G-code 편집</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1409"/>
+        <location filename="../src/ui/param_panel.py" line="1452"/>
         <source>Start G-code</source>
         <translation>시작 G-code</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1424"/>
+        <location filename="../src/ui/param_panel.py" line="1467"/>
         <source>Edit End G-code</source>
         <translation>종료 G-code 편집</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1426"/>
+        <location filename="../src/ui/param_panel.py" line="1469"/>
         <source>End G-code</source>
         <translation>종료 G-code</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1457"/>
+        <location filename="../src/ui/param_panel.py" line="1500"/>
         <source>{name} (Project Snapshot)</source>
         <translation>{name} (프로젝트 스냅샷)</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1502"/>
+        <location filename="../src/ui/param_panel.py" line="1545"/>
         <source>Using embedded project profile snapshot.</source>
         <translation>내장된 프로젝트 프로필 스냅샷을 사용 중입니다.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1504"/>
+        <location filename="../src/ui/param_panel.py" line="1547"/>
         <source>Profile changes are saved immediately.</source>
         <translation>프로필 변경 사항은 즉시 저장됩니다.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1707"/>
+        <location filename="../src/ui/param_panel.py" line="1750"/>
         <source>New Printer Profile</source>
         <translation>새 프린터 프로필</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1708"/>
-        <location filename="../src/ui/param_panel.py" line="1754"/>
+        <location filename="../src/ui/param_panel.py" line="1751"/>
+        <location filename="../src/ui/param_panel.py" line="1797"/>
         <source>Profile Name:</source>
         <translation>프로필 이름:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1728"/>
+        <location filename="../src/ui/param_panel.py" line="1771"/>
         <source>Duplicate Printer Profile</source>
         <translation>프린터 프로필 복제</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1729"/>
+        <location filename="../src/ui/param_panel.py" line="1772"/>
         <source>New Profile Name:</source>
         <translation>새 프로필 이름:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1730"/>
+        <location filename="../src/ui/param_panel.py" line="1773"/>
         <source>{name} Copy</source>
         <translation>{name} 사본</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1753"/>
+        <location filename="../src/ui/param_panel.py" line="1796"/>
         <source>Rename Printer Profile</source>
         <translation>프린터 프로필 이름 변경</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1774"/>
+        <location filename="../src/ui/param_panel.py" line="1817"/>
         <source>Delete Printer Profile</source>
         <translation>프린터 프로필 삭제</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1775"/>
+        <location filename="../src/ui/param_panel.py" line="1818"/>
         <source>Delete printer profile &apos;{name}&apos;?</source>
         <translation>프린터 프로필 &apos;{name}&apos;을 삭제하시겠습니까?</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1816"/>
+        <location filename="../src/ui/param_panel.py" line="1859"/>
         <source>Empty</source>
         <translation>비어 있음</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1819"/>
+        <location filename="../src/ui/param_panel.py" line="1862"/>
         <source>{first} (+{count} more lines)</source>
         <translation>{first} (+{count}줄 더)</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1834"/>
-        <location filename="../src/ui/param_panel.py" line="2853"/>
+        <location filename="../src/ui/param_panel.py" line="1877"/>
+        <location filename="../src/ui/param_panel.py" line="2916"/>
         <source>Klipper Profile</source>
         <translation>Klipper 프로필</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2061"/>
-        <location filename="../src/ui/param_panel.py" line="2209"/>
-        <location filename="../src/ui/param_panel.py" line="2261"/>
+        <location filename="../src/ui/param_panel.py" line="2108"/>
+        <location filename="../src/ui/param_panel.py" line="2256"/>
+        <location filename="../src/ui/param_panel.py" line="2308"/>
         <source>Outer</source>
         <translation>외부</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2220"/>
+        <location filename="../src/ui/param_panel.py" line="2267"/>
         <source>Wrap Direction:</source>
         <translation>래핑 방향:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2228"/>
+        <location filename="../src/ui/param_panel.py" line="2275"/>
         <source>Wrap Width:</source>
         <translation>래핑 너비:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2236"/>
+        <location filename="../src/ui/param_panel.py" line="2283"/>
         <source>Wrap Height:</source>
         <translation>래핑 높이:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2251"/>
+        <location filename="../src/ui/param_panel.py" line="2298"/>
         <source>Enable Outline</source>
         <translation>윤곽선 활성화</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2272"/>
+        <location filename="../src/ui/param_panel.py" line="2319"/>
         <source>Outline Direction:</source>
         <translation>윤곽선 방향:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2280"/>
+        <location filename="../src/ui/param_panel.py" line="2327"/>
         <source>Outline Width:</source>
         <translation>윤곽선 너비:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2288"/>
+        <location filename="../src/ui/param_panel.py" line="2335"/>
         <source>Outline Height:</source>
         <translation>윤곽선 높이:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2296"/>
+        <location filename="../src/ui/param_panel.py" line="2343"/>
         <source>Outline Offset:</source>
         <translation>윤곽선 오프셋:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2312"/>
+        <location filename="../src/ui/param_panel.py" line="2359"/>
         <source>Speed Settings</source>
         <translation>속도 설정</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2322"/>
+        <location filename="../src/ui/param_panel.py" line="2369"/>
         <source>Print Speed:</source>
         <translation>인쇄 속도:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2330"/>
+        <location filename="../src/ui/param_panel.py" line="2377"/>
         <source>Travel Speed:</source>
         <translation>이동 속도:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2338"/>
+        <location filename="../src/ui/param_panel.py" line="2385"/>
         <source>First Layer Speed:</source>
         <translation>첫 레이어 속도:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2340"/>
+        <location filename="../src/ui/param_panel.py" line="2387"/>
         <source>Skirt Speed:</source>
         <translation>스커트 속도:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2341"/>
+        <location filename="../src/ui/param_panel.py" line="2388"/>
         <source>Step Speed:</source>
         <translation>단차 속도:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2347"/>
+        <location filename="../src/ui/param_panel.py" line="2394"/>
         <source>Temperature Settings</source>
         <translation>온도 설정</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2356"/>
+        <location filename="../src/ui/param_panel.py" line="2403"/>
         <source>First Layer Nozzle Temperature:</source>
         <translation>첫 레이어 노즐 온도:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2363"/>
+        <location filename="../src/ui/param_panel.py" line="2410"/>
         <source>Other Layers Nozzle Temperature:</source>
         <translation>나머지 레이어 노즐 온도:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2370"/>
+        <location filename="../src/ui/param_panel.py" line="2417"/>
         <source>First Layer Bed Temperature:</source>
         <translation>첫 레이어 베드 온도:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2377"/>
+        <location filename="../src/ui/param_panel.py" line="2424"/>
         <source>Other Layers Bed Temperature:</source>
         <translation>나머지 레이어 베드 온도:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2383"/>
+        <location filename="../src/ui/param_panel.py" line="2430"/>
         <source>Cooling Settings</source>
         <translation>냉각 설정</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2392"/>
+        <location filename="../src/ui/param_panel.py" line="2439"/>
         <source>First Layer Fan Speed:</source>
         <translation>첫 레이어 팬 속도:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2399"/>
+        <location filename="../src/ui/param_panel.py" line="2446"/>
         <source>Other Layers Fan Speed:</source>
         <translation>다른 레이어 팬 속도:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2994"/>
+        <location filename="../src/ui/param_panel.py" line="3059"/>
         <source>Import Custom Edge DXF</source>
         <translation>사용자 정의 엣지 DXF 가져오기</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2996"/>
+        <location filename="../src/ui/param_panel.py" line="3061"/>
         <source>DXF Files (*.dxf);;All Files (*.*)</source>
         <translation>DXF 파일 (*.dxf);;모든 파일 (*.*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="3015"/>
+        <location filename="../src/ui/param_panel.py" line="3080"/>
         <source>Import Success</source>
         <translation>가져오기 성공</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="3016"/>
+        <location filename="../src/ui/param_panel.py" line="3081"/>
         <source>Imported custom edge profile: {name}
 Size: {width:.1f} x {height:.1f} mm
 Control points: {points}</source>
@@ -2018,127 +1981,157 @@ Control points: {points}</source>
 제어점: {points}개</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="3027"/>
+        <location filename="../src/ui/param_panel.py" line="3092"/>
         <source>Import Failed</source>
         <translation>가져오기 실패</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="3028"/>
+        <location filename="../src/ui/param_panel.py" line="3093"/>
         <source>Failed to import DXF file:
 {error}</source>
         <translation>DXF 파일을 가져올 수 없습니다:
 {error}</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="3039"/>
+        <location filename="../src/ui/param_panel.py" line="3104"/>
         <source> ({count} points)</source>
         <translation> ({count}개 점)</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="617"/>
+        <location filename="../src/ui/param_panel.py" line="664"/>
         <source>DXF Export</source>
         <translation>DXF 내보내기</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="627"/>
+        <location filename="../src/ui/param_panel.py" line="674"/>
         <source>Outer Clearance:</source>
         <translation>외곽 여유값:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="635"/>
+        <location filename="../src/ui/param_panel.py" line="682"/>
         <source>Hole Clearance:</source>
         <translation>구멍 여유값:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="643"/>
+        <location filename="../src/ui/param_panel.py" line="690"/>
         <source>Laser Kerf:</source>
         <translation>레이저 커프:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1332"/>
+        <location filename="../src/ui/param_panel.py" line="1375"/>
         <source>One polygon per line: 0x0,70x0,70x70,0x70</source>
         <translation>한 줄에 하나의 다각형: 0x0,70x0,70x70,0x70</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1335"/>
+        <location filename="../src/ui/param_panel.py" line="1378"/>
         <source>Orca-style bed exclude area. Use XxY points separated by commas; put each region on its own line.</source>
         <translation>Orca 형식의 베드 제외 영역입니다. 쉼표로 구분된 XxY 점을 사용하고 각 영역은 한 줄에 하나씩 입력하세요.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1338"/>
+        <location filename="../src/ui/param_panel.py" line="1381"/>
         <source>Bed Exclude Area:</source>
         <translation>베드 제외 영역:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="332"/>
+        <source>This value is rounded up to the nearest printable height.</source>
+        <translation>This value is rounded up to the nearest printable height.</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="516"/>
+        <source>Wall Thickness:</source>
+        <translation>Wall Thickness:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="612"/>
+        <source>Bottom Solid Thickness:</source>
+        <translation>Bottom Solid Thickness:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="712"/>
+        <source>Bottom Face Thickness:</source>
+        <translation>Bottom Face Thickness:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="818"/>
+        <source>Floor Thickness:</source>
+        <translation>Floor Thickness:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="918"/>
+        <source>Top Face Thickness:</source>
+        <translation>Top Face Thickness:</translation>
     </message>
 </context>
 <context>
     <name>Preview3D</name>
     <message>
-        <location filename="../src/ui/preview_3d.py" line="1213"/>
+        <location filename="../src/ui/preview_3d.py" line="1209"/>
         <source>Loading 3D preview...</source>
         <translation>3D 미리보기를 불러오는 중...</translation>
     </message>
     <message>
-        <location filename="../src/ui/preview_3d.py" line="1279"/>
+        <location filename="../src/ui/preview_3d.py" line="1275"/>
         <source>外壳</source>
         <translation>외부 쉘</translation>
     </message>
     <message>
-        <location filename="../src/ui/preview_3d.py" line="1284"/>
+        <location filename="../src/ui/preview_3d.py" line="1280"/>
         <source>内壳</source>
         <translation>내부 쉘</translation>
     </message>
     <message>
-        <location filename="../src/ui/preview_3d.py" line="1289"/>
+        <location filename="../src/ui/preview_3d.py" line="1285"/>
         <source>填充</source>
         <translation>채우기</translation>
     </message>
     <message>
-        <location filename="../src/ui/preview_3d.py" line="1294"/>
+        <location filename="../src/ui/preview_3d.py" line="1290"/>
         <source>实边</source>
         <translation>솔리드 엣지</translation>
     </message>
     <message>
-        <location filename="../src/ui/preview_3d.py" line="1299"/>
+        <location filename="../src/ui/preview_3d.py" line="1295"/>
         <source>换色</source>
         <translation>색상 변경</translation>
     </message>
     <message>
-        <location filename="../src/ui/preview_3d.py" line="1304"/>
+        <location filename="../src/ui/preview_3d.py" line="1300"/>
         <source>底面</source>
         <translation>하단면</translation>
     </message>
     <message>
-        <location filename="../src/ui/preview_3d.py" line="1309"/>
+        <location filename="../src/ui/preview_3d.py" line="1305"/>
         <source>顶面</source>
         <translation>상단면</translation>
     </message>
     <message>
-        <location filename="../src/ui/preview_3d.py" line="1317"/>
+        <location filename="../src/ui/preview_3d.py" line="1313"/>
         <source>图层编辑</source>
         <translation>레이어 편집</translation>
     </message>
     <message>
-        <location filename="../src/ui/preview_3d.py" line="1333"/>
+        <location filename="../src/ui/preview_3d.py" line="1329"/>
         <source>层数编辑</source>
         <translation>레이어 수 편집</translation>
     </message>
     <message>
-        <location filename="../src/ui/preview_3d.py" line="1397"/>
+        <location filename="../src/ui/preview_3d.py" line="1393"/>
         <source>正</source>
         <translation>정면</translation>
     </message>
     <message>
-        <location filename="../src/ui/preview_3d.py" line="1402"/>
+        <location filename="../src/ui/preview_3d.py" line="1398"/>
         <source>俯</source>
         <translation>상단</translation>
     </message>
     <message>
-        <location filename="../src/ui/preview_3d.py" line="1407"/>
+        <location filename="../src/ui/preview_3d.py" line="1403"/>
         <source>侧</source>
         <translation>측면</translation>
     </message>
     <message>
-        <location filename="../src/ui/preview_3d.py" line="1412"/>
+        <location filename="../src/ui/preview_3d.py" line="1408"/>
         <source>透</source>
         <translation>아이소</translation>
     </message>
@@ -2146,27 +2139,27 @@ Control points: {points}</source>
 <context>
     <name>PrimeTowerGenerator</name>
     <message>
-        <location filename="../src/core/prime_tower.py" line="107"/>
+        <location filename="../src/core/prime_tower.py" line="108"/>
         <source>Prime tower width and depth must be greater than zero.</source>
         <translation>프라임 타워의 너비와 깊이는 0보다 커야 합니다.</translation>
     </message>
     <message>
-        <location filename="../src/core/prime_tower.py" line="115"/>
+        <location filename="../src/core/prime_tower.py" line="116"/>
         <source>Prime tower infill density must stay between 10% and 80%.</source>
         <translation>프라임 타워의 인필 밀도는 10%에서 80% 사이여야 합니다.</translation>
     </message>
     <message>
-        <location filename="../src/core/prime_tower.py" line="130"/>
+        <location filename="../src/core/prime_tower.py" line="131"/>
         <source>Prime tower size must be large enough for two walls and sparse infill.</source>
         <translation>프라임 타워 크기는 두 개의 벽과 성긴 인필을 수용할 수 있을 만큼 충분히 커야 합니다.</translation>
     </message>
     <message>
-        <location filename="../src/core/prime_tower.py" line="145"/>
+        <location filename="../src/core/prime_tower.py" line="146"/>
         <source>Prime tower must stay within the printer bed.</source>
         <translation>프라임 타워는 프린터 베드 내부에 있어야 합니다.</translation>
     </message>
     <message>
-        <location filename="../src/core/prime_tower.py" line="155"/>
+        <location filename="../src/core/prime_tower.py" line="156"/>
         <source>Prime tower overlaps existing printable geometry.</source>
         <translation>프라임 타워가 기존 인쇄 가능 형상과 겹칩니다.</translation>
     </message>
@@ -2211,7 +2204,7 @@ Control points: {points}</source>
 <context>
     <name>ShellPanel</name>
     <message>
-        <location filename="../src/ui/panels/shell_panel.py" line="347"/>
+        <location filename="../src/ui/panels/shell_panel.py" line="377"/>
         <source>No profile selected</source>
         <translation>프로필이 선택되지 않음</translation>
     </message>
@@ -2407,92 +2400,87 @@ Control points: {points}</source>
 <context>
     <name>UpdateDialog</name>
     <message>
-        <location filename="../src/ui/update_dialog.py" line="70"/>
+        <location filename="../src/ui/update_dialog.py" line="69"/>
         <source>Update Available</source>
         <translation>업데이트 사용 가능</translation>
     </message>
     <message>
-        <location filename="../src/ui/update_dialog.py" line="78"/>
+        <location filename="../src/ui/update_dialog.py" line="77"/>
         <source>A new version of MINGDA SignMaker is available.</source>
         <translation>MINGDA SignMaker의 새 버전을 사용할 수 있습니다.</translation>
     </message>
     <message>
-        <location filename="../src/ui/update_dialog.py" line="85"/>
+        <location filename="../src/ui/update_dialog.py" line="84"/>
         <source>Current version: {version}</source>
         <translation>현재 버전: {version}</translation>
     </message>
     <message>
-        <location filename="../src/ui/update_dialog.py" line="90"/>
+        <location filename="../src/ui/update_dialog.py" line="89"/>
         <source>New version: {version}</source>
         <translation>새 버전: {version}</translation>
     </message>
     <message>
-        <location filename="../src/ui/update_dialog.py" line="93"/>
+        <location filename="../src/ui/update_dialog.py" line="92"/>
         <source>Installer size: {size}</source>
         <translation>설치 프로그램 크기: {size}</translation>
     </message>
     <message>
-        <location filename="../src/ui/update_dialog.py" line="101"/>
+        <location filename="../src/ui/update_dialog.py" line="100"/>
         <source>No release notes provided.</source>
         <translation>릴리스 노트가 제공되지 않았습니다.</translation>
     </message>
     <message>
-        <location filename="../src/ui/update_dialog.py" line="117"/>
-        <source>Open Release Page</source>
-        <translation>릴리스 페이지 열기</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/update_dialog.py" line="122"/>
+        <location filename="../src/ui/update_dialog.py" line="116"/>
         <source>Later</source>
         <translation>나중에</translation>
     </message>
     <message>
-        <location filename="../src/ui/update_dialog.py" line="126"/>
+        <location filename="../src/ui/update_dialog.py" line="120"/>
         <source>Download</source>
         <translation>다운로드</translation>
     </message>
     <message>
-        <location filename="../src/ui/update_dialog.py" line="130"/>
+        <location filename="../src/ui/update_dialog.py" line="124"/>
         <source>Run Installer and Exit</source>
         <translation>설치 프로그램 실행 후 종료</translation>
     </message>
     <message>
-        <location filename="../src/ui/update_dialog.py" line="146"/>
+        <location filename="../src/ui/update_dialog.py" line="136"/>
         <source>Downloading update installer...</source>
         <translation>업데이트 설치 프로그램 다운로드 중...</translation>
     </message>
     <message>
-        <location filename="../src/ui/update_dialog.py" line="173"/>
+        <location filename="../src/ui/update_dialog.py" line="160"/>
         <source>Downloading update installer... {downloaded} / {total}</source>
         <translation>업데이트 설치 프로그램 다운로드 중... {downloaded} / {total}</translation>
     </message>
     <message>
-        <location filename="../src/ui/update_dialog.py" line="181"/>
+        <location filename="../src/ui/update_dialog.py" line="168"/>
         <source>Downloading update installer... {downloaded}</source>
         <translation>업데이트 설치 프로그램 다운로드 중... {downloaded}</translation>
     </message>
     <message>
-        <location filename="../src/ui/update_dialog.py" line="193"/>
+        <location filename="../src/ui/update_dialog.py" line="180"/>
         <source>Update installer downloaded and verified.</source>
         <translation>업데이트 설치 프로그램을 다운로드하고 확인했습니다.</translation>
     </message>
     <message>
-        <location filename="../src/ui/update_dialog.py" line="202"/>
+        <location filename="../src/ui/update_dialog.py" line="189"/>
         <source>Update download failed.</source>
         <translation>업데이트 다운로드에 실패했습니다.</translation>
     </message>
     <message>
-        <location filename="../src/ui/update_dialog.py" line="205"/>
+        <location filename="../src/ui/update_dialog.py" line="192"/>
         <source>Update Download Failed</source>
         <translation>업데이트 다운로드 실패</translation>
     </message>
     <message>
-        <location filename="../src/ui/update_dialog.py" line="214"/>
+        <location filename="../src/ui/update_dialog.py" line="201"/>
         <source>Run Installer</source>
         <translation>설치 프로그램 실행</translation>
     </message>
     <message>
-        <location filename="../src/ui/update_dialog.py" line="216"/>
+        <location filename="../src/ui/update_dialog.py" line="203"/>
         <source>The installer will start and MINGDA SignMaker will close. Continue?</source>
         <translation>설치 프로그램이 시작되고 MINGDA SignMaker가 종료됩니다. 계속하시겠습니까?</translation>
     </message>

@@ -136,7 +136,12 @@ DEFAULT_PRINTER_PROFILE_SPECS = (
     },
 )
 
-DEFAULT_PRINTER_PROFILE_NAME = DEFAULT_PRINTER_PROFILE_SPECS[0]["name"]
+DEFAULT_PRINTER_PROFILE_ID = "builtin-mignda-ad-f4-0p8"
+DEFAULT_PRINTER_PROFILE_SPEC = next(
+    spec for spec in DEFAULT_PRINTER_PROFILE_SPECS
+    if spec["id"] == DEFAULT_PRINTER_PROFILE_ID
+)
+DEFAULT_PRINTER_PROFILE_NAME = DEFAULT_PRINTER_PROFILE_SPEC["name"]
 DEFAULT_PRINTER_PROFILE_ORDER = {
     spec["id"]: index for index, spec in enumerate(DEFAULT_PRINTER_PROFILE_SPECS)
 }
@@ -164,21 +169,21 @@ def serialize_printer_profile(profile: PrinterProfile) -> dict:
 def deserialize_printer_profile(data: dict) -> PrinterProfile:
     """Restore a printer profile from a dict."""
     if not data:
-        bed_width = DEFAULT_PRINTER_PROFILE_SPECS[0]["bed_width"]
-        bed_depth = DEFAULT_PRINTER_PROFILE_SPECS[0]["bed_depth"]
+        bed_width = DEFAULT_PRINTER_PROFILE_SPEC["bed_width"]
+        bed_depth = DEFAULT_PRINTER_PROFILE_SPEC["bed_depth"]
         return PrinterProfile(
             name=DEFAULT_PRINTER_PROFILE_NAME,
             bed_width=bed_width,
             bed_depth=bed_depth,
             bed_exclude_area=default_bed_exclude_area_for_bed(bed_width, bed_depth),
-            nozzle_diameter=DEFAULT_PRINTER_PROFILE_SPECS[0]["nozzle_diameter"],
+            nozzle_diameter=DEFAULT_PRINTER_PROFILE_SPEC["nozzle_diameter"],
         )
     start_gcode, end_gcode = normalize_default_gcode_scripts(
         data.get("start_gcode", DEFAULT_BUILTIN_START_GCODE),
         data.get("end_gcode", DEFAULT_BUILTIN_END_GCODE),
     )
-    bed_width = float(data.get("bed_width", DEFAULT_PRINTER_PROFILE_SPECS[0]["bed_width"]))
-    bed_depth = float(data.get("bed_depth", DEFAULT_PRINTER_PROFILE_SPECS[0]["bed_depth"]))
+    bed_width = float(data.get("bed_width", DEFAULT_PRINTER_PROFILE_SPEC["bed_width"]))
+    bed_depth = float(data.get("bed_depth", DEFAULT_PRINTER_PROFILE_SPEC["bed_depth"]))
     if "bed_exclude_area" in data:
         bed_exclude_area = normalize_bed_exclude_area(data.get("bed_exclude_area"))
     else:
@@ -192,7 +197,7 @@ def deserialize_printer_profile(data: dict) -> PrinterProfile:
         bed_height=float(data.get("bed_height", 100.0)),
         bed_exclude_area=bed_exclude_area,
         nozzle_diameter=float(
-            data.get("nozzle_diameter", DEFAULT_PRINTER_PROFILE_SPECS[0]["nozzle_diameter"])
+            data.get("nozzle_diameter", DEFAULT_PRINTER_PROFILE_SPEC["nozzle_diameter"])
         ),
         filament_diameter=float(data.get("filament_diameter", 1.75)),
         retract_length=float(data.get("retract_length", 2.0)),
@@ -279,7 +284,7 @@ class PrinterProfileManager:
         self._load()
 
     def _build_default_profile(self) -> PrinterProfile:
-        return _build_profile_from_spec(DEFAULT_PRINTER_PROFILE_SPECS[0])
+        return _build_profile_from_spec(DEFAULT_PRINTER_PROFILE_SPEC)
 
     def _build_default_profiles(self) -> List[PrinterProfile]:
         return [_build_profile_from_spec(spec) for spec in DEFAULT_PRINTER_PROFILE_SPECS]

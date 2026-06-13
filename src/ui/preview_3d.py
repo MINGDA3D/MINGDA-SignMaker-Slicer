@@ -56,7 +56,7 @@ from src.core.types import (
     SliceResult,
     BedExcludeAreaInput,
     parse_bed_exclude_area,
-    resolve_shell_wall_thickness,
+    normalize_slice_params,
     is_bottom_face_effective,
     resolve_u_shape_profile_start_z,
 )
@@ -282,13 +282,9 @@ class Preview3DWidget(QOpenGLWidget):
         if result is None or not result.layers or not contours or params is None:
             return []
 
+        params = normalize_slice_params(params)
         path_offset = PathOffset()
-        wall_thickness = resolve_shell_wall_thickness(
-            params.shell.line_width,
-            params.shell.wall_count,
-            params.shell.layer_height,
-            wall_thickness=params.shell.wall_thickness,
-        )
+        wall_thickness = params.shell.wall_thickness
         shell_builder = ShellMeshBuilder(path_offset, wall_thickness)
         step_builder = StepMeshBuilder(path_offset)
         skirt_builder = SkirtMeshBuilder(path_offset)
@@ -1447,11 +1443,11 @@ class Preview3D(QWidget):
         layer_info_layout.setContentsMargins(8, 0, 0, 0)
         layer_info_layout.setSpacing(2)
 
-        self.layer_current_label = QLabel("0")
+        self.layer_current_label = QLabel("Z --")
         self.layer_current_label.setStyleSheet("color: #58A6FF; font-size: 16px; font-weight: bold;")
         layer_info_layout.addWidget(self.layer_current_label)
 
-        self.layer_total_label = QLabel("0")
+        self.layer_total_label = QLabel("")
         self.layer_total_label.setStyleSheet("color: #8B949E; font-size: 10px;")
         layer_info_layout.addWidget(self.layer_total_label)
         self._layer_count_hint = 0
@@ -1597,14 +1593,24 @@ class Preview3D(QWidget):
         self.gl_widget.set_unprintable_regions(bed_exclude_area)
 
     def _update_layer_info(self, total: int, current_index: int):
-        """Refresh current/total layer labels."""
-        if total > 0:
+        """Refresh current Z-height labels without exposing layer counts."""
+        layers = self.gl_widget.layers
+        if total > 0 and layers:
             current_index = max(0, min(current_index, total - 1))
-            self.layer_current_label.setText(str(current_index + 1))
+            layer = layers[current_index]
+            current_z = layer.z_height + layer.layer_height
+            total_height = max(
+                item.z_height + item.layer_height
+                for item in layers
+            )
+            self.layer_current_label.setText(f"Z {current_z:.2f} mm")
+            self.layer_total_label.setText(f"/ {total_height:.2f} mm")
+        elif total > 0:
+            self.layer_current_label.setText("Z --")
+            self.layer_total_label.setText("")
         else:
-            self.layer_current_label.setText("0")
-
-        self.layer_total_label.setText(str(max(0, total)))
+            self.layer_current_label.setText("Z --")
+            self.layer_total_label.setText("")
 
     def _sync_layer_controls(
         self,
