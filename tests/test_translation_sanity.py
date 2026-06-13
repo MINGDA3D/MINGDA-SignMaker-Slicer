@@ -48,7 +48,6 @@ ZH_CN_REQUIRED = {
         "Beveled",
         "U Shape",
         "Custom",
-        "This value is rounded up to the nearest printable height.",
         "Line Width:",
         "Wall Thickness:",
         "Arc Height:",

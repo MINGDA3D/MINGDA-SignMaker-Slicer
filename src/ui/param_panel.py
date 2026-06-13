@@ -32,6 +32,7 @@ from src.core.types import (
     resolve_shell_wall_plan,
     snap_height_up_to_layer_grid,
     wall_line_width_limits,
+    wall_thickness_limits_for_line_width,
     default_bed_exclude_area_for_bed,
     format_bed_exclude_area_for_editor,
     is_default_bed_exclude_area,
@@ -314,6 +315,24 @@ class ParamPanel(QWidget):
         spinbox.setAlignment(Qt.AlignmentFlag.AlignCenter)
         return spinbox
 
+    def _parameter_tooltip(self, meaning: str, requirements: str) -> str:
+        """Build a consistent two-part tooltip for parameter inputs."""
+        return self.tr("Meaning: {meaning}\nInput requirements: {requirements}").format(
+            meaning=meaning,
+            requirements=requirements,
+        )
+
+    def _z_height_tooltip(self, meaning: str, minimum: float, maximum: float) -> str:
+        """Build a tooltip for Z-height values that snap to the layer grid."""
+        return self._parameter_tooltip(
+            meaning,
+            self.tr(
+                "{minimum:.2f}-{maximum:.2f} mm. This value is rounded up to the current "
+                "layer-height grid before preview, STL export, and G-code export. "
+                "Example: 1.0 mm at 0.3 mm layer height becomes 1.2 mm."
+            ).format(minimum=minimum, maximum=maximum),
+        )
+
     def _configure_z_height_spin(
         self,
         spinbox: QDoubleSpinBox,
@@ -321,6 +340,7 @@ class ParamPanel(QWidget):
         maximum: float,
         value: float,
         enabled: bool = True,
+        meaning: Optional[str] = None,
     ) -> None:
         """Initialize a printable Z-height spinbox in millimeters."""
         spinbox.setRange(minimum, maximum)
@@ -329,7 +349,11 @@ class ParamPanel(QWidget):
         spinbox.setSuffix(" mm")
         spinbox.setEnabled(enabled)
         spinbox.setToolTip(
-            self.tr("This value is rounded up to the nearest printable height.")
+            self._z_height_tooltip(
+                meaning or self.tr("Z-height used by this feature."),
+                minimum,
+                maximum,
+            )
         )
 
     def _current_layer_height(self) -> float:
@@ -394,6 +418,56 @@ class ParamPanel(QWidget):
             self.wall_thickness_spin.setSingleStep(
                 max(float(self.width_line_spin.value()), 0.01)
             )
+            self._sync_wall_tooltips()
+
+    def _sync_wall_tooltips(self) -> None:
+        """Refresh tooltips whose valid ranges depend on nozzle, layer height, or line width."""
+        if hasattr(self, "width_line_spin"):
+            min_line_width, max_line_width = wall_line_width_limits(
+                self._current_nozzle_diameter(),
+                self._current_layer_height(),
+            )
+            self.width_line_spin.setToolTip(
+                self._parameter_tooltip(
+                    self.tr("Actual extrusion width used for each shell wall path."),
+                    self.tr(
+                        "Current printable range: {minimum:.2f}-{maximum:.2f} mm. "
+                        "Formula: min = max(0.75 * nozzle diameter, 1.20 * layer height); "
+                        "max = 1.50 * nozzle diameter. Values outside this range block slicing and export."
+                    ).format(minimum=min_line_width, maximum=max_line_width),
+                )
+            )
+
+        if hasattr(self, "width_line_spin") and hasattr(self, "wall_thickness_spin"):
+            min_wall_thickness, max_wall_thickness = wall_thickness_limits_for_line_width(
+                self.width_line_spin.value()
+            )
+            self.wall_thickness_spin.setToolTip(
+                self._parameter_tooltip(
+                    self.tr("Final total XY shell wall thickness."),
+                    self.tr(
+                        "Valid printable range for the current Line Width: {minimum:.2f}-{maximum:.2f} mm. "
+                        "The value is rounded up to a whole multiple of Line Width; "
+                        "the internal wall path count may not exceed 100. Values above the range block slicing and export."
+                    ).format(minimum=min_wall_thickness, maximum=max_wall_thickness),
+                )
+            )
+
+    def _color_change_height_tooltip(self) -> str:
+        return self._parameter_tooltip(
+            self.tr("Z height where the printer should run the selected color-change macro."),
+            self.tr(
+                "{minimum:.2f}-100.00 mm. The value is rounded up to the current layer-height grid before preview and G-code export."
+            ).format(minimum=self._current_layer_height()),
+        )
+
+    def _sync_color_change_row_tooltips(self) -> None:
+        if not hasattr(self, "color_change_table"):
+            return
+        for row in range(self.color_change_table.rowCount()):
+            height_spin = self.color_change_table.cellWidget(row, 0)
+            if isinstance(height_spin, QDoubleSpinBox):
+                height_spin.setToolTip(self._color_change_height_tooltip())
 
     def _snap_color_change_rows_to_layer_grid(self) -> None:
         for row in range(self.color_change_table.rowCount()):
@@ -456,6 +530,9 @@ class ParamPanel(QWidget):
             self.connected_height.setSingleStep(layer_height)
             self.connected_base_height.setSingleStep(layer_height)
 
+        self._sync_wall_tooltips()
+        self._sync_color_change_row_tooltips()
+
     def _on_layer_height_changed(self, value: float):
         """Keep Line Width synced to the current Layer Height."""
         if hasattr(self, "width_line_spin"):
@@ -484,6 +561,13 @@ class ParamPanel(QWidget):
         self.height_spin.setValue(50.0)
         self.height_spin.setSingleStep(0.1)
         self.height_spin.setSuffix(" mm")
+        self.height_spin.setToolTip(
+            self._z_height_tooltip(
+                self.tr("Total printed height of the sign shell."),
+                0.1,
+                100.0,
+            )
+        )
         self.height_spin.valueChanged.connect(self._on_param_changed)
         self.height_spin.valueChanged.connect(self._update_step_ranges)
         layout.addRow(self.tr("Shell Height:"), self.height_spin)
@@ -494,6 +578,15 @@ class ParamPanel(QWidget):
         self.layer_height_spin.setValue(0.3)
         self.layer_height_spin.setSingleStep(0.05)
         self.layer_height_spin.setSuffix(" mm")
+        self.layer_height_spin.setToolTip(
+            self._parameter_tooltip(
+                self.tr("Vertical thickness of each printed layer; it also defines the Z snapping grid."),
+                self.tr(
+                    "0.10-1.00 mm. Smaller values improve vertical detail and increase print time. "
+                    "Changing this value rounds Z-height parameters up to the new grid and recomputes the default Line Width."
+                ),
+            )
+        )
         self.layer_height_spin.valueChanged.connect(self._on_layer_height_changed)
         layout.addRow(self.tr("Layer Height:"), self.layer_height_spin)
 
@@ -514,6 +607,7 @@ class ParamPanel(QWidget):
         self.wall_thickness_spin.setSuffix(" mm")
         self.wall_thickness_spin.valueChanged.connect(self._on_param_changed)
         layout.addRow(self.tr("Wall Thickness:"), self.wall_thickness_spin)
+        self._sync_wall_tooltips()
 
         return group
 
@@ -572,6 +666,7 @@ class ParamPanel(QWidget):
             0.0,
             50.0,
             9.0,
+            meaning=self.tr("Straight bottom section height used for the baseplate side of the shell."),
         )
         self.baseplate_spin.valueChanged.connect(self._on_param_changed)
         bevel_layout.addRow(self.tr("Baseplate Thickness:"), self.baseplate_spin)
@@ -583,6 +678,7 @@ class ParamPanel(QWidget):
             0.0,
             20.0,
             9.0,
+            meaning=self.tr("Straight top section height reserved for the face panel side of the shell."),
         )
         self.panel_thickness_spin.valueChanged.connect(self._on_param_changed)
         bevel_layout.addRow(self.tr("Panel Thickness:"), self.panel_thickness_spin)
@@ -602,12 +698,19 @@ class ParamPanel(QWidget):
             0.1,
             50.0,
             6.0,
+            meaning=self.tr("Vertical height of the curved U-shaped edge profile."),
         )
         self.u_arc_height_spin.valueChanged.connect(self._on_param_changed)
         u_shape_layout.addRow(self.tr("Arc Height:"), self.u_arc_height_spin)
 
         self.u_bottom_layers_spin = self._create_double_spinbox()
-        self._configure_z_height_spin(self.u_bottom_layers_spin, 0.0, 30.0, 0.9)
+        self._configure_z_height_spin(
+            self.u_bottom_layers_spin,
+            0.0,
+            30.0,
+            0.9,
+            meaning=self.tr("Solid bottom thickness under the U-shaped profile."),
+        )
         self.u_bottom_layers_spin.valueChanged.connect(self._on_param_changed)
         u_shape_layout.addRow(self.tr("Bottom Solid Thickness:"), self.u_bottom_layers_spin)
 
@@ -707,7 +810,14 @@ class ParamPanel(QWidget):
 
         # 底面厚度
         self.bottom_face_thickness = self._create_double_spinbox()
-        self._configure_z_height_spin(self.bottom_face_thickness, 0.1, 10.0, 0.9, enabled=False)
+        self._configure_z_height_spin(
+            self.bottom_face_thickness,
+            0.1,
+            10.0,
+            0.9,
+            enabled=False,
+            meaning=self.tr("Printed solid bottom face thickness used to close the shell bottom."),
+        )
         self.bottom_face_thickness.valueChanged.connect(self._on_param_changed)
         form.addRow(self.tr("Bottom Face Thickness:"), self.bottom_face_thickness)
 
@@ -717,6 +827,12 @@ class ParamPanel(QWidget):
         self.bottom_face_screw_hole_diameter.setSuffix(" mm")
         self.bottom_face_screw_hole_diameter.setValue(5.0)
         self.bottom_face_screw_hole_diameter.setEnabled(False)
+        self.bottom_face_screw_hole_diameter.setToolTip(
+            self._parameter_tooltip(
+                self.tr("Diameter of screw holes generated in the bottom face."),
+                self.tr("0.10-100.00 mm. Use a value larger than the screw shaft and smaller than nearby wall spacing."),
+            )
+        )
         self.bottom_face_screw_hole_diameter.valueChanged.connect(self._on_param_changed)
         form.addRow(self.tr("Screw Hole Diameter:"), self.bottom_face_screw_hole_diameter)
 
@@ -804,16 +920,36 @@ class ParamPanel(QWidget):
         self.light_slot_width.setSingleStep(0.5)
         self.light_slot_width.setSuffix(" mm")
         self.light_slot_width.setEnabled(False)
+        self.light_slot_width.setToolTip(
+            self._parameter_tooltip(
+                self.tr("XY width of the LED light slot cut along eligible contours."),
+                self.tr("0.50-50.00 mm. Choose a value that fits the LED strip and leaves enough wall material."),
+            )
+        )
         self.light_slot_width.valueChanged.connect(self._on_param_changed)
         form.addRow(self.tr("Slot Width:"), self.light_slot_width)
 
         self.light_slot_depth = self._create_double_spinbox()
-        self._configure_z_height_spin(self.light_slot_depth, 0.1, 20.0, 6.0, enabled=False)
+        self._configure_z_height_spin(
+            self.light_slot_depth,
+            0.1,
+            20.0,
+            6.0,
+            enabled=False,
+            meaning=self.tr("Vertical depth of the light slot from the shell opening side."),
+        )
         self.light_slot_depth.valueChanged.connect(self._on_param_changed)
         form.addRow(self.tr("Slot Depth:"), self.light_slot_depth)
 
         self.light_slot_floor_layers = self._create_double_spinbox()
-        self._configure_z_height_spin(self.light_slot_floor_layers, 0.1, 20.0, 1.5, enabled=False)
+        self._configure_z_height_spin(
+            self.light_slot_floor_layers,
+            0.1,
+            20.0,
+            1.5,
+            enabled=False,
+            meaning=self.tr("Solid material thickness left under the light slot floor."),
+        )
         self.light_slot_floor_layers.valueChanged.connect(self._on_param_changed)
         form.addRow(self.tr("Floor Thickness:"), self.light_slot_floor_layers)
 
@@ -823,6 +959,12 @@ class ParamPanel(QWidget):
         self.light_slot_wall_gap.setSingleStep(0.1)
         self.light_slot_wall_gap.setSuffix(" mm")
         self.light_slot_wall_gap.setEnabled(False)
+        self.light_slot_wall_gap.setToolTip(
+            self._parameter_tooltip(
+                self.tr("Extra XY clearance between the light slot and nearby shell walls."),
+                self.tr("0.00-20.00 mm. Use 0 for no extra clearance; larger values move slots farther from walls."),
+            )
+        )
         self.light_slot_wall_gap.valueChanged.connect(self._on_param_changed)
         form.addRow(self.tr("Wall Gap:"), self.light_slot_wall_gap)
 
@@ -913,6 +1055,7 @@ class ParamPanel(QWidget):
             10.0,
             2.4,
             enabled=False,
+            meaning=self.tr("Printed solid top face thickness used to close the shell top."),
         )
         self.top_face_thickness.valueChanged.connect(self._on_param_changed)
         form.addRow(self.tr("Top Face Thickness:"), self.top_face_thickness)
@@ -1095,6 +1238,7 @@ class ParamPanel(QWidget):
         height_spin.setSuffix(" mm")
         height_spin.setValue(change_point.height_mm)
         height_spin.setEnabled(self.color_enabled.isChecked())
+        height_spin.setToolTip(self._color_change_height_tooltip())
         height_spin.valueChanged.connect(self._on_color_change_row_changed)
         self.color_change_table.setCellWidget(row, 0, height_spin)
 
@@ -1102,6 +1246,12 @@ class ParamPanel(QWidget):
         macro_spin.setRange(0, 999)
         macro_spin.setValue(change_point.macro_index)
         macro_spin.setEnabled(self.color_enabled.isChecked())
+        macro_spin.setToolTip(
+            self._parameter_tooltip(
+                self.tr("Macro index inserted into the configured color-change command template."),
+                self.tr("0-999. With the default template T{index}, value 3 outputs T3."),
+            )
+        )
         macro_spin.valueChanged.connect(self._on_color_change_row_changed)
         self.color_change_table.setCellWidget(row, 1, macro_spin)
 
@@ -1594,6 +1744,7 @@ class ParamPanel(QWidget):
         self._update_prime_tower_coordinate_ranges()
         self._update_script_summaries()
         self._update_color_change_summary()
+        self._sync_wall_tooltips()
 
     def _apply_shell_defaults_for_profile_nozzle_change(
         self,
@@ -1700,6 +1851,7 @@ class ParamPanel(QWidget):
             previous_nozzle_diameter,
             profile.nozzle_diameter,
         )
+        self._sync_wall_tooltips()
         self._update_profile_action_buttons()
         self._on_param_changed()
 
@@ -1734,6 +1886,7 @@ class ParamPanel(QWidget):
             self._refresh_default_bed_exclude_area_for_current_bed()
         self._update_prime_tower_coordinate_ranges()
         self._persist_profile_form_edits()
+        self._sync_wall_tooltips()
         self._on_param_changed()
 
     def _prompt_profile_name(self, title: str, text: str, value: str = "") -> Optional[str]:
@@ -1926,6 +2079,15 @@ class ParamPanel(QWidget):
         self.panel_step_height.setSingleStep(0.1)
         self.panel_step_height.setSuffix(" mm")
         self.panel_step_height.setEnabled(False)
+        self.panel_step_height.setToolTip(
+            self._parameter_tooltip(
+                self.tr("Z height where the top panel step or V-groove is generated."),
+                self.tr(
+                    "Current range is automatically constrained between half of Shell Height and Shell Height. "
+                    "The value is rounded up to the current layer-height grid before preview, STL export, and G-code export."
+                ),
+            )
+        )
         self.panel_step_height.valueChanged.connect(self._on_param_changed)
         form1.addRow(self.tr("Step Height:"), self.panel_step_height)
 
@@ -1934,6 +2096,12 @@ class ParamPanel(QWidget):
         self.panel_step_width.setValue(1.8)
         self.panel_step_width.setSuffix(" mm")
         self.panel_step_width.setEnabled(False)
+        self.panel_step_width.setToolTip(
+            self._parameter_tooltip(
+                self.tr("XY width of the top panel step or V-groove."),
+                self.tr("0.50-20.00 mm. Choose a value wide enough for panel seating but not wider than the local stroke."),
+            )
+        )
         self.panel_step_width.valueChanged.connect(self._on_param_changed)
         form1.addRow(self.tr("Step Width:"), self.panel_step_width)
 
@@ -1963,7 +2131,14 @@ class ParamPanel(QWidget):
 
         form2 = QFormLayout()
         self.baseplate_step_height = self._create_double_spinbox()
-        self._configure_z_height_spin(self.baseplate_step_height, 0.1, 50.0, 3.0, enabled=False)
+        self._configure_z_height_spin(
+            self.baseplate_step_height,
+            0.1,
+            50.0,
+            3.0,
+            enabled=False,
+            meaning=self.tr("Z height where the bottom baseplate step or V-groove is generated."),
+        )
         self.baseplate_step_height.valueChanged.connect(self._on_param_changed)
         form2.addRow(self.tr("Step Height:"), self.baseplate_step_height)
 
@@ -1972,6 +2147,12 @@ class ParamPanel(QWidget):
         self.baseplate_step_width.setValue(1.8)
         self.baseplate_step_width.setSuffix(" mm")
         self.baseplate_step_width.setEnabled(False)
+        self.baseplate_step_width.setToolTip(
+            self._parameter_tooltip(
+                self.tr("XY width of the bottom baseplate step or V-groove."),
+                self.tr("0.50-20.00 mm. Choose a value wide enough for baseplate seating but not wider than the local stroke."),
+            )
+        )
         self.baseplate_step_width.valueChanged.connect(self._on_param_changed)
         form2.addRow(self.tr("Step Width:"), self.baseplate_step_width)
 
@@ -2026,6 +2207,15 @@ class ParamPanel(QWidget):
         panel_max_mm = max(panel_min_mm, shell_height_mm)
         self.panel_step_height.setRange(panel_min_mm, panel_max_mm)
         self.panel_step_height.setSingleStep(layer_height)
+        self.panel_step_height.setToolTip(
+            self._parameter_tooltip(
+                self.tr("Z height where the top panel step or V-groove is generated."),
+                self.tr(
+                    "Current range: {minimum:.2f}-{maximum:.2f} mm. "
+                    "The value is rounded up to the current layer-height grid before preview, STL export, and G-code export."
+                ).format(minimum=panel_min_mm, maximum=panel_max_mm),
+            )
+        )
         if self.panel_step_height.value() < panel_min_mm:
             self.panel_step_height.setValue(panel_min_mm)
         elif self.panel_step_height.value() > panel_max_mm:
@@ -2035,6 +2225,15 @@ class ParamPanel(QWidget):
         baseplate_max_mm = max(layer_height, half_max * layer_height)
         self.baseplate_step_height.setRange(layer_height, baseplate_max_mm)
         self.baseplate_step_height.setSingleStep(layer_height)
+        self.baseplate_step_height.setToolTip(
+            self._parameter_tooltip(
+                self.tr("Z height where the bottom baseplate step or V-groove is generated."),
+                self.tr(
+                    "Current range: {minimum:.2f}-{maximum:.2f} mm. "
+                    "The value is rounded up to the current layer-height grid before preview, STL export, and G-code export."
+                ).format(minimum=layer_height, maximum=baseplate_max_mm),
+            )
+        )
         if self.baseplate_step_height.value() < layer_height:
             self.baseplate_step_height.setValue(layer_height)
         elif self.baseplate_step_height.value() > baseplate_max_mm:
@@ -2083,6 +2282,13 @@ class ParamPanel(QWidget):
         self.skirt_height.setSingleStep(0.1)
         self.skirt_height.setSuffix(" mm")
         self.skirt_height.setEnabled(False)
+        self.skirt_height.setToolTip(
+            self._z_height_tooltip(
+                self.tr("Printed vertical height of the anti-warping skirt around the shell."),
+                0.2,
+                10.0,
+            )
+        )
         self.skirt_height.valueChanged.connect(self._on_param_changed)
         form.addRow(self.tr("Skirt Height:"), self.skirt_height)
 
@@ -2100,6 +2306,12 @@ class ParamPanel(QWidget):
         self.skirt_offset.setSingleStep(0.1)
         self.skirt_offset.setSuffix(" mm")
         self.skirt_offset.setEnabled(False)
+        self.skirt_offset.setToolTip(
+            self._parameter_tooltip(
+                self.tr("XY breakaway gap between the shell wall and the skirt."),
+                self.tr("0.00-1.00 mm. Use 0 for a touching skirt; larger values make removal easier."),
+            )
+        )
         self.skirt_offset.valueChanged.connect(self._on_param_changed)
         form.addRow(self.tr("Wall Gap:"), self.skirt_offset)
 
@@ -2168,6 +2380,12 @@ class ParamPanel(QWidget):
         self.connected_width.setValue(5)
         self.connected_width.setSuffix(" mm")
         self.connected_width.setEnabled(False)
+        self.connected_width.setToolTip(
+            self._parameter_tooltip(
+                self.tr("XY width of the bridge that connects neighboring letters."),
+                self.tr("1.00-50.00 mm. Choose a value wide enough for strength without covering visible letter gaps."),
+            )
+        )
         self.connected_width.valueChanged.connect(self._on_param_changed)
         form.addRow(self.tr("Connection Width:"), self.connected_width)
 
@@ -2179,6 +2397,7 @@ class ParamPanel(QWidget):
             20.0,
             4.5,
             enabled=False,
+            meaning=self.tr("Vertical bevel height used on the connected-letter bridge."),
         )
         self.connected_height.valueChanged.connect(self._on_param_changed)
         form.addRow(self.tr("Bevel Height:"), self.connected_height)
@@ -2191,6 +2410,7 @@ class ParamPanel(QWidget):
             20.0,
             4.5,
             enabled=False,
+            meaning=self.tr("Vertical base height of the connected-letter bridge before beveling."),
         )
         self.connected_base_height.valueChanged.connect(self._on_param_changed)
         form.addRow(self.tr("Base Height:"), self.connected_base_height)
@@ -2201,6 +2421,12 @@ class ParamPanel(QWidget):
         self.connected_support_offset.setValue(2.5)
         self.connected_support_offset.setSuffix(" mm")
         self.connected_support_offset.setEnabled(False)
+        self.connected_support_offset.setToolTip(
+            self._parameter_tooltip(
+                self.tr("XY offset used to place extra bridge support away from the detected connection point."),
+                self.tr("0.00-10.00 mm. Use smaller values for tight letter gaps and larger values for stronger support."),
+            )
+        )
         self.connected_support_offset.valueChanged.connect(self._on_param_changed)
         form.addRow(self.tr("Support Offset:"), self.connected_support_offset)
 

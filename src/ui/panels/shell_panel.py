@@ -66,6 +66,10 @@ class ShellPanel(QWidget):
         self.height_spin.setRange(1, 200)
         self.height_spin.setValue(30.0)
         self.height_spin.setSuffix(" mm")
+        self.height_spin.setToolTip(
+            "含义：字壳最终打印总高度。\n"
+            "输入要求：1-200 mm；会按当前层高向上吸附到可打印高度。"
+        )
         basic_layout.addRow("字壳高度:", self.height_spin)
 
         self.layer_height_spin = QDoubleSpinBox()
@@ -73,6 +77,10 @@ class ShellPanel(QWidget):
         self.layer_height_spin.setValue(0.3)
         self.layer_height_spin.setSingleStep(0.1)
         self.layer_height_spin.setSuffix(" mm")
+        self.layer_height_spin.setToolTip(
+            "含义：每一层的 Z 向厚度，也是所有高度参数的吸附网格。\n"
+            "输入要求：0.1-1.0 mm；数值越小细节越高但打印时间越长。"
+        )
         basic_layout.addRow("层高:", self.layer_height_spin)
 
         self.line_width_spin = QDoubleSpinBox()
@@ -80,6 +88,10 @@ class ShellPanel(QWidget):
         self.line_width_spin.setValue(0.6)
         self.line_width_spin.setSingleStep(0.05)
         self.line_width_spin.setSuffix(" mm")
+        self.line_width_spin.setToolTip(
+            "含义：每一道墙路径实际使用的挤出线宽。\n"
+            "输入要求：需符合喷嘴和层高的安全线宽范围；超出范围会阻止切片/导出。"
+        )
         basic_layout.addRow("线宽:", self.line_width_spin)
 
         self.wall_thickness_spin = QDoubleSpinBox()
@@ -87,6 +99,7 @@ class ShellPanel(QWidget):
         self.wall_thickness_spin.setValue(1.2)
         self.wall_thickness_spin.setSingleStep(self.line_width_spin.value())
         self.wall_thickness_spin.setSuffix(" mm")
+        self._update_wall_thickness_tooltip()
         basic_layout.addRow("壁厚:", self.wall_thickness_spin)
 
         layout.addWidget(basic_group)
@@ -104,18 +117,30 @@ class ShellPanel(QWidget):
         self.bevel_width_spin.setRange(1, 50)
         self.bevel_width_spin.setValue(5.0)
         self.bevel_width_spin.setSuffix(" mm")
+        self.bevel_width_spin.setToolTip(
+            "含义：斜边在 XY 方向收缩或扩展的宽度。\n"
+            "输入要求：1-50 mm；不应大于局部笔画宽度。"
+        )
         bevel_layout.addRow("斜边宽度:", self.bevel_width_spin)
 
         self.baseplate_spin = QDoubleSpinBox()
         self.baseplate_spin.setRange(0, 50)
         self.baseplate_spin.setValue(10.0)
         self.baseplate_spin.setSuffix(" mm")
+        self.baseplate_spin.setToolTip(
+            "含义：底板侧直边区域的高度。\n"
+            "输入要求：0-50 mm；会按当前层高向上吸附。"
+        )
         bevel_layout.addRow("底板厚度:", self.baseplate_spin)
 
         self.panel_spin = QDoubleSpinBox()
         self.panel_spin.setRange(0, 20)
         self.panel_spin.setValue(3.0)
         self.panel_spin.setSuffix(" mm")
+        self.panel_spin.setToolTip(
+            "含义：面板侧直边区域的高度。\n"
+            "输入要求：0-20 mm；会按当前层高向上吸附。"
+        )
         bevel_layout.addRow("面板厚度:", self.panel_spin)
 
         layout.addWidget(self.bevel_group)
@@ -163,6 +188,10 @@ class ShellPanel(QWidget):
         self.wall_offset_spin.setRange(0, 5)
         self.wall_offset_spin.setValue(0.8)
         self.wall_offset_spin.setSuffix(" mm")
+        self.wall_offset_spin.setToolTip(
+            "含义：墙路径相对轮廓的 XY 偏移距离。\n"
+            "输入要求：0-5 mm；过大可能导致窄笔画区域无法生成。"
+        )
         wall_layout.addRow("走线偏移:", self.wall_offset_spin)
 
         layout.addWidget(wall_group)
@@ -175,11 +204,19 @@ class ShellPanel(QWidget):
         self.safety_offset_spin.setRange(0, 100)
         self.safety_offset_spin.setValue(20.0)
         self.safety_offset_spin.setSuffix(" mm")
+        self.safety_offset_spin.setToolTip(
+            "含义：预打边线距离模型外轮廓的 XY 偏移。\n"
+            "输入要求：0-100 mm；需要确保边线仍在平台范围内。"
+        )
         safety_layout.addRow("边线偏移:", self.safety_offset_spin)
 
         self.safety_count_spin = QSpinBox()
         self.safety_count_spin.setRange(0, 5)
         self.safety_count_spin.setValue(1)
+        self.safety_count_spin.setToolTip(
+            "含义：预打边线的圈数。\n"
+            "输入要求：0-5；0 表示不生成预打边线。"
+        )
         safety_layout.addRow("边线次数:", self.safety_count_spin)
 
         layout.addWidget(safety_group)
@@ -221,7 +258,18 @@ class ShellPanel(QWidget):
 
     def _on_line_width_changed(self, value: float):
         self.wall_thickness_spin.setSingleStep(max(float(value), 0.01))
+        self._update_wall_thickness_tooltip()
         self._emit_params()
+
+    def _update_wall_thickness_tooltip(self):
+        if not hasattr(self, "wall_thickness_spin") or not hasattr(self, "line_width_spin"):
+            return
+        line_width = max(float(self.line_width_spin.value()), 0.001)
+        self.wall_thickness_spin.setToolTip(
+            "含义：字壳最终 XY 总壁厚。\n"
+            f"输入要求：当前线宽下可打印范围为 {line_width:.2f}-{line_width * 100:.2f} mm；"
+            "会向上吸附到线宽的整数倍，内部墙路径数最多 100。"
+        )
 
     def _emit_params(self):
         self._params.height = self.height_spin.value()
@@ -292,6 +340,7 @@ class ShellPanel(QWidget):
         )
         self.wall_thickness_spin.setValue(self._params.wall_thickness)
         self.wall_thickness_spin.setSingleStep(max(self.line_width_spin.value(), 0.01))
+        self._update_wall_thickness_tooltip()
         self.wall_offset_spin.setValue(self._params.wall_offset)
         self.bevel_width_spin.setValue(self._params.bevel_width)
         self.baseplate_spin.setValue(self._params.baseplate_thickness)

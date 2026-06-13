@@ -170,6 +170,45 @@ def test_user_visible_param_labels_hide_layer_counts_and_wall_loops(qapp):
     assert panel.bottom_face_thickness.suffix() == " mm"
 
 
+def test_manufacturing_inputs_have_clear_tooltips(qapp):
+    panel = ParamPanel()
+    _select_nozzle_profile(panel, 0.8)
+    panel.layer_height_spin.setValue(0.3)
+
+    controls = [
+        panel.height_spin,
+        panel.layer_height_spin,
+        panel.width_line_spin,
+        panel.wall_thickness_spin,
+        panel.baseplate_spin,
+        panel.panel_thickness_spin,
+        panel.u_arc_height_spin,
+        panel.u_bottom_layers_spin,
+        panel.bottom_face_thickness,
+        panel.light_slot_depth,
+        panel.light_slot_floor_layers,
+        panel.top_face_thickness,
+        panel.panel_step_height,
+        panel.baseplate_step_height,
+        panel.skirt_height,
+        panel.connected_height,
+        panel.connected_base_height,
+    ]
+
+    for control in controls:
+        tooltip = control.toolTip()
+        assert "Meaning:" in tooltip
+        assert "Input requirements:" in tooltip
+
+    assert "Current printable range: 0.60-1.20 mm" in panel.width_line_spin.toolTip()
+    assert "0.60-60.00 mm" in panel.wall_thickness_spin.toolTip()
+    assert "rounded up to the current layer-height grid" in panel.bottom_face_thickness.toolTip()
+
+    panel.width_line_spin.setValue(1.1)
+
+    assert "1.10-110.00 mm" in panel.wall_thickness_spin.toolTip()
+
+
 def test_primary_groups_follow_requested_order(qapp):
     panel = ParamPanel()
 
