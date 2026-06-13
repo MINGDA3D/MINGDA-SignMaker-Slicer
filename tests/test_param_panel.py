@@ -387,6 +387,57 @@ def test_primary_tabs_default_to_shape_and_switch_between_pages(qapp):
     assert panel.primary_tabs.currentWidget() is panel._section_widgets_by_key["print"]
 
 
+def test_primary_tabs_and_parameter_icons_are_loaded(qapp):
+    panel = ParamPanel()
+
+    assert all(
+        not panel.primary_tabs.tabIcon(index).isNull()
+        for index in range(panel.primary_tabs.count())
+    )
+    for icon_name in (
+        "shape",
+        "machine",
+        "print",
+        "height",
+        "step",
+        "skirt",
+        "speed",
+        "temperature",
+        "gcode",
+    ):
+        assert not panel._icon(icon_name).isNull()
+
+
+def test_primary_tabs_are_equal_width_with_centered_custom_paint(qapp):
+    panel = ParamPanel()
+    panel.resize(400, 260)
+    panel.show()
+    QApplication.processEvents()
+
+    tab_bar = panel.primary_tabs.tabBar()
+    widths = [
+        tab_bar.tabRect(index).width()
+        for index in range(tab_bar.count())
+    ]
+
+    assert tab_bar.expanding() is True
+    assert max(widths) - min(widths) <= 1
+    assert not tab_bar.grab().isNull()
+
+
+def test_parameter_icon_labels_preserve_original_text(qapp):
+    panel = ParamPanel()
+
+    visible_text = {
+        label.text()
+        for label in panel.findChildren(QLabel)
+    }
+
+    assert "Shell Height:" in visible_text
+    assert "Step Height:" in visible_text
+    assert "Skirt Speed:" in visible_text
+
+
 def test_prime_tower_controls_roundtrip_through_print_settings(qapp):
     panel = ParamPanel()
     params = SliceParams()

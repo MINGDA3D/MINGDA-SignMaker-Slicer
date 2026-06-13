@@ -20,9 +20,13 @@ from PySide6.QtWidgets import (
     QPushButton, QFormLayout, QRadioButton, QButtonGroup,
     QSpinBox, QDoubleSpinBox, QAbstractSpinBox, QTableWidget,
     QTableWidgetItem, QHeaderView, QAbstractItemView, QInputDialog,
-    QSizePolicy, QMessageBox, QLineEdit, QPlainTextEdit, QTabWidget
+    QSizePolicy, QMessageBox, QLineEdit, QPlainTextEdit, QTabWidget, QLayout,
+    QTabBar,
 )
-from PySide6.QtCore import Qt, Signal, QCoreApplication
+from PySide6.QtCore import Qt, Signal, QCoreApplication, QSize
+from PySide6.QtGui import QIcon, QPainter, QColor, QCursor, QFont
+
+from resources import rc_resources  # noqa: F401
 
 from src.core.types import (
     SliceParams, EdgeType, ExtruderType, EdgeDirection, BevelDirection,
@@ -54,6 +58,68 @@ from src.ui.widgets import (
     GuardedSpinBox,
 )
 from .theme import COLORS
+
+
+class _IconTextTabBar(QTabBar):
+    """Draw equal-width tabs with the icon and text centered as one group."""
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setMouseTracking(True)
+
+    def tabSizeHint(self, index):  # noqa: N802 - Qt override
+        size = super().tabSizeHint(index)
+        if self.count() > 0 and self.width() > 0:
+            size.setWidth(max(1, self.width() // self.count()))
+        return size
+
+    def paintEvent(self, event):  # noqa: N802 - Qt override
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing, True)
+
+        hovered_index = self.tabAt(self.mapFromGlobal(QCursor.pos()))
+        icon_size = self.iconSize()
+        spacing = 8
+
+        for index in range(self.count()):
+            rect = self.tabRect(index)
+            selected = index == self.currentIndex()
+            hovered = index == hovered_index and not selected
+
+            if hovered:
+                painter.fillRect(rect, QColor(COLORS.editor_list_item_bg))
+
+            font = self.font()
+            font.setWeight(QFont.Weight.DemiBold if selected else QFont.Weight.Medium)
+            painter.setFont(font)
+            painter.setPen(QColor(COLORS.text_primary if selected else COLORS.text_muted))
+
+            text = self.tabText(index)
+            text_width = painter.fontMetrics().horizontalAdvance(text)
+            icon_width = icon_size.width()
+            group_width = icon_width + spacing + text_width
+            group_x = rect.x() + max(0, (rect.width() - group_width) // 2)
+            content_height = max(0, rect.height() - 2)
+            icon_y = rect.y() + max(0, (content_height - icon_size.height()) // 2)
+
+            pixmap = self.tabIcon(index).pixmap(icon_size)
+            painter.drawPixmap(group_x, icon_y, pixmap)
+
+            text_rect = rect.adjusted(
+                group_x + icon_width + spacing - rect.x(),
+                0,
+                0,
+                -2,
+            )
+            painter.drawText(
+                text_rect,
+                Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter,
+                text,
+            )
+
+            if selected:
+                underline_rect = rect.adjusted(0, rect.height() - 2, 0, 0)
+                painter.fillRect(underline_rect, QColor(COLORS.editor_canvas_toolbar_accent))
 
 
 class ParamPanel(QWidget):
@@ -167,6 +233,7 @@ class ParamPanel(QWidget):
         self._primary_sections = [
             {
                 "key": "shape",
+                "icon": "shape",
                 "title": self.tr("Shape"),
                 "tooltip": self.tr(
                     "Geometry and sign shell settings"
@@ -175,6 +242,7 @@ class ParamPanel(QWidget):
             },
             {
                 "key": "machine",
+                "icon": "machine",
                 "title": self.tr("Machine"),
                 "tooltip": self.tr(
                     "Printer profile and hardware settings"
@@ -183,6 +251,7 @@ class ParamPanel(QWidget):
             },
             {
                 "key": "print",
+                "icon": "print",
                 "title": self.tr("Print"),
                 "tooltip": self.tr(
                     "Speed, temperature, cooling, color, and G-code settings"
@@ -192,12 +261,14 @@ class ParamPanel(QWidget):
         ]
 
         self.primary_tabs = QTabWidget()
+        self.primary_tabs.setTabBar(_IconTextTabBar(self.primary_tabs))
         self.primary_tabs.setObjectName("primarySettingsTabs")
         self.primary_tabs.setDocumentMode(True)
         self.primary_tabs.setTabPosition(QTabWidget.TabPosition.North)
         self.primary_tabs.setUsesScrollButtons(False)
         self.primary_tabs.tabBar().setExpanding(True)
         self.primary_tabs.tabBar().setDrawBase(False)
+        self.primary_tabs.setIconSize(QSize(22, 22))
         self.primary_tabs.setStyleSheet(f"""
             QTabWidget#primarySettingsTabs {{
                 background-color: {COLORS.editor_sidebar_left_bg};
@@ -228,8 +299,8 @@ class ParamPanel(QWidget):
                 color: {COLORS.text_muted};
                 font-size: 12px;
                 font-weight: 500;
-                min-width: 64px;
-                padding: 10px 10px 8px 10px;
+                min-width: 84px;
+                padding: 10px 8px 8px 8px;
             }}
             QTabWidget#primarySettingsTabs QTabBar::tab:selected {{
                 background-color: {COLORS.editor_sidebar_left_bg};
@@ -252,7 +323,11 @@ class ParamPanel(QWidget):
             )
             self._section_widgets.append(tab_page)
             self._section_widgets_by_key[section["key"]] = tab_page
-            tab_index = self.primary_tabs.addTab(tab_page, section["title"])
+            tab_index = self.primary_tabs.addTab(
+                tab_page,
+                self._icon(section["icon"]),
+                section["title"],
+            )
             self.primary_tabs.setTabToolTip(tab_index, section["tooltip"])
 
         self.primary_tabs.setCurrentIndex(0)
@@ -297,6 +372,57 @@ class ParamPanel(QWidget):
         scroll._content = content
         scroll._groups = groups
         return scroll
+
+    def _icon(self, name: str) -> QIcon:
+        """Load a parameter-panel icon from Qt resources."""
+        return QIcon(f":/icons/icons/params/{name}.svg")
+
+    def _icon_label(self, icon_name: str, text: str) -> QWidget:
+        """Create a compact form label that keeps the original text discoverable."""
+        label_widget = QWidget()
+        label_widget.setObjectName("paramIconLabel")
+        label_widget.setMinimumWidth(0)
+        label_widget.setMaximumWidth(136)
+        label_widget.setSizePolicy(
+            QSizePolicy.Policy.Maximum,
+            QSizePolicy.Policy.Preferred,
+        )
+        label_widget.setToolTip(text)
+
+        row = QHBoxLayout(label_widget)
+        row.setContentsMargins(0, 0, 0, 0)
+        row.setSpacing(8)
+        row.setAlignment(Qt.AlignmentFlag.AlignVCenter)
+
+        icon_label = QLabel()
+        icon_label.setObjectName("paramRowIcon")
+        icon_label.setFixedSize(24, 24)
+        icon_label.setPixmap(self._icon(icon_name).pixmap(24, 24))
+        row.addWidget(icon_label, 0, Qt.AlignmentFlag.AlignVCenter)
+
+        text_label = QLabel(text)
+        text_label.setObjectName("paramRowText")
+        text_label.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
+        text_label.setWordWrap(True)
+        text_label.setMinimumWidth(0)
+        text_label.setSizePolicy(
+            QSizePolicy.Policy.Preferred,
+            QSizePolicy.Policy.Preferred,
+        )
+        row.addWidget(text_label, 1)
+
+        return label_widget
+
+    def _add_icon_row(
+        self,
+        form: QFormLayout,
+        icon_name: str,
+        text: str,
+        field: QWidget | QLayout,
+    ) -> None:
+        """Add a form row with a 24px icon while preserving the visible label text."""
+        form.setLabelAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
+        form.addRow(self._icon_label(icon_name, text), field)
 
     def _create_double_spinbox(self, decimals: int = 2) -> QDoubleSpinBox:
         """Create a standard floating-point input without custom plus/minus buttons."""
@@ -570,7 +696,7 @@ class ParamPanel(QWidget):
         )
         self.height_spin.valueChanged.connect(self._on_param_changed)
         self.height_spin.valueChanged.connect(self._update_step_ranges)
-        layout.addRow(self.tr("Shell Height:"), self.height_spin)
+        self._add_icon_row(layout, "height", self.tr("Shell Height:"), self.height_spin)
 
         # 层高
         self.layer_height_spin = self._create_double_spinbox()
@@ -588,7 +714,7 @@ class ParamPanel(QWidget):
             )
         )
         self.layer_height_spin.valueChanged.connect(self._on_layer_height_changed)
-        layout.addRow(self.tr("Layer Height:"), self.layer_height_spin)
+        self._add_icon_row(layout, "layer", self.tr("Layer Height:"), self.layer_height_spin)
 
         # 线宽
         self.width_line_spin = self._create_double_spinbox()
@@ -597,7 +723,7 @@ class ParamPanel(QWidget):
         self.width_line_spin.setSingleStep(0.05)
         self.width_line_spin.setSuffix(" mm")
         self.width_line_spin.valueChanged.connect(self._on_line_width_changed)
-        layout.addRow(self.tr("Line Width:"), self.width_line_spin)
+        self._add_icon_row(layout, "line-width", self.tr("Line Width:"), self.width_line_spin)
 
         # 壁数量
         self.wall_thickness_spin = self._create_double_spinbox()
@@ -606,7 +732,7 @@ class ParamPanel(QWidget):
         self.wall_thickness_spin.setSingleStep(self.width_line_spin.value())
         self.wall_thickness_spin.setSuffix(" mm")
         self.wall_thickness_spin.valueChanged.connect(self._on_param_changed)
-        layout.addRow(self.tr("Wall Thickness:"), self.wall_thickness_spin)
+        self._add_icon_row(layout, "wall", self.tr("Wall Thickness:"), self.wall_thickness_spin)
         self._sync_wall_tooltips()
 
         return group
@@ -627,7 +753,7 @@ class ParamPanel(QWidget):
         self.edge_type_combo.addItem(self.tr("U Shape"), EdgeType.U_SHAPED)
         self.edge_type_combo.addItem(self.tr("Custom"), EdgeType.CUSTOM)
         self.edge_type_combo.currentIndexChanged.connect(self._on_edge_type_changed)
-        type_form.addRow(self.tr("Edge Type:"), self.edge_type_combo)
+        self._add_icon_row(type_form, "edge", self.tr("Edge Type:"), self.edge_type_combo)
 
         layout.addLayout(type_form)
 
@@ -642,7 +768,7 @@ class ParamPanel(QWidget):
         self.bevel_direction_combo.addItem(self.tr("Top Small"), BevelDirection.TOP_SMALL)
         self.bevel_direction_combo.addItem(self.tr("Top Large"), BevelDirection.TOP_LARGE)
         self.bevel_direction_combo.currentIndexChanged.connect(self._on_param_changed)
-        bevel_layout.addRow(self.tr("Bevel Direction:"), self.bevel_direction_combo)
+        self._add_icon_row(bevel_layout, "direction", self.tr("Bevel Direction:"), self.bevel_direction_combo)
 
         self.bevel_direction_hint = QLabel(
             self.tr("Original contour is always based on the bottom face (z=0).")
@@ -657,7 +783,7 @@ class ParamPanel(QWidget):
         self.bevel_width_spin.setValue(5)
         self.bevel_width_spin.setSuffix(" mm")
         self.bevel_width_spin.valueChanged.connect(self._on_param_changed)
-        bevel_layout.addRow(self.tr("Bevel Width:"), self.bevel_width_spin)
+        self._add_icon_row(bevel_layout, "bevel", self.tr("Bevel Width:"), self.bevel_width_spin)
 
         # 底板厚度
         self.baseplate_spin = self._create_double_spinbox()
@@ -669,7 +795,7 @@ class ParamPanel(QWidget):
             meaning=self.tr("Straight bottom section height used for the baseplate side of the shell."),
         )
         self.baseplate_spin.valueChanged.connect(self._on_param_changed)
-        bevel_layout.addRow(self.tr("Baseplate Thickness:"), self.baseplate_spin)
+        self._add_icon_row(bevel_layout, "baseplate", self.tr("Baseplate Thickness:"), self.baseplate_spin)
 
         # 面板厚度
         self.panel_thickness_spin = self._create_double_spinbox()
@@ -681,7 +807,7 @@ class ParamPanel(QWidget):
             meaning=self.tr("Straight top section height reserved for the face panel side of the shell."),
         )
         self.panel_thickness_spin.valueChanged.connect(self._on_param_changed)
-        bevel_layout.addRow(self.tr("Panel Thickness:"), self.panel_thickness_spin)
+        self._add_icon_row(bevel_layout, "panel", self.tr("Panel Thickness:"), self.panel_thickness_spin)
 
         layout.addWidget(self.bevel_params_widget)
         self.bevel_params_widget.setVisible(False)
@@ -701,7 +827,7 @@ class ParamPanel(QWidget):
             meaning=self.tr("Vertical height of the curved U-shaped edge profile."),
         )
         self.u_arc_height_spin.valueChanged.connect(self._on_param_changed)
-        u_shape_layout.addRow(self.tr("Arc Height:"), self.u_arc_height_spin)
+        self._add_icon_row(u_shape_layout, "arc", self.tr("Arc Height:"), self.u_arc_height_spin)
 
         self.u_bottom_layers_spin = self._create_double_spinbox()
         self._configure_z_height_spin(
@@ -712,7 +838,7 @@ class ParamPanel(QWidget):
             meaning=self.tr("Solid bottom thickness under the U-shaped profile."),
         )
         self.u_bottom_layers_spin.valueChanged.connect(self._on_param_changed)
-        u_shape_layout.addRow(self.tr("Bottom Solid Thickness:"), self.u_bottom_layers_spin)
+        self._add_icon_row(u_shape_layout, "face-bottom", self.tr("Bottom Solid Thickness:"), self.u_bottom_layers_spin)
 
         layout.addWidget(self.u_shape_params_widget)
         self.u_shape_params_widget.setVisible(False)
@@ -747,7 +873,7 @@ class ParamPanel(QWidget):
         info_layout = QFormLayout()
         self.profile_info_label = QLabel(self.tr("No profile selected"))
         self.profile_info_label.setStyleSheet("color: #888;")
-        info_layout.addRow(self.tr("Current Profile:"), self.profile_info_label)
+        self._add_icon_row(info_layout, "profile", self.tr("Current Profile:"), self.profile_info_label)
         custom_layout.addLayout(info_layout)
 
         layout.addWidget(self.custom_edge_widget)
@@ -774,7 +900,7 @@ class ParamPanel(QWidget):
         self.dxf_outer_clearance_spin.setSingleStep(0.1)
         self.dxf_outer_clearance_spin.setSuffix(" mm")
         self.dxf_outer_clearance_spin.valueChanged.connect(self._on_param_changed)
-        layout.addRow(self.tr("Outer Clearance:"), self.dxf_outer_clearance_spin)
+        self._add_icon_row(layout, "clearance", self.tr("Outer Clearance:"), self.dxf_outer_clearance_spin)
 
         self.dxf_hole_clearance_spin = self._create_double_spinbox()
         self.dxf_hole_clearance_spin.setRange(0, 10)
@@ -782,7 +908,7 @@ class ParamPanel(QWidget):
         self.dxf_hole_clearance_spin.setSingleStep(0.1)
         self.dxf_hole_clearance_spin.setSuffix(" mm")
         self.dxf_hole_clearance_spin.valueChanged.connect(self._on_param_changed)
-        layout.addRow(self.tr("Hole Clearance:"), self.dxf_hole_clearance_spin)
+        self._add_icon_row(layout, "clearance", self.tr("Hole Clearance:"), self.dxf_hole_clearance_spin)
 
         self.dxf_laser_kerf_spin = self._create_double_spinbox()
         self.dxf_laser_kerf_spin.setRange(0, 2)
@@ -790,7 +916,7 @@ class ParamPanel(QWidget):
         self.dxf_laser_kerf_spin.setSingleStep(0.01)
         self.dxf_laser_kerf_spin.setSuffix(" mm")
         self.dxf_laser_kerf_spin.valueChanged.connect(self._on_param_changed)
-        layout.addRow(self.tr("Laser Kerf:"), self.dxf_laser_kerf_spin)
+        self._add_icon_row(layout, "kerf", self.tr("Laser Kerf:"), self.dxf_laser_kerf_spin)
 
         return group
 
@@ -819,7 +945,7 @@ class ParamPanel(QWidget):
             meaning=self.tr("Printed solid bottom face thickness used to close the shell bottom."),
         )
         self.bottom_face_thickness.valueChanged.connect(self._on_param_changed)
-        form.addRow(self.tr("Bottom Face Thickness:"), self.bottom_face_thickness)
+        self._add_icon_row(form, "face-bottom", self.tr("Bottom Face Thickness:"), self.bottom_face_thickness)
 
         self.bottom_face_screw_hole_diameter = self._create_double_spinbox()
         self.bottom_face_screw_hole_diameter.setRange(0.1, 100.0)
@@ -834,7 +960,7 @@ class ParamPanel(QWidget):
             )
         )
         self.bottom_face_screw_hole_diameter.valueChanged.connect(self._on_param_changed)
-        form.addRow(self.tr("Screw Hole Diameter:"), self.bottom_face_screw_hole_diameter)
+        self._add_icon_row(form, "screw-hole", self.tr("Screw Hole Diameter:"), self.bottom_face_screw_hole_diameter)
 
         layout.addLayout(form)
 
@@ -927,7 +1053,7 @@ class ParamPanel(QWidget):
             )
         )
         self.light_slot_width.valueChanged.connect(self._on_param_changed)
-        form.addRow(self.tr("Slot Width:"), self.light_slot_width)
+        self._add_icon_row(form, "light-slot", self.tr("Slot Width:"), self.light_slot_width)
 
         self.light_slot_depth = self._create_double_spinbox()
         self._configure_z_height_spin(
@@ -939,7 +1065,7 @@ class ParamPanel(QWidget):
             meaning=self.tr("Vertical depth of the light slot from the shell opening side."),
         )
         self.light_slot_depth.valueChanged.connect(self._on_param_changed)
-        form.addRow(self.tr("Slot Depth:"), self.light_slot_depth)
+        self._add_icon_row(form, "height", self.tr("Slot Depth:"), self.light_slot_depth)
 
         self.light_slot_floor_layers = self._create_double_spinbox()
         self._configure_z_height_spin(
@@ -951,7 +1077,7 @@ class ParamPanel(QWidget):
             meaning=self.tr("Solid material thickness left under the light slot floor."),
         )
         self.light_slot_floor_layers.valueChanged.connect(self._on_param_changed)
-        form.addRow(self.tr("Floor Thickness:"), self.light_slot_floor_layers)
+        self._add_icon_row(form, "floor", self.tr("Floor Thickness:"), self.light_slot_floor_layers)
 
         self.light_slot_wall_gap = self._create_double_spinbox()
         self.light_slot_wall_gap.setRange(0.0, 20.0)
@@ -966,7 +1092,7 @@ class ParamPanel(QWidget):
             )
         )
         self.light_slot_wall_gap.valueChanged.connect(self._on_param_changed)
-        form.addRow(self.tr("Wall Gap:"), self.light_slot_wall_gap)
+        self._add_icon_row(form, "gap", self.tr("Wall Gap:"), self.light_slot_wall_gap)
 
         layout.addLayout(form)
 
@@ -1000,7 +1126,7 @@ class ParamPanel(QWidget):
         self.light_slot_min_hole_span.setSuffix(" mm")
         self.light_slot_min_hole_span.setEnabled(False)
         self.light_slot_min_hole_span.valueChanged.connect(self._on_param_changed)
-        min_hole_span_form.addRow(self.tr("Min Hole Span:"), self.light_slot_min_hole_span)
+        self._add_icon_row(min_hole_span_form, "dimension", self.tr("Min Hole Span:"), self.light_slot_min_hole_span)
         layout.addLayout(min_hole_span_form)
 
         self.light_slot_enabled.stateChanged.connect(
@@ -1058,7 +1184,7 @@ class ParamPanel(QWidget):
             meaning=self.tr("Printed solid top face thickness used to close the shell top."),
         )
         self.top_face_thickness.valueChanged.connect(self._on_param_changed)
-        form.addRow(self.tr("Top Face Thickness:"), self.top_face_thickness)
+        self._add_icon_row(form, "face-top", self.tr("Top Face Thickness:"), self.top_face_thickness)
 
         layout.addLayout(form)
 
@@ -1364,7 +1490,7 @@ class ParamPanel(QWidget):
         self.prime_tower_center_x.setSuffix(" mm")
         self.prime_tower_center_x.setEnabled(False)
         self.prime_tower_center_x.valueChanged.connect(self._on_param_changed)
-        form.addRow(self.tr("Center X:"), self.prime_tower_center_x)
+        self._add_icon_row(form, "center", self.tr("Center X:"), self.prime_tower_center_x)
 
         self.prime_tower_center_y = self._create_double_spinbox()
         self.prime_tower_center_y.setDecimals(2)
@@ -1373,7 +1499,7 @@ class ParamPanel(QWidget):
         self.prime_tower_center_y.setSuffix(" mm")
         self.prime_tower_center_y.setEnabled(False)
         self.prime_tower_center_y.valueChanged.connect(self._on_param_changed)
-        form.addRow(self.tr("Center Y:"), self.prime_tower_center_y)
+        self._add_icon_row(form, "center", self.tr("Center Y:"), self.prime_tower_center_y)
 
         self.prime_tower_width = self._create_double_spinbox()
         self.prime_tower_width.setDecimals(2)
@@ -1383,7 +1509,7 @@ class ParamPanel(QWidget):
         self.prime_tower_width.setEnabled(False)
         self.prime_tower_width.valueChanged.connect(self._update_prime_tower_coordinate_ranges)
         self.prime_tower_width.valueChanged.connect(self._on_param_changed)
-        form.addRow(self.tr("Tower Width:"), self.prime_tower_width)
+        self._add_icon_row(form, "prime-tower", self.tr("Tower Width:"), self.prime_tower_width)
 
         self.prime_tower_depth = self._create_double_spinbox()
         self.prime_tower_depth.setDecimals(2)
@@ -1393,7 +1519,7 @@ class ParamPanel(QWidget):
         self.prime_tower_depth.setEnabled(False)
         self.prime_tower_depth.valueChanged.connect(self._update_prime_tower_coordinate_ranges)
         self.prime_tower_depth.valueChanged.connect(self._on_param_changed)
-        form.addRow(self.tr("Tower Depth:"), self.prime_tower_depth)
+        self._add_icon_row(form, "dimension", self.tr("Tower Depth:"), self.prime_tower_depth)
 
         self.prime_tower_infill_density = self._create_int_spinbox()
         self.prime_tower_infill_density.setRange(10, 80)
@@ -1402,7 +1528,7 @@ class ParamPanel(QWidget):
         self.prime_tower_infill_density.setSuffix(" %")
         self.prime_tower_infill_density.setEnabled(False)
         self.prime_tower_infill_density.valueChanged.connect(self._on_param_changed)
-        form.addRow(self.tr("Infill Density:"), self.prime_tower_infill_density)
+        self._add_icon_row(form, "infill", self.tr("Infill Density:"), self.prime_tower_infill_density)
 
         layout.addLayout(form)
         return group
@@ -1505,19 +1631,19 @@ class ParamPanel(QWidget):
         self.profile_bed_width.setRange(1.0, 5000.0)
         self.profile_bed_width.setSuffix(" mm")
         self.profile_bed_width.valueChanged.connect(self._on_printer_profile_field_changed)
-        form.addRow(self.tr("Printable Area X:"), self.profile_bed_width)
+        self._add_icon_row(form, "bed", self.tr("Printable Area X:"), self.profile_bed_width)
 
         self.profile_bed_depth = self._create_double_spinbox()
         self.profile_bed_depth.setRange(1.0, 5000.0)
         self.profile_bed_depth.setSuffix(" mm")
         self.profile_bed_depth.valueChanged.connect(self._on_printer_profile_field_changed)
-        form.addRow(self.tr("Printable Area Y:"), self.profile_bed_depth)
+        self._add_icon_row(form, "bed", self.tr("Printable Area Y:"), self.profile_bed_depth)
 
         self.profile_bed_height = self._create_double_spinbox()
         self.profile_bed_height.setRange(1.0, 1000.0)
         self.profile_bed_height.setSuffix(" mm")
         self.profile_bed_height.valueChanged.connect(self._on_printer_profile_field_changed)
-        form.addRow(self.tr("Printable Area Z:"), self.profile_bed_height)
+        self._add_icon_row(form, "height", self.tr("Printable Area Z:"), self.profile_bed_height)
 
         self.profile_bed_exclude_area = QPlainTextEdit()
         self.profile_bed_exclude_area.setFixedHeight(92)
@@ -1528,58 +1654,58 @@ class ParamPanel(QWidget):
             self.tr("Orca-style bed exclude area. Use XxY points separated by commas; put each region on its own line.")
         )
         self.profile_bed_exclude_area.textChanged.connect(self._on_printer_profile_field_changed)
-        form.addRow(self.tr("Bed Exclude Area:"), self.profile_bed_exclude_area)
+        self._add_icon_row(form, "clearance", self.tr("Bed Exclude Area:"), self.profile_bed_exclude_area)
 
         self.profile_nozzle_diameter = self._create_double_spinbox(3)
         self.profile_nozzle_diameter.setRange(0.1, 5.0)
         self.profile_nozzle_diameter.setSingleStep(0.05)
         self.profile_nozzle_diameter.setSuffix(" mm")
         self.profile_nozzle_diameter.valueChanged.connect(self._on_printer_profile_field_changed)
-        form.addRow(self.tr("Nozzle Diameter:"), self.profile_nozzle_diameter)
+        self._add_icon_row(form, "nozzle", self.tr("Nozzle Diameter:"), self.profile_nozzle_diameter)
 
         self.profile_filament_diameter = self._create_double_spinbox(3)
         self.profile_filament_diameter.setRange(0.5, 5.0)
         self.profile_filament_diameter.setSingleStep(0.05)
         self.profile_filament_diameter.setSuffix(" mm")
         self.profile_filament_diameter.valueChanged.connect(self._on_printer_profile_field_changed)
-        form.addRow(self.tr("Filament Diameter:"), self.profile_filament_diameter)
+        self._add_icon_row(form, "filament", self.tr("Filament Diameter:"), self.profile_filament_diameter)
 
         self.profile_retract_length = self._create_double_spinbox()
         self.profile_retract_length.setRange(0.0, 20.0)
         self.profile_retract_length.setSingleStep(0.1)
         self.profile_retract_length.setSuffix(" mm")
         self.profile_retract_length.valueChanged.connect(self._on_printer_profile_field_changed)
-        form.addRow(self.tr("Retract Length:"), self.profile_retract_length)
+        self._add_icon_row(form, "retract", self.tr("Retract Length:"), self.profile_retract_length)
 
         self.profile_retract_speed = self._create_double_spinbox()
         self.profile_retract_speed.setRange(1.0, 300.0)
         self.profile_retract_speed.setSuffix(" mm/s")
         self.profile_retract_speed.valueChanged.connect(self._on_printer_profile_field_changed)
-        form.addRow(self.tr("Retract Speed:"), self.profile_retract_speed)
+        self._add_icon_row(form, "speed", self.tr("Retract Speed:"), self.profile_retract_speed)
 
         self.profile_z_hop_short = self._create_double_spinbox()
         self.profile_z_hop_short.setRange(0.0, 20.0)
         self.profile_z_hop_short.setSingleStep(0.1)
         self.profile_z_hop_short.setSuffix(" mm")
         self.profile_z_hop_short.valueChanged.connect(self._on_printer_profile_field_changed)
-        form.addRow(self.tr("Short Z-Hop:"), self.profile_z_hop_short)
+        self._add_icon_row(form, "z-hop", self.tr("Short Z-Hop:"), self.profile_z_hop_short)
 
         self.profile_z_hop_long = self._create_double_spinbox()
         self.profile_z_hop_long.setRange(0.0, 50.0)
         self.profile_z_hop_long.setSingleStep(0.1)
         self.profile_z_hop_long.setSuffix(" mm")
         self.profile_z_hop_long.valueChanged.connect(self._on_printer_profile_field_changed)
-        form.addRow(self.tr("Long Z-Hop:"), self.profile_z_hop_long)
+        self._add_icon_row(form, "z-hop", self.tr("Long Z-Hop:"), self.profile_z_hop_long)
 
         self.profile_long_travel_threshold = self._create_double_spinbox()
         self.profile_long_travel_threshold.setRange(1.0, 1000.0)
         self.profile_long_travel_threshold.setSuffix(" mm")
         self.profile_long_travel_threshold.valueChanged.connect(self._on_printer_profile_field_changed)
-        form.addRow(self.tr("Long Travel Threshold:"), self.profile_long_travel_threshold)
+        self._add_icon_row(form, "dimension", self.tr("Long Travel Threshold:"), self.profile_long_travel_threshold)
 
         self.profile_color_change_template = QLineEdit()
         self.profile_color_change_template.textChanged.connect(self._on_printer_profile_field_changed)
-        form.addRow(self.tr("Color Change Template:"), self.profile_color_change_template)
+        self._add_icon_row(form, "color-change", self.tr("Color Change Template:"), self.profile_color_change_template)
 
         layout.addLayout(form)
         return group
@@ -2089,7 +2215,7 @@ class ParamPanel(QWidget):
             )
         )
         self.panel_step_height.valueChanged.connect(self._on_param_changed)
-        form1.addRow(self.tr("Step Height:"), self.panel_step_height)
+        self._add_icon_row(form1, "step", self.tr("Step Height:"), self.panel_step_height)
 
         self.panel_step_width = self._create_double_spinbox()
         self.panel_step_width.setRange(0.5, 20)
@@ -2103,7 +2229,7 @@ class ParamPanel(QWidget):
             )
         )
         self.panel_step_width.valueChanged.connect(self._on_param_changed)
-        form1.addRow(self.tr("Step Width:"), self.panel_step_width)
+        self._add_icon_row(form1, "dimension", self.tr("Step Width:"), self.panel_step_width)
 
         self.panel_step_v_groove = QCheckBox(self.tr("V-Groove"))
         self.panel_step_v_groove.setEnabled(False)
@@ -2140,7 +2266,7 @@ class ParamPanel(QWidget):
             meaning=self.tr("Z height where the bottom baseplate step or V-groove is generated."),
         )
         self.baseplate_step_height.valueChanged.connect(self._on_param_changed)
-        form2.addRow(self.tr("Step Height:"), self.baseplate_step_height)
+        self._add_icon_row(form2, "step", self.tr("Step Height:"), self.baseplate_step_height)
 
         self.baseplate_step_width = self._create_double_spinbox()
         self.baseplate_step_width.setRange(0.5, 20)
@@ -2154,7 +2280,7 @@ class ParamPanel(QWidget):
             )
         )
         self.baseplate_step_width.valueChanged.connect(self._on_param_changed)
-        form2.addRow(self.tr("Step Width:"), self.baseplate_step_width)
+        self._add_icon_row(form2, "dimension", self.tr("Step Width:"), self.baseplate_step_width)
 
         self.baseplate_step_v_groove = QCheckBox(self.tr("V-Groove"))
         self.baseplate_step_v_groove.setEnabled(False)
@@ -2290,7 +2416,7 @@ class ParamPanel(QWidget):
             )
         )
         self.skirt_height.valueChanged.connect(self._on_param_changed)
-        form.addRow(self.tr("Skirt Height:"), self.skirt_height)
+        self._add_icon_row(form, "skirt", self.tr("Skirt Height:"), self.skirt_height)
 
         self.skirt_speed = self._create_double_spinbox(decimals=1)
         self.skirt_speed.setRange(5.0, 200.0)
@@ -2313,7 +2439,7 @@ class ParamPanel(QWidget):
             )
         )
         self.skirt_offset.valueChanged.connect(self._on_param_changed)
-        form.addRow(self.tr("Wall Gap:"), self.skirt_offset)
+        self._add_icon_row(form, "gap", self.tr("Wall Gap:"), self.skirt_offset)
 
         direction_layout = QHBoxLayout()
         direction_layout.setContentsMargins(0, 0, 0, 0)
@@ -2327,7 +2453,7 @@ class ParamPanel(QWidget):
         self.skirt_inner_enabled.stateChanged.connect(self._on_param_changed)
         direction_layout.addWidget(self.skirt_inner_enabled)
         direction_layout.addStretch()
-        form.addRow(self.tr("Skirt Sides:"), direction_layout)
+        self._add_icon_row(form, "direction", self.tr("Skirt Sides:"), direction_layout)
 
         layout.addLayout(form)
 
@@ -2365,7 +2491,7 @@ class ParamPanel(QWidget):
         self.connected_type.addItem(self.tr("Diamond"), "diamond")
         self.connected_type.setEnabled(False)
         self.connected_type.currentIndexChanged.connect(self._on_param_changed)
-        form.addRow(self.tr("Connection Type:"), self.connected_type)
+        self._add_icon_row(form, "connected", self.tr("Connection Type:"), self.connected_type)
 
         # 自动检测
         self.connected_auto_detect = QCheckBox(self.tr("Auto Detect Connection Points"))
@@ -2387,7 +2513,7 @@ class ParamPanel(QWidget):
             )
         )
         self.connected_width.valueChanged.connect(self._on_param_changed)
-        form.addRow(self.tr("Connection Width:"), self.connected_width)
+        self._add_icon_row(form, "dimension", self.tr("Connection Width:"), self.connected_width)
 
         # 斜边高度
         self.connected_height = self._create_double_spinbox()
@@ -2400,7 +2526,7 @@ class ParamPanel(QWidget):
             meaning=self.tr("Vertical bevel height used on the connected-letter bridge."),
         )
         self.connected_height.valueChanged.connect(self._on_param_changed)
-        form.addRow(self.tr("Bevel Height:"), self.connected_height)
+        self._add_icon_row(form, "bevel", self.tr("Bevel Height:"), self.connected_height)
 
         # 底座高度
         self.connected_base_height = self._create_double_spinbox()
@@ -2413,7 +2539,7 @@ class ParamPanel(QWidget):
             meaning=self.tr("Vertical base height of the connected-letter bridge before beveling."),
         )
         self.connected_base_height.valueChanged.connect(self._on_param_changed)
-        form.addRow(self.tr("Base Height:"), self.connected_base_height)
+        self._add_icon_row(form, "baseplate", self.tr("Base Height:"), self.connected_base_height)
 
         # 支撑偏移
         self.connected_support_offset = self._create_double_spinbox()
@@ -2428,7 +2554,7 @@ class ParamPanel(QWidget):
             )
         )
         self.connected_support_offset.valueChanged.connect(self._on_param_changed)
-        form.addRow(self.tr("Support Offset:"), self.connected_support_offset)
+        self._add_icon_row(form, "clearance", self.tr("Support Offset:"), self.connected_support_offset)
 
         layout.addLayout(form)
 
@@ -2490,7 +2616,7 @@ class ParamPanel(QWidget):
         wrap_dir_layout.addWidget(self.wrap_dir_inner)
         wrap_dir_layout.addWidget(self.wrap_dir_outer)
         wrap_dir_layout.addStretch()
-        wrap_form.addRow(self.tr("Wrap Direction:"), wrap_dir_layout)
+        self._add_icon_row(wrap_form, "direction", self.tr("Wrap Direction:"), wrap_dir_layout)
 
         self.wrap_width = self._create_double_spinbox()
         self.wrap_width.setRange(0.5, 10)
@@ -2498,7 +2624,7 @@ class ParamPanel(QWidget):
         self.wrap_width.setSingleStep(0.1)
         self.wrap_width.setSuffix(" mm")
         self.wrap_width.setEnabled(False)
-        wrap_form.addRow(self.tr("Wrap Width:"), self.wrap_width)
+        self._add_icon_row(wrap_form, "wrap", self.tr("Wrap Width:"), self.wrap_width)
 
         self.wrap_height = self._create_double_spinbox()
         self.wrap_height.setRange(0.5, 20)
@@ -2506,7 +2632,7 @@ class ParamPanel(QWidget):
         self.wrap_height.setSingleStep(0.5)
         self.wrap_height.setSuffix(" mm")
         self.wrap_height.setEnabled(False)
-        wrap_form.addRow(self.tr("Wrap Height:"), self.wrap_height)
+        self._add_icon_row(wrap_form, "height", self.tr("Wrap Height:"), self.wrap_height)
 
         layout.addLayout(wrap_form)
 
@@ -2542,7 +2668,7 @@ class ParamPanel(QWidget):
         outline_dir_layout.addWidget(self.outline_dir_inner)
         outline_dir_layout.addWidget(self.outline_dir_outer)
         outline_dir_layout.addStretch()
-        outline_form.addRow(self.tr("Outline Direction:"), outline_dir_layout)
+        self._add_icon_row(outline_form, "direction", self.tr("Outline Direction:"), outline_dir_layout)
 
         self.outline_width = self._create_double_spinbox()
         self.outline_width.setRange(0.3, 5)
@@ -2550,7 +2676,7 @@ class ParamPanel(QWidget):
         self.outline_width.setSingleStep(0.1)
         self.outline_width.setSuffix(" mm")
         self.outline_width.setEnabled(False)
-        outline_form.addRow(self.tr("Outline Width:"), self.outline_width)
+        self._add_icon_row(outline_form, "outline", self.tr("Outline Width:"), self.outline_width)
 
         self.outline_height = self._create_double_spinbox()
         self.outline_height.setRange(0.3, 10)
@@ -2558,7 +2684,7 @@ class ParamPanel(QWidget):
         self.outline_height.setSingleStep(0.1)
         self.outline_height.setSuffix(" mm")
         self.outline_height.setEnabled(False)
-        outline_form.addRow(self.tr("Outline Height:"), self.outline_height)
+        self._add_icon_row(outline_form, "height", self.tr("Outline Height:"), self.outline_height)
 
         self.outline_offset = self._create_double_spinbox()
         self.outline_offset.setRange(-5, 5)
@@ -2566,7 +2692,7 @@ class ParamPanel(QWidget):
         self.outline_offset.setSingleStep(0.1)
         self.outline_offset.setSuffix(" mm")
         self.outline_offset.setEnabled(False)
-        outline_form.addRow(self.tr("Outline Offset:"), self.outline_offset)
+        self._add_icon_row(outline_form, "clearance", self.tr("Outline Offset:"), self.outline_offset)
 
         layout.addLayout(outline_form)
 
@@ -2592,7 +2718,7 @@ class ParamPanel(QWidget):
         self.print_speed.setValue(50)
         self.print_speed.setSuffix(" mm/s")
         self.print_speed.valueChanged.connect(self._on_param_changed)
-        layout.addRow(self.tr("Print Speed:"), self.print_speed)
+        self._add_icon_row(layout, "speed", self.tr("Print Speed:"), self.print_speed)
 
         # 空走速度
         self.travel_speed = self._create_int_spinbox()
@@ -2600,7 +2726,7 @@ class ParamPanel(QWidget):
         self.travel_speed.setValue(150)
         self.travel_speed.setSuffix(" mm/s")
         self.travel_speed.valueChanged.connect(self._on_param_changed)
-        layout.addRow(self.tr("Travel Speed:"), self.travel_speed)
+        self._add_icon_row(layout, "speed", self.tr("Travel Speed:"), self.travel_speed)
 
         # 首层速度
         self.first_layer_speed = self._create_int_spinbox()
@@ -2608,10 +2734,10 @@ class ParamPanel(QWidget):
         self.first_layer_speed.setValue(20)
         self.first_layer_speed.setSuffix(" mm/s")
         self.first_layer_speed.valueChanged.connect(self._on_param_changed)
-        layout.addRow(self.tr("First Layer Speed:"), self.first_layer_speed)
+        self._add_icon_row(layout, "layer", self.tr("First Layer Speed:"), self.first_layer_speed)
 
-        layout.addRow(self.tr("Skirt Speed:"), self.skirt_speed)
-        layout.addRow(self.tr("Step Speed:"), self.step_speed)
+        self._add_icon_row(layout, "skirt", self.tr("Skirt Speed:"), self.skirt_speed)
+        self._add_icon_row(layout, "step", self.tr("Step Speed:"), self.step_speed)
 
         return group
 
@@ -2626,28 +2752,28 @@ class ParamPanel(QWidget):
         self.first_layer_nozzle_temp.setValue(220)
         self.first_layer_nozzle_temp.setSuffix(" °C")
         self.first_layer_nozzle_temp.valueChanged.connect(self._on_param_changed)
-        layout.addRow(self.tr("First Layer Nozzle Temperature:"), self.first_layer_nozzle_temp)
+        self._add_icon_row(layout, "temperature", self.tr("First Layer Nozzle Temperature:"), self.first_layer_nozzle_temp)
 
         self.other_layer_nozzle_temp = self._create_int_spinbox()
         self.other_layer_nozzle_temp.setRange(0, 400)
         self.other_layer_nozzle_temp.setValue(220)
         self.other_layer_nozzle_temp.setSuffix(" °C")
         self.other_layer_nozzle_temp.valueChanged.connect(self._on_param_changed)
-        layout.addRow(self.tr("Other Layers Nozzle Temperature:"), self.other_layer_nozzle_temp)
+        self._add_icon_row(layout, "temperature", self.tr("Other Layers Nozzle Temperature:"), self.other_layer_nozzle_temp)
 
         self.first_layer_bed_temp = self._create_int_spinbox()
         self.first_layer_bed_temp.setRange(0, 200)
         self.first_layer_bed_temp.setValue(60)
         self.first_layer_bed_temp.setSuffix(" °C")
         self.first_layer_bed_temp.valueChanged.connect(self._on_param_changed)
-        layout.addRow(self.tr("First Layer Bed Temperature:"), self.first_layer_bed_temp)
+        self._add_icon_row(layout, "temperature", self.tr("First Layer Bed Temperature:"), self.first_layer_bed_temp)
 
         self.other_layer_bed_temp = self._create_int_spinbox()
         self.other_layer_bed_temp.setRange(0, 200)
         self.other_layer_bed_temp.setValue(60)
         self.other_layer_bed_temp.setSuffix(" °C")
         self.other_layer_bed_temp.valueChanged.connect(self._on_param_changed)
-        layout.addRow(self.tr("Other Layers Bed Temperature:"), self.other_layer_bed_temp)
+        self._add_icon_row(layout, "temperature", self.tr("Other Layers Bed Temperature:"), self.other_layer_bed_temp)
 
         return group
 
@@ -2662,14 +2788,14 @@ class ParamPanel(QWidget):
         self.first_layer_fan_percent.setValue(0)
         self.first_layer_fan_percent.setSuffix(" %")
         self.first_layer_fan_percent.valueChanged.connect(self._on_param_changed)
-        layout.addRow(self.tr("First Layer Fan Speed:"), self.first_layer_fan_percent)
+        self._add_icon_row(layout, "fan", self.tr("First Layer Fan Speed:"), self.first_layer_fan_percent)
 
         self.other_layer_fan_percent = self._create_int_spinbox()
         self.other_layer_fan_percent.setRange(0, 100)
         self.other_layer_fan_percent.setValue(100)
         self.other_layer_fan_percent.setSuffix(" %")
         self.other_layer_fan_percent.valueChanged.connect(self._on_param_changed)
-        layout.addRow(self.tr("Other Layers Fan Speed:"), self.other_layer_fan_percent)
+        self._add_icon_row(layout, "fan", self.tr("Other Layers Fan Speed:"), self.other_layer_fan_percent)
 
         return group
 
