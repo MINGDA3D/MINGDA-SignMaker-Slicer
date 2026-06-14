@@ -215,21 +215,22 @@ def test_primary_groups_follow_requested_order(qapp):
     assert [group.title() for group in panel._primary_groups] == [
         "Shell Settings",
         "Edge Type",
+        "Top Face",
+        "Panel Step/V-Groove",
+        "Bottom Face",
+        "Baseplate Step/V-Groove",
+        "Light Slot",
         "Edge Wrap/Outline",
-        "Step/V-Groove",
         "Anti-Warping Skirt",
+        "Connected Letters",
+        "DXF Export",
         "Speed Settings",
         "Temperature Settings",
         "Cooling Settings",
         "Color Change",
         "Prime Tower",
-        "Top Face",
-        "Bottom Face",
-        "Connected Letters",
-        "Light Slot",
         "Printer Profile",
         "Machine G-code",
-        "DXF Export",
     ]
 
 
@@ -328,13 +329,14 @@ def test_primary_sections_separate_shape_machine_and_print_settings(qapp):
             [
                 "Shell Settings",
                 "Edge Type",
-                "Edge Wrap/Outline",
-                "Step/V-Groove",
-                "Anti-Warping Skirt",
                 "Top Face",
+                "Panel Step/V-Groove",
                 "Bottom Face",
-                "Connected Letters",
+                "Baseplate Step/V-Groove",
                 "Light Slot",
+                "Edge Wrap/Outline",
+                "Anti-Warping Skirt",
+                "Connected Letters",
                 "DXF Export",
             ],
         ),
@@ -385,6 +387,175 @@ def test_primary_tabs_default_to_shape_and_switch_between_pages(qapp):
 
     panel.primary_tabs.setCurrentIndex(print_index)
     assert panel.primary_tabs.currentWidget() is panel._section_widgets_by_key["print"]
+
+
+def test_shape_page_places_shell_settings_before_feature_tabs(qapp):
+    panel = ParamPanel()
+    shape_content = panel._section_widgets_by_key["shape"]._content
+    shape_layout = shape_content.layout()
+
+    assert shape_layout.itemAt(0).widget() is panel.shell_group
+    assert shape_layout.itemAt(1).widget() is panel.shape_feature_tabs
+    assert panel.shape_feature_tabs.objectName() == "shape_feature_tabs"
+    assert [
+        panel.shape_feature_tabs.tabText(index)
+        for index in range(panel.shape_feature_tabs.count())
+    ] == ["Wall", "Top", "Bottom", "Other"]
+    assert all(
+        panel.shape_feature_tabs.tabIcon(index).isNull()
+        for index in range(panel.shape_feature_tabs.count())
+    )
+
+    panel.resize(420, 480)
+    panel.show()
+    QApplication.processEvents()
+
+    tab_bar = panel.shape_feature_tabs.tabBar()
+    widths = [
+        tab_bar.tabRect(index).width()
+        for index in range(tab_bar.count())
+    ]
+    assert tab_bar.expanding() is True
+    assert max(widths) - min(widths) <= 1
+
+
+def test_shape_feature_tabs_group_controls_by_mode(qapp):
+    panel = ParamPanel()
+
+    assert [
+        (section["key"], section["title"], [group.title() for group in section["groups"]])
+        for section in panel._shape_feature_sections
+    ] == [
+        ("wall", "Wall", ["Edge Type"]),
+        ("top", "Top", ["Top Face", "Panel Step/V-Groove"]),
+        (
+            "bottom",
+            "Bottom",
+            [
+                "Bottom Face",
+                "Baseplate Step/V-Groove",
+                "Light Slot",
+                "Edge Wrap/Outline",
+            ],
+        ),
+        ("other", "Other", ["Anti-Warping Skirt", "Connected Letters", "DXF Export"]),
+    ]
+
+
+def test_wall_mode_buttons_sync_edge_type_and_parameter_visibility(qapp):
+    panel = ParamPanel()
+
+    assert panel.edge_type_combo.isHidden() is True
+    assert panel.wall_mode_group.checkedId() == 0
+
+    panel.wall_mode_group.button(1).click()
+    assert panel.edge_type_combo.currentData() == EdgeType.BEVELED
+    assert panel.bevel_params_widget.isHidden() is False
+    assert panel.u_shape_params_widget.isHidden() is True
+    assert panel.custom_edge_widget.isHidden() is True
+    assert panel.get_params().shell.edge_type == EdgeType.BEVELED
+
+    panel.wall_mode_group.button(2).click()
+    assert panel.edge_type_combo.currentData() == EdgeType.U_SHAPED
+    assert panel.bevel_params_widget.isHidden() is True
+    assert panel.u_shape_params_widget.isHidden() is False
+
+    panel.wall_mode_group.button(0).click()
+    assert panel.edge_type_combo.currentData() == EdgeType.STRAIGHT
+    assert panel.bevel_params_widget.isHidden() is True
+    assert panel.u_shape_params_widget.isHidden() is True
+    assert panel.custom_edge_widget.isHidden() is True
+
+
+def test_top_mode_buttons_are_exclusive_and_write_back_to_params(qapp):
+    panel = ParamPanel()
+
+    panel.top_mode_group.button(panel.TOP_MODE_PANEL_V_GROOVE).click()
+    params = panel.get_params()
+
+    assert panel.top_face_enabled.isChecked() is False
+    assert panel.panel_step_enabled.isChecked() is True
+    assert panel.panel_step_v_groove.isChecked() is True
+    assert panel.top_face_group.isHidden() is True
+    assert panel.panel_step_group.isHidden() is False
+    assert params.top_face.enabled is False
+    assert params.step.panel_step_enabled is True
+    assert params.step.panel_step_is_v_groove is True
+
+    panel.top_mode_group.button(panel.TOP_MODE_FACE).click()
+    params = panel.get_params()
+
+    assert panel.top_face_enabled.isChecked() is True
+    assert panel.panel_step_enabled.isChecked() is False
+    assert panel.panel_step_v_groove.isChecked() is False
+    assert params.top_face.enabled is True
+    assert params.step.panel_step_enabled is False
+
+
+def test_bottom_mode_buttons_are_exclusive_and_write_back_to_params(qapp):
+    panel = ParamPanel()
+
+    panel.bottom_mode_group.button(panel.BOTTOM_MODE_BASEPLATE_V_GROOVE).click()
+    params = panel.get_params()
+
+    assert panel.bottom_face_enabled.isChecked() is False
+    assert panel.baseplate_step_enabled.isChecked() is True
+    assert panel.baseplate_step_v_groove.isChecked() is True
+    assert panel.light_slot_enabled.isChecked() is False
+    assert params.bottom_face.enabled is False
+    assert params.step.baseplate_step_enabled is True
+    assert params.step.baseplate_step_is_v_groove is True
+
+    panel.bottom_mode_group.button(panel.BOTTOM_MODE_OUTLINE).click()
+    params = panel.get_params()
+
+    assert panel.baseplate_step_enabled.isChecked() is False
+    assert panel.light_slot_enabled.isChecked() is False
+    assert panel.wrap_enabled.isChecked() is False
+    assert panel.outline_enabled.isChecked() is True
+    assert params.step.baseplate_step_enabled is False
+    assert params.light_slot.enabled is False
+    assert params.edge_wrap.wrap_enabled is False
+    assert params.edge_wrap.outline_enabled is True
+
+
+def test_set_params_resolves_legacy_bottom_modes_by_priority(qapp):
+    panel = ParamPanel()
+    params = SliceParams()
+    params.bottom_face.enabled = True
+    params.step.baseplate_step_enabled = True
+    params.step.baseplate_step_is_v_groove = True
+    params.light_slot.enabled = True
+    params.edge_wrap.wrap_enabled = True
+    params.edge_wrap.outline_enabled = True
+
+    panel.set_params(params)
+    restored = panel.get_params()
+
+    assert panel.bottom_mode_group.checkedId() == panel.BOTTOM_MODE_FACE
+    assert restored.bottom_face.enabled is True
+    assert restored.step.baseplate_step_enabled is False
+    assert restored.light_slot.enabled is False
+    assert restored.edge_wrap.wrap_enabled is False
+    assert restored.edge_wrap.outline_enabled is False
+
+    params = SliceParams()
+    params.step.baseplate_step_enabled = True
+    params.step.baseplate_step_is_v_groove = True
+    params.light_slot.enabled = True
+    params.edge_wrap.wrap_enabled = True
+    params.edge_wrap.outline_enabled = True
+
+    panel.set_params(params)
+    restored = panel.get_params()
+
+    assert panel.bottom_mode_group.checkedId() == panel.BOTTOM_MODE_BASEPLATE_V_GROOVE
+    assert restored.bottom_face.enabled is False
+    assert restored.step.baseplate_step_enabled is True
+    assert restored.step.baseplate_step_is_v_groove is True
+    assert restored.light_slot.enabled is False
+    assert restored.edge_wrap.wrap_enabled is False
+    assert restored.edge_wrap.outline_enabled is False
 
 
 def test_primary_tabs_and_parameter_icons_are_loaded(qapp):
@@ -471,12 +642,14 @@ def test_prime_tower_controls_roundtrip_through_print_settings(qapp):
     assert restored.prime_tower.infill_density_percent == 35
 
 
-def test_step_controls_share_single_primary_group(qapp):
+def test_step_controls_are_split_between_top_and_bottom_groups(qapp):
     panel = ParamPanel()
 
-    assert panel.step_group.title() == "Step/V-Groove"
-    assert _owning_group(panel.panel_step_enabled) is panel.step_group
-    assert _owning_group(panel.baseplate_step_enabled) is panel.step_group
+    assert panel.step_group is panel.panel_step_group
+    assert panel.panel_step_group.title() == "Panel Step/V-Groove"
+    assert panel.baseplate_step_group.title() == "Baseplate Step/V-Groove"
+    assert _owning_group(panel.panel_step_enabled) is panel.panel_step_group
+    assert _owning_group(panel.baseplate_step_enabled) is panel.baseplate_step_group
 
 
 def test_set_params_restores_wrap_controls_enabled_state(qapp):
@@ -880,10 +1053,15 @@ def test_skirt_group_hides_legacy_fields_and_moves_speed_to_print_settings(qapp)
 
 def test_step_group_keeps_geometry_fields_and_moves_speed_to_print_settings(qapp):
     panel = ParamPanel()
-    step_group = next(group for group in panel._primary_groups if group.title() == "Step/V-Groove")
+    top_step_group = next(group for group in panel._primary_groups if group.title() == "Panel Step/V-Groove")
+    bottom_step_group = next(group for group in panel._primary_groups if group.title() == "Baseplate Step/V-Groove")
     speed_group = next(group for group in panel._primary_groups if group.title() == "Speed Settings")
 
-    step_labels = {label.text() for label in step_group.findChildren(QLabel)}
+    step_labels = {
+        label.text()
+        for group in (top_step_group, bottom_step_group)
+        for label in group.findChildren(QLabel)
+    }
     speed_labels = {label.text() for label in speed_group.findChildren(QLabel)}
 
     assert "Step Height:" in step_labels
@@ -1097,17 +1275,20 @@ def test_light_slot_and_baseplate_step_are_mutually_exclusive(qapp):
     assert panel.light_slot_width.isEnabled() is False
 
 
-def test_light_slot_and_bottom_face_can_coexist(qapp):
+def test_light_slot_and_bottom_face_are_mutually_exclusive(qapp):
     panel = ParamPanel()
 
     panel.bottom_face_enabled.setChecked(True)
     panel.light_slot_enabled.setChecked(True)
+    params = panel.get_params()
 
-    assert panel.bottom_face_enabled.isChecked() is True
+    assert panel.bottom_face_enabled.isChecked() is False
     assert panel.light_slot_enabled.isChecked() is True
-    assert panel.bottom_face_thickness.isEnabled() is True
-    assert panel.bottom_face_screw_hole_diameter.isEnabled() is True
+    assert panel.bottom_face_thickness.isEnabled() is False
+    assert panel.bottom_face_screw_hole_diameter.isEnabled() is False
     assert panel.light_slot_width.isEnabled() is True
+    assert params.bottom_face.enabled is False
+    assert params.light_slot.enabled is True
 
 
 def test_bottom_face_screw_hole_diameter_roundtrips_with_bottom_face_params(qapp):

@@ -127,6 +127,19 @@ class ParamPanel(QWidget):
 
     params_changed = Signal()  # 参数变化信号
 
+    TOP_MODE_NONE = 0
+    TOP_MODE_FACE = 1
+    TOP_MODE_PANEL_STEP = 2
+    TOP_MODE_PANEL_V_GROOVE = 3
+
+    BOTTOM_MODE_NONE = 0
+    BOTTOM_MODE_FACE = 1
+    BOTTOM_MODE_BASEPLATE_STEP = 2
+    BOTTOM_MODE_BASEPLATE_V_GROOVE = 3
+    BOTTOM_MODE_LIGHT_SLOT = 4
+    BOTTOM_MODE_EDGE_WRAP = 5
+    BOTTOM_MODE_OUTLINE = 6
+
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setObjectName("paramPanel")
@@ -185,37 +198,41 @@ class ParamPanel(QWidget):
         self.printer_profile_group = self._create_printer_profile_group()
         self.klipper_commands_group = self._create_klipper_commands_group()
         self.dxf_export_group = self._create_dxf_export_group()
+        self.top_mode_widget = self._create_top_mode_widget()
+        self.bottom_mode_widget = self._create_bottom_mode_widget()
 
         self._primary_groups = [
             self.shell_group,
             self.edge_group,
+            self.top_face_group,
+            self.panel_step_group,
+            self.bottom_face_group,
+            self.baseplate_step_group,
+            self.light_slot_group,
             self.edge_wrap_group,
-            self.step_group,
             self.skirt_group,
+            self.connected_group,
+            self.dxf_export_group,
             self.speed_group,
             self.temperature_group,
             self.cooling_group,
             self.color_group,
             self.prime_tower_group,
-            self.top_face_group,
-            self.bottom_face_group,
-            self.connected_group,
-            self.light_slot_group,
             self.printer_profile_group,
             self.klipper_commands_group,
-            self.dxf_export_group,
         ]
 
         self._shape_groups = [
             self.shell_group,
             self.edge_group,
-            self.edge_wrap_group,
-            self.step_group,
-            self.skirt_group,
             self.top_face_group,
+            self.panel_step_group,
             self.bottom_face_group,
-            self.connected_group,
+            self.baseplate_step_group,
             self.light_slot_group,
+            self.edge_wrap_group,
+            self.skirt_group,
+            self.connected_group,
             self.dxf_export_group,
         ]
         self._vector_groups = self._shape_groups
@@ -317,10 +334,13 @@ class ParamPanel(QWidget):
         self._section_widgets = []
         self._section_widgets_by_key = {}
         for section in self._primary_sections:
-            tab_page = self._create_settings_tab_page(
-                key=section["key"],
-                groups=section["groups"],
-            )
+            if section["key"] == "shape":
+                tab_page = self._create_shape_settings_tab_page()
+            else:
+                tab_page = self._create_settings_tab_page(
+                    key=section["key"],
+                    groups=section["groups"],
+                )
             self._section_widgets.append(tab_page)
             self._section_widgets_by_key[section["key"]] = tab_page
             tab_index = self.primary_tabs.addTab(
@@ -332,6 +352,9 @@ class ParamPanel(QWidget):
 
         self.primary_tabs.setCurrentIndex(0)
         layout.addWidget(self.primary_tabs, 1)
+        self._sync_top_mode_from_controls()
+        self._sync_bottom_mode_from_controls()
+        self._sync_shape_mode_group_visibility()
         self._sync_layer_based_controls()
         self._update_prime_tower_coordinate_ranges()
 
@@ -372,6 +395,140 @@ class ParamPanel(QWidget):
         scroll._content = content
         scroll._groups = groups
         return scroll
+
+    def _create_shape_settings_tab_page(self) -> QScrollArea:
+        """Create the Shape page with Shell Settings followed by feature tabs."""
+        scroll = QScrollArea()
+        scroll.setObjectName("shapeSettingsTab")
+        scroll.setWidgetResizable(True)
+        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        scroll.setStyleSheet(f"""
+            QScrollArea#shapeSettingsTab {{
+                background-color: {COLORS.editor_sidebar_left_bg};
+                border: none;
+            }}
+            QScrollArea#shapeSettingsTab > QWidget > QWidget {{
+                background-color: {COLORS.editor_sidebar_left_bg};
+            }}
+        """)
+
+        content = QWidget()
+        content.setObjectName("shapeSettingsTabContent")
+        content.setStyleSheet(f"background-color: {COLORS.editor_sidebar_left_bg};")
+
+        content_layout = QVBoxLayout(content)
+        content_layout.setContentsMargins(12, 12, 12, 12)
+        content_layout.setSpacing(12)
+        content_layout.addWidget(self.shell_group)
+
+        self.shape_feature_tabs = QTabWidget()
+        self.shape_feature_tabs.setObjectName("shape_feature_tabs")
+        self.shape_feature_tabs.setDocumentMode(True)
+        self.shape_feature_tabs.setUsesScrollButtons(False)
+        self.shape_feature_tabs.tabBar().setExpanding(True)
+        self.shape_feature_tabs.tabBar().setDrawBase(False)
+        self.shape_feature_tabs.setStyleSheet(f"""
+            QTabWidget#shape_feature_tabs {{
+                background-color: {COLORS.editor_sidebar_left_bg};
+                border: none;
+            }}
+            QTabWidget#shape_feature_tabs::pane {{
+                background-color: {COLORS.editor_sidebar_left_bg};
+                border: none;
+                padding-top: 10px;
+            }}
+            QTabWidget#shape_feature_tabs QTabBar::tab {{
+                background-color: {COLORS.editor_sidebar_left_bg};
+                border: none;
+                border-bottom: 2px solid transparent;
+                color: {COLORS.text_muted};
+                font-size: 12px;
+                font-weight: 500;
+                padding: 9px 2px 7px 2px;
+            }}
+            QTabWidget#shape_feature_tabs QTabBar::tab:selected {{
+                color: {COLORS.text_primary};
+                border-bottom: 2px solid {COLORS.editor_canvas_toolbar_accent};
+                font-weight: 600;
+            }}
+            QTabWidget#shape_feature_tabs QTabBar::tab:hover:!selected {{
+                background-color: {COLORS.editor_list_item_bg};
+                color: {COLORS.text_secondary};
+            }}
+        """)
+
+        self._shape_feature_sections = [
+            {
+                "key": "wall",
+                "title": self.tr("Wall"),
+                "mode_widget": None,
+                "groups": [self.edge_group],
+            },
+            {
+                "key": "top",
+                "title": self.tr("Top"),
+                "mode_widget": self.top_mode_widget,
+                "groups": [self.top_face_group, self.panel_step_group],
+            },
+            {
+                "key": "bottom",
+                "title": self.tr("Bottom"),
+                "mode_widget": self.bottom_mode_widget,
+                "groups": [
+                    self.bottom_face_group,
+                    self.baseplate_step_group,
+                    self.light_slot_group,
+                    self.edge_wrap_group,
+                ],
+            },
+            {
+                "key": "other",
+                "title": self.tr("Other"),
+                "mode_widget": None,
+                "groups": [
+                    self.skirt_group,
+                    self.connected_group,
+                    self.dxf_export_group,
+                ],
+            },
+        ]
+        self._shape_feature_widgets_by_key = {}
+        for section in self._shape_feature_sections:
+            page = self._create_feature_tab_content(
+                section["key"],
+                section["mode_widget"],
+                section["groups"],
+            )
+            self._shape_feature_widgets_by_key[section["key"]] = page
+            self.shape_feature_tabs.addTab(page, section["title"])
+
+        content_layout.addWidget(self.shape_feature_tabs)
+        content_layout.addStretch()
+
+        scroll.setWidget(content)
+        scroll._content = content
+        scroll._groups = self._shape_groups
+        return scroll
+
+    def _create_feature_tab_content(
+        self,
+        key: str,
+        mode_widget: Optional[QWidget],
+        groups: list[QGroupBox],
+    ) -> QWidget:
+        page = QWidget()
+        page.setObjectName(f"shape_{key}_tab_content")
+        page.setStyleSheet(f"background-color: {COLORS.editor_sidebar_left_bg};")
+        layout = QVBoxLayout(page)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(12)
+        if mode_widget is not None:
+            layout.addWidget(mode_widget)
+        for group in groups:
+            layout.addWidget(group)
+        layout.addStretch()
+        page._groups = groups
+        return page
 
     def _icon(self, name: str) -> QIcon:
         """Load a parameter-panel icon from Qt resources."""
@@ -423,6 +580,116 @@ class ParamPanel(QWidget):
         """Add a form row with a 24px icon while preserving the visible label text."""
         form.setLabelAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
         form.addRow(self._icon_label(icon_name, text), field)
+
+    def _create_mode_button_group(
+        self,
+        object_name: str,
+        options: list[tuple[int, str, str]],
+        checked_id: int,
+    ) -> tuple[QWidget, QButtonGroup, dict[int, QPushButton]]:
+        """Create an exclusive icon-button mode selector."""
+        container = QWidget()
+        container.setObjectName(object_name)
+        container.setStyleSheet(f"""
+            QPushButton[shapeModeButton="true"] {{
+                background-color: {COLORS.editor_list_item_bg};
+                border: 1px solid {COLORS.border_default};
+                border-radius: 6px;
+                padding: 6px;
+            }}
+            QPushButton[shapeModeButton="true"]:checked {{
+                background-color: {COLORS.editor_canvas_toolbar_accent};
+                border-color: {COLORS.editor_canvas_toolbar_accent};
+            }}
+            QPushButton[shapeModeButton="true"]:hover:!checked {{
+                border-color: {COLORS.text_muted};
+            }}
+        """)
+        layout = QHBoxLayout(container)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(6)
+
+        button_group = QButtonGroup(self)
+        button_group.setObjectName(f"{object_name}_group")
+        button_group.setExclusive(True)
+
+        buttons: dict[int, QPushButton] = {}
+        for mode_id, tooltip, icon_name in options:
+            button = QPushButton()
+            button.setObjectName(f"{object_name}_{mode_id}")
+            button.setCheckable(True)
+            button.setIcon(self._icon(icon_name))
+            button.setIconSize(QSize(22, 22))
+            button.setToolTip(tooltip)
+            button.setAccessibleName(tooltip)
+            button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+            button.setMinimumHeight(40)
+            button.setProperty("shapeModeButton", True)
+            layout.addWidget(button)
+            button_group.addButton(button, mode_id)
+            buttons[mode_id] = button
+
+        if checked_id in buttons:
+            buttons[checked_id].setChecked(True)
+
+        return container, button_group, buttons
+
+    def _set_button_group_checked(
+        self,
+        button_group: QButtonGroup,
+        mode_id: int,
+    ) -> None:
+        button = button_group.button(mode_id)
+        if button is None or button.isChecked():
+            return
+        button_group.blockSignals(True)
+        try:
+            button.setChecked(True)
+        finally:
+            button_group.blockSignals(False)
+
+    @staticmethod
+    def _set_checked_silent(checkbox: QCheckBox, checked: bool) -> None:
+        checkbox.blockSignals(True)
+        try:
+            checkbox.setChecked(checked)
+        finally:
+            checkbox.blockSignals(False)
+
+    def _create_top_mode_widget(self) -> QWidget:
+        widget, group, buttons = self._create_mode_button_group(
+            "top_mode_buttons",
+            [
+                (self.TOP_MODE_NONE, self.tr("None"), "shape"),
+                (self.TOP_MODE_FACE, self.tr("Top Face"), "face-top"),
+                (self.TOP_MODE_PANEL_STEP, self.tr("Panel Step"), "step"),
+                (self.TOP_MODE_PANEL_V_GROOVE, self.tr("Panel V-Groove"), "bevel"),
+            ],
+            self.TOP_MODE_NONE,
+        )
+        self.top_mode_group = group
+        self.top_mode_buttons = buttons
+        group.idClicked.connect(self._on_top_mode_selected)
+        return widget
+
+    def _create_bottom_mode_widget(self) -> QWidget:
+        widget, group, buttons = self._create_mode_button_group(
+            "bottom_mode_buttons",
+            [
+                (self.BOTTOM_MODE_NONE, self.tr("None"), "shape"),
+                (self.BOTTOM_MODE_FACE, self.tr("Bottom Face"), "face-bottom"),
+                (self.BOTTOM_MODE_BASEPLATE_STEP, self.tr("Baseplate Step"), "step"),
+                (self.BOTTOM_MODE_BASEPLATE_V_GROOVE, self.tr("Baseplate V-Groove"), "bevel"),
+                (self.BOTTOM_MODE_LIGHT_SLOT, self.tr("Light Slot"), "light-slot"),
+                (self.BOTTOM_MODE_EDGE_WRAP, self.tr("Edge Wrap"), "wrap"),
+                (self.BOTTOM_MODE_OUTLINE, self.tr("Outline"), "outline"),
+            ],
+            self.BOTTOM_MODE_NONE,
+        )
+        self.bottom_mode_group = group
+        self.bottom_mode_buttons = buttons
+        group.idClicked.connect(self._on_bottom_mode_selected)
+        return widget
 
     def _create_double_spinbox(self, decimals: int = 2) -> QDoubleSpinBox:
         """Create a standard floating-point input without custom plus/minus buttons."""
@@ -744,18 +1011,32 @@ class ParamPanel(QWidget):
         layout.setSpacing(8)
 
         # 边缘类型选择
-        type_form = QFormLayout()
-        type_form.setSpacing(8)
-
         self.edge_type_combo = GuardedComboBox()
+        self.edge_type_combo.setObjectName("edge_type_combo")
         self.edge_type_combo.addItem(self.tr("Straight"), EdgeType.STRAIGHT)
         self.edge_type_combo.addItem(self.tr("Beveled"), EdgeType.BEVELED)
         self.edge_type_combo.addItem(self.tr("U Shape"), EdgeType.U_SHAPED)
         self.edge_type_combo.addItem(self.tr("Custom"), EdgeType.CUSTOM)
+        self.edge_type_combo.setVisible(False)
         self.edge_type_combo.currentIndexChanged.connect(self._on_edge_type_changed)
-        self._add_icon_row(type_form, "edge", self.tr("Edge Type:"), self.edge_type_combo)
-
-        layout.addLayout(type_form)
+        self.wall_mode_widget, self.wall_mode_group, self.wall_mode_buttons = self._create_mode_button_group(
+            "wall_mode_buttons",
+            [
+                (0, self.tr("Straight"), "wall"),
+                (1, self.tr("Beveled"), "bevel"),
+                (2, self.tr("U Shape"), "arc"),
+                (3, self.tr("Custom"), "profile"),
+            ],
+            0,
+        )
+        self._wall_mode_edge_types = {
+            0: EdgeType.STRAIGHT,
+            1: EdgeType.BEVELED,
+            2: EdgeType.U_SHAPED,
+            3: EdgeType.CUSTOM,
+        }
+        self.wall_mode_group.idClicked.connect(self._on_wall_mode_selected)
+        layout.addWidget(self.wall_mode_widget)
 
         # ===== 斜边参数容器 =====
         self.bevel_params_widget = QWidget()
@@ -928,6 +1209,8 @@ class ParamPanel(QWidget):
 
         # 启用开关
         self.bottom_face_enabled = QCheckBox(self.tr("Enable Bottom Face"))
+        self.bottom_face_enabled.setObjectName("bottom_face_enabled")
+        self.bottom_face_enabled.setVisible(False)
         self.bottom_face_enabled.stateChanged.connect(self._on_param_changed)
         layout.addWidget(self.bottom_face_enabled)
 
@@ -970,6 +1253,7 @@ class ParamPanel(QWidget):
         )
         # 与 Baseplate Step (Bottom) 互斥
         self.bottom_face_enabled.stateChanged.connect(self._on_bottom_face_toggled)
+        self.bottom_face_enabled.stateChanged.connect(self._sync_bottom_mode_from_controls)
         self._sync_bottom_face_availability()
 
         return group
@@ -1019,7 +1303,10 @@ class ParamPanel(QWidget):
             self.bottom_face_enabled.blockSignals(False)
 
         self.bottom_face_enabled.setEnabled(not is_u_shape)
+        if hasattr(self, "bottom_mode_buttons"):
+            self.bottom_mode_buttons[self.BOTTOM_MODE_FACE].setEnabled(not is_u_shape)
         self._toggle_bottom_face_controls(self.bottom_face_enabled.isChecked())
+        self._sync_bottom_mode_from_controls()
 
     def _toggle_bottom_face_controls(self, enabled: bool):
         """切换底面封闭控件的启用状态"""
@@ -1034,6 +1321,8 @@ class ParamPanel(QWidget):
         layout.setSpacing(8)
 
         self.light_slot_enabled = QCheckBox(self.tr("Enable Light Slot"))
+        self.light_slot_enabled.setObjectName("light_slot_enabled")
+        self.light_slot_enabled.setVisible(False)
         self.light_slot_enabled.stateChanged.connect(self._on_param_changed)
         layout.addWidget(self.light_slot_enabled)
 
@@ -1133,6 +1422,7 @@ class ParamPanel(QWidget):
             lambda: self._toggle_light_slot_controls(self.light_slot_enabled.isChecked())
         )
         self.light_slot_enabled.stateChanged.connect(self._on_light_slot_toggled)
+        self.light_slot_enabled.stateChanged.connect(self._sync_bottom_mode_from_controls)
 
         return group
 
@@ -1167,6 +1457,8 @@ class ParamPanel(QWidget):
 
         # 启用开关
         self.top_face_enabled = QCheckBox(self.tr("Enable Top Face"))
+        self.top_face_enabled.setObjectName("top_face_enabled")
+        self.top_face_enabled.setVisible(False)
         self.top_face_enabled.stateChanged.connect(self._on_param_changed)
         layout.addWidget(self.top_face_enabled)
 
@@ -1194,6 +1486,7 @@ class ParamPanel(QWidget):
         )
         # 与 Panel Step (Top) 互斥
         self.top_face_enabled.stateChanged.connect(self._on_top_face_toggled)
+        self.top_face_enabled.stateChanged.connect(self._sync_top_mode_from_controls)
 
         return group
 
@@ -2189,12 +2482,15 @@ class ParamPanel(QWidget):
 
     def _create_step_group(self) -> QGroupBox:
         """创建台阶/V槽参数组"""
-        group = QGroupBox(self.tr("Step/V-Groove"))
+        self.panel_step_group = QGroupBox(self.tr("Panel Step/V-Groove"))
+        group = self.panel_step_group
         layout = QVBoxLayout(group)
         layout.setSpacing(8)
 
         # ===== 面板台阶（顶部）=====
         self.panel_step_enabled = QCheckBox(self.tr("Enable Panel Step (Top)"))
+        self.panel_step_enabled.setObjectName("panel_step_enabled")
+        self.panel_step_enabled.setVisible(False)
         self.panel_step_enabled.stateChanged.connect(self._on_param_changed)
         layout.addWidget(self.panel_step_enabled)
 
@@ -2232,6 +2528,8 @@ class ParamPanel(QWidget):
         self._add_icon_row(form1, "dimension", self.tr("Step Width:"), self.panel_step_width)
 
         self.panel_step_v_groove = QCheckBox(self.tr("V-Groove"))
+        self.panel_step_v_groove.setObjectName("panel_step_v_groove")
+        self.panel_step_v_groove.setVisible(False)
         self.panel_step_v_groove.setEnabled(False)
         self.panel_step_v_groove.stateChanged.connect(self._on_param_changed)
         form1.addRow("", self.panel_step_v_groove)
@@ -2243,17 +2541,20 @@ class ParamPanel(QWidget):
         )
         # 与 Top Face 互斥
         self.panel_step_enabled.stateChanged.connect(self._on_panel_step_toggled)
+        self.panel_step_enabled.stateChanged.connect(self._sync_top_mode_from_controls)
+        self.panel_step_v_groove.stateChanged.connect(self._sync_top_mode_from_controls)
 
         # 分隔线
-        line1 = QFrame()
-        line1.setFrameShape(QFrame.Shape.HLine)
-        line1.setStyleSheet(f"background-color: {COLORS.border_default};")
-        layout.addWidget(line1)
+        self.baseplate_step_group = QGroupBox(self.tr("Baseplate Step/V-Groove"))
+        bottom_layout = QVBoxLayout(self.baseplate_step_group)
+        bottom_layout.setSpacing(8)
 
         # ===== 底板台阶（底部）=====
         self.baseplate_step_enabled = QCheckBox(self.tr("Enable Baseplate Step (Bottom)"))
+        self.baseplate_step_enabled.setObjectName("baseplate_step_enabled")
+        self.baseplate_step_enabled.setVisible(False)
         self.baseplate_step_enabled.stateChanged.connect(self._on_param_changed)
-        layout.addWidget(self.baseplate_step_enabled)
+        bottom_layout.addWidget(self.baseplate_step_enabled)
 
         form2 = QFormLayout()
         self.baseplate_step_height = self._create_double_spinbox()
@@ -2283,11 +2584,13 @@ class ParamPanel(QWidget):
         self._add_icon_row(form2, "dimension", self.tr("Step Width:"), self.baseplate_step_width)
 
         self.baseplate_step_v_groove = QCheckBox(self.tr("V-Groove"))
+        self.baseplate_step_v_groove.setObjectName("baseplate_step_v_groove")
+        self.baseplate_step_v_groove.setVisible(False)
         self.baseplate_step_v_groove.setEnabled(False)
         self.baseplate_step_v_groove.stateChanged.connect(self._on_param_changed)
         form2.addRow("", self.baseplate_step_v_groove)
 
-        layout.addLayout(form2)
+        bottom_layout.addLayout(form2)
 
         self.step_speed = self._create_double_spinbox(decimals=1)
         self.step_speed.setRange(5.0, 200.0)
@@ -2302,6 +2605,8 @@ class ParamPanel(QWidget):
         )
         # 与 Bottom Face 互斥
         self.baseplate_step_enabled.stateChanged.connect(self._on_baseplate_step_toggled)
+        self.baseplate_step_enabled.stateChanged.connect(self._sync_bottom_mode_from_controls)
+        self.baseplate_step_v_groove.stateChanged.connect(self._sync_bottom_mode_from_controls)
 
         # 兼容旧变量（避免其他代码报错）
         self.top_step_enabled = self.panel_step_enabled
@@ -2596,6 +2901,8 @@ class ParamPanel(QWidget):
 
         # 包边设置
         self.wrap_enabled = QCheckBox(self.tr("Enable Edge Wrap"))
+        self.wrap_enabled.setObjectName("wrap_enabled")
+        self.wrap_enabled.setVisible(False)
         self.wrap_enabled.stateChanged.connect(self._on_param_changed)
         layout.addWidget(self.wrap_enabled)
 
@@ -2648,6 +2955,8 @@ class ParamPanel(QWidget):
 
         # 勾边设置
         self.outline_enabled = QCheckBox(self.tr("Enable Outline"))
+        self.outline_enabled.setObjectName("outline_enabled")
+        self.outline_enabled.setVisible(False)
         self.outline_enabled.stateChanged.connect(self._on_param_changed)
         layout.addWidget(self.outline_enabled)
 
@@ -2703,6 +3012,8 @@ class ParamPanel(QWidget):
         # 包边和勾边互斥
         self.wrap_enabled.stateChanged.connect(self._on_wrap_outline_mutual_exclusive)
         self.outline_enabled.stateChanged.connect(self._on_wrap_outline_mutual_exclusive)
+        self.wrap_enabled.stateChanged.connect(self._sync_bottom_mode_from_controls)
+        self.outline_enabled.stateChanged.connect(self._sync_bottom_mode_from_controls)
 
         return group
 
@@ -2799,6 +3110,191 @@ class ParamPanel(QWidget):
 
         return group
 
+    def _on_wall_mode_selected(self, mode_id: int) -> None:
+        edge_type = self._wall_mode_edge_types.get(mode_id)
+        if edge_type is None:
+            return
+        edge_index = self.edge_type_combo.findData(edge_type)
+        if edge_index >= 0 and edge_index != self.edge_type_combo.currentIndex():
+            self.edge_type_combo.setCurrentIndex(edge_index)
+        else:
+            self._sync_wall_mode_from_controls()
+
+    def _sync_wall_mode_from_controls(self) -> None:
+        if not hasattr(self, "wall_mode_group"):
+            return
+        edge_type = self.edge_type_combo.currentData()
+        for mode_id, candidate in self._wall_mode_edge_types.items():
+            if candidate == edge_type:
+                self._set_button_group_checked(self.wall_mode_group, mode_id)
+                break
+        self._sync_shape_mode_group_visibility()
+
+    def _top_mode_from_controls(self) -> int:
+        if self.top_face_enabled.isChecked():
+            return self.TOP_MODE_FACE
+        if self.panel_step_enabled.isChecked():
+            if self.panel_step_v_groove.isChecked():
+                return self.TOP_MODE_PANEL_V_GROOVE
+            return self.TOP_MODE_PANEL_STEP
+        return self.TOP_MODE_NONE
+
+    def _top_mode_from_params(self, params: SliceParams) -> int:
+        if params.top_face.enabled:
+            return self.TOP_MODE_FACE
+        if params.step.panel_step_enabled:
+            if params.step.panel_step_is_v_groove:
+                return self.TOP_MODE_PANEL_V_GROOVE
+            return self.TOP_MODE_PANEL_STEP
+        return self.TOP_MODE_NONE
+
+    def _on_top_mode_selected(self, mode_id: int) -> None:
+        self._apply_top_mode(mode_id, emit_changed=True)
+
+    def _apply_top_mode(self, mode_id: int, *, emit_changed: bool) -> None:
+        self._set_checked_silent(self.top_face_enabled, mode_id == self.TOP_MODE_FACE)
+        self._set_checked_silent(
+            self.panel_step_enabled,
+            mode_id in (self.TOP_MODE_PANEL_STEP, self.TOP_MODE_PANEL_V_GROOVE),
+        )
+        self._set_checked_silent(
+            self.panel_step_v_groove,
+            mode_id == self.TOP_MODE_PANEL_V_GROOVE,
+        )
+        self._toggle_top_face_controls(self.top_face_enabled.isChecked())
+        self._toggle_panel_step_controls(self.panel_step_enabled.isChecked())
+        self._set_button_group_checked(self.top_mode_group, mode_id)
+        self._sync_shape_mode_group_visibility()
+        if emit_changed:
+            self._on_param_changed()
+
+    def _sync_top_mode_from_controls(self) -> None:
+        if not hasattr(self, "top_mode_group"):
+            return
+        self._apply_top_mode(self._top_mode_from_controls(), emit_changed=False)
+
+    def _bottom_mode_for_sender(self, sender: QWidget) -> Optional[int]:
+        if sender is self.bottom_face_enabled:
+            return self.BOTTOM_MODE_FACE
+        if sender is self.baseplate_step_enabled:
+            return (
+                self.BOTTOM_MODE_BASEPLATE_V_GROOVE
+                if self.baseplate_step_v_groove.isChecked()
+                else self.BOTTOM_MODE_BASEPLATE_STEP
+            )
+        if sender is self.baseplate_step_v_groove and self.baseplate_step_enabled.isChecked():
+            return (
+                self.BOTTOM_MODE_BASEPLATE_V_GROOVE
+                if self.baseplate_step_v_groove.isChecked()
+                else self.BOTTOM_MODE_BASEPLATE_STEP
+            )
+        if sender is self.light_slot_enabled:
+            return self.BOTTOM_MODE_LIGHT_SLOT
+        if sender is self.wrap_enabled:
+            return self.BOTTOM_MODE_EDGE_WRAP
+        if sender is self.outline_enabled:
+            return self.BOTTOM_MODE_OUTLINE
+        return None
+
+    def _bottom_mode_from_controls(self) -> int:
+        if self.bottom_face_enabled.isChecked() and not self._is_u_shape_edge_selected():
+            return self.BOTTOM_MODE_FACE
+        if self.baseplate_step_enabled.isChecked():
+            if self.baseplate_step_v_groove.isChecked():
+                return self.BOTTOM_MODE_BASEPLATE_V_GROOVE
+            return self.BOTTOM_MODE_BASEPLATE_STEP
+        if self.light_slot_enabled.isChecked():
+            return self.BOTTOM_MODE_LIGHT_SLOT
+        if self.wrap_enabled.isChecked():
+            return self.BOTTOM_MODE_EDGE_WRAP
+        if self.outline_enabled.isChecked():
+            return self.BOTTOM_MODE_OUTLINE
+        return self.BOTTOM_MODE_NONE
+
+    def _bottom_mode_from_params(self, params: SliceParams) -> int:
+        if params.bottom_face.enabled and params.shell.edge_type != EdgeType.U_SHAPED:
+            return self.BOTTOM_MODE_FACE
+        if params.step.baseplate_step_enabled:
+            if params.step.baseplate_step_is_v_groove:
+                return self.BOTTOM_MODE_BASEPLATE_V_GROOVE
+            return self.BOTTOM_MODE_BASEPLATE_STEP
+        if params.light_slot.enabled:
+            return self.BOTTOM_MODE_LIGHT_SLOT
+        if params.edge_wrap.wrap_enabled:
+            return self.BOTTOM_MODE_EDGE_WRAP
+        if params.edge_wrap.outline_enabled:
+            return self.BOTTOM_MODE_OUTLINE
+        return self.BOTTOM_MODE_NONE
+
+    def _on_bottom_mode_selected(self, mode_id: int) -> None:
+        self._apply_bottom_mode(mode_id, emit_changed=True)
+
+    def _apply_bottom_mode(self, mode_id: int, *, emit_changed: bool) -> None:
+        if mode_id == self.BOTTOM_MODE_FACE and self._is_u_shape_edge_selected():
+            mode_id = self.BOTTOM_MODE_NONE
+
+        self._set_checked_silent(self.bottom_face_enabled, mode_id == self.BOTTOM_MODE_FACE)
+        self._set_checked_silent(
+            self.baseplate_step_enabled,
+            mode_id in (
+                self.BOTTOM_MODE_BASEPLATE_STEP,
+                self.BOTTOM_MODE_BASEPLATE_V_GROOVE,
+            ),
+        )
+        self._set_checked_silent(
+            self.baseplate_step_v_groove,
+            mode_id == self.BOTTOM_MODE_BASEPLATE_V_GROOVE,
+        )
+        self._set_checked_silent(self.light_slot_enabled, mode_id == self.BOTTOM_MODE_LIGHT_SLOT)
+        self._set_checked_silent(self.wrap_enabled, mode_id == self.BOTTOM_MODE_EDGE_WRAP)
+        self._set_checked_silent(self.outline_enabled, mode_id == self.BOTTOM_MODE_OUTLINE)
+
+        self._toggle_bottom_face_controls(self.bottom_face_enabled.isChecked())
+        self._toggle_baseplate_step_controls(self.baseplate_step_enabled.isChecked())
+        self._toggle_light_slot_controls(self.light_slot_enabled.isChecked())
+        self._toggle_wrap_controls(self.wrap_enabled.isChecked())
+        self._toggle_outline_controls(self.outline_enabled.isChecked())
+        self._set_button_group_checked(self.bottom_mode_group, mode_id)
+        self._sync_shape_mode_group_visibility()
+        if emit_changed:
+            self._on_param_changed()
+
+    def _sync_bottom_mode_from_controls(self) -> None:
+        if not hasattr(self, "bottom_mode_group"):
+            return
+        sender = self.sender()
+        sender_mode = None
+        if isinstance(sender, QCheckBox):
+            sender_mode = self._bottom_mode_for_sender(sender)
+            if sender_mode is not None and (
+                sender.isChecked()
+                or sender is self.baseplate_step_v_groove
+            ):
+                self._apply_bottom_mode(sender_mode, emit_changed=True)
+                return
+        self._apply_bottom_mode(self._bottom_mode_from_controls(), emit_changed=False)
+
+    def _sync_shape_mode_group_visibility(self) -> None:
+        if hasattr(self, "top_face_group"):
+            top_mode = self._top_mode_from_controls()
+            self.top_face_group.setVisible(top_mode == self.TOP_MODE_FACE)
+            self.panel_step_group.setVisible(
+                top_mode in (self.TOP_MODE_PANEL_STEP, self.TOP_MODE_PANEL_V_GROOVE)
+            )
+        if hasattr(self, "bottom_face_group"):
+            bottom_mode = self._bottom_mode_from_controls()
+            self.bottom_face_group.setVisible(bottom_mode == self.BOTTOM_MODE_FACE)
+            self.baseplate_step_group.setVisible(
+                bottom_mode in (
+                    self.BOTTOM_MODE_BASEPLATE_STEP,
+                    self.BOTTOM_MODE_BASEPLATE_V_GROOVE,
+                )
+            )
+            self.light_slot_group.setVisible(bottom_mode == self.BOTTOM_MODE_LIGHT_SLOT)
+            self.edge_wrap_group.setVisible(
+                bottom_mode in (self.BOTTOM_MODE_EDGE_WRAP, self.BOTTOM_MODE_OUTLINE)
+            )
+
     def _on_edge_type_changed(self, index: int):
         """边缘类型变化"""
         edge_type = self.edge_type_combo.currentData()
@@ -2807,6 +3303,7 @@ class ParamPanel(QWidget):
         self.bevel_params_widget.setVisible(edge_type == EdgeType.BEVELED)
         self.u_shape_params_widget.setVisible(edge_type == EdgeType.U_SHAPED)
         self.custom_edge_widget.setVisible(edge_type == EdgeType.CUSTOM)
+        self._sync_wall_mode_from_controls()
         self._sync_bottom_face_availability()
 
         # 如果切换到异形边且没有选择预设，自动加载默认预设
@@ -3161,6 +3658,39 @@ class ParamPanel(QWidget):
         light_slot_min_hole_span = params.light_slot.min_hole_span
         top_face_enabled = params.top_face.enabled
         top_face_thickness = params.top_face.thickness
+        top_mode = self._top_mode_from_params(params)
+        bottom_mode = self._bottom_mode_from_params(params)
+
+        top_face_enabled = top_mode == self.TOP_MODE_FACE
+        panel_step_enabled = top_mode in (
+            self.TOP_MODE_PANEL_STEP,
+            self.TOP_MODE_PANEL_V_GROOVE,
+        )
+        panel_step_is_v_groove = top_mode == self.TOP_MODE_PANEL_V_GROOVE
+
+        bottom_face_enabled = bottom_mode == self.BOTTOM_MODE_FACE
+        baseplate_step_enabled = bottom_mode in (
+            self.BOTTOM_MODE_BASEPLATE_STEP,
+            self.BOTTOM_MODE_BASEPLATE_V_GROOVE,
+        )
+        baseplate_step_is_v_groove = bottom_mode == self.BOTTOM_MODE_BASEPLATE_V_GROOVE
+        light_slot_enabled = bottom_mode == self.BOTTOM_MODE_LIGHT_SLOT
+
+        params.top_face.enabled = top_face_enabled
+        params.step.panel_step_enabled = panel_step_enabled
+        params.step.panel_step_is_v_groove = panel_step_is_v_groove
+        params.step.top_step_enabled = panel_step_enabled
+        params.step.top_step_height = panel_step_height
+        params.step.top_step_width = panel_step_width
+        params.bottom_face.enabled = bottom_face_enabled
+        params.step.baseplate_step_enabled = baseplate_step_enabled
+        params.step.baseplate_step_is_v_groove = baseplate_step_is_v_groove
+        params.step.bottom_groove_enabled = baseplate_step_enabled
+        params.step.bottom_groove_height = baseplate_step_height
+        params.step.bottom_groove_depth = baseplate_step_width
+        params.light_slot.enabled = light_slot_enabled
+        params.edge_wrap.wrap_enabled = bottom_mode == self.BOTTOM_MODE_EDGE_WRAP
+        params.edge_wrap.outline_enabled = bottom_mode == self.BOTTOM_MODE_OUTLINE
         self._params = params
 
         # 确保机器参数使用当前默认值（避免旧配置的平台尺寸被加载）
@@ -3363,6 +3893,7 @@ class ParamPanel(QWidget):
         self.bevel_params_widget.setVisible(edge_type == EdgeType.BEVELED)
         self.u_shape_params_widget.setVisible(edge_type == EdgeType.U_SHAPED)
         self.custom_edge_widget.setVisible(edge_type == EdgeType.CUSTOM)
+        self._sync_wall_mode_from_controls()
 
         # 异形边：恢复 profile 和预设选中状态
         if edge_type == EdgeType.CUSTOM and params.shell.edge_profile is not None:
@@ -3374,15 +3905,11 @@ class ParamPanel(QWidget):
 
         self._toggle_skirt_controls(params.skirt.enabled)
         self._toggle_connected_controls(params.connected.enabled)
-        self._toggle_wrap_controls(params.edge_wrap.wrap_enabled)
-        self._toggle_outline_controls(params.edge_wrap.outline_enabled)
-        self._toggle_panel_step_controls(panel_step_enabled)
-        self._toggle_baseplate_step_controls(baseplate_step_enabled)
+        self._apply_top_mode(top_mode, emit_changed=False)
+        self._apply_bottom_mode(bottom_mode, emit_changed=False)
         self._toggle_color_change_controls(params.color.enabled)
         self._toggle_prime_tower_controls(prime_tower_enabled)
         self._sync_bottom_face_availability()
-        self._toggle_light_slot_controls(light_slot_enabled)
-        self._toggle_top_face_controls(top_face_enabled)
         self._sync_layer_based_controls()
 
     # ===== 异形边相关方法 =====
