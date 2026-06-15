@@ -2832,20 +2832,22 @@ class ParamPanel(QWidget):
         self.skirt_offset.valueChanged.connect(self._on_param_changed)
         self._add_icon_row(form, "gap", self.tr("Wall Gap:"), self.skirt_offset)
 
-        direction_layout = QHBoxLayout()
-        direction_layout.setContentsMargins(0, 0, 0, 0)
-        self.skirt_outer_enabled = QCheckBox(self.tr("Outer"))
-        self.skirt_outer_enabled.setChecked(True)
+        self.skirt_sides_widget, self.skirt_side_buttons = self._create_multi_select_icon_buttons(
+            "skirt_side_buttons",
+            [
+                (0, self.tr("Outer Skirt"), "skirt-side-outer"),
+                (1, self.tr("Inner Skirt"), "skirt-side-inner"),
+            ],
+            {0},
+        )
+        self.skirt_outer_enabled = self.skirt_side_buttons[0]
+        self.skirt_inner_enabled = self.skirt_side_buttons[1]
         self.skirt_outer_enabled.setEnabled(False)
-        self.skirt_outer_enabled.stateChanged.connect(self._on_param_changed)
-        direction_layout.addWidget(self.skirt_outer_enabled)
-        self.skirt_inner_enabled = QCheckBox(self.tr("Inner"))
         self.skirt_inner_enabled.setEnabled(False)
-        self.skirt_inner_enabled.stateChanged.connect(self._on_param_changed)
-        direction_layout.addWidget(self.skirt_inner_enabled)
-        direction_layout.addStretch()
-        self._add_icon_row(form, "direction", self.tr("Skirt Sides:"), direction_layout)
+        self.skirt_outer_enabled.toggled.connect(lambda _checked: self._on_param_changed())
+        self.skirt_inner_enabled.toggled.connect(lambda _checked: self._on_param_changed())
 
+        layout.addWidget(self.skirt_sides_widget)
         layout.addLayout(form)
 
         self.skirt_enabled.stateChanged.connect(
@@ -2904,7 +2906,7 @@ class ParamPanel(QWidget):
             )
         )
         self.connected_width.valueChanged.connect(self._on_param_changed)
-        self._add_icon_row(form, "dimension", self.tr("Connection Width:"), self.connected_width)
+        self._add_icon_row(form, "connected-width", self.tr("Connection Width:"), self.connected_width)
 
         # 斜边高度
         self.connected_height = self._create_double_spinbox()
@@ -2917,7 +2919,7 @@ class ParamPanel(QWidget):
             meaning=self.tr("Vertical bevel height used on the connected-letter bridge."),
         )
         self.connected_height.valueChanged.connect(self._on_param_changed)
-        self._add_icon_row(form, "bevel", self.tr("Bevel Height:"), self.connected_height)
+        self._add_icon_row(form, "connected-bevel-height", self.tr("Bevel Height:"), self.connected_height)
 
         # 底座高度
         self.connected_base_height = self._create_double_spinbox()
@@ -2930,7 +2932,7 @@ class ParamPanel(QWidget):
             meaning=self.tr("Vertical base height of the connected-letter bridge before beveling."),
         )
         self.connected_base_height.valueChanged.connect(self._on_param_changed)
-        self._add_icon_row(form, "baseplate", self.tr("Base Height:"), self.connected_base_height)
+        self._add_icon_row(form, "connected-base-height", self.tr("Base Height:"), self.connected_base_height)
 
         # 支撑偏移
         self.connected_support_offset = self._create_double_spinbox()

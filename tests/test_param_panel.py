@@ -1253,6 +1253,40 @@ def test_skirt_wall_gap_defaults_to_point_twelve_mm(qapp):
     assert panel.get_params().skirt.offset == pytest.approx(0.12)
 
 
+def test_skirt_sides_are_multi_select_icon_buttons(qapp):
+    panel = ParamPanel()
+
+    panel.skirt_enabled.setChecked(True)
+
+    assert isinstance(panel.skirt_outer_enabled, QPushButton)
+    assert isinstance(panel.skirt_inner_enabled, QPushButton)
+    assert panel.skirt_group.layout().itemAt(1).widget() is panel.skirt_sides_widget
+    assert panel.skirt_outer_enabled.isCheckable() is True
+    assert panel.skirt_inner_enabled.isCheckable() is True
+    assert panel.skirt_outer_enabled.icon().isNull() is False
+    assert panel.skirt_inner_enabled.icon().isNull() is False
+    assert panel.skirt_outer_enabled.toolTip() == "Outer Skirt"
+    assert panel.skirt_inner_enabled.toolTip() == "Inner Skirt"
+    assert panel.skirt_outer_enabled.isEnabled() is True
+    assert panel.skirt_inner_enabled.isEnabled() is True
+    assert panel.skirt_outer_enabled.isChecked() is True
+    assert panel.skirt_inner_enabled.isChecked() is False
+
+    panel.skirt_inner_enabled.click()
+    params = panel.get_params()
+
+    assert params.skirt.outer_enabled is True
+    assert params.skirt.inner_enabled is True
+
+    panel.skirt_outer_enabled.click()
+    params = panel.get_params()
+
+    assert panel.skirt_outer_enabled.isChecked() is False
+    assert panel.skirt_inner_enabled.isChecked() is True
+    assert params.skirt.outer_enabled is False
+    assert params.skirt.inner_enabled is True
+
+
 def test_step_speed_stays_enabled_while_any_step_toggle_remains_active(qapp):
     panel = ParamPanel()
 

@@ -52,7 +52,10 @@
     <file>icons/params/center.svg</file>
     <file>icons/params/clearance.svg</file>
     <file>icons/params/color-change.svg</file>
+    <file>icons/params/connected-base-height.svg</file>
+    <file>icons/params/connected-bevel-height.svg</file>
     <file>icons/params/connected.svg</file>
+    <file>icons/params/connected-width.svg</file>
     <file>icons/params/custom_shape.svg</file>
     <file>icons/params/dimension.svg</file>
     <file>icons/params/direction.svg</file>
@@ -94,6 +97,8 @@
     <file>icons/params/screw-hole.svg</file>
     <file>icons/params/shape.svg</file>
     <file>icons/params/skirt.svg</file>
+    <file>icons/params/skirt-side-inner.svg</file>
+    <file>icons/params/skirt-side-outer.svg</file>
     <file>icons/params/slot-depth.svg</file>
     <file>icons/params/slot-width.svg</file>
     <file>icons/params/speed.svg</file>
