@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="24"
+   height="24"
+   viewBox="0 0 24 24"
+   fill="none"
+   version="1.1"
+   id="svg5"
+   sodipodi:docname="step-height.svg"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs5" />
+  <sodipodi:namedview
+     id="namedview5"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="33.875"
+     inkscape:cx="12"
+     inkscape:cy="12"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg5" />
+  <path
+     d="m 6,4.85 v 12 m 11,-12 v 12"
+     stroke="#c9d1d9"
+     stroke-width="1.7"
+     stroke-linecap="round"
+     id="path1" />
+  <path
+     d="M 5.1734317,4 H 18 V 8.202952 H 5.1734317 Z"
+     fill="#58a6ff"
+     fill-opacity="0.35"
+     id="path2"
+     style="stroke-width:0.947887" />
+  <path
+     d="M16 4h2v5h-2z"
+     fill="#58A6FF"
+     fill-opacity=".45"
+     id="path3" />
+  <path
+     d="M6 9h3M14 9h3"
+     stroke="#58A6FF"
+     stroke-width="1.7"
+     stroke-linecap="round"
+     id="path4" />
+  <path
+     d="M 21,3.9549409 V 8.1594503 M 19.454941,3.9549409 h 3.090118 m -3.090118,4.2045094 h 3.090118"
+     stroke="#58a6ff"
+     stroke-width="1.3"
+     stroke-linecap="square"
+     stroke-linejoin="round"
+     id="path5" />
+</svg>

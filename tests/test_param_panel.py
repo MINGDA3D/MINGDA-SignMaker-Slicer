@@ -1,5 +1,5 @@
 import pytest
-from PySide6.QtCore import QPoint, QPointF, Qt
+from PySide6.QtCore import QFile, QPoint, QPointF, Qt
 from PySide6.QtGui import QWheelEvent
 from PySide6.QtWidgets import (
     QApplication,
@@ -45,6 +45,22 @@ def _owning_group(widget):
             return current
         current = current.parentWidget()
     return None
+
+
+def _visible_group_titles(groups):
+    return [
+        group.title()
+        for group in groups
+        if hasattr(group, "title") and group.title()
+    ]
+
+
+def _group_by_title(groups, title):
+    return next(
+        group
+        for group in groups
+        if hasattr(group, "title") and group.title() == title
+    )
 
 
 def _dispatch_wheel(widget, delta_y: int = 120) -> None:
@@ -212,9 +228,8 @@ def test_manufacturing_inputs_have_clear_tooltips(qapp):
 def test_primary_groups_follow_requested_order(qapp):
     panel = ParamPanel()
 
-    assert [group.title() for group in panel._primary_groups] == [
+    assert _visible_group_titles(panel._primary_groups) == [
         "Shell Settings",
-        "Edge Type",
         "Top Face",
         "Panel Step/V-Groove",
         "Bottom Face",
@@ -320,7 +335,7 @@ def test_primary_sections_separate_shape_machine_and_print_settings(qapp):
     panel = ParamPanel()
 
     assert [
-        (section["key"], section["title"], [group.title() for group in section["groups"]])
+        (section["key"], section["title"], _visible_group_titles(section["groups"]))
         for section in panel._primary_sections
     ] == [
         (
@@ -328,7 +343,6 @@ def test_primary_sections_separate_shape_machine_and_print_settings(qapp):
             "Shape",
             [
                 "Shell Settings",
-                "Edge Type",
                 "Top Face",
                 "Panel Step/V-Groove",
                 "Bottom Face",
@@ -400,7 +414,7 @@ def test_shape_page_places_shell_settings_before_feature_tabs(qapp):
     assert [
         panel.shape_feature_tabs.tabText(index)
         for index in range(panel.shape_feature_tabs.count())
-    ] == ["Wall", "Top", "Bottom", "Other"]
+    ] == ["Wall", "Bottom", "Top", "Other"]
     assert all(
         panel.shape_feature_tabs.tabIcon(index).isNull()
         for index in range(panel.shape_feature_tabs.count())
@@ -423,11 +437,10 @@ def test_shape_feature_tabs_group_controls_by_mode(qapp):
     panel = ParamPanel()
 
     assert [
-        (section["key"], section["title"], [group.title() for group in section["groups"]])
+        (section["key"], section["title"], _visible_group_titles(section["groups"]))
         for section in panel._shape_feature_sections
     ] == [
-        ("wall", "Wall", ["Edge Type"]),
-        ("top", "Top", ["Top Face", "Panel Step/V-Groove"]),
+        ("wall", "Wall", []),
         (
             "bottom",
             "Bottom",
@@ -438,8 +451,22 @@ def test_shape_feature_tabs_group_controls_by_mode(qapp):
                 "Edge Wrap/Outline",
             ],
         ),
+        ("top", "Top", ["Top Face", "Panel Step/V-Groove"]),
         ("other", "Other", ["Anti-Warping Skirt", "Connected Letters", "DXF Export"]),
     ]
+
+
+def test_wall_tab_starts_with_edge_type_icons_without_card_title(qapp):
+    panel = ParamPanel()
+    wall_page = panel._shape_feature_widgets_by_key["wall"]
+    wall_layout = wall_page.layout()
+    edge_layout = panel.edge_group.layout()
+
+    assert panel.edge_group.objectName() == "wall_edge_type_panel"
+    assert not hasattr(panel.edge_group, "title")
+    assert wall_layout.itemAt(0).widget() is panel.edge_group
+    assert edge_layout.contentsMargins().left() == 0
+    assert edge_layout.itemAt(0).widget() is panel.wall_mode_widget
 
 
 def test_wall_mode_buttons_sync_edge_type_and_parameter_visibility(qapp):
@@ -517,6 +544,24 @@ def test_bottom_mode_buttons_are_exclusive_and_write_back_to_params(qapp):
     assert params.light_slot.enabled is False
     assert params.edge_wrap.wrap_enabled is False
     assert params.edge_wrap.outline_enabled is True
+
+
+def test_edge_wrap_bottom_mode_only_shows_matching_option_set(qapp):
+    panel = ParamPanel()
+
+    panel.bottom_mode_group.button(panel.BOTTOM_MODE_EDGE_WRAP).click()
+
+    assert panel.edge_wrap_group.isHidden() is False
+    assert panel.wrap_options_widget.isHidden() is False
+    assert panel.outline_options_widget.isHidden() is True
+    assert panel.wrap_outline_separator.isHidden() is True
+
+    panel.bottom_mode_group.button(panel.BOTTOM_MODE_OUTLINE).click()
+
+    assert panel.edge_wrap_group.isHidden() is False
+    assert panel.wrap_options_widget.isHidden() is True
+    assert panel.outline_options_widget.isHidden() is False
+    assert panel.wrap_outline_separator.isHidden() is True
 
 
 def test_set_params_resolves_legacy_bottom_modes_by_priority(qapp):
@@ -665,6 +710,42 @@ def test_set_params_restores_wrap_controls_enabled_state(qapp):
     assert panel.wrap_height.isEnabled() is True
     assert panel.wrap_dir_inner.isEnabled() is True
     assert panel.wrap_dir_outer.isEnabled() is True
+
+
+def test_wrap_direction_uses_exclusive_icon_buttons(qapp):
+    panel = ParamPanel()
+
+    panel.bottom_mode_group.button(panel.BOTTOM_MODE_EDGE_WRAP).click()
+    assert panel.wrap_dir_inner.isEnabled() is True
+    assert panel.wrap_dir_outer.isEnabled() is True
+    assert panel.wrap_dir_group.checkedId() == 0
+
+    panel.wrap_dir_outer.click()
+    params = panel.get_params()
+
+    assert panel.wrap_dir_group.checkedId() == 1
+    assert panel.wrap_dir_inner.isChecked() is False
+    assert panel.wrap_dir_outer.isChecked() is True
+    assert params.edge_wrap.wrap_direction == EdgeDirection.OUTER
+
+
+def test_wrap_size_icons_are_registered(qapp):
+    assert QFile.exists(":/icons/icons/params/wrap_width.svg") is True
+    assert QFile.exists(":/icons/icons/params/wrap_height.svg") is True
+
+
+def test_outline_size_icons_are_registered(qapp):
+    assert QFile.exists(":/icons/icons/params/outline_width.svg") is True
+    assert QFile.exists(":/icons/icons/params/outline_height.svg") is True
+
+
+def test_light_slot_scope_icons_are_registered(qapp):
+    assert QFile.exists(":/icons/icons/params/outer-slot.svg") is True
+    assert QFile.exists(":/icons/icons/params/hole-slot.svg") is True
+
+
+def test_shell_height_icon_is_registered(qapp):
+    assert QFile.exists(":/icons/icons/params/shell_height.svg") is True
 
 
 def test_temperature_settings_roundtrip_through_print_settings(qapp):
@@ -1012,9 +1093,45 @@ def test_set_params_restores_outline_controls_enabled_state(qapp):
     assert panel.outline_enabled.isChecked() is True
     assert panel.outline_width.isEnabled() is True
     assert panel.outline_height.isEnabled() is True
-    assert panel.outline_offset.isEnabled() is True
+    assert panel.outline_offset.isEnabled() is False
+    assert panel.outline_offset.isHidden() is True
     assert panel.outline_dir_inner.isEnabled() is True
     assert panel.outline_dir_outer.isEnabled() is True
+
+
+def test_outline_offset_is_hidden_but_preserved(qapp):
+    panel = ParamPanel()
+    params = SliceParams()
+    params.edge_wrap.outline_enabled = True
+    params.edge_wrap.outline_offset = 1.5
+
+    panel.set_params(params)
+    labels = {label.text() for label in panel.edge_wrap_group.findChildren(QLabel)}
+    restored = panel.get_params()
+
+    assert "Outline Offset:" not in labels
+    assert panel.outline_offset.isHidden() is True
+    assert panel.outline_offset.isEnabled() is False
+    assert restored.edge_wrap.outline_offset == pytest.approx(1.5)
+
+
+def test_outline_direction_uses_exclusive_icon_buttons(qapp):
+    panel = ParamPanel()
+
+    panel.bottom_mode_group.button(panel.BOTTOM_MODE_OUTLINE).click()
+    assert panel.outline_dir_inner.isEnabled() is True
+    assert panel.outline_dir_outer.isEnabled() is True
+    assert panel.outline_dir_inner.icon().isNull() is False
+    assert panel.outline_dir_outer.icon().isNull() is False
+    assert panel.outline_dir_group.checkedId() == 0
+
+    panel.outline_dir_outer.click()
+    params = panel.get_params()
+
+    assert panel.outline_dir_group.checkedId() == 1
+    assert panel.outline_dir_inner.isChecked() is False
+    assert panel.outline_dir_outer.isChecked() is True
+    assert params.edge_wrap.outline_direction == EdgeDirection.OUTER
 
 
 def test_wrap_outline_mutual_exclusive_updates_control_enabled_state(qapp):
@@ -1036,8 +1153,8 @@ def test_wrap_outline_mutual_exclusive_updates_control_enabled_state(qapp):
 
 def test_skirt_group_hides_legacy_fields_and_moves_speed_to_print_settings(qapp):
     panel = ParamPanel()
-    skirt_group = next(group for group in panel._primary_groups if group.title() == "Anti-Warping Skirt")
-    speed_group = next(group for group in panel._primary_groups if group.title() == "Speed Settings")
+    skirt_group = _group_by_title(panel._primary_groups, "Anti-Warping Skirt")
+    speed_group = _group_by_title(panel._primary_groups, "Speed Settings")
 
     skirt_labels = {label.text() for label in skirt_group.findChildren(QLabel)}
     speed_labels = {label.text() for label in speed_group.findChildren(QLabel)}
@@ -1053,9 +1170,9 @@ def test_skirt_group_hides_legacy_fields_and_moves_speed_to_print_settings(qapp)
 
 def test_step_group_keeps_geometry_fields_and_moves_speed_to_print_settings(qapp):
     panel = ParamPanel()
-    top_step_group = next(group for group in panel._primary_groups if group.title() == "Panel Step/V-Groove")
-    bottom_step_group = next(group for group in panel._primary_groups if group.title() == "Baseplate Step/V-Groove")
-    speed_group = next(group for group in panel._primary_groups if group.title() == "Speed Settings")
+    top_step_group = _group_by_title(panel._primary_groups, "Panel Step/V-Groove")
+    bottom_step_group = _group_by_title(panel._primary_groups, "Baseplate Step/V-Groove")
+    speed_group = _group_by_title(panel._primary_groups, "Speed Settings")
 
     step_labels = {
         label.text()
@@ -1289,6 +1406,41 @@ def test_light_slot_and_bottom_face_are_mutually_exclusive(qapp):
     assert panel.light_slot_width.isEnabled() is True
     assert params.bottom_face.enabled is False
     assert params.light_slot.enabled is True
+
+
+def test_light_slot_outer_and_hole_slots_are_multi_select_icon_buttons(qapp):
+    panel = ParamPanel()
+
+    panel.bottom_mode_group.button(panel.BOTTOM_MODE_LIGHT_SLOT).click()
+
+    assert isinstance(panel.light_slot_outer_enabled, QPushButton)
+    assert isinstance(panel.light_slot_hole_enabled, QPushButton)
+    assert panel.light_slot_group.layout().itemAt(1).widget() is panel.light_slot_scope_widget
+    assert panel.light_slot_outer_enabled.isCheckable() is True
+    assert panel.light_slot_hole_enabled.isCheckable() is True
+    assert panel.light_slot_outer_enabled.icon().isNull() is False
+    assert panel.light_slot_hole_enabled.icon().isNull() is False
+    assert panel.light_slot_outer_enabled.isEnabled() is True
+    assert panel.light_slot_hole_enabled.isEnabled() is True
+    assert panel.light_slot_outer_enabled.isChecked() is True
+    assert panel.light_slot_hole_enabled.isChecked() is True
+
+    panel.light_slot_outer_enabled.click()
+    params = panel.get_params()
+
+    assert panel.light_slot_outer_enabled.isChecked() is False
+    assert panel.light_slot_hole_enabled.isChecked() is True
+    assert params.light_slot.outer_enabled is False
+    assert params.light_slot.hole_enabled is True
+
+    panel.light_slot_outer_enabled.click()
+    panel.light_slot_hole_enabled.click()
+    params = panel.get_params()
+
+    assert panel.light_slot_outer_enabled.isChecked() is True
+    assert panel.light_slot_hole_enabled.isChecked() is False
+    assert params.light_slot.outer_enabled is True
+    assert params.light_slot.hole_enabled is False
 
 
 def test_bottom_face_screw_hole_diameter_roundtrips_with_bottom_face_params(qapp):
