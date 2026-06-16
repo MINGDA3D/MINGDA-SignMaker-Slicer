@@ -604,8 +604,8 @@ class ParamPanel(QWidget):
                 padding: 6px;
             }}
             QPushButton[shapeModeButton="true"]:checked {{
-                background-color: {COLORS.editor_canvas_toolbar_accent};
-                border-color: {COLORS.editor_canvas_toolbar_accent};
+                background-color: #1E344F;
+                border-color: #58A6FF;
             }}
             QPushButton[shapeModeButton="true"]:hover:!checked {{
                 border-color: {COLORS.text_muted};
@@ -657,8 +657,8 @@ class ParamPanel(QWidget):
                 padding: 6px;
             }}
             QPushButton[shapeModeButton="true"]:checked {{
-                background-color: {COLORS.editor_canvas_toolbar_accent};
-                border-color: {COLORS.editor_canvas_toolbar_accent};
+                background-color: #1E344F;
+                border-color: #58A6FF;
             }}
             QPushButton[shapeModeButton="true"]:hover:!checked {{
                 border-color: {COLORS.text_muted};
