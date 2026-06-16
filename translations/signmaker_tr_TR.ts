@@ -1443,16 +1443,24 @@ Hata kodu: {code}</translation>
         <translation>Panel Basamagini Etkinlestir (Ust)</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2092"/>
-        <location filename="../src/ui/param_panel.py" line="2143"/>
-        <source>Step Height:</source>
-        <translation>Basamak Yuksekligi:</translation>
+        <location filename="../src/ui/param_panel.py" line="2606"/>
+        <source>Top Step Distance:</source>
+        <translation>Ust Basamak Mesafesi:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2106"/>
-        <location filename="../src/ui/param_panel.py" line="2157"/>
-        <source>Step Width:</source>
-        <translation>Basamak Genisligi:</translation>
+        <location filename="../src/ui/param_panel.py" line="2662"/>
+        <source>Bottom Step Height:</source>
+        <translation>Alt Basamak Yuksekligi:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="2620"/>
+        <source>Top Step Width:</source>
+        <translation>Ust Basamak Genisligi:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="2676"/>
+        <source>Bottom Step Width:</source>
+        <translation>Alt Basamak Genisligi:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="2108"/>
@@ -1984,13 +1992,13 @@ Girdi gereksinimleri: {requirements}</translation>
     <message>
         <location filename="../src/ui/param_panel.py" line="2084"/>
         <location filename="../src/ui/param_panel.py" line="2212"/>
-        <source>Z height where the top panel step or V-groove is generated.</source>
-        <translation>Üst panel basamağı veya V oluğunun üretildiği Z yüksekliği.</translation>
+        <source>Distance from Shell Height down to the top surface of the top panel step or V-groove.</source>
+        <translation>Shell Height degerinden asagiya, ust panel basamagi veya V kanalinin ust yuzeyine kadar olan mesafe.</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="2086"/>
-        <source>Current range is automatically constrained between half of Shell Height and Shell Height. The value is rounded up to the current layer-height grid before preview, STL export, and G-code export.</source>
-        <translation>Geçerli aralık otomatik olarak kabuk yüksekliğinin yarısı ile kabuk yüksekliği arasında sınırlandırılır. Değer önizleme, STL dışa aktarma ve G-code dışa aktarma öncesinde geçerli katman yüksekliği ızgarasına yukarı yuvarlanır.</translation>
+        <source>Current range is automatically constrained from 0 to half of Shell Height. The value is rounded up to the current layer-height grid before preview, STL export, and G-code export.</source>
+        <translation>Gecerli aralik otomatik olarak 0 ile Shell Height degerinin yarisi arasinda sinirlanir. Deger onizleme, STL disari aktarma ve G-code disari aktarma oncesinde gecerli katman yuksekligi izgarasina yukari yuvarlanir.</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="2101"/>

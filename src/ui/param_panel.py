@@ -839,6 +839,35 @@ class ParamPanel(QWidget):
             minimum_layers=minimum_layers,
         )
 
+    def _current_shell_height_on_layer_grid(self) -> float:
+        """Return the shell height rounded to the active printable layer grid."""
+        return self._height_to_layers(self.height_spin.value()) * self._current_layer_height()
+
+    def _top_step_absolute_height_from_distance(
+        self,
+        distance_from_shell_top: Optional[float] = None,
+        shell_height: Optional[float] = None,
+    ) -> float:
+        """Convert the UI top-step distance to the core absolute Z height."""
+        if shell_height is None:
+            shell_height = self._current_shell_height_on_layer_grid()
+        distance = self.panel_step_height.value() if distance_from_shell_top is None else distance_from_shell_top
+        max_distance = max(0, self._height_to_layers(shell_height) // 2) * self._current_layer_height()
+        distance = min(max(distance, 0.0), max_distance)
+        return max(shell_height - distance, 0.0)
+
+    def _top_step_distance_from_absolute_height(
+        self,
+        absolute_height: float,
+        shell_height: Optional[float] = None,
+    ) -> float:
+        """Convert a saved absolute top-step Z height to the UI top distance."""
+        if shell_height is None:
+            shell_height = self._current_shell_height_on_layer_grid()
+        distance = max(shell_height - absolute_height, 0.0)
+        max_distance = max(0, self._height_to_layers(shell_height) // 2) * self._current_layer_height()
+        return min(distance, max_distance)
+
     def _set_spin_value_silent(self, spinbox: QAbstractSpinBox, value: float) -> None:
         """Set a spinbox value without emitting valueChanged."""
         spinbox.blockSignals(True)
@@ -928,7 +957,7 @@ class ParamPanel(QWidget):
             (self.panel_thickness_spin, 0),
             (self.u_arc_height_spin, 1),
             (self.u_bottom_layers_spin, 0),
-            (self.panel_step_height, 1),
+            (self.panel_step_height, 0),
             (self.baseplate_step_height, 1),
             (self.skirt_height, 1),
             (self.connected_height, 1),
@@ -2588,22 +2617,22 @@ class ParamPanel(QWidget):
 
         form1 = QFormLayout()
         self.panel_step_height = self._create_double_spinbox()
-        self.panel_step_height.setRange(15.0, 100.0)
-        self.panel_step_height.setValue(47.0)
+        self.panel_step_height.setRange(0.0, 100.0)
+        self.panel_step_height.setValue(3.0)
         self.panel_step_height.setSingleStep(0.1)
         self.panel_step_height.setSuffix(" mm")
         self.panel_step_height.setEnabled(False)
         self.panel_step_height.setToolTip(
             self._parameter_tooltip(
-                self.tr("Z height where the top panel step or V-groove is generated."),
+                self.tr("Distance from Shell Height down to the top surface of the top panel step or V-groove."),
                 self.tr(
-                    "Current range is automatically constrained between half of Shell Height and Shell Height. "
+                    "Current range is automatically constrained from 0 to half of Shell Height. "
                     "The value is rounded up to the current layer-height grid before preview, STL export, and G-code export."
                 ),
             )
         )
         self.panel_step_height.valueChanged.connect(self._on_param_changed)
-        self._add_icon_row(form1, "step-height", self.tr("Step Height:"), self.panel_step_height)
+        self._add_icon_row(form1, "top-step-height", self.tr("Top Step Distance:"), self.panel_step_height)
 
         self.panel_step_width = self._create_double_spinbox()
         self.panel_step_width.setRange(0.5, 20)
@@ -2617,7 +2646,7 @@ class ParamPanel(QWidget):
             )
         )
         self.panel_step_width.valueChanged.connect(self._on_param_changed)
-        self._add_icon_row(form1, "step-width", self.tr("Step Width:"), self.panel_step_width)
+        self._add_icon_row(form1, "top-step-width", self.tr("Top Step Width:"), self.panel_step_width)
 
         self.panel_step_v_groove = QCheckBox(self.tr("V-Groove"))
         self.panel_step_v_groove.setObjectName("panel_step_v_groove")
@@ -2659,7 +2688,7 @@ class ParamPanel(QWidget):
             meaning=self.tr("Z height where the bottom baseplate step or V-groove is generated."),
         )
         self.baseplate_step_height.valueChanged.connect(self._on_param_changed)
-        self._add_icon_row(form2, "step-height", self.tr("Step Height:"), self.baseplate_step_height)
+        self._add_icon_row(form2, "bottom-step-height", self.tr("Bottom Step Height:"), self.baseplate_step_height)
 
         self.baseplate_step_width = self._create_double_spinbox()
         self.baseplate_step_width.setRange(0.5, 20)
@@ -2673,7 +2702,7 @@ class ParamPanel(QWidget):
             )
         )
         self.baseplate_step_width.valueChanged.connect(self._on_param_changed)
-        self._add_icon_row(form2, "step-width", self.tr("Step Width:"), self.baseplate_step_width)
+        self._add_icon_row(form2, "bottom-step-width", self.tr("Bottom Step Width:"), self.baseplate_step_width)
 
         self.baseplate_step_v_groove = QCheckBox(self.tr("V-Groove"))
         self.baseplate_step_v_groove.setObjectName("baseplate_step_v_groove")
@@ -2721,18 +2750,16 @@ class ParamPanel(QWidget):
 
         layer_height = self._current_layer_height()
         shell_layers = self._height_to_layers(self.height_spin.value())
-        half_min = max(1, (shell_layers + 1) // 2)
-        half_max = max(1, shell_layers // 2)
-        shell_height_mm = shell_layers * layer_height
+        half_max = max(0, shell_layers // 2)
 
         # 顶部卡槽（mm）
-        panel_min_mm = half_min * layer_height
-        panel_max_mm = max(panel_min_mm, shell_height_mm)
+        panel_min_mm = 0.0
+        panel_max_mm = half_max * layer_height
         self.panel_step_height.setRange(panel_min_mm, panel_max_mm)
         self.panel_step_height.setSingleStep(layer_height)
         self.panel_step_height.setToolTip(
             self._parameter_tooltip(
-                self.tr("Z height where the top panel step or V-groove is generated."),
+                self.tr("Distance from Shell Height down to the top surface of the top panel step or V-groove."),
                 self.tr(
                     "Current range: {minimum:.2f}-{maximum:.2f} mm. "
                     "The value is rounded up to the current layer-height grid before preview, STL export, and G-code export."
@@ -3625,7 +3652,8 @@ class ParamPanel(QWidget):
         # 台阶参数
         # 面板台阶（顶部）
         self._params.step.panel_step_enabled = self.panel_step_enabled.isChecked()
-        self._params.step.panel_step_height = self.panel_step_height.value()
+        panel_step_absolute_height = self._top_step_absolute_height_from_distance()
+        self._params.step.panel_step_height = panel_step_absolute_height
         self._params.step.panel_step_width = self.panel_step_width.value()
         self._params.step.panel_step_is_v_groove = self.panel_step_v_groove.isChecked()
 
@@ -3637,7 +3665,7 @@ class ParamPanel(QWidget):
 
         # 兼容旧参数
         self._params.step.top_step_enabled = self.panel_step_enabled.isChecked()
-        self._params.step.top_step_height = self.panel_step_height.value()
+        self._params.step.top_step_height = panel_step_absolute_height
         self._params.step.top_step_width = self.panel_step_width.value()
         self._params.step.bottom_groove_enabled = self.baseplate_step_enabled.isChecked()
         self._params.step.bottom_groove_height = self.baseplate_step_height.value()
@@ -3978,7 +4006,9 @@ class ParamPanel(QWidget):
 
         # 台阶参数 - 面板台阶（顶部）
         self.panel_step_enabled.setChecked(panel_step_enabled)
-        self.panel_step_height.setValue(panel_step_height)
+        self.panel_step_height.setValue(
+            self._top_step_distance_from_absolute_height(panel_step_height)
+        )
         self.panel_step_width.setValue(panel_step_width)
         self.panel_step_v_groove.setChecked(panel_step_is_v_groove)
 

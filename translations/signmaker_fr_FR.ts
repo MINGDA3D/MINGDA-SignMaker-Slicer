@@ -1443,16 +1443,24 @@ Code d'erreur : {code}</translation>
         <translation>Activer la marche du panneau (haut)</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2092"/>
-        <location filename="../src/ui/param_panel.py" line="2143"/>
-        <source>Step Height:</source>
-        <translation>Hauteur de marche :</translation>
+        <location filename="../src/ui/param_panel.py" line="2606"/>
+        <source>Top Step Distance:</source>
+        <translation>Distance marche haut :</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2106"/>
-        <location filename="../src/ui/param_panel.py" line="2157"/>
-        <source>Step Width:</source>
-        <translation>Largeur de marche :</translation>
+        <location filename="../src/ui/param_panel.py" line="2662"/>
+        <source>Bottom Step Height:</source>
+        <translation>Hauteur marche bas :</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="2620"/>
+        <source>Top Step Width:</source>
+        <translation>Largeur marche haut :</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="2676"/>
+        <source>Bottom Step Width:</source>
+        <translation>Largeur marche bas :</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="2108"/>
@@ -1984,13 +1992,13 @@ Exigences de saisie : {requirements}</translation>
     <message>
         <location filename="../src/ui/param_panel.py" line="2084"/>
         <location filename="../src/ui/param_panel.py" line="2212"/>
-        <source>Z height where the top panel step or V-groove is generated.</source>
-        <translation>Hauteur Z où la marche ou rainure en V du panneau supérieur est générée.</translation>
+        <source>Distance from Shell Height down to the top surface of the top panel step or V-groove.</source>
+        <translation>Distance depuis Shell Height vers le bas jusqu&apos;a la surface superieure de la marche de panneau ou rainure V.</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="2086"/>
-        <source>Current range is automatically constrained between half of Shell Height and Shell Height. The value is rounded up to the current layer-height grid before preview, STL export, and G-code export.</source>
-        <translation>La plage actuelle est automatiquement limitée entre la moitié de la hauteur de coque et la hauteur de coque. La valeur est arrondie vers le haut sur la grille de hauteur de couche actuelle avant l'aperçu, l'export STL et l'export G-code.</translation>
+        <source>Current range is automatically constrained from 0 to half of Shell Height. The value is rounded up to the current layer-height grid before preview, STL export, and G-code export.</source>
+        <translation>La plage actuelle est automatiquement limitee de 0 a la moitie de Shell Height. La valeur est arrondie a la grille de hauteur de couche actuelle avant l&apos;apercu, l&apos;export STL et l&apos;export G-code.</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="2101"/>

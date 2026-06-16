@@ -1443,16 +1443,24 @@ Error code: {code}</source>
         <translation>パネルステップを有効にする（上部）</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2092"/>
-        <location filename="../src/ui/param_panel.py" line="2143"/>
-        <source>Step Height:</source>
-        <translation>ステップ高さ:</translation>
+        <location filename="../src/ui/param_panel.py" line="2606"/>
+        <source>Top Step Distance:</source>
+        <translation>上部ステップ距離:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2106"/>
-        <location filename="../src/ui/param_panel.py" line="2157"/>
-        <source>Step Width:</source>
-        <translation>ステップ幅:</translation>
+        <location filename="../src/ui/param_panel.py" line="2662"/>
+        <source>Bottom Step Height:</source>
+        <translation>下部ステップ高さ:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="2620"/>
+        <source>Top Step Width:</source>
+        <translation>上部ステップ幅:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="2676"/>
+        <source>Bottom Step Width:</source>
+        <translation>下部ステップ幅:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="2108"/>
@@ -1984,13 +1992,13 @@ Input requirements: {requirements}</source>
     <message>
         <location filename="../src/ui/param_panel.py" line="2084"/>
         <location filename="../src/ui/param_panel.py" line="2212"/>
-        <source>Z height where the top panel step or V-groove is generated.</source>
-        <translation>上部パネルのステップまたは V 溝を生成する Z 高さです。</translation>
+        <source>Distance from Shell Height down to the top surface of the top panel step or V-groove.</source>
+        <translation>Shell Height から下方向に、上部パネルステップまたはV溝の上面までの距離。</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="2086"/>
-        <source>Current range is automatically constrained between half of Shell Height and Shell Height. The value is rounded up to the current layer-height grid before preview, STL export, and G-code export.</source>
-        <translation>現在の範囲は、シェル高さの半分からシェル高さまでに自動制限されます。値はプレビュー、STL エクスポート、G-code エクスポートの前に、現在のレイヤー高さグリッドへ切り上げられます。</translation>
+        <source>Current range is automatically constrained from 0 to half of Shell Height. The value is rounded up to the current layer-height grid before preview, STL export, and G-code export.</source>
+        <translation>現在の範囲は 0 から Shell Height の半分までに自動制限されます。プレビュー、STL エクスポート、G-code エクスポート前に、現在のレイヤー高さグリッドへ切り上げられます。</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="2101"/>

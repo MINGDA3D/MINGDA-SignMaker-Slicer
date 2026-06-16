@@ -1443,16 +1443,24 @@ Codice di errore: {code}</translation>
         <translation>Abilita gradino pannello (superiore)</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2092"/>
-        <location filename="../src/ui/param_panel.py" line="2143"/>
-        <source>Step Height:</source>
-        <translation>Altezza gradino:</translation>
+        <location filename="../src/ui/param_panel.py" line="2606"/>
+        <source>Top Step Distance:</source>
+        <translation>Distanza gradino sup.:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2106"/>
-        <location filename="../src/ui/param_panel.py" line="2157"/>
-        <source>Step Width:</source>
-        <translation>Larghezza gradino:</translation>
+        <location filename="../src/ui/param_panel.py" line="2662"/>
+        <source>Bottom Step Height:</source>
+        <translation>Altezza gradino inf.:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="2620"/>
+        <source>Top Step Width:</source>
+        <translation>Larghezza gradino sup.:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="2676"/>
+        <source>Bottom Step Width:</source>
+        <translation>Larghezza gradino inf.:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="2108"/>
@@ -1984,13 +1992,13 @@ Requisiti di input: {requirements}</translation>
     <message>
         <location filename="../src/ui/param_panel.py" line="2084"/>
         <location filename="../src/ui/param_panel.py" line="2212"/>
-        <source>Z height where the top panel step or V-groove is generated.</source>
-        <translation>Altezza Z in cui viene generato il gradino o la scanalatura a V del pannello superiore.</translation>
+        <source>Distance from Shell Height down to the top surface of the top panel step or V-groove.</source>
+        <translation>Distanza da Shell Height verso il basso fino alla superficie superiore del gradino pannello o scanalatura a V.</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="2086"/>
-        <source>Current range is automatically constrained between half of Shell Height and Shell Height. The value is rounded up to the current layer-height grid before preview, STL export, and G-code export.</source>
-        <translation>L'intervallo corrente è vincolato automaticamente tra metà altezza del guscio e altezza del guscio. Il valore viene arrotondato verso l'alto alla griglia corrente dell'altezza layer prima dell'anteprima, dell'esportazione STL e dell'esportazione G-code.</translation>
+        <source>Current range is automatically constrained from 0 to half of Shell Height. The value is rounded up to the current layer-height grid before preview, STL export, and G-code export.</source>
+        <translation>L&apos;intervallo corrente e limitato automaticamente da 0 a meta di Shell Height. Il valore viene arrotondato in alto alla griglia altezza layer corrente prima di anteprima, export STL ed export G-code.</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="2101"/>

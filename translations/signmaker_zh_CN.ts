@@ -1443,16 +1443,24 @@ Error code: {code}</source>
         <translation>启用面板台阶（顶部）</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1930"/>
-        <location filename="../src/ui/param_panel.py" line="1968"/>
-        <source>Step Height:</source>
-        <translation>台阶高度:</translation>
+        <location filename="../src/ui/param_panel.py" line="2606"/>
+        <source>Top Step Distance:</source>
+        <translation>顶部台阶距顶:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1938"/>
-        <location filename="../src/ui/param_panel.py" line="1976"/>
-        <source>Step Width:</source>
-        <translation>台阶宽度:</translation>
+        <location filename="../src/ui/param_panel.py" line="2662"/>
+        <source>Bottom Step Height:</source>
+        <translation>底部台阶高度:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="2620"/>
+        <source>Top Step Width:</source>
+        <translation>顶部台阶宽度:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="2676"/>
+        <source>Bottom Step Width:</source>
+        <translation>底部台阶宽度:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1940"/>

@@ -1443,16 +1443,24 @@ Código de error: {code}</translation>
         <translation>Habilitar escalon de panel (superior)</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2092"/>
-        <location filename="../src/ui/param_panel.py" line="2143"/>
-        <source>Step Height:</source>
-        <translation>Altura del escalon:</translation>
+        <location filename="../src/ui/param_panel.py" line="2606"/>
+        <source>Top Step Distance:</source>
+        <translation>Distancia paso superior:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2106"/>
-        <location filename="../src/ui/param_panel.py" line="2157"/>
-        <source>Step Width:</source>
-        <translation>Ancho del escalon:</translation>
+        <location filename="../src/ui/param_panel.py" line="2662"/>
+        <source>Bottom Step Height:</source>
+        <translation>Altura paso inferior:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="2620"/>
+        <source>Top Step Width:</source>
+        <translation>Ancho paso superior:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="2676"/>
+        <source>Bottom Step Width:</source>
+        <translation>Ancho paso inferior:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="2108"/>
@@ -1984,13 +1992,13 @@ Requisitos de entrada: {requirements}</translation>
     <message>
         <location filename="../src/ui/param_panel.py" line="2084"/>
         <location filename="../src/ui/param_panel.py" line="2212"/>
-        <source>Z height where the top panel step or V-groove is generated.</source>
-        <translation>Altura Z donde se genera el escalón o la ranura en V del panel superior.</translation>
+        <source>Distance from Shell Height down to the top surface of the top panel step or V-groove.</source>
+        <translation>Distancia desde Shell Height hacia abajo hasta la cara superior del paso de panel o ranura en V.</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="2086"/>
-        <source>Current range is automatically constrained between half of Shell Height and Shell Height. The value is rounded up to the current layer-height grid before preview, STL export, and G-code export.</source>
-        <translation>El rango actual se limita automáticamente entre la mitad de la altura de la carcasa y la altura de la carcasa. El valor se redondea hacia arriba a la cuadrícula actual de altura de capa antes de la vista previa, la exportación STL y la exportación G-code.</translation>
+        <source>Current range is automatically constrained from 0 to half of Shell Height. The value is rounded up to the current layer-height grid before preview, STL export, and G-code export.</source>
+        <translation>El rango actual se limita automaticamente de 0 a la mitad de Shell Height. El valor se redondea hacia arriba a la cuadricula de altura de capa actual antes de la vista previa, la exportacion STL y la exportacion G-code.</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="2101"/>

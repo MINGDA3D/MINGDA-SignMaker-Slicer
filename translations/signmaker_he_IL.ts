@@ -1443,16 +1443,24 @@ Error code: {code}</source>
         <translation>אפשר מדרגת פאנל (עליון)</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2092"/>
-        <location filename="../src/ui/param_panel.py" line="2143"/>
-        <source>Step Height:</source>
-        <translation>גובה מדרגה:</translation>
+        <location filename="../src/ui/param_panel.py" line="2606"/>
+        <source>Top Step Distance:</source>
+        <translation>מרחק מדרגה עליון:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2106"/>
-        <location filename="../src/ui/param_panel.py" line="2157"/>
-        <source>Step Width:</source>
-        <translation>רוחב מדרגה:</translation>
+        <location filename="../src/ui/param_panel.py" line="2662"/>
+        <source>Bottom Step Height:</source>
+        <translation>גובה מדרגה תחתון:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="2620"/>
+        <source>Top Step Width:</source>
+        <translation>רוחב מדרגה עליון:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="2676"/>
+        <source>Bottom Step Width:</source>
+        <translation>רוחב מדרגה תחתון:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="2108"/>
@@ -1984,13 +1992,13 @@ Input requirements: {requirements}</source>
     <message>
         <location filename="../src/ui/param_panel.py" line="2084"/>
         <location filename="../src/ui/param_panel.py" line="2212"/>
-        <source>Z height where the top panel step or V-groove is generated.</source>
-        <translation>גובה Z שבו נוצרים מדרגת הפאנל העליון או חריץ ה-V.</translation>
+        <source>Distance from Shell Height down to the top surface of the top panel step or V-groove.</source>
+        <translation>המרחק מ-Shell Height כלפי מטה עד לפני השטח העליונים של מדרגת הפאנל העליונה או חריץ V.</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="2086"/>
-        <source>Current range is automatically constrained between half of Shell Height and Shell Height. The value is rounded up to the current layer-height grid before preview, STL export, and G-code export.</source>
-        <translation>הטווח הנוכחי מוגבל אוטומטית בין חצי גובה המעטפת לבין גובה המעטפת. הערך יעוגל כלפי מעלה לרשת גובה השכבה הנוכחית לפני תצוגה מקדימה, ייצוא STL וייצוא G-code.</translation>
+        <source>Current range is automatically constrained from 0 to half of Shell Height. The value is rounded up to the current layer-height grid before preview, STL export, and G-code export.</source>
+        <translation>הטווח הנוכחי מוגבל אוטומטית מ-0 עד חצי Shell Height. הערך מעוגל כלפי מעלה לרשת גובה השכבה הנוכחית לפני תצוגה מקדימה, יצוא STL ויצוא G-code.</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="2101"/>

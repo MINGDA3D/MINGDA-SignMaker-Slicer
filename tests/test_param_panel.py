@@ -620,6 +620,10 @@ def test_primary_tabs_and_parameter_icons_are_loaded(qapp):
         "speed",
         "temperature",
         "gcode",
+        "top-step-height",
+        "bottom-step-height",
+        "top-step-width",
+        "bottom-step-width",
     ):
         assert not panel._icon(icon_name).isNull()
 
@@ -650,7 +654,10 @@ def test_parameter_icon_labels_preserve_original_text(qapp):
     }
 
     assert "Shell Height:" in visible_text
-    assert "Step Height:" in visible_text
+    assert "Top Step Distance:" in visible_text
+    assert "Bottom Step Height:" in visible_text
+    assert "Top Step Width:" in visible_text
+    assert "Bottom Step Width:" in visible_text
     assert "Skirt Speed:" in visible_text
 
 
@@ -820,7 +827,7 @@ def test_vector_defaults_match_requested_values(qapp):
     assert panel.outline_width.value() == pytest.approx(3.0)
     assert panel.outline_height.value() == pytest.approx(3.0)
     assert panel.outline_offset.value() == pytest.approx(0.0)
-    assert panel.panel_step_height.value() == pytest.approx(47.1)
+    assert panel.panel_step_height.value() == pytest.approx(3.0)
     assert panel.baseplate_step_height.value() == pytest.approx(3.0)
     assert panel.skirt_height.value() == pytest.approx(0.3)
     assert panel.skirt_offset.value() == pytest.approx(0.12)
@@ -1181,8 +1188,10 @@ def test_step_group_keeps_geometry_fields_and_moves_speed_to_print_settings(qapp
     }
     speed_labels = {label.text() for label in speed_group.findChildren(QLabel)}
 
-    assert "Step Height:" in step_labels
-    assert "Step Width:" in step_labels
+    assert "Top Step Distance:" in step_labels
+    assert "Bottom Step Height:" in step_labels
+    assert "Top Step Width:" in step_labels
+    assert "Bottom Step Width:" in step_labels
     assert "Step Speed:" not in step_labels
     assert "Step Speed:" in speed_labels
     assert _owning_group(panel.step_speed) is panel.speed_group
@@ -1527,7 +1536,7 @@ def test_set_params_displays_layer_based_heights_as_mm(qapp):
     assert panel.height_spin.value() == pytest.approx(40.0)
     assert panel.baseplate_spin.value() == pytest.approx(10.0)
     assert panel.panel_thickness_spin.value() == pytest.approx(3.0)
-    assert panel.panel_step_height.value() == pytest.approx(25.0)
+    assert panel.panel_step_height.value() == pytest.approx(15.0)
     assert panel.baseplate_step_height.value() == pytest.approx(2.0)
     assert panel.bottom_face_thickness.value() == pytest.approx(1.0)
     assert panel.light_slot_depth.value() == pytest.approx(3.0)
@@ -1578,14 +1587,26 @@ def test_get_params_uses_mm_for_step_heights(qapp):
     panel.layer_height_spin.setValue(0.25)
     panel.height_spin.setValue(30.0)
     panel.panel_step_enabled.setChecked(True)
-    panel.panel_step_height.setValue(16.0)
+    panel.panel_step_height.setValue(6.0)
     panel.baseplate_step_enabled.setChecked(True)
     panel.baseplate_step_height.setValue(8.0)
 
     params = panel.get_params()
 
-    assert params.step.panel_step_height == pytest.approx(16.0)
+    assert params.step.panel_step_height == pytest.approx(24.0)
     assert params.step.baseplate_step_height == pytest.approx(8.0)
+
+
+def test_top_step_distance_is_limited_to_half_shell_height(qapp):
+    panel = ParamPanel()
+
+    panel.layer_height_spin.setValue(0.25)
+    panel.height_spin.setValue(30.0)
+    panel.panel_step_height.setValue(16.0)
+
+    assert panel.panel_step_height.maximum() == pytest.approx(15.0)
+    assert panel.panel_step_height.value() == pytest.approx(15.0)
+    assert panel.get_params().step.panel_step_height == pytest.approx(15.0)
 
 
 def test_get_params_commits_pending_step_height_text_edits(qapp):
@@ -1594,7 +1615,7 @@ def test_get_params_commits_pending_step_height_text_edits(qapp):
     panel.layer_height_spin.lineEdit().setText("0.25")
     panel.height_spin.lineEdit().setText("40")
     panel.panel_step_enabled.setChecked(True)
-    panel.panel_step_height.lineEdit().setText("24")
+    panel.panel_step_height.lineEdit().setText("6")
     panel.baseplate_step_enabled.setChecked(True)
     panel.baseplate_step_height.lineEdit().setText("8")
 
@@ -1602,7 +1623,7 @@ def test_get_params_commits_pending_step_height_text_edits(qapp):
 
     assert params.shell.layer_height == pytest.approx(0.25)
     assert params.shell.height == pytest.approx(40.0)
-    assert params.step.panel_step_height == pytest.approx(24.0)
+    assert params.step.panel_step_height == pytest.approx(34.0)
     assert params.step.baseplate_step_height == pytest.approx(8.0)
 
 

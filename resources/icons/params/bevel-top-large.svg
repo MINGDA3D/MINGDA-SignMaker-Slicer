@@ -33,21 +33,15 @@
      inkscape:window-maximized="1"
      inkscape:current-layer="svg4" />
   <path
-     d="M5 6h14l-4 12H9L5 6Z"
-     fill="#58A6FF"
-     fill-opacity=".16"
-     stroke="none"
-     id="path1" />
-  <path
-     d="M5 6h14M9 18h6"
-     stroke="#C9D1D9"
-     stroke-width="1.8"
+     d="M 2.199785,2.199785 H 21.800218 M 7.79991,21.80022 h 8.400182"
+     stroke="#c9d1d9"
+     stroke-width="2.39957"
      stroke-linecap="round"
      id="path3" />
   <path
-     d="M5 6 9 18M19 6 15 18"
-     stroke="#58A6FF"
-     stroke-width="1.8"
+     d="M 2.1370699,2.1370699 7.7730325,19.862929 M 21.862928,2.1370699 16.226967,19.862929"
+     stroke="#58a6ff"
+     stroke-width="2.27414"
      stroke-linecap="round"
      stroke-linejoin="round"
      id="path4" />

@@ -1443,16 +1443,24 @@ Error code: {code}</source>
         <translation>Увімкнути сходинку панелі (зверху)</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2092"/>
-        <location filename="../src/ui/param_panel.py" line="2143"/>
-        <source>Step Height:</source>
-        <translation>Висота сходинки:</translation>
+        <location filename="../src/ui/param_panel.py" line="2606"/>
+        <source>Top Step Distance:</source>
+        <translation>Відст. верхньої сходинки:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2106"/>
-        <location filename="../src/ui/param_panel.py" line="2157"/>
-        <source>Step Width:</source>
-        <translation>Ширина сходинки:</translation>
+        <location filename="../src/ui/param_panel.py" line="2662"/>
+        <source>Bottom Step Height:</source>
+        <translation>Нижня висота сходинки:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="2620"/>
+        <source>Top Step Width:</source>
+        <translation>Верхня ширина сходинки:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="2676"/>
+        <source>Bottom Step Width:</source>
+        <translation>Нижня ширина сходинки:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="2108"/>
@@ -1984,13 +1992,13 @@ Input requirements: {requirements}</source>
     <message>
         <location filename="../src/ui/param_panel.py" line="2084"/>
         <location filename="../src/ui/param_panel.py" line="2212"/>
-        <source>Z height where the top panel step or V-groove is generated.</source>
-        <translation>Z-висота, на якій створюється сходинка або V-паз верхньої панелі.</translation>
+        <source>Distance from Shell Height down to the top surface of the top panel step or V-groove.</source>
+        <translation>Відстань від Shell Height вниз до верхньої поверхні верхньої сходинки панелі або V-паза.</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="2086"/>
-        <source>Current range is automatically constrained between half of Shell Height and Shell Height. The value is rounded up to the current layer-height grid before preview, STL export, and G-code export.</source>
-        <translation>Поточний діапазон автоматично обмежено між половиною висоти оболонки та висотою оболонки. Значення округлюється вгору до поточної сітки висоти шару перед попереднім переглядом, експортом STL і експортом G-code.</translation>
+        <source>Current range is automatically constrained from 0 to half of Shell Height. The value is rounded up to the current layer-height grid before preview, STL export, and G-code export.</source>
+        <translation>Поточний діапазон автоматично обмежено від 0 до половини Shell Height. Значення округлюється вгору до поточної сітки висоти шару перед переглядом, експортом STL і експортом G-code.</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="2101"/>

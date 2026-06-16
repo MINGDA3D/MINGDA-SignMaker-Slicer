@@ -52,6 +52,8 @@
     <file>icons/params/bevel-top-small.svg</file>
     <file>icons/params/bottom-face.svg</file>
     <file>icons/params/bottom-face-thickness.svg</file>
+    <file>icons/params/bottom-step-height.svg</file>
+    <file>icons/params/bottom-step-width.svg</file>
     <file>icons/params/bottom_solid_thickness.svg</file>
     <file>icons/params/center.svg</file>
     <file>icons/params/clearance.svg</file>
@@ -68,6 +70,8 @@
     <file>icons/params/face-bottom.svg</file>
     <file>icons/params/face-top.svg</file>
     <file>icons/params/top-face-thickness.svg</file>
+    <file>icons/params/top-step-height.svg</file>
+    <file>icons/params/top-step-width.svg</file>
     <file>icons/params/fan.svg</file>
     <file>icons/params/filament.svg</file>
     <file>icons/params/floor.svg</file>

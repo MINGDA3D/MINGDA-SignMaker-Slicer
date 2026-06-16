@@ -1,4 +1,47 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-  <path d="M5 18h14L15 6H9L5 18Z" stroke="#C9D1D9" stroke-width="1.7" stroke-linejoin="round"/>
-  <path d="M9 6 5 18M15 6l4 12" stroke="#58A6FF" stroke-width="1.7" stroke-linecap="round"/>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="24"
+   height="24"
+   viewBox="0 0 24 24"
+   fill="none"
+   version="1.1"
+   id="svg2"
+   sodipodi:docname="bevel-top-small.svg"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     id="namedview2"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="33.875"
+     inkscape:cx="12"
+     inkscape:cy="12"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg2" />
+  <path
+     d="M 2.0928551,21.907105 H 21.601602 L 16.027675,2.09289 H 7.6667827 Z"
+     stroke="#c9d1d9"
+     stroke-width="2.18578"
+     stroke-linejoin="round"
+     id="path1" />
+  <path
+     d="M 7.6097841,2.1005661 1.9529646,21.899436 M 16.095015,2.1005661 21.751834,21.899436"
+     stroke="#58a6ff"
+     stroke-width="2.20113"
+     stroke-linecap="round"
+     id="path2" />
 </svg>
