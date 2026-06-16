@@ -1200,1017 +1200,1073 @@ Fehlercode: {code}</translation>
     <message>
         <location filename="../src/ui/main_window.py" line="2901"/>
         <source>Processing complete: height {height:.2f} mm, estimated time {time:.1f} minutes</source>
-        <translation>Processing complete: height {height:.2f} mm, estimated time {time:.1f} minutes</translation>
+        <translation>Verarbeitung abgeschlossen: Höhe {height:.2f} mm, geschätzte Zeit {time:.1f} Minuten</translation>
     </message>
 </context>
 <context>
     <name>ParamPanel</name>
     <message>
-        <location filename="../src/ui/param_panel.py" line="92"/>
+        <location filename="../src/ui/param_panel.py" line="177"/>
         <source>Settings</source>
         <translation>Einstellungen</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="170"/>
+        <location filename="../src/ui/param_panel.py" line="260"/>
         <source>Shape</source>
         <translation>Form</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="172"/>
+        <location filename="../src/ui/param_panel.py" line="262"/>
         <source>Geometry and sign shell settings</source>
         <translation>Geometrie- und Buchstabenschalen-Einstellungen</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="178"/>
+        <location filename="../src/ui/param_panel.py" line="269"/>
         <source>Machine</source>
         <translation>Maschine</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="180"/>
+        <location filename="../src/ui/param_panel.py" line="271"/>
         <source>Printer profile and hardware settings</source>
         <translation>Druckerprofil- und Hardware-Einstellungen</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="186"/>
+        <location filename="../src/ui/param_panel.py" line="278"/>
         <source>Print</source>
         <translation>Druck</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="554"/>
+        <location filename="../src/ui/param_panel.py" line="1028"/>
         <source>Shell Settings</source>
         <translation>Gehaeuseeinstellungen</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="573"/>
+        <location filename="../src/ui/param_panel.py" line="1047"/>
         <source>Shell Height:</source>
         <translation>Gehaeusehoehe:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="591"/>
+        <location filename="../src/ui/param_panel.py" line="1065"/>
         <source>Layer Height:</source>
         <translation>Schichthoehe:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="600"/>
+        <location filename="../src/ui/param_panel.py" line="1074"/>
         <source>Line Width:</source>
         <translation>Linienbreite:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="616"/>
-        <source>Edge Type</source>
-        <translation>Kantentyp</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="625"/>
+        <location filename="../src/ui/param_panel.py" line="1101"/>
+        <location filename="../src/ui/param_panel.py" line="1110"/>
         <source>Straight</source>
         <translation>Gerade</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="626"/>
+        <location filename="../src/ui/param_panel.py" line="1102"/>
+        <location filename="../src/ui/param_panel.py" line="1111"/>
         <source>Beveled</source>
         <translation>Abgeschraegt</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="627"/>
+        <location filename="../src/ui/param_panel.py" line="1103"/>
+        <location filename="../src/ui/param_panel.py" line="1112"/>
         <source>U Shape</source>
         <translation>U-Form</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="628"/>
+        <location filename="../src/ui/param_panel.py" line="1104"/>
+        <location filename="../src/ui/param_panel.py" line="1113"/>
         <source>Custom</source>
         <translation>Benutzerdefiniert</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="630"/>
-        <source>Edge Type:</source>
-        <translation>Kantentyp:</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="642"/>
+        <location filename="../src/ui/param_panel.py" line="1146"/>
         <source>Top Small</source>
         <translation>Oben klein</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="643"/>
+        <location filename="../src/ui/param_panel.py" line="1151"/>
         <source>Top Large</source>
         <translation>Oben gross</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="645"/>
+        <location filename="../src/ui/param_panel.py" line="1161"/>
         <source>Bevel Direction:</source>
         <translation>Schraegrichtung:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="648"/>
+        <location filename="../src/ui/param_panel.py" line="1166"/>
         <source>Original contour is always based on the bottom face (z=0).</source>
         <translation>Die Originalkontur bezieht sich immer auf die Unterseite (z=0).</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="660"/>
+        <location filename="../src/ui/param_panel.py" line="1178"/>
         <source>Bevel Width:</source>
         <translation>Schraegbreite:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="672"/>
+        <location filename="../src/ui/param_panel.py" line="1190"/>
         <source>Baseplate Thickness:</source>
         <translation>Bodenplattendicke:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="684"/>
+        <location filename="../src/ui/param_panel.py" line="1202"/>
         <source>Panel Thickness:</source>
         <translation>Frontplattendicke:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="704"/>
+        <location filename="../src/ui/param_panel.py" line="1222"/>
         <source>Arc Height:</source>
         <translation>Bogenhoehe:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="727"/>
+        <location filename="../src/ui/param_panel.py" line="1245"/>
         <source>Preset Templates:</source>
         <translation>Vorlagen:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="739"/>
+        <location filename="../src/ui/param_panel.py" line="1257"/>
         <source>Import DXF...</source>
         <translation>DXF importieren...</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="740"/>
+        <location filename="../src/ui/param_panel.py" line="1258"/>
         <source>Import custom edge profile from DXF file</source>
         <translation>Benutzerdefiniertes Kantenprofil aus DXF-Datei importieren</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="748"/>
-        <location filename="../src/ui/param_panel.py" line="3334"/>
+        <location filename="../src/ui/param_panel.py" line="1266"/>
+        <location filename="../src/ui/param_panel.py" line="4144"/>
         <source>No profile selected</source>
         <translation>Kein Profil ausgewaehlt</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="750"/>
+        <location filename="../src/ui/param_panel.py" line="1268"/>
         <source>Current Profile:</source>
         <translation>Aktuelles Profil:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="799"/>
+        <location filename="../src/ui/param_panel.py" line="732"/>
+        <location filename="../src/ui/param_panel.py" line="1317"/>
         <source>Bottom Face</source>
         <translation>Untere Flaeche</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="804"/>
+        <location filename="../src/ui/param_panel.py" line="1322"/>
         <source>Enable Bottom Face</source>
         <translation>Untere Flaeche aktivieren</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="906"/>
+        <location filename="../src/ui/param_panel.py" line="735"/>
+        <location filename="../src/ui/param_panel.py" line="1430"/>
         <source>Light Slot</source>
         <translation>Lichtnut</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="910"/>
+        <location filename="../src/ui/param_panel.py" line="1434"/>
         <source>Enable Light Slot</source>
         <translation>Lichtnut aktivieren</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="930"/>
+        <location filename="../src/ui/param_panel.py" line="1472"/>
         <source>Slot Width:</source>
         <translation>Nutbreite:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="942"/>
+        <location filename="../src/ui/param_panel.py" line="1484"/>
         <source>Slot Depth:</source>
         <translation>Nuttiefe:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="969"/>
-        <location filename="../src/ui/param_panel.py" line="2316"/>
+        <location filename="../src/ui/param_panel.py" line="1511"/>
+        <location filename="../src/ui/param_panel.py" line="2866"/>
         <source>Wall Gap:</source>
         <translation>Wandabstand:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="973"/>
+        <location filename="../src/ui/param_panel.py" line="1443"/>
         <source>Outer Slot</source>
         <translation>Außennut</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="979"/>
+        <location filename="../src/ui/param_panel.py" line="1444"/>
         <source>Hole Slot</source>
         <translation>Lochnut</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="985"/>
+        <location filename="../src/ui/param_panel.py" line="1515"/>
         <source>Auto Skip Small Holes</source>
         <translation>Kleine Löcher automatisch überspringen</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1003"/>
+        <location filename="../src/ui/param_panel.py" line="1533"/>
         <source>Min Hole Span:</source>
         <translation>Min. Lochspannweite:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1038"/>
+        <location filename="../src/ui/param_panel.py" line="716"/>
+        <location filename="../src/ui/param_panel.py" line="1569"/>
         <source>Top Face</source>
         <translation>Obere Flaeche</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1043"/>
+        <location filename="../src/ui/param_panel.py" line="1574"/>
         <source>Enable Top Face</source>
         <translation>Obere Flaeche aktivieren</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1589"/>
+        <location filename="../src/ui/param_panel.py" line="2129"/>
         <source>Machine G-code</source>
         <translation>Maschinen-G-code</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1596"/>
+        <location filename="../src/ui/param_panel.py" line="2136"/>
         <source>Machine start G-code</source>
         <translation>Maschinen-Start-G-code</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1613"/>
+        <location filename="../src/ui/param_panel.py" line="2153"/>
         <source>Machine end G-code</source>
         <translation>Maschinen-End-G-code</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2066"/>
-        <source>Step/V-Groove</source>
-        <translation>Stufe/V-Nut</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="2071"/>
+        <location filename="../src/ui/param_panel.py" line="2612"/>
         <source>Enable Panel Step (Top)</source>
         <translation>Frontplattenstufe aktivieren (Oben)</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2606"/>
+        <location filename="../src/ui/param_panel.py" line="2635"/>
         <source>Top Step Distance:</source>
         <translation>Oberer Stufenabstand:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2662"/>
+        <location filename="../src/ui/param_panel.py" line="2691"/>
         <source>Bottom Step Height:</source>
         <translation>Untere Stufenhoehe:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2620"/>
+        <location filename="../src/ui/param_panel.py" line="2649"/>
         <source>Top Step Width:</source>
         <translation>Obere Stufenbreite:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2676"/>
+        <location filename="../src/ui/param_panel.py" line="2705"/>
         <source>Bottom Step Width:</source>
         <translation>Untere Stufenbreite:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2108"/>
-        <location filename="../src/ui/param_panel.py" line="2159"/>
+        <location filename="../src/ui/param_panel.py" line="2651"/>
+        <location filename="../src/ui/param_panel.py" line="2707"/>
         <source>V-Groove</source>
         <translation>V-Nut</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2128"/>
+        <location filename="../src/ui/param_panel.py" line="2674"/>
         <source>Enable Baseplate Step (Bottom)</source>
         <translation>Bodenplattenstufe aktivieren (Unten)</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2267"/>
+        <location filename="../src/ui/param_panel.py" line="2817"/>
         <source>Anti-Warping Skirt</source>
         <translation>Anti-Verformungs-Rand</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2272"/>
+        <location filename="../src/ui/param_panel.py" line="2822"/>
         <source>Enable Anti-Warping Skirt</source>
         <translation>Anti-Verformungs-Rand aktivieren</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2293"/>
+        <location filename="../src/ui/param_panel.py" line="2843"/>
         <source>Skirt Height:</source>
         <translation>Randhoehe:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2330"/>
-        <source>Skirt Sides:</source>
-        <translation>Skirt-Seiten:</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="2350"/>
+        <location filename="../src/ui/param_panel.py" line="2902"/>
         <source>Connected Letters</source>
         <translation>Verbundene Buchstaben</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2355"/>
+        <location filename="../src/ui/param_panel.py" line="2907"/>
         <source>Enable Connected Letters</source>
         <translation>Verbundene Buchstaben aktivieren</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2364"/>
+        <location filename="../src/ui/param_panel.py" line="2916"/>
         <source>Triangle</source>
         <translation>Dreieck</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2365"/>
+        <location filename="../src/ui/param_panel.py" line="2917"/>
         <source>Diamond</source>
         <translation>Raute</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2368"/>
+        <location filename="../src/ui/param_panel.py" line="2920"/>
         <source>Connection Type:</source>
         <translation>Verbindungstyp:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2371"/>
+        <location filename="../src/ui/param_panel.py" line="2923"/>
         <source>Auto Detect Connection Points</source>
         <translation>Verbindungspunkte automatisch erkennen</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2390"/>
+        <location filename="../src/ui/param_panel.py" line="2942"/>
         <source>Connection Width:</source>
         <translation>Verbindungsbreite:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2403"/>
+        <location filename="../src/ui/param_panel.py" line="2955"/>
         <source>Bevel Height:</source>
         <translation>Schraeghoehe:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2416"/>
+        <location filename="../src/ui/param_panel.py" line="2968"/>
         <source>Base Height:</source>
         <translation>Basishoehe:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2431"/>
+        <location filename="../src/ui/param_panel.py" line="2983"/>
         <source>Support Offset:</source>
         <translation>Stuetzversatz:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2467"/>
+        <location filename="../src/ui/param_panel.py" line="3031"/>
         <source>Edge Wrap/Outline</source>
         <translation>Kanteneinfassung/Umriss</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2472"/>
+        <location filename="../src/ui/param_panel.py" line="3036"/>
         <source>Enable Edge Wrap</source>
         <translation>Kanteneinfassung aktivieren</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2325"/>
-        <location filename="../src/ui/param_panel.py" line="2481"/>
-        <location filename="../src/ui/param_panel.py" line="2533"/>
+        <location filename="../src/ui/param_panel.py" line="3050"/>
+        <location filename="../src/ui/param_panel.py" line="3105"/>
         <source>Inner</source>
         <translation>Innen</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="72"/>
+        <location filename="../src/ui/param_panel.py" line="157"/>
         <source>Project Snapshot</source>
         <translation>Projekt-Schnappschuss</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="188"/>
+        <location filename="../src/ui/param_panel.py" line="280"/>
         <source>Speed, temperature, cooling, color, and G-code settings</source>
         <translation>Geschwindigkeits-, Temperatur-, Kühlungs-, Farb- und G-Code-Einstellungen</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="320"/>
+        <location filename="../src/ui/param_panel.py" line="469"/>
+        <source>Wall</source>
+        <translation>Wand</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="475"/>
+        <source>Bottom</source>
+        <translation>Unten</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="486"/>
+        <source>Top</source>
+        <translation>Oben</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="492"/>
+        <source>Other</source>
+        <translation>Sonstiges</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="715"/>
+        <location filename="../src/ui/param_panel.py" line="731"/>
+        <source>None</source>
+        <translation>Keine</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="717"/>
+        <source>Panel Step</source>
+        <translation>Frontplattenstufe</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="718"/>
+        <source>Panel V-Groove</source>
+        <translation>Frontplatten-V-Nut</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="733"/>
+        <source>Baseplate Step</source>
+        <translation>Bodenplattenstufe</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="734"/>
+        <source>Baseplate V-Groove</source>
+        <translation>Bodenplatten-V-Nut</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="736"/>
+        <source>Edge Wrap</source>
+        <translation>Kanteneinfassung</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="737"/>
+        <source>Outline</source>
+        <translation>Umriss</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="765"/>
         <source>Meaning: {meaning}
 Input requirements: {requirements}</source>
         <translation>Bedeutung: {meaning}
 Eingabeanforderungen: {requirements}</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="330"/>
+        <location filename="../src/ui/param_panel.py" line="775"/>
         <source>{minimum:.2f}-{maximum:.2f} mm. This value is rounded up to the current layer-height grid before preview, STL export, and G-code export. Example: 1.0 mm at 0.3 mm layer height becomes 1.2 mm.</source>
         <translation>{minimum:.2f}-{maximum:.2f} mm. Dieser Wert wird vor Vorschau, STL-Export und G-Code-Export auf das aktuelle Schichthoehenraster aufgerundet. Beispiel: 1,0 mm wird bei 0,3 mm Schichthoehe zu 1,2 mm.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="353"/>
+        <location filename="../src/ui/param_panel.py" line="798"/>
         <source>Z-height used by this feature.</source>
         <translation>Z-Hoehe, die von dieser Funktion verwendet wird.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="432"/>
+        <location filename="../src/ui/param_panel.py" line="906"/>
         <source>Actual extrusion width used for each shell wall path.</source>
         <translation>Tatsaechliche Extrusionsbreite fuer jede Wandbahn der Schale.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="434"/>
+        <location filename="../src/ui/param_panel.py" line="908"/>
         <source>Current printable range: {minimum:.2f}-{maximum:.2f} mm. Formula: min = max(0.75 * nozzle diameter, 1.20 * layer height); max = 1.50 * nozzle diameter. Values outside this range block slicing and export.</source>
         <translation>Aktuell druckbarer Bereich: {minimum:.2f}-{maximum:.2f} mm. Formel: Minimum = max(0,75 * Duesendurchmesser, 1,20 * Schichthoehe); Maximum = 1,50 * Duesendurchmesser. Werte ausserhalb dieses Bereichs blockieren Slicing und Export.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="447"/>
+        <location filename="../src/ui/param_panel.py" line="921"/>
         <source>Final total XY shell wall thickness.</source>
         <translation>Endgueltige Gesamtwandstaerke der Schale in XY.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="449"/>
+        <location filename="../src/ui/param_panel.py" line="923"/>
         <source>Valid printable range for the current Line Width: {minimum:.2f}-{maximum:.2f} mm. The value is rounded up to a whole multiple of Line Width; the internal wall path count may not exceed 100. Values above the range block slicing and export.</source>
         <translation>Gueltiger druckbarer Bereich fuer die aktuelle Linienbreite: {minimum:.2f}-{maximum:.2f} mm. Der Wert wird auf ein ganzzahliges Vielfaches der Linienbreite aufgerundet; die interne Anzahl der Wandbahnen darf 100 nicht ueberschreiten. Werte oberhalb des Bereichs blockieren Slicing und Export.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="458"/>
+        <location filename="../src/ui/param_panel.py" line="932"/>
         <source>Z height where the printer should run the selected color-change macro.</source>
         <translation>Z-Hoehe, bei der der Drucker das ausgewaehlte Farbwechsel-Makro ausfuehren soll.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="460"/>
+        <location filename="../src/ui/param_panel.py" line="934"/>
         <source>{minimum:.2f}-100.00 mm. The value is rounded up to the current layer-height grid before preview and G-code export.</source>
         <translation>{minimum:.2f}-100.00 mm. Der Wert wird vor Vorschau und G-Code-Export auf das aktuelle Schichthoehenraster aufgerundet.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="566"/>
+        <location filename="../src/ui/param_panel.py" line="1040"/>
         <source>Total printed height of the sign shell.</source>
         <translation>Gesamte Druckhoehe der Buchstabenschale.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="583"/>
+        <location filename="../src/ui/param_panel.py" line="1057"/>
         <source>Vertical thickness of each printed layer; it also defines the Z snapping grid.</source>
         <translation>Vertikale Dicke jeder gedruckten Schicht; sie definiert auch das Z-Einrastraster.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="585"/>
+        <location filename="../src/ui/param_panel.py" line="1059"/>
         <source>0.10-1.00 mm. Smaller values improve vertical detail and increase print time. Changing this value rounds Z-height parameters up to the new grid and recomputes the default Line Width.</source>
         <translation>0.10-1.00 mm. Kleinere Werte verbessern vertikale Details und erhoehen die Druckzeit. Eine Aenderung dieses Werts rundet Z-Hoehenparameter auf das neue Raster auf und berechnet die Standard-Linienbreite neu.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="669"/>
+        <location filename="../src/ui/param_panel.py" line="1187"/>
         <source>Straight bottom section height used for the baseplate side of the shell.</source>
         <translation>Hoehe des geraden unteren Abschnitts auf der Grundplattenseite der Schale.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="681"/>
+        <location filename="../src/ui/param_panel.py" line="1199"/>
         <source>Straight top section height reserved for the face panel side of the shell.</source>
         <translation>Hoehe des geraden oberen Abschnitts, der fuer die Frontplatte der Schale reserviert ist.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="701"/>
+        <location filename="../src/ui/param_panel.py" line="1219"/>
         <source>Vertical height of the curved U-shaped edge profile.</source>
         <translation>Vertikale Hoehe des gebogenen U-foermigen Kantenprofils.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="712"/>
+        <location filename="../src/ui/param_panel.py" line="1230"/>
         <source>Solid bottom thickness under the U-shaped profile.</source>
         <translation>Massive Bodendicke unter dem U-foermigen Profil.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="819"/>
+        <location filename="../src/ui/param_panel.py" line="1339"/>
         <source>Printed solid bottom face thickness used to close the shell bottom.</source>
         <translation>Dicke der gedruckten massiven Bodenflaeche zum Schliessen der Schalenunterseite.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="832"/>
+        <location filename="../src/ui/param_panel.py" line="1352"/>
         <source>Diameter of screw holes generated in the bottom face.</source>
         <translation>Durchmesser der in der Bodenflaeche erzeugten Schraubenloecher.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="833"/>
+        <location filename="../src/ui/param_panel.py" line="1353"/>
         <source>0.10-100.00 mm. Use a value larger than the screw shaft and smaller than nearby wall spacing.</source>
         <translation>0.10-100.00 mm. Verwenden Sie einen Wert, der groesser als der Schraubenschaft und kleiner als der nahe Wandabstand ist.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="837"/>
+        <location filename="../src/ui/param_panel.py" line="1357"/>
         <source>Screw Hole Diameter:</source>
         <translation>Schraubenlochdurchmesser:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="925"/>
+        <location filename="../src/ui/param_panel.py" line="1467"/>
         <source>XY width of the LED light slot cut along eligible contours.</source>
         <translation>XY-Breite des LED-Lichtschlitzes, der entlang geeigneter Konturen geschnitten wird.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="926"/>
+        <location filename="../src/ui/param_panel.py" line="1468"/>
         <source>0.50-50.00 mm. Choose a value that fits the LED strip and leaves enough wall material.</source>
         <translation>0.50-50.00 mm. Waehlen Sie einen Wert, der zum LED-Streifen passt und genug Wandmaterial uebrig laesst.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="939"/>
+        <location filename="../src/ui/param_panel.py" line="1481"/>
         <source>Vertical depth of the light slot from the shell opening side.</source>
         <translation>Vertikale Tiefe des Lichtschlitzes von der Oeffnungsseite der Schale.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="951"/>
+        <location filename="../src/ui/param_panel.py" line="1493"/>
         <source>Solid material thickness left under the light slot floor.</source>
         <translation>Massive Materialdicke, die unter dem Boden des Lichtschlitzes verbleibt.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="964"/>
+        <location filename="../src/ui/param_panel.py" line="1506"/>
         <source>Extra XY clearance between the light slot and nearby shell walls.</source>
         <translation>Zusaetzlicher XY-Abstand zwischen Lichtschlitz und nahen Schalenwaenden.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="965"/>
+        <location filename="../src/ui/param_panel.py" line="1507"/>
         <source>0.00-20.00 mm. Use 0 for no extra clearance; larger values move slots farther from walls.</source>
         <translation>0.00-20.00 mm. Verwenden Sie 0 fuer keinen zusaetzlichen Abstand; groessere Werte verschieben Schlitze weiter von den Waenden weg.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1058"/>
+        <location filename="../src/ui/param_panel.py" line="1591"/>
         <source>Printed solid top face thickness used to close the shell top.</source>
         <translation>Dicke der gedruckten massiven Deckflaeche zum Schliessen der Schalenoberseite.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1138"/>
+        <location filename="../src/ui/param_panel.py" line="1672"/>
         <source>Color Change</source>
         <translation>Farbwechsel</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1142"/>
+        <location filename="../src/ui/param_panel.py" line="1676"/>
         <source>Enable Color Change</source>
         <translation>Farbwechsel aktivieren</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1151"/>
+        <location filename="../src/ui/param_panel.py" line="1685"/>
         <source>Initial color comes from Start G-code. Each change point runs the selected T macro.</source>
         <translation>Die Ausgangsfarbe stammt aus dem Start-G-Code. Jeder Wechselpunkt führt das ausgewählte T-Makro aus.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1159"/>
+        <location filename="../src/ui/param_panel.py" line="1693"/>
         <source>Change At Height</source>
         <translation>Wechselhöhe</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1160"/>
+        <location filename="../src/ui/param_panel.py" line="1694"/>
         <source>Macro Index</source>
         <translation>Makroindex</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1161"/>
+        <location filename="../src/ui/param_panel.py" line="1695"/>
         <source>Preview</source>
         <translation>Vorschau</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1180"/>
+        <location filename="../src/ui/param_panel.py" line="1714"/>
         <source>Add Change Point</source>
         <translation>Wechselpunkt hinzufügen</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1185"/>
+        <location filename="../src/ui/param_panel.py" line="1719"/>
         <source>Remove Selected</source>
         <translation>Ausgewählte entfernen</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1251"/>
+        <location filename="../src/ui/param_panel.py" line="1785"/>
         <source>Macro index inserted into the configured color-change command template.</source>
         <translation>Makroindex, der in die konfigurierte Farbwechsel-Befehlsvorlage eingefuegt wird.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1252"/>
+        <location filename="../src/ui/param_panel.py" line="1786"/>
         <source>0-999. With the default template T{index}, value 3 outputs T3.</source>
         <translation>0-999. Mit der Standardvorlage T{index} gibt der Wert 3 T3 aus.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1314"/>
+        <location filename="../src/ui/param_panel.py" line="1848"/>
         <source>Color change disabled.</source>
         <translation>Farbwechsel deaktiviert.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1320"/>
+        <location filename="../src/ui/param_panel.py" line="1854"/>
         <source>Initial color comes from Start G-code. No automatic changes are configured.</source>
         <translation>Die Anfangsfarbe stammt aus dem Start-G-Code. Es sind keine automatischen Wechsel konfiguriert.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1327"/>
+        <location filename="../src/ui/param_panel.py" line="1861"/>
         <source>At {height:.2f}mm -&gt; {command}</source>
         <translation>Bei {height:.2f} mm -&gt; {command}</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1336"/>
+        <location filename="../src/ui/param_panel.py" line="1870"/>
         <source>Prime Tower</source>
         <translation>Prime-Turm</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1340"/>
+        <location filename="../src/ui/param_panel.py" line="1874"/>
         <source>Enable Prime Tower</source>
         <translation>Prime-Turm aktivieren</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1348"/>
+        <location filename="../src/ui/param_panel.py" line="1882"/>
         <source>Prime tower geometry is defined by its center point in bed coordinates.</source>
         <translation>Die Geometrie des Prime-Turms wird durch seinen Mittelpunkt in den Bettkoordinaten definiert.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1367"/>
+        <location filename="../src/ui/param_panel.py" line="1901"/>
         <source>Center X:</source>
         <translation>Mittelpunkt X:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1376"/>
+        <location filename="../src/ui/param_panel.py" line="1910"/>
         <source>Center Y:</source>
         <translation>Mittelpunkt Y:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1386"/>
+        <location filename="../src/ui/param_panel.py" line="1920"/>
         <source>Tower Width:</source>
         <translation>Turmbreite:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1396"/>
+        <location filename="../src/ui/param_panel.py" line="1930"/>
         <source>Tower Depth:</source>
         <translation>Turmtiefe:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1405"/>
+        <location filename="../src/ui/param_panel.py" line="1939"/>
         <source>Infill Density:</source>
         <translation>Fülldichte:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1459"/>
+        <location filename="../src/ui/param_panel.py" line="1993"/>
         <source>Printer Profile</source>
         <translation>Druckerprofil</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1470"/>
+        <location filename="../src/ui/param_panel.py" line="2004"/>
         <source>New</source>
         <translation>Neu</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1475"/>
+        <location filename="../src/ui/param_panel.py" line="2009"/>
         <source>Duplicate</source>
         <translation>Duplizieren</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1480"/>
+        <location filename="../src/ui/param_panel.py" line="2014"/>
         <source>Rename</source>
         <translation>Umbenennen</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1485"/>
+        <location filename="../src/ui/param_panel.py" line="2019"/>
         <source>Delete</source>
         <translation>Löschen</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1490"/>
+        <location filename="../src/ui/param_panel.py" line="2024"/>
         <source>Set Default</source>
         <translation>Als Standard festlegen</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1508"/>
+        <location filename="../src/ui/param_panel.py" line="2042"/>
         <source>Printable Area X:</source>
         <translation>Druckbereich X:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1514"/>
+        <location filename="../src/ui/param_panel.py" line="2048"/>
         <source>Printable Area Y:</source>
         <translation>Druckbereich Y:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1520"/>
+        <location filename="../src/ui/param_panel.py" line="2054"/>
         <source>Printable Area Z:</source>
         <translation>Druckbereich Z:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1538"/>
+        <location filename="../src/ui/param_panel.py" line="2072"/>
         <source>Nozzle Diameter:</source>
         <translation>Düsendurchmesser:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1545"/>
+        <location filename="../src/ui/param_panel.py" line="2079"/>
         <source>Filament Diameter:</source>
         <translation>Filamentdurchmesser:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1552"/>
+        <location filename="../src/ui/param_panel.py" line="2086"/>
         <source>Retract Length:</source>
         <translation>Rückzugslänge:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1558"/>
+        <location filename="../src/ui/param_panel.py" line="2092"/>
         <source>Retract Speed:</source>
         <translation>Rückzugsgeschwindigkeit:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1565"/>
+        <location filename="../src/ui/param_panel.py" line="2099"/>
         <source>Short Z-Hop:</source>
         <translation>Kurzer Z-Hop:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1572"/>
+        <location filename="../src/ui/param_panel.py" line="2106"/>
         <source>Long Z-Hop:</source>
         <translation>Langer Z-Hop:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1578"/>
+        <location filename="../src/ui/param_panel.py" line="2112"/>
         <source>Long Travel Threshold:</source>
         <translation>Schwelle für lange Wege:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1582"/>
+        <location filename="../src/ui/param_panel.py" line="2116"/>
         <source>Color Change Template:</source>
         <translation>Farbwechselvorlage:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1600"/>
+        <location filename="../src/ui/param_panel.py" line="2140"/>
         <source>Edit Start G-code</source>
         <translation>Start-G-Code bearbeiten</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1602"/>
+        <location filename="../src/ui/param_panel.py" line="2142"/>
         <source>Start G-code</source>
         <translation>Start-G-Code</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1617"/>
+        <location filename="../src/ui/param_panel.py" line="2157"/>
         <source>Edit End G-code</source>
         <translation>End-G-Code bearbeiten</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1619"/>
+        <location filename="../src/ui/param_panel.py" line="2159"/>
         <source>End G-code</source>
         <translation>End-G-Code</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1650"/>
+        <location filename="../src/ui/param_panel.py" line="2190"/>
         <source>{name} (Project Snapshot)</source>
         <translation>{name} (Projekt-Schnappschuss)</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1695"/>
+        <location filename="../src/ui/param_panel.py" line="2235"/>
         <source>Using embedded project profile snapshot.</source>
         <translation>Eingebetteter Projektprofil-Schnappschuss wird verwendet.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1697"/>
+        <location filename="../src/ui/param_panel.py" line="2237"/>
         <source>Profile changes are saved immediately.</source>
         <translation>Profiländerungen werden sofort gespeichert.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1903"/>
+        <location filename="../src/ui/param_panel.py" line="2443"/>
         <source>New Printer Profile</source>
         <translation>Neues Druckerprofil</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1904"/>
-        <location filename="../src/ui/param_panel.py" line="1950"/>
+        <location filename="../src/ui/param_panel.py" line="2444"/>
+        <location filename="../src/ui/param_panel.py" line="2490"/>
         <source>Profile Name:</source>
         <translation>Profilname:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1924"/>
+        <location filename="../src/ui/param_panel.py" line="2464"/>
         <source>Duplicate Printer Profile</source>
         <translation>Druckerprofil duplizieren</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1925"/>
+        <location filename="../src/ui/param_panel.py" line="2465"/>
         <source>New Profile Name:</source>
         <translation>Neuer Profilname:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1926"/>
+        <location filename="../src/ui/param_panel.py" line="2466"/>
         <source>{name} Copy</source>
         <translation>{name} Kopie</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1949"/>
+        <location filename="../src/ui/param_panel.py" line="2489"/>
         <source>Rename Printer Profile</source>
         <translation>Druckerprofil umbenennen</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1970"/>
+        <location filename="../src/ui/param_panel.py" line="2510"/>
         <source>Delete Printer Profile</source>
         <translation>Druckerprofil löschen</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1971"/>
-        <source>Delete printer profile '{name}'?</source>
-        <translation>Druckerprofil '{name}' löschen?</translation>
+        <location filename="../src/ui/param_panel.py" line="2511"/>
+        <source>Delete printer profile &apos;{name}&apos;?</source>
+        <translation>Druckerprofil &apos;{name}&apos; löschen?</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2012"/>
+        <location filename="../src/ui/param_panel.py" line="2552"/>
         <source>Empty</source>
         <translation>Leer</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2015"/>
+        <location filename="../src/ui/param_panel.py" line="2555"/>
         <source>{first} (+{count} more lines)</source>
         <translation>{first} (+{count} weitere Zeilen)</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2030"/>
-        <location filename="../src/ui/param_panel.py" line="3142"/>
+        <location filename="../src/ui/param_panel.py" line="2570"/>
+        <location filename="../src/ui/param_panel.py" line="3953"/>
         <source>Klipper Profile</source>
         <translation>Klipper-Profil</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2084"/>
-        <location filename="../src/ui/param_panel.py" line="2212"/>
+        <location filename="../src/ui/param_panel.py" line="2606"/>
+        <source>Panel Step/V-Groove</source>
+        <translation>Frontplattenstufe/V-Nut</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="2627"/>
+        <location filename="../src/ui/param_panel.py" line="2762"/>
         <source>Distance from Shell Height down to the top surface of the top panel step or V-groove.</source>
         <translation>Abstand von Shell Height nach unten bis zur Oberseite der oberen Panelstufe oder V-Nut.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2086"/>
+        <location filename="../src/ui/param_panel.py" line="2629"/>
         <source>Current range is automatically constrained from 0 to half of Shell Height. The value is rounded up to the current layer-height grid before preview, STL export, and G-code export.</source>
         <translation>Der aktuelle Bereich ist automatisch auf 0 bis zur halben Shell Height begrenzt. Der Wert wird vor Vorschau, STL-Export und G-code-Export auf das aktuelle Layerhoehenraster aufgerundet.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2101"/>
+        <location filename="../src/ui/param_panel.py" line="2644"/>
         <source>XY width of the top panel step or V-groove.</source>
         <translation>XY-Breite der Stufe oder V-Nut der oberen Platte.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2102"/>
+        <location filename="../src/ui/param_panel.py" line="2645"/>
         <source>0.50-20.00 mm. Choose a value wide enough for panel seating but not wider than the local stroke.</source>
         <translation>0.50-20.00 mm. Waehlen Sie einen Wert, der breit genug fuer den Plattensitz ist, aber nicht breiter als der lokale Strich.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2140"/>
-        <location filename="../src/ui/param_panel.py" line="2230"/>
+        <location filename="../src/ui/param_panel.py" line="2669"/>
+        <source>Baseplate Step/V-Groove</source>
+        <translation>Bodenplattenstufe/V-Nut</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="2688"/>
+        <location filename="../src/ui/param_panel.py" line="2780"/>
         <source>Z height where the bottom baseplate step or V-groove is generated.</source>
         <translation>Z-Hoehe, bei der die Stufe oder V-Nut der unteren Grundplatte erzeugt wird.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2152"/>
+        <location filename="../src/ui/param_panel.py" line="2700"/>
         <source>XY width of the bottom baseplate step or V-groove.</source>
         <translation>XY-Breite der Stufe oder V-Nut der unteren Grundplatte.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2153"/>
+        <location filename="../src/ui/param_panel.py" line="2701"/>
         <source>0.50-20.00 mm. Choose a value wide enough for baseplate seating but not wider than the local stroke.</source>
         <translation>0.50-20.00 mm. Waehlen Sie einen Wert, der breit genug fuer den Grundplattensitz ist, aber nicht breiter als der lokale Strich.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2214"/>
-        <location filename="../src/ui/param_panel.py" line="2232"/>
+        <location filename="../src/ui/param_panel.py" line="2764"/>
+        <location filename="../src/ui/param_panel.py" line="2782"/>
         <source>Current range: {minimum:.2f}-{maximum:.2f} mm. The value is rounded up to the current layer-height grid before preview, STL export, and G-code export.</source>
         <translation>Aktueller Bereich: {minimum:.2f}-{maximum:.2f} mm. Der Wert wird vor Vorschau, STL-Export und G-Code-Export auf das aktuelle Schichthoehenraster aufgerundet.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2287"/>
+        <location filename="../src/ui/param_panel.py" line="2837"/>
         <source>Printed vertical height of the anti-warping skirt around the shell.</source>
         <translation>Gedruckte vertikale Hoehe der Anti-Warping-Schuerze um die Schale.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2311"/>
+        <location filename="../src/ui/param_panel.py" line="2861"/>
         <source>XY breakaway gap between the shell wall and the skirt.</source>
         <translation>XY-Abbrechspalt zwischen Schalenwand und Schuerze.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2312"/>
+        <location filename="../src/ui/param_panel.py" line="2862"/>
         <source>0.00-1.00 mm. Use 0 for a touching skirt; larger values make removal easier.</source>
         <translation>0.00-1.00 mm. Verwenden Sie 0 fuer eine beruehrende Schuerze; groessere Werte erleichtern das Entfernen.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2320"/>
-        <location filename="../src/ui/param_panel.py" line="2482"/>
-        <location filename="../src/ui/param_panel.py" line="2534"/>
+        <location filename="../src/ui/param_panel.py" line="2871"/>
+        <source>Outer Skirt</source>
+        <translation>Äußerer Rand</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="2872"/>
+        <source>Inner Skirt</source>
+        <translation>Innerer Rand</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="3051"/>
+        <location filename="../src/ui/param_panel.py" line="3106"/>
         <source>Outer</source>
         <translation>Aussen</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2385"/>
+        <location filename="../src/ui/param_panel.py" line="2937"/>
         <source>XY width of the bridge that connects neighboring letters.</source>
         <translation>XY-Breite der Bruecke, die benachbarte Buchstaben verbindet.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2386"/>
+        <location filename="../src/ui/param_panel.py" line="2938"/>
         <source>1.00-50.00 mm. Choose a value wide enough for strength without covering visible letter gaps.</source>
         <translation>1.00-50.00 mm. Waehlen Sie einen Wert, der fuer Stabilitaet breit genug ist, ohne sichtbare Buchstabenabstaende zu verdecken.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2400"/>
+        <location filename="../src/ui/param_panel.py" line="2952"/>
         <source>Vertical bevel height used on the connected-letter bridge.</source>
         <translation>Vertikale Fasenhoehe an der Bruecke fuer verbundene Buchstaben.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2413"/>
+        <location filename="../src/ui/param_panel.py" line="2965"/>
         <source>Vertical base height of the connected-letter bridge before beveling.</source>
         <translation>Vertikale Basishoehe der Bruecke fuer verbundene Buchstaben vor dem Anfasen.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2426"/>
+        <location filename="../src/ui/param_panel.py" line="2978"/>
         <source>XY offset used to place extra bridge support away from the detected connection point.</source>
         <translation>XY-Versatz zum Platzieren einer zusaetzlichen Brueckenstuetze weg vom erkannten Verbindungspunkt.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2427"/>
+        <location filename="../src/ui/param_panel.py" line="2979"/>
         <source>0.00-10.00 mm. Use smaller values for tight letter gaps and larger values for stronger support.</source>
         <translation>0.00-10.00 mm. Verwenden Sie kleinere Werte fuer enge Buchstabenabstaende und groessere Werte fuer staerkere Unterstuetzung.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2493"/>
+        <location filename="../src/ui/param_panel.py" line="3060"/>
         <source>Wrap Direction:</source>
         <translation>Einfassungsrichtung:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2501"/>
+        <location filename="../src/ui/param_panel.py" line="3068"/>
         <source>Wrap Width:</source>
         <translation>Einfassungsbreite:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2509"/>
+        <location filename="../src/ui/param_panel.py" line="3076"/>
         <source>Wrap Height:</source>
         <translation>Einfassungshoehe:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2524"/>
+        <location filename="../src/ui/param_panel.py" line="3091"/>
         <source>Enable Outline</source>
         <translation>Umriss aktivieren</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2545"/>
+        <location filename="../src/ui/param_panel.py" line="3115"/>
         <source>Outline Direction:</source>
         <translation>Umrissrichtung:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2553"/>
+        <location filename="../src/ui/param_panel.py" line="3123"/>
         <source>Outline Width:</source>
         <translation>Umrissbreite:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2561"/>
+        <location filename="../src/ui/param_panel.py" line="3131"/>
         <source>Outline Height:</source>
         <translation>Umrisshoehe:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2569"/>
-        <source>Outline Offset:</source>
-        <translation>Umrissversatz:</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="2585"/>
+        <location filename="../src/ui/param_panel.py" line="3158"/>
         <source>Speed Settings</source>
         <translation>Geschwindigkeitseinstellungen</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2595"/>
+        <location filename="../src/ui/param_panel.py" line="3168"/>
         <source>Print Speed:</source>
         <translation>Druckgeschwindigkeit:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2603"/>
+        <location filename="../src/ui/param_panel.py" line="3176"/>
         <source>Travel Speed:</source>
         <translation>Verfahrgeschwindigkeit:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2611"/>
+        <location filename="../src/ui/param_panel.py" line="3184"/>
         <source>First Layer Speed:</source>
         <translation>Erste Schicht Geschwindigkeit:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2613"/>
+        <location filename="../src/ui/param_panel.py" line="3186"/>
         <source>Skirt Speed:</source>
         <translation>Randgeschwindigkeit:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2614"/>
+        <location filename="../src/ui/param_panel.py" line="3187"/>
         <source>Step Speed:</source>
         <translation>Stufengeschwindigkeit:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2620"/>
+        <location filename="../src/ui/param_panel.py" line="3193"/>
         <source>Temperature Settings</source>
         <translation>Temperatureinstellungen</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2629"/>
+        <location filename="../src/ui/param_panel.py" line="3202"/>
         <source>First Layer Nozzle Temperature:</source>
         <translation>Düsentemperatur der ersten Schicht:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2636"/>
+        <location filename="../src/ui/param_panel.py" line="3209"/>
         <source>Other Layers Nozzle Temperature:</source>
         <translation>Düsentemperatur der übrigen Schichten:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2643"/>
+        <location filename="../src/ui/param_panel.py" line="3216"/>
         <source>First Layer Bed Temperature:</source>
         <translation>Betttemperatur der ersten Schicht:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2650"/>
+        <location filename="../src/ui/param_panel.py" line="3223"/>
         <source>Other Layers Bed Temperature:</source>
         <translation>Betttemperatur der übrigen Schichten:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2656"/>
+        <location filename="../src/ui/param_panel.py" line="3229"/>
         <source>Cooling Settings</source>
         <translation>Kühlungseinstellungen</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2665"/>
+        <location filename="../src/ui/param_panel.py" line="3238"/>
         <source>First Layer Fan Speed:</source>
         <translation>Lüftergeschwindigkeit erste Schicht:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2672"/>
+        <location filename="../src/ui/param_panel.py" line="3245"/>
         <source>Other Layers Fan Speed:</source>
         <translation>Lüftergeschwindigkeit übrige Schichten:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="3285"/>
+        <location filename="../src/ui/param_panel.py" line="4095"/>
         <source>Import Custom Edge DXF</source>
         <translation>Benutzerdefinierte Kante DXF importieren</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="3287"/>
+        <location filename="../src/ui/param_panel.py" line="4097"/>
         <source>DXF Files (*.dxf);;All Files (*.*)</source>
         <translation>DXF-Dateien (*.dxf);;Alle Dateien (*.*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="3306"/>
+        <location filename="../src/ui/param_panel.py" line="4116"/>
         <source>Import Success</source>
         <translation>Import erfolgreich</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="3307"/>
+        <location filename="../src/ui/param_panel.py" line="4117"/>
         <source>Imported custom edge profile: {name}
 Size: {width:.1f} x {height:.1f} mm
 Control points: {points}</source>
@@ -2219,81 +2275,81 @@ Groesse: {width:.1f} x {height:.1f} mm
 Kontrollpunkte: {points}</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="3318"/>
+        <location filename="../src/ui/param_panel.py" line="4128"/>
         <source>Import Failed</source>
         <translation>Import fehlgeschlagen</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="3319"/>
+        <location filename="../src/ui/param_panel.py" line="4129"/>
         <source>Failed to import DXF file:
 {error}</source>
         <translation>DXF-Datei konnte nicht importiert werden:
 {error}</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="3330"/>
+        <location filename="../src/ui/param_panel.py" line="4140"/>
         <source> ({count} points)</source>
         <translation> ({count} Punkte)</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="767"/>
+        <location filename="../src/ui/param_panel.py" line="1285"/>
         <source>DXF Export</source>
         <translation>DXF-Export</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="777"/>
+        <location filename="../src/ui/param_panel.py" line="1295"/>
         <source>Outer Clearance:</source>
         <translation>Aussenkontur-Spiel:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="785"/>
+        <location filename="../src/ui/param_panel.py" line="1303"/>
         <source>Hole Clearance:</source>
         <translation>Loch-Spiel:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="793"/>
+        <location filename="../src/ui/param_panel.py" line="1311"/>
         <source>Laser Kerf:</source>
         <translation>Laser-Schnittfuge:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1525"/>
+        <location filename="../src/ui/param_panel.py" line="2059"/>
         <source>One polygon per line: 0x0,70x0,70x70,0x70</source>
         <translation>Ein Polygon pro Zeile: 0x0,70x0,70x70,0x70</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1528"/>
+        <location filename="../src/ui/param_panel.py" line="2062"/>
         <source>Orca-style bed exclude area. Use XxY points separated by commas; put each region on its own line.</source>
         <translation>Orca-artiger ausgeschlossener Druckbettbereich. Verwenden Sie durch Kommas getrennte XxY-Punkte; jede Region in eine eigene Zeile.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1531"/>
+        <location filename="../src/ui/param_panel.py" line="2065"/>
         <source>Bed Exclude Area:</source>
         <translation>Ausgeschlossener Druckbettbereich:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="609"/>
+        <location filename="../src/ui/param_panel.py" line="1083"/>
         <source>Wall Thickness:</source>
-        <translation>Wall Thickness:</translation>
+        <translation>Wanddicke:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="715"/>
+        <location filename="../src/ui/param_panel.py" line="1233"/>
         <source>Bottom Solid Thickness:</source>
-        <translation>Bottom Solid Thickness:</translation>
+        <translation>Massive Bodendicke:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="822"/>
+        <location filename="../src/ui/param_panel.py" line="1342"/>
         <source>Bottom Face Thickness:</source>
-        <translation>Bottom Face Thickness:</translation>
+        <translation>Dicke der unteren Fläche:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="954"/>
+        <location filename="../src/ui/param_panel.py" line="1496"/>
         <source>Floor Thickness:</source>
-        <translation>Floor Thickness:</translation>
+        <translation>Bodendicke:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1061"/>
+        <location filename="../src/ui/param_panel.py" line="1594"/>
         <source>Top Face Thickness:</source>
-        <translation>Top Face Thickness:</translation>
+        <translation>Dicke der oberen Fläche:</translation>
     </message>
 </context>
 <context>
