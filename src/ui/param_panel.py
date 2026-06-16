@@ -1190,7 +1190,7 @@ class ParamPanel(QWidget):
             meaning=self.tr("Vertical height of the curved U-shaped edge profile."),
         )
         self.u_arc_height_spin.valueChanged.connect(self._on_param_changed)
-        self._add_icon_row(u_shape_layout, "arc", self.tr("Arc Height:"), self.u_arc_height_spin)
+        self._add_icon_row(u_shape_layout, "arc_height", self.tr("Arc Height:"), self.u_arc_height_spin)
 
         self.u_bottom_layers_spin = self._create_double_spinbox()
         self._configure_z_height_spin(
@@ -1201,7 +1201,7 @@ class ParamPanel(QWidget):
             meaning=self.tr("Solid bottom thickness under the U-shaped profile."),
         )
         self.u_bottom_layers_spin.valueChanged.connect(self._on_param_changed)
-        self._add_icon_row(u_shape_layout, "face-bottom", self.tr("Bottom Solid Thickness:"), self.u_bottom_layers_spin)
+        self._add_icon_row(u_shape_layout, "bottom_solid_thickness", self.tr("Bottom Solid Thickness:"), self.u_bottom_layers_spin)
 
         layout.addWidget(self.u_shape_params_widget)
         self.u_shape_params_widget.setVisible(False)
@@ -1263,7 +1263,7 @@ class ParamPanel(QWidget):
         self.dxf_outer_clearance_spin.setSingleStep(0.1)
         self.dxf_outer_clearance_spin.setSuffix(" mm")
         self.dxf_outer_clearance_spin.valueChanged.connect(self._on_param_changed)
-        self._add_icon_row(layout, "clearance", self.tr("Outer Clearance:"), self.dxf_outer_clearance_spin)
+        self._add_icon_row(layout, "outer_clearance", self.tr("Outer Clearance:"), self.dxf_outer_clearance_spin)
 
         self.dxf_hole_clearance_spin = self._create_double_spinbox()
         self.dxf_hole_clearance_spin.setRange(0, 10)
@@ -1271,7 +1271,7 @@ class ParamPanel(QWidget):
         self.dxf_hole_clearance_spin.setSingleStep(0.1)
         self.dxf_hole_clearance_spin.setSuffix(" mm")
         self.dxf_hole_clearance_spin.valueChanged.connect(self._on_param_changed)
-        self._add_icon_row(layout, "clearance", self.tr("Hole Clearance:"), self.dxf_hole_clearance_spin)
+        self._add_icon_row(layout, "hole_clearance", self.tr("Hole Clearance:"), self.dxf_hole_clearance_spin)
 
         self.dxf_laser_kerf_spin = self._create_double_spinbox()
         self.dxf_laser_kerf_spin.setRange(0, 2)
@@ -1869,7 +1869,7 @@ class ParamPanel(QWidget):
         self.prime_tower_center_x.setSuffix(" mm")
         self.prime_tower_center_x.setEnabled(False)
         self.prime_tower_center_x.valueChanged.connect(self._on_param_changed)
-        self._add_icon_row(form, "center", self.tr("Center X:"), self.prime_tower_center_x)
+        self._add_icon_row(form, "prime_tower_center_x", self.tr("Center X:"), self.prime_tower_center_x)
 
         self.prime_tower_center_y = self._create_double_spinbox()
         self.prime_tower_center_y.setDecimals(2)
@@ -1878,7 +1878,7 @@ class ParamPanel(QWidget):
         self.prime_tower_center_y.setSuffix(" mm")
         self.prime_tower_center_y.setEnabled(False)
         self.prime_tower_center_y.valueChanged.connect(self._on_param_changed)
-        self._add_icon_row(form, "center", self.tr("Center Y:"), self.prime_tower_center_y)
+        self._add_icon_row(form, "prime_tower_center_y", self.tr("Center Y:"), self.prime_tower_center_y)
 
         self.prime_tower_width = self._create_double_spinbox()
         self.prime_tower_width.setDecimals(2)
@@ -1888,7 +1888,7 @@ class ParamPanel(QWidget):
         self.prime_tower_width.setEnabled(False)
         self.prime_tower_width.valueChanged.connect(self._update_prime_tower_coordinate_ranges)
         self.prime_tower_width.valueChanged.connect(self._on_param_changed)
-        self._add_icon_row(form, "prime-tower", self.tr("Tower Width:"), self.prime_tower_width)
+        self._add_icon_row(form, "prime_tower_width", self.tr("Tower Width:"), self.prime_tower_width)
 
         self.prime_tower_depth = self._create_double_spinbox()
         self.prime_tower_depth.setDecimals(2)
@@ -1898,7 +1898,7 @@ class ParamPanel(QWidget):
         self.prime_tower_depth.setEnabled(False)
         self.prime_tower_depth.valueChanged.connect(self._update_prime_tower_coordinate_ranges)
         self.prime_tower_depth.valueChanged.connect(self._on_param_changed)
-        self._add_icon_row(form, "dimension", self.tr("Tower Depth:"), self.prime_tower_depth)
+        self._add_icon_row(form, "prime_tower_depth", self.tr("Tower Depth:"), self.prime_tower_depth)
 
         self.prime_tower_infill_density = self._create_int_spinbox()
         self.prime_tower_infill_density.setRange(10, 80)
@@ -2010,19 +2010,19 @@ class ParamPanel(QWidget):
         self.profile_bed_width.setRange(1.0, 5000.0)
         self.profile_bed_width.setSuffix(" mm")
         self.profile_bed_width.valueChanged.connect(self._on_printer_profile_field_changed)
-        self._add_icon_row(form, "bed", self.tr("Printable Area X:"), self.profile_bed_width)
+        self._add_icon_row(form, "printable_area_x", self.tr("Printable Area X:"), self.profile_bed_width)
 
         self.profile_bed_depth = self._create_double_spinbox()
         self.profile_bed_depth.setRange(1.0, 5000.0)
         self.profile_bed_depth.setSuffix(" mm")
         self.profile_bed_depth.valueChanged.connect(self._on_printer_profile_field_changed)
-        self._add_icon_row(form, "bed", self.tr("Printable Area Y:"), self.profile_bed_depth)
+        self._add_icon_row(form, "printable_area_y", self.tr("Printable Area Y:"), self.profile_bed_depth)
 
         self.profile_bed_height = self._create_double_spinbox()
         self.profile_bed_height.setRange(1.0, 1000.0)
         self.profile_bed_height.setSuffix(" mm")
         self.profile_bed_height.valueChanged.connect(self._on_printer_profile_field_changed)
-        self._add_icon_row(form, "height", self.tr("Printable Area Z:"), self.profile_bed_height)
+        self._add_icon_row(form, "printable_area_z", self.tr("Printable Area Z:"), self.profile_bed_height)
 
         self.profile_bed_exclude_area = QPlainTextEdit()
         self.profile_bed_exclude_area.setFixedHeight(92)
@@ -2033,14 +2033,14 @@ class ParamPanel(QWidget):
             self.tr("Orca-style bed exclude area. Use XxY points separated by commas; put each region on its own line.")
         )
         self.profile_bed_exclude_area.textChanged.connect(self._on_printer_profile_field_changed)
-        self._add_icon_row(form, "clearance", self.tr("Bed Exclude Area:"), self.profile_bed_exclude_area)
+        self._add_icon_row(form, "bed_exclude_area", self.tr("Bed Exclude Area:"), self.profile_bed_exclude_area)
 
         self.profile_nozzle_diameter = self._create_double_spinbox(3)
         self.profile_nozzle_diameter.setRange(0.1, 5.0)
         self.profile_nozzle_diameter.setSingleStep(0.05)
         self.profile_nozzle_diameter.setSuffix(" mm")
         self.profile_nozzle_diameter.valueChanged.connect(self._on_printer_profile_field_changed)
-        self._add_icon_row(form, "nozzle", self.tr("Nozzle Diameter:"), self.profile_nozzle_diameter)
+        self._add_icon_row(form, "nozzle_diameter", self.tr("Nozzle Diameter:"), self.profile_nozzle_diameter)
 
         self.profile_filament_diameter = self._create_double_spinbox(3)
         self.profile_filament_diameter.setRange(0.5, 5.0)
@@ -2054,7 +2054,7 @@ class ParamPanel(QWidget):
         self.profile_retract_length.setSingleStep(0.1)
         self.profile_retract_length.setSuffix(" mm")
         self.profile_retract_length.valueChanged.connect(self._on_printer_profile_field_changed)
-        self._add_icon_row(form, "retract", self.tr("Retract Length:"), self.profile_retract_length)
+        self._add_icon_row(form, "retract_length", self.tr("Retract Length:"), self.profile_retract_length)
 
         self.profile_retract_speed = self._create_double_spinbox()
         self.profile_retract_speed.setRange(1.0, 300.0)
@@ -2067,14 +2067,14 @@ class ParamPanel(QWidget):
         self.profile_z_hop_short.setSingleStep(0.1)
         self.profile_z_hop_short.setSuffix(" mm")
         self.profile_z_hop_short.valueChanged.connect(self._on_printer_profile_field_changed)
-        self._add_icon_row(form, "z-hop", self.tr("Short Z-Hop:"), self.profile_z_hop_short)
+        self._add_icon_row(form, "short_z-hop", self.tr("Short Z-Hop:"), self.profile_z_hop_short)
 
         self.profile_z_hop_long = self._create_double_spinbox()
         self.profile_z_hop_long.setRange(0.0, 50.0)
         self.profile_z_hop_long.setSingleStep(0.1)
         self.profile_z_hop_long.setSuffix(" mm")
         self.profile_z_hop_long.valueChanged.connect(self._on_printer_profile_field_changed)
-        self._add_icon_row(form, "z-hop", self.tr("Long Z-Hop:"), self.profile_z_hop_long)
+        self._add_icon_row(form, "long_z-hop", self.tr("Long Z-Hop:"), self.profile_z_hop_long)
 
         self.profile_long_travel_threshold = self._create_double_spinbox()
         self.profile_long_travel_threshold.setRange(1.0, 1000.0)
@@ -2085,6 +2085,12 @@ class ParamPanel(QWidget):
         self.profile_color_change_template = QLineEdit()
         self.profile_color_change_template.textChanged.connect(self._on_printer_profile_field_changed)
         self._add_icon_row(form, "color-change", self.tr("Color Change Template:"), self.profile_color_change_template)
+        if hasattr(form, "setRowVisible"):
+            form.setRowVisible(self.profile_color_change_template, False)
+        color_template_label = form.labelForField(self.profile_color_change_template)
+        if color_template_label is not None:
+            color_template_label.hide()
+        self.profile_color_change_template.hide()
 
         layout.addLayout(form)
         return group
@@ -2807,7 +2813,7 @@ class ParamPanel(QWidget):
             )
         )
         self.skirt_height.valueChanged.connect(self._on_param_changed)
-        self._add_icon_row(form, "skirt", self.tr("Skirt Height:"), self.skirt_height)
+        self._add_icon_row(form, "skirt_height", self.tr("Skirt Height:"), self.skirt_height)
 
         self.skirt_speed = self._create_double_spinbox(decimals=1)
         self.skirt_speed.setRange(5.0, 200.0)
@@ -2947,7 +2953,7 @@ class ParamPanel(QWidget):
             )
         )
         self.connected_support_offset.valueChanged.connect(self._on_param_changed)
-        self._add_icon_row(form, "clearance", self.tr("Support Offset:"), self.connected_support_offset)
+        self._add_icon_row(form, "support_offset", self.tr("Support Offset:"), self.connected_support_offset)
 
         layout.addLayout(form)
 
@@ -3140,7 +3146,7 @@ class ParamPanel(QWidget):
         self.travel_speed.setValue(150)
         self.travel_speed.setSuffix(" mm/s")
         self.travel_speed.valueChanged.connect(self._on_param_changed)
-        self._add_icon_row(layout, "speed", self.tr("Travel Speed:"), self.travel_speed)
+        self._add_icon_row(layout, "speed+", self.tr("Travel Speed:"), self.travel_speed)
 
         # 首层速度
         self.first_layer_speed = self._create_int_spinbox()
@@ -3148,10 +3154,10 @@ class ParamPanel(QWidget):
         self.first_layer_speed.setValue(20)
         self.first_layer_speed.setSuffix(" mm/s")
         self.first_layer_speed.valueChanged.connect(self._on_param_changed)
-        self._add_icon_row(layout, "layer", self.tr("First Layer Speed:"), self.first_layer_speed)
+        self._add_icon_row(layout, "speed-", self.tr("First Layer Speed:"), self.first_layer_speed)
 
-        self._add_icon_row(layout, "skirt", self.tr("Skirt Speed:"), self.skirt_speed)
-        self._add_icon_row(layout, "step", self.tr("Step Speed:"), self.step_speed)
+        self._add_icon_row(layout, "speed-", self.tr("Skirt Speed:"), self.skirt_speed)
+        self._add_icon_row(layout, "speed-", self.tr("Step Speed:"), self.step_speed)
 
         return group
 
@@ -3166,28 +3172,28 @@ class ParamPanel(QWidget):
         self.first_layer_nozzle_temp.setValue(220)
         self.first_layer_nozzle_temp.setSuffix(" °C")
         self.first_layer_nozzle_temp.valueChanged.connect(self._on_param_changed)
-        self._add_icon_row(layout, "temperature", self.tr("First Layer Nozzle Temperature:"), self.first_layer_nozzle_temp)
+        self._add_icon_row(layout, "nozzle_temp", self.tr("First Layer Nozzle Temperature:"), self.first_layer_nozzle_temp)
 
         self.other_layer_nozzle_temp = self._create_int_spinbox()
         self.other_layer_nozzle_temp.setRange(0, 400)
         self.other_layer_nozzle_temp.setValue(220)
         self.other_layer_nozzle_temp.setSuffix(" °C")
         self.other_layer_nozzle_temp.valueChanged.connect(self._on_param_changed)
-        self._add_icon_row(layout, "temperature", self.tr("Other Layers Nozzle Temperature:"), self.other_layer_nozzle_temp)
+        self._add_icon_row(layout, "nozzle_temp", self.tr("Other Layers Nozzle Temperature:"), self.other_layer_nozzle_temp)
 
         self.first_layer_bed_temp = self._create_int_spinbox()
         self.first_layer_bed_temp.setRange(0, 200)
         self.first_layer_bed_temp.setValue(60)
         self.first_layer_bed_temp.setSuffix(" °C")
         self.first_layer_bed_temp.valueChanged.connect(self._on_param_changed)
-        self._add_icon_row(layout, "temperature", self.tr("First Layer Bed Temperature:"), self.first_layer_bed_temp)
+        self._add_icon_row(layout, "bed_temp", self.tr("First Layer Bed Temperature:"), self.first_layer_bed_temp)
 
         self.other_layer_bed_temp = self._create_int_spinbox()
         self.other_layer_bed_temp.setRange(0, 200)
         self.other_layer_bed_temp.setValue(60)
         self.other_layer_bed_temp.setSuffix(" °C")
         self.other_layer_bed_temp.valueChanged.connect(self._on_param_changed)
-        self._add_icon_row(layout, "temperature", self.tr("Other Layers Bed Temperature:"), self.other_layer_bed_temp)
+        self._add_icon_row(layout, "bed_temp", self.tr("Other Layers Bed Temperature:"), self.other_layer_bed_temp)
 
         return group
 

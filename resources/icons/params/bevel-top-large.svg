@@ -36,14 +36,19 @@
      d="M5 6h14l-4 12H9L5 6Z"
      fill="#58A6FF"
      fill-opacity=".16"
-     stroke="#C9D1D9"
-     stroke-width="1.8"
-     stroke-linejoin="round"
+     stroke="none"
      id="path1" />
   <path
-     d="M9 18h6"
+     d="M5 6h14M9 18h6"
      stroke="#C9D1D9"
      stroke-width="1.8"
      stroke-linecap="round"
      id="path3" />
+  <path
+     d="M5 6 9 18M19 6 15 18"
+     stroke="#58A6FF"
+     stroke-width="1.8"
+     stroke-linecap="round"
+     stroke-linejoin="round"
+     id="path4" />
 </svg>

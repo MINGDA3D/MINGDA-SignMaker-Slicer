@@ -5,17 +5,17 @@
    viewBox="0 0 24 24"
    fill="none"
    version="1.1"
-   id="svg4"
-   sodipodi:docname="connected-bevel-height.svg"
+   id="svg3"
+   sodipodi:docname="connected-base-height - Copy.svg"
    inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg">
   <defs
-     id="defs4" />
+     id="defs3" />
   <sodipodi:namedview
-     id="namedview4"
+     id="namedview3"
      pagecolor="#ffffff"
      bordercolor="#000000"
      borderopacity="0.25"
@@ -31,24 +31,25 @@
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
-     inkscape:current-layer="svg4" />
+     inkscape:current-layer="svg3" />
   <path
-     d="M7.7 5h8.5M5 19h14"
+     d="m 2.1447304,11.088642 v 7.607956 H 16.316518 V 11.088642 M 2.1447304,18.696598 H 16.316518"
      stroke="#C9D1D9"
-     stroke-width="1.05"
-     stroke-linecap="round"
-     id="path1" />
-  <path
-     d="M7.7 5 5 19M16.2 5 19 19"
-     stroke="#58A6FF"
-     stroke-width="1.2"
-     stroke-linecap="round"
+     stroke-width="1.15"
+     stroke-linecap="square"
      stroke-linejoin="round"
+     id="path2" />
+  <path
+     d="M 20.61992,2.6340535 V 10.649397 M 19.27869,2.6340535 h 2.68246 m -2.68246,8.0153435 h 2.68246"
+     stroke="#58a6ff"
+     stroke-width="1.06409"
+     stroke-linecap="round"
      id="path3" />
   <path
-     d="M22 5v14M20.5 5h3M20.5 19h3"
-     stroke="#58A6FF"
-     stroke-width="1.05"
+     d="M 2.1906661,10.736218 9.2562531,2.7773528 16.321837,10.736218"
+     stroke="#58a6ff"
+     stroke-width="1.14886"
      stroke-linecap="round"
-     id="path4" />
+     stroke-linejoin="round"
+     id="path1" />
 </svg>

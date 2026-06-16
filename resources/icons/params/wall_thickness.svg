@@ -23,8 +23,8 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:zoom="45.166667"
-     inkscape:cx="9"
-     inkscape:cy="9"
+     inkscape:cx="9.0221402"
+     inkscape:cy="8.9999999"
      inkscape:window-width="1920"
      inkscape:window-height="1009"
      inkscape:window-x="-8"
@@ -32,11 +32,11 @@
      inkscape:window-maximized="1"
      inkscape:current-layer="svg2" />
   <path
-     d="M 3.8851348,1.206168 V 3.3436474 M 15.022615,1.206168 V 3.3436474 M 14.326522,2.2749077 H 4.5812272"
-     style="fill:none;stroke:#58a6ff;stroke-width:0.862521;stroke-linecap:square;stroke-linejoin:round"
+     d="M 3.2664713,0.99127448 V 3.1157369 M 14.774115,0.99127448 V 3.1157369 M 14.048409,2.0535057 H 3.9921788"
+     style="fill:none;stroke:#58a6ff;stroke-width:0.875538;stroke-linecap:square;stroke-linejoin:round"
      id="path1" />
   <path
-     d="M6.5,13.5v-8a1,1,0,0,0-1-1h0a1,1,0,0,0-1,1v8a1,1,0,0,0,1,1h0A1,1,0,0,0,6.5,13.5Zm4,0v-8a1,1,0,0,0-1-1h0a1,1,0,0,0-1,1v8a1,1,0,0,0,1,1h0A1,1,0,0,0,10.5,13.5Zm4,0v-8a1,1,0,0,0-1-1h0a1,1,0,0,0-1,1v8a1,1,0,0,0,1,1h0A1,1,0,0,0,14.5,13.5Zm-14,3h16"
-     style="fill:none;stroke:#C9D1D9;stroke-linecap:square;stroke-linejoin:round"
+     d="M 5.7472862,14.12416 V 5.6110246 A 1.1242135,1.064142 0 0 0 4.6230727,4.5468828 v 0 A 1.1242135,1.064142 0 0 0 3.4988593,5.6110246 V 14.12416 a 1.1242135,1.064142 0 0 0 1.1242134,1.064142 v 0 A 1.1242135,1.064142 0 0 0 5.7472862,14.12416 Z m 4.4968578,0 V 5.6110246 A 1.1242135,1.064142 0 0 0 9.1199266,4.5468828 v 0 A 1.1242135,1.064142 0 0 0 7.9957132,5.6110246 V 14.12416 a 1.1242135,1.064142 0 0 0 1.1242134,1.064142 v 0 A 1.1242135,1.064142 0 0 0 10.244144,14.12416 Z m 4.496853,0 V 5.6110246 A 1.1242135,1.064142 0 0 0 13.616784,4.5468828 v 0 A 1.1242135,1.064142 0 0 0 12.492571,5.6110246 V 14.12416 a 1.1242135,1.064142 0 0 0 1.124213,1.064142 v 0 A 1.1242135,1.064142 0 0 0 14.740997,14.12416 Z M 0.12621855,17.316586 H 18.113638"
+     style="fill:none;stroke:#c9d1d9;stroke-width:1.09377;stroke-linecap:square;stroke-linejoin:round"
      id="path2" />
 </svg>

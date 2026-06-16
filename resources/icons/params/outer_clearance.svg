@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="24"
+   height="24"
+   viewBox="0 0 24 24"
+   fill="none"
+   version="1.1"
+   id="svg7"
+   sodipodi:docname="outer_clearance.svg"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs7" />
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="33.875"
+     inkscape:cx="12"
+     inkscape:cy="12"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg7" />
+  <path
+     d="M 1.6930532,1.6044923 H 22.365988 V 22.57263 H 1.6930532 Z"
+     stroke="#c9d1d9"
+     stroke-width="1.10113"
+     stroke-linejoin="round"
+     id="path1" />
+  <path
+     d="M 5.8705328,5.8410127 H 18.040907 V 17.922826 H 5.8705328 Z"
+     stroke="#58a6ff"
+     stroke-width="0.973707"
+     stroke-linejoin="round"
+     id="path2" />
+  <path
+     d="M8.6 9.1h6.8v5.4H8.6V9.1Z"
+     stroke="#C9D1D9"
+     stroke-width="1.05"
+     stroke-linejoin="round"
+     id="path3" />
+  <path
+     d="m 1.8144564,1.7554158 3.2349249,3.4120467 m 0,0 L 2.3853255,4.5653366 M 5.0493813,5.1674625 4.4785122,2.3575417"
+     stroke="#58a6ff"
+     stroke-width="1.0084"
+     stroke-linecap="round"
+     stroke-linejoin="round"
+     id="path4" />
+  <path
+     d="m 22.114238,1.8562447 -3.357991,3.3284701 m 0,0 2.765404,-0.5873771 m -2.765404,0.5873771 0.592587,-2.741093"
+     stroke="#58a6ff"
+     stroke-width="0.973266"
+     stroke-linecap="round"
+     stroke-linejoin="round"
+     id="path5" />
+  <path
+     d="m 1.8401313,22.484597 3.1835751,-3.892063 m 0,0 -0.5618073,3.205228 m 0.5618073,-3.205228 -2.6217678,0.686834"
+     stroke="#58a6ff"
+     stroke-width="1.1002"
+     stroke-linecap="round"
+     stroke-linejoin="round"
+     id="path6" />
+  <path
+     d="m 22.324881,22.450321 -3.631675,-3.572633 m 0,0 2.990791,0.630464 m -2.990791,-0.630464 0.640883,2.94217"
+     stroke="#58a6ff"
+     stroke-width="1.13283"
+     stroke-linecap="round"
+     stroke-linejoin="round"
+     id="path7" />
+</svg>
