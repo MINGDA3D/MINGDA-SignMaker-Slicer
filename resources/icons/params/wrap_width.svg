@@ -1,6 +1,60 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-  <path d="M3.4 7.6h6.2v12.9H3.4z" fill="#58A6FF" fill-opacity="0.35"/>
-  <path d="M4.4 19.6h4.2M15.6 19.6h4.2" stroke="#58A6FF" stroke-width="1.8" stroke-linecap="round"/>
-  <path d="M4.1 3v2.7M8.9 3v2.7M4.1 4.35h4.8" stroke="#58A6FF" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="round"/>
-  <path d="M2.4 8.1v11.5M21.9 8.1v11.5" stroke="#C9D1D9" stroke-width="2.2" stroke-linecap="round"/>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="24"
+   height="24"
+   viewBox="0 0 24 24"
+   fill="none"
+   version="1.1"
+   id="svg4"
+   sodipodi:docname="wrap_width.svg"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="namedview4"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="33.875"
+     inkscape:cx="12"
+     inkscape:cy="12"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg4" />
+  <path
+     d="M 1.8059041,4.4413284 H 7.4745388 V 23.835793 H 1.8059041 Z"
+     fill="#58a6ff"
+     fill-opacity="0.35"
+     id="path1"
+     style="stroke-width:1.17244" />
+  <path
+     d="m 2.6655967,23.03912 h 3.9263132 m 6.5438561,0 h 3.926313"
+     stroke="#58a6ff"
+     stroke-width="1.74037"
+     stroke-linecap="round"
+     id="path2" />
+  <path
+     d="M 2.4078621,0.68793586 V 2.5021009 M 6.8725806,0.68793586 V 2.5021009 M 2.4078621,1.5950184 h 4.4647185"
+     stroke="#58a6ff"
+     stroke-width="1.18583"
+     stroke-linecap="square"
+     stroke-linejoin="round"
+     id="path3" />
+  <path
+     d="M 0.8885495,5.3608743 V 23.018606 M 18.834108,5.3608743 V 23.018606"
+     stroke="#c9d1d9"
+     stroke-width="1.84352"
+     stroke-linecap="round"
+     id="path4" />
 </svg>

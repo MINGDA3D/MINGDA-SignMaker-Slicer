@@ -33,15 +33,15 @@
      inkscape:window-maximized="1"
      inkscape:current-layer="svg2" />
   <path
-     d="M6 4v16M18 4v16"
+     d="M 2.8885495,3.92176 V 21.579486 M 20.834108,3.92176 v 17.657726"
      stroke="#C9D1D9"
-     stroke-width="1.7"
+     stroke-width="1.84352"
      stroke-linecap="round"
      id="path1" />
   <path
-     d="m 6,19.97416 h 4 m 4,0 h 4"
+     d="m 4.7110746,21.53872 h 4.7608827 m 4.7608837,0 h 4.760881"
      stroke="#58a6ff"
-     stroke-width="1.7"
+     stroke-width="1.85465"
      stroke-linecap="round"
      id="path2" />
 </svg>

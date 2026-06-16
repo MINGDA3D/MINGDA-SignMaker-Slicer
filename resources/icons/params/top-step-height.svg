@@ -33,27 +33,27 @@
      inkscape:window-maximized="1"
      inkscape:current-layer="svg5" />
   <path
-     d="M 2.1027687,4.1175288 V 19.882471 M 17.882471,4.1175288 V 19.882471"
+     d="M 0.8885495,3.92176 V 21.579486 M 18.834108,3.92176 v 17.657726"
      stroke="#c9d1d9"
-     stroke-width="1.7"
+     stroke-width="1.84352"
      stroke-linecap="round"
      id="path1" />
   <path
-     d="M 1.2767527,3.1734317 H 18.797048 V 9.6494465 H 1.2767527 Z"
+     d="M 0.0369003,3.0553505 H 19.682657 v 6.594096 H 0.0369003 Z"
      fill="#58a6ff"
      fill-opacity="0.28"
      id="path2"
-     style="stroke-width:1.37514" />
+     style="stroke-width:1.46938" />
   <path
-     d="m 3.8015313,10.46864 h 3.1213745 m 6.2427462,0 h 3.121374"
+     d="m 2.7402971,10.46864 h 3.578191 m 7.1563789,0 h 3.57819"
      stroke="#58a6ff"
-     stroke-width="1.66218"
+     stroke-width="1.77966"
      stroke-linecap="round"
      id="path3" />
   <path
-     d="m 21,3.9704797 v 5 m -1.4,-5 h 2.8 m -2.8,5 h 2.8"
+     d="M 22.450002,3.5833825 V 9.062374 M 21.508106,3.5833825 h 1.883792 M 21.508106,9.062374 h 1.883792"
      stroke="#58a6ff"
-     stroke-width="1.3"
+     stroke-width="1.11621"
      stroke-linecap="square"
      stroke-linejoin="round"
      id="path4" />

@@ -24,8 +24,8 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:zoom="33.875"
-     inkscape:cx="11.557196"
-     inkscape:cy="14.361624"
+     inkscape:cx="11.586716"
+     inkscape:cy="14.391144"
      inkscape:window-width="1920"
      inkscape:window-height="1009"
      inkscape:window-x="-8"
@@ -33,23 +33,23 @@
      inkscape:window-maximized="1"
      inkscape:current-layer="svg3" />
   <path
-     d="M 5.9574542,8.0286514 V 4.9255449 h 8.0850918 v 3.1031065 m -8.0850918,0 -3.0319093,4.6546596 M 14.042546,8.0286514 17.074455,12.683311"
+     d="M 4.7085161,9.1562539 V 5.2009809 H 14.994268 v 3.955273 m -10.2857519,0 L 0.85136,15.089162 m 14.142908,-5.9329081 3.857156,5.9329081"
      stroke="#c9d1d9"
-     stroke-width="1.15109"
+     stroke-width="1.4658"
      stroke-linecap="round"
      stroke-linejoin="round"
      id="path1" />
   <path
-     d="m 3.0926844,13.144345 v 5.73345 H 16.877795 v -5.73345"
+     d="m 1.0639927,15.676803 v 7.307955 H 18.601236 v -7.307955"
      stroke="#58a6ff"
-     stroke-width="1.5444"
+     stroke-width="1.96665"
      stroke-linecap="square"
      stroke-linejoin="round"
      id="path2" />
   <path
-     d="m 21.19928,13.153652 v 5.744356 m -1.398008,-5.744356 h 2.796016 m -2.796016,5.744356 h 2.796016"
+     d="m 22.401676,15.381044 v 7.902115 m -0.8232,-7.902115 h 1.6464 m -1.6464,7.902115 h 1.6464"
      stroke="#58a6ff"
-     stroke-width="1.50398"
+     stroke-width="1.3536"
      stroke-linecap="square"
      stroke-linejoin="round"
      id="path3" />

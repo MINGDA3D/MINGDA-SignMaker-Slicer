@@ -1,5 +1,56 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-  <path d="M7 8v11M17 8v11" stroke="#C9D1D9" stroke-width="1.7" stroke-linecap="round"/>
-  <path d="M6 4h12v5H6z" fill="#58A6FF" fill-opacity=".85" stroke="#58A6FF" stroke-width="1.3" stroke-linejoin="round"/>
-  <path d="M21 4v5m-1.5-5h3m-3 5h3" stroke="#58A6FF" stroke-width="1.3" stroke-linecap="square" stroke-linejoin="round"/>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="24"
+   height="24"
+   viewBox="0 0 24 24"
+   fill="none"
+   version="1.1"
+   id="svg3"
+   sodipodi:docname="top-face-thickness.svg"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs3" />
+  <sodipodi:namedview
+     id="namedview3"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="33.875"
+     inkscape:cx="12"
+     inkscape:cy="12"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg3" />
+  <path
+     d="M 0.8885495,3.92176 V 21.579486 M 18.834108,3.92176 v 17.657726"
+     stroke="#c9d1d9"
+     stroke-width="1.84352"
+     stroke-linecap="round"
+     id="path1" />
+  <path
+     d="M 2.3414582,3.6772516 H 17.319064 V 8.9094643 H 2.3414582 Z"
+     fill="#58a6ff"
+     fill-opacity="0.85"
+     stroke="#58a6ff"
+     stroke-width="1.34387"
+     stroke-linejoin="round"
+     id="path2" />
+  <path
+     d="M 22.43317,3.6079552 V 8.9787606 M 21.506499,3.6079552 h 1.853342 m -1.853342,5.3708054 h 1.853342"
+     stroke="#58a6ff"
+     stroke-width="1.14666"
+     stroke-linecap="square"
+     stroke-linejoin="round"
+     id="path3" />
 </svg>
