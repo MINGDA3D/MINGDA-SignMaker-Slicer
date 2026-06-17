@@ -1,5 +1,6 @@
-MINGDA SignMaker V0.3.9 Official Release
+MINGDA SignMaker V0.5.0 Official Release
 
-- Reorganized the Settings panel into Shape, Machine, and Print tabs for faster navigation.
-- Clarified parameter labels for line width, wall loops, and top/bottom shell layers.
-- Added safer project opening with unsaved-change confirmation, and fixed scale undo/redo after adding text.
+- Reworked Settings into Shape, Machine, and Print tabs, clarified key parameter labels, and updated multilingual UI text.
+- Improved editing and project workflows with reliable Ctrl+A/Delete/Backspace shortcuts, safer selection deletion, unsaved-project prompts, and fixed scale undo/redo after adding text.
+- Improved 3D preview startup, U-shaped edge slicing with finer 0.05 mm transition layers, Prime Tower defaults, and Orca/Klipper G-code compatibility.
+- Fixed DXF imports for block-based files, nested HATCH holes, and duplicate HATCH/curve boundaries.

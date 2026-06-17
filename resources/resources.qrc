@@ -37,13 +37,10 @@
     <file>icons/topbar_undo.svg</file>
     <file>icons/undo.png</file>
     <file>icons/union.png</file>
-    <file>icons/params/arc.svg</file>
     <file>icons/params/arc_height.svg</file>
-    <file>icons/params/baseplate.svg</file>
     <file>icons/params/baseplate-step.svg</file>
     <file>icons/params/baseplate-thickness.svg</file>
     <file>icons/params/baseplate-v-groove.svg</file>
-    <file>icons/params/bed.svg</file>
     <file>icons/params/bed_exclude_area.svg</file>
     <file>icons/params/bed_temp.svg</file>
     <file>icons/params/bevel.svg</file>
@@ -55,8 +52,6 @@
     <file>icons/params/bottom-step-height.svg</file>
     <file>icons/params/bottom-step-width.svg</file>
     <file>icons/params/bottom_solid_thickness.svg</file>
-    <file>icons/params/center.svg</file>
-    <file>icons/params/clearance.svg</file>
     <file>icons/params/color-change.svg</file>
     <file>icons/params/connected-base-height.svg</file>
     <file>icons/params/connected-bevel-height.svg</file>
@@ -65,9 +60,7 @@
     <file>icons/params/custom_shape.svg</file>
     <file>icons/params/dimension.svg</file>
     <file>icons/params/direction.svg</file>
-    <file>icons/params/edge.svg</file>
     <file>icons/params/edge-wrap.svg</file>
-    <file>icons/params/face-bottom.svg</file>
     <file>icons/params/face-top.svg</file>
     <file>icons/params/top-face-thickness.svg</file>
     <file>icons/params/top-step-height.svg</file>
@@ -76,8 +69,6 @@
     <file>icons/params/filament.svg</file>
     <file>icons/params/floor.svg</file>
     <file>icons/params/gap.svg</file>
-    <file>icons/params/gcode.svg</file>
-    <file>icons/params/height.svg</file>
     <file>icons/params/shell_height.svg</file>
     <file>icons/params/hole_clearance.svg</file>
     <file>icons/params/infill.svg</file>
@@ -89,7 +80,6 @@
     <file>icons/params/hole-slot.svg</file>
     <file>icons/params/machine.svg</file>
     <file>icons/params/none.svg</file>
-    <file>icons/params/nozzle.svg</file>
     <file>icons/params/nozzle_diameter.svg</file>
     <file>icons/params/nozzle_temp.svg</file>
     <file>icons/params/outer_clearance.svg</file>
@@ -98,11 +88,9 @@
     <file>icons/params/outline-direction-outer.svg</file>
     <file>icons/params/outline_width.svg</file>
     <file>icons/params/outline_height.svg</file>
-    <file>icons/params/panel.svg</file>
     <file>icons/params/panel-step.svg</file>
     <file>icons/params/panel-thickness.svg</file>
     <file>icons/params/panel-v-groove.svg</file>
-    <file>icons/params/prime-tower.svg</file>
     <file>icons/params/prime_tower_center_x.svg</file>
     <file>icons/params/prime_tower_center_y.svg</file>
     <file>icons/params/prime_tower_depth.svg</file>
@@ -115,7 +103,6 @@
     <file>icons/params/retract_length.svg</file>
     <file>icons/params/screw-hole.svg</file>
     <file>icons/params/shape.svg</file>
-    <file>icons/params/skirt.svg</file>
     <file>icons/params/skirt_height.svg</file>
     <file>icons/params/skirt-side-inner.svg</file>
     <file>icons/params/skirt-side-outer.svg</file>
@@ -125,21 +112,15 @@
     <file>icons/params/speed-.svg</file>
     <file>icons/params/speed.svg</file>
     <file>icons/params/short_z-hop.svg</file>
-    <file>icons/params/step.svg</file>
-    <file>icons/params/step-height.svg</file>
-    <file>icons/params/step-width.svg</file>
     <file>icons/params/support_offset.svg</file>
-    <file>icons/params/temperature.svg</file>
     <file>icons/params/u_shape.svg</file>
     <file>icons/params/wall.svg</file>
     <file>icons/params/wall_thickness.svg</file>
-    <file>icons/params/wrap.svg</file>
     <file>icons/params/wrap-direction-inner.svg</file>
     <file>icons/params/wrap-direction-outer.svg</file>
     <file>icons/params/wrap_width.svg</file>
     <file>icons/params/wrap_height.svg</file>
     <file>icons/params/long_z-hop.svg</file>
-    <file>icons/params/z-hop.svg</file>
 </qresource>
 <qresource prefix="logos">
     <file>logos/MINGDA_logo.ico</file>
