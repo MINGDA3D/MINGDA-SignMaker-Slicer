@@ -24,6 +24,7 @@ from PySide6.QtGui import QIcon
 
 from src.core.asset_utils import get_contour_asset_id, get_contour_asset_name
 from src.core.types import Contour
+from .icon_utils import build_theme_icon
 from .theme import COLORS
 
 
@@ -130,7 +131,7 @@ class _ProjectListItem(QFrame):
             self.release_btn.setFixedSize(28, 28)
             self.release_btn.setCursor(Qt.CursorShape.PointingHandCursor)
             self.release_btn.setIconSize(QSize(18, 18))
-            self.release_btn.setIcon(QIcon(":/icons/icons/explode_asset.svg"))
+            self.release_btn.setIcon(self._build_row_icon("explode_asset.svg"))
             self.release_btn.setToolTip(self.tr("Explode Asset"))
             self.release_btn.setStyleSheet(
                 """
@@ -155,7 +156,7 @@ class _ProjectListItem(QFrame):
         self.delete_btn.setFixedSize(28, 28)
         self.delete_btn.setCursor(Qt.CursorShape.PointingHandCursor)
         self.delete_btn.setIconSize(QSize(18, 18))
-        self.delete_btn.setIcon(QIcon(":/icons/icons/delete.png"))
+        self.delete_btn.setIcon(self._build_row_icon("delete.png"))
         self.delete_btn.setStyleSheet(
             """
             QPushButton {
@@ -175,6 +176,35 @@ class _ProjectListItem(QFrame):
         self.setCursor(Qt.CursorShape.PointingHandCursor)
         self._update_style()
 
+    @staticmethod
+    def _build_row_icon(name: str) -> QIcon:
+        return build_theme_icon(
+            f":/icons/icons/{name}",
+            QSize(18, 18),
+            light_color=COLORS.accent_primary,
+            disabled_light_color=COLORS.text_muted,
+        )
+
+    def apply_theme(self):
+        self.name_label.setStyleSheet(
+            f"""
+            color: {COLORS.text_primary};
+            font-size: 13px;
+            padding: 0 12px;
+        """
+        )
+        self.secondary_label.setStyleSheet(
+            f"""
+            color: {COLORS.text_muted};
+            font-size: 12px;
+            padding: 0 8px 0 0;
+        """
+        )
+        if self.release_btn is not None:
+            self.release_btn.setIcon(self._build_row_icon("explode_asset.svg"))
+        self.delete_btn.setIcon(self._build_row_icon("delete.png"))
+        self._update_style()
+
     def mousePressEvent(self, event):
         if event.button() == Qt.MouseButton.LeftButton:
             self.clicked.emit(self.row_key)
@@ -192,7 +222,7 @@ class _ProjectListItem(QFrame):
     def _update_style(self):
         if self._selection_state == "full":
             background = COLORS.editor_list_item_bg
-            border = "#1F6FEB"
+            border = COLORS.accent_primary
         elif self._selection_state == "partial":
             background = COLORS.bg_panel
             border = COLORS.border_hover
@@ -255,8 +285,8 @@ class ProjectPanel(QWidget):
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(0)
 
-        title = QLabel(self.tr("Shape List"))
-        title.setStyleSheet(
+        self.title_label = QLabel(self.tr("Shape List"))
+        self.title_label.setStyleSheet(
             f"""
             padding: 12px 14px 12px 12px;
             background-color: {COLORS.editor_sidebar_right_header_bg};
@@ -267,12 +297,12 @@ class ProjectPanel(QWidget):
             border-right: 4px solid {COLORS.editor_sidebar_right_accent};
         """
         )
-        layout.addWidget(title)
+        layout.addWidget(self.title_label)
 
-        scroll_area = QScrollArea()
-        scroll_area.setWidgetResizable(True)
-        scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        scroll_area.setStyleSheet(
+        self.scroll_area = QScrollArea()
+        self.scroll_area.setWidgetResizable(True)
+        self.scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.scroll_area.setStyleSheet(
             f"""
             QScrollArea {{
                 background-color: {COLORS.editor_sidebar_right_bg};
@@ -305,13 +335,13 @@ class ProjectPanel(QWidget):
         self.list_layout.setSpacing(0)
         self.list_layout.addStretch()
 
-        scroll_area.setWidget(self.list_container)
-        layout.addWidget(scroll_area, 1)
+        self.scroll_area.setWidget(self.list_container)
+        layout.addWidget(self.scroll_area, 1)
 
-        import_btn = QPushButton(self.tr("+ Import Shape"))
-        import_btn.setCursor(Qt.CursorShape.PointingHandCursor)
-        import_btn.setFixedHeight(52)
-        import_btn.setStyleSheet(
+        self.import_btn = QPushButton(self.tr("+ Import Shape"))
+        self.import_btn.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.import_btn.setFixedHeight(52)
+        self.import_btn.setStyleSheet(
             f"""
             QPushButton {{
                 background-color: {COLORS.editor_list_item_bg};
@@ -328,8 +358,68 @@ class ProjectPanel(QWidget):
             }}
         """
         )
-        import_btn.clicked.connect(self.import_clicked.emit)
-        layout.addWidget(import_btn)
+        self.import_btn.clicked.connect(self.import_clicked.emit)
+        layout.addWidget(self.import_btn)
+
+    def apply_theme(self):
+        """Refresh panel and row styles after the global theme changes."""
+        self.title_label.setStyleSheet(
+            f"""
+            padding: 12px 14px 12px 12px;
+            background-color: {COLORS.editor_sidebar_right_header_bg};
+            color: {COLORS.text_primary};
+            font-size: 13px;
+            font-weight: 600;
+            border-bottom: 1px solid {COLORS.editor_sidebar_right_accent};
+            border-right: 4px solid {COLORS.editor_sidebar_right_accent};
+        """
+        )
+        self.scroll_area.setStyleSheet(
+            f"""
+            QScrollArea {{
+                background-color: {COLORS.editor_sidebar_right_bg};
+                border: none;
+            }}
+            QScrollBar:vertical {{
+                background-color: {COLORS.editor_sidebar_right_bg};
+                width: 8px;
+            }}
+            QScrollBar::handle:vertical {{
+                background-color: {COLORS.border_default};
+                border-radius: 4px;
+                min-height: 20px;
+            }}
+            QScrollBar::handle:vertical:hover {{
+                background-color: {COLORS.border_hover};
+            }}
+            QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {{
+                height: 0;
+            }}
+        """
+        )
+        self.list_container.setStyleSheet(
+            f"background-color: {COLORS.editor_sidebar_right_bg};"
+        )
+        self.import_btn.setStyleSheet(
+            f"""
+            QPushButton {{
+                background-color: {COLORS.editor_list_item_bg};
+                color: {COLORS.text_secondary};
+                border: 1px solid {COLORS.editor_toolbar_border};
+                border-radius: 4px;
+                margin: 8px;
+                font-size: 13px;
+            }}
+            QPushButton:hover {{
+                background-color: {COLORS.bg_panel};
+                border-color: {COLORS.border_hover};
+                color: {COLORS.text_primary};
+            }}
+        """
+        )
+        for row in self._rows:
+            row.item.apply_theme()
+        self.update()
 
     def update_contours(self, contours: List[Contour]):
         self._contours = contours

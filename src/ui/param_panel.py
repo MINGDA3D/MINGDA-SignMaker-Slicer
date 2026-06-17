@@ -57,6 +57,7 @@ from src.ui.widgets import (
     GuardedDoubleSpinBox,
     GuardedSpinBox,
 )
+from .icon_utils import build_theme_icon
 from .theme import COLORS
 
 
@@ -162,6 +163,9 @@ class ParamPanel(QWidget):
         # 异形边预设管理器
         self._preset_manager = EdgePresetManager()
         self._current_profile = None
+        self._mode_button_containers: list[QWidget] = []
+        self._theme_icon_labels: list[tuple[QLabel, str]] = []
+        self._theme_icon_buttons: list[tuple[QPushButton, str]] = []
 
         # 初始化UI
         self._init_ui()
@@ -174,9 +178,9 @@ class ParamPanel(QWidget):
         layout.setSpacing(0)
 
         # 标题
-        title = QLabel(self.tr("Settings"))
-        title.setProperty("heading", True)
-        title.setStyleSheet(f"""
+        self.title_label = QLabel(self.tr("Settings"))
+        self.title_label.setProperty("heading", True)
+        self.title_label.setStyleSheet(f"""
             padding: 12px 12px 12px 14px;
             background-color: {COLORS.editor_sidebar_left_header_bg};
             border-bottom: 1px solid {COLORS.editor_sidebar_left_accent};
@@ -184,7 +188,7 @@ class ParamPanel(QWidget):
             font-size: 14px;
             font-weight: bold;
         """)
-        layout.addWidget(title)
+        layout.addWidget(self.title_label)
 
         # 添加一级参数分组
         self.shell_group = self._create_shell_group()
@@ -292,7 +296,65 @@ class ParamPanel(QWidget):
         self.primary_tabs.tabBar().setExpanding(True)
         self.primary_tabs.tabBar().setDrawBase(False)
         self.primary_tabs.setIconSize(PARAM_ICON_SIZE)
-        self.primary_tabs.setStyleSheet(f"""
+        self.primary_tabs.setStyleSheet(self._primary_tabs_stylesheet())
+        self._primary_tabs = self.primary_tabs
+        self._section_widgets = []
+        self._section_widgets_by_key = {}
+        for section in self._primary_sections:
+            if section["key"] == "shape":
+                tab_page = self._create_shape_settings_tab_page()
+            else:
+                tab_page = self._create_settings_tab_page(
+                    key=section["key"],
+                    groups=section["groups"],
+                )
+            self._section_widgets.append(tab_page)
+            self._section_widgets_by_key[section["key"]] = tab_page
+            tab_index = self.primary_tabs.addTab(
+                tab_page,
+                self._icon(section["icon"]),
+                section["title"],
+            )
+            self.primary_tabs.setTabToolTip(tab_index, section["tooltip"])
+
+        self.primary_tabs.setCurrentIndex(0)
+        layout.addWidget(self.primary_tabs, 1)
+        self._sync_top_mode_from_controls()
+        self._sync_bottom_mode_from_controls()
+        self._sync_shape_mode_group_visibility()
+        self._sync_layer_based_controls()
+        self._update_prime_tower_coordinate_ranges()
+
+    def _mode_button_stylesheet(self) -> str:
+        return f"""
+            QPushButton[shapeModeButton="true"] {{
+                background-color: {COLORS.editor_list_item_bg};
+                border: 1px solid {COLORS.border_default};
+                border-radius: 6px;
+                padding: 6px;
+            }}
+            QPushButton[shapeModeButton="true"]:checked {{
+                background-color: {COLORS.bg_selected};
+                border-color: {COLORS.accent_primary};
+            }}
+            QPushButton[shapeModeButton="true"]:hover:!checked {{
+                border-color: {COLORS.border_hover};
+            }}
+        """
+
+    def _scroll_stylesheet(self, object_name: str) -> str:
+        return f"""
+            QScrollArea#{object_name} {{
+                background-color: {COLORS.editor_sidebar_left_bg};
+                border: none;
+            }}
+            QScrollArea#{object_name} > QWidget > QWidget {{
+                background-color: {COLORS.editor_sidebar_left_bg};
+            }}
+        """
+
+    def _primary_tabs_stylesheet(self) -> str:
+        return f"""
             QTabWidget#primarySettingsTabs {{
                 background-color: {COLORS.editor_sidebar_left_bg};
                 border: none;
@@ -335,34 +397,80 @@ class ParamPanel(QWidget):
                 background-color: {COLORS.editor_list_item_bg};
                 color: {COLORS.text_secondary};
             }}
-        """)
-        self._primary_tabs = self.primary_tabs
-        self._section_widgets = []
-        self._section_widgets_by_key = {}
-        for section in self._primary_sections:
-            if section["key"] == "shape":
-                tab_page = self._create_shape_settings_tab_page()
-            else:
-                tab_page = self._create_settings_tab_page(
-                    key=section["key"],
-                    groups=section["groups"],
-                )
-            self._section_widgets.append(tab_page)
-            self._section_widgets_by_key[section["key"]] = tab_page
-            tab_index = self.primary_tabs.addTab(
-                tab_page,
-                self._icon(section["icon"]),
-                section["title"],
-            )
-            self.primary_tabs.setTabToolTip(tab_index, section["tooltip"])
+        """
 
-        self.primary_tabs.setCurrentIndex(0)
-        layout.addWidget(self.primary_tabs, 1)
-        self._sync_top_mode_from_controls()
-        self._sync_bottom_mode_from_controls()
-        self._sync_shape_mode_group_visibility()
-        self._sync_layer_based_controls()
-        self._update_prime_tower_coordinate_ranges()
+    def _feature_tabs_stylesheet(self) -> str:
+        return f"""
+            QTabWidget#shape_feature_tabs {{
+                background-color: {COLORS.editor_sidebar_left_bg};
+                border: none;
+            }}
+            QTabWidget#shape_feature_tabs::pane {{
+                background-color: {COLORS.editor_sidebar_left_bg};
+                border: none;
+                padding-top: 10px;
+            }}
+            QTabWidget#shape_feature_tabs QTabBar::tab {{
+                background-color: {COLORS.editor_sidebar_left_bg};
+                border: none;
+                border-bottom: 2px solid transparent;
+                color: {COLORS.text_muted};
+                font-size: 12px;
+                font-weight: 500;
+                padding: 9px 2px 7px 2px;
+            }}
+            QTabWidget#shape_feature_tabs QTabBar::tab:selected {{
+                color: {COLORS.text_primary};
+                border-bottom: 2px solid {COLORS.editor_canvas_toolbar_accent};
+                font-weight: 600;
+            }}
+            QTabWidget#shape_feature_tabs QTabBar::tab:hover:!selected {{
+                background-color: {COLORS.editor_list_item_bg};
+                color: {COLORS.text_secondary};
+            }}
+        """
+
+    def apply_theme(self):
+        """Refresh theme-dependent inline styles."""
+        self.title_label.setStyleSheet(f"""
+            padding: 12px 12px 12px 14px;
+            background-color: {COLORS.editor_sidebar_left_header_bg};
+            border-bottom: 1px solid {COLORS.editor_sidebar_left_accent};
+            border-left: 4px solid {COLORS.editor_sidebar_left_accent};
+            font-size: 14px;
+            font-weight: bold;
+        """)
+        self.primary_tabs.setStyleSheet(self._primary_tabs_stylesheet())
+        self.shape_feature_tabs.setStyleSheet(self._feature_tabs_stylesheet())
+        for index, section in enumerate(getattr(self, "_primary_sections", [])):
+            self.primary_tabs.setTabIcon(index, self._icon(section["icon"]))
+        for label, icon_name in self._theme_icon_labels:
+            label.setPixmap(self._icon(icon_name).pixmap(PARAM_ICON_SIZE))
+        for button, icon_name in self._theme_icon_buttons:
+            button.setIcon(self._icon(icon_name))
+
+        for scroll in getattr(self, "_section_widgets", []):
+            scroll.setStyleSheet(self._scroll_stylesheet(scroll.objectName()))
+            content = getattr(scroll, "_content", None)
+            if content is not None:
+                content.setStyleSheet(f"background-color: {COLORS.editor_sidebar_left_bg};")
+        for page in getattr(self, "_shape_feature_widgets_by_key", {}).values():
+            page.setStyleSheet(f"background-color: {COLORS.editor_sidebar_left_bg};")
+        for container in self._mode_button_containers:
+            container.setStyleSheet(self._mode_button_stylesheet())
+
+        for label_name in ("bevel_direction_hint", "profile_source_label"):
+            label = getattr(self, label_name, None)
+            if label is not None:
+                label.setStyleSheet(f"color: {COLORS.text_muted}; font-size: 12px;")
+        if hasattr(self, "wrap_outline_separator"):
+            self.wrap_outline_separator.setStyleSheet(f"background-color: {COLORS.border_default};")
+        if hasattr(self, "profile_info_label"):
+            self._update_profile_info()
+        for child in self.findChildren(QWidget):
+            if child is not self and hasattr(child, "apply_theme"):
+                child.apply_theme()
+        self.update()
 
     def _create_settings_tab_page(
         self,
@@ -433,35 +541,7 @@ class ParamPanel(QWidget):
         self.shape_feature_tabs.setUsesScrollButtons(False)
         self.shape_feature_tabs.tabBar().setExpanding(True)
         self.shape_feature_tabs.tabBar().setDrawBase(False)
-        self.shape_feature_tabs.setStyleSheet(f"""
-            QTabWidget#shape_feature_tabs {{
-                background-color: {COLORS.editor_sidebar_left_bg};
-                border: none;
-            }}
-            QTabWidget#shape_feature_tabs::pane {{
-                background-color: {COLORS.editor_sidebar_left_bg};
-                border: none;
-                padding-top: 10px;
-            }}
-            QTabWidget#shape_feature_tabs QTabBar::tab {{
-                background-color: {COLORS.editor_sidebar_left_bg};
-                border: none;
-                border-bottom: 2px solid transparent;
-                color: {COLORS.text_muted};
-                font-size: 12px;
-                font-weight: 500;
-                padding: 9px 2px 7px 2px;
-            }}
-            QTabWidget#shape_feature_tabs QTabBar::tab:selected {{
-                color: {COLORS.text_primary};
-                border-bottom: 2px solid {COLORS.editor_canvas_toolbar_accent};
-                font-weight: 600;
-            }}
-            QTabWidget#shape_feature_tabs QTabBar::tab:hover:!selected {{
-                background-color: {COLORS.editor_list_item_bg};
-                color: {COLORS.text_secondary};
-            }}
-        """)
+        self.shape_feature_tabs.setStyleSheet(self._feature_tabs_stylesheet())
 
         self._shape_feature_sections = [
             {
@@ -538,7 +618,12 @@ class ParamPanel(QWidget):
 
     def _icon(self, name: str) -> QIcon:
         """Load a parameter-panel icon from Qt resources."""
-        return QIcon(f":/icons/icons/params/{name}.svg")
+        return build_theme_icon(
+            f":/icons/icons/params/{name}.svg",
+            PARAM_ICON_SIZE,
+            light_color=COLORS.accent_primary,
+            disabled_light_color=COLORS.text_muted,
+        )
 
     def _icon_label(self, icon_name: str, text: str) -> QWidget:
         """Create a compact form label that keeps the original text discoverable."""
@@ -561,6 +646,7 @@ class ParamPanel(QWidget):
         icon_label.setObjectName("paramRowIcon")
         icon_label.setFixedSize(PARAM_ICON_SIZE)
         icon_label.setPixmap(self._icon(icon_name).pixmap(PARAM_ICON_SIZE))
+        self._theme_icon_labels.append((icon_label, icon_name))
         row.addWidget(icon_label, 0, Qt.AlignmentFlag.AlignVCenter)
 
         text_label = QLabel(text)
@@ -596,21 +682,8 @@ class ParamPanel(QWidget):
         """Create an exclusive icon-button mode selector."""
         container = QWidget()
         container.setObjectName(object_name)
-        container.setStyleSheet(f"""
-            QPushButton[shapeModeButton="true"] {{
-                background-color: {COLORS.editor_list_item_bg};
-                border: 1px solid {COLORS.border_default};
-                border-radius: 6px;
-                padding: 6px;
-            }}
-            QPushButton[shapeModeButton="true"]:checked {{
-                background-color: #1E344F;
-                border-color: #58A6FF;
-            }}
-            QPushButton[shapeModeButton="true"]:hover:!checked {{
-                border-color: {COLORS.text_muted};
-            }}
-        """)
+        container.setStyleSheet(self._mode_button_stylesheet())
+        self._mode_button_containers.append(container)
         layout = QHBoxLayout(container)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(6)
@@ -626,6 +699,7 @@ class ParamPanel(QWidget):
             button.setCheckable(True)
             button.setIcon(self._icon(icon_name))
             button.setIconSize(PARAM_ICON_SIZE)
+            self._theme_icon_buttons.append((button, icon_name))
             button.setToolTip(tooltip)
             button.setAccessibleName(tooltip)
             button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
@@ -649,21 +723,8 @@ class ParamPanel(QWidget):
         """Create checkable icon buttons that can be selected independently."""
         container = QWidget()
         container.setObjectName(object_name)
-        container.setStyleSheet(f"""
-            QPushButton[shapeModeButton="true"] {{
-                background-color: {COLORS.editor_list_item_bg};
-                border: 1px solid {COLORS.border_default};
-                border-radius: 6px;
-                padding: 6px;
-            }}
-            QPushButton[shapeModeButton="true"]:checked {{
-                background-color: #1E344F;
-                border-color: #58A6FF;
-            }}
-            QPushButton[shapeModeButton="true"]:hover:!checked {{
-                border-color: {COLORS.text_muted};
-            }}
-        """)
+        container.setStyleSheet(self._mode_button_stylesheet())
+        self._mode_button_containers.append(container)
         layout = QHBoxLayout(container)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(6)
@@ -676,6 +737,7 @@ class ParamPanel(QWidget):
             button.setChecked(mode_id in checked_ids)
             button.setIcon(self._icon(icon_name))
             button.setIconSize(PARAM_ICON_SIZE)
+            self._theme_icon_buttons.append((button, icon_name))
             button.setToolTip(tooltip)
             button.setAccessibleName(tooltip)
             button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
@@ -1166,7 +1228,7 @@ class ParamPanel(QWidget):
             self.tr("Original contour is always based on the bottom face (z=0).")
         )
         self.bevel_direction_hint.setWordWrap(True)
-        self.bevel_direction_hint.setStyleSheet("color: #8B949E; font-size: 12px;")
+        self.bevel_direction_hint.setStyleSheet(f"color: {COLORS.text_muted}; font-size: 12px;")
         bevel_layout.addRow("", self.bevel_direction_hint)
 
         # 斜边宽度
@@ -1243,7 +1305,7 @@ class ParamPanel(QWidget):
 
         # 预设模板标签
         preset_label = QLabel(self.tr("Preset Templates:"))
-        preset_label.setStyleSheet("color: #8B949E; font-size: 12px;")
+        preset_label.setStyleSheet(f"color: {COLORS.text_muted}; font-size: 12px;")
         custom_layout.addWidget(preset_label)
 
         # 预设图片选择器
@@ -1264,7 +1326,7 @@ class ParamPanel(QWidget):
         # 当前轮廓信息
         info_layout = QFormLayout()
         self.profile_info_label = QLabel(self.tr("No profile selected"))
-        self.profile_info_label.setStyleSheet("color: #888;")
+        self.profile_info_label.setStyleSheet(f"color: {COLORS.text_muted};")
         self._add_icon_row(info_layout, "profile", self.tr("Current Profile:"), self.profile_info_label)
         custom_layout.addLayout(info_layout)
 
@@ -1637,7 +1699,7 @@ class ParamPanel(QWidget):
             QSizePolicy.Policy.Expanding,
             QSizePolicy.Policy.Preferred,
         )
-        label.setStyleSheet("color: #8B949E; font-size: 12px;")
+        label.setStyleSheet(f"color: {COLORS.text_muted}; font-size: 12px;")
 
     @staticmethod
     def _create_script_preview_editor() -> QPlainTextEdit:
@@ -2029,7 +2091,7 @@ class ParamPanel(QWidget):
 
         self.profile_source_label = QLabel("")
         self.profile_source_label.setWordWrap(True)
-        self.profile_source_label.setStyleSheet("color: #8B949E; font-size: 12px;")
+        self.profile_source_label.setStyleSheet(f"color: {COLORS.text_muted}; font-size: 12px;")
         layout.addWidget(self.profile_source_label)
 
         form = QFormLayout()
@@ -4139,7 +4201,7 @@ class ParamPanel(QWidget):
             if self._current_profile.control_points:
                 info += self.tr(" ({count} points)").format(count=len(self._current_profile.control_points))
             self.profile_info_label.setText(info)
-            self.profile_info_label.setStyleSheet("color: #58A6FF;")
+            self.profile_info_label.setStyleSheet(f"color: {COLORS.accent_primary};")
         else:
             self.profile_info_label.setText(self.tr("No profile selected"))
-            self.profile_info_label.setStyleSheet("color: #888;")
+            self.profile_info_label.setStyleSheet(f"color: {COLORS.text_muted};")

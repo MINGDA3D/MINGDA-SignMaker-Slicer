@@ -17,32 +17,43 @@ from PySide6.QtGui import (
     QRadialGradient, QPixmap, QPen, QBrush, QFontMetrics
 )
 
+from .theme import COLORS as THEME_COLORS
+
 
 # ============================================
-# 配色方案 - 与 generate_ui_home.py 完全一致
+# 配色方案 - 从全局主题动态读取
 # ============================================
-COLORS = {
-    "bg_base": "#0A0E14",
-    "bg_primary": "#0D1219",
-    "bg_secondary": "#131A24",
-    "bg_card": "#1A2332",
-    "bg_elevated": "#1F2A3C",
-    "bg_hover": "#253345",
-    "text_primary": "#E6EDF3",
-    "text_secondary": "#9CA3AF",
-    "text_muted": "#6B7280",
-    "accent_primary": "#3B82F6",
-    "accent_secondary": "#06B6D4",
-    "success": "#10B981",
-    "warning": "#F59E0B",
-    "error": "#EF4444",
-    "info": "#6366F1",
-    "border_subtle": "#1E293B",
-    "border_default": "#334155",
-    "border_focus": "#3B82F6",
-    "preview_bg": "#2D323C",  # (45, 50, 60)
-    "wire_color": "#7887A0",  # (120, 135, 160)
+_HOME_COLOR_KEYS = {
+    "bg_base": "home_bg_base",
+    "bg_primary": "home_bg_primary",
+    "bg_secondary": "bg_secondary",
+    "bg_card": "home_bg_card",
+    "bg_elevated": "bg_panel",
+    "bg_hover": "home_bg_hover",
+    "text_primary": "home_text_primary",
+    "text_secondary": "home_text_secondary",
+    "text_muted": "home_text_muted",
+    "accent_primary": "home_accent_primary",
+    "accent_secondary": "home_accent_secondary",
+    "success": "accent_success",
+    "warning": "accent_warning",
+    "error": "accent_error",
+    "info": "home_info",
+    "border_subtle": "home_border_subtle",
+    "border_default": "home_border_default",
+    "border_focus": "border_focus",
+    "preview_bg": "home_preview_bg",
+    "wire_color": "home_wire_color",
+    "glow_alpha": "home_glow_alpha",
 }
+
+
+class _HomeColors:
+    def __getitem__(self, key: str):
+        return getattr(THEME_COLORS, _HOME_COLOR_KEYS[key])
+
+
+COLORS = _HomeColors()
 
 
 def hex_to_qcolor(hex_color: str) -> QColor:
@@ -497,6 +508,12 @@ class HomePage(QWidget):
         self._create_cards()
         self.update()
 
+    def apply_theme(self):
+        """Refresh self-painted home content after the global theme changes."""
+        for card in self._cards:
+            card.update()
+        self.update()
+
     def sizeHint(self) -> QSize:
         return QSize(max(1200, self.width()), self._content_height)
 
@@ -525,9 +542,10 @@ class HomePage(QWidget):
         # ============================================
         # 多层光晕效果
         # ============================================
-        self._draw_soft_glow(painter, w // 2, h // 2 - 100, 600, hex_to_qcolor(COLORS["accent_primary"]), 0.06)
-        self._draw_soft_glow(painter, w // 2 - 300, h // 2 - 50, 400, hex_to_qcolor(COLORS["info"]), 0.04)
-        self._draw_soft_glow(painter, w // 2 + 300, h // 2 - 50, 400, hex_to_qcolor(COLORS["accent_secondary"]), 0.04)
+        glow_alpha = float(COLORS["glow_alpha"])
+        self._draw_soft_glow(painter, w // 2, h // 2 - 100, 600, hex_to_qcolor(COLORS["accent_primary"]), glow_alpha)
+        self._draw_soft_glow(painter, w // 2 - 300, h // 2 - 50, 400, hex_to_qcolor(COLORS["info"]), glow_alpha * 0.7)
+        self._draw_soft_glow(painter, w // 2 + 300, h // 2 - 50, 400, hex_to_qcolor(COLORS["accent_secondary"]), glow_alpha * 0.7)
 
         # ============================================
         # 英雄区域
@@ -561,8 +579,8 @@ class HomePage(QWidget):
         self._draw_gradient_text(
             painter, features, font_body,
             hero_y + 108,
-            QColor(6, 182, 212),
-            QColor(168, 85, 247),
+            hex_to_qcolor(COLORS["accent_secondary"]),
+            hex_to_qcolor(COLORS["info"]),
             w
         )
 

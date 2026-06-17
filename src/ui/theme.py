@@ -1,21 +1,28 @@
 """
 MINGDA SignMaker UI Theme
-深色主题配色和样式定义
+主题配色和样式定义
 """
 
-from dataclasses import dataclass
-from typing import Dict
+from dataclasses import dataclass, fields
+from typing import Dict, Literal, Optional
+
+
+ThemeMode = Literal["system", "dark", "light"]
+EffectiveTheme = Literal["dark", "light"]
+VALID_THEME_MODES = {"system", "dark", "light"}
 
 
 @dataclass
 class Colors:
     """颜色定义"""
+    theme_name: str = "dark"
+
     # 背景
     bg_primary: str = "#0D1117"       # 主背景
     bg_secondary: str = "#161B22"     # 次背景（侧边栏）
     bg_panel: str = "#21262D"         # 面板背景
     bg_hover: str = "#30363D"         # 悬浮背景
-    bg_selected: str = "#388BFD26"    # 选中背景（带透明）
+    bg_selected: str = "#1E344F"      # 选中背景
     editor_toolbar_bg: str = "#15202E"
     editor_toolbar_border: str = "#425A76"
     editor_sidebar_left_bg: str = "#121923"
@@ -30,17 +37,31 @@ class Colors:
     editor_canvas_toolbar_accent: str = "#5E8FD0"
     editor_canvas_frame: str = "#3E5879"
     editor_canvas_platform_bg: str = "#111A23"
+    editor_grid: str = "#242F3B"
+    editor_grid_major: str = "#32404F"
+    editor_platform_border: str = "#5C738A"
+    editor_ruler_bg: str = "#101821"
+    editor_ruler_text: str = "#788CA0"
+    editor_ruler_tick: str = "#5C738A"
 
     # 文字
     text_primary: str = "#F0F6FC"     # 主文字
     text_secondary: str = "#C9D1D9"   # 次文字
     text_muted: str = "#8B949E"       # 禁用/提示文字
+    text_on_accent: str = "#FFFFFF"
+    text_on_success: str = "#FFFFFF"
+    text_on_error: str = "#FFFFFF"
 
     # 强调色
     accent_primary: str = "#58A6FF"   # 主强调（蓝色）
+    accent_primary_hover: str = "#79B8FF"
+    accent_primary_pressed: str = "#388BFD"
     accent_success: str = "#3FB950"   # 成功（绿色）
+    accent_success_hover: str = "#2EA043"
+    accent_success_pressed: str = "#196C2E"
     accent_warning: str = "#F59E0B"   # 警告（橙色）
     accent_error: str = "#F85149"     # 错误（红色）
+    accent_error_hover: str = "#FF6B6B"
 
     # 边框
     border_default: str = "#30363D"   # 默认边框
@@ -57,6 +78,23 @@ class Colors:
     path_fill: str = "#3FB950"        # 填充路径
     path_travel: str = "#8B949E"      # 空走路径
     path_skirt: str = "#F59E0B"       # 裙边路径
+
+    # 首页自绘色
+    home_bg_base: str = "#0A0E14"
+    home_bg_primary: str = "#0D1219"
+    home_bg_card: str = "#1A2332"
+    home_bg_hover: str = "#253345"
+    home_text_primary: str = "#E6EDF3"
+    home_text_secondary: str = "#9CA3AF"
+    home_text_muted: str = "#6B7280"
+    home_accent_primary: str = "#3B82F6"
+    home_accent_secondary: str = "#06B6D4"
+    home_info: str = "#6366F1"
+    home_border_subtle: str = "#1E293B"
+    home_border_default: str = "#334155"
+    home_preview_bg: str = "#2D323C"
+    home_wire_color: str = "#7887A0"
+    home_glow_alpha: float = 0.06
 
 
 @dataclass
@@ -110,21 +148,158 @@ class Layout:
     border_width: int = 1
 
 
-# 全局实例
+# 主题色板
+DARK_COLORS = Colors()
+LIGHT_COLORS = Colors(
+    theme_name="light",
+    bg_primary="#F6F8FB",
+    bg_secondary="#F0F4F8",
+    bg_panel="#FFFFFF",
+    bg_hover="#E9EEF5",
+    bg_selected="#D9F4FC",
+    editor_toolbar_bg="#FFFFFF",
+    editor_toolbar_border="#D8E1EA",
+    editor_sidebar_left_bg="#F8FAFC",
+    editor_sidebar_left_header_bg="#EAF6FB",
+    editor_sidebar_left_accent="#1298CC",
+    editor_sidebar_right_bg="#F8FAFC",
+    editor_sidebar_right_header_bg="#EEF8F2",
+    editor_sidebar_right_accent="#16A34A",
+    editor_list_item_bg="#FFFFFF",
+    editor_canvas_bg="#EEF3F8",
+    editor_canvas_toolbar_bg="#FFFFFF",
+    editor_canvas_toolbar_accent="#1298CC",
+    editor_canvas_frame="#C8D5E1",
+    editor_canvas_platform_bg="#FFFFFF",
+    editor_grid="#DDE6EF",
+    editor_grid_major="#CBD5E1",
+    editor_platform_border="#B8C7D6",
+    editor_ruler_bg="#E9EEF5",
+    editor_ruler_text="#64748B",
+    editor_ruler_tick="#B8C7D6",
+    text_primary="#111827",
+    text_secondary="#526172",
+    text_muted="#7A8796",
+    accent_primary="#1298CC",
+    accent_primary_hover="#1DADE5",
+    accent_primary_pressed="#0F7FA8",
+    accent_success="#16A34A",
+    accent_success_hover="#22C55E",
+    accent_success_pressed="#15803D",
+    accent_warning="#D97706",
+    accent_error="#DC2626",
+    accent_error_hover="#EF4444",
+    border_default="#D8E1EA",
+    border_hover="#B8C7D6",
+    border_focus="#1298CC",
+    extruder_1="#1298CC",
+    extruder_2="#DB2777",
+    extruder_3="#D97706",
+    path_shell="#1298CC",
+    path_fill="#16A34A",
+    path_travel="#64748B",
+    path_skirt="#D97706",
+    home_bg_base="#F6F8FB",
+    home_bg_primary="#F0F4F8",
+    home_bg_card="#FFFFFF",
+    home_bg_hover="#E9EEF5",
+    home_text_primary="#111827",
+    home_text_secondary="#526172",
+    home_text_muted="#7A8796",
+    home_accent_primary="#1298CC",
+    home_accent_secondary="#1DADE5",
+    home_info="#4F46E5",
+    home_border_subtle="#D8E1EA",
+    home_border_default="#B8C7D6",
+    home_preview_bg="#E9EEF5",
+    home_wire_color="#64748B",
+    home_glow_alpha=0.035,
+)
+
+
+def _copy_colors(source: Colors, target: Colors):
+    for field in fields(Colors):
+        setattr(target, field.name, getattr(source, field.name))
+
+
+def _palette_for_effective_theme(theme: EffectiveTheme) -> Colors:
+    return LIGHT_COLORS if theme == "light" else DARK_COLORS
+
+
+def normalize_theme_mode(mode: Optional[str]) -> ThemeMode:
+    """Normalize a persisted or requested theme mode."""
+    return mode if mode in VALID_THEME_MODES else "system"  # type: ignore[return-value]
+
+
+def resolve_effective_theme(mode: Optional[str] = None) -> EffectiveTheme:
+    """Resolve system/dark/light into the effective theme currently rendered."""
+    requested = normalize_theme_mode(mode or _REQUESTED_THEME_MODE)
+    if requested in {"dark", "light"}:
+        return requested  # type: ignore[return-value]
+
+    try:
+        from PySide6.QtCore import Qt
+        from PySide6.QtWidgets import QApplication
+
+        app = QApplication.instance()
+        if app is None:
+            return "dark"
+
+        color_scheme = app.styleHints().colorScheme()
+        if color_scheme == Qt.ColorScheme.Light:
+            return "light"
+        if color_scheme == Qt.ColorScheme.Dark:
+            return "dark"
+    except Exception:
+        return "dark"
+
+    return "dark"
+
+
+def get_palette(mode: Optional[str] = None) -> Colors:
+    """Return the palette for a requested theme mode without mutating global state."""
+    return _palette_for_effective_theme(resolve_effective_theme(mode))
+
+
+_REQUESTED_THEME_MODE: ThemeMode = "system"
+_EFFECTIVE_THEME: EffectiveTheme = resolve_effective_theme(_REQUESTED_THEME_MODE)
+
+
+# 全局实例。注意：不要替换对象，其他模块会持有这个引用。
 COLORS = Colors()
+_copy_colors(_palette_for_effective_theme(_EFFECTIVE_THEME), COLORS)
 FONTS = Fonts()
 LAYOUT = Layout()
 
 
-def get_stylesheet() -> str:
+def set_active_theme(mode: Optional[str] = None) -> EffectiveTheme:
+    """Set the active theme and update the shared COLORS object in place."""
+    global _REQUESTED_THEME_MODE, _EFFECTIVE_THEME
+    _REQUESTED_THEME_MODE = normalize_theme_mode(mode)
+    _EFFECTIVE_THEME = resolve_effective_theme(_REQUESTED_THEME_MODE)
+    _copy_colors(_palette_for_effective_theme(_EFFECTIVE_THEME), COLORS)
+    return _EFFECTIVE_THEME
+
+
+def get_active_theme_mode() -> ThemeMode:
+    """Return the requested theme mode."""
+    return _REQUESTED_THEME_MODE
+
+
+def get_effective_theme() -> EffectiveTheme:
+    """Return the effective rendered theme."""
+    return _EFFECTIVE_THEME
+
+
+def get_stylesheet(mode: Optional[str] = None) -> str:
     """获取完整的 Qt 样式表"""
-    c = COLORS
+    c = get_palette(mode) if mode is not None else COLORS
     f = FONTS
     l = LAYOUT
 
     return f"""
 /* ============================================ */
-/* MINGDA SignMaker - Dark Theme Stylesheet    */
+/* MINGDA SignMaker - Theme Stylesheet         */
 /* ============================================ */
 
 /* 全局样式 */
@@ -257,27 +432,27 @@ QPushButton:disabled {{
 QPushButton[primary="true"] {{
     background-color: {c.accent_primary};
     border: none;
-    color: #FFFFFF;
+    color: {c.text_on_accent};
     font-weight: {f.weight_bold};
 }}
 
 QPushButton[primary="true"]:hover {{
-    background-color: #79B8FF;
+    background-color: {c.accent_primary_hover};
 }}
 
 QPushButton[primary="true"]:pressed {{
-    background-color: #388BFD;
+    background-color: {c.accent_primary_pressed};
 }}
 
 /* 危险按钮 */
 QPushButton[danger="true"] {{
     background-color: {c.accent_error};
     border: none;
-    color: #FFFFFF;
+    color: {c.text_on_error};
 }}
 
 QPushButton[danger="true"]:hover {{
-    background-color: #FF6B6B;
+    background-color: {c.accent_error_hover};
 }}
 
 /* ============================================ */
@@ -631,7 +806,7 @@ QSlider::handle:horizontal {{
 }}
 
 QSlider::handle:horizontal:hover {{
-    background-color: #FFFFFF;
+    background-color: {c.bg_panel};
 }}
 
 QSlider::sub-page:horizontal {{
@@ -817,13 +992,16 @@ def hex_to_rgb(hex_color: str) -> tuple:
 def get_color_dict() -> Dict[str, str]:
     """获取颜色字典"""
     return {
+        "theme_name": COLORS.theme_name,
         "bg_primary": COLORS.bg_primary,
         "bg_secondary": COLORS.bg_secondary,
         "bg_panel": COLORS.bg_panel,
         "bg_hover": COLORS.bg_hover,
+        "bg_selected": COLORS.bg_selected,
         "text_primary": COLORS.text_primary,
         "text_secondary": COLORS.text_secondary,
         "text_muted": COLORS.text_muted,
+        "text_on_accent": COLORS.text_on_accent,
         "editor_toolbar_bg": COLORS.editor_toolbar_bg,
         "editor_toolbar_border": COLORS.editor_toolbar_border,
         "editor_sidebar_left_bg": COLORS.editor_sidebar_left_bg,
@@ -836,6 +1014,7 @@ def get_color_dict() -> Dict[str, str]:
         "editor_canvas_toolbar_bg": COLORS.editor_canvas_toolbar_bg,
         "editor_canvas_toolbar_accent": COLORS.editor_canvas_toolbar_accent,
         "editor_canvas_frame": COLORS.editor_canvas_frame,
+        "editor_canvas_platform_bg": COLORS.editor_canvas_platform_bg,
         "accent_primary": COLORS.accent_primary,
         "accent_success": COLORS.accent_success,
         "accent_warning": COLORS.accent_warning,

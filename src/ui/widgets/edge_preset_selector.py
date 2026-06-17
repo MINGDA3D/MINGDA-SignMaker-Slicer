@@ -14,6 +14,7 @@ from PySide6.QtCore import Signal, Qt, QSize, QCoreApplication
 from PySide6.QtGui import QPixmap, QPainter, QPen, QColor, QPainterPath
 
 from src.core.edge_presets import EdgePresetManager
+from src.ui.theme import COLORS
 
 
 class PresetThumbnail(QFrame):
@@ -63,13 +64,13 @@ class PresetThumbnail(QFrame):
     def _draw_profile(self):
         """绘制轮廓线条"""
         pixmap = QPixmap(72, 92)
-        pixmap.fill(QColor("#1E2430"))
+        pixmap.fill(QColor(COLORS.home_preview_bg))
 
         painter = QPainter(pixmap)
         painter.setRenderHint(QPainter.Antialiasing)
 
         # 设置画笔 - 红色轮廓
-        pen = QPen(QColor("#FF4444"), 2)
+        pen = QPen(QColor(COLORS.accent_error), 2)
         pen.setCapStyle(Qt.RoundCap)
         pen.setJoinStyle(Qt.RoundJoin)
         painter.setPen(pen)
@@ -139,31 +140,35 @@ class PresetThumbnail(QFrame):
 
     def _update_style(self):
         if self._selected:
-            self.setStyleSheet("""
-                PresetThumbnail {
-                    background-color: #1E3A5F;
-                    border: 2px solid #58A6FF;
+            self.setStyleSheet(f"""
+                PresetThumbnail {{
+                    background-color: {COLORS.bg_selected};
+                    border: 2px solid {COLORS.accent_primary};
                     border-radius: 6px;
-                }
-                PresetThumbnail:hover {
-                    background-color: #254670;
-                }
+                }}
+                PresetThumbnail:hover {{
+                    background-color: {COLORS.bg_selected};
+                }}
             """)
         else:
-            self.setStyleSheet("""
-                PresetThumbnail {
-                    background-color: #1E2430;
-                    border: 1px solid #30363D;
+            self.setStyleSheet(f"""
+                PresetThumbnail {{
+                    background-color: {COLORS.editor_list_item_bg};
+                    border: 1px solid {COLORS.border_default};
                     border-radius: 6px;
-                }
-                PresetThumbnail:hover {
-                    background-color: #252D38;
-                    border: 1px solid #58A6FF;
-                }
+                }}
+                PresetThumbnail:hover {{
+                    background-color: {COLORS.bg_hover};
+                    border: 1px solid {COLORS.accent_primary};
+                }}
             """)
 
     def set_selected(self, selected: bool):
         self._selected = selected
+        self._update_style()
+
+    def apply_theme(self):
+        self._draw_profile()
         self._update_style()
 
     def mousePressEvent(self, event):
@@ -255,6 +260,11 @@ class EdgePresetSelector(QWidget):
     def get_selected_preset(self) -> str:
         """获取当前选中的预设名称"""
         return self._current_preset or ""
+
+    def apply_theme(self):
+        for thumbnail in self._thumbnails.values():
+            thumbnail.apply_theme()
+        self.update()
 
     def sizeHint(self):
         return QSize(220, 300)

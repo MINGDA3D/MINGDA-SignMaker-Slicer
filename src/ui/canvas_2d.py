@@ -144,38 +144,57 @@ class Canvas2D(QWidget):
         self._cumulative_angle = 0.0
 
         # 样式
-        self.bg_color = QColor(COLORS.editor_canvas_bg)
-        self.platform_bg_color = QColor(COLORS.editor_canvas_platform_bg)
-        self.frame_color = QColor(COLORS.editor_canvas_frame)
-        self.grid_color = QColor(36, 47, 59)  # 细网格颜色
-        self.grid_major_color = QColor(50, 64, 79)  # 主网格颜色
-        self.platform_border_color = QColor(92, 115, 138)  # 平台边框颜色
-        self.ruler_bg_color = QColor(16, 24, 33)  # 标尺背景色
-        self.ruler_text_color = QColor(120, 140, 160)  # 标尺文字颜色
-        self.ruler_tick_color = QColor(92, 115, 138)  # 标尺刻度颜色
-        self.contour_color = QColor(COLORS.path_shell)
-        self.hole_color = QColor(COLORS.accent_warning)
-        self.selected_color = QColor(COLORS.accent_primary)
-        self.out_of_bounds_color = QColor(COLORS.accent_error)
-        self.unprintable_fill_color = QColor(255, 116, 116, 52)
-        self.unprintable_border_color = QColor(255, 132, 132, 150)
-        self.prime_tower_color = QColor(COLORS.accent_primary)
-        self.start_point_color = QColor(COLORS.accent_success)
-        self.start_point_candidate_color = QColor(COLORS.accent_primary)
-        self.start_point_hover_color = QColor(COLORS.accent_warning)
-        self.screw_hole_color = QColor("#D7DEE8")
-        self.screw_hole_invalid_color = QColor(COLORS.accent_error)
-        self.screw_hole_selected_color = QColor("#F5F8FC")
-        self.screw_hole_hover_color = QColor("#E8EEF5")
-        self.transform_handle_color = QColor(COLORS.accent_primary)
-        self.rotate_gizmo_color = QColor(88, 166, 255, 180)  # 旋转圆环颜色
-        self.rotate_arc_color = QColor(88, 166, 255, 120)    # 旋转角度弧颜色
-        self.rotate_snap_color = QColor(88, 166, 255, 60)    # 吸附参考线颜色
+        self._apply_theme_colors()
 
         # 设置
         self.setMinimumSize(400, 300)
         self.setMouseTracking(True)
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+
+    def _alpha_color(self, color: QColor, alpha: int) -> QColor:
+        themed = QColor(color)
+        themed.setAlpha(alpha)
+        return themed
+
+    def _apply_theme_colors(self):
+        """Refresh cached QColor values from the active theme."""
+        self.bg_color = QColor(COLORS.editor_canvas_bg)
+        self.platform_bg_color = QColor(COLORS.editor_canvas_platform_bg)
+        self.frame_color = QColor(COLORS.editor_canvas_frame)
+        self.grid_color = QColor(COLORS.editor_grid)
+        self.grid_major_color = QColor(COLORS.editor_grid_major)
+        self.platform_border_color = QColor(COLORS.editor_platform_border)
+        self.ruler_bg_color = QColor(COLORS.editor_ruler_bg)
+        self.ruler_text_color = QColor(COLORS.editor_ruler_text)
+        self.ruler_tick_color = QColor(COLORS.editor_ruler_tick)
+        self.contour_color = QColor(COLORS.path_shell)
+        self.hole_color = QColor(COLORS.accent_warning)
+        self.selected_color = QColor(COLORS.accent_primary)
+        self.out_of_bounds_color = QColor(COLORS.accent_error)
+        self.unprintable_fill_color = self._alpha_color(QColor(COLORS.accent_error), 52)
+        self.unprintable_border_color = self._alpha_color(QColor(COLORS.accent_error), 150)
+        self.prime_tower_color = QColor(COLORS.accent_primary)
+        self.start_point_color = QColor(COLORS.accent_success)
+        self.start_point_candidate_color = QColor(COLORS.accent_primary)
+        self.start_point_hover_color = QColor(COLORS.accent_warning)
+        self.screw_hole_color = QColor(COLORS.text_secondary)
+        self.screw_hole_invalid_color = QColor(COLORS.accent_error)
+        self.screw_hole_selected_color = QColor(COLORS.text_primary)
+        self.screw_hole_hover_color = QColor(COLORS.text_secondary)
+        self.transform_handle_color = QColor(COLORS.accent_primary)
+        accent = QColor(COLORS.accent_primary)
+        self.rotate_gizmo_color = self._alpha_color(accent, 180)
+        self.rotate_arc_color = self._alpha_color(accent, 120)
+        self.rotate_snap_color = self._alpha_color(accent, 60)
+        self.badge_border_color = QColor(COLORS.bg_primary)
+        self.badge_fill_color = QColor(COLORS.accent_warning)
+        self.badge_text_color = QColor(COLORS.text_on_accent)
+        self.badge_muted_text_color = QColor(COLORS.text_primary)
+
+    def apply_theme(self):
+        """Refresh self-painted colors after the global theme changes."""
+        self._apply_theme_colors()
+        self.update()
 
     def _init_view(self):
         """初始化视图，显示整个平台"""
@@ -1556,13 +1575,13 @@ class Canvas2D(QWidget):
         for order, target, rect in self._build_print_order_badge_layout():
             is_highlighted = target in self._print_order_highlighted_targets
 
-            painter.setPen(QPen(QColor("#0D1117"), 1.2))
+            painter.setPen(QPen(self.badge_border_color, 1.2))
             painter.setBrush(
-                QBrush(self.selected_color if is_highlighted else QColor("#F2CC60"))
+                QBrush(self.selected_color if is_highlighted else self.badge_fill_color)
             )
             painter.drawRoundedRect(rect, 8.0, 8.0)
             painter.setPen(
-                QColor("#FFFFFF") if is_highlighted else QColor("#111111")
+                self.badge_text_color if is_highlighted else self.badge_muted_text_color
             )
             painter.drawText(rect, Qt.AlignmentFlag.AlignCenter, str(order))
 

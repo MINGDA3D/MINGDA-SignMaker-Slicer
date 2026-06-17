@@ -224,6 +224,20 @@ class SettingsManager:
         self._qsettings.setValue("language", lang_code)
 
     # =========================================================================
+    # 主题设置（使用 QSettings）
+    # =========================================================================
+
+    def get_theme_mode(self) -> str:
+        """获取当前主题模式：system、dark 或 light。"""
+        mode = self._qsettings.value("UI/theme_mode", "system", type=str)
+        return mode if mode in {"system", "dark", "light"} else "system"
+
+    def set_theme_mode(self, mode: str):
+        """设置主题模式。非法值回退为 system。"""
+        normalized = mode if mode in {"system", "dark", "light"} else "system"
+        self._qsettings.setValue("UI/theme_mode", normalized)
+
+    # =========================================================================
     # 窗口状态（使用 QSettings）
     # =========================================================================
 

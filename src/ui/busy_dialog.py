@@ -10,6 +10,8 @@ from PySide6.QtCore import Qt, QTimer, Signal, QThread
 from PySide6.QtGui import QPainter, QColor, QPen, QConicalGradient
 from PySide6.QtWidgets import QDialog, QVBoxLayout, QLabel, QWidget
 
+from .theme import COLORS
+
 
 class SpinnerWidget(QWidget):
     """转圈圈动画控件"""
@@ -37,14 +39,14 @@ class SpinnerWidget(QWidget):
         margin = pen_width // 2 + 1
         rect = self.rect().adjusted(margin, margin, -margin, -margin)
 
-        # 底圈（暗色）
-        bg_pen = QPen(QColor("#30363D"), pen_width)
+        # 底圈
+        bg_pen = QPen(QColor(COLORS.border_default), pen_width)
         bg_pen.setCapStyle(Qt.PenCapStyle.RoundCap)
         painter.setPen(bg_pen)
         painter.drawEllipse(rect)
 
-        # 旋转弧（亮色渐变）
-        arc_pen = QPen(QColor("#58A6FF"), pen_width)
+        # 旋转弧
+        arc_pen = QPen(QColor(COLORS.accent_primary), pen_width)
         arc_pen.setCapStyle(Qt.PenCapStyle.RoundCap)
         painter.setPen(arc_pen)
 
@@ -89,15 +91,15 @@ class BusyDialog(QDialog):
         self._label = QLabel(message)
         self._label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self._label.setWordWrap(True)
-        self._label.setStyleSheet("color: #C9D1D9; font-size: 13px;")
+        self._label.setStyleSheet(f"color: {COLORS.text_secondary}; font-size: 13px;")
         layout.addWidget(self._label)
 
-        self.setStyleSheet("""
-            BusyDialog {
-                background-color: #1C2128;
-                border: 1px solid #30363D;
+        self.setStyleSheet(f"""
+            BusyDialog {{
+                background-color: {COLORS.bg_panel};
+                border: 1px solid {COLORS.border_default};
                 border-radius: 12px;
-            }
+            }}
         """)
 
     def set_message(self, message: str):

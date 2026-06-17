@@ -13,6 +13,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Signal, Qt, QSize
 from PySide6.QtGui import QDoubleValidator, QIntValidator, QIcon
 
+from src.ui.icon_utils import build_theme_icon
 from src.ui.theme import COLORS, LAYOUT
 
 # 确保资源已加载
@@ -51,7 +52,7 @@ class PlusMinusSpinBox(QWidget):
 
         # 减号按钮 - 使用 SVG 图标
         self._minus_btn = QPushButton()
-        self._minus_btn.setIcon(QIcon(":/icons/icons/minus.svg"))
+        self._minus_btn.setIcon(self._build_button_icon("minus.svg"))
         self._minus_btn.setIconSize(QSize(16, 16))
         self._minus_btn.setFixedSize(28, 28)
         self._minus_btn.setCursor(Qt.CursorShape.PointingHandCursor)
@@ -81,7 +82,7 @@ class PlusMinusSpinBox(QWidget):
 
         # 加号按钮 - 使用 SVG 图标
         self._plus_btn = QPushButton()
-        self._plus_btn.setIcon(QIcon(":/icons/icons/plus.svg"))
+        self._plus_btn.setIcon(self._build_button_icon("plus.svg"))
         self._plus_btn.setIconSize(QSize(16, 16))
         self._plus_btn.setFixedSize(28, 28)
         self._plus_btn.setCursor(Qt.CursorShape.PointingHandCursor)
@@ -94,18 +95,22 @@ class PlusMinusSpinBox(QWidget):
     def _apply_style(self):
         """应用样式"""
         # 按钮样式 - 使用 SVG 图标
+        hover_background = COLORS.bg_hover if COLORS.theme_name == "light" else COLORS.accent_primary
+        hover_border = COLORS.border_hover if COLORS.theme_name == "light" else COLORS.accent_primary
+        pressed_background = COLORS.bg_selected if COLORS.theme_name == "light" else COLORS.accent_primary_hover
+        pressed_border = COLORS.accent_primary if COLORS.theme_name == "light" else COLORS.accent_primary_hover
         btn_style = f"""
             QPushButton {{
-                background-color: #3D4850;
-                border: 1px solid #5A6570;
+                background-color: {COLORS.bg_panel};
+                border: 1px solid {COLORS.border_hover};
             }}
             QPushButton:hover {{
-                background-color: {COLORS.accent_primary};
-                border-color: {COLORS.accent_primary};
+                background-color: {hover_background};
+                border-color: {hover_border};
             }}
             QPushButton:pressed {{
-                background-color: #79B8FF;
-                border-color: #79B8FF;
+                background-color: {pressed_background};
+                border-color: {pressed_border};
             }}
             QPushButton:disabled {{
                 background-color: {COLORS.bg_panel};
@@ -139,7 +144,7 @@ class PlusMinusSpinBox(QWidget):
         self._line_edit.setStyleSheet(f"""
             QLineEdit {{
                 background-color: {COLORS.bg_primary};
-                border: 1px solid #5A6570;
+                border: 1px solid {COLORS.border_hover};
                 border-left: none;
                 border-right: none;
                 border-radius: 0;
@@ -168,6 +173,15 @@ class PlusMinusSpinBox(QWidget):
                 font-size: 11px;
             }}
         """)
+
+    @staticmethod
+    def _build_button_icon(name: str) -> QIcon:
+        return build_theme_icon(
+            f":/icons/icons/{name}",
+            QSize(16, 16),
+            light_color=COLORS.accent_primary,
+            disabled_light_color=COLORS.text_muted,
+        )
 
     def _update_secondary_display(self):
         """Update helper text rendered inside the input box."""
@@ -334,6 +348,12 @@ class PlusMinusSpinBox(QWidget):
         self._plus_btn.setEnabled(enabled and self._value < self._maximum)
         self._line_edit.setEnabled(enabled)
         self._secondary_label.setEnabled(enabled)
+
+    def apply_theme(self):
+        """Refresh inline styles after the global theme changes."""
+        self._minus_btn.setIcon(self._build_button_icon("minus.svg"))
+        self._plus_btn.setIcon(self._build_button_icon("plus.svg"))
+        self._apply_style()
 
     def resizeEvent(self, event):
         """Keep helper text aligned when the widget is resized."""

@@ -374,6 +374,88 @@ def test_primary_export_selection_persists_across_main_window_instances(
         second_window.deleteLater()
 
 
+def test_theme_mode_defaults_to_system_on_main_window_startup(
+    qapp, monkeypatch, workspace_tmp_dir
+):
+    from src.business.settings_manager import init_settings_manager as real_init_settings_manager
+
+    settings_dir = workspace_tmp_dir / "config"
+    monkeypatch.setattr(
+        "src.ui.main_window.init_settings_manager",
+        lambda: real_init_settings_manager(str(settings_dir)),
+    )
+
+    window = MainWindow()
+
+    try:
+        assert window._theme_mode == "system"
+        assert window.settings_manager.get_theme_mode() == "system"
+    finally:
+        window.deleteLater()
+
+
+def test_theme_menu_action_applies_and_persists_light_theme(
+    qapp, monkeypatch, workspace_tmp_dir
+):
+    from src.business.settings_manager import init_settings_manager as real_init_settings_manager
+    import src.ui.home_page as home_page_module
+    from src.ui.theme import COLORS
+
+    settings_dir = workspace_tmp_dir / "config"
+    monkeypatch.setattr(
+        "src.ui.main_window.init_settings_manager",
+        lambda: real_init_settings_manager(str(settings_dir)),
+    )
+
+    first_window = MainWindow()
+
+    try:
+        first_window._on_menu_action("theme_light")
+        qapp.processEvents()
+
+        assert first_window._theme_mode == "light"
+        assert first_window.settings_manager.get_theme_mode() == "light"
+        assert COLORS.theme_name == "light"
+        assert first_window.canvas.bg_color.name().upper() == "#EEF3F8"
+        assert home_page_module.COLORS["bg_base"] == "#F6F8FB"
+    finally:
+        first_window.deleteLater()
+
+    second_window = MainWindow()
+
+    try:
+        assert second_window._theme_mode == "light"
+        assert second_window.settings_manager.get_theme_mode() == "light"
+        assert COLORS.theme_name == "light"
+    finally:
+        second_window.deleteLater()
+
+
+def test_theme_menu_action_can_return_to_dark_theme(qapp, monkeypatch, workspace_tmp_dir):
+    from src.business.settings_manager import init_settings_manager as real_init_settings_manager
+    from src.ui.theme import COLORS
+
+    settings_dir = workspace_tmp_dir / "config"
+    monkeypatch.setattr(
+        "src.ui.main_window.init_settings_manager",
+        lambda: real_init_settings_manager(str(settings_dir)),
+    )
+
+    window = MainWindow()
+
+    try:
+        window._on_menu_action("theme_light")
+        window._on_menu_action("theme_dark")
+        qapp.processEvents()
+
+        assert window._theme_mode == "dark"
+        assert window.settings_manager.get_theme_mode() == "dark"
+        assert COLORS.theme_name == "dark"
+        assert window.canvas.bg_color.name().upper() == "#0B1118"
+    finally:
+        window.deleteLater()
+
+
 def test_screw_hole_button_follows_restored_bottom_face_checkbox_state(
     qapp, monkeypatch, workspace_tmp_dir
 ):

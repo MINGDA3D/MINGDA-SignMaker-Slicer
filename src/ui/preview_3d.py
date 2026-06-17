@@ -22,6 +22,7 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtGui import QMouseEvent, QWheelEvent, QPainter, QPen, QColor
 from .busy_dialog import SpinnerWidget
+from .theme import COLORS
 
 try:
     from PySide6.QtOpenGLWidgets import QOpenGLWidget
@@ -638,6 +639,18 @@ class Preview3DWidget(QOpenGLWidget):
             self.rotation_x, self.rotation_z = presets[preset]
             self.update()
 
+    def _apply_clear_color(self):
+        color = QColor(COLORS.editor_canvas_bg)
+        glClearColor(color.redF(), color.greenF(), color.blueF(), 1.0)
+
+    def apply_theme(self):
+        """Refresh OpenGL background after the global theme changes."""
+        if OPENGL_AVAILABLE and self.context() is not None:
+            self.makeCurrent()
+            self._apply_clear_color()
+            self.doneCurrent()
+        self.update()
+
     # =========================================================================
     # OpenGL 渲染
     # =========================================================================
@@ -647,8 +660,8 @@ class Preview3DWidget(QOpenGLWidget):
         if not OPENGL_AVAILABLE:
             return
 
-        # 设置背景色（深蓝色）
-        glClearColor(0.051, 0.067, 0.090, 1.0)  # #0D1117
+        # 设置背景色
+        self._apply_clear_color()
 
         # 启用深度测试
         glEnable(GL_DEPTH_TEST)
@@ -679,6 +692,7 @@ class Preview3DWidget(QOpenGLWidget):
         if not OPENGL_AVAILABLE:
             return
 
+        self._apply_clear_color()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
         # 设置投影矩阵
@@ -1175,6 +1189,80 @@ class Preview3D(QWidget):
         super().__init__(parent)
         self._init_ui()
 
+    def _loading_overlay_stylesheet(self) -> str:
+        overlay = QColor(COLORS.bg_panel)
+        alpha = 238 if COLORS.theme_name == "light" else 210
+        return f"""
+            QFrame {{
+                background-color: rgba({overlay.red()}, {overlay.green()}, {overlay.blue()}, {alpha});
+                border: 1px solid {COLORS.border_default};
+                border-radius: 12px;
+            }}
+            QLabel {{
+                color: {COLORS.text_secondary};
+                font-size: 13px;
+            }}
+        """
+
+    def _control_bar_stylesheet(self) -> str:
+        return f"""
+            QFrame {{
+                background-color: {COLORS.bg_secondary};
+                border-top: 1px solid {COLORS.border_default};
+            }}
+            QPushButton {{
+                background-color: {COLORS.bg_panel};
+                color: {COLORS.text_secondary};
+                border: 1px solid {COLORS.border_default};
+                border-radius: 4px;
+                padding: 6px 12px;
+                min-width: 48px;
+                min-height: 32px;
+                font-size: 13px;
+            }}
+            QPushButton:hover {{
+                background-color: {COLORS.bg_hover};
+                border-color: {COLORS.accent_primary};
+            }}
+            QPushButton:pressed, QPushButton:checked {{
+                background-color: {COLORS.bg_selected};
+                border-color: {COLORS.accent_primary};
+            }}
+            QLabel {{
+                color: {COLORS.text_muted};
+                font-size: 12px;
+            }}
+            QSlider::groove:horizontal {{
+                background: {COLORS.bg_panel};
+                height: 6px;
+                border-radius: 3px;
+            }}
+            QSlider::handle:horizontal {{
+                background: {COLORS.accent_primary};
+                width: 14px;
+                height: 14px;
+                margin: -4px 0;
+                border-radius: 7px;
+            }}
+            QSlider::sub-page:horizontal {{
+                background: {COLORS.accent_primary};
+                border-radius: 3px;
+            }}
+        """
+
+    def apply_theme(self):
+        """Refresh preview styles after the global theme changes."""
+        self._loading_overlay.setStyleSheet(self._loading_overlay_stylesheet())
+        self.control_bar.setStyleSheet(self._control_bar_stylesheet())
+        self.coord_label.setStyleSheet(f"color: {COLORS.text_secondary}; font-family: Consolas;")
+        self.speed_label.setStyleSheet(f"color: {COLORS.text_muted}; font-family: Consolas;")
+        self.layer_current_label.setStyleSheet(
+            f"color: {COLORS.accent_primary}; font-size: 16px; font-weight: bold;"
+        )
+        self.layer_total_label.setStyleSheet(f"color: {COLORS.text_muted}; font-size: 10px;")
+        self.gl_widget.apply_theme()
+        self.update()
+
     def _init_ui(self):
         """初始化UI"""
         layout = QVBoxLayout(self)
@@ -1190,17 +1278,7 @@ class Preview3D(QWidget):
         layout.addWidget(self.gl_widget, 1)
 
         self._loading_overlay = QFrame(self)
-        self._loading_overlay.setStyleSheet("""
-            QFrame {
-                background-color: rgba(13, 17, 23, 210);
-                border: 1px solid #30363D;
-                border-radius: 12px;
-            }
-            QLabel {
-                color: #C9D1D9;
-                font-size: 13px;
-            }
-        """)
+        self._loading_overlay.setStyleSheet(self._loading_overlay_stylesheet())
         overlay_layout = QVBoxLayout(self._loading_overlay)
         overlay_layout.setContentsMargins(20, 18, 20, 18)
         overlay_layout.setSpacing(12)
@@ -1213,8 +1291,8 @@ class Preview3D(QWidget):
         self._loading_overlay.raise_()
 
         # 底部控制栏
-        control_bar = self._create_control_bar()
-        layout.addWidget(control_bar)
+        self.control_bar = self._create_control_bar()
+        layout.addWidget(self.control_bar)
 
     def resizeEvent(self, event):
         """Keep the loading overlay centered above the preview area."""
@@ -1340,50 +1418,7 @@ class Preview3D(QWidget):
     def _create_control_bar(self) -> QFrame:
         """创建底部控制栏"""
         bar = QFrame()
-        bar.setStyleSheet("""
-            QFrame {
-                background-color: #161B22;
-                border-top: 1px solid #30363D;
-            }
-            QPushButton {
-                background-color: #21262D;
-                color: #C9D1D9;
-                border: 1px solid #30363D;
-                border-radius: 4px;
-                padding: 6px 12px;
-                min-width: 48px;
-                min-height: 32px;
-                font-size: 13px;
-            }
-            QPushButton:hover {
-                background-color: #30363D;
-                border-color: #58A6FF;
-            }
-            QPushButton:pressed, QPushButton:checked {
-                background-color: #0D1117;
-                border-color: #58A6FF;
-            }
-            QLabel {
-                color: #8B949E;
-                font-size: 12px;
-            }
-            QSlider::groove:horizontal {
-                background: #21262D;
-                height: 6px;
-                border-radius: 3px;
-            }
-            QSlider::handle:horizontal {
-                background: #58A6FF;
-                width: 14px;
-                height: 14px;
-                margin: -4px 0;
-                border-radius: 7px;
-            }
-            QSlider::sub-page:horizontal {
-                background: #58A6FF;
-                border-radius: 3px;
-            }
-        """)
+        bar.setStyleSheet(self._control_bar_stylesheet())
 
         layout = QHBoxLayout(bar)
         layout.setContentsMargins(12, 8, 12, 8)
@@ -1418,13 +1453,13 @@ class Preview3D(QWidget):
 
         # 中间：坐标和速度显示
         self.coord_label = QLabel("X: 342.652    Y: 521.196    Z: 26.700")
-        self.coord_label.setStyleSheet("color: #C9D1D9; font-family: Consolas;")
+        self.coord_label.setStyleSheet(f"color: {COLORS.text_secondary}; font-family: Consolas;")
         layout.addWidget(self.coord_label)
 
         layout.addSpacing(20)
 
         self.speed_label = QLabel("Speed:    50")
-        self.speed_label.setStyleSheet("color: #8B949E; font-family: Consolas;")
+        self.speed_label.setStyleSheet(f"color: {COLORS.text_muted}; font-family: Consolas;")
         layout.addWidget(self.speed_label)
 
         layout.addStretch()
@@ -1444,11 +1479,11 @@ class Preview3D(QWidget):
         layer_info_layout.setSpacing(2)
 
         self.layer_current_label = QLabel("Z --")
-        self.layer_current_label.setStyleSheet("color: #58A6FF; font-size: 16px; font-weight: bold;")
+        self.layer_current_label.setStyleSheet(f"color: {COLORS.accent_primary}; font-size: 16px; font-weight: bold;")
         layer_info_layout.addWidget(self.layer_current_label)
 
         self.layer_total_label = QLabel("")
-        self.layer_total_label.setStyleSheet("color: #8B949E; font-size: 10px;")
+        self.layer_total_label.setStyleSheet(f"color: {COLORS.text_muted}; font-size: 10px;")
         layer_info_layout.addWidget(self.layer_total_label)
         self._layer_count_hint = 0
 

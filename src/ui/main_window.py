@@ -30,7 +30,12 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt, Signal, QSize, QPoint, QTimer, QUrl, QProcess
 from PySide6.QtGui import QAction, QDesktopServices, QIcon, QKeySequence, QPixmap, QFont, QColor
 
-from .theme import get_stylesheet, COLORS, LAYOUT
+from .theme import (
+    get_stylesheet,
+    set_active_theme,
+    COLORS,
+    LAYOUT,
+)
 from .canvas_2d import Canvas2D
 from .param_panel import ParamPanel
 
@@ -126,6 +131,8 @@ class MainWindow(QMainWindow):
 
         # 初始化设置管理器
         self.settings_manager = init_settings_manager()
+        self._theme_mode = self.settings_manager.get_theme_mode()
+        set_active_theme(self._theme_mode)
 
         # 初始化项目管理器
         self.project_manager = ProjectManager()
@@ -169,7 +176,8 @@ class MainWindow(QMainWindow):
         self.menuBar().setVisible(False)
 
         # 应用样式
-        self.setStyleSheet(get_stylesheet())
+        self._apply_theme(self._theme_mode, persist=False)
+        self._connect_system_theme_signal()
 
         # 初始没有可直接导出的处理结果
         self._sync_export_stl_state()
@@ -186,6 +194,102 @@ class MainWindow(QMainWindow):
             cache_dir=cache_dir,
         )
 
+    def _connect_system_theme_signal(self):
+        app = QApplication.instance()
+        if app is None:
+            return
+        try:
+            app.styleHints().colorSchemeChanged.connect(self._on_system_theme_changed)
+        except Exception:
+            return
+
+    def _on_system_theme_changed(self, *_args):
+        if self._theme_mode == "system":
+            self._apply_theme("system", persist=False)
+
+    def _title_toolbar_stylesheet(self) -> str:
+        return f"""
+            QToolBar#titleToolbar {{
+                background-color: {COLORS.editor_toolbar_bg};
+                border: none;
+                border-bottom: 1px solid {COLORS.editor_toolbar_border};
+                spacing: 0;
+                padding: 0;
+            }}
+        """
+
+    def _apply_transform_panel_theme(self):
+        self.transform_panel.setStyleSheet(f"""
+            #transformPanel {{
+                background-color: {COLORS.bg_panel};
+                border: 1px solid {COLORS.border_hover};
+                border-radius: 4px;
+                padding: 8px;
+            }}
+            QLabel {{
+                color: {COLORS.text_muted};
+                font-size: 12px;
+            }}
+            QDoubleSpinBox {{
+                background-color: {COLORS.bg_primary};
+                border: 1px solid {COLORS.border_default};
+                border-radius: 3px;
+                color: {COLORS.text_primary};
+                padding: 4px 8px;
+                min-width: 80px;
+            }}
+            QDoubleSpinBox:focus {{
+                border-color: {COLORS.accent_primary};
+            }}
+        """)
+
+    def _apply_editor_container_theme(self):
+        if hasattr(self, "home_scroll"):
+            self.home_scroll.setStyleSheet(f"""
+                QScrollArea#homeScrollArea {{
+                    background-color: {COLORS.editor_canvas_bg};
+                    border: none;
+                }}
+                QScrollArea#homeScrollArea > QWidget > QWidget {{
+                    background-color: {COLORS.editor_canvas_bg};
+                }}
+            """)
+        if hasattr(self, "center_container"):
+            self.center_container.setStyleSheet(f"""
+                QWidget#editorCenterContainer {{
+                    background-color: {COLORS.editor_canvas_bg};
+                    border-left: 1px solid {COLORS.editor_canvas_frame};
+                    border-right: 1px solid {COLORS.editor_canvas_frame};
+                }}
+            """)
+
+    def _apply_theme(self, mode: str, *, persist: bool = True):
+        self._theme_mode = mode if mode in {"system", "dark", "light"} else "system"
+        set_active_theme(self._theme_mode)
+        if persist and self.settings_manager:
+            self.settings_manager.set_theme_mode(self._theme_mode)
+        self.setStyleSheet(get_stylesheet())
+
+        if hasattr(self, "title_toolbar"):
+            self.title_toolbar.setStyleSheet(self._title_toolbar_stylesheet())
+        if hasattr(self, "transform_panel"):
+            self._apply_transform_panel_theme()
+        self._apply_editor_container_theme()
+
+        for widget_name in (
+            "title_bar",
+            "home_page",
+            "param_panel",
+            "project_panel",
+            "canvas_toolbar",
+            "canvas",
+            "preview_3d",
+        ):
+            widget = getattr(self, widget_name, None)
+            if widget is not None and hasattr(widget, "apply_theme"):
+                widget.apply_theme()
+        self.update()
+
     def _init_window(self):
         """初始化窗口属性"""
         self.setWindowTitle(self.tr("MINGDA SignMaker - LED Sign Letter Slicer"))
@@ -200,21 +304,13 @@ class MainWindow(QMainWindow):
         self.title_bar = TitleBar(self)
 
         # 创建标题栏工具栏（用于放置自定义标题栏）
-        title_toolbar = QToolBar(self.tr("Title Bar"))
-        title_toolbar.setObjectName("titleToolbar")
-        title_toolbar.setMovable(False)
-        title_toolbar.setFloatable(False)
-        title_toolbar.setStyleSheet(f"""
-            QToolBar#titleToolbar {{
-                background-color: {COLORS.editor_toolbar_bg};
-                border: none;
-                border-bottom: 1px solid {COLORS.editor_toolbar_border};
-                spacing: 0;
-                padding: 0;
-            }}
-        """)
-        title_toolbar.addWidget(self.title_bar)
-        self.addToolBar(Qt.ToolBarArea.TopToolBarArea, title_toolbar)
+        self.title_toolbar = QToolBar(self.tr("Title Bar"))
+        self.title_toolbar.setObjectName("titleToolbar")
+        self.title_toolbar.setMovable(False)
+        self.title_toolbar.setFloatable(False)
+        self.title_toolbar.setStyleSheet(self._title_toolbar_stylesheet())
+        self.title_toolbar.addWidget(self.title_bar)
+        self.addToolBar(Qt.ToolBarArea.TopToolBarArea, self.title_toolbar)
 
         # 强制工具栏换行，让主工具栏显示在标题栏下方
         self.addToolBarBreak(Qt.ToolBarArea.TopToolBarArea)
@@ -379,29 +475,7 @@ class MainWindow(QMainWindow):
         self.transform_panel = QFrame(self)
         self.transform_panel.setObjectName("transformPanel")
         self.transform_panel.setFrameStyle(QFrame.Shape.StyledPanel | QFrame.Shadow.Raised)
-        self.transform_panel.setStyleSheet("""
-            #transformPanel {
-                background-color: #1C2128;
-                border: 1px solid #444C56;
-                border-radius: 4px;
-                padding: 8px;
-            }
-            QLabel {
-                color: #8B949E;
-                font-size: 12px;
-            }
-            QDoubleSpinBox {
-                background-color: #0D1117;
-                border: 1px solid #30363D;
-                border-radius: 3px;
-                color: #C9D1D9;
-                padding: 4px 8px;
-                min-width: 80px;
-            }
-            QDoubleSpinBox:focus {
-                border-color: #58A6FF;
-            }
-        """)
+        self._apply_transform_panel_theme()
         self.transform_panel.setVisible(False)
 
         # 面板布局
@@ -670,16 +744,9 @@ class MainWindow(QMainWindow):
         self.editor_splitter.addWidget(self.param_panel)
 
         # === 中央视图区域（工具栏 + 2D/3D视图）===
-        center_container = QWidget()
-        center_container.setObjectName("editorCenterContainer")
-        center_container.setStyleSheet(f"""
-            QWidget#editorCenterContainer {{
-                background-color: {COLORS.editor_canvas_bg};
-                border-left: 1px solid {COLORS.editor_canvas_frame};
-                border-right: 1px solid {COLORS.editor_canvas_frame};
-            }}
-        """)
-        center_layout = QVBoxLayout(center_container)
+        self.center_container = QWidget()
+        self.center_container.setObjectName("editorCenterContainer")
+        center_layout = QVBoxLayout(self.center_container)
         center_layout.setContentsMargins(0, 0, 0, 0)
         center_layout.setSpacing(0)
 
@@ -703,7 +770,7 @@ class MainWindow(QMainWindow):
         self.current_view = "2d"
 
         center_layout.addWidget(self.view_stack)
-        self.editor_splitter.addWidget(center_container)
+        self.editor_splitter.addWidget(self.center_container)
 
         # === 右侧图形列表面板 ===
         self.project_panel = ProjectPanel()
@@ -1976,6 +2043,10 @@ class MainWindow(QMainWindow):
             self._on_change_language(lang_code)
             return
 
+        if action.startswith("theme_"):
+            self._apply_theme(action[6:], persist=True)
+            return
+
         if action in actions:
             actions[action]()
         elif action == "settings":
@@ -2587,27 +2658,28 @@ class MainWindow(QMainWindow):
         from PySide6.QtGui import QCursor
 
         menu = QMenu(self)
-        menu.setStyleSheet("""
-            QMenu {
-                background-color: #161B22;
-                border: 1px solid #30363D;
+        menu.setStyleSheet(f"""
+            QMenu {{
+                background-color: {COLORS.bg_panel};
+                border: 1px solid {COLORS.border_default};
                 border-radius: 6px;
                 padding: 4px;
-            }
-            QMenu::item {
+            }}
+            QMenu::item {{
                 background-color: transparent;
-                color: #C9D1D9;
+                color: {COLORS.text_secondary};
                 padding: 8px 16px;
                 border-radius: 4px;
-            }
-            QMenu::item:selected {
-                background-color: #21262D;
-            }
-            QMenu::separator {
+            }}
+            QMenu::item:selected {{
+                background-color: {COLORS.bg_hover};
+                color: {COLORS.text_primary};
+            }}
+            QMenu::separator {{
                 height: 1px;
-                background-color: #30363D;
+                background-color: {COLORS.border_default};
                 margin: 4px 8px;
-            }
+            }}
         """)
 
         menu.addAction(self.tr("Export G-code..."), self._on_export_gcode)

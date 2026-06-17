@@ -727,6 +727,35 @@ class TestSettingsManagerWithQt:
 
         assert sm.get_primary_export_format() == "gcode"
 
+    def test_theme_mode_defaults_to_system(self, qapp, temp_config_dir):
+        """测试 UI 主题默认跟随系统。"""
+        from src.business.settings_manager import SettingsManager
+
+        sm = SettingsManager(temp_config_dir)
+
+        assert sm.get_theme_mode() == "system"
+
+    def test_theme_mode_persists(self, qapp, temp_config_dir):
+        """测试 UI 主题模式会持久化到 QSettings。"""
+        from src.business.settings_manager import SettingsManager
+
+        sm = SettingsManager(temp_config_dir)
+        sm.set_theme_mode("light")
+
+        sm2 = SettingsManager(temp_config_dir)
+
+        assert sm.get_theme_mode() == "light"
+        assert sm2.get_theme_mode() == "light"
+
+    def test_theme_mode_falls_back_to_system_for_invalid_value(self, qapp, temp_config_dir):
+        """测试非法主题模式会回退到 system。"""
+        from src.business.settings_manager import SettingsManager
+
+        sm = SettingsManager(temp_config_dir)
+        sm.set_theme_mode("invalid")
+
+        assert sm.get_theme_mode() == "system"
+
     def test_transform_uniform_scale_defaults_to_true(self, qapp):
         from src.business.settings_manager import SettingsManager
 

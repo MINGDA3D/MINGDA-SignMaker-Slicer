@@ -12,6 +12,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt, Signal, QSize
 from PySide6.QtGui import QIcon, QImage, QPixmap
 
+from .icon_utils import build_theme_icon
 from .theme import COLORS
 
 
@@ -38,12 +39,19 @@ class CanvasToolbar(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.current_tool = None
+        self._icon_buttons: list[tuple[QPushButton, str]] = []
         self._init_ui()
         self._apply_styles()
 
     def _get_icon(self, name: str) -> QIcon:
         """获取图标"""
-        icon = QIcon(f":/icons/icons/{name}")
+        icon = build_theme_icon(
+            f":/icons/icons/{name}",
+            QSize(36, 36),
+            light_color=COLORS.accent_primary,
+            on_light_color=COLORS.text_on_accent,
+            disabled_light_color=COLORS.text_muted,
+        )
         disabled_pixmap = self._build_disabled_icon_pixmap(icon)
         if not disabled_pixmap.isNull():
             icon.addPixmap(disabled_pixmap, QIcon.Mode.Disabled, QIcon.State.Off)
@@ -172,6 +180,7 @@ class CanvasToolbar(QWidget):
         btn.setCursor(Qt.CursorShape.PointingHandCursor)
         btn.setIconSize(QSize(36, 36))
         btn.setIcon(self._get_icon(icon_name))
+        self._icon_buttons.append((btn, icon_name))
         return btn
 
     def _create_separator(self) -> QFrame:
@@ -214,10 +223,10 @@ class CanvasToolbar(QWidget):
                 border-color: transparent;
             }}
             QPushButton#iconButton:pressed {{
-                background-color: #30363D;
+                background-color: {COLORS.bg_hover};
             }}
             QPushButton#iconButton:checked {{
-                background-color: #1F6FEB;
+                background-color: {COLORS.accent_primary};
                 border-color: {COLORS.editor_canvas_toolbar_accent};
             }}
 
@@ -227,6 +236,13 @@ class CanvasToolbar(QWidget):
                 margin: 8px 8px;
             }}
         """)
+
+    def apply_theme(self):
+        """Refresh toolbar styles after the global theme changes."""
+        for button, icon_name in self._icon_buttons:
+            button.setIcon(self._get_icon(icon_name))
+        self._apply_styles()
+        self.update()
 
     def _on_move_clicked(self):
         """移动工具点击"""

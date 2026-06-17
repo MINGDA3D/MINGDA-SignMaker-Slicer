@@ -13,7 +13,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt, Signal, QSize, QCoreApplication
 from PySide6.QtGui import QIcon, QAction, QActionGroup
 
-from .theme import COLORS
+from .theme import COLORS, get_active_theme_mode
 
 
 class TitleBar(QWidget):
@@ -228,35 +228,37 @@ class TitleBar(QWidget):
         """创建分隔符"""
         sep = QFrame()
         sep.setFrameShape(QFrame.Shape.VLine)
-        sep.setStyleSheet(
-            f"background-color: {COLORS.editor_toolbar_border}; margin: 8px 8px;"
-        )
+        sep.setObjectName("separator")
         sep.setFixedWidth(1)
         return sep
 
     def _apply_menu_style(self, menu: QMenu):
-        """Apply the shared dark popup-menu styling."""
-        menu.setStyleSheet("""
-            QMenu {
-                background-color: #161B22;
-                border: 1px solid #30363D;
+        """Apply the shared popup-menu styling."""
+        menu.setStyleSheet(f"""
+            QMenu {{
+                background-color: {COLORS.bg_panel};
+                border: 1px solid {COLORS.border_default};
                 border-radius: 6px;
                 padding: 4px;
-            }
-            QMenu::item {
+            }}
+            QMenu::item {{
                 background-color: transparent;
-                color: #C9D1D9;
+                color: {COLORS.text_secondary};
                 padding: 8px 16px;
                 border-radius: 4px;
-            }
-            QMenu::item:selected {
-                background-color: #21262D;
-            }
-            QMenu::separator {
+            }}
+            QMenu::item:selected {{
+                background-color: {COLORS.bg_hover};
+                color: {COLORS.text_primary};
+            }}
+            QMenu::item:checked {{
+                color: {COLORS.accent_primary};
+            }}
+            QMenu::separator {{
                 height: 1px;
-                background-color: #30363D;
+                background-color: {COLORS.border_default};
                 margin: 4px 8px;
-            }
+            }}
         """)
 
     def _apply_styles(self):
@@ -270,7 +272,7 @@ class TitleBar(QWidget):
             /* 导航按钮 - 普通状态 */
             QPushButton#navButton {{
                 background-color: transparent;
-                color: #8B949E;
+                color: {COLORS.text_muted};
                 border: 1px solid transparent;
                 border-radius: 4px;
                 padding: 5px 16px;
@@ -280,13 +282,13 @@ class TitleBar(QWidget):
             QPushButton#navButton:hover {{
                 background-color: {COLORS.editor_canvas_toolbar_bg};
                 border-color: {COLORS.editor_toolbar_border};
-                color: #C9D1D9;
+                color: {COLORS.text_secondary};
             }}
 
             /* 导航按钮 - 激活状态 */
             QPushButton#navButtonActive {{
-                background-color: #1F6FEB;
-                color: #FFFFFF;
+                background-color: {COLORS.accent_primary};
+                color: {COLORS.text_on_accent};
                 border: 1px solid {COLORS.editor_canvas_toolbar_accent};
                 border-radius: 4px;
                 padding: 5px 16px;
@@ -294,13 +296,13 @@ class TitleBar(QWidget):
                 font-weight: 500;
             }}
             QPushButton#navButtonActive:hover {{
-                background-color: #388BFD;
+                background-color: {COLORS.accent_primary_hover};
             }}
 
             /* 图标按钮 */
             QPushButton#iconButton {{
                 background-color: transparent;
-                color: #8B949E;
+                color: {COLORS.text_muted};
                 border: 1px solid transparent;
                 border-radius: 4px;
                 min-width: 36px;
@@ -312,13 +314,13 @@ class TitleBar(QWidget):
             QPushButton#iconButton:hover {{
                 background-color: {COLORS.editor_canvas_toolbar_bg};
                 border-color: {COLORS.editor_toolbar_border};
-                color: #C9D1D9;
+                color: {COLORS.text_secondary};
             }}
 
             /* 操作按钮 */
             QPushButton#actionButton {{
                 background-color: {COLORS.editor_canvas_toolbar_bg};
-                color: #C9D1D9;
+                color: {COLORS.text_secondary};
                 border: 1px solid {COLORS.editor_toolbar_border};
                 border-radius: 4px;
                 padding: 6px 16px;
@@ -326,8 +328,8 @@ class TitleBar(QWidget):
                 font-weight: 500;
             }}
             QPushButton#actionButton:hover {{
-                background-color: #30363D;
-                border-color: #8B949E;
+                background-color: {COLORS.bg_hover};
+                border-color: {COLORS.border_hover};
             }}
             QPushButton#actionButton:pressed {{
                 background-color: {COLORS.bg_secondary};
@@ -336,8 +338,8 @@ class TitleBar(QWidget):
             /* 主要按钮 */
             QPushButton#primaryButton,
             QToolButton#primaryButton {{
-                background-color: #238636;
-                color: #FFFFFF;
+                background-color: {COLORS.accent_success};
+                color: {COLORS.text_on_success};
                 border: none;
                 border-radius: 4px;
                 min-height: 36px;
@@ -348,11 +350,11 @@ class TitleBar(QWidget):
             }}
             QPushButton#primaryButton:hover,
             QToolButton#primaryButton:hover {{
-                background-color: #2EA043;
+                background-color: {COLORS.accent_success_hover};
             }}
             QPushButton#primaryButton:pressed,
             QToolButton#primaryButton:pressed {{
-                background-color: #196C2E;
+                background-color: {COLORS.accent_success_pressed};
             }}
             QToolButton#primaryButton {{
                 padding-right: 28px;
@@ -370,8 +372,8 @@ class TitleBar(QWidget):
             /* Export split button */
             QPushButton#splitPrimaryMainButton,
             QToolButton#splitPrimaryMenuButton {{
-                background-color: #238636;
-                color: #FFFFFF;
+                background-color: {COLORS.accent_success};
+                color: {COLORS.text_on_success};
                 border: none;
                 min-height: 36px;
                 max-height: 36px;
@@ -392,32 +394,42 @@ class TitleBar(QWidget):
                 border-bottom-right-radius: 0;
                 min-width: 38px;
                 max-width: 38px;
-                border-right: 1px solid #196C2E;
+                border-right: 1px solid {COLORS.accent_success_pressed};
                 padding: 0;
                 font-size: 11px;
                 font-weight: 700;
             }}
             QPushButton#splitPrimaryMainButton:hover,
             QToolButton#splitPrimaryMenuButton:hover {{
-                background-color: #2EA043;
+                background-color: {COLORS.accent_success_hover};
             }}
             QPushButton#splitPrimaryMainButton:pressed,
             QToolButton#splitPrimaryMenuButton:pressed {{
-                background-color: #196C2E;
+                background-color: {COLORS.accent_success_pressed};
             }}
             QPushButton#splitPrimaryMainButton:disabled,
             QToolButton#splitPrimaryMenuButton:disabled {{
-                background-color: #2D333B;
-                color: #6E7681;
+                background-color: {COLORS.bg_hover};
+                color: {COLORS.text_muted};
             }}
             QToolButton#splitPrimaryMenuButton:disabled {{
-                border-right: 1px solid #444C56;
+                border-right: 1px solid {COLORS.border_hover};
             }}
             QToolButton#splitPrimaryMenuButton::menu-indicator {{
                 image: none;
                 width: 0;
             }}
+            QFrame#separator {{
+                background-color: {COLORS.editor_toolbar_border};
+                margin: 8px 8px;
+            }}
         """)
+
+    def apply_theme(self):
+        """Refresh all title-bar styles after the global theme changes."""
+        self._apply_styles()
+        self._apply_menu_style(self._export_menu)
+        self.update()
 
     def _translate_export_text(self, export_format: str) -> str:
         """Return the translated label for the primary export button."""
@@ -525,6 +537,23 @@ class TitleBar(QWidget):
         lang_menu.addAction("日本語", lambda: self.menu_action.emit("lang_ja_JP"))
         lang_menu.addAction("한국어", lambda: self.menu_action.emit("lang_ko_KR"))
         lang_menu.addAction("Türkçe", lambda: self.menu_action.emit("lang_tr_TR"))
+
+        theme_menu = menu.addMenu(self.tr("Theme"))
+        theme_group = QActionGroup(menu)
+        theme_group.setExclusive(True)
+        current_theme = get_active_theme_mode()
+        for mode, label in (
+            ("system", self.tr("System")),
+            ("dark", self.tr("Dark")),
+            ("light", self.tr("Light")),
+        ):
+            action = QAction(label, menu)
+            action.setCheckable(True)
+            action.setChecked(current_theme == mode)
+            action.triggered.connect(lambda checked=False, m=mode: self.menu_action.emit(f"theme_{m}"))
+            theme_group.addAction(action)
+            theme_menu.addAction(action)
+
         menu.addAction(self.tr("Show Configuration Folder"), lambda: self.menu_action.emit("open_user_config_dir"))
         menu.addAction(self.tr("Tutorial"), lambda: self.menu_action.emit("tutorial"))
         menu.addAction(self.tr("Check for Updates"), lambda: self.menu_action.emit("check_updates"))
