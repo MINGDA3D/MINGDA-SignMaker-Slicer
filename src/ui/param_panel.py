@@ -467,6 +467,10 @@ class ParamPanel(QWidget):
             self.wrap_outline_separator.setStyleSheet(f"background-color: {COLORS.border_default};")
         if hasattr(self, "profile_info_label"):
             self._update_profile_info()
+        for editor_name in ("start_gcode_summary", "end_gcode_summary"):
+            editor = getattr(self, editor_name, None)
+            if editor is not None:
+                editor.setStyleSheet(self._script_preview_editor_stylesheet())
         for child in self.findChildren(QWidget):
             if child is not self and hasattr(child, "apply_theme"):
                 child.apply_theme()
@@ -720,7 +724,7 @@ class ParamPanel(QWidget):
         options: list[tuple[int, str, str]],
         checked_ids: set[int],
     ) -> tuple[QWidget, dict[int, QPushButton]]:
-        """Create checkable icon buttons that can be selected independently."""
+        """Create checkable icon buttons while keeping at least one selected."""
         container = QWidget()
         container.setObjectName(object_name)
         container.setStyleSheet(self._mode_button_stylesheet())
@@ -746,7 +750,34 @@ class ParamPanel(QWidget):
             layout.addWidget(button)
             buttons[mode_id] = button
 
+        self._ensure_multi_select_buttons_have_selection(buttons)
+        for button in buttons.values():
+            button.toggled.connect(
+                lambda checked, changed_button=button, button_map=buttons: (
+                    self._ensure_multi_select_buttons_have_selection(
+                        button_map,
+                        restore_button=changed_button if not checked else None,
+                    )
+                )
+            )
+
         return container, buttons
+
+    @staticmethod
+    def _ensure_multi_select_buttons_have_selection(
+        buttons: dict[int, QPushButton],
+        restore_button: QPushButton | None = None,
+    ) -> None:
+        if not buttons or any(button.isChecked() for button in buttons.values()):
+            return
+
+        button = restore_button or next(iter(buttons.values()))
+        signals_blocked = button.signalsBlocked()
+        button.blockSignals(True)
+        try:
+            button.setChecked(True)
+        finally:
+            button.blockSignals(signals_blocked)
 
     def _set_button_group_checked(
         self,
@@ -1702,6 +1733,21 @@ class ParamPanel(QWidget):
         label.setStyleSheet(f"color: {COLORS.text_muted}; font-size: 12px;")
 
     @staticmethod
+    def _script_preview_editor_stylesheet() -> str:
+        return f"""
+            QPlainTextEdit {{
+                background-color: {COLORS.bg_primary};
+                color: {COLORS.text_primary};
+                border: 1px solid {COLORS.border_default};
+                border-bottom: 2px solid {COLORS.accent_primary};
+                border-radius: 4px;
+                padding: 6px;
+                font-family: Consolas, "Courier New", monospace;
+                font-size: 12px;
+            }}
+        """
+
+    @staticmethod
     def _create_script_preview_editor() -> QPlainTextEdit:
         editor = QPlainTextEdit()
         editor.setReadOnly(True)
@@ -1713,20 +1759,7 @@ class ParamPanel(QWidget):
             QSizePolicy.Policy.Expanding,
             QSizePolicy.Policy.MinimumExpanding,
         )
-        editor.setStyleSheet(
-            f"""
-            QPlainTextEdit {{
-                background-color: {COLORS.bg_primary};
-                color: {COLORS.text_primary};
-                border: 1px solid {COLORS.border_default};
-                border-bottom: 2px solid {COLORS.accent_primary};
-                border-radius: 4px;
-                padding: 6px;
-                font-family: Consolas, "Courier New", monospace;
-                font-size: 12px;
-            }}
-            """
-        )
+        editor.setStyleSheet(ParamPanel._script_preview_editor_stylesheet())
         return editor
 
     def _create_color_group(self) -> QGroupBox:
@@ -3742,6 +3775,7 @@ class ParamPanel(QWidget):
         )
 
         # 裙边参数
+        self._ensure_multi_select_buttons_have_selection(self.skirt_side_buttons)
         self._params.skirt.enabled = self.skirt_enabled.isChecked()
         self._params.skirt.height = self.skirt_height.value()
         self._params.skirt.speed = self.skirt_speed.value()
@@ -3824,6 +3858,7 @@ class ParamPanel(QWidget):
         self._params.bottom_face.screw_hole_diameter = self.bottom_face_screw_hole_diameter.value()
 
         # 灯槽参数
+        self._ensure_multi_select_buttons_have_selection(self.light_slot_scope_buttons)
         self._params.light_slot.enabled = self.light_slot_enabled.isChecked()
         self._params.light_slot.width = self.light_slot_width.value()
         self._params.light_slot.depth = self.light_slot_depth.value()
@@ -4105,6 +4140,9 @@ class ParamPanel(QWidget):
         # 恢复信号
         for w in widgets:
             w.blockSignals(False)
+
+        self._ensure_multi_select_buttons_have_selection(self.skirt_side_buttons)
+        self._ensure_multi_select_buttons_have_selection(self.light_slot_scope_buttons)
 
         # 手动更新控件的启用/可见状态
         # 边缘类型：展开对应的参数面板

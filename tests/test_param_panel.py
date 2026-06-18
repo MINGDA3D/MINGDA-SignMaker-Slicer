@@ -25,6 +25,7 @@ from src.core.types import (
     normalize_slice_params,
 )
 from src.ui.param_panel import ParamPanel
+from src.ui.theme import set_active_theme
 from src.ui.widgets import GuardedComboBox, GuardedDoubleSpinBox
 
 
@@ -314,6 +315,23 @@ def test_print_summary_labels_and_color_change_preview_column_can_shrink_in_narr
         panel.color_change_table.horizontalHeader().sectionResizeMode(2)
         == QHeaderView.ResizeMode.Stretch
     )
+
+
+def test_machine_gcode_preview_editors_refresh_when_theme_changes(qapp):
+    set_active_theme("dark")
+    panel = ParamPanel()
+    try:
+        assert "#0D1117" in panel.start_gcode_summary.styleSheet()
+
+        set_active_theme("light")
+        panel.apply_theme()
+
+        assert "#F6F8FB" in panel.start_gcode_summary.styleSheet()
+        assert "#F6F8FB" in panel.end_gcode_summary.styleSheet()
+        assert "#0D1117" not in panel.start_gcode_summary.styleSheet()
+    finally:
+        panel.deleteLater()
+        set_active_theme("system")
 
 
 def test_color_change_preview_cells_are_centered_and_action_buttons_split_to_edges(qapp):
@@ -1297,6 +1315,14 @@ def test_skirt_sides_are_multi_select_icon_buttons(qapp):
     assert params.skirt.outer_enabled is False
     assert params.skirt.inner_enabled is True
 
+    panel.skirt_inner_enabled.click()
+    params = panel.get_params()
+
+    assert panel.skirt_outer_enabled.isChecked() is False
+    assert panel.skirt_inner_enabled.isChecked() is True
+    assert params.skirt.outer_enabled is False
+    assert params.skirt.inner_enabled is True
+
 
 def test_step_speed_stays_enabled_while_any_step_toggle_remains_active(qapp):
     panel = ParamPanel()
@@ -1486,6 +1512,37 @@ def test_light_slot_outer_and_hole_slots_are_multi_select_icon_buttons(qapp):
     assert panel.light_slot_hole_enabled.isChecked() is False
     assert params.light_slot.outer_enabled is True
     assert params.light_slot.hole_enabled is False
+
+    panel.light_slot_outer_enabled.click()
+    params = panel.get_params()
+
+    assert panel.light_slot_outer_enabled.isChecked() is True
+    assert panel.light_slot_hole_enabled.isChecked() is False
+    assert params.light_slot.outer_enabled is True
+    assert params.light_slot.hole_enabled is False
+
+
+def test_set_params_restores_one_option_for_empty_multi_select_buttons(qapp):
+    panel = ParamPanel()
+    params = SliceParams()
+    params.skirt.enabled = True
+    params.skirt.outer_enabled = False
+    params.skirt.inner_enabled = False
+    params.light_slot.enabled = True
+    params.light_slot.outer_enabled = False
+    params.light_slot.hole_enabled = False
+
+    panel.set_params(params)
+    restored = panel.get_params()
+
+    assert panel.skirt_outer_enabled.isChecked() is True
+    assert panel.skirt_inner_enabled.isChecked() is False
+    assert restored.skirt.outer_enabled is True
+    assert restored.skirt.inner_enabled is False
+    assert panel.light_slot_outer_enabled.isChecked() is True
+    assert panel.light_slot_hole_enabled.isChecked() is False
+    assert restored.light_slot.outer_enabled is True
+    assert restored.light_slot.hole_enabled is False
 
 
 def test_bottom_face_screw_hole_diameter_roundtrips_with_bottom_face_params(qapp):
