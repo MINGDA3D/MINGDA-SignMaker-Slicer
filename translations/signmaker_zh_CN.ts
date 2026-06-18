@@ -1268,12 +1268,6 @@ Error code: {code}</source>
         <translation>斜边</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1103"/>
-        <location filename="../src/ui/param_panel.py" line="1112"/>
-        <source>U Shape</source>
-        <translation>U形边</translation>
-    </message>
-    <message>
         <location filename="../src/ui/param_panel.py" line="1104"/>
         <location filename="../src/ui/param_panel.py" line="1113"/>
         <source>Custom</source>
@@ -1313,11 +1307,6 @@ Error code: {code}</source>
         <location filename="../src/ui/param_panel.py" line="1202"/>
         <source>Panel Thickness:</source>
         <translation>面板厚度:</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="1222"/>
-        <source>Arc Height:</source>
-        <translation>圆弧高度:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1245"/>
@@ -1683,16 +1672,6 @@ Input requirements: {requirements}</source>
         <location filename="../src/ui/param_panel.py" line="1199"/>
         <source>Straight top section height reserved for the face panel side of the shell.</source>
         <translation>字壳面板侧预留的直壁顶部段高度。</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="1219"/>
-        <source>Vertical height of the curved U-shaped edge profile.</source>
-        <translation>U 形弧边轮廓的垂直高度。</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="1230"/>
-        <source>Solid bottom thickness under the U-shaped profile.</source>
-        <translation>U 形轮廓下方的实心底部厚度。</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1339"/>
@@ -2330,11 +2309,6 @@ Control points: {points}</source>
         <location filename="../src/ui/param_panel.py" line="1083"/>
         <source>Wall Thickness:</source>
         <translation>壁厚:</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="1233"/>
-        <source>Bottom Solid Thickness:</source>
-        <translation>底部实心厚度:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1342"/>

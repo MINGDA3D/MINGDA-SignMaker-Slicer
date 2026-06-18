@@ -1048,8 +1048,6 @@ class ParamPanel(QWidget):
             (self.height_spin, 1),
             (self.baseplate_spin, 0),
             (self.panel_thickness_spin, 0),
-            (self.u_arc_height_spin, 1),
-            (self.u_bottom_layers_spin, 0),
             (self.panel_step_height, 0),
             (self.baseplate_step_height, 1),
             (self.skirt_height, 1),
@@ -1076,8 +1074,6 @@ class ParamPanel(QWidget):
             "height_spin",
             "baseplate_spin",
             "panel_thickness_spin",
-            "u_arc_height_spin",
-            "u_bottom_layers_spin",
             "bottom_face_thickness",
             "light_slot_depth",
             "light_slot_floor_layers",
@@ -1193,7 +1189,6 @@ class ParamPanel(QWidget):
         self.edge_type_combo.setObjectName("edge_type_combo")
         self.edge_type_combo.addItem(self.tr("Straight"), EdgeType.STRAIGHT)
         self.edge_type_combo.addItem(self.tr("Beveled"), EdgeType.BEVELED)
-        self.edge_type_combo.addItem(self.tr("U Shape"), EdgeType.U_SHAPED)
         self.edge_type_combo.addItem(self.tr("Custom"), EdgeType.CUSTOM)
         self.edge_type_combo.setVisible(False)
         self.edge_type_combo.currentIndexChanged.connect(self._on_edge_type_changed)
@@ -1202,16 +1197,14 @@ class ParamPanel(QWidget):
             [
                 (0, self.tr("Straight"), "wall"),
                 (1, self.tr("Beveled"), "bevel"),
-                (2, self.tr("U Shape"), "u_shape"),
-                (3, self.tr("Custom"), "custom_shape"),
+                (2, self.tr("Custom"), "custom_shape"),
             ],
             0,
         )
         self._wall_mode_edge_types = {
             0: EdgeType.STRAIGHT,
             1: EdgeType.BEVELED,
-            2: EdgeType.U_SHAPED,
-            3: EdgeType.CUSTOM,
+            2: EdgeType.CUSTOM,
         }
         self.wall_mode_group.idClicked.connect(self._on_wall_mode_selected)
         layout.addWidget(self.wall_mode_widget)
@@ -1296,37 +1289,6 @@ class ParamPanel(QWidget):
 
         layout.addWidget(self.bevel_params_widget)
         self.bevel_params_widget.setVisible(False)
-
-        # ===== U形边参数容器 =====
-        self.u_shape_params_widget = QWidget()
-        u_shape_layout = QFormLayout(self.u_shape_params_widget)
-        u_shape_layout.setContentsMargins(0, 8, 0, 0)
-        u_shape_layout.setSpacing(8)
-
-        self.u_arc_height_spin = self._create_double_spinbox()
-        self._configure_z_height_spin(
-            self.u_arc_height_spin,
-            0.1,
-            50.0,
-            6.0,
-            meaning=self.tr("Vertical height of the curved U-shaped edge profile."),
-        )
-        self.u_arc_height_spin.valueChanged.connect(self._on_param_changed)
-        self._add_icon_row(u_shape_layout, "arc_height", self.tr("Arc Height:"), self.u_arc_height_spin)
-
-        self.u_bottom_layers_spin = self._create_double_spinbox()
-        self._configure_z_height_spin(
-            self.u_bottom_layers_spin,
-            0.0,
-            30.0,
-            0.9,
-            meaning=self.tr("Solid bottom thickness under the U-shaped profile."),
-        )
-        self.u_bottom_layers_spin.valueChanged.connect(self._on_param_changed)
-        self._add_icon_row(u_shape_layout, "bottom_solid_thickness", self.tr("Bottom Solid Thickness:"), self.u_bottom_layers_spin)
-
-        layout.addWidget(self.u_shape_params_widget)
-        self.u_shape_params_widget.setVisible(False)
 
         # ===== 异形边参数容器 =====
         self.custom_edge_widget = QWidget()
@@ -1489,32 +1451,19 @@ class ParamPanel(QWidget):
                 self.light_slot_enabled.blockSignals(False)
                 self._on_param_changed()
 
-    def _is_u_shape_edge_selected(self) -> bool:
-        return (
-            hasattr(self, "edge_type_combo")
-            and self.edge_type_combo.currentData() == EdgeType.U_SHAPED
-        )
-
     def _sync_bottom_face_availability(self) -> None:
-        """Apply edge-type restrictions to explicit bottom-face controls."""
+        """Apply bottom-face control availability."""
         if not hasattr(self, "bottom_face_enabled"):
             return
 
-        is_u_shape = self._is_u_shape_edge_selected()
-        if is_u_shape and self.bottom_face_enabled.isChecked():
-            self.bottom_face_enabled.blockSignals(True)
-            self.bottom_face_enabled.setChecked(False)
-            self.bottom_face_enabled.blockSignals(False)
-
-        self.bottom_face_enabled.setEnabled(not is_u_shape)
+        self.bottom_face_enabled.setEnabled(True)
         if hasattr(self, "bottom_mode_buttons"):
-            self.bottom_mode_buttons[self.BOTTOM_MODE_FACE].setEnabled(not is_u_shape)
+            self.bottom_mode_buttons[self.BOTTOM_MODE_FACE].setEnabled(True)
         self._toggle_bottom_face_controls(self.bottom_face_enabled.isChecked())
         self._sync_bottom_mode_from_controls()
 
     def _toggle_bottom_face_controls(self, enabled: bool):
         """切换底面封闭控件的启用状态"""
-        enabled = enabled and not self._is_u_shape_edge_selected()
         self.bottom_face_thickness.setEnabled(enabled)
         self.bottom_face_screw_hole_diameter.setEnabled(enabled)
 
@@ -3446,7 +3395,7 @@ class ParamPanel(QWidget):
         return None
 
     def _bottom_mode_from_controls(self) -> int:
-        if self.bottom_face_enabled.isChecked() and not self._is_u_shape_edge_selected():
+        if self.bottom_face_enabled.isChecked():
             return self.BOTTOM_MODE_FACE
         if self.baseplate_step_enabled.isChecked():
             if self.baseplate_step_v_groove.isChecked():
@@ -3461,7 +3410,7 @@ class ParamPanel(QWidget):
         return self.BOTTOM_MODE_NONE
 
     def _bottom_mode_from_params(self, params: SliceParams) -> int:
-        if params.bottom_face.enabled and params.shell.edge_type != EdgeType.U_SHAPED:
+        if params.bottom_face.enabled:
             return self.BOTTOM_MODE_FACE
         if params.step.baseplate_step_enabled:
             if params.step.baseplate_step_is_v_groove:
@@ -3479,9 +3428,6 @@ class ParamPanel(QWidget):
         self._apply_bottom_mode(mode_id, emit_changed=True)
 
     def _apply_bottom_mode(self, mode_id: int, *, emit_changed: bool) -> None:
-        if mode_id == self.BOTTOM_MODE_FACE and self._is_u_shape_edge_selected():
-            mode_id = self.BOTTOM_MODE_NONE
-
         self._set_checked_silent(self.bottom_face_enabled, mode_id == self.BOTTOM_MODE_FACE)
         self._set_checked_silent(
             self.baseplate_step_enabled,
@@ -3552,7 +3498,6 @@ class ParamPanel(QWidget):
 
         # 显示/隐藏对应的参数组
         self.bevel_params_widget.setVisible(edge_type == EdgeType.BEVELED)
-        self.u_shape_params_widget.setVisible(edge_type == EdgeType.U_SHAPED)
         self.custom_edge_widget.setVisible(edge_type == EdgeType.CUSTOM)
         self._sync_wall_mode_from_controls()
         self._sync_bottom_face_availability()
@@ -3593,8 +3538,6 @@ class ParamPanel(QWidget):
             self.bevel_width_spin,
             self.baseplate_spin,
             self.panel_thickness_spin,
-            self.u_arc_height_spin,
-            self.u_bottom_layers_spin,
             self.dxf_outer_clearance_spin,
             self.dxf_hole_clearance_spin,
             self.dxf_laser_kerf_spin,
@@ -3712,11 +3655,6 @@ class ParamPanel(QWidget):
         self._params.shell.bevel_direction = self._selected_bevel_direction()
         self._params.shell.baseplate_thickness = self.baseplate_spin.value()
         self._params.shell.panel_thickness = self.panel_thickness_spin.value()
-        self._params.shell.u_arc_height = self.u_arc_height_spin.value()
-        self._params.shell.u_bottom_layers = self._height_to_layers(
-            self.u_bottom_layers_spin.value(),
-            minimum=0,
-        )
         self._params.shell.dxf_outer_clearance = self.dxf_outer_clearance_spin.value()
         self._params.shell.dxf_hole_clearance = self.dxf_hole_clearance_spin.value()
         self._params.shell.dxf_laser_kerf = self.dxf_laser_kerf_spin.value()
@@ -3727,9 +3665,6 @@ class ParamPanel(QWidget):
             self._params.shell.edge_profile = self._current_profile
             if self._current_profile:
                 self._params.shell.bevel_width = self._current_profile.original_width
-        elif self._params.shell.edge_type == EdgeType.U_SHAPED:
-            self._params.shell.bevel_width = self._params.shell.u_arc_height
-            self._params.shell.edge_profile = None
         else:
             # 直边或斜边
             self._params.shell.bevel_width = self.bevel_width_spin.value()
@@ -3853,10 +3788,7 @@ class ParamPanel(QWidget):
             )
 
         # 底面封闭参数
-        self._params.bottom_face.enabled = (
-            self.bottom_face_enabled.isChecked()
-            and self._params.shell.edge_type != EdgeType.U_SHAPED
-        )
+        self._params.bottom_face.enabled = self.bottom_face_enabled.isChecked()
         self._params.bottom_face.thickness = self.bottom_face_thickness.value()
         self._params.bottom_face.screw_hole_diameter = self.bottom_face_screw_hole_diameter.value()
 
@@ -3966,7 +3898,6 @@ class ParamPanel(QWidget):
             self.height_spin, self.layer_height_spin, self.width_line_spin,
             self.wall_thickness_spin, self.edge_type_combo, self.bevel_direction_group,
             self.bevel_width_spin, self.baseplate_spin, self.panel_thickness_spin,
-            self.u_arc_height_spin, self.u_bottom_layers_spin,
             self.dxf_outer_clearance_spin, self.dxf_hole_clearance_spin, self.dxf_laser_kerf_spin,
             self.print_speed, self.travel_speed, self.first_layer_speed,
             self.first_layer_nozzle_temp, self.other_layer_nozzle_temp,
@@ -4024,10 +3955,6 @@ class ParamPanel(QWidget):
         self.bevel_width_spin.setValue(params.shell.bevel_width)
         self.baseplate_spin.setValue(params.shell.baseplate_thickness)
         self.panel_thickness_spin.setValue(params.shell.panel_thickness)
-        self.u_arc_height_spin.setValue(params.shell.u_arc_height)
-        self.u_bottom_layers_spin.setValue(
-            params.shell.u_bottom_layers * self._current_layer_height()
-        )
         self.dxf_outer_clearance_spin.setValue(params.shell.dxf_outer_clearance)
         self.dxf_hole_clearance_spin.setValue(params.shell.dxf_hole_clearance)
         self.dxf_laser_kerf_spin.setValue(params.shell.dxf_laser_kerf)
@@ -4152,7 +4079,6 @@ class ParamPanel(QWidget):
         # 边缘类型：展开对应的参数面板
         edge_type = params.shell.edge_type
         self.bevel_params_widget.setVisible(edge_type == EdgeType.BEVELED)
-        self.u_shape_params_widget.setVisible(edge_type == EdgeType.U_SHAPED)
         self.custom_edge_widget.setVisible(edge_type == EdgeType.CUSTOM)
         self._sync_wall_mode_from_controls()
 

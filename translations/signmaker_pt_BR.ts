@@ -1268,12 +1268,6 @@ Código de erro: {code}</translation>
         <translation>Chanfrada</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1103"/>
-        <location filename="../src/ui/param_panel.py" line="1112"/>
-        <source>U Shape</source>
-        <translation>Formato em U</translation>
-    </message>
-    <message>
         <location filename="../src/ui/param_panel.py" line="1104"/>
         <location filename="../src/ui/param_panel.py" line="1113"/>
         <source>Custom</source>
@@ -1313,11 +1307,6 @@ Código de erro: {code}</translation>
         <location filename="../src/ui/param_panel.py" line="1202"/>
         <source>Panel Thickness:</source>
         <translation>Espessura do painel:</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="1222"/>
-        <source>Arc Height:</source>
-        <translation>Altura do arco:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1245"/>
@@ -1683,16 +1672,6 @@ Requisitos de entrada: {requirements}</translation>
         <location filename="../src/ui/param_panel.py" line="1199"/>
         <source>Straight top section height reserved for the face panel side of the shell.</source>
         <translation>Altura da seção superior reta reservada para o lado do painel frontal da concha.</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="1219"/>
-        <source>Vertical height of the curved U-shaped edge profile.</source>
-        <translation>Altura vertical do perfil de borda curvo em U.</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="1230"/>
-        <source>Solid bottom thickness under the U-shaped profile.</source>
-        <translation>Espessura de fundo sólido sob o perfil em U.</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1339"/>
@@ -2330,11 +2309,6 @@ Pontos de controle: {points}</translation>
         <location filename="../src/ui/param_panel.py" line="1083"/>
         <source>Wall Thickness:</source>
         <translation>Espessura da parede:</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="1233"/>
-        <source>Bottom Solid Thickness:</source>
-        <translation>Espessura sólida inferior:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1342"/>

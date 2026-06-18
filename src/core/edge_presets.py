@@ -56,12 +56,12 @@ PRESET_DEFINITIONS: Dict[str, PresetInfo] = {
     # === Zigzag ===
     "zigzag_4": PresetInfo(
         name="zigzag_4",
-        display_name="4-Tooth Zigzag",
-        description="4 sharp zigzag teeth, highly decorative",
-        category=ProfileCategory.ZIGZAG,
-        source_file="resources/profiles/profile_1.dxf",
-        default_width=1.1,
-        preview_image="resources/profiles/profile_1.jpg",
+        display_name="U-Shaped Letter",
+        description="U-shaped letter outline template",
+        category=ProfileCategory.MIXED,
+        source_file="resources/profiles/u_letter_outline.dxf",
+        default_width=6.0,
+        preview_image="",
     ),
     "zigzag_3": PresetInfo(
         name="zigzag_3",

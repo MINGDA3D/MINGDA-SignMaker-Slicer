@@ -1268,12 +1268,6 @@ Error code: {code}</source>
         <translation>베벨</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1103"/>
-        <location filename="../src/ui/param_panel.py" line="1112"/>
-        <source>U Shape</source>
-        <translation>U형</translation>
-    </message>
-    <message>
         <location filename="../src/ui/param_panel.py" line="1104"/>
         <location filename="../src/ui/param_panel.py" line="1113"/>
         <source>Custom</source>
@@ -1313,11 +1307,6 @@ Error code: {code}</source>
         <location filename="../src/ui/param_panel.py" line="1202"/>
         <source>Panel Thickness:</source>
         <translation>패널 두께:</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="1222"/>
-        <source>Arc Height:</source>
-        <translation>호 높이:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1245"/>
@@ -1683,16 +1672,6 @@ Input requirements: {requirements}</source>
         <location filename="../src/ui/param_panel.py" line="1199"/>
         <source>Straight top section height reserved for the face panel side of the shell.</source>
         <translation>셸의 전면 패널 쪽을 위해 예약된 직선 상단 구간 높이입니다.</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="1219"/>
-        <source>Vertical height of the curved U-shaped edge profile.</source>
-        <translation>곡선 U자형 엣지 프로파일의 수직 높이입니다.</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="1230"/>
-        <source>Solid bottom thickness under the U-shaped profile.</source>
-        <translation>U자형 프로파일 아래의 솔리드 바닥 두께입니다.</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1339"/>
@@ -2330,11 +2309,6 @@ Control points: {points}</source>
         <location filename="../src/ui/param_panel.py" line="1083"/>
         <source>Wall Thickness:</source>
         <translation>벽 두께:</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="1233"/>
-        <source>Bottom Solid Thickness:</source>
-        <translation>하단 솔리드 두께:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1342"/>

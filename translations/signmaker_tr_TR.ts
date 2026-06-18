@@ -1268,12 +1268,6 @@ Hata kodu: {code}</translation>
         <translation>Egimli</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1103"/>
-        <location filename="../src/ui/param_panel.py" line="1112"/>
-        <source>U Shape</source>
-        <translation>U Sekli</translation>
-    </message>
-    <message>
         <location filename="../src/ui/param_panel.py" line="1104"/>
         <location filename="../src/ui/param_panel.py" line="1113"/>
         <source>Custom</source>
@@ -1313,11 +1307,6 @@ Hata kodu: {code}</translation>
         <location filename="../src/ui/param_panel.py" line="1202"/>
         <source>Panel Thickness:</source>
         <translation>Panel Kalinligi:</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="1222"/>
-        <source>Arc Height:</source>
-        <translation>Yay Yuksekligi:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1245"/>
@@ -1683,16 +1672,6 @@ Girdi gereksinimleri: {requirements}</translation>
         <location filename="../src/ui/param_panel.py" line="1199"/>
         <source>Straight top section height reserved for the face panel side of the shell.</source>
         <translation>Kabuğun ön panel tarafı için ayrılan düz üst bölüm yüksekliği.</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="1219"/>
-        <source>Vertical height of the curved U-shaped edge profile.</source>
-        <translation>Kavisli U şekilli kenar profilinin dikey yüksekliği.</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="1230"/>
-        <source>Solid bottom thickness under the U-shaped profile.</source>
-        <translation>U şekilli profilin altındaki dolu taban kalınlığı.</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1339"/>
@@ -2330,11 +2309,6 @@ Kontrol noktalari: {points}</translation>
         <location filename="../src/ui/param_panel.py" line="1083"/>
         <source>Wall Thickness:</source>
         <translation>Duvar kalınlığı:</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="1233"/>
-        <source>Bottom Solid Thickness:</source>
-        <translation>Katı alt kalınlığı:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1342"/>

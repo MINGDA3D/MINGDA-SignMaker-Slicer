@@ -59,7 +59,6 @@ from src.core.types import (
     parse_bed_exclude_area,
     normalize_slice_params,
     is_bottom_face_effective,
-    resolve_u_shape_profile_start_z,
 )
 
 
@@ -316,7 +315,6 @@ class Preview3DWidget(QOpenGLWidget):
 
         panel_contours: List[Contour] = []
         baseplate_contours: List[Contour] = []
-        u_flat_height = resolve_u_shape_profile_start_z(params.shell)
         if params.step.panel_step_enabled or params.step.baseplate_step_enabled:
             panel_z = params.step.panel_step_height
             baseplate_z = params.step.baseplate_step_height
@@ -326,7 +324,6 @@ class Preview3DWidget(QOpenGLWidget):
                         contour,
                         panel_z,
                         params.shell,
-                        u_flat_height=u_flat_height,
                     )
                     if panel_contour is not None:
                         panel_contours.append(panel_contour)
@@ -335,7 +332,6 @@ class Preview3DWidget(QOpenGLWidget):
                         contour,
                         baseplate_z,
                         params.shell,
-                        u_flat_height=u_flat_height,
                     )
                     if baseplate_contour is not None:
                         baseplate_contours.append(baseplate_contour)
@@ -433,13 +429,11 @@ class Preview3DWidget(QOpenGLWidget):
     ) -> List[Contour]:
         """Apply edge transforms at a target height to match STL mesh logic."""
         transformed_contours: List[Contour] = []
-        u_flat_height = resolve_u_shape_profile_start_z(params.shell)
         for contour in contours:
             transformed = temp_engine._apply_edge_profile(
                 contour,
                 z,
                 params.shell,
-                u_flat_height=u_flat_height,
             )
             if transformed is not None:
                 transformed_contours.append(transformed)

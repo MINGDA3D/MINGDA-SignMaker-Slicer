@@ -1268,12 +1268,6 @@ Fehlercode: {code}</translation>
         <translation>Abgeschraegt</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1103"/>
-        <location filename="../src/ui/param_panel.py" line="1112"/>
-        <source>U Shape</source>
-        <translation>U-Form</translation>
-    </message>
-    <message>
         <location filename="../src/ui/param_panel.py" line="1104"/>
         <location filename="../src/ui/param_panel.py" line="1113"/>
         <source>Custom</source>
@@ -1313,11 +1307,6 @@ Fehlercode: {code}</translation>
         <location filename="../src/ui/param_panel.py" line="1202"/>
         <source>Panel Thickness:</source>
         <translation>Frontplattendicke:</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="1222"/>
-        <source>Arc Height:</source>
-        <translation>Bogenhoehe:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1245"/>
@@ -1683,16 +1672,6 @@ Eingabeanforderungen: {requirements}</translation>
         <location filename="../src/ui/param_panel.py" line="1199"/>
         <source>Straight top section height reserved for the face panel side of the shell.</source>
         <translation>Hoehe des geraden oberen Abschnitts, der fuer die Frontplatte der Schale reserviert ist.</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="1219"/>
-        <source>Vertical height of the curved U-shaped edge profile.</source>
-        <translation>Vertikale Hoehe des gebogenen U-foermigen Kantenprofils.</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="1230"/>
-        <source>Solid bottom thickness under the U-shaped profile.</source>
-        <translation>Massive Bodendicke unter dem U-foermigen Profil.</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1339"/>
@@ -2330,11 +2309,6 @@ Kontrollpunkte: {points}</translation>
         <location filename="../src/ui/param_panel.py" line="1083"/>
         <source>Wall Thickness:</source>
         <translation>Wanddicke:</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="1233"/>
-        <source>Bottom Solid Thickness:</source>
-        <translation>Massive Bodendicke:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="1342"/>

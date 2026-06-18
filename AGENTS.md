@@ -278,7 +278,7 @@ project.smp (ZIP)
 ### Phase 2: Edge Types
 - [x] Straight edge (直边) - 已实现
 - [x] Beveled edge (斜边) - 已实现
-- [ ] Custom edge profiles (异形边)
+- [x] Custom edge profiles (异形边) - 支持预设模板、DXF 导入和动态缩略图；U 形字轮廓作为 Custom preset 提供，不再作为独立 EdgeType
 
 ### Phase 3: Advanced Features
 - [ ] Color change layers (换色层) - 参数已定义
@@ -355,7 +355,6 @@ project.smp (ZIP)
 
 ### In Progress
 - [ ] 3D preview widget
-- [ ] Custom edge profiles (异形边)
 
 ### Planned
 - [ ] Color change layer logic

@@ -14,8 +14,7 @@ import trimesh
 
 from ..types import (
     Contour, SliceParams, ConnectedParams, Point,
-    EdgeType, BevelDirection, JoinType, calculate_u_shape_offset_at_z,
-    resolve_u_shape_profile_start_z,
+    EdgeType, BevelDirection, JoinType,
 )
 from ..path_offset import PathOffset
 from ..connected_generator import ConnectedGenerator, ConnectionBridge
@@ -123,12 +122,6 @@ class ConnectedMeshBuilder:
         # 计算该高度的偏移量
         if shell.edge_type == EdgeType.CUSTOM:
             offset = self._calculate_custom_edge_offset_at_z(z, shell)
-        elif shell.edge_type == EdgeType.U_SHAPED:
-            offset = calculate_u_shape_offset_at_z(
-                z,
-                shell,
-                resolve_u_shape_profile_start_z(params.shell),
-            )
         else:
             offset = self._calculate_bevel_offset_at_z(z, shell)
 
@@ -138,14 +131,7 @@ class ConnectedMeshBuilder:
         # 应用偏移到所有轮廓
         result = []
         for contour in contours:
-            if shell.edge_type == EdgeType.U_SHAPED:
-                offset_contour = self.path_offset.offset_contour_outer_expand_holes_shrink(
-                    contour,
-                    offset,
-                    JoinType.MITER,
-                )
-            else:
-                offset_contour = self._offset_contour_same_direction(contour, offset)
+            offset_contour = self._offset_contour_same_direction(contour, offset)
             if offset_contour is not None:
                 result.append(offset_contour)
 

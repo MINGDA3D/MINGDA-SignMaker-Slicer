@@ -12,7 +12,6 @@ from src.core.slice_engine import SliceEngine
 from src.core.types import (
     ColorChangePoint,
     Contour,
-    EdgeType,
     ExtruderType,
     Layer,
     LayerPath,
@@ -24,7 +23,6 @@ from src.core.types import (
     ProjectMeta,
     SliceParams,
     SliceResult,
-    U_SHAPE_FINE_LAYER_HEIGHT,
     set_contour_user_start_point_index,
     set_path_user_start_point_index,
 )
@@ -473,35 +471,6 @@ def test_gcode_uses_dedicated_skirt_speed_on_each_skirt_layer():
     assert _first_print_feedrate_for_role(layer1_lines, "SKIRT") == 1980
     assert _first_print_feedrate_for_role(layer0_lines, "WALL") != 1980
     assert _first_print_feedrate_for_role(layer1_lines, "WALL") != 1980
-
-
-def test_gcode_emits_per_path_width_and_height_for_u_shape_fine_layers():
-    contour = _rect_contour(0.0, 0.0, 40.0, 20.0)
-    params = SliceParams()
-    params.shell.edge_type = EdgeType.U_SHAPED
-    params.shell.height = 1.0
-    params.shell.layer_height = 0.3
-    params.shell.line_width = 0.6
-    params.shell.wall_count = 2
-    params.shell.u_bottom_layers = 1
-    profile = PrinterProfile(start_gcode="G28", end_gcode="M400")
-
-    result = SliceEngine().slice([contour], params)
-    lines = GCodeWriter(params.gcode).generate(
-        result,
-        slice_params=params,
-        printer_profile=profile,
-        contours=[contour],
-    )
-
-    fine_height = U_SHAPE_FINE_LAYER_HEIGHT
-    layer0_index = lines.index(f"; Layer 0 at Z={fine_height:.2f}mm")
-    wall_type_index = lines.index(";TYPE:WALL", layer0_index)
-
-    assert lines[wall_type_index + 1] == ";WIDTH:0.600"
-    assert lines[wall_type_index + 2] == f";HEIGHT:{fine_height:.3f}"
-    assert lines[wall_type_index + 3].startswith("; WALL path")
-    assert "; layer_height = 0.3" in _extract_config_block(lines)
 
 
 def test_manual_color_change_macros_follow_selected_order_and_restore_state():

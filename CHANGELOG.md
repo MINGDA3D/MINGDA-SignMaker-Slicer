@@ -4,6 +4,16 @@
 
 ---
 
+## [Unreleased]
+
+### 变更
+- **移除内置 U Shape 边类型** - Wall 边型收敛为 `Straight`、`Beveled`、`Custom` 三类，删除独立 `U_SHAPED` 工艺、专用圆弧参数、自动底面封闭和精细层生成链路。
+- **U 形轮廓改为 Custom 预设** - U 形字轮廓通过 `Custom` 边的 `U-Shaped Letter` DXF preset 提供，仍使用异形边 DXF 加载、缩略图和高度偏移流程。
+- **Bottom Face 语义统一** - 底面封闭重新只由显式 `Bottom Face` 模式控制，不再被内置 U Shape 边自动启用或互斥。
+
+### 文档
+- **教程同步** - 更新教学大纲，删除独立 U Shape 边型章节，将 U 形轮廓说明并入 `Custom` 异形边预设流程。
+
 ## [0.5.0] - 2026-06-16
 
 ### 新功能

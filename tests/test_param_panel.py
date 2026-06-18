@@ -200,8 +200,6 @@ def test_manufacturing_inputs_have_clear_tooltips(qapp):
         panel.wall_thickness_spin,
         panel.baseplate_spin,
         panel.panel_thickness_spin,
-        panel.u_arc_height_spin,
-        panel.u_bottom_layers_spin,
         panel.bottom_face_thickness,
         panel.light_slot_depth,
         panel.light_slot_floor_layers,
@@ -498,19 +496,17 @@ def test_wall_mode_buttons_sync_edge_type_and_parameter_visibility(qapp):
     panel.wall_mode_group.button(1).click()
     assert panel.edge_type_combo.currentData() == EdgeType.BEVELED
     assert panel.bevel_params_widget.isHidden() is False
-    assert panel.u_shape_params_widget.isHidden() is True
     assert panel.custom_edge_widget.isHidden() is True
     assert panel.get_params().shell.edge_type == EdgeType.BEVELED
 
     panel.wall_mode_group.button(2).click()
-    assert panel.edge_type_combo.currentData() == EdgeType.U_SHAPED
+    assert panel.edge_type_combo.currentData() == EdgeType.CUSTOM
     assert panel.bevel_params_widget.isHidden() is True
-    assert panel.u_shape_params_widget.isHidden() is False
+    assert panel.custom_edge_widget.isHidden() is False
 
     panel.wall_mode_group.button(0).click()
     assert panel.edge_type_combo.currentData() == EdgeType.STRAIGHT
     assert panel.bevel_params_widget.isHidden() is True
-    assert panel.u_shape_params_widget.isHidden() is True
     assert panel.custom_edge_widget.isHidden() is True
 
 
@@ -519,7 +515,7 @@ def test_custom_wall_preset_selection_survives_param_restore(qapp):
     preset_names = list(panel.preset_selector._thumbnails.keys())
     target_preset = preset_names[2]
 
-    panel.wall_mode_group.button(3).click()
+    panel.wall_mode_group.button(2).click()
     panel.preset_selector._on_thumbnail_clicked(target_preset)
 
     params = panel.get_params()
@@ -911,9 +907,6 @@ def test_vector_defaults_match_requested_values(qapp):
     assert panel.skirt_height.value() == pytest.approx(0.3)
     assert panel.skirt_offset.value() == pytest.approx(0.12)
     assert panel.top_face_thickness.value() == pytest.approx(2.4)
-    assert panel.u_arc_height_spin.value() == pytest.approx(6.0)
-    assert panel.u_bottom_layers_spin.minimum() == 0
-    assert panel.u_bottom_layers_spin.value() == pytest.approx(0.9)
     assert panel.bottom_face_thickness.value() == pytest.approx(0.9)
     assert panel.bottom_face_screw_hole_diameter.value() == pytest.approx(5.0)
     assert panel.connected_type.currentData() == "triangle"
@@ -937,8 +930,6 @@ def test_vector_defaults_match_requested_values(qapp):
     assert params.connected.enabled is False
     assert params.shell.baseplate_thickness == pytest.approx(9.0)
     assert params.shell.panel_thickness == pytest.approx(9.0)
-    assert params.shell.u_arc_height == pytest.approx(6.0)
-    assert params.shell.u_bottom_layers == 3
     assert params.step.panel_step_height == pytest.approx(47.1)
     assert params.step.baseplate_step_height == pytest.approx(3.0)
     assert params.top_face.thickness == pytest.approx(2.4)
@@ -1080,75 +1071,6 @@ def test_invalid_line_width_is_rejected_for_default_nozzle_and_layer_height(
 
     with pytest.raises(ManufacturingConstraintError, match="0.60-1.20 mm"):
         normalize_slice_params(params)
-
-
-def test_u_shape_edge_roundtrips_arc_height_and_zero_bottom_layers(qapp):
-    panel = ParamPanel()
-    params = SliceParams()
-    params.shell.layer_height = 0.5
-    params.shell.edge_type = EdgeType.U_SHAPED
-    params.shell.u_arc_height = 2.5
-    params.shell.u_bottom_layers = 0
-    params.bottom_face.enabled = False
-    params.bottom_face.thickness = 1.5
-
-    panel.set_params(params)
-    restored = panel.get_params()
-
-    assert panel.u_shape_params_widget.isHidden() is False
-    assert panel.u_arc_height_spin.value() == pytest.approx(2.5)
-    assert panel.u_bottom_layers_spin.value() == pytest.approx(0.0)
-    assert panel.bottom_face_enabled.isChecked() is False
-    assert panel.bottom_face_enabled.isEnabled() is False
-    assert panel.bottom_face_thickness.value() == pytest.approx(1.5)
-    assert panel.bottom_face_thickness.isEnabled() is False
-    assert panel.bottom_face_screw_hole_diameter.isEnabled() is False
-    assert restored.shell.edge_type == EdgeType.U_SHAPED
-    assert restored.shell.u_arc_height == pytest.approx(2.5)
-    assert restored.shell.u_bottom_layers == 0
-    assert restored.bottom_face.enabled is False
-    assert restored.bottom_face.thickness == pytest.approx(1.5)
-
-
-def test_u_shape_edge_selection_disables_explicit_bottom_face(qapp):
-    panel = ParamPanel()
-
-    panel.bottom_face_enabled.setChecked(True)
-    assert panel.bottom_face_thickness.isEnabled() is True
-
-    u_shape_index = panel.edge_type_combo.findData(EdgeType.U_SHAPED)
-    panel.edge_type_combo.setCurrentIndex(u_shape_index)
-
-    assert panel.bottom_face_enabled.isChecked() is False
-    assert panel.bottom_face_enabled.isEnabled() is False
-    assert panel.bottom_face_thickness.isEnabled() is False
-    assert panel.bottom_face_screw_hole_diameter.isEnabled() is False
-
-    params = panel.get_params()
-    assert params.shell.edge_type == EdgeType.U_SHAPED
-    assert params.bottom_face.enabled is False
-
-    straight_index = panel.edge_type_combo.findData(EdgeType.STRAIGHT)
-    panel.edge_type_combo.setCurrentIndex(straight_index)
-
-    assert panel.bottom_face_enabled.isEnabled() is True
-    panel.bottom_face_enabled.setChecked(True)
-    assert panel.bottom_face_thickness.isEnabled() is True
-
-
-def test_set_params_with_u_shape_clears_explicit_bottom_face(qapp):
-    panel = ParamPanel()
-    params = SliceParams()
-    params.shell.edge_type = EdgeType.U_SHAPED
-    params.bottom_face.enabled = True
-
-    panel.set_params(params)
-    restored = panel.get_params()
-
-    assert panel.bottom_face_enabled.isChecked() is False
-    assert panel.bottom_face_enabled.isEnabled() is False
-    assert restored.shell.edge_type == EdgeType.U_SHAPED
-    assert restored.bottom_face.enabled is False
 
 
 def test_set_params_displays_legacy_wall_fields_as_mm_thickness(qapp):
