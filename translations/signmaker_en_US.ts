@@ -2659,6 +2659,26 @@ Control points: {points}</translation>
         <source>Save As...</source>
         <translation>Save As...</translation>
     </message>
+    <message>
+        <location filename="../src/ui/title_bar.py" line="541"/>
+        <source>Theme</source>
+        <translation>Theme</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/title_bar.py" line="546"/>
+        <source>System</source>
+        <translation>System</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/title_bar.py" line="547"/>
+        <source>Dark</source>
+        <translation>Dark</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/title_bar.py" line="548"/>
+        <source>Light</source>
+        <translation>Light</translation>
+    </message>
 </context>
 <context>
     <name>UpdateDialog</name>

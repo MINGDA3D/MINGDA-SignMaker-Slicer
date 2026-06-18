@@ -2659,6 +2659,26 @@ Control points: {points}</source>
         <source>Language</source>
         <translation>语言</translation>
     </message>
+    <message>
+        <location filename="../src/ui/title_bar.py" line="541"/>
+        <source>Theme</source>
+        <translation>主题</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/title_bar.py" line="546"/>
+        <source>System</source>
+        <translation>系统</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/title_bar.py" line="547"/>
+        <source>Dark</source>
+        <translation>深色</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/title_bar.py" line="548"/>
+        <source>Light</source>
+        <translation>浅色</translation>
+    </message>
 </context>
 <context>
     <name>UpdateDialog</name>

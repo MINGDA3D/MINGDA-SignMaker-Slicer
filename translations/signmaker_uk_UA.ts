@@ -2659,6 +2659,26 @@ Control points: {points}</source>
         <source>Process the model and generate layers</source>
         <translation>Обробити модель і створити шари</translation>
     </message>
+    <message>
+        <location filename="../src/ui/title_bar.py" line="541"/>
+        <source>Theme</source>
+        <translation>Тема</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/title_bar.py" line="546"/>
+        <source>System</source>
+        <translation>Системна</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/title_bar.py" line="547"/>
+        <source>Dark</source>
+        <translation>Темна</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/title_bar.py" line="548"/>
+        <source>Light</source>
+        <translation>Світла</translation>
+    </message>
 </context>
 <context>
     <name>UpdateDialog</name>

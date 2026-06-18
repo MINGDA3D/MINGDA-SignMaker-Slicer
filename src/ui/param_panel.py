@@ -62,6 +62,8 @@ from .theme import COLORS
 
 
 PARAM_ICON_SIZE = QSize(32, 32)
+PARAM_CONTENT_MARGIN = 12
+PARAM_CONTENT_RIGHT_MARGIN = 16
 
 
 class _IconTextTabBar(QTabBar):
@@ -502,7 +504,12 @@ class ParamPanel(QWidget):
         content.setStyleSheet(f"background-color: {COLORS.editor_sidebar_left_bg};")
 
         content_layout = QVBoxLayout(content)
-        content_layout.setContentsMargins(12, 12, 12, 12)
+        content_layout.setContentsMargins(
+            PARAM_CONTENT_MARGIN,
+            PARAM_CONTENT_MARGIN,
+            PARAM_CONTENT_RIGHT_MARGIN,
+            PARAM_CONTENT_MARGIN,
+        )
         content_layout.setSpacing(12)
 
         for group in groups:
@@ -535,8 +542,14 @@ class ParamPanel(QWidget):
         content.setStyleSheet(f"background-color: {COLORS.editor_sidebar_left_bg};")
 
         content_layout = QVBoxLayout(content)
-        content_layout.setContentsMargins(12, 12, 12, 12)
+        content_layout.setContentsMargins(
+            0,
+            PARAM_CONTENT_MARGIN,
+            0,
+            PARAM_CONTENT_MARGIN,
+        )
         content_layout.setSpacing(12)
+
         content_layout.addWidget(self.shell_group)
 
         self.shape_feature_tabs = QTabWidget()
@@ -545,6 +558,13 @@ class ParamPanel(QWidget):
         self.shape_feature_tabs.setUsesScrollButtons(False)
         self.shape_feature_tabs.tabBar().setExpanding(True)
         self.shape_feature_tabs.tabBar().setDrawBase(False)
+        # Hidden feature pages can have wider form hints; keep the scroll page
+        # sized to the viewport because horizontal scrolling is disabled.
+        self.shape_feature_tabs.setSizePolicy(
+            QSizePolicy.Policy.Ignored,
+            QSizePolicy.Policy.Preferred,
+        )
+        self.shape_feature_tabs.setMinimumWidth(0)
         self.shape_feature_tabs.setStyleSheet(self._feature_tabs_stylesheet())
 
         self._shape_feature_sections = [

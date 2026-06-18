@@ -2659,6 +2659,26 @@ Control points: {points}</source>
         <source>Process the model and generate layers</source>
         <translation>モデルを処理してレイヤーを生成</translation>
     </message>
+    <message>
+        <location filename="../src/ui/title_bar.py" line="541"/>
+        <source>Theme</source>
+        <translation>テーマ</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/title_bar.py" line="546"/>
+        <source>System</source>
+        <translation>システム</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/title_bar.py" line="547"/>
+        <source>Dark</source>
+        <translation>ダーク</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/title_bar.py" line="548"/>
+        <source>Light</source>
+        <translation>ライト</translation>
+    </message>
 </context>
 <context>
     <name>UpdateDialog</name>

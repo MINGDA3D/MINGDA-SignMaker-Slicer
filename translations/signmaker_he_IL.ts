@@ -2659,6 +2659,26 @@ Control points: {points}</source>
         <source>Process the model and generate layers</source>
         <translation>עבד את המודל וצור שכבות</translation>
     </message>
+    <message>
+        <location filename="../src/ui/title_bar.py" line="541"/>
+        <source>Theme</source>
+        <translation>ערכת נושא</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/title_bar.py" line="546"/>
+        <source>System</source>
+        <translation>מערכת</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/title_bar.py" line="547"/>
+        <source>Dark</source>
+        <translation>כהה</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/title_bar.py" line="548"/>
+        <source>Light</source>
+        <translation>בהיר</translation>
+    </message>
 </context>
 <context>
     <name>UpdateDialog</name>

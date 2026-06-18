@@ -2659,6 +2659,26 @@ Points de contrôle : {points}</translation>
         <source>Process the model and generate layers</source>
         <translation>Traiter le modèle et générer les couches</translation>
     </message>
+    <message>
+        <location filename="../src/ui/title_bar.py" line="541"/>
+        <source>Theme</source>
+        <translation>Thème</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/title_bar.py" line="546"/>
+        <source>System</source>
+        <translation>Système</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/title_bar.py" line="547"/>
+        <source>Dark</source>
+        <translation>Sombre</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/title_bar.py" line="548"/>
+        <source>Light</source>
+        <translation>Clair</translation>
+    </message>
 </context>
 <context>
     <name>UpdateDialog</name>

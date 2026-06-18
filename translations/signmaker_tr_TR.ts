@@ -2659,6 +2659,26 @@ Kontrol noktalari: {points}</translation>
         <source>Process the model and generate layers</source>
         <translation>Modeli işle ve katmanları oluştur</translation>
     </message>
+    <message>
+        <location filename="../src/ui/title_bar.py" line="541"/>
+        <source>Theme</source>
+        <translation>Tema</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/title_bar.py" line="546"/>
+        <source>System</source>
+        <translation>Sistem</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/title_bar.py" line="547"/>
+        <source>Dark</source>
+        <translation>Koyu</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/title_bar.py" line="548"/>
+        <source>Light</source>
+        <translation>Açık</translation>
+    </message>
 </context>
 <context>
     <name>UpdateDialog</name>
