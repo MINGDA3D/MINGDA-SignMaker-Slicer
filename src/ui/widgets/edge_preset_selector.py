@@ -69,8 +69,8 @@ class PresetThumbnail(QFrame):
         painter = QPainter(pixmap)
         painter.setRenderHint(QPainter.Antialiasing)
 
-        # 设置画笔 - 红色轮廓
-        pen = QPen(QColor(COLORS.accent_error), 2)
+        # 设置画笔 - 蓝色轮廓
+        pen = QPen(QColor(COLORS.accent_primary), 2)
         pen.setCapStyle(Qt.RoundCap)
         pen.setJoinStyle(Qt.RoundJoin)
         painter.setPen(pen)

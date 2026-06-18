@@ -50,7 +50,7 @@ from src.business.printer_profile_manager import (
     clone_printer_profile,
     printer_profile_from_params,
 )
-from src.core.edge_presets import EdgePresetManager, ProfileCategory
+from src.core.edge_presets import EdgePresetManager, PRESET_DEFINITIONS, ProfileCategory
 from src.ui.widgets import (
     EdgePresetSelector,
     GuardedComboBox,
@@ -4219,8 +4219,14 @@ class ParamPanel(QWidget):
         """更新轮廓信息显示"""
         if self._current_profile:
             # 翻译预设名称
+            profile_name = self._current_profile.name
+            preset_name = getattr(self._current_profile, "preset_name", "")
+            if preset_name:
+                preset_info = PRESET_DEFINITIONS.get(preset_name)
+                if preset_info:
+                    profile_name = preset_info.display_name
             translated_name = QCoreApplication.translate(
-                "EdgePresets", self._current_profile.name)
+                "EdgePresets", profile_name)
             info = f"{translated_name}"
             if self._current_profile.control_points:
                 info += self.tr(" ({count} points)").format(count=len(self._current_profile.control_points))

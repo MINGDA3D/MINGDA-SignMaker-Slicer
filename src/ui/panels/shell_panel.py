@@ -18,7 +18,7 @@ from PySide6.QtCore import Signal, QCoreApplication
 
 from src.business.settings_manager import get_settings_manager
 from src.core.types import ShellParams, EdgeType, BevelDirection, EdgeProfile
-from src.core.edge_presets import EdgePresetManager, ProfileCategory
+from src.core.edge_presets import EdgePresetManager, PRESET_DEFINITIONS, ProfileCategory
 from src.ui.widgets.edge_preset_selector import EdgePresetSelector
 
 
@@ -419,6 +419,11 @@ class ShellPanel(QWidget):
         if self._current_profile:
             # Translate profile name if it's a preset
             name = self._current_profile.name
+            preset_name = getattr(self._current_profile, "preset_name", "")
+            if preset_name:
+                preset_info = PRESET_DEFINITIONS.get(preset_name)
+                if preset_info:
+                    name = preset_info.display_name
             translated_name = QCoreApplication.translate("EdgePresets", name)
             info = f"{translated_name}"
             if self._current_profile.control_points:

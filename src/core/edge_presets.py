@@ -161,11 +161,11 @@ PRESET_DEFINITIONS: Dict[str, PresetInfo] = {
     # === Step ===
     "step_small": PresetInfo(
         name="step_small",
-        display_name="Small Step",
-        description="Single small step",
+        display_name="Center V Peak",
+        description="Centered V-shaped peak",
         category=ProfileCategory.STEP,
         source_file="resources/profiles/profile_12.dxf",
-        default_width=0.6,
+        default_width=5.3,
         preview_image="resources/profiles/profile_12.jpg",
     ),
     "step_double": PresetInfo(
