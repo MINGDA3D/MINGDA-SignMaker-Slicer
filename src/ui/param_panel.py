@@ -30,7 +30,7 @@ from resources import rc_resources  # noqa: F401
 
 from src.core.types import (
     SliceParams, EdgeType, ExtruderType, EdgeDirection, BevelDirection,
-    EdgeProfile, PrinterProfile, ColorChangePoint, default_shell_line_width, resolve_shell_line_width,
+    EdgeProfile, EdgeProfileType, PrinterProfile, ColorChangePoint, default_shell_line_width, resolve_shell_line_width,
     height_to_layer_count_up,
     normalize_slice_params,
     resolve_shell_wall_plan,
@@ -3559,7 +3559,10 @@ class ParamPanel(QWidget):
 
         # 如果切换到异形边且没有选择预设，自动加载默认预设
         if edge_type == EdgeType.CUSTOM and self._current_profile is None:
-            preset_name = self.preset_selector.get_selected_preset()
+            preset_name = (
+                self.preset_selector.get_selected_preset()
+                or self.preset_selector.first_preset_name()
+            )
             if preset_name:
                 self._on_preset_changed(preset_name)
 
@@ -3914,6 +3917,7 @@ class ParamPanel(QWidget):
         top_face_thickness = params.top_face.thickness
         top_mode = self._top_mode_from_params(params)
         bottom_mode = self._bottom_mode_from_params(params)
+        incoming_edge_profile = params.shell.edge_profile
 
         top_face_enabled = top_mode == self.TOP_MODE_FACE
         panel_step_enabled = top_mode in (
@@ -4153,12 +4157,28 @@ class ParamPanel(QWidget):
         self._sync_wall_mode_from_controls()
 
         # 异形边：恢复 profile 和预设选中状态
-        if edge_type == EdgeType.CUSTOM and params.shell.edge_profile is not None:
-            self._current_profile = params.shell.edge_profile
-            # 恢复预设缩略图的选中高亮
-            if params.shell.edge_profile.preset_name:
-                self.preset_selector.select_preset(params.shell.edge_profile.preset_name)
+        if edge_type == EdgeType.CUSTOM and incoming_edge_profile is not None:
+            params.shell.edge_profile = incoming_edge_profile
+            self._params.shell.edge_profile = incoming_edge_profile
+            self._current_profile = incoming_edge_profile
+            preset_name = self._preset_name_for_profile(self._current_profile)
+            if preset_name:
+                self._current_profile.preset_name = preset_name
+                self.preset_selector.select_preset(preset_name)
+            else:
+                self.preset_selector.clear_selection()
             self._update_profile_info()
+        elif edge_type == EdgeType.CUSTOM:
+            self._current_profile = None
+            self.preset_selector.clear_selection()
+            preset_name = self.preset_selector.first_preset_name()
+            if preset_name:
+                self.preset_selector.select_preset(preset_name)
+                self._current_profile = self._preset_manager.get_preset_profile(preset_name)
+                self._update_profile_info()
+        else:
+            self._current_profile = None
+            self.preset_selector.clear_selection()
 
         self._toggle_skirt_controls(params.skirt.enabled)
         self._toggle_connected_controls(params.connected.enabled)
@@ -4171,6 +4191,25 @@ class ParamPanel(QWidget):
 
     # ===== 异形边相关方法 =====
 
+    def _preset_name_for_profile(self, profile: EdgeProfile) -> str:
+        """Return the selector preset name represented by an edge profile."""
+        if profile.preset_name and self.preset_selector.has_preset(profile.preset_name):
+            return profile.preset_name
+        if profile.profile_type != EdgeProfileType.PRESET:
+            return ""
+
+        profile_names = {
+            name for name in (profile.preset_name, profile.name)
+            if name
+        }
+        for preset_info in self._preset_manager.get_preset_list():
+            preset_name = preset_info["name"]
+            display_name = preset_info["display_name"]
+            translated_name = QCoreApplication.translate("EdgePresets", display_name)
+            if profile_names.intersection({preset_name, display_name, translated_name}):
+                return preset_name
+        return ""
+
     def _on_preset_changed(self, preset_name: str):
         """预设选择变更"""
         if not preset_name:
@@ -4180,6 +4219,7 @@ class ParamPanel(QWidget):
         profile = self._preset_manager.get_preset_profile(preset_name)
 
         if profile:
+            self.preset_selector.select_preset(preset_name)
             self._current_profile = profile
             self._update_profile_info()
             self._on_param_changed()

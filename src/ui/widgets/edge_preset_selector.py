@@ -237,11 +237,6 @@ class EdgePresetSelector(QWidget):
         scroll.setWidget(content)
         layout.addWidget(scroll)
 
-        # 默认选中第一个
-        if self._thumbnails:
-            first_name = next(iter(self._thumbnails.keys()))
-            self.select_preset(first_name)
-
     def _on_thumbnail_clicked(self, preset_name: str):
         self.select_preset(preset_name)
         self.preset_selected.emit(preset_name)
@@ -251,11 +246,24 @@ class EdgePresetSelector(QWidget):
         # 取消之前的选中
         if self._current_preset and self._current_preset in self._thumbnails:
             self._thumbnails[self._current_preset].set_selected(False)
+        self._current_preset = None
 
         # 选中新的
         if preset_name in self._thumbnails:
             self._thumbnails[preset_name].set_selected(True)
             self._current_preset = preset_name
+
+    def clear_selection(self):
+        """Clear the selected preset thumbnail."""
+        self.select_preset("")
+
+    def has_preset(self, preset_name: str) -> bool:
+        """Return whether a preset exists in the selector."""
+        return preset_name in self._thumbnails
+
+    def first_preset_name(self) -> str:
+        """Return the first available preset name, or an empty string."""
+        return next(iter(self._thumbnails.keys()), "")
 
     def get_selected_preset(self) -> str:
         """获取当前选中的预设名称"""

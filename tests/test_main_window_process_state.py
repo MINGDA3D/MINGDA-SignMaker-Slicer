@@ -7,7 +7,7 @@ import pytest
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
-from src.core.types import Contour, Path, Point
+from src.core.types import Contour, EdgeType, Path, Point
 from src.ui.canvas_2d import Canvas2D
 from src.ui.main_window import MainWindow, TUTORIAL_PLAYLIST_URL
 from src.ui.title_bar import TitleBar
@@ -496,6 +496,93 @@ def test_screw_hole_button_follows_restored_bottom_face_checkbox_state(
 
         assert second_window.canvas_toolbar.btn_screw_hole.isEnabled() is True
         assert second_window._sync_params_from_panel().bottom_face.enabled is True
+    finally:
+        second_window.deleteLater()
+
+
+def test_custom_wall_preset_persists_across_restart(
+    qapp, monkeypatch, workspace_tmp_dir
+):
+    from src.business.settings_manager import init_settings_manager as real_init_settings_manager
+
+    settings_dir = workspace_tmp_dir / "config"
+
+    monkeypatch.setattr(
+        "src.ui.main_window.init_settings_manager",
+        lambda: real_init_settings_manager(str(settings_dir)),
+    )
+
+    first_window = MainWindow()
+    preset_names = list(first_window.param_panel.preset_selector._thumbnails.keys())
+    target_preset = preset_names[2]
+
+    try:
+        first_window.param_panel.wall_mode_group.button(3).click()
+        first_window.param_panel.preset_selector._on_thumbnail_clicked(target_preset)
+        qapp.processEvents()
+
+        params = first_window.param_panel.get_params()
+        assert params.shell.edge_type == EdgeType.CUSTOM
+        assert params.shell.edge_profile is not None
+        assert params.shell.edge_profile.preset_name == target_preset
+
+        first_window.close()
+        qapp.processEvents()
+    finally:
+        first_window.deleteLater()
+
+    second_window = MainWindow()
+
+    try:
+        restored = second_window.param_panel.get_params()
+
+        assert second_window.param_panel.edge_type_combo.currentData() == EdgeType.CUSTOM
+        assert second_window.param_panel.preset_selector.get_selected_preset() == target_preset
+        assert restored.shell.edge_profile is not None
+        assert restored.shell.edge_profile.preset_name == target_preset
+    finally:
+        second_window.deleteLater()
+
+
+def test_custom_wall_preset_persists_in_smp_project(
+    qapp, monkeypatch, workspace_tmp_dir
+):
+    from src.business.settings_manager import init_settings_manager as real_init_settings_manager
+
+    settings_dir = workspace_tmp_dir / "config"
+    project_path = workspace_tmp_dir / "custom_wall_preset.smp"
+
+    monkeypatch.setattr(
+        "src.ui.main_window.init_settings_manager",
+        lambda: real_init_settings_manager(str(settings_dir)),
+    )
+
+    first_window = MainWindow()
+    preset_names = list(first_window.param_panel.preset_selector._thumbnails.keys())
+    target_preset = preset_names[2]
+
+    try:
+        first_window.contours = [_rect_contour(0, 0, 40, 30, name="sample")]
+        first_window.canvas.set_contours(first_window.contours)
+        first_window.project_panel.update_contours(first_window.contours)
+        first_window.param_panel.wall_mode_group.button(3).click()
+        first_window.param_panel.preset_selector._on_thumbnail_clicked(target_preset)
+        qapp.processEvents()
+
+        assert first_window._save_project(str(project_path)) is True
+    finally:
+        first_window.deleteLater()
+
+    second_window = MainWindow()
+
+    try:
+        assert second_window._load_project(str(project_path)) is True
+        restored = second_window.param_panel.get_params()
+
+        assert second_window.param_panel.edge_type_combo.currentData() == EdgeType.CUSTOM
+        assert second_window.param_panel.preset_selector.get_selected_preset() == target_preset
+        assert restored.shell.edge_profile is not None
+        assert restored.shell.edge_profile.preset_name == target_preset
     finally:
         second_window.deleteLater()
 

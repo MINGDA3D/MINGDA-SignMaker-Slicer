@@ -17,6 +17,7 @@ from src.business.printer_profile_manager import DEFAULT_PRINTER_PROFILE_SPECS
 from src.core.types import (
     ColorChangePoint,
     EdgeDirection,
+    EdgeProfile,
     EdgeType,
     ManufacturingConstraintError,
     PrinterProfile,
@@ -492,6 +493,7 @@ def test_wall_mode_buttons_sync_edge_type_and_parameter_visibility(qapp):
 
     assert panel.edge_type_combo.isHidden() is True
     assert panel.wall_mode_group.checkedId() == 0
+    assert panel.preset_selector.get_selected_preset() == ""
 
     panel.wall_mode_group.button(1).click()
     assert panel.edge_type_combo.currentData() == EdgeType.BEVELED
@@ -510,6 +512,63 @@ def test_wall_mode_buttons_sync_edge_type_and_parameter_visibility(qapp):
     assert panel.bevel_params_widget.isHidden() is True
     assert panel.u_shape_params_widget.isHidden() is True
     assert panel.custom_edge_widget.isHidden() is True
+
+
+def test_custom_wall_preset_selection_survives_param_restore(qapp):
+    panel = ParamPanel()
+    preset_names = list(panel.preset_selector._thumbnails.keys())
+    target_preset = preset_names[2]
+
+    panel.wall_mode_group.button(3).click()
+    panel.preset_selector._on_thumbnail_clicked(target_preset)
+
+    params = panel.get_params()
+    assert params.shell.edge_type == EdgeType.CUSTOM
+    assert params.shell.edge_profile is not None
+    assert params.shell.edge_profile.preset_name == target_preset
+
+    restored_panel = ParamPanel()
+    restored_panel.set_params(params)
+    restored = restored_panel.get_params()
+
+    assert restored_panel.edge_type_combo.currentData() == EdgeType.CUSTOM
+    assert restored_panel.preset_selector.get_selected_preset() == target_preset
+    assert restored.shell.edge_profile is not None
+    assert restored.shell.edge_profile.preset_name == target_preset
+
+
+def test_imported_custom_edge_profile_does_not_show_default_preset_selected(qapp):
+    panel = ParamPanel()
+    params = SliceParams()
+    params.shell.edge_type = EdgeType.CUSTOM
+    params.shell.edge_profile = EdgeProfile.from_control_points(
+        [(0.0, 0.0), (0.4, 0.5), (1.0, 1.0)],
+        name="Imported DXF",
+    )
+
+    panel.set_params(params)
+    restored = panel.get_params()
+
+    assert panel.preset_selector.get_selected_preset() == ""
+    assert restored.shell.edge_profile is not None
+    assert restored.shell.edge_profile.preset_name == ""
+    assert restored.shell.edge_profile.name == "Imported DXF"
+
+
+def test_legacy_preset_profile_without_preset_name_restores_thumbnail(qapp):
+    panel = ParamPanel()
+    target_preset = list(panel.preset_selector._thumbnails.keys())[2]
+    params = SliceParams()
+    params.shell.edge_type = EdgeType.CUSTOM
+    params.shell.edge_profile = EdgeProfile.from_preset(target_preset)
+    params.shell.edge_profile.preset_name = ""
+
+    panel.set_params(params)
+    restored = panel.get_params()
+
+    assert panel.preset_selector.get_selected_preset() == target_preset
+    assert restored.shell.edge_profile is not None
+    assert restored.shell.edge_profile.preset_name == target_preset
 
 
 def test_top_mode_buttons_are_exclusive_and_write_back_to_params(qapp):

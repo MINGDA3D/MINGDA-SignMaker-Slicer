@@ -18,6 +18,7 @@ from src.business.project_format import (
     FORMAT_VERSION, MANIFEST_FILE, PARAMS_FILE, CONTOURS_FILE,
     ProjectFormatError, _serialize_contours, load_project_contours,
 )
+from src.core.edge_presets import EdgePresetManager
 from src.core.types import (
     Contour, Path, Point, PathType, SliceParams,
     Project, ProjectMeta, EdgeType, BevelDirection,
@@ -150,6 +151,31 @@ class TestProjectFormat:
             assert loaded.params.skirt.enabled is True
             assert loaded.params.skirt.width == 6.0
             assert loaded.params.skirt.speed == 26.0
+
+    def test_save_and_load_with_custom_wall_preset_params(self):
+        """Test that .smp params preserve the selected custom wall preset."""
+        preset_name = "zigzag_2"
+        project = Project(meta=ProjectMeta(name="custom-wall-preset"))
+        project.params.shell.edge_type = EdgeType.CUSTOM
+        project.params.shell.edge_profile = EdgePresetManager().get_preset_profile(preset_name)
+
+        with writable_tempdir() as tmpdir:
+            file_path = os.path.join(tmpdir, "custom_wall_preset.smp")
+            save_project(project, file_path)
+
+            with zipfile.ZipFile(file_path, 'r') as zf:
+                params_data = json.loads(zf.read(PARAMS_FILE).decode('utf-8'))
+
+            saved_profile = params_data["shell"]["edge_profile"]
+            assert params_data["shell"]["edge_type"] == "CUSTOM"
+            assert saved_profile["profile_type"] == "PRESET"
+            assert saved_profile["preset_name"] == preset_name
+
+            loaded = load_project(file_path)
+
+            assert loaded.params.shell.edge_type == EdgeType.CUSTOM
+            assert loaded.params.shell.edge_profile is not None
+            assert loaded.params.shell.edge_profile.preset_name == preset_name
 
     def test_file_size_comparison(self):
         """测试文件大小（二进制应该更小）"""
