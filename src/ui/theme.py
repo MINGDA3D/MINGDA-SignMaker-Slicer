@@ -296,6 +296,22 @@ def get_stylesheet(mode: Optional[str] = None) -> str:
     c = get_palette(mode) if mode is not None else COLORS
     f = FONTS
     l = LAYOUT
+    if c.theme_name == "light":
+        option_indicator_bg = "#FFFFFF"
+        option_indicator_border_width = 2
+        option_indicator_border = "#64748B"
+        option_indicator_hover_border = c.accent_primary
+        option_indicator_disabled_bg = "#EEF3F8"
+        option_indicator_disabled_border = "#B8C7D6"
+        option_indicator_disabled_checked = "#94A3B8"
+    else:
+        option_indicator_bg = "transparent"
+        option_indicator_border_width = 2
+        option_indicator_border = c.text_muted
+        option_indicator_hover_border = c.accent_primary
+        option_indicator_disabled_bg = c.bg_secondary
+        option_indicator_disabled_border = c.border_hover
+        option_indicator_disabled_checked = c.text_muted
 
     return f"""
 /* ============================================ */
@@ -715,6 +731,10 @@ QCheckBox {{
     color: {c.text_secondary};
 }}
 
+QCheckBox:disabled {{
+    color: {c.text_muted};
+}}
+
 QCheckBox:hover {{
     color: {c.text_primary};
 }}
@@ -722,13 +742,13 @@ QCheckBox:hover {{
 QCheckBox::indicator {{
     width: 16px;
     height: 16px;
-    border: 1px solid {c.border_default};
+    border: {option_indicator_border_width}px solid {option_indicator_border};
     border-radius: {l.radius_sm}px;
-    background-color: transparent;
+    background-color: {option_indicator_bg};
 }}
 
 QCheckBox::indicator:hover {{
-    border-color: {c.border_hover};
+    border-color: {option_indicator_hover_border};
 }}
 
 QCheckBox::indicator:checked {{
@@ -738,8 +758,14 @@ QCheckBox::indicator:checked {{
 }}
 
 QCheckBox::indicator:disabled {{
-    border-color: {c.bg_panel};
-    background-color: {c.bg_secondary};
+    border-color: {option_indicator_disabled_border};
+    background-color: {option_indicator_disabled_bg};
+}}
+
+QCheckBox::indicator:checked:disabled {{
+    background-color: {option_indicator_disabled_checked};
+    border-color: {option_indicator_disabled_checked};
+    image: url(:/icons/icons/check.svg);
 }}
 
 /* ============================================ */
@@ -762,13 +788,13 @@ QRadioButton:hover {{
 QRadioButton::indicator {{
     width: 16px;
     height: 16px;
-    border: 1px solid {c.border_default};
+    border: {option_indicator_border_width}px solid {option_indicator_border};
     border-radius: 8px;
-    background-color: transparent;
+    background-color: {option_indicator_bg};
 }}
 
 QRadioButton::indicator:hover {{
-    border-color: {c.border_hover};
+    border-color: {option_indicator_hover_border};
 }}
 
 QRadioButton::indicator:checked {{
@@ -777,13 +803,13 @@ QRadioButton::indicator:checked {{
 }}
 
 QRadioButton::indicator:disabled {{
-    border-color: {c.border_default};
-    background-color: {c.bg_secondary};
+    border-color: {option_indicator_disabled_border};
+    background-color: {option_indicator_disabled_bg};
 }}
 
 QRadioButton::indicator:checked:disabled {{
-    background-color: {c.text_muted};
-    border-color: {c.text_muted};
+    background-color: {option_indicator_disabled_checked};
+    border-color: {option_indicator_disabled_checked};
 }}
 
 /* ============================================ */

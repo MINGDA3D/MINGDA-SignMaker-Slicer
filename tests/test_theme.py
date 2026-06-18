@@ -84,6 +84,22 @@ def test_light_stylesheet_uses_light_design_tokens():
     assert "#111827" in stylesheet
 
 
+def test_light_option_indicators_use_visible_borders():
+    stylesheet = get_stylesheet("light")
+
+    assert "border: 2px solid #64748B;" in stylesheet
+    assert "background-color: #EEF3F8;" in stylesheet
+    assert "QCheckBox::indicator:checked:disabled" in stylesheet
+
+
+def test_dark_option_indicators_use_visible_borders():
+    stylesheet = get_stylesheet("dark")
+
+    assert "border: 2px solid #8B949E;" in stylesheet
+    assert "border-color: #58A6FF;" in stylesheet
+    assert "border-color: #484F58;" in stylesheet
+
+
 def test_set_active_theme_updates_shared_colors_in_place():
     original = COLORS
 
