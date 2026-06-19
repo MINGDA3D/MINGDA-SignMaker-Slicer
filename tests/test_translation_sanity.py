@@ -7,6 +7,16 @@ TRANSLATIONS_DIR = Path(__file__).resolve().parent.parent / "translations"
 ZH_CN_REQUIRED = {
     "MainWindow": {
         "Export G-code...",
+        "Export Back Plate DXF...",
+        "Export Acrylic Face DXF...",
+        "Export Back Plate DXF",
+        "Back Plate DXF exported: ",
+        "Back Plate DXF saved to:",
+        "Failed to export back plate DXF:",
+        "Export Acrylic Face DXF",
+        "Acrylic Face DXF exported: ",
+        "Acrylic Face DXF saved to:",
+        "Failed to export acrylic face DXF:",
         "3D preview loading failed",
         "Failed to prepare 3D preview:",
         "Export Blocked",

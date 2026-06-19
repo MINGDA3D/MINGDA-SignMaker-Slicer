@@ -2768,8 +2768,8 @@ class MainWindow(QMainWindow):
         menu.addAction(self.tr("Export G-code..."), self._on_export_gcode)
         menu.addAction(self.tr("Export STL..."), self._on_export_stl)
         menu.addSeparator()
-        menu.addAction(self.tr("Export Baseplate DXF..."), self._on_export_baseplate)
-        menu.addAction(self.tr("Export Panel DXF..."), self._on_export_panel)
+        menu.addAction(self.tr("Export Back Plate DXF..."), self._on_export_baseplate)
+        menu.addAction(self.tr("Export Acrylic Face DXF..."), self._on_export_panel)
 
         menu.exec(QCursor.pos())
 
@@ -2895,14 +2895,14 @@ class MainWindow(QMainWindow):
             )
 
     def _on_export_baseplate(self):
-        """导出底板DXF"""
+        """导出背板DXF"""
         if not self.contours:
             QMessageBox.information(self, self.tr("Info"), self.tr("Please import a DXF file first"))
             return
 
         file_path, _ = QFileDialog.getSaveFileName(
             self,
-            self.tr("Export Baseplate DXF"),
+            self.tr("Export Back Plate DXF"),
             self._get_initial_save_path(),
             self.tr("DXF Files (*.dxf);;All Files (*)")
         )
@@ -2917,10 +2917,10 @@ class MainWindow(QMainWindow):
                     self.contours, file_path, params
                 )
                 if success:
-                    self._update_status(self.tr("Baseplate DXF exported: ") + Path(file_path).name)
+                    self._update_status(self.tr("Back Plate DXF exported: ") + Path(file_path).name)
                     QMessageBox.information(
                         self, self.tr("Export Success"),
-                        self.tr("Baseplate DXF saved to:") + f"\n{file_path}\n\n" +
+                        self.tr("Back Plate DXF saved to:") + f"\n{file_path}\n\n" +
                         self.tr("Outer contour clearance: ") + f"{params.shell.dxf_outer_clearance}mm\n" +
                         self.tr("Inner hole clearance: ") + f"{params.shell.dxf_hole_clearance}mm\n" +
                         self.tr("Laser kerf width: ") + f"{params.shell.dxf_laser_kerf}mm"
@@ -2928,17 +2928,17 @@ class MainWindow(QMainWindow):
                 else:
                     QMessageBox.warning(self, self.tr("Export Failed"), self.tr("Failed to generate baseplate contour"))
             except Exception as e:
-                QMessageBox.critical(self, self.tr("Export Failed"), self.tr("Failed to export baseplate DXF:") + f"\n{e}")
+                QMessageBox.critical(self, self.tr("Export Failed"), self.tr("Failed to export back plate DXF:") + f"\n{e}")
 
     def _on_export_panel(self):
-        """导出面板DXF"""
+        """导出亚克力面板DXF"""
         if not self.contours:
             QMessageBox.information(self, self.tr("Info"), self.tr("Please import a DXF file first"))
             return
 
         file_path, _ = QFileDialog.getSaveFileName(
             self,
-            self.tr("Export Panel DXF"),
+            self.tr("Export Acrylic Face DXF"),
             self._get_initial_save_path(),
             self.tr("DXF Files (*.dxf);;All Files (*)")
         )
@@ -2953,10 +2953,10 @@ class MainWindow(QMainWindow):
                     self.contours, file_path, params
                 )
                 if success:
-                    self._update_status(self.tr("Panel DXF exported: ") + Path(file_path).name)
+                    self._update_status(self.tr("Acrylic Face DXF exported: ") + Path(file_path).name)
                     QMessageBox.information(
                         self, self.tr("Export Success"),
-                        self.tr("Panel DXF saved to:") + f"\n{file_path}\n\n" +
+                        self.tr("Acrylic Face DXF saved to:") + f"\n{file_path}\n\n" +
                         self.tr("Outer contour clearance: ") + f"{params.shell.dxf_outer_clearance}mm\n" +
                         self.tr("Inner hole clearance: ") + f"{params.shell.dxf_hole_clearance}mm\n" +
                         self.tr("Laser kerf width: ") + f"{params.shell.dxf_laser_kerf}mm"
@@ -2964,7 +2964,7 @@ class MainWindow(QMainWindow):
                 else:
                     QMessageBox.warning(self, self.tr("Export Failed"), self.tr("Failed to generate panel contour"))
             except Exception as e:
-                QMessageBox.critical(self, self.tr("Export Failed"), self.tr("Failed to export panel DXF:") + f"\n{e}")
+                QMessageBox.critical(self, self.tr("Export Failed"), self.tr("Failed to export acrylic face DXF:") + f"\n{e}")
 
     def _on_undo(self):
         """撤销"""

@@ -21,8 +21,8 @@
       "save_as": "另存为...",
       "export_gcode": "导出G-code...",
       "export_stl": "导出STL...",
-      "export_baseplate": "导出底板DXF...",
-      "export_panel": "导出面板DXF...",
+      "export_baseplate": "导出背板DXF...",
+      "export_panel": "导出亚克力面板DXF...",
       "exit": "退出"
     },
     "edit": {
