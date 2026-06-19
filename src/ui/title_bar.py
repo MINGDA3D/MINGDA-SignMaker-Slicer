@@ -13,6 +13,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt, Signal, QSize, QCoreApplication
 from PySide6.QtGui import QIcon, QAction, QActionGroup
 
+from src.i18n import SUPPORTED_LANGUAGES, get_translation_manager
 from .theme import COLORS, get_active_theme_mode
 
 
@@ -253,6 +254,12 @@ class TitleBar(QWidget):
                 color: {COLORS.text_primary};
             }}
             QMenu::item:checked {{
+                background-color: {COLORS.bg_selected};
+                color: {COLORS.accent_primary};
+                font-weight: 600;
+            }}
+            QMenu::item:checked:selected {{
+                background-color: {COLORS.bg_selected};
                 color: {COLORS.accent_primary};
             }}
             QMenu::separator {{
@@ -523,22 +530,7 @@ class TitleBar(QWidget):
         menu.addAction(self.tr("Export Panel DXF..."), lambda: self.menu_action.emit("export_panel"))
         menu.addSeparator()
 
-        # 语言子菜单
-        lang_menu = menu.addMenu(self.tr("Language"))
-        lang_menu.addAction("中文", lambda: self.menu_action.emit("lang_zh_CN"))
-        lang_menu.addAction("English", lambda: self.menu_action.emit("lang_en_US"))
-        lang_menu.addAction("Русский", lambda: self.menu_action.emit("lang_ru_RU"))
-        lang_menu.addAction("Українська", lambda: self.menu_action.emit("lang_uk_UA"))
-        lang_menu.addAction("Deutsch", lambda: self.menu_action.emit("lang_de_DE"))
-        lang_menu.addAction("Français", lambda: self.menu_action.emit("lang_fr_FR"))
-        lang_menu.addAction("Español", lambda: self.menu_action.emit("lang_es_ES"))
-        lang_menu.addAction("Português", lambda: self.menu_action.emit("lang_pt_BR"))
-        lang_menu.addAction("Italiano", lambda: self.menu_action.emit("lang_it_IT"))
-        lang_menu.addAction("עברית", lambda: self.menu_action.emit("lang_he_IL"))
-        lang_menu.addAction("العربية", lambda: self.menu_action.emit("lang_ar_SA"))
-        lang_menu.addAction("日本語", lambda: self.menu_action.emit("lang_ja_JP"))
-        lang_menu.addAction("한국어", lambda: self.menu_action.emit("lang_ko_KR"))
-        lang_menu.addAction("Türkçe", lambda: self.menu_action.emit("lang_tr_TR"))
+        self._add_language_menu(menu)
 
         theme_menu = menu.addMenu(self.tr("Theme"))
         theme_group = QActionGroup(menu)
@@ -566,6 +558,35 @@ class TitleBar(QWidget):
         menu.addAction(self.tr("Exit"), lambda: self.menu_action.emit("quit"))
 
         menu.exec(self.btn_menu.mapToGlobal(self.btn_menu.rect().bottomLeft()))
+
+    def _get_selected_language_code(self) -> str:
+        translation_manager = get_translation_manager()
+        if translation_manager is None:
+            return "en_US"
+        return translation_manager.get_language_preference()
+
+    def _add_language_menu(self, menu: QMenu):
+        lang_menu = QMenu(self.tr("Language"), menu)
+        self._apply_menu_style(lang_menu)
+        menu.addMenu(lang_menu)
+
+        lang_group = QActionGroup(lang_menu)
+        lang_group.setExclusive(True)
+        selected_lang = self._get_selected_language_code()
+
+        for lang_code, label in SUPPORTED_LANGUAGES.items():
+            action = QAction(label, lang_menu)
+            action.setCheckable(True)
+            action.setChecked(lang_code == selected_lang)
+            if action.isChecked():
+                font = action.font()
+                font.setBold(True)
+                action.setFont(font)
+            action.triggered.connect(
+                lambda checked=False, code=lang_code: self.menu_action.emit(f"lang_{code}")
+            )
+            lang_group.addAction(action)
+            lang_menu.addAction(action)
 
     def _add_open_recent_menu(self, menu: QMenu):
         recent_menu = menu.addMenu(self.tr("Open Recent"))

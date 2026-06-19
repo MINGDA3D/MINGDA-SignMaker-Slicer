@@ -150,6 +150,13 @@ class TranslationManager(QObject):
         """获取当前语言代码"""
         return self._current_language
 
+    def get_language_preference(self) -> str:
+        """Return the saved language preference, falling back to the active language."""
+        saved_lang = self._settings.value("language", "", type=str)
+        if saved_lang in SUPPORTED_LANGUAGES:
+            return saved_lang
+        return self._current_language
+
     def get_current_language_name(self) -> str:
         """获取当前语言显示名称"""
         return SUPPORTED_LANGUAGES.get(self._current_language, "中文")
