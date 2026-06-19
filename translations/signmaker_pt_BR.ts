@@ -1202,6 +1202,22 @@ Código de erro: {code}</translation>
         <source>Processing complete: height {height:.2f} mm, estimated time {time:.1f} minutes</source>
         <translation>Processamento concluído: altura {height:.2f} mm, tempo estimado {time:.1f} minutos</translation>
     </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1937"/>
+        <source>No Recent Files</source>
+        <translation>Nenhum arquivo recente</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1968"/>
+        <location filename="../src/ui/main_window.py" line="1979"/>
+        <source>Open Recent</source>
+        <translation>Abrir recentes</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1980"/>
+        <source>The selected recent file is no longer available and has been removed from the list.</source>
+        <translation>O arquivo recente selecionado não está mais disponível e foi removido da lista.</translation>
+    </message>
 </context>
 <context>
     <name>ParamPanel</name>
@@ -2646,6 +2662,11 @@ Pontos de controle: {points}</translation>
         <location filename="../src/ui/title_bar.py" line="548"/>
         <source>Light</source>
         <translation>Claro</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/title_bar.py" line="571"/>
+        <source>Open Recent</source>
+        <translation>Abrir recentes</translation>
     </message>
 </context>
 <context>

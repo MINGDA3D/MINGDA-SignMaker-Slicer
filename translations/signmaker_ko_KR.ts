@@ -1202,6 +1202,22 @@ Error code: {code}</source>
         <source>Processing complete: height {height:.2f} mm, estimated time {time:.1f} minutes</source>
         <translation>처리 완료: 높이 {height:.2f} mm, 예상 시간 {time:.1f}분</translation>
     </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1937"/>
+        <source>No Recent Files</source>
+        <translation>최근 파일 없음</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1968"/>
+        <location filename="../src/ui/main_window.py" line="1979"/>
+        <source>Open Recent</source>
+        <translation>최근 파일 열기</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1980"/>
+        <source>The selected recent file is no longer available and has been removed from the list.</source>
+        <translation>선택한 최근 파일을 더 이상 사용할 수 없어 목록에서 제거했습니다.</translation>
+    </message>
 </context>
 <context>
     <name>ParamPanel</name>
@@ -2646,6 +2662,11 @@ Control points: {points}</source>
         <location filename="../src/ui/title_bar.py" line="548"/>
         <source>Light</source>
         <translation>라이트</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/title_bar.py" line="571"/>
+        <source>Open Recent</source>
+        <translation>최근 파일 열기</translation>
     </message>
 </context>
 <context>

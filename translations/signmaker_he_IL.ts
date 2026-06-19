@@ -1202,6 +1202,22 @@ Error code: {code}</source>
         <source>Processing complete: height {height:.2f} mm, estimated time {time:.1f} minutes</source>
         <translation>העיבוד הושלם: גובה {height:.2f} מ״מ, זמן משוער {time:.1f} דקות</translation>
     </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1937"/>
+        <source>No Recent Files</source>
+        <translation>אין קבצים אחרונים</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1968"/>
+        <location filename="../src/ui/main_window.py" line="1979"/>
+        <source>Open Recent</source>
+        <translation>פתיחת אחרונים</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main_window.py" line="1980"/>
+        <source>The selected recent file is no longer available and has been removed from the list.</source>
+        <translation>הקובץ האחרון שנבחר אינו זמין עוד והוסר מהרשימה.</translation>
+    </message>
 </context>
 <context>
     <name>ParamPanel</name>
@@ -2646,6 +2662,11 @@ Control points: {points}</source>
         <location filename="../src/ui/title_bar.py" line="548"/>
         <source>Light</source>
         <translation>בהיר</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/title_bar.py" line="571"/>
+        <source>Open Recent</source>
+        <translation>פתיחת אחרונים</translation>
     </message>
 </context>
 <context>
