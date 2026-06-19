@@ -2768,8 +2768,8 @@ class MainWindow(QMainWindow):
         menu.addAction(self.tr("Export G-code..."), self._on_export_gcode)
         menu.addAction(self.tr("Export STL..."), self._on_export_stl)
         menu.addSeparator()
-        menu.addAction(self.tr("Export Back Plate DXF..."), self._on_export_baseplate)
         menu.addAction(self.tr("Export Acrylic Face DXF..."), self._on_export_panel)
+        menu.addAction(self.tr("Export Back Plate DXF..."), self._on_export_baseplate)
 
         menu.exec(QCursor.pos())
 

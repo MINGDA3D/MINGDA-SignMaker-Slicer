@@ -526,8 +526,8 @@ class TitleBar(QWidget):
         menu.addAction(self.tr("Export G-code..."), lambda: self.menu_action.emit("export_gcode"))
         menu.addAction(self.tr("Export STL..."), lambda: self.menu_action.emit("export_stl"))
         menu.addSeparator()
-        menu.addAction(self.tr("Export Back Plate DXF..."), lambda: self.menu_action.emit("export_baseplate"))
         menu.addAction(self.tr("Export Acrylic Face DXF..."), lambda: self.menu_action.emit("export_panel"))
+        menu.addAction(self.tr("Export Back Plate DXF..."), lambda: self.menu_action.emit("export_baseplate"))
         menu.addSeparator()
 
         self._add_language_menu(menu)
