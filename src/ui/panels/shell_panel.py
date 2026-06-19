@@ -121,7 +121,7 @@ class ShellPanel(QWidget):
             "含义：斜边在 XY 方向收缩或扩展的宽度。\n"
             "输入要求：1-50 mm；不应大于局部笔画宽度。"
         )
-        bevel_layout.addRow("斜边宽度:", self.bevel_width_spin)
+        bevel_layout.addRow("斜边水平宽度:", self.bevel_width_spin)
 
         self.baseplate_spin = QDoubleSpinBox()
         self.baseplate_spin.setRange(0, 50)
@@ -131,7 +131,7 @@ class ShellPanel(QWidget):
             "含义：底板侧直边区域的高度。\n"
             "输入要求：0-50 mm；会按当前层高向上吸附。"
         )
-        bevel_layout.addRow("底板厚度:", self.baseplate_spin)
+        bevel_layout.addRow("底部直壁高度:", self.baseplate_spin)
 
         self.panel_spin = QDoubleSpinBox()
         self.panel_spin.setRange(0, 20)
@@ -141,7 +141,7 @@ class ShellPanel(QWidget):
             "含义：面板侧直边区域的高度。\n"
             "输入要求：0-20 mm；会按当前层高向上吸附。"
         )
-        bevel_layout.addRow("面板厚度:", self.panel_spin)
+        bevel_layout.addRow("顶部直壁高度:", self.panel_spin)
 
         layout.addWidget(self.bevel_group)
         self.bevel_group.setVisible(False)

@@ -12,7 +12,7 @@ os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 from PySide6.QtCore import QPoint, Qt
 from PySide6.QtGui import QContextMenuEvent
 from PySide6.QtTest import QTest
-from PySide6.QtWidgets import QApplication, QMessageBox
+from PySide6.QtWidgets import QApplication, QMessageBox, QMenu
 
 from src.business.project_format import PREVIEW_FILE, save_project
 from src.business.settings_manager import SettingsManager
@@ -58,6 +58,8 @@ def window(qapp, workspace_tmp_dir, monkeypatch):
         yield window
     finally:
         window.close()
+        window.deleteLater()
+        qapp.processEvents()
 
 
 def _create_project_file(
@@ -297,6 +299,21 @@ def test_imported_contours_reset_view_instead_of_fit_view(window, monkeypatch):
     window._set_project_save_point()
 
 
+def test_imported_contours_are_added_to_recent_files(window, workspace_tmp_dir):
+    file_path = workspace_tmp_dir / "imported.svg"
+    file_path.write_text("<svg />", encoding="utf-8")
+
+    try:
+        window._load_contours([_rect_contour(0, 0, 30, 10, "I")], file_path)
+
+        resolved_path = str(file_path.resolve())
+        assert window.settings_manager.get_recent_files()[0] == resolved_path
+        assert window._get_recent_file_menu_entries()[0] == resolved_path
+        assert window.home_page._recent_projects == []
+    finally:
+        window._set_project_save_point()
+
+
 def test_text_generation_resets_view_instead_of_fit_view(window, monkeypatch):
     reset_calls = []
     fit_calls = []
@@ -336,7 +353,101 @@ def test_open_project_moves_recent_project_to_front(window, workspace_tmp_dir):
     assert window.home_page._recent_projects[0]["name"] == "Newer Project.smp"
 
 
-def test_refresh_home_recent_projects_filters_missing_and_non_smp_entries(window, workspace_tmp_dir):
+def test_open_recent_project_uses_project_open_flow(window, workspace_tmp_dir, monkeypatch):
+    project_path = _create_project_file(workspace_tmp_dir, "recent_project.smp", "Recent Project")
+    opened_paths = []
+
+    monkeypatch.setattr(window, "_handle_unsaved_changes_before_open_project", lambda: True)
+    monkeypatch.setattr(
+        window,
+        "_load_project",
+        lambda file_path: opened_paths.append(file_path) or True,
+    )
+
+    window._open_recent_file(str(project_path))
+
+    assert opened_paths == [str(project_path.resolve())]
+    assert window.settings_manager.get_last_open_dir() == str(workspace_tmp_dir.resolve())
+
+
+@pytest.mark.parametrize("suffix", [".dxf", ".svg"])
+def test_open_recent_import_file_uses_import_flow(window, workspace_tmp_dir, monkeypatch, suffix):
+    file_path = workspace_tmp_dir / f"recent_import{suffix}"
+    file_path.write_text("0\nEOF\n", encoding="utf-8")
+    loaded_paths = []
+
+    monkeypatch.setattr(window, "_load_file", lambda file_path: loaded_paths.append(file_path))
+
+    window._open_recent_file(str(file_path))
+
+    assert loaded_paths == [str(file_path.resolve())]
+    assert window.settings_manager.get_last_open_dir() == str(workspace_tmp_dir.resolve())
+
+
+def test_open_recent_missing_file_removes_entry(window, workspace_tmp_dir, monkeypatch):
+    missing_file = workspace_tmp_dir / "missing.svg"
+    valid_project = _create_project_file(workspace_tmp_dir, "valid.smp", "Valid Project")
+    warnings = []
+
+    window.settings_manager.add_recent_file(str(valid_project))
+    window.settings_manager.add_recent_file(str(missing_file))
+
+    monkeypatch.setattr(
+        "src.ui.main_window.QMessageBox.warning",
+        lambda *args: warnings.append(args) or QMessageBox.StandardButton.Ok,
+    )
+
+    window._open_recent_file(str(missing_file))
+
+    assert window.settings_manager.get_recent_files() == [str(valid_project.resolve())]
+    assert warnings
+    assert warnings[0][2] == (
+        "The selected recent file is no longer available and has been removed from the list."
+    )
+
+
+def test_open_recent_menu_shows_recent_files_with_full_path_tooltips(window, workspace_tmp_dir):
+    imported_svg = workspace_tmp_dir / "imported.svg"
+    imported_svg.write_text("<svg />", encoding="utf-8")
+    project_path = _create_project_file(workspace_tmp_dir, "project.smp", "Project")
+
+    window.settings_manager.add_recent_file(str(project_path))
+    window.settings_manager.add_recent_file(str(imported_svg))
+
+    menu = QMenu()
+    window._populate_open_recent_menu(menu)
+
+    actions = menu.actions()
+    imported_path = str(imported_svg.resolve())
+    project_resolved_path = str(project_path.resolve())
+
+    assert [action.text() for action in actions] == [
+        "1. imported.svg",
+        "2. project.smp",
+    ]
+    assert [action.toolTip() for action in actions] == [
+        imported_path,
+        project_resolved_path,
+    ]
+    assert [action.statusTip() for action in actions] == [
+        imported_path,
+        project_resolved_path,
+    ]
+
+
+def test_open_recent_menu_shows_disabled_empty_state(window):
+    window.settings_manager.clear_recent_files()
+
+    menu = QMenu()
+    window._populate_open_recent_menu(menu)
+
+    actions = menu.actions()
+    assert len(actions) == 1
+    assert actions[0].text() == "No Recent Files"
+    assert actions[0].isEnabled() is False
+
+
+def test_refresh_home_recent_projects_only_displays_valid_smp_entries(window, workspace_tmp_dir):
     valid_project = _create_project_file(workspace_tmp_dir, "valid.smp", "Valid Project")
     missing_project = workspace_tmp_dir / "missing.smp"
     imported_dxf = workspace_tmp_dir / "imported.dxf"
@@ -348,7 +459,11 @@ def test_refresh_home_recent_projects_filters_missing_and_non_smp_entries(window
 
     window._refresh_home_recent_projects()
 
-    assert window.settings_manager.get_recent_files() == [str(valid_project.resolve())]
+    assert window.settings_manager.get_recent_files() == [
+        str(valid_project.resolve()),
+        str(missing_project.resolve()),
+        str(imported_dxf.resolve()),
+    ]
     assert [project["path"] for project in window.home_page._recent_projects] == [
         str(valid_project.resolve())
     ]
@@ -458,7 +573,10 @@ def test_recent_project_open_cancel_keeps_project_in_list(window, workspace_tmp_
 def test_home_clear_all_button_clears_recent_projects(window, workspace_tmp_dir, qapp):
     first_project = _create_project_file(workspace_tmp_dir, "first.smp", "First Project")
     second_project = _create_project_file(workspace_tmp_dir, "second.smp", "Second Project")
+    imported_dxf = workspace_tmp_dir / "imported.dxf"
+    imported_dxf.write_text("0\nEOF\n", encoding="utf-8")
 
+    window.settings_manager.add_recent_file(str(imported_dxf))
     window.settings_manager.add_recent_file(str(first_project))
     window.settings_manager.add_recent_file(str(second_project))
     window._refresh_home_recent_projects()
@@ -479,7 +597,7 @@ def test_home_clear_all_button_clears_recent_projects(window, workspace_tmp_dir,
     )
     qapp.processEvents()
 
-    assert window.settings_manager.get_recent_files() == []
+    assert window.settings_manager.get_recent_files() == [str(imported_dxf.resolve())]
     assert window.home_page._recent_projects == []
     assert window.home_page._cards == []
 

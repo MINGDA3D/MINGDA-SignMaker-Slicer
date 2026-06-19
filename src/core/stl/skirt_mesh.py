@@ -23,7 +23,7 @@ from .mesh_utils import MeshUtils
 
 
 class SkirtMeshBuilder:
-    """Build anti-warping skirt meshes."""
+    """Build anti-warp brim meshes."""
 
     def __init__(self, path_offset: PathOffset):
         self.path_offset = path_offset

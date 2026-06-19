@@ -343,10 +343,10 @@ def generate_part1():
     renderer.draw_text(m + 8, renderer.y + 2, "斜边参数", font_small, C["accent_secondary"])
     renderer.y += 18
     params_bevel = [
-        ("斜边宽度", "5", "mm"),
+        ("斜边水平宽度", "5", "mm"),
         ("斜边角度", "75", "°"),
-        ("面板厚度", "3", "mm"),
-        ("底板厚度", "10", "mm"),
+        ("顶部直壁高度", "3", "mm"),
+        ("底部直壁高度", "10", "mm"),
     ]
     for label, value, unit in params_bevel:
         renderer.draw_param_row(label, value, unit)

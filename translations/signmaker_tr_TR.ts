@@ -4,37 +4,37 @@
 <context>
     <name>Canvas2D</name>
     <message>
-        <location filename="../src/ui/canvas_2d.py" line="2246"/>
+        <location filename="../src/ui/canvas_2d.py" line="2265"/>
         <source>Delete</source>
         <translation>Sil</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_2d.py" line="2254"/>
+        <location filename="../src/ui/canvas_2d.py" line="2273"/>
         <source>Mirror</source>
         <translation>Aynala</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_2d.py" line="2255"/>
+        <location filename="../src/ui/canvas_2d.py" line="2274"/>
         <source>Mirror X</source>
         <translation>X Ekseninde Aynala</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_2d.py" line="2257"/>
+        <location filename="../src/ui/canvas_2d.py" line="2276"/>
         <source>Mirror Y</source>
         <translation>Y Ekseninde Aynala</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_2d.py" line="2264"/>
+        <location filename="../src/ui/canvas_2d.py" line="2283"/>
         <source>Select All</source>
         <translation>Tümünü Seç</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_2d.py" line="2272"/>
+        <location filename="../src/ui/canvas_2d.py" line="2291"/>
         <source>Fit View</source>
         <translation>Görünümü Sığdır</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_2d.py" line="2277"/>
+        <location filename="../src/ui/canvas_2d.py" line="2296"/>
         <source>Reset View</source>
         <translation>Görünümü Sıfırla</translation>
     </message>
@@ -42,72 +42,72 @@
 <context>
     <name>CanvasToolbar</name>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="81"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="89"/>
         <source>Move</source>
         <translation>Taşı</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="86"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="94"/>
         <source>Rotate</source>
         <translation>Döndür</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="91"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="99"/>
         <source>Scale</source>
         <translation>Ölçekle</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="99"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="107"/>
         <source>Mirror Horizontal</source>
         <translation>Yatay Aynala</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="103"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="111"/>
         <source>Mirror Vertical</source>
         <translation>Dikey Aynala</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="110"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="118"/>
         <source>Intersection</source>
         <translation>Kesişim</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="114"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="122"/>
         <source>Difference</source>
         <translation>Fark</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="121"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="129"/>
         <source>Group</source>
         <translation>Grupla</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="125"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="133"/>
         <source>Ungroup</source>
         <translation>Grubu Çöz</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="131"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="139"/>
         <source>Explode Asset</source>
         <translation>Varlığı parçala</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="140"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="148"/>
         <source>Text</source>
         <translation>Metin</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="147"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="155"/>
         <source>Start Point</source>
         <translation>Başlangıç noktası</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="152"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="160"/>
         <source>Print Order</source>
         <translation>Yazdırma sırası</translation>
     </message>
     <message>
-        <location filename="../src/ui/canvas_toolbar.py" line="157"/>
+        <location filename="../src/ui/canvas_toolbar.py" line="165"/>
         <source>Screw Hole</source>
         <translation>Vida Deliği</translation>
     </message>
@@ -181,42 +181,42 @@ Hata kodu: {code}</translation>
 <context>
     <name>HomePage</name>
     <message>
-        <location filename="../src/ui/home_page.py" line="548"/>
+        <location filename="../src/ui/home_page.py" line="566"/>
         <source>Professional Illuminated Sign Slicer</source>
         <translation>Profesyonel Işıklı Tabela Dilimleyici</translation>
     </message>
     <message>
-        <location filename="../src/ui/home_page.py" line="559"/>
+        <location filename="../src/ui/home_page.py" line="577"/>
         <source>One-click G-code  ·  Multiple Edge Types  ·  High Precision</source>
         <translation>Tek tıkla G-code  ·  Çoklu Kenar Türleri  ·  Yüksek Hassasiyet</translation>
     </message>
     <message>
-        <location filename="../src/ui/home_page.py" line="588"/>
+        <location filename="../src/ui/home_page.py" line="606"/>
         <source>+ New Project</source>
         <translation>+ Yeni Proje</translation>
     </message>
     <message>
-        <location filename="../src/ui/home_page.py" line="599"/>
+        <location filename="../src/ui/home_page.py" line="617"/>
         <source>Open File</source>
         <translation>Dosya Aç</translation>
     </message>
     <message>
-        <location filename="../src/ui/home_page.py" line="610"/>
+        <location filename="../src/ui/home_page.py" line="628"/>
         <source>Recent Projects</source>
         <translation>Son Projeler</translation>
     </message>
     <message>
-        <location filename="../src/ui/home_page.py" line="625"/>
+        <location filename="../src/ui/home_page.py" line="643"/>
         <source>Clear All</source>
         <translation>Tümünü temizle</translation>
     </message>
     <message>
-        <location filename="../src/ui/home_page.py" line="675"/>
+        <location filename="../src/ui/home_page.py" line="693"/>
         <source>No recent projects yet</source>
         <translation>Henüz son proje yok</translation>
     </message>
     <message>
-        <location filename="../src/ui/home_page.py" line="685"/>
+        <location filename="../src/ui/home_page.py" line="703"/>
         <source>Open or save a SignMaker project to see it here.</source>
         <translation>Burada görmek için bir SignMaker projesi açın veya kaydedin.</translation>
     </message>
@@ -224,981 +224,981 @@ Hata kodu: {code}</translation>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../src/ui/main_window.py" line="191"/>
+        <location filename="../src/ui/main_window.py" line="295"/>
         <source>MINGDA SignMaker - LED Sign Letter Slicer</source>
         <translation>MINGDA SignMaker - LED Isikli Harf Dilimleyici</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="203"/>
+        <location filename="../src/ui/main_window.py" line="307"/>
         <source>Title Bar</source>
         <translation>Baslik Cubugu</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="241"/>
+        <location filename="../src/ui/main_window.py" line="337"/>
         <source>File(&amp;F)</source>
         <translation>Dosya(&amp;F)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="244"/>
-        <location filename="../src/ui/main_window.py" line="968"/>
-        <location filename="../src/ui/main_window.py" line="2005"/>
+        <location filename="../src/ui/main_window.py" line="340"/>
+        <location filename="../src/ui/main_window.py" line="1035"/>
+        <location filename="../src/ui/main_window.py" line="2076"/>
         <source>New Project</source>
         <translation>Yeni Proje</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="250"/>
+        <location filename="../src/ui/main_window.py" line="346"/>
         <source>Open DXF/SVG...</source>
         <translation>DXF/SVG Ac...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="258"/>
-        <location filename="../src/ui/main_window.py" line="2514"/>
+        <location filename="../src/ui/main_window.py" line="354"/>
+        <location filename="../src/ui/main_window.py" line="2585"/>
         <source>Save Project</source>
         <translation>Projeyi Kaydet</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="264"/>
+        <location filename="../src/ui/main_window.py" line="360"/>
         <source>Save As...</source>
         <translation>Farkli Kaydet...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="277"/>
-        <location filename="../src/ui/main_window.py" line="2614"/>
+        <location filename="../src/ui/main_window.py" line="373"/>
+        <location filename="../src/ui/main_window.py" line="2686"/>
         <source>Export STL...</source>
         <translation>STL Disa Aktar...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="285"/>
-        <location filename="../src/ui/main_window.py" line="961"/>
+        <location filename="../src/ui/main_window.py" line="381"/>
+        <location filename="../src/ui/main_window.py" line="1028"/>
         <source>Exit</source>
         <translation>Cikis</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="962"/>
+        <location filename="../src/ui/main_window.py" line="1029"/>
         <source>The current project has unsaved changes. Do you want to save before exiting?</source>
         <translation>Geçerli projede kaydedilmemiş değişiklikler var. Çıkmadan önce kaydetmek istiyor musunuz?</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="969"/>
+        <location filename="../src/ui/main_window.py" line="1036"/>
         <source>The current project has unsaved changes. Do you want to save before creating a new project?</source>
         <translation>Geçerli projede kaydedilmemiş değişiklikler var. Yeni bir proje oluşturmadan önce kaydetmek istiyor musunuz?</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="976"/>
+        <location filename="../src/ui/main_window.py" line="1043"/>
         <source>The current project has unsaved changes. Do you want to save before opening another project?</source>
         <translation>Geçerli projede kaydedilmemiş değişiklikler var. Başka bir projeyi açmadan önce kaydetmek istiyor musunuz?</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="936"/>
+        <location filename="../src/ui/main_window.py" line="1003"/>
         <source>Save</source>
         <translation>Kaydet</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="940"/>
+        <location filename="../src/ui/main_window.py" line="1007"/>
         <source>Discard</source>
         <translation>Vazgeç</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="944"/>
+        <location filename="../src/ui/main_window.py" line="1011"/>
         <source>Cancel</source>
         <translation>İptal</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="291"/>
+        <location filename="../src/ui/main_window.py" line="387"/>
         <source>Edit(&amp;E)</source>
         <translation>Duzenle(&amp;E)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="271"/>
-        <location filename="../src/ui/main_window.py" line="2613"/>
+        <location filename="../src/ui/main_window.py" line="367"/>
+        <location filename="../src/ui/main_window.py" line="2685"/>
         <source>Export G-code...</source>
         <translation>G-code&apos;u dışa aktar...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="293"/>
+        <location filename="../src/ui/main_window.py" line="389"/>
         <source>Undo</source>
         <translation>Geri Al</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="298"/>
+        <location filename="../src/ui/main_window.py" line="394"/>
         <source>Redo</source>
         <translation>Yinele</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="305"/>
+        <location filename="../src/ui/main_window.py" line="401"/>
         <source>Select All</source>
         <translation>Tümünü Seç</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="310"/>
+        <location filename="../src/ui/main_window.py" line="406"/>
         <source>Delete</source>
         <translation>Sil</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="316"/>
+        <location filename="../src/ui/main_window.py" line="412"/>
         <source>View(&amp;V)</source>
         <translation>Gorunum(&amp;V)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="318"/>
+        <location filename="../src/ui/main_window.py" line="414"/>
         <source>2D View</source>
         <translation>2D Gorunum</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="323"/>
+        <location filename="../src/ui/main_window.py" line="419"/>
         <source>3D View</source>
         <translation>3D Gorunum</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="330"/>
+        <location filename="../src/ui/main_window.py" line="426"/>
         <source>Fit to Window</source>
         <translation>Pencereye Sigdir</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="335"/>
+        <location filename="../src/ui/main_window.py" line="431"/>
         <source>Zoom In</source>
         <translation>Yakinlastir</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="339"/>
+        <location filename="../src/ui/main_window.py" line="435"/>
         <source>Zoom Out</source>
         <translation>Uzaklastir</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="351"/>
+        <location filename="../src/ui/main_window.py" line="447"/>
         <source>Preview G-code</source>
         <translation>G-code Onizleme</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="356"/>
+        <location filename="../src/ui/main_window.py" line="452"/>
         <source>Help(&amp;H)</source>
         <translation>Yardim(&amp;H)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="358"/>
+        <location filename="../src/ui/main_window.py" line="454"/>
         <source>Check for Updates</source>
         <translation>Güncellemeleri Denetle</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="364"/>
+        <location filename="../src/ui/main_window.py" line="460"/>
         <source>About</source>
         <translation>Hakkinda</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="489"/>
-        <location filename="../src/ui/main_window.py" line="3272"/>
-        <location filename="../src/ui/main_window.py" line="3408"/>
-        <location filename="../src/ui/main_window.py" line="3439"/>
-        <location filename="../src/ui/main_window.py" line="3476"/>
-        <location filename="../src/ui/main_window.py" line="3501"/>
+        <location filename="../src/ui/main_window.py" line="563"/>
+        <location filename="../src/ui/main_window.py" line="3344"/>
+        <location filename="../src/ui/main_window.py" line="3480"/>
+        <location filename="../src/ui/main_window.py" line="3511"/>
+        <location filename="../src/ui/main_window.py" line="3548"/>
+        <location filename="../src/ui/main_window.py" line="3573"/>
         <source>Scale</source>
         <translation>Ölçekle</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="614"/>
-        <location filename="../src/ui/main_window.py" line="1551"/>
-        <location filename="../src/ui/main_window.py" line="3264"/>
+        <location filename="../src/ui/main_window.py" line="688"/>
+        <location filename="../src/ui/main_window.py" line="1618"/>
+        <location filename="../src/ui/main_window.py" line="3336"/>
         <source>Arrow keys: 1mm, Shift+Arrow: 10mm</source>
         <translation>Ok tuşları: 1 mm, Shift+Ok: 10 mm</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="763"/>
-        <location filename="../src/ui/main_window.py" line="3021"/>
-        <location filename="../src/ui/main_window.py" line="3109"/>
-        <location filename="../src/ui/main_window.py" line="3173"/>
-        <location filename="../src/ui/main_window.py" line="3522"/>
+        <location filename="../src/ui/main_window.py" line="830"/>
+        <location filename="../src/ui/main_window.py" line="3093"/>
+        <location filename="../src/ui/main_window.py" line="3181"/>
+        <location filename="../src/ui/main_window.py" line="3245"/>
+        <location filename="../src/ui/main_window.py" line="3594"/>
         <source>Ready</source>
         <translation>Hazir</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="801"/>
+        <location filename="../src/ui/main_window.py" line="868"/>
         <source>Executed: </source>
         <translation>Yurutuldu: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="804"/>
+        <location filename="../src/ui/main_window.py" line="871"/>
         <source>Undone: </source>
         <translation>Geri Alindi: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="807"/>
+        <location filename="../src/ui/main_window.py" line="874"/>
         <source>Redone: </source>
         <translation>Yinelendi: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1340"/>
-        <location filename="../src/ui/main_window.py" line="2138"/>
+        <location filename="../src/ui/main_window.py" line="1407"/>
+        <location filename="../src/ui/main_window.py" line="2209"/>
         <source>Asset</source>
         <translation>Varlık</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1546"/>
-        <location filename="../src/ui/main_window.py" line="3260"/>
+        <location filename="../src/ui/main_window.py" line="1613"/>
+        <location filename="../src/ui/main_window.py" line="3332"/>
         <source>Position</source>
         <translation>Konum</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1700"/>
+        <location filename="../src/ui/main_window.py" line="1767"/>
         <source>3D preview loading failed</source>
         <translation>3D önizleme yüklenemedi</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1704"/>
+        <location filename="../src/ui/main_window.py" line="1771"/>
         <source>Failed to prepare 3D preview:</source>
         <translation>3D önizleme hazırlanamadı:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1866"/>
+        <location filename="../src/ui/main_window.py" line="1933"/>
         <source>The selected recent project is no longer available and has been removed from the list.</source>
         <translation>Seçilen son proje artık kullanılamıyor ve listeden kaldırıldı.</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1934"/>
+        <location filename="../src/ui/main_window.py" line="2001"/>
         <source>Home</source>
         <translation>Ana Sayfa</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1941"/>
+        <location filename="../src/ui/main_window.py" line="2008"/>
         <source>Project Edit</source>
         <translation>Proje Duzenleme</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1703"/>
-        <location filename="../src/ui/main_window.py" line="1950"/>
+        <location filename="../src/ui/main_window.py" line="1770"/>
+        <location filename="../src/ui/main_window.py" line="2017"/>
         <source>3D Preview</source>
         <translation>3D Onizleme</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1982"/>
+        <location filename="../src/ui/main_window.py" line="2053"/>
         <source>Settings feature under development...</source>
         <translation>Ayarlar ozelligi gelistiriliyor...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1984"/>
+        <location filename="../src/ui/main_window.py" line="2055"/>
         <source>Help feature under development...</source>
         <translation>Yardim ozelligi gelistiriliyor...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2004"/>
+        <location filename="../src/ui/main_window.py" line="2075"/>
         <source>MINGDA SignMaker - New Project</source>
         <translation>MINGDA SignMaker - Yeni Proje</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2016"/>
+        <location filename="../src/ui/main_window.py" line="2087"/>
         <source>Open File</source>
         <translation>Dosya Ac</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2200"/>
+        <location filename="../src/ui/main_window.py" line="2271"/>
         <source>Unsupported Format</source>
         <translation>Desteklenmeyen Format</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2200"/>
+        <location filename="../src/ui/main_window.py" line="2271"/>
         <source>Format not supported: </source>
         <translation>Format desteklenmiyor: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2403"/>
+        <location filename="../src/ui/main_window.py" line="2474"/>
         <source>Load </source>
         <translation>Yukle </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2424"/>
+        <location filename="../src/ui/main_window.py" line="2495"/>
         <source>Loaded: {file}, {count} contours</source>
         <translation>Yuklendi: {file}, {count} kontur</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2209"/>
-        <location filename="../src/ui/main_window.py" line="2489"/>
+        <location filename="../src/ui/main_window.py" line="2280"/>
+        <location filename="../src/ui/main_window.py" line="2560"/>
         <source>Load Failed</source>
         <translation>Yukleme Basarisiz</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2210"/>
+        <location filename="../src/ui/main_window.py" line="2281"/>
         <source>Failed to load file:</source>
         <translation>Dosya yuklenemedi:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2031"/>
-        <location filename="../src/ui/main_window.py" line="2516"/>
+        <location filename="../src/ui/main_window.py" line="2102"/>
+        <location filename="../src/ui/main_window.py" line="2587"/>
         <source>SignMaker Project (*.smp);;All Files (*)</source>
         <translation>SignMaker Projesi (*.smp);;Tum Dosyalar (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="344"/>
+        <location filename="../src/ui/main_window.py" line="440"/>
         <source>Process(&amp;P)</source>
         <translation>İşle(&amp;P)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2018"/>
+        <location filename="../src/ui/main_window.py" line="2089"/>
         <source>Supported Files (*.dxf *.svg *.smp);;SignMaker Project (*.smp);;DXF Files (*.dxf);;SVG Files (*.svg);;All Files (*)</source>
         <translation>Desteklenen Dosyalar (*.dxf *.svg *.smp);;SignMaker Projesi (*.smp);;DXF Dosyaları (*.dxf);;SVG Dosyaları (*.svg);;Tüm Dosyalar (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="975"/>
-        <location filename="../src/ui/main_window.py" line="1865"/>
-        <location filename="../src/ui/main_window.py" line="2029"/>
+        <location filename="../src/ui/main_window.py" line="1042"/>
+        <location filename="../src/ui/main_window.py" line="1932"/>
+        <location filename="../src/ui/main_window.py" line="2100"/>
         <source>Open Project</source>
         <translation>Projeyi Aç</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2476"/>
+        <location filename="../src/ui/main_window.py" line="2547"/>
         <source>Project loaded: {name}, {count} contours</source>
         <translation>Proje yüklendi: {name}, {count} kontur</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2489"/>
+        <location filename="../src/ui/main_window.py" line="2560"/>
         <source>Failed to load project:</source>
         <translation>Proje yüklenemedi:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2571"/>
+        <location filename="../src/ui/main_window.py" line="2642"/>
         <source>Project saved: </source>
         <translation>Proje kaydedildi: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2581"/>
+        <location filename="../src/ui/main_window.py" line="2652"/>
         <source>Save Failed</source>
         <translation>Kaydetme başarısız</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2581"/>
+        <location filename="../src/ui/main_window.py" line="2652"/>
         <source>Failed to save project:</source>
         <translation>Proje kaydedilemedi:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2616"/>
+        <location filename="../src/ui/main_window.py" line="2688"/>
         <source>Export Baseplate DXF...</source>
         <translation>Taban Plakası DXF Dışa Aktar...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2617"/>
+        <location filename="../src/ui/main_window.py" line="2689"/>
         <source>Export Panel DXF...</source>
         <translation>Panel DXF Dışa Aktar...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1267"/>
-        <location filename="../src/ui/main_window.py" line="2531"/>
-        <location filename="../src/ui/main_window.py" line="2624"/>
-        <location filename="../src/ui/main_window.py" line="2695"/>
-        <location filename="../src/ui/main_window.py" line="2745"/>
-        <location filename="../src/ui/main_window.py" line="2781"/>
-        <location filename="../src/ui/main_window.py" line="2852"/>
-        <location filename="../src/ui/main_window.py" line="2968"/>
-        <location filename="../src/ui/main_window.py" line="2976"/>
-        <location filename="../src/ui/main_window.py" line="3086"/>
-        <location filename="../src/ui/main_window.py" line="3124"/>
-        <location filename="../src/ui/main_window.py" line="3536"/>
-        <location filename="../src/ui/main_window.py" line="3562"/>
-        <location filename="../src/ui/main_window.py" line="3599"/>
-        <location filename="../src/ui/main_window.py" line="3637"/>
-        <location filename="../src/ui/main_window.py" line="3668"/>
+        <location filename="../src/ui/main_window.py" line="1334"/>
+        <location filename="../src/ui/main_window.py" line="2602"/>
+        <location filename="../src/ui/main_window.py" line="2696"/>
+        <location filename="../src/ui/main_window.py" line="2767"/>
+        <location filename="../src/ui/main_window.py" line="2817"/>
+        <location filename="../src/ui/main_window.py" line="2853"/>
+        <location filename="../src/ui/main_window.py" line="2924"/>
+        <location filename="../src/ui/main_window.py" line="3040"/>
+        <location filename="../src/ui/main_window.py" line="3048"/>
+        <location filename="../src/ui/main_window.py" line="3158"/>
+        <location filename="../src/ui/main_window.py" line="3196"/>
+        <location filename="../src/ui/main_window.py" line="3608"/>
+        <location filename="../src/ui/main_window.py" line="3634"/>
+        <location filename="../src/ui/main_window.py" line="3671"/>
+        <location filename="../src/ui/main_window.py" line="3709"/>
+        <location filename="../src/ui/main_window.py" line="3740"/>
         <source>Info</source>
         <translation>Bilgi</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2624"/>
-        <location filename="../src/ui/main_window.py" line="2695"/>
+        <location filename="../src/ui/main_window.py" line="2696"/>
+        <location filename="../src/ui/main_window.py" line="2767"/>
         <source>Please process first</source>
         <translation>Lutfen once isleme yapin</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2673"/>
-        <location filename="../src/ui/main_window.py" line="2729"/>
-        <location filename="../src/ui/main_window.py" line="2767"/>
-        <location filename="../src/ui/main_window.py" line="2803"/>
+        <location filename="../src/ui/main_window.py" line="2745"/>
+        <location filename="../src/ui/main_window.py" line="2801"/>
+        <location filename="../src/ui/main_window.py" line="2839"/>
+        <location filename="../src/ui/main_window.py" line="2875"/>
         <source>Export Success</source>
         <translation>Disa Aktarma Basarili</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2680"/>
-        <location filename="../src/ui/main_window.py" line="2732"/>
-        <location filename="../src/ui/main_window.py" line="2774"/>
-        <location filename="../src/ui/main_window.py" line="2776"/>
-        <location filename="../src/ui/main_window.py" line="2810"/>
-        <location filename="../src/ui/main_window.py" line="2812"/>
+        <location filename="../src/ui/main_window.py" line="2752"/>
+        <location filename="../src/ui/main_window.py" line="2804"/>
+        <location filename="../src/ui/main_window.py" line="2846"/>
+        <location filename="../src/ui/main_window.py" line="2848"/>
+        <location filename="../src/ui/main_window.py" line="2882"/>
+        <location filename="../src/ui/main_window.py" line="2884"/>
         <source>Export Failed</source>
         <translation>Disa Aktarma Basarisiz</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2700"/>
+        <location filename="../src/ui/main_window.py" line="2772"/>
         <source>Export STL</source>
         <translation>STL Disa Aktar</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2702"/>
+        <location filename="../src/ui/main_window.py" line="2774"/>
         <source>STL Files (*.stl);;All Files (*)</source>
         <translation>STL Dosyalari (*.stl);;Tum Dosyalar (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2728"/>
+        <location filename="../src/ui/main_window.py" line="2800"/>
         <source>STL exported: </source>
         <translation>STL disa aktarildi: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2729"/>
+        <location filename="../src/ui/main_window.py" line="2801"/>
         <source>STL saved to:</source>
         <translation>STL kaydedildi:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2732"/>
+        <location filename="../src/ui/main_window.py" line="2804"/>
         <source>Failed to export STL:</source>
         <translation>STL disa aktarilamadi:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2745"/>
-        <location filename="../src/ui/main_window.py" line="2781"/>
-        <location filename="../src/ui/main_window.py" line="2852"/>
+        <location filename="../src/ui/main_window.py" line="2817"/>
+        <location filename="../src/ui/main_window.py" line="2853"/>
+        <location filename="../src/ui/main_window.py" line="2924"/>
         <source>Please import a DXF file first</source>
         <translation>Lutfen once bir DXF dosyasi iceri aktarin</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2532"/>
+        <location filename="../src/ui/main_window.py" line="2603"/>
         <source>Please import or create graphics before saving</source>
         <translation>Kaydetmeden önce lütfen grafik içe aktarın veya oluşturun</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1120"/>
+        <location filename="../src/ui/main_window.py" line="1187"/>
         <source>{count} screw holes are invalid</source>
         <translation>{count} vida deliği geçersiz</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1149"/>
-        <location filename="../src/ui/main_window.py" line="1285"/>
+        <location filename="../src/ui/main_window.py" line="1216"/>
+        <location filename="../src/ui/main_window.py" line="1352"/>
         <source>Explode Asset</source>
         <translation>Varlığı parçala</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1268"/>
+        <location filename="../src/ui/main_window.py" line="1335"/>
         <source>Please select an imported asset first</source>
         <translation>Lütfen önce içe aktarılmış bir varlık seçin</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1898"/>
-        <location filename="../src/ui/main_window.py" line="1906"/>
+        <location filename="../src/ui/main_window.py" line="1965"/>
+        <location filename="../src/ui/main_window.py" line="1973"/>
         <source>Show Configuration Folder Failed</source>
         <translation>Yapılandırma klasörü gösterilemedi</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1899"/>
-        <location filename="../src/ui/main_window.py" line="1907"/>
+        <location filename="../src/ui/main_window.py" line="1966"/>
+        <location filename="../src/ui/main_window.py" line="1974"/>
         <source>Failed to show the configuration folder in the file manager.</source>
         <translation>Yapılandırma klasörü dosya yöneticisinde gösterilemedi.</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2640"/>
+        <location filename="../src/ui/main_window.py" line="2712"/>
         <source>Export Blocked</source>
         <translation>Dışa aktarma engellendi</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2641"/>
+        <location filename="../src/ui/main_window.py" line="2713"/>
         <source>Cannot export G-code:</source>
         <translation>G-code dışa aktarılamıyor:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2649"/>
+        <location filename="../src/ui/main_window.py" line="2721"/>
         <source>Export G-code</source>
         <translation>G-code&apos;u dışa aktar</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2651"/>
+        <location filename="../src/ui/main_window.py" line="2723"/>
         <source>G-code Files (*.gcode);;All Files (*)</source>
         <translation>G-code Dosyaları (*.gcode);;Tüm Dosyalar (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2670"/>
+        <location filename="../src/ui/main_window.py" line="2742"/>
         <source>G-code exported: </source>
         <translation>G-code dışa aktarıldı:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2674"/>
+        <location filename="../src/ui/main_window.py" line="2746"/>
         <source>G-code saved to:</source>
         <translation>G-code şuraya kaydedildi:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2681"/>
+        <location filename="../src/ui/main_window.py" line="2753"/>
         <source>Failed to export G-code:</source>
         <translation>G-code dışa aktarılamadı:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2686"/>
+        <location filename="../src/ui/main_window.py" line="2758"/>
         <source>Exporting G-code...</source>
         <translation>G-code dışa aktarılıyor...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2750"/>
+        <location filename="../src/ui/main_window.py" line="2822"/>
         <source>Export Baseplate DXF</source>
         <translation>Taban Plakasi DXF Disa Aktar</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2752"/>
-        <location filename="../src/ui/main_window.py" line="2788"/>
+        <location filename="../src/ui/main_window.py" line="2824"/>
+        <location filename="../src/ui/main_window.py" line="2860"/>
         <source>DXF Files (*.dxf);;All Files (*)</source>
         <translation>DXF Dosyalari (*.dxf);;Tum Dosyalar (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2765"/>
+        <location filename="../src/ui/main_window.py" line="2837"/>
         <source>Baseplate DXF exported: </source>
         <translation>Taban plakasi DXF disa aktarildi: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2768"/>
+        <location filename="../src/ui/main_window.py" line="2840"/>
         <source>Baseplate DXF saved to:</source>
         <translation>Taban plakasi DXF kaydedildi:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2774"/>
+        <location filename="../src/ui/main_window.py" line="2846"/>
         <source>Failed to generate baseplate contour</source>
         <translation>Taban plakasi konturu olusturulamadi</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2776"/>
+        <location filename="../src/ui/main_window.py" line="2848"/>
         <source>Failed to export baseplate DXF:</source>
         <translation>Taban plakasi DXF disa aktarilamadi:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2786"/>
+        <location filename="../src/ui/main_window.py" line="2858"/>
         <source>Export Panel DXF</source>
         <translation>Panel DXF Disa Aktar</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2801"/>
+        <location filename="../src/ui/main_window.py" line="2873"/>
         <source>Panel DXF exported: </source>
         <translation>Panel DXF disa aktarildi: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2804"/>
+        <location filename="../src/ui/main_window.py" line="2876"/>
         <source>Panel DXF saved to:</source>
         <translation>Panel DXF kaydedildi:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2810"/>
+        <location filename="../src/ui/main_window.py" line="2882"/>
         <source>Failed to generate panel contour</source>
         <translation>Panel konturu olusturulamadi</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2812"/>
+        <location filename="../src/ui/main_window.py" line="2884"/>
         <source>Failed to export panel DXF:</source>
         <translation>Panel DXF disa aktarilamadi:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2829"/>
+        <location filename="../src/ui/main_window.py" line="2901"/>
         <source>Nothing to undo</source>
         <translation>Geri alinacak islem yok</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2846"/>
+        <location filename="../src/ui/main_window.py" line="2918"/>
         <source>Nothing to redo</source>
         <translation>Yinelenecek islem yok</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2869"/>
-        <location filename="../src/ui/main_window.py" line="2883"/>
+        <location filename="../src/ui/main_window.py" line="2941"/>
+        <location filename="../src/ui/main_window.py" line="2955"/>
         <source>Processing Blocked</source>
         <translation>İşleme engellendi</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2969"/>
+        <location filename="../src/ui/main_window.py" line="3041"/>
         <source>No contours available for screw-hole editing</source>
         <translation>Vida deliği düzenlemek için kullanılabilir kontur yok</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2977"/>
-        <source>Enable Bottom Face before editing screw holes</source>
-        <translation>Vida deliklerini düzenlemeden önce Bottom Face&apos;i etkinleştirin</translation>
+        <location filename="../src/ui/main_window.py" line="3049"/>
+        <source>Enable Bottom Shells before editing screw holes</source>
+        <translation>Vida deliklerini düzenlemeden önce alt kabukları etkinleştirin</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="915"/>
-        <location filename="../src/ui/main_window.py" line="2993"/>
+        <location filename="../src/ui/main_window.py" line="982"/>
+        <location filename="../src/ui/main_window.py" line="3065"/>
         <source>Edit Screw Holes</source>
         <translation>Vida deliklerini düzenle</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3003"/>
+        <location filename="../src/ui/main_window.py" line="3075"/>
         <source>Click a screw hole to select it, click empty space to add, Delete to remove, Esc to finish</source>
         <translation>Seçmek için bir vida deliğine tıklayın, eklemek için boş bir alana tıklayın, silmek için Delete&apos;e, bitirmek için Esc&apos;ye basın</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3029"/>
-        <source>Click inside a valid bottom-face region</source>
-        <translation>Geçerli bir Bottom Face bölgesi içine tıklayın</translation>
+        <location filename="../src/ui/main_window.py" line="3101"/>
+        <source>Click inside a valid bottom-shell region</source>
+        <translation>Geçerli bir alt kabuk bölgesinin içine tıklayın</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3039"/>
+        <location filename="../src/ui/main_window.py" line="3111"/>
         <source>Screw hole added</source>
         <translation>Vida deliği eklendi</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3059"/>
+        <location filename="../src/ui/main_window.py" line="3131"/>
         <source>Screw hole updated</source>
         <translation>Vida deliği güncellendi</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3075"/>
+        <location filename="../src/ui/main_window.py" line="3147"/>
         <source>Screw hole removed</source>
         <translation>Vida deliği kaldırıldı</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3125"/>
+        <location filename="../src/ui/main_window.py" line="3197"/>
         <source>No contours available for print order selection</source>
         <translation>Yazdırma sırasını ayarlamak için kullanılabilir kontur yok</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="907"/>
-        <location filename="../src/ui/main_window.py" line="3139"/>
+        <location filename="../src/ui/main_window.py" line="974"/>
+        <location filename="../src/ui/main_window.py" line="3211"/>
         <source>Set Print Order</source>
         <translation>Yazdırma sırasını ayarla</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3147"/>
+        <location filename="../src/ui/main_window.py" line="3219"/>
         <source>Click contours or holes in desired print order, Esc to finish</source>
         <translation>İstenen yazdırma sırasına göre konturlara veya deliklere tıklayın, bitirmek için Esc&apos;ye basın</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3198"/>
+        <location filename="../src/ui/main_window.py" line="3270"/>
         <source>Print order updated</source>
         <translation>Yazdırma sırası güncellendi</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3692"/>
+        <location filename="../src/ui/main_window.py" line="3764"/>
         <source>Text</source>
         <translation>Metin</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3698"/>
+        <location filename="../src/ui/main_window.py" line="3770"/>
         <source>Add Contours</source>
         <translation>Kontur ekle</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3855"/>
+        <location filename="../src/ui/main_window.py" line="3927"/>
         <source>Open Tutorial Failed</source>
         <translation>Eğitim açılamadı</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3856"/>
+        <location filename="../src/ui/main_window.py" line="3928"/>
         <source>Failed to open the tutorial playlist in the default browser.</source>
         <translation>Eğitim oynatma listesi varsayılan tarayıcıda açılamadı.</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3897"/>
+        <location filename="../src/ui/main_window.py" line="3969"/>
         <source>Loaded saved parameters</source>
         <translation>Kaydedilmiş parametreler yüklendi</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2934"/>
+        <location filename="../src/ui/main_window.py" line="3006"/>
         <source>Switched to {view} view</source>
         <translation>{view} gorunumune gecildi</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3266"/>
+        <location filename="../src/ui/main_window.py" line="3338"/>
         <source>Rotation</source>
         <translation>Döndürme</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3285"/>
+        <location filename="../src/ui/main_window.py" line="3357"/>
         <source>Tool: </source>
         <translation>Arac: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3335"/>
+        <location filename="../src/ui/main_window.py" line="3407"/>
         <source>Move to: X={x:.2f}, Y={y:.2f}</source>
         <translation>Tasi: X={x:.2f}, Y={y:.2f}</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3345"/>
+        <location filename="../src/ui/main_window.py" line="3417"/>
         <source>Rotation: {angle:.2f}°</source>
         <translation>Döndürme: {angle:.2f}°</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3444"/>
-        <location filename="../src/ui/main_window.py" line="3484"/>
-        <location filename="../src/ui/main_window.py" line="3509"/>
+        <location filename="../src/ui/main_window.py" line="3516"/>
+        <location filename="../src/ui/main_window.py" line="3556"/>
+        <location filename="../src/ui/main_window.py" line="3581"/>
         <source>Scale: {px:.1f}% x {py:.1f}%</source>
         <translation>Ölçek: {px:.1f}% x {py:.1f}%</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3536"/>
+        <location filename="../src/ui/main_window.py" line="3608"/>
         <source>Please select a contour first</source>
         <translation>Lutfen once bir kontur secin</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3553"/>
+        <location filename="../src/ui/main_window.py" line="3625"/>
         <source>Mirror {axis} complete</source>
         <translation>{axis} aynalama tamamlandi</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3563"/>
-        <location filename="../src/ui/main_window.py" line="3600"/>
-        <location filename="../src/ui/main_window.py" line="3638"/>
+        <location filename="../src/ui/main_window.py" line="3635"/>
+        <location filename="../src/ui/main_window.py" line="3672"/>
+        <location filename="../src/ui/main_window.py" line="3710"/>
         <source>Please select at least two contours</source>
         <translation>Lütfen en az iki kontur seçin</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3575"/>
-        <location filename="../src/ui/main_window.py" line="3583"/>
+        <location filename="../src/ui/main_window.py" line="3647"/>
+        <location filename="../src/ui/main_window.py" line="3655"/>
         <source>Intersection</source>
         <translation>Kesişim</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3612"/>
-        <location filename="../src/ui/main_window.py" line="3620"/>
+        <location filename="../src/ui/main_window.py" line="3684"/>
+        <location filename="../src/ui/main_window.py" line="3692"/>
         <source>Difference</source>
         <translation>Fark</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3648"/>
+        <location filename="../src/ui/main_window.py" line="3720"/>
         <source>Already grouped</source>
         <translation>Zaten gruplandı</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1147"/>
-        <location filename="../src/ui/main_window.py" line="3651"/>
+        <location filename="../src/ui/main_window.py" line="1214"/>
+        <location filename="../src/ui/main_window.py" line="3723"/>
         <source>Group</source>
         <translation>Grupla</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3669"/>
+        <location filename="../src/ui/main_window.py" line="3741"/>
         <source>Please select a grouped contour first</source>
         <translation>Lütfen önce gruplanmış bir kontur seçin</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1148"/>
-        <location filename="../src/ui/main_window.py" line="3673"/>
+        <location filename="../src/ui/main_window.py" line="1215"/>
+        <location filename="../src/ui/main_window.py" line="3745"/>
         <source>Ungroup</source>
         <translation>Grubu Çöz</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3703"/>
+        <location filename="../src/ui/main_window.py" line="3775"/>
         <source>Text added</source>
         <translation>Metin eklendi</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3705"/>
+        <location filename="../src/ui/main_window.py" line="3777"/>
         <source>Error</source>
         <translation>Hata</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3736"/>
+        <location filename="../src/ui/main_window.py" line="3808"/>
         <source>Checking for updates...</source>
         <translation>Güncellemeler denetleniyor...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3756"/>
+        <location filename="../src/ui/main_window.py" line="3828"/>
         <source>No Updates Available</source>
         <translation>Kullanılabilir güncelleme yok</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3757"/>
+        <location filename="../src/ui/main_window.py" line="3829"/>
         <source>You are using the latest version.</source>
         <translation>En son sürümü kullanıyorsunuz.</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3770"/>
+        <location filename="../src/ui/main_window.py" line="3842"/>
         <source>Update Check Failed</source>
         <translation>Güncelleme denetimi başarısız</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3779"/>
+        <location filename="../src/ui/main_window.py" line="3851"/>
         <source>Installer Not Found</source>
         <translation>Yükleyici bulunamadı</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3780"/>
+        <location filename="../src/ui/main_window.py" line="3852"/>
         <source>The downloaded update installer no longer exists.</source>
         <translation>İndirilen güncelleme yükleyicisi artık mevcut değil.</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3819"/>
+        <location filename="../src/ui/main_window.py" line="3891"/>
         <source>Run Installer Failed</source>
         <translation>Yükleyici çalıştırılamadı</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3820"/>
+        <location filename="../src/ui/main_window.py" line="3892"/>
         <source>Failed to start the update installer.</source>
         <translation>Güncelleme yükleyicisi başlatılamadı.</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3830"/>
+        <location filename="../src/ui/main_window.py" line="3902"/>
         <source>About MINGDA SignMaker</source>
         <translation>MINGDA SignMaker Hakkinda</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3832"/>
+        <location filename="../src/ui/main_window.py" line="3904"/>
         <source>Professional LED Sign Letter 3D Printing Slicer</source>
         <translation>Profesyonel LED Isikli Harf 3D Baski Dilimleyici</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3833"/>
+        <location filename="../src/ui/main_window.py" line="3905"/>
         <source>Version: </source>
         <translation>Sürüm: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3835"/>
+        <location filename="../src/ui/main_window.py" line="3907"/>
         <source>Features:</source>
         <translation>Ozellikler:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3837"/>
+        <location filename="../src/ui/main_window.py" line="3909"/>
         <source>DXF/SVG file import</source>
         <translation>DXF/SVG dosya iceri aktarma</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3838"/>
+        <location filename="../src/ui/main_window.py" line="3910"/>
         <source>Straight/Bevel/Custom edges</source>
         <translation>Duz/Egimli/Ozel kenarlar</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3839"/>
+        <location filename="../src/ui/main_window.py" line="3911"/>
         <source>Multi-color printing support</source>
         <translation>Cok renkli baski destegi</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3840"/>
+        <location filename="../src/ui/main_window.py" line="3912"/>
         <source>Step/V-groove</source>
         <translation>Basamak/V-Oluk</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3841"/>
-        <source>Anti-warping skirt</source>
-        <translation>Carpilma onleyici etek</translation>
+        <location filename="../src/ui/main_window.py" line="3913"/>
+        <source>Anti-warp brim</source>
+        <translation>Eğrilme önleyici brim</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3842"/>
-        <source>Connected letters</source>
-        <translation>Bagli harfler</translation>
+        <location filename="../src/ui/main_window.py" line="3914"/>
+        <source>Letter bridges</source>
+        <translation>Harf köprüleri</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3867"/>
+        <location filename="../src/ui/main_window.py" line="3939"/>
         <source>Language Changed</source>
         <translation>Dil Degistirildi</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3868"/>
+        <location filename="../src/ui/main_window.py" line="3940"/>
         <source>Language has been changed to {lang}. Please restart the application for full effect.</source>
         <translation>Dil {lang} olarak degistirildi. Tam etki icin lutfen uygulamayi yeniden baslatin.</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3875"/>
+        <location filename="../src/ui/main_window.py" line="3947"/>
         <source>Language Change Failed</source>
         <translation>Dil Degisikligi Basarisiz</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3876"/>
+        <location filename="../src/ui/main_window.py" line="3948"/>
         <source>Translation file for {lang} is not available yet.</source>
         <translation>{lang} icin ceviri dosyasi henuz mevcut degil.</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="464"/>
+        <location filename="../src/ui/main_window.py" line="538"/>
         <source>Angle</source>
         <translation>Açı</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3270"/>
+        <location filename="../src/ui/main_window.py" line="3342"/>
         <source>Drag grabber on ring to rotate</source>
         <translation>Döndürmek için halka üzerindeki tutamacı sürükleyin</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="528"/>
+        <location filename="../src/ui/main_window.py" line="602"/>
         <source>Size</source>
         <translation>Boyut</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="571"/>
+        <location filename="../src/ui/main_window.py" line="645"/>
         <source>Uniform Scale</source>
         <translation>Orantılı ölçekleme</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3276"/>
+        <location filename="../src/ui/main_window.py" line="3348"/>
         <source>Drag to scale, input exact values above</source>
         <translation>Ölçeklemek için sürükleyin, yukarıya kesin değerleri girin</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2205"/>
+        <location filename="../src/ui/main_window.py" line="2276"/>
         <source>Loading file...</source>
         <translation>Dosya yükleniyor...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2736"/>
+        <location filename="../src/ui/main_window.py" line="2808"/>
         <source>Exporting STL...</source>
         <translation>STL dışa aktarılıyor...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="346"/>
+        <location filename="../src/ui/main_window.py" line="442"/>
         <source>Start Processing</source>
         <translation>İşlemeyi başlat</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="1946"/>
-        <location filename="../src/ui/main_window.py" line="2914"/>
+        <location filename="../src/ui/main_window.py" line="2013"/>
+        <location filename="../src/ui/main_window.py" line="2986"/>
         <source>Processing...</source>
         <translation>İşleniyor...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2909"/>
+        <location filename="../src/ui/main_window.py" line="2981"/>
         <source>Processing Failed</source>
         <translation>İşlem başarısız</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2909"/>
+        <location filename="../src/ui/main_window.py" line="2981"/>
         <source>Error during processing:</source>
         <translation>İşlem sırasında hata:</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2910"/>
+        <location filename="../src/ui/main_window.py" line="2982"/>
         <source>Processing failed</source>
         <translation>İşlem başarısız</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2769"/>
-        <location filename="../src/ui/main_window.py" line="2805"/>
-        <source>Outer clearance: </source>
-        <translation>Dis kontur boslugu: </translation>
+        <location filename="../src/ui/main_window.py" line="2841"/>
+        <location filename="../src/ui/main_window.py" line="2877"/>
+        <source>Outer contour clearance: </source>
+        <translation>Dış kontur boşluğu: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2770"/>
-        <location filename="../src/ui/main_window.py" line="2806"/>
-        <source>Hole clearance: </source>
-        <translation>Delik boslugu: </translation>
+        <location filename="../src/ui/main_window.py" line="2842"/>
+        <location filename="../src/ui/main_window.py" line="2878"/>
+        <source>Inner hole clearance: </source>
+        <translation>İç delik boşluğu: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2771"/>
-        <location filename="../src/ui/main_window.py" line="2807"/>
-        <source>Laser kerf: </source>
-        <translation>Lazer kesim payi: </translation>
+        <location filename="../src/ui/main_window.py" line="2843"/>
+        <location filename="../src/ui/main_window.py" line="2879"/>
+        <source>Laser kerf width: </source>
+        <translation>Lazer kesim izi genişliği: </translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3087"/>
+        <location filename="../src/ui/main_window.py" line="3159"/>
         <source>No contours available for start point selection</source>
         <translation>Başlangıç noktası seçimi için kullanılabilir kontur yok</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3099"/>
+        <location filename="../src/ui/main_window.py" line="3171"/>
         <source>Click a corner on any contour or hole, Esc to exit</source>
         <translation>Herhangi bir konturun veya deliğin köşesine tıklayın, çıkmak için Esc&apos;ye basın</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3229"/>
+        <location filename="../src/ui/main_window.py" line="3301"/>
         <source>Set Start Point</source>
         <translation>Başlangıç noktasını ayarla</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="3240"/>
+        <location filename="../src/ui/main_window.py" line="3312"/>
         <source>Start point updated</source>
         <translation>Başlangıç noktası güncellendi</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2871"/>
+        <location filename="../src/ui/main_window.py" line="2943"/>
         <source>Some contours exceed the platform size or overlap a bed exclude area. Please move or scale them back into the printable area before processing.</source>
         <translation>Bazı konturlar platform boyutunu aşıyor veya tabla hariç tutma alanıyla çakışıyor. İşlemeden önce bunları yazdırılabilir alanın içine taşıyın veya ölçeklendirin.</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2875"/>
+        <location filename="../src/ui/main_window.py" line="2947"/>
         <source>Processing blocked: contours outside printable area</source>
         <translation>İşleme engellendi: konturlar yazdırılabilir alanın dışında</translation>
     </message>
     <message>
-        <location filename="../src/ui/main_window.py" line="2901"/>
+        <location filename="../src/ui/main_window.py" line="2973"/>
         <source>Processing complete: height {height:.2f} mm, estimated time {time:.1f} minutes</source>
         <translation>İşleme tamamlandı: yükseklik {height:.2f} mm, tahmini süre {time:.1f} dakika</translation>
     </message>
@@ -1206,1046 +1206,1019 @@ Hata kodu: {code}</translation>
 <context>
     <name>ParamPanel</name>
     <message>
-        <location filename="../src/ui/param_panel.py" line="177"/>
+        <location filename="../src/ui/param_panel.py" line="183"/>
         <source>Settings</source>
         <translation>Ayarlar</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="260"/>
+        <location filename="../src/ui/param_panel.py" line="266"/>
         <source>Shape</source>
         <translation>Şekil</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="262"/>
+        <location filename="../src/ui/param_panel.py" line="268"/>
         <source>Geometry and sign shell settings</source>
         <translation>Geometri ve tabela kabuğu ayarları</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="269"/>
+        <location filename="../src/ui/param_panel.py" line="275"/>
         <source>Machine</source>
         <translation>Makine</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="271"/>
+        <location filename="../src/ui/param_panel.py" line="277"/>
         <source>Printer profile and hardware settings</source>
         <translation>Yazıcı profili ve donanım ayarları</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="278"/>
+        <location filename="../src/ui/param_panel.py" line="284"/>
         <source>Print</source>
         <translation>Baskı</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1028"/>
+        <location filename="../src/ui/param_panel.py" line="849"/>
+        <location filename="../src/ui/param_panel.py" line="3075"/>
+        <location filename="../src/ui/param_panel.py" line="3094"/>
+        <source>Bottom Edge Wrap</source>
+        <translation>Alt Kenar Sarması</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="850"/>
+        <location filename="../src/ui/param_panel.py" line="3074"/>
+        <source>Bottom Outline</source>
+        <translation>Alt Kontur</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="1137"/>
         <source>Shell Settings</source>
         <translation>Kabuk Ayarlari</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1047"/>
+        <location filename="../src/ui/param_panel.py" line="1156"/>
         <source>Shell Height:</source>
         <translation>Kabuk Yuksekligi:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1065"/>
+        <location filename="../src/ui/param_panel.py" line="1174"/>
         <source>Layer Height:</source>
         <translation>Katman Yuksekligi:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1074"/>
+        <location filename="../src/ui/param_panel.py" line="1183"/>
         <source>Line Width:</source>
         <translation>Çizgi Genişliği:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1101"/>
-        <location filename="../src/ui/param_panel.py" line="1110"/>
+        <location filename="../src/ui/param_panel.py" line="1210"/>
+        <location filename="../src/ui/param_panel.py" line="1218"/>
         <source>Straight</source>
         <translation>Duz</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1102"/>
-        <location filename="../src/ui/param_panel.py" line="1111"/>
+        <location filename="../src/ui/param_panel.py" line="1211"/>
+        <location filename="../src/ui/param_panel.py" line="1219"/>
         <source>Beveled</source>
         <translation>Egimli</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1104"/>
-        <location filename="../src/ui/param_panel.py" line="1113"/>
+        <location filename="../src/ui/param_panel.py" line="1212"/>
+        <location filename="../src/ui/param_panel.py" line="1220"/>
         <source>Custom</source>
         <translation>Ozel</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1146"/>
+        <location filename="../src/ui/param_panel.py" line="1252"/>
         <source>Top Small</source>
         <translation>Ust Kucuk</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1151"/>
+        <location filename="../src/ui/param_panel.py" line="1257"/>
         <source>Top Large</source>
         <translation>Ust Buyuk</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1161"/>
+        <location filename="../src/ui/param_panel.py" line="1267"/>
         <source>Bevel Direction:</source>
         <translation>Egim Yonu:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1166"/>
+        <location filename="../src/ui/param_panel.py" line="1272"/>
         <source>Original contour is always based on the bottom face (z=0).</source>
         <translation>Orijinal kontur her zaman alt yüzeye (z=0) göre alınır.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1178"/>
-        <source>Bevel Width:</source>
-        <translation>Egim Genisligi:</translation>
+        <location filename="../src/ui/param_panel.py" line="1284"/>
+        <source>Bevel Horizontal Width:</source>
+        <translation>Eğim Yatay Genişliği:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1190"/>
-        <source>Baseplate Thickness:</source>
-        <translation>Taban Plakasi Kalinligi:</translation>
+        <location filename="../src/ui/param_panel.py" line="1296"/>
+        <source>Bottom Straight Height:</source>
+        <translation>Alt Düz Duvar Yüksekliği:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1202"/>
-        <source>Panel Thickness:</source>
-        <translation>Panel Kalinligi:</translation>
+        <location filename="../src/ui/param_panel.py" line="1308"/>
+        <source>Top Straight Height:</source>
+        <translation>Üst Düz Duvar Yüksekliği:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1245"/>
+        <location filename="../src/ui/param_panel.py" line="1320"/>
         <source>Preset Templates:</source>
         <translation>Hazir Sablonlar:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1257"/>
+        <location filename="../src/ui/param_panel.py" line="1332"/>
         <source>Import DXF...</source>
         <translation>DXF Iceri Aktar...</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1258"/>
+        <location filename="../src/ui/param_panel.py" line="1333"/>
         <source>Import custom edge profile from DXF file</source>
         <translation>DXF dosyasindan ozel kenar profili iceri aktar</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1266"/>
-        <location filename="../src/ui/param_panel.py" line="4144"/>
+        <location filename="../src/ui/param_panel.py" line="1341"/>
+        <location filename="../src/ui/param_panel.py" line="4247"/>
         <source>No profile selected</source>
         <translation>Profil secilmedi</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1268"/>
+        <location filename="../src/ui/param_panel.py" line="1343"/>
         <source>Current Profile:</source>
         <translation>Mevcut Profil:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="732"/>
-        <location filename="../src/ui/param_panel.py" line="1317"/>
-        <source>Bottom Face</source>
-        <translation>Alt Yuz</translation>
+        <location filename="../src/ui/param_panel.py" line="845"/>
+        <location filename="../src/ui/param_panel.py" line="1392"/>
+        <source>Bottom Shells</source>
+        <translation>Alt Kabuklar</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1322"/>
-        <source>Enable Bottom Face</source>
-        <translation>Alt Yuzu Etkinlestir</translation>
+        <location filename="../src/ui/param_panel.py" line="1397"/>
+        <source>Enable Bottom Shells</source>
+        <translation>Alt Kabukları Etkinleştir</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="735"/>
-        <location filename="../src/ui/param_panel.py" line="1430"/>
-        <source>Light Slot</source>
-        <translation>Işık oluğu</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="1434"/>
-        <source>Enable Light Slot</source>
-        <translation>Işık oluğunu etkinleştir</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="1472"/>
+        <location filename="../src/ui/param_panel.py" line="1534"/>
         <source>Slot Width:</source>
-        <translation>Oluk genişliği:</translation>
+        <translation>Yuva genişliği:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1484"/>
+        <location filename="../src/ui/param_panel.py" line="1546"/>
         <source>Slot Depth:</source>
-        <translation>Oluk derinliği:</translation>
+        <translation>Yuva derinliği:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1511"/>
-        <location filename="../src/ui/param_panel.py" line="2866"/>
-        <source>Wall Gap:</source>
-        <translation>Duvar boşluğu:</translation>
+        <location filename="../src/ui/param_panel.py" line="2922"/>
+        <source>Breakaway Gap:</source>
+        <translation>Koparma boşluğu:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1443"/>
+        <location filename="../src/ui/param_panel.py" line="1505"/>
         <source>Outer Slot</source>
-        <translation>Dış oluk</translation>
+        <translation>Dış kontur yuvası</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1444"/>
+        <location filename="../src/ui/param_panel.py" line="1506"/>
         <source>Hole Slot</source>
-        <translation>Delik oluğu</translation>
+        <translation>İç delik yuvası</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1515"/>
-        <source>Auto Skip Small Holes</source>
-        <translation>Küçük delikleri otomatik atla</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="1533"/>
+        <location filename="../src/ui/param_panel.py" line="1588"/>
         <source>Min Hole Span:</source>
         <translation>Min. delik açıklığı:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="716"/>
-        <location filename="../src/ui/param_panel.py" line="1569"/>
-        <source>Top Face</source>
-        <translation>Ust Yuz</translation>
+        <location filename="../src/ui/param_panel.py" line="829"/>
+        <location filename="../src/ui/param_panel.py" line="1623"/>
+        <source>Top Shell</source>
+        <translation>Üst Kabuk</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1574"/>
-        <source>Enable Top Face</source>
-        <translation>Ust Yuzu Etkinlestir</translation>
+        <location filename="../src/ui/param_panel.py" line="1628"/>
+        <source>Enable Top Shell</source>
+        <translation>Üst Kabuğu Etkinleştir</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2129"/>
+        <location filename="../src/ui/param_panel.py" line="2185"/>
         <source>Machine G-code</source>
         <translation>Makine G-code</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2136"/>
+        <location filename="../src/ui/param_panel.py" line="2192"/>
         <source>Machine start G-code</source>
         <translation>Makine başlangıç G-code</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2153"/>
+        <location filename="../src/ui/param_panel.py" line="2209"/>
         <source>Machine end G-code</source>
         <translation>Makine bitiş G-code</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2612"/>
-        <source>Enable Panel Step (Top)</source>
-        <translation>Panel Basamagini Etkinlestir (Ust)</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="2635"/>
-        <source>Top Step Distance:</source>
-        <translation>Ust Basamak Mesafesi:</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="2691"/>
-        <source>Bottom Step Height:</source>
-        <translation>Alt Basamak Yuksekligi:</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="2649"/>
-        <source>Top Step Width:</source>
-        <translation>Ust Basamak Genisligi:</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="2705"/>
-        <source>Bottom Step Width:</source>
-        <translation>Alt Basamak Genisligi:</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="2651"/>
         <location filename="../src/ui/param_panel.py" line="2707"/>
+        <location filename="../src/ui/param_panel.py" line="2763"/>
         <source>V-Groove</source>
         <translation>V-Oluk</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2674"/>
-        <source>Enable Baseplate Step (Bottom)</source>
-        <translation>Taban Plakasi Basamagini Etkinlestir (Alt)</translation>
+        <location filename="../src/ui/param_panel.py" line="2873"/>
+        <source>Anti-Warp Brim</source>
+        <translation>Eğrilme Önleyici Brim</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2817"/>
-        <source>Anti-Warping Skirt</source>
-        <translation>Carpilma Onleyici Etek</translation>
+        <location filename="../src/ui/param_panel.py" line="2878"/>
+        <source>Enable Anti-Warp Brim</source>
+        <translation>Eğrilme önleyici brimi etkinleştir</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2822"/>
-        <source>Enable Anti-Warping Skirt</source>
-        <translation>Carpilma Onleyici Etegi Etkinlestir</translation>
+        <location filename="../src/ui/param_panel.py" line="2899"/>
+        <source>Brim Height:</source>
+        <translation>Brim yüksekliği:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2843"/>
-        <source>Skirt Height:</source>
-        <translation>Etek Yuksekligi:</translation>
+        <location filename="../src/ui/param_panel.py" line="2958"/>
+        <source>Letter Bridges</source>
+        <translation>Harf Köprüleri</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2902"/>
-        <source>Connected Letters</source>
-        <translation>Bagli Harfler</translation>
+        <location filename="../src/ui/param_panel.py" line="2963"/>
+        <source>Enable Letter Bridges</source>
+        <translation>Harf köprülerini etkinleştir</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2907"/>
-        <source>Enable Connected Letters</source>
-        <translation>Bagli Harfleri Etkinlestir</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="2916"/>
+        <location filename="../src/ui/param_panel.py" line="2972"/>
         <source>Triangle</source>
         <translation>Ucgen Baglanti</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2917"/>
+        <location filename="../src/ui/param_panel.py" line="2973"/>
         <source>Diamond</source>
         <translation>Elmas Baglanti</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2920"/>
-        <source>Connection Type:</source>
-        <translation>Baglanti Tipi:</translation>
+        <location filename="../src/ui/param_panel.py" line="2976"/>
+        <source>Bridge Type:</source>
+        <translation>Köprü tipi:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2923"/>
-        <source>Auto Detect Connection Points</source>
-        <translation>Baglanti Noktalarini Otomatik Algi</translation>
+        <location filename="../src/ui/param_panel.py" line="2979"/>
+        <source>Auto-Detect Bridge Points</source>
+        <translation>Köprü noktalarını otomatik algıla</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2942"/>
-        <source>Connection Width:</source>
-        <translation>Baglanti Genisligi:</translation>
+        <location filename="../src/ui/param_panel.py" line="2998"/>
+        <source>Bridge Width:</source>
+        <translation>Köprü genişliği:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2955"/>
-        <source>Bevel Height:</source>
-        <translation>Egim Yuksekligi:</translation>
+        <location filename="../src/ui/param_panel.py" line="3011"/>
+        <source>Bridge Bevel Height:</source>
+        <translation>Köprü pah yüksekliği:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2968"/>
-        <source>Base Height:</source>
-        <translation>Taban Yuksekligi:</translation>
+        <location filename="../src/ui/param_panel.py" line="3024"/>
+        <source>Bridge Base Height:</source>
+        <translation>Köprü taban yüksekliği:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2983"/>
-        <source>Support Offset:</source>
-        <translation>Destek Ofseti:</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="3031"/>
-        <source>Edge Wrap/Outline</source>
-        <translation>Kenar Sarma/Kontur</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="3036"/>
-        <source>Enable Edge Wrap</source>
-        <translation>Kenar Sarmayi Etkinlestir</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="3050"/>
-        <location filename="../src/ui/param_panel.py" line="3105"/>
+        <location filename="../src/ui/param_panel.py" line="3113"/>
+        <location filename="../src/ui/param_panel.py" line="3168"/>
         <source>Inner</source>
-        <translation>Ic</translation>
+        <translation>İç</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="157"/>
+        <location filename="../src/ui/param_panel.py" line="160"/>
         <source>Project Snapshot</source>
         <translation>Proje Anlık Görüntüsü</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="280"/>
+        <location filename="../src/ui/param_panel.py" line="286"/>
         <source>Speed, temperature, cooling, color, and G-code settings</source>
         <translation>Hız, sıcaklık, soğutma, renk ve G-code ayarları</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="469"/>
+        <location filename="../src/ui/param_panel.py" line="573"/>
         <source>Wall</source>
         <translation>Duvar</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="475"/>
+        <location filename="../src/ui/param_panel.py" line="579"/>
         <source>Bottom</source>
         <translation>Alt</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="486"/>
+        <location filename="../src/ui/param_panel.py" line="590"/>
         <source>Top</source>
         <translation>Üst</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="492"/>
+        <location filename="../src/ui/param_panel.py" line="596"/>
         <source>Other</source>
         <translation>Diğer</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="715"/>
-        <location filename="../src/ui/param_panel.py" line="731"/>
+        <location filename="../src/ui/param_panel.py" line="828"/>
+        <location filename="../src/ui/param_panel.py" line="844"/>
         <source>None</source>
         <translation>Yok</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="717"/>
-        <source>Panel Step</source>
-        <translation>Panel kademesi</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="718"/>
-        <source>Panel V-Groove</source>
-        <translation>Panel V kanalı</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="733"/>
-        <source>Baseplate Step</source>
-        <translation>Taban plakası kademesi</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="734"/>
-        <source>Baseplate V-Groove</source>
-        <translation>Taban plakası V kanalı</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="736"/>
-        <source>Edge Wrap</source>
-        <translation>Kenar sarma</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="737"/>
-        <source>Outline</source>
-        <translation>Kontur</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="765"/>
+        <location filename="../src/ui/param_panel.py" line="878"/>
         <source>Meaning: {meaning}
 Input requirements: {requirements}</source>
         <translation>Anlam: {meaning}
 Girdi gereksinimleri: {requirements}</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="775"/>
+        <location filename="../src/ui/param_panel.py" line="888"/>
         <source>{minimum:.2f}-{maximum:.2f} mm. This value is rounded up to the current layer-height grid before preview, STL export, and G-code export. Example: 1.0 mm at 0.3 mm layer height becomes 1.2 mm.</source>
         <translation>{minimum:.2f}-{maximum:.2f} mm. Bu değer önizleme, STL dışa aktarma ve G-code dışa aktarma öncesinde geçerli katman yüksekliği ızgarasına yukarı yuvarlanır. Örnek: 0,3 mm katman yüksekliğinde 1,0 mm değeri 1,2 mm olur.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="798"/>
+        <location filename="../src/ui/param_panel.py" line="911"/>
         <source>Z-height used by this feature.</source>
         <translation>Bu özellik tarafından kullanılan Z yüksekliği.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="906"/>
+        <location filename="../src/ui/param_panel.py" line="1019"/>
         <source>Actual extrusion width used for each shell wall path.</source>
         <translation>Her kabuk duvar yolu için kullanılan gerçek ekstrüzyon genişliği.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="908"/>
+        <location filename="../src/ui/param_panel.py" line="1021"/>
         <source>Current printable range: {minimum:.2f}-{maximum:.2f} mm. Formula: min = max(0.75 * nozzle diameter, 1.20 * layer height); max = 1.50 * nozzle diameter. Values outside this range block slicing and export.</source>
         <translation>Geçerli yazdırılabilir aralık: {minimum:.2f}-{maximum:.2f} mm. Formül: min = max(0,75 * nozul çapı, 1,20 * katman yüksekliği); max = 1,50 * nozul çapı. Bu aralığın dışındaki değerler dilimleme ve dışa aktarmayı engeller.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="921"/>
+        <location filename="../src/ui/param_panel.py" line="1034"/>
         <source>Final total XY shell wall thickness.</source>
         <translation>Nihai toplam XY kabuk duvar kalınlığı.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="923"/>
+        <location filename="../src/ui/param_panel.py" line="1036"/>
         <source>Valid printable range for the current Line Width: {minimum:.2f}-{maximum:.2f} mm. The value is rounded up to a whole multiple of Line Width; the internal wall path count may not exceed 100. Values above the range block slicing and export.</source>
         <translation>Geçerli çizgi genişliği için geçerli yazdırılabilir aralık: {minimum:.2f}-{maximum:.2f} mm. Değer, çizgi genişliğinin tam katına yukarı yuvarlanır; iç duvar yolu sayısı 100&apos;ü aşamaz. Aralığın üzerindeki değerler dilimleme ve dışa aktarmayı engeller.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="932"/>
+        <location filename="../src/ui/param_panel.py" line="1045"/>
         <source>Z height where the printer should run the selected color-change macro.</source>
         <translation>Yazıcının seçili renk değiştirme makrosunu çalıştırması gereken Z yüksekliği.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="934"/>
+        <location filename="../src/ui/param_panel.py" line="1047"/>
         <source>{minimum:.2f}-100.00 mm. The value is rounded up to the current layer-height grid before preview and G-code export.</source>
         <translation>{minimum:.2f}-100.00 mm. Değer önizleme ve G-code dışa aktarma öncesinde geçerli katman yüksekliği ızgarasına yukarı yuvarlanır.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1040"/>
+        <location filename="../src/ui/param_panel.py" line="1149"/>
         <source>Total printed height of the sign shell.</source>
         <translation>Tabela kabuğunun toplam yazdırılan yüksekliği.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1057"/>
+        <location filename="../src/ui/param_panel.py" line="1166"/>
         <source>Vertical thickness of each printed layer; it also defines the Z snapping grid.</source>
         <translation>Her yazdırılan katmanın dikey kalınlığı; Z yakalama ızgarasını da tanımlar.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1059"/>
+        <location filename="../src/ui/param_panel.py" line="1168"/>
         <source>0.10-1.00 mm. Smaller values improve vertical detail and increase print time. Changing this value rounds Z-height parameters up to the new grid and recomputes the default Line Width.</source>
         <translation>0.10-1.00 mm. Daha küçük değerler dikey ayrıntıyı iyileştirir ve baskı süresini artırır. Bu değeri değiştirmek Z yüksekliği parametrelerini yeni ızgaraya yukarı yuvarlar ve varsayılan çizgi genişliğini yeniden hesaplar.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1187"/>
+        <location filename="../src/ui/param_panel.py" line="1293"/>
         <source>Straight bottom section height used for the baseplate side of the shell.</source>
         <translation>Kabuğun taban plakası tarafında kullanılan düz alt bölüm yüksekliği.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1199"/>
+        <location filename="../src/ui/param_panel.py" line="1305"/>
         <source>Straight top section height reserved for the face panel side of the shell.</source>
         <translation>Kabuğun ön panel tarafı için ayrılan düz üst bölüm yüksekliği.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1339"/>
-        <source>Printed solid bottom face thickness used to close the shell bottom.</source>
-        <translation>Kabuk altını kapatmak için kullanılan yazdırılmış dolu alt yüzey kalınlığı.</translation>
+        <location filename="../src/ui/param_panel.py" line="1414"/>
+        <source>Printed solid bottom shell thickness used to close the shell bottom.</source>
+        <translation>Kabuğun altını kapatmak için yazdırılan dolu alt kabuk kalınlığı.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1352"/>
-        <source>Diameter of screw holes generated in the bottom face.</source>
-        <translation>Alt yüzeyde oluşturulan vida deliklerinin çapı.</translation>
+        <location filename="../src/ui/param_panel.py" line="1427"/>
+        <source>Diameter of screw holes generated in the bottom shells.</source>
+        <translation>Alt kabuklarda oluşturulan vida deliklerinin çapı.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1353"/>
+        <location filename="../src/ui/param_panel.py" line="1428"/>
         <source>0.10-100.00 mm. Use a value larger than the screw shaft and smaller than nearby wall spacing.</source>
         <translation>0.10-100.00 mm. Vida gövdesinden büyük ve yakındaki duvar aralığından küçük bir değer kullanın.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1357"/>
-        <source>Screw Hole Diameter:</source>
-        <translation>Vida deliği çapı:</translation>
+        <location filename="../src/ui/param_panel.py" line="1432"/>
+        <source>Bottom Screw Hole Diameter:</source>
+        <translation>Alt vida deliği çapı:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1467"/>
-        <source>XY width of the LED light slot cut along eligible contours.</source>
-        <translation>Uygun konturlar boyunca kesilen LED ışık kanalının XY genişliği.</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="1468"/>
+        <location filename="../src/ui/param_panel.py" line="1530"/>
         <source>0.50-50.00 mm. Choose a value that fits the LED strip and leaves enough wall material.</source>
         <translation>0.50-50.00 mm. LED şeride uyan ve yeterli duvar malzemesi bırakan bir değer seçin.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1481"/>
-        <source>Vertical depth of the light slot from the shell opening side.</source>
-        <translation>Kabuk açıklık tarafından ışık kanalının dikey derinliği.</translation>
+        <location filename="../src/ui/param_panel.py" line="1570"/>
+        <source>Skip Small Hole Slots</source>
+        <translation>Küçük delik yuvalarını atla</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1493"/>
-        <source>Solid material thickness left under the light slot floor.</source>
-        <translation>Işık kanalı tabanının altında bırakılan dolu malzeme kalınlığı.</translation>
+        <location filename="../src/ui/param_panel.py" line="1645"/>
+        <source>Printed solid top shell thickness used to close the shell top.</source>
+        <translation>Kabuğun üstünü kapatmak için yazdırılan dolu üst kabuk kalınlığı.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1506"/>
-        <source>Extra XY clearance between the light slot and nearby shell walls.</source>
-        <translation>Işık kanalı ile yakındaki kabuk duvarları arasındaki ek XY boşluğu.</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="1507"/>
-        <source>0.00-20.00 mm. Use 0 for no extra clearance; larger values move slots farther from walls.</source>
-        <translation>0.00-20.00 mm. Ek boşluk yoksa 0 kullanın; daha büyük değerler kanalları duvarlardan uzaklaştırır.</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="1591"/>
-        <source>Printed solid top face thickness used to close the shell top.</source>
-        <translation>Kabuk üstünü kapatmak için kullanılan yazdırılmış dolu üst yüzey kalınlığı.</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="1672"/>
+        <location filename="../src/ui/param_panel.py" line="1728"/>
         <source>Color Change</source>
         <translation>Renk Değişimi</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1676"/>
+        <location filename="../src/ui/param_panel.py" line="1732"/>
         <source>Enable Color Change</source>
         <translation>Renk Değişimini Etkinleştir</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1685"/>
+        <location filename="../src/ui/param_panel.py" line="1741"/>
         <source>Initial color comes from Start G-code. Each change point runs the selected T macro.</source>
         <translation>Başlangıç rengi Başlangıç G-code&apos;undan gelir. Her değişim noktası seçilen T makrosunu çalıştırır.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1693"/>
+        <location filename="../src/ui/param_panel.py" line="1749"/>
         <source>Change At Height</source>
         <translation>Yükseklikte Değiştir</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1694"/>
+        <location filename="../src/ui/param_panel.py" line="1750"/>
         <source>Macro Index</source>
         <translation>Makro Dizini</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1695"/>
+        <location filename="../src/ui/param_panel.py" line="1751"/>
         <source>Preview</source>
         <translation>Önizleme</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1714"/>
+        <location filename="../src/ui/param_panel.py" line="1770"/>
         <source>Add Change Point</source>
         <translation>Değişim Noktası Ekle</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1719"/>
+        <location filename="../src/ui/param_panel.py" line="1775"/>
         <source>Remove Selected</source>
         <translation>Seçileni Kaldır</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1785"/>
+        <location filename="../src/ui/param_panel.py" line="1841"/>
         <source>Macro index inserted into the configured color-change command template.</source>
         <translation>Yapılandırılmış renk değiştirme komut şablonuna eklenen makro dizini.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1786"/>
+        <location filename="../src/ui/param_panel.py" line="1842"/>
         <source>0-999. With the default template T{index}, value 3 outputs T3.</source>
         <translation>0-999. Varsayılan T{index} şablonunda 3 değeri T3 çıktısı verir.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1848"/>
+        <location filename="../src/ui/param_panel.py" line="1904"/>
         <source>Color change disabled.</source>
         <translation>Renk değişimi devre dışı.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1854"/>
+        <location filename="../src/ui/param_panel.py" line="1910"/>
         <source>Initial color comes from Start G-code. No automatic changes are configured.</source>
         <translation>Başlangıç rengi Başlangıç G-code&apos;undan gelir. Otomatik değişim yapılandırılmadı.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1861"/>
+        <location filename="../src/ui/param_panel.py" line="1917"/>
         <source>At {height:.2f}mm -&gt; {command}</source>
         <translation>{height:.2f} mm&apos;de -&gt; {command}</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1870"/>
+        <location filename="../src/ui/param_panel.py" line="1926"/>
         <source>Prime Tower</source>
         <translation>Temizleme kulesi</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1874"/>
+        <location filename="../src/ui/param_panel.py" line="1930"/>
         <source>Enable Prime Tower</source>
         <translation>Temizleme kulesini etkinleştir</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1882"/>
+        <location filename="../src/ui/param_panel.py" line="1938"/>
         <source>Prime tower geometry is defined by its center point in bed coordinates.</source>
         <translation>Temizleme kulesi geometrisi, tabla koordinatlarındaki merkez noktasıyla tanımlanır.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1901"/>
+        <location filename="../src/ui/param_panel.py" line="1957"/>
         <source>Center X:</source>
         <translation>Merkez X:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1910"/>
+        <location filename="../src/ui/param_panel.py" line="1966"/>
         <source>Center Y:</source>
         <translation>Merkez Y:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1920"/>
+        <location filename="../src/ui/param_panel.py" line="1976"/>
         <source>Tower Width:</source>
         <translation>Kule genişliği:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1930"/>
+        <location filename="../src/ui/param_panel.py" line="1986"/>
         <source>Tower Depth:</source>
         <translation>Kule derinliği:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1939"/>
+        <location filename="../src/ui/param_panel.py" line="1995"/>
         <source>Infill Density:</source>
         <translation>Dolgu yoğunluğu:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1993"/>
+        <location filename="../src/ui/param_panel.py" line="2049"/>
         <source>Printer Profile</source>
         <translation>Yazıcı Profili</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2004"/>
+        <location filename="../src/ui/param_panel.py" line="2060"/>
         <source>New</source>
         <translation>Yeni</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2009"/>
+        <location filename="../src/ui/param_panel.py" line="2065"/>
         <source>Duplicate</source>
         <translation>Kopyala</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2014"/>
+        <location filename="../src/ui/param_panel.py" line="2070"/>
         <source>Rename</source>
         <translation>Yeniden Adlandır</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2019"/>
+        <location filename="../src/ui/param_panel.py" line="2075"/>
         <source>Delete</source>
         <translation>Sil</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2024"/>
+        <location filename="../src/ui/param_panel.py" line="2080"/>
         <source>Set Default</source>
         <translation>Varsayılan Yap</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2042"/>
+        <location filename="../src/ui/param_panel.py" line="2098"/>
         <source>Printable Area X:</source>
         <translation>Yazdırılabilir Alan X:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2048"/>
+        <location filename="../src/ui/param_panel.py" line="2104"/>
         <source>Printable Area Y:</source>
         <translation>Yazdırılabilir Alan Y:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2054"/>
+        <location filename="../src/ui/param_panel.py" line="2110"/>
         <source>Printable Area Z:</source>
         <translation>Yazdırılabilir Alan Z:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2072"/>
+        <location filename="../src/ui/param_panel.py" line="2128"/>
         <source>Nozzle Diameter:</source>
         <translation>Nozul Çapı:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2079"/>
+        <location filename="../src/ui/param_panel.py" line="2135"/>
         <source>Filament Diameter:</source>
         <translation>Filament Çapı:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2086"/>
+        <location filename="../src/ui/param_panel.py" line="2142"/>
         <source>Retract Length:</source>
         <translation>Geri Çekme Uzunluğu:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2092"/>
+        <location filename="../src/ui/param_panel.py" line="2148"/>
         <source>Retract Speed:</source>
         <translation>Geri Çekme Hızı:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2099"/>
+        <location filename="../src/ui/param_panel.py" line="2155"/>
         <source>Short Z-Hop:</source>
         <translation>Kısa Z-Hop:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2106"/>
+        <location filename="../src/ui/param_panel.py" line="2162"/>
         <source>Long Z-Hop:</source>
         <translation>Uzun Z-Hop:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2112"/>
+        <location filename="../src/ui/param_panel.py" line="2168"/>
         <source>Long Travel Threshold:</source>
         <translation>Uzun Hareket Eşiği:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2116"/>
+        <location filename="../src/ui/param_panel.py" line="2172"/>
         <source>Color Change Template:</source>
         <translation>Renk Değişim Şablonu:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2140"/>
+        <location filename="../src/ui/param_panel.py" line="2196"/>
         <source>Edit Start G-code</source>
         <translation>Başlangıç G-code&apos;unu Düzenle</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2142"/>
+        <location filename="../src/ui/param_panel.py" line="2198"/>
         <source>Start G-code</source>
         <translation>Başlangıç G-kodu</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2157"/>
+        <location filename="../src/ui/param_panel.py" line="2213"/>
         <source>Edit End G-code</source>
         <translation>Bitiş G-code&apos;unu Düzenle</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2159"/>
+        <location filename="../src/ui/param_panel.py" line="2215"/>
         <source>End G-code</source>
         <translation>Bitiş G-kodu</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2190"/>
+        <location filename="../src/ui/param_panel.py" line="2246"/>
         <source>{name} (Project Snapshot)</source>
         <translation>{name} (Proje Anlık Görüntüsü)</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2235"/>
+        <location filename="../src/ui/param_panel.py" line="2291"/>
         <source>Using embedded project profile snapshot.</source>
         <translation>Gömülü proje profil anlık görüntüsü kullanılıyor.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2237"/>
+        <location filename="../src/ui/param_panel.py" line="2293"/>
         <source>Profile changes are saved immediately.</source>
         <translation>Profil değişiklikleri anında kaydedilir.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2443"/>
+        <location filename="../src/ui/param_panel.py" line="2499"/>
         <source>New Printer Profile</source>
         <translation>Yeni Yazıcı Profili</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2444"/>
-        <location filename="../src/ui/param_panel.py" line="2490"/>
+        <location filename="../src/ui/param_panel.py" line="2500"/>
+        <location filename="../src/ui/param_panel.py" line="2546"/>
         <source>Profile Name:</source>
         <translation>Profil Adı:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2464"/>
+        <location filename="../src/ui/param_panel.py" line="2520"/>
         <source>Duplicate Printer Profile</source>
         <translation>Yazıcı Profilini Kopyala</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2465"/>
+        <location filename="../src/ui/param_panel.py" line="2521"/>
         <source>New Profile Name:</source>
         <translation>Yeni Profil Adı:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2466"/>
+        <location filename="../src/ui/param_panel.py" line="2522"/>
         <source>{name} Copy</source>
         <translation>{name} Kopyası</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2489"/>
+        <location filename="../src/ui/param_panel.py" line="2545"/>
         <source>Rename Printer Profile</source>
         <translation>Yazıcı Profilini Yeniden Adlandır</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2510"/>
+        <location filename="../src/ui/param_panel.py" line="2566"/>
         <source>Delete Printer Profile</source>
         <translation>Yazıcı Profilini Sil</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2511"/>
+        <location filename="../src/ui/param_panel.py" line="2567"/>
         <source>Delete printer profile &apos;{name}&apos;?</source>
         <translation>&apos;{name}&apos; yazıcı profili silinsin mi?</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2552"/>
+        <location filename="../src/ui/param_panel.py" line="2608"/>
         <source>Empty</source>
         <translation>Boş</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2555"/>
+        <location filename="../src/ui/param_panel.py" line="2611"/>
         <source>{first} (+{count} more lines)</source>
         <translation>{first} (+{count} satır daha)</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2570"/>
-        <location filename="../src/ui/param_panel.py" line="3953"/>
+        <location filename="../src/ui/param_panel.py" line="2626"/>
+        <location filename="../src/ui/param_panel.py" line="4012"/>
         <source>Klipper Profile</source>
         <translation>Klipper Profili</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2606"/>
-        <source>Panel Step/V-Groove</source>
-        <translation>Panel kademesi/V kanalı</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="2627"/>
-        <location filename="../src/ui/param_panel.py" line="2762"/>
-        <source>Distance from Shell Height down to the top surface of the top panel step or V-groove.</source>
-        <translation>Shell Height degerinden asagiya, ust panel basamagi veya V kanalinin ust yuzeyine kadar olan mesafe.</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="2629"/>
+        <location filename="../src/ui/param_panel.py" line="2685"/>
         <source>Current range is automatically constrained from 0 to half of Shell Height. The value is rounded up to the current layer-height grid before preview, STL export, and G-code export.</source>
         <translation>Gecerli aralik otomatik olarak 0 ile Shell Height degerinin yarisi arasinda sinirlanir. Deger onizleme, STL disari aktarma ve G-code disari aktarma oncesinde gecerli katman yuksekligi izgarasina yukari yuvarlanir.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2644"/>
-        <source>XY width of the top panel step or V-groove.</source>
-        <translation>Üst panel basamağı veya V oluğunun XY genişliği.</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="2645"/>
+        <location filename="../src/ui/param_panel.py" line="2701"/>
         <source>0.50-20.00 mm. Choose a value wide enough for panel seating but not wider than the local stroke.</source>
         <translation>0.50-20.00 mm. Panel oturması için yeterince geniş, ancak yerel strok genişliğinden büyük olmayan bir değer seçin.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2669"/>
-        <source>Baseplate Step/V-Groove</source>
-        <translation>Taban plakası kademesi/V kanalı</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="2688"/>
-        <location filename="../src/ui/param_panel.py" line="2780"/>
-        <source>Z height where the bottom baseplate step or V-groove is generated.</source>
-        <translation>Alt taban plakası basamağı veya V oluğunun üretildiği Z yüksekliği.</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="2700"/>
-        <source>XY width of the bottom baseplate step or V-groove.</source>
-        <translation>Alt taban plakası basamağı veya V oluğunun XY genişliği.</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="2701"/>
+        <location filename="../src/ui/param_panel.py" line="2757"/>
         <source>0.50-20.00 mm. Choose a value wide enough for baseplate seating but not wider than the local stroke.</source>
         <translation>0.50-20.00 mm. Taban plakası oturması için yeterince geniş, ancak yerel strok genişliğinden büyük olmayan bir değer seçin.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2764"/>
-        <location filename="../src/ui/param_panel.py" line="2782"/>
+        <location filename="../src/ui/param_panel.py" line="2820"/>
+        <location filename="../src/ui/param_panel.py" line="2838"/>
         <source>Current range: {minimum:.2f}-{maximum:.2f} mm. The value is rounded up to the current layer-height grid before preview, STL export, and G-code export.</source>
         <translation>Geçerli aralık: {minimum:.2f}-{maximum:.2f} mm. Değer önizleme, STL dışa aktarma ve G-code dışa aktarma öncesinde geçerli katman yüksekliği ızgarasına yukarı yuvarlanır.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2837"/>
-        <source>Printed vertical height of the anti-warping skirt around the shell.</source>
-        <translation>Kabuğun etrafındaki kalkmayı önleme eteğinin yazdırılmış dikey yüksekliği.</translation>
+        <location filename="../src/ui/param_panel.py" line="2893"/>
+        <source>Printed vertical height of the anti-warp brim around the shell.</source>
+        <translation>Kabuk etrafındaki eğrilme önleyici brimin basılan dikey yüksekliği.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2861"/>
-        <source>XY breakaway gap between the shell wall and the skirt.</source>
-        <translation>Kabuk duvarı ile etek arasındaki XY koparma boşluğu.</translation>
+        <location filename="../src/ui/param_panel.py" line="2917"/>
+        <source>XY breakaway gap between the shell wall and the brim.</source>
+        <translation>Kabuk duvarı ile brim arasındaki XY koparma boşluğu.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2862"/>
-        <source>0.00-1.00 mm. Use 0 for a touching skirt; larger values make removal easier.</source>
-        <translation>0.00-1.00 mm. Temas eden etek için 0 kullanın; daha büyük değerler sökmeyi kolaylaştırır.</translation>
+        <location filename="../src/ui/param_panel.py" line="2918"/>
+        <source>0.00-1.00 mm. Use 0 for a touching brim; larger values make removal easier.</source>
+        <translation>0,00-1,00 mm. Temas eden brim için 0 kullanın; daha büyük değerler sökmeyi kolaylaştırır.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2871"/>
-        <source>Outer Skirt</source>
-        <translation>Dış etek</translation>
+        <location filename="../src/ui/param_panel.py" line="2927"/>
+        <source>Outer Brim</source>
+        <translation>Dış brim</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2872"/>
-        <source>Inner Skirt</source>
-        <translation>İç etek</translation>
+        <location filename="../src/ui/param_panel.py" line="2928"/>
+        <source>Inner Brim</source>
+        <translation>İç brim</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="3051"/>
-        <location filename="../src/ui/param_panel.py" line="3106"/>
+        <location filename="../src/ui/param_panel.py" line="3099"/>
+        <source>Enable Bottom Edge Wrap</source>
+        <translation>Alt kenar sarmasını etkinleştir</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="3114"/>
+        <location filename="../src/ui/param_panel.py" line="3169"/>
         <source>Outer</source>
-        <translation>Dis</translation>
+        <translation>Dış</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2937"/>
+        <location filename="../src/ui/param_panel.py" line="3123"/>
+        <source>Wrap Position:</source>
+        <translation>Sarma konumu:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="3154"/>
+        <source>Enable Bottom Outline</source>
+        <translation>Alt konturu etkinleştir</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="3178"/>
+        <source>Outline Position:</source>
+        <translation>Kontur konumu:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="2993"/>
         <source>XY width of the bridge that connects neighboring letters.</source>
         <translation>Komşu harfleri bağlayan köprünün XY genişliği.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2938"/>
+        <location filename="../src/ui/param_panel.py" line="830"/>
+        <location filename="../src/ui/param_panel.py" line="2662"/>
+        <location filename="../src/ui/param_panel.py" line="3371"/>
+        <source>Acrylic Face Slot</source>
+        <translation>Akrilik ön yüz yuvası</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="831"/>
+        <location filename="../src/ui/param_panel.py" line="3370"/>
+        <source>Acrylic Face V-Groove</source>
+        <translation>Akrilik ön yüz V kanalı</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="846"/>
+        <location filename="../src/ui/param_panel.py" line="2725"/>
+        <location filename="../src/ui/param_panel.py" line="3454"/>
+        <source>Back Plate Slot</source>
+        <translation>Arka plaka yuvası</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="847"/>
+        <location filename="../src/ui/param_panel.py" line="3453"/>
+        <source>Back Plate V-Groove</source>
+        <translation>Arka plaka V kanalı</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="848"/>
+        <location filename="../src/ui/param_panel.py" line="1492"/>
+        <source>LED Strip Slot</source>
+        <translation>LED Şerit Yuvası</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="1496"/>
+        <source>Enable LED Strip Slot</source>
+        <translation>LED şerit yuvasını etkinleştir</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="1529"/>
+        <source>XY width of the LED strip slot cut along eligible contours.</source>
+        <translation>Uygun konturlar boyunca kesilen LED şerit yuvasının XY genişliği.</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="1543"/>
+        <source>Vertical depth of the LED strip slot from the shell opening side.</source>
+        <translation>Kabuk açıklık tarafından LED şerit yuvasının dikey derinliği.</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="1555"/>
+        <source>Solid material thickness left under the LED strip slot floor.</source>
+        <translation>LED şerit yuvası tabanının altında bırakılan dolu malzeme kalınlığı.</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="1558"/>
+        <source>Slot Floor Thickness:</source>
+        <translation>Yuva taban kalınlığı:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="2668"/>
+        <source>Enable Acrylic Face Slot</source>
+        <translation>Akrilik ön yüz yuvasını etkinleştir</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="2683"/>
+        <location filename="../src/ui/param_panel.py" line="2818"/>
+        <source>Distance from the shell top down to the top surface of the acrylic face slot or V-groove.</source>
+        <translation>Kabuk üstünden aşağıya, akrilik ön yüz yuvasının veya V kanalının üst yüzeyine kadar olan mesafe.</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="2691"/>
+        <source>Face Slot Drop:</source>
+        <translation>Ön yüz yuvası düşümü:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="2700"/>
+        <source>XY width of the acrylic face slot or V-groove.</source>
+        <translation>Akrilik ön yüz yuvasının veya V kanalının XY genişliği.</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="2705"/>
+        <source>Face Slot Width:</source>
+        <translation>Ön yüz yuvası genişliği:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="2730"/>
+        <source>Enable Back Plate Slot</source>
+        <translation>Arka plaka yuvasını etkinleştir</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="2744"/>
+        <location filename="../src/ui/param_panel.py" line="2836"/>
+        <source>Z height where the back plate slot or V-groove is generated.</source>
+        <translation>Arka plaka yuvasının veya V kanalının oluşturulduğu Z yüksekliği.</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="2747"/>
+        <source>Back Plate Slot Height:</source>
+        <translation>Arka plaka yuvası yüksekliği:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="2756"/>
+        <source>XY width of the back plate slot or V-groove.</source>
+        <translation>Arka plaka yuvasının veya V kanalının XY genişliği.</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="2761"/>
+        <source>Back Plate Slot Width:</source>
+        <translation>Arka plaka yuvası genişliği:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="2994"/>
         <source>1.00-50.00 mm. Choose a value wide enough for strength without covering visible letter gaps.</source>
         <translation>1.00-50.00 mm. Görünür harf boşluklarını kapatmadan dayanım için yeterince geniş bir değer seçin.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2952"/>
-        <source>Vertical bevel height used on the connected-letter bridge.</source>
-        <translation>Bağlı harf köprüsünde kullanılan dikey pah yüksekliği.</translation>
+        <location filename="../src/ui/param_panel.py" line="3008"/>
+        <source>Vertical bevel height used on the letter bridge.</source>
+        <translation>Harf köprüsünde kullanılan dikey pah yüksekliği.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2965"/>
-        <source>Vertical base height of the connected-letter bridge before beveling.</source>
-        <translation>Pah vermeden önce bağlı harf köprüsünün dikey taban yüksekliği.</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="2978"/>
-        <source>XY offset used to place extra bridge support away from the detected connection point.</source>
-        <translation>Algılanan bağlantı noktasından uzağa ek köprü desteği yerleştirmek için kullanılan XY ofseti.</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="2979"/>
-        <source>0.00-10.00 mm. Use smaller values for tight letter gaps and larger values for stronger support.</source>
-        <translation>0.00-10.00 mm. Dar harf boşlukları için daha küçük, daha güçlü destek için daha büyük değerler kullanın.</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="3060"/>
-        <source>Wrap Direction:</source>
-        <translation>Sarma Yonu:</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="3068"/>
-        <source>Wrap Width:</source>
-        <translation>Sarma Genisligi:</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="3076"/>
-        <source>Wrap Height:</source>
-        <translation>Sarma Yuksekligi:</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="3091"/>
-        <source>Enable Outline</source>
-        <translation>Konturu Etkinlestir</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="3115"/>
-        <source>Outline Direction:</source>
-        <translation>Kontur Yonu:</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="3123"/>
-        <source>Outline Width:</source>
-        <translation>Kontur Genisligi:</translation>
+        <location filename="../src/ui/param_panel.py" line="3021"/>
+        <source>Vertical base height of the letter bridge before beveling.</source>
+        <translation>Pah oluşturmadan önce harf köprüsünün dikey taban yüksekliği.</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="3131"/>
-        <source>Outline Height:</source>
-        <translation>Kontur Yuksekligi:</translation>
+        <source>Wrap Width:</source>
+        <translation>Sarma genişliği:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="3158"/>
+        <location filename="../src/ui/param_panel.py" line="3139"/>
+        <source>Wrap Height:</source>
+        <translation>Sarma yüksekliği:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="3186"/>
+        <source>Outline Width:</source>
+        <translation>Kontur genişliği:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="3194"/>
+        <source>Outline Height:</source>
+        <translation>Kontur yüksekliği:</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/param_panel.py" line="3221"/>
         <source>Speed Settings</source>
         <translation>Hiz Ayarlari</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="3168"/>
+        <location filename="../src/ui/param_panel.py" line="3231"/>
         <source>Print Speed:</source>
         <translation>Baski Hizi:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="3176"/>
+        <location filename="../src/ui/param_panel.py" line="3239"/>
         <source>Travel Speed:</source>
         <translation>Hareket Hizi:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="3184"/>
+        <location filename="../src/ui/param_panel.py" line="3247"/>
         <source>First Layer Speed:</source>
         <translation>Ilk Katman Hizi:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="3186"/>
+        <location filename="../src/ui/param_panel.py" line="3249"/>
         <source>Skirt Speed:</source>
         <translation>Etek Hizi:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="3187"/>
+        <location filename="../src/ui/param_panel.py" line="3250"/>
         <source>Step Speed:</source>
         <translation>Kademe Hizi:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="3193"/>
+        <location filename="../src/ui/param_panel.py" line="3256"/>
         <source>Temperature Settings</source>
         <translation>Sıcaklık Ayarları</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="3202"/>
+        <location filename="../src/ui/param_panel.py" line="3265"/>
         <source>First Layer Nozzle Temperature:</source>
         <translation>İlk Katman Nozzle Sıcaklığı:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="3209"/>
+        <location filename="../src/ui/param_panel.py" line="3272"/>
         <source>Other Layers Nozzle Temperature:</source>
         <translation>Diğer Katmanlar Nozzle Sıcaklığı:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="3216"/>
+        <location filename="../src/ui/param_panel.py" line="3279"/>
         <source>First Layer Bed Temperature:</source>
         <translation>İlk Katman Tabla Sıcaklığı:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="3223"/>
+        <location filename="../src/ui/param_panel.py" line="3286"/>
         <source>Other Layers Bed Temperature:</source>
         <translation>Diğer Katmanlar Tabla Sıcaklığı:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="3229"/>
+        <location filename="../src/ui/param_panel.py" line="3292"/>
         <source>Cooling Settings</source>
         <translation>Soğutma Ayarları</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="3238"/>
+        <location filename="../src/ui/param_panel.py" line="3301"/>
         <source>First Layer Fan Speed:</source>
         <translation>İlk Katman Fan Hızı:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="3245"/>
+        <location filename="../src/ui/param_panel.py" line="3308"/>
         <source>Other Layers Fan Speed:</source>
         <translation>Diğer Katmanların Fan Hızı:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="4095"/>
+        <location filename="../src/ui/param_panel.py" line="4192"/>
         <source>Import Custom Edge DXF</source>
         <translation>Ozel Kenar DXF Iceri Aktar</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="4097"/>
+        <location filename="../src/ui/param_panel.py" line="4194"/>
         <source>DXF Files (*.dxf);;All Files (*.*)</source>
         <translation>DXF Dosyalari (*.dxf);;Tum Dosyalar (*.*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="4116"/>
+        <location filename="../src/ui/param_panel.py" line="4213"/>
         <source>Import Success</source>
         <translation>Iceri Aktarma Basarili</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="4117"/>
+        <location filename="../src/ui/param_panel.py" line="4214"/>
         <source>Imported custom edge profile: {name}
 Size: {width:.1f} x {height:.1f} mm
 Control points: {points}</source>
@@ -2254,147 +2227,142 @@ Boyut: {width:.1f} x {height:.1f} mm
 Kontrol noktalari: {points}</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="4128"/>
+        <location filename="../src/ui/param_panel.py" line="4225"/>
         <source>Import Failed</source>
         <translation>Iceri Aktarma Basarisiz</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="4129"/>
+        <location filename="../src/ui/param_panel.py" line="4226"/>
         <source>Failed to import DXF file:
 {error}</source>
         <translation>DXF dosyasi iceri aktarilamadi:
 {error}</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="4140"/>
+        <location filename="../src/ui/param_panel.py" line="4243"/>
         <source> ({count} points)</source>
         <translation> ({count} nokta)</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1285"/>
-        <source>DXF Export</source>
-        <translation>DXF Disa Aktarma</translation>
+        <location filename="../src/ui/param_panel.py" line="1360"/>
+        <source>DXF Export Compensation</source>
+        <translation>DXF dışa aktarma telafisi</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1295"/>
-        <source>Outer Clearance:</source>
-        <translation>Dis kontur boslugu:</translation>
+        <location filename="../src/ui/param_panel.py" line="1370"/>
+        <source>Outer Contour Clearance:</source>
+        <translation>Dış kontur boşluğu:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1303"/>
-        <source>Hole Clearance:</source>
-        <translation>Delik boslugu:</translation>
+        <location filename="../src/ui/param_panel.py" line="1378"/>
+        <source>Inner Hole Clearance:</source>
+        <translation>İç delik boşluğu:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1311"/>
-        <source>Laser Kerf:</source>
-        <translation>Lazer kesim payi:</translation>
+        <location filename="../src/ui/param_panel.py" line="1386"/>
+        <source>Laser Kerf Width:</source>
+        <translation>Lazer kesim izi genişliği:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2059"/>
+        <location filename="../src/ui/param_panel.py" line="2115"/>
         <source>One polygon per line: 0x0,70x0,70x70,0x70</source>
         <translation>Her satıra bir çokgen: 0x0,70x0,70x70,0x70</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2062"/>
+        <location filename="../src/ui/param_panel.py" line="2118"/>
         <source>Orca-style bed exclude area. Use XxY points separated by commas; put each region on its own line.</source>
         <translation>Orca biçiminde tabla hariç tutma alanı. Virgülle ayrılmış XxY noktaları kullanın; her bölgeyi ayrı satıra yazın.</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="2065"/>
+        <location filename="../src/ui/param_panel.py" line="2121"/>
         <source>Bed Exclude Area:</source>
         <translation>Tabla hariç tutma alanı:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1083"/>
+        <location filename="../src/ui/param_panel.py" line="1192"/>
         <source>Wall Thickness:</source>
         <translation>Duvar kalınlığı:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1342"/>
-        <source>Bottom Face Thickness:</source>
-        <translation>Alt yüz kalınlığı:</translation>
+        <location filename="../src/ui/param_panel.py" line="1417"/>
+        <source>Bottom Shell Thickness:</source>
+        <translation>Alt kabuk kalınlığı:</translation>
     </message>
     <message>
-        <location filename="../src/ui/param_panel.py" line="1496"/>
-        <source>Floor Thickness:</source>
-        <translation>Taban kalınlığı:</translation>
-    </message>
-    <message>
-        <location filename="../src/ui/param_panel.py" line="1594"/>
-        <source>Top Face Thickness:</source>
-        <translation>Üst yüz kalınlığı:</translation>
+        <location filename="../src/ui/param_panel.py" line="1648"/>
+        <source>Top Shell Thickness:</source>
+        <translation>Üst kabuk kalınlığı:</translation>
     </message>
 </context>
 <context>
     <name>Preview3D</name>
     <message>
-        <location filename="../src/ui/preview_3d.py" line="1209"/>
+        <location filename="../src/ui/preview_3d.py" line="1281"/>
         <source>Loading 3D preview...</source>
         <translation>3D önizleme yükleniyor...</translation>
     </message>
     <message>
-        <location filename="../src/ui/preview_3d.py" line="1275"/>
+        <location filename="../src/ui/preview_3d.py" line="1347"/>
         <source>外壳</source>
         <translation>Dış Kabuk</translation>
     </message>
     <message>
-        <location filename="../src/ui/preview_3d.py" line="1280"/>
+        <location filename="../src/ui/preview_3d.py" line="1352"/>
         <source>内壳</source>
         <translation>İç Kabuk</translation>
     </message>
     <message>
-        <location filename="../src/ui/preview_3d.py" line="1285"/>
+        <location filename="../src/ui/preview_3d.py" line="1357"/>
         <source>填充</source>
         <translation>Doldurma</translation>
     </message>
     <message>
-        <location filename="../src/ui/preview_3d.py" line="1290"/>
+        <location filename="../src/ui/preview_3d.py" line="1362"/>
         <source>实边</source>
         <translation>Katı Kenar</translation>
     </message>
     <message>
-        <location filename="../src/ui/preview_3d.py" line="1295"/>
+        <location filename="../src/ui/preview_3d.py" line="1367"/>
         <source>换色</source>
         <translation>Renk Değişimi</translation>
     </message>
     <message>
-        <location filename="../src/ui/preview_3d.py" line="1300"/>
+        <location filename="../src/ui/preview_3d.py" line="1372"/>
         <source>底面</source>
         <translation>Alt Yüz</translation>
     </message>
     <message>
-        <location filename="../src/ui/preview_3d.py" line="1305"/>
+        <location filename="../src/ui/preview_3d.py" line="1377"/>
         <source>顶面</source>
         <translation>Üst Yüz</translation>
     </message>
     <message>
-        <location filename="../src/ui/preview_3d.py" line="1313"/>
+        <location filename="../src/ui/preview_3d.py" line="1385"/>
         <source>图层编辑</source>
         <translation>Katman Düzenleme</translation>
     </message>
     <message>
-        <location filename="../src/ui/preview_3d.py" line="1329"/>
+        <location filename="../src/ui/preview_3d.py" line="1401"/>
         <source>层数编辑</source>
         <translation>Katman Sayısı Düzenleme</translation>
     </message>
     <message>
-        <location filename="../src/ui/preview_3d.py" line="1393"/>
+        <location filename="../src/ui/preview_3d.py" line="1422"/>
         <source>正</source>
         <translation>Ön</translation>
     </message>
     <message>
-        <location filename="../src/ui/preview_3d.py" line="1398"/>
+        <location filename="../src/ui/preview_3d.py" line="1427"/>
         <source>俯</source>
         <translation>Üst</translation>
     </message>
     <message>
-        <location filename="../src/ui/preview_3d.py" line="1403"/>
+        <location filename="../src/ui/preview_3d.py" line="1432"/>
         <source>侧</source>
         <translation>Yan</translation>
     </message>
     <message>
-        <location filename="../src/ui/preview_3d.py" line="1408"/>
+        <location filename="../src/ui/preview_3d.py" line="1437"/>
         <source>透</source>
         <translation>İzo</translation>
     </message>
@@ -2430,12 +2398,12 @@ Kontrol noktalari: {points}</translation>
 <context>
     <name>ProjectCard</name>
     <message>
-        <location filename="../src/ui/home_page.py" line="199"/>
+        <location filename="../src/ui/home_page.py" line="210"/>
         <source>Open Containing Folder</source>
         <translation>İçeren klasörü aç</translation>
     </message>
     <message>
-        <location filename="../src/ui/home_page.py" line="200"/>
+        <location filename="../src/ui/home_page.py" line="211"/>
         <source>Remove from Recent</source>
         <translation>Son kullanılanlardan kaldır</translation>
     </message>
@@ -2443,23 +2411,23 @@ Kontrol noktalari: {points}</translation>
 <context>
     <name>ProjectPanel</name>
     <message>
-        <location filename="../src/ui/project_panel.py" line="258"/>
+        <location filename="../src/ui/project_panel.py" line="288"/>
         <source>Shape List</source>
         <translation>Sekil Listesi</translation>
     </message>
     <message>
-        <location filename="../src/ui/project_panel.py" line="311"/>
+        <location filename="../src/ui/project_panel.py" line="341"/>
         <source>+ Import Shape</source>
         <translation>+ Sekil Iceri Aktar</translation>
     </message>
     <message>
-        <location filename="../src/ui/project_panel.py" line="377"/>
-        <location filename="../src/ui/project_panel.py" line="405"/>
+        <location filename="../src/ui/project_panel.py" line="467"/>
+        <location filename="../src/ui/project_panel.py" line="495"/>
         <source>Asset</source>
         <translation>Varlık</translation>
     </message>
     <message>
-        <location filename="../src/ui/project_panel.py" line="451"/>
+        <location filename="../src/ui/project_panel.py" line="541"/>
         <source>Letter-{index}</source>
         <translation>Harf-{index}</translation>
     </message>
@@ -2467,7 +2435,7 @@ Kontrol noktalari: {points}</translation>
 <context>
     <name>ShellPanel</name>
     <message>
-        <location filename="../src/ui/panels/shell_panel.py" line="429"/>
+        <location filename="../src/ui/panels/shell_panel.py" line="434"/>
         <source>No profile selected</source>
         <translation>Profil seçilmedi</translation>
     </message>
@@ -2569,68 +2537,68 @@ Kontrol noktalari: {points}</translation>
         <translation>İşle</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="498"/>
+        <location filename="../src/ui/title_bar.py" line="510"/>
         <source>New Project</source>
         <translation>Yeni Proje</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="499"/>
+        <location filename="../src/ui/title_bar.py" line="511"/>
         <source>Open File...</source>
         <translation>Dosya Ac...</translation>
     </message>
     <message>
         <location filename="../src/ui/title_bar.py" line="88"/>
-        <location filename="../src/ui/title_bar.py" line="502"/>
+        <location filename="../src/ui/title_bar.py" line="514"/>
         <source>Save Project</source>
         <translation>Projeyi Kaydet</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="505"/>
+        <location filename="../src/ui/title_bar.py" line="517"/>
         <source>Export G-code...</source>
         <translation>G-code&apos;u dışa aktar...</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="506"/>
+        <location filename="../src/ui/title_bar.py" line="518"/>
         <source>Export STL...</source>
         <translation>STL Disa Aktar...</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="508"/>
+        <location filename="../src/ui/title_bar.py" line="520"/>
         <source>Export Baseplate DXF...</source>
         <translation>Taban Plakası DXF Dışa Aktar...</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="509"/>
+        <location filename="../src/ui/title_bar.py" line="521"/>
         <source>Export Panel DXF...</source>
         <translation>Panel DXF Dışa Aktar...</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="528"/>
+        <location filename="../src/ui/title_bar.py" line="557"/>
         <source>Show Configuration Folder</source>
         <translation>Yapılandırma klasörünü göster</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="529"/>
+        <location filename="../src/ui/title_bar.py" line="558"/>
         <source>Tutorial</source>
         <translation>Eğitim</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="530"/>
+        <location filename="../src/ui/title_bar.py" line="559"/>
         <source>Check for Updates</source>
         <translation>Güncellemeleri Denetle</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="533"/>
+        <location filename="../src/ui/title_bar.py" line="562"/>
         <source>About</source>
         <translation>Hakkinda</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="535"/>
+        <location filename="../src/ui/title_bar.py" line="564"/>
         <source>Exit</source>
         <translation>Cikis</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="513"/>
+        <location filename="../src/ui/title_bar.py" line="525"/>
         <source>Language</source>
         <translation>Dil</translation>
     </message>
@@ -2645,12 +2613,12 @@ Kontrol noktalari: {points}</translation>
         <translation>Projeyi Dışa Aktar</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="500"/>
+        <location filename="../src/ui/title_bar.py" line="512"/>
         <source>Open Project...</source>
         <translation>Proje Aç...</translation>
     </message>
     <message>
-        <location filename="../src/ui/title_bar.py" line="503"/>
+        <location filename="../src/ui/title_bar.py" line="515"/>
         <source>Save As...</source>
         <translation>Farklı Kaydet...</translation>
     </message>
@@ -2875,7 +2843,7 @@ Kontrol noktalari: {points}</translation>
 <context>
     <name>_ProjectListItem</name>
     <message>
-        <location filename="../src/ui/project_panel.py" line="134"/>
+        <location filename="../src/ui/project_panel.py" line="135"/>
         <source>Explode Asset</source>
         <translation>Varlığı parçala</translation>
     </message>

@@ -288,7 +288,7 @@
 - U 形字轮廓不再是独立 Wall 模式，而是 Custom 边的一个 DXF preset。
 - 先用内置预设录一遍，再演示导入 DXF，降低理解成本。
 
-## 8. Top 结构：顶面封闭、面板台阶、V 槽
+## 8. Top 结构：顶面封闭、亚克力面板卡槽、亚克力面板 V 槽
 
 进入路径：`Settings -> Shape -> Top`
 
@@ -305,25 +305,25 @@
 
 - `Top Face Thickness`：顶面封闭厚度，单位 mm，会按层高自动吸附。
 
-### Panel Step / V-Groove
+### Acrylic Face Slot / Acrylic Face V-Groove
 
 用途：
 
-- 为亚克力面板或上盖预留台阶/卡槽。
-- `V-Groove` 用于形成 V 槽效果。
+- 为亚克力面板或上盖预留卡槽。
+- `Acrylic Face V-Groove` 用于形成亚克力面板 V 槽效果。
 
 参数：
 
-- `Top Step Distance`：从 `Shell Height` 顶面向下到顶部 Step/V-Groove 顶面的距离。
-- `Top Step Width`：顶部台阶或 V 槽在 XY 方向的宽度。
+- `Face Slot Drop`：从 `Shell Height` 顶面向下到顶部 Acrylic Face Slot / Acrylic Face V-Groove 顶面的距离。
+- `Face Slot Width`：顶部亚克力面板卡槽或 V 槽在 XY 方向的宽度。
 
 重点提醒：
 
-- `Top Face` 与 `Panel Step/V-Groove` 互斥。
-- `Top Step Distance` 不是旧版本的“台阶高度”，它是从顶部往下量的距离。
+- `Top Shell` 与 `Acrylic Face Slot` / `Acrylic Face V-Groove` 互斥。
+- `Face Slot Drop` 不是旧版本的“台阶高度”，它是从顶部往下量的距离。
 - 顶部 Step 最大值会受字壳高度限制，通常不超过字壳高度的一半。
 
-## 9. Bottom 结构：底面、底板台阶、灯槽、包边/勾边
+## 9. Bottom 结构：底面、背板卡槽、灯槽、包边/勾边
 
 进入路径：`Settings -> Shape -> Bottom`
 
@@ -348,23 +348,23 @@
 3. 回到画布使用 `Screw Hole` 工具添加孔位。
 4. `Process` 后进入 3D 预览检查孔位。
 
-### Baseplate Step / V-Groove
+### Back Plate Slot / Back Plate V-Groove
 
 用途：
 
-- 为底板装配生成台阶或 V 槽。
+- 为背板/底板装配生成卡槽或 V 槽。
 
 参数：
 
-- `Bottom Step Height`：底部台阶或 V 槽所在 Z 高度。
-- `Bottom Step Width`：底部台阶或 V 槽宽度。
+- `Back Plate Slot Height`：背板卡槽或 V 槽所在 Z 高度。
+- `Back Plate Slot Width`：背板卡槽或 V 槽宽度。
 
 提醒：
 
-- `Bottom Face`、`Baseplate Step/V-Groove`、`Light Slot`、`Edge Wrap`、`Outline` 属于互斥或冲突场景，软件会自动收敛有效模式。
+- `Bottom Face`、`Back Plate Slot`、`Back Plate V-Groove`、`LED Strip Slot`、`Edge Wrap`、`Outline` 属于互斥或冲突场景，软件会自动收敛有效模式。
 - 录课时不要同时打开多个底部模式，要一个案例只讲一种结构。
 
-### Light Slot
+### LED Strip Slot
 
 用途：
 
@@ -375,20 +375,19 @@
 - `Outer Slot` / `Hole Slot`：选择外轮廓或内孔是否生成灯槽。
 - `Slot Width`：灯槽 XY 宽度。
 - `Slot Depth`：灯槽深度。
-- `Floor Thickness`：灯槽底部保留实心厚度。
-- `Wall Gap`：灯槽与墙体的额外间隙。
-- `Auto Skip Small Holes` 与 `Min Hole Span`：自动跳过过小内孔，避免小孔区域生成不合理灯槽。
+- `Slot Floor Thickness`：槽底保留实心厚度。
+- `Skip Small Hole Slots` 与 `Min Hole Span`：小内孔不生成灯槽，避免小孔区域生成不合理灯槽。
 
-### Edge Wrap / Outline
+### Bottom Edge Wrap / Bottom Outline
 
 用途：
 
-- `Edge Wrap`：包边。
-- `Outline`：勾边。
+- `Bottom Edge Wrap`：底部包边。
+- `Bottom Outline`：底部勾边。
 
 参数：
 
-- 方向：`Inner` 或 `Outer`。
+- 位置：`Inner` 或 `Outer`。
 - 宽度、高度。
 
 教学建议：
@@ -400,7 +399,7 @@
 
 进入路径：`Settings -> Shape -> Other`
 
-### Anti-Warping Skirt
+### Anti-Warp Brim
 
 用途：
 
@@ -409,16 +408,16 @@
 
 参数：
 
-- `Skirt Height`：裙边高度。
-- `Wall Gap`：裙边连接线与字壳墙体的净空，便于拆除。
-- `Outer Skirt` / `Inner Skirt`：选择外侧或内侧。
+- `Brim Height`：防翘边高度。
+- `Breakaway Gap`：防翘边连接线与字壳墙体的净空，便于拆除。
+- `Outer Brim` / `Inner Brim`：选择外侧或内侧。
 
 提醒：
 
 - 默认先讲外侧裙边。
 - 内侧裙边适合有较大内孔且也需要防翘的情况。
 
-### Connected Letters
+### Letter Bridges
 
 用途：
 
@@ -426,16 +425,16 @@
 
 参数：
 
-- `Connection Type`：三角形或菱形。
-- `Auto Detect Connection Points`：自动寻找连接点。
-- `Connection Width`、`Bevel Height`、`Base Height`、`Support Offset`。
+- `Bridge Type`：三角形或菱形。
+- `Auto-Detect Bridge Points`：自动寻找连接点。
+- `Bridge Width`、`Bridge Bevel Height`、`Bridge Base Height`、`Bridge Support Offset`。
 
 教学提醒：
 
 - 连襟字只在确实需要连接离散笔画时启用。
 - 第一次教学不要建议客户默认开启。
 
-### DXF Export
+### DXF Export Compensation
 
 用途：
 
@@ -443,9 +442,9 @@
 
 参数：
 
-- `Outer Clearance`：外轮廓安装公差。
-- `Hole Clearance`：内孔安装公差。
-- `Laser Kerf`：激光切缝补偿。
+- `Outer Contour Clearance`：外轮廓安装公差。
+- `Inner Hole Clearance`：内孔安装公差。
+- `Laser Kerf Width`：激光切缝补偿。
 
 重点口播：
 
@@ -626,7 +625,7 @@
 讲解重点：
 
 - 使用当前图形和 DXF 补偿参数。
-- 导出成功提示会显示 `Outer Clearance`、`Hole Clearance`、`Laser Kerf`。
+- 导出成功提示会显示 `Outer Contour Clearance`、`Inner Hole Clearance`、`Laser Kerf Width`。
 
 ### Export Panel DXF
 
@@ -637,7 +636,7 @@
 讲解重点：
 
 - 同样受 DXF 补偿参数影响。
-- 面板是否能准确装配，和 `Panel Step / V-Groove` 参数、DXF 补偿值都有关系。
+- 面板是否能准确装配，和 `Acrylic Face Slot / Acrylic Face V-Groove` 参数、DXF 补偿值都有关系。
 
 ## 16. 多语言、教程入口、更新与配置目录
 
@@ -681,9 +680,9 @@
 
 优先检查：
 
-- `Outer Clearance`
-- `Hole Clearance`
-- `Laser Kerf`
+- `Outer Contour Clearance`
+- `Inner Hole Clearance`
+- `Laser Kerf Width`
 - 台阶宽度是否太小。
 - DXF 加工设备实际切缝是否和输入一致。
 
@@ -707,8 +706,8 @@
 检查：
 
 - 是否选了 `Outer Slot` 或 `Hole Slot`。
-- 小内孔是否被 `Auto Skip Small Holes` 跳过。
-- `Slot Width`、`Wall Gap` 是否让槽位没有足够空间生成。
+- 小内孔是否被 `Skip Small Hole Slots` 跳过。
+- `Slot Width` 是否让槽位没有足够空间生成。
 
 ### 换色没有按预期执行
 
@@ -740,9 +739,9 @@
 4. 2D 编辑：移动、旋转、缩放、镜像、布尔、组合、删除。
 5. Shape 基础：Shell Height、Layer Height、Line Width、Wall Thickness。
 6. Wall 边型：Straight、Beveled、Custom。
-7. Top 工艺：Top Face、Panel Step、V-Groove。
-8. Bottom 工艺：Bottom Face、螺丝孔、Baseplate Step、Light Slot、Edge Wrap、Outline。
-9. Other 工艺：Anti-Warping Skirt、Connected Letters、DXF Export。
+7. Top 工艺：Top Shell、Acrylic Face Slot、Acrylic Face V-Groove。
+8. Bottom 工艺：Bottom Face、螺丝孔、Back Plate Slot、LED Strip Slot、Edge Wrap、Outline。
+9. Other 工艺：Anti-Warp Brim、Letter Bridges、DXF Export Compensation。
 10. Machine 设置：打印机档案、平台、喷嘴、不可打印区域。
 11. Print 设置：速度、温度、冷却、换色、Prime Tower、Start/End G-code。
 12. Process 与 Preview：处理、校验、3D 检查。

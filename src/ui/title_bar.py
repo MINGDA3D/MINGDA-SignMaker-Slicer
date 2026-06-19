@@ -22,6 +22,7 @@ class TitleBar(QWidget):
     # 信号
     nav_changed = Signal(str)  # 导航切换信号
     menu_action = Signal(str)  # 菜单动作信号
+    open_recent_menu_requested = Signal(object)
 
     # 文件操作信号
     open_clicked = Signal()
@@ -510,6 +511,7 @@ class TitleBar(QWidget):
         menu.addAction(self.tr("New Project"), lambda: self.menu_action.emit("new"))
         menu.addAction(self.tr("Open File..."), lambda: self.menu_action.emit("open"))
         menu.addAction(self.tr("Open Project..."), lambda: self.menu_action.emit("open_project"))
+        self._add_open_recent_menu(menu)
         menu.addSeparator()
         menu.addAction(self.tr("Save Project"), lambda: self.menu_action.emit("save"))
         menu.addAction(self.tr("Save As..."), lambda: self.menu_action.emit("save_as"))
@@ -564,6 +566,14 @@ class TitleBar(QWidget):
         menu.addAction(self.tr("Exit"), lambda: self.menu_action.emit("quit"))
 
         menu.exec(self.btn_menu.mapToGlobal(self.btn_menu.rect().bottomLeft()))
+
+    def _add_open_recent_menu(self, menu: QMenu):
+        recent_menu = menu.addMenu(self.tr("Open Recent"))
+        self._apply_menu_style(recent_menu)
+        recent_menu.setToolTipsVisible(True)
+        recent_menu.aboutToShow.connect(
+            lambda target_menu=recent_menu: self.open_recent_menu_requested.emit(target_menu)
+        )
 
     def set_nav(self, nav: str):
         """设置当前导航"""

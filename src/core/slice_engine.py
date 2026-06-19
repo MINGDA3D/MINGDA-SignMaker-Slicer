@@ -493,7 +493,7 @@ class SliceEngine:
         contours: List[Contour],
         params: SliceParams,
     ) -> Optional[ConnectedPreviewContext]:
-        """Precompute connected-letter bridges once per slice."""
+        """Precompute letter bridges once per slice."""
         if not params.connected.enabled or not contours:
             return None
 
@@ -586,10 +586,10 @@ class SliceEngine:
         """
         斜边处理
 
-        斜边结构（包含底板区域、斜边区域、面板区域三部分）：
+        斜边结构（包含底部直壁区域、斜边区域、顶部直壁区域三部分）：
 
-        总高度 = 底板厚度 + 斜边高度 + 面板厚度
-        斜边高度 = 总高度 - 底板厚度 - 面板厚度
+        总高度 = 底部直壁高度 + 斜边高度 + 顶部直壁高度
+        斜边高度 = 总高度 - 底部直壁高度 - 顶部直壁高度
 
         原始轮廓始终以底面 z=0 为基准。
 
@@ -615,11 +615,11 @@ class SliceEngine:
         bevel_width = params.bevel_width
 
         # 计算区域边界
-        baseplate_top = baseplate_thickness  # 底板区域顶部
-        panel_bottom = total_height - panel_thickness  # 面板区域底部
+        baseplate_top = baseplate_thickness  # 底部直壁区域顶部
+        panel_bottom = total_height - panel_thickness  # 顶部直壁区域底部
 
         # 斜边区域就是中间部分
-        # 注意：如果底板+面板厚度超过总高度，则没有斜边区域
+        # 注意：如果底部+顶部直壁高度超过总高度，则没有斜边区域
 
         if params.bevel_direction == BevelDirection.TOP_SMALL:
             # 上小下大：底面保持原始轮廓，向上逐渐内缩

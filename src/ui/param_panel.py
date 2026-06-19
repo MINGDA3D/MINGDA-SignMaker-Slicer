@@ -826,9 +826,9 @@ class ParamPanel(QWidget):
             "top_mode_buttons",
             [
                 (self.TOP_MODE_NONE, self.tr("None"), "none"),
-                (self.TOP_MODE_FACE, self.tr("Top Face"), "face-top"),
-                (self.TOP_MODE_PANEL_STEP, self.tr("Panel Step"), "panel-step"),
-                (self.TOP_MODE_PANEL_V_GROOVE, self.tr("Panel V-Groove"), "panel-v-groove"),
+                (self.TOP_MODE_FACE, self.tr("Top Shell"), "face-top"),
+                (self.TOP_MODE_PANEL_STEP, self.tr("Acrylic Face Slot"), "panel-step"),
+                (self.TOP_MODE_PANEL_V_GROOVE, self.tr("Acrylic Face V-Groove"), "panel-v-groove"),
             ],
             self.TOP_MODE_NONE,
         )
@@ -842,12 +842,12 @@ class ParamPanel(QWidget):
             "bottom_mode_buttons",
             [
                 (self.BOTTOM_MODE_NONE, self.tr("None"), "none"),
-                (self.BOTTOM_MODE_FACE, self.tr("Bottom Face"), "bottom-face"),
-                (self.BOTTOM_MODE_BASEPLATE_STEP, self.tr("Baseplate Step"), "baseplate-step"),
-                (self.BOTTOM_MODE_BASEPLATE_V_GROOVE, self.tr("Baseplate V-Groove"), "baseplate-v-groove"),
-                (self.BOTTOM_MODE_LIGHT_SLOT, self.tr("Light Slot"), "light-slot"),
-                (self.BOTTOM_MODE_EDGE_WRAP, self.tr("Edge Wrap"), "edge-wrap"),
-                (self.BOTTOM_MODE_OUTLINE, self.tr("Outline"), "outline"),
+                (self.BOTTOM_MODE_FACE, self.tr("Bottom Shells"), "bottom-face"),
+                (self.BOTTOM_MODE_BASEPLATE_STEP, self.tr("Back Plate Slot"), "baseplate-step"),
+                (self.BOTTOM_MODE_BASEPLATE_V_GROOVE, self.tr("Back Plate V-Groove"), "baseplate-v-groove"),
+                (self.BOTTOM_MODE_LIGHT_SLOT, self.tr("LED Strip Slot"), "light-slot"),
+                (self.BOTTOM_MODE_EDGE_WRAP, self.tr("Bottom Edge Wrap"), "edge-wrap"),
+                (self.BOTTOM_MODE_OUTLINE, self.tr("Bottom Outline"), "outline"),
             ],
             self.BOTTOM_MODE_NONE,
         )
@@ -1275,15 +1275,15 @@ class ParamPanel(QWidget):
         self.bevel_direction_hint.setStyleSheet(f"color: {COLORS.text_muted}; font-size: 12px;")
         bevel_layout.addRow("", self.bevel_direction_hint)
 
-        # 斜边宽度
+        # 斜边水平宽度
         self.bevel_width_spin = self._create_double_spinbox()
         self.bevel_width_spin.setRange(0, 50)
         self.bevel_width_spin.setValue(5)
         self.bevel_width_spin.setSuffix(" mm")
         self.bevel_width_spin.valueChanged.connect(self._on_param_changed)
-        self._add_icon_row(bevel_layout, "bevel-width", self.tr("Bevel Width:"), self.bevel_width_spin)
+        self._add_icon_row(bevel_layout, "bevel-width", self.tr("Bevel Horizontal Width:"), self.bevel_width_spin)
 
-        # 底板厚度
+        # 底部直壁高度
         self.baseplate_spin = self._create_double_spinbox()
         self._configure_z_height_spin(
             self.baseplate_spin,
@@ -1293,9 +1293,9 @@ class ParamPanel(QWidget):
             meaning=self.tr("Straight bottom section height used for the baseplate side of the shell."),
         )
         self.baseplate_spin.valueChanged.connect(self._on_param_changed)
-        self._add_icon_row(bevel_layout, "baseplate-thickness", self.tr("Baseplate Thickness:"), self.baseplate_spin)
+        self._add_icon_row(bevel_layout, "baseplate-thickness", self.tr("Bottom Straight Height:"), self.baseplate_spin)
 
-        # 面板厚度
+        # 顶部直壁高度
         self.panel_thickness_spin = self._create_double_spinbox()
         self._configure_z_height_spin(
             self.panel_thickness_spin,
@@ -1305,7 +1305,7 @@ class ParamPanel(QWidget):
             meaning=self.tr("Straight top section height reserved for the face panel side of the shell."),
         )
         self.panel_thickness_spin.valueChanged.connect(self._on_param_changed)
-        self._add_icon_row(bevel_layout, "panel-thickness", self.tr("Panel Thickness:"), self.panel_thickness_spin)
+        self._add_icon_row(bevel_layout, "panel-thickness", self.tr("Top Straight Height:"), self.panel_thickness_spin)
 
         layout.addWidget(self.bevel_params_widget)
         self.bevel_params_widget.setVisible(False)
@@ -1357,7 +1357,7 @@ class ParamPanel(QWidget):
 
     def _create_dxf_export_group(self) -> QGroupBox:
         """创建 DXF 导出补偿参数组"""
-        group = QGroupBox(self.tr("DXF Export"))
+        group = QGroupBox(self.tr("DXF Export Compensation"))
         layout = QFormLayout(group)
         layout.setSpacing(8)
 
@@ -1367,7 +1367,7 @@ class ParamPanel(QWidget):
         self.dxf_outer_clearance_spin.setSingleStep(0.1)
         self.dxf_outer_clearance_spin.setSuffix(" mm")
         self.dxf_outer_clearance_spin.valueChanged.connect(self._on_param_changed)
-        self._add_icon_row(layout, "outer_clearance", self.tr("Outer Clearance:"), self.dxf_outer_clearance_spin)
+        self._add_icon_row(layout, "outer_clearance", self.tr("Outer Contour Clearance:"), self.dxf_outer_clearance_spin)
 
         self.dxf_hole_clearance_spin = self._create_double_spinbox()
         self.dxf_hole_clearance_spin.setRange(0, 10)
@@ -1375,7 +1375,7 @@ class ParamPanel(QWidget):
         self.dxf_hole_clearance_spin.setSingleStep(0.1)
         self.dxf_hole_clearance_spin.setSuffix(" mm")
         self.dxf_hole_clearance_spin.valueChanged.connect(self._on_param_changed)
-        self._add_icon_row(layout, "hole_clearance", self.tr("Hole Clearance:"), self.dxf_hole_clearance_spin)
+        self._add_icon_row(layout, "hole_clearance", self.tr("Inner Hole Clearance:"), self.dxf_hole_clearance_spin)
 
         self.dxf_laser_kerf_spin = self._create_double_spinbox()
         self.dxf_laser_kerf_spin.setRange(0, 2)
@@ -1383,18 +1383,18 @@ class ParamPanel(QWidget):
         self.dxf_laser_kerf_spin.setSingleStep(0.01)
         self.dxf_laser_kerf_spin.setSuffix(" mm")
         self.dxf_laser_kerf_spin.valueChanged.connect(self._on_param_changed)
-        self._add_icon_row(layout, "kerf", self.tr("Laser Kerf:"), self.dxf_laser_kerf_spin)
+        self._add_icon_row(layout, "kerf", self.tr("Laser Kerf Width:"), self.dxf_laser_kerf_spin)
 
         return group
 
     def _create_bottom_face_group(self) -> QGroupBox:
         """创建底面封闭参数组"""
-        group = QGroupBox(self.tr("Bottom Face"))
+        group = QGroupBox(self.tr("Bottom Shells"))
         layout = QVBoxLayout(group)
         layout.setSpacing(8)
 
         # 启用开关
-        self.bottom_face_enabled = QCheckBox(self.tr("Enable Bottom Face"))
+        self.bottom_face_enabled = QCheckBox(self.tr("Enable Bottom Shells"))
         self.bottom_face_enabled.setObjectName("bottom_face_enabled")
         self.bottom_face_enabled.setVisible(False)
         self.bottom_face_enabled.stateChanged.connect(self._on_param_changed)
@@ -1411,10 +1411,10 @@ class ParamPanel(QWidget):
             10.0,
             0.9,
             enabled=False,
-            meaning=self.tr("Printed solid bottom face thickness used to close the shell bottom."),
+            meaning=self.tr("Printed solid bottom shell thickness used to close the shell bottom."),
         )
         self.bottom_face_thickness.valueChanged.connect(self._on_param_changed)
-        self._add_icon_row(form, "bottom-face-thickness", self.tr("Bottom Face Thickness:"), self.bottom_face_thickness)
+        self._add_icon_row(form, "bottom-face-thickness", self.tr("Bottom Shell Thickness:"), self.bottom_face_thickness)
 
         self.bottom_face_screw_hole_diameter = self._create_double_spinbox()
         self.bottom_face_screw_hole_diameter.setRange(0.1, 100.0)
@@ -1424,12 +1424,12 @@ class ParamPanel(QWidget):
         self.bottom_face_screw_hole_diameter.setEnabled(False)
         self.bottom_face_screw_hole_diameter.setToolTip(
             self._parameter_tooltip(
-                self.tr("Diameter of screw holes generated in the bottom face."),
+                self.tr("Diameter of screw holes generated in the bottom shells."),
                 self.tr("0.10-100.00 mm. Use a value larger than the screw shaft and smaller than nearby wall spacing."),
             )
         )
         self.bottom_face_screw_hole_diameter.valueChanged.connect(self._on_param_changed)
-        self._add_icon_row(form, "screw-hole", self.tr("Screw Hole Diameter:"), self.bottom_face_screw_hole_diameter)
+        self._add_icon_row(form, "screw-hole", self.tr("Bottom Screw Hole Diameter:"), self.bottom_face_screw_hole_diameter)
 
         layout.addLayout(form)
 
@@ -1437,7 +1437,7 @@ class ParamPanel(QWidget):
         self.bottom_face_enabled.stateChanged.connect(
             lambda: self._toggle_bottom_face_controls(self.bottom_face_enabled.isChecked())
         )
-        # 与 Baseplate Step (Bottom) 互斥
+        # 与 Back Plate Slot 互斥
         self.bottom_face_enabled.stateChanged.connect(self._on_bottom_face_toggled)
         self.bottom_face_enabled.stateChanged.connect(self._sync_bottom_mode_from_controls)
         self._sync_bottom_face_availability()
@@ -1445,7 +1445,7 @@ class ParamPanel(QWidget):
         return group
 
     def _on_bottom_face_toggled(self):
-        """底面封闭启用时，自动关闭底板台阶（互斥）"""
+        """底面封闭启用时，自动关闭背板卡槽（互斥）"""
         if self.bottom_face_enabled.isChecked() and hasattr(self, 'baseplate_step_enabled'):
             if self.baseplate_step_enabled.isChecked():
                 self.baseplate_step_enabled.blockSignals(True)
@@ -1455,7 +1455,7 @@ class ParamPanel(QWidget):
                 self._on_param_changed()
 
     def _on_baseplate_step_toggled(self):
-        """底板台阶启用时，自动关闭冲突的底部结构。"""
+        """背板卡槽启用时，自动关闭冲突的底部结构。"""
         if self.baseplate_step_enabled.isChecked() and hasattr(self, 'bottom_face_enabled'):
             if self.bottom_face_enabled.isChecked():
                 self.bottom_face_enabled.blockSignals(True)
@@ -1489,11 +1489,11 @@ class ParamPanel(QWidget):
 
     def _create_light_slot_group(self) -> QGroupBox:
         """创建灯槽参数组"""
-        group = QGroupBox(self.tr("Light Slot"))
+        group = QGroupBox(self.tr("LED Strip Slot"))
         layout = QVBoxLayout(group)
         layout.setSpacing(8)
 
-        self.light_slot_enabled = QCheckBox(self.tr("Enable Light Slot"))
+        self.light_slot_enabled = QCheckBox(self.tr("Enable LED Strip Slot"))
         self.light_slot_enabled.setObjectName("light_slot_enabled")
         self.light_slot_enabled.setVisible(False)
         self.light_slot_enabled.stateChanged.connect(self._on_param_changed)
@@ -1526,7 +1526,7 @@ class ParamPanel(QWidget):
         self.light_slot_width.setEnabled(False)
         self.light_slot_width.setToolTip(
             self._parameter_tooltip(
-                self.tr("XY width of the LED light slot cut along eligible contours."),
+                self.tr("XY width of the LED strip slot cut along eligible contours."),
                 self.tr("0.50-50.00 mm. Choose a value that fits the LED strip and leaves enough wall material."),
             )
         )
@@ -1540,7 +1540,7 @@ class ParamPanel(QWidget):
             20.0,
             6.0,
             enabled=False,
-            meaning=self.tr("Vertical depth of the light slot from the shell opening side."),
+            meaning=self.tr("Vertical depth of the LED strip slot from the shell opening side."),
         )
         self.light_slot_depth.valueChanged.connect(self._on_param_changed)
         self._add_icon_row(form, "slot-depth", self.tr("Slot Depth:"), self.light_slot_depth)
@@ -1552,10 +1552,10 @@ class ParamPanel(QWidget):
             20.0,
             1.5,
             enabled=False,
-            meaning=self.tr("Solid material thickness left under the light slot floor."),
+            meaning=self.tr("Solid material thickness left under the LED strip slot floor."),
         )
         self.light_slot_floor_layers.valueChanged.connect(self._on_param_changed)
-        self._add_icon_row(form, "floor", self.tr("Floor Thickness:"), self.light_slot_floor_layers)
+        self._add_icon_row(form, "floor", self.tr("Slot Floor Thickness:"), self.light_slot_floor_layers)
 
         self.light_slot_wall_gap = self._create_double_spinbox()
         self.light_slot_wall_gap.setRange(0.0, 20.0)
@@ -1563,18 +1563,11 @@ class ParamPanel(QWidget):
         self.light_slot_wall_gap.setSingleStep(0.1)
         self.light_slot_wall_gap.setSuffix(" mm")
         self.light_slot_wall_gap.setEnabled(False)
-        self.light_slot_wall_gap.setToolTip(
-            self._parameter_tooltip(
-                self.tr("Extra XY clearance between the light slot and nearby shell walls."),
-                self.tr("0.00-20.00 mm. Use 0 for no extra clearance; larger values move slots farther from walls."),
-            )
-        )
-        self.light_slot_wall_gap.valueChanged.connect(self._on_param_changed)
-        self._add_icon_row(form, "gap", self.tr("Wall Gap:"), self.light_slot_wall_gap)
+        self.light_slot_wall_gap.setVisible(False)
 
         layout.addLayout(form)
 
-        self.light_slot_auto_skip_small_holes = QCheckBox(self.tr("Auto Skip Small Holes"))
+        self.light_slot_auto_skip_small_holes = QCheckBox(self.tr("Skip Small Hole Slots"))
         self.light_slot_auto_skip_small_holes.setChecked(True)
         self.light_slot_auto_skip_small_holes.setEnabled(False)
         self.light_slot_auto_skip_small_holes.stateChanged.connect(self._on_param_changed)
@@ -1604,7 +1597,7 @@ class ParamPanel(QWidget):
         return group
 
     def _on_light_slot_toggled(self):
-        """灯槽启用时自动关闭底板台阶（互斥）。"""
+        """灯槽启用时自动关闭背板卡槽（互斥）。"""
         if self.light_slot_enabled.isChecked() and hasattr(self, 'baseplate_step_enabled'):
             if self.baseplate_step_enabled.isChecked():
                 self.baseplate_step_enabled.blockSignals(True)
@@ -1618,7 +1611,6 @@ class ParamPanel(QWidget):
         self.light_slot_width.setEnabled(enabled)
         self.light_slot_depth.setEnabled(enabled)
         self.light_slot_floor_layers.setEnabled(enabled)
-        self.light_slot_wall_gap.setEnabled(enabled)
         self.light_slot_outer_enabled.setEnabled(enabled)
         self.light_slot_hole_enabled.setEnabled(enabled)
         self.light_slot_auto_skip_small_holes.setEnabled(enabled)
@@ -1628,12 +1620,12 @@ class ParamPanel(QWidget):
 
     def _create_top_face_group(self) -> QGroupBox:
         """创建顶面封闭参数组"""
-        group = QGroupBox(self.tr("Top Face"))
+        group = QGroupBox(self.tr("Top Shell"))
         layout = QVBoxLayout(group)
         layout.setSpacing(8)
 
         # 启用开关
-        self.top_face_enabled = QCheckBox(self.tr("Enable Top Face"))
+        self.top_face_enabled = QCheckBox(self.tr("Enable Top Shell"))
         self.top_face_enabled.setObjectName("top_face_enabled")
         self.top_face_enabled.setVisible(False)
         self.top_face_enabled.stateChanged.connect(self._on_param_changed)
@@ -1650,10 +1642,10 @@ class ParamPanel(QWidget):
             10.0,
             2.4,
             enabled=False,
-            meaning=self.tr("Printed solid top face thickness used to close the shell top."),
+            meaning=self.tr("Printed solid top shell thickness used to close the shell top."),
         )
         self.top_face_thickness.valueChanged.connect(self._on_param_changed)
-        self._add_icon_row(form, "top-face-thickness", self.tr("Top Face Thickness:"), self.top_face_thickness)
+        self._add_icon_row(form, "top-face-thickness", self.tr("Top Shell Thickness:"), self.top_face_thickness)
 
         layout.addLayout(form)
 
@@ -1661,14 +1653,14 @@ class ParamPanel(QWidget):
         self.top_face_enabled.stateChanged.connect(
             lambda: self.top_face_thickness.setEnabled(self.top_face_enabled.isChecked())
         )
-        # 与 Panel Step (Top) 互斥
+        # 与 Acrylic Face Slot 互斥
         self.top_face_enabled.stateChanged.connect(self._on_top_face_toggled)
         self.top_face_enabled.stateChanged.connect(self._sync_top_mode_from_controls)
 
         return group
 
     def _on_top_face_toggled(self):
-        """顶面封闭启用时，自动关闭面板台阶（互斥）"""
+        """顶面封闭启用时，自动关闭面板卡槽（互斥）"""
         if self.top_face_enabled.isChecked() and hasattr(self, 'panel_step_enabled'):
             if self.panel_step_enabled.isChecked():
                 self.panel_step_enabled.blockSignals(True)
@@ -1678,7 +1670,7 @@ class ParamPanel(QWidget):
                 self._on_param_changed()
 
     def _on_panel_step_toggled(self):
-        """面板台阶启用时，自动关闭顶面封闭（互斥）"""
+        """面板卡槽启用时，自动关闭顶面封闭（互斥）"""
         if self.panel_step_enabled.isChecked() and hasattr(self, 'top_face_enabled'):
             if self.top_face_enabled.isChecked():
                 self.top_face_enabled.blockSignals(True)
@@ -2667,13 +2659,13 @@ class ParamPanel(QWidget):
 
     def _create_step_group(self) -> QGroupBox:
         """创建台阶/V槽参数组"""
-        self.panel_step_group = QGroupBox(self.tr("Panel Step/V-Groove"))
+        self.panel_step_group = QGroupBox(self.tr("Acrylic Face Slot"))
         group = self.panel_step_group
         layout = QVBoxLayout(group)
         layout.setSpacing(8)
 
-        # ===== 面板台阶（顶部）=====
-        self.panel_step_enabled = QCheckBox(self.tr("Enable Panel Step (Top)"))
+        # ===== 面板卡槽（顶部）=====
+        self.panel_step_enabled = QCheckBox(self.tr("Enable Acrylic Face Slot"))
         self.panel_step_enabled.setObjectName("panel_step_enabled")
         self.panel_step_enabled.setVisible(False)
         self.panel_step_enabled.stateChanged.connect(self._on_param_changed)
@@ -2688,7 +2680,7 @@ class ParamPanel(QWidget):
         self.panel_step_height.setEnabled(False)
         self.panel_step_height.setToolTip(
             self._parameter_tooltip(
-                self.tr("Distance from Shell Height down to the top surface of the top panel step or V-groove."),
+                self.tr("Distance from the shell top down to the top surface of the acrylic face slot or V-groove."),
                 self.tr(
                     "Current range is automatically constrained from 0 to half of Shell Height. "
                     "The value is rounded up to the current layer-height grid before preview, STL export, and G-code export."
@@ -2696,7 +2688,7 @@ class ParamPanel(QWidget):
             )
         )
         self.panel_step_height.valueChanged.connect(self._on_param_changed)
-        self._add_icon_row(form1, "top-step-height", self.tr("Top Step Distance:"), self.panel_step_height)
+        self._add_icon_row(form1, "top-step-height", self.tr("Face Slot Drop:"), self.panel_step_height)
 
         self.panel_step_width = self._create_double_spinbox()
         self.panel_step_width.setRange(0.5, 20)
@@ -2705,12 +2697,12 @@ class ParamPanel(QWidget):
         self.panel_step_width.setEnabled(False)
         self.panel_step_width.setToolTip(
             self._parameter_tooltip(
-                self.tr("XY width of the top panel step or V-groove."),
+                self.tr("XY width of the acrylic face slot or V-groove."),
                 self.tr("0.50-20.00 mm. Choose a value wide enough for panel seating but not wider than the local stroke."),
             )
         )
         self.panel_step_width.valueChanged.connect(self._on_param_changed)
-        self._add_icon_row(form1, "top-step-width", self.tr("Top Step Width:"), self.panel_step_width)
+        self._add_icon_row(form1, "top-step-width", self.tr("Face Slot Width:"), self.panel_step_width)
 
         self.panel_step_v_groove = QCheckBox(self.tr("V-Groove"))
         self.panel_step_v_groove.setObjectName("panel_step_v_groove")
@@ -2724,18 +2716,18 @@ class ParamPanel(QWidget):
         self.panel_step_enabled.stateChanged.connect(
             lambda: self._toggle_panel_step_controls(self.panel_step_enabled.isChecked())
         )
-        # 与 Top Face 互斥
+        # 与 Top Shell 互斥
         self.panel_step_enabled.stateChanged.connect(self._on_panel_step_toggled)
         self.panel_step_enabled.stateChanged.connect(self._sync_top_mode_from_controls)
         self.panel_step_v_groove.stateChanged.connect(self._sync_top_mode_from_controls)
 
         # 分隔线
-        self.baseplate_step_group = QGroupBox(self.tr("Baseplate Step/V-Groove"))
+        self.baseplate_step_group = QGroupBox(self.tr("Back Plate Slot"))
         bottom_layout = QVBoxLayout(self.baseplate_step_group)
         bottom_layout.setSpacing(8)
 
-        # ===== 底板台阶（底部）=====
-        self.baseplate_step_enabled = QCheckBox(self.tr("Enable Baseplate Step (Bottom)"))
+        # ===== 背板卡槽（底部）=====
+        self.baseplate_step_enabled = QCheckBox(self.tr("Enable Back Plate Slot"))
         self.baseplate_step_enabled.setObjectName("baseplate_step_enabled")
         self.baseplate_step_enabled.setVisible(False)
         self.baseplate_step_enabled.stateChanged.connect(self._on_param_changed)
@@ -2749,10 +2741,10 @@ class ParamPanel(QWidget):
             50.0,
             3.0,
             enabled=False,
-            meaning=self.tr("Z height where the bottom baseplate step or V-groove is generated."),
+            meaning=self.tr("Z height where the back plate slot or V-groove is generated."),
         )
         self.baseplate_step_height.valueChanged.connect(self._on_param_changed)
-        self._add_icon_row(form2, "bottom-step-height", self.tr("Bottom Step Height:"), self.baseplate_step_height)
+        self._add_icon_row(form2, "bottom-step-height", self.tr("Back Plate Slot Height:"), self.baseplate_step_height)
 
         self.baseplate_step_width = self._create_double_spinbox()
         self.baseplate_step_width.setRange(0.5, 20)
@@ -2761,12 +2753,12 @@ class ParamPanel(QWidget):
         self.baseplate_step_width.setEnabled(False)
         self.baseplate_step_width.setToolTip(
             self._parameter_tooltip(
-                self.tr("XY width of the bottom baseplate step or V-groove."),
+                self.tr("XY width of the back plate slot or V-groove."),
                 self.tr("0.50-20.00 mm. Choose a value wide enough for baseplate seating but not wider than the local stroke."),
             )
         )
         self.baseplate_step_width.valueChanged.connect(self._on_param_changed)
-        self._add_icon_row(form2, "bottom-step-width", self.tr("Bottom Step Width:"), self.baseplate_step_width)
+        self._add_icon_row(form2, "bottom-step-width", self.tr("Back Plate Slot Width:"), self.baseplate_step_width)
 
         self.baseplate_step_v_groove = QCheckBox(self.tr("V-Groove"))
         self.baseplate_step_v_groove.setObjectName("baseplate_step_v_groove")
@@ -2788,7 +2780,7 @@ class ParamPanel(QWidget):
         self.baseplate_step_enabled.stateChanged.connect(
             lambda: self._toggle_baseplate_step_controls(self.baseplate_step_enabled.isChecked())
         )
-        # 与 Bottom Face 互斥
+        # 与 Bottom Shells 互斥
         self.baseplate_step_enabled.stateChanged.connect(self._on_baseplate_step_toggled)
         self.baseplate_step_enabled.stateChanged.connect(self._sync_bottom_mode_from_controls)
         self.baseplate_step_v_groove.stateChanged.connect(self._sync_bottom_mode_from_controls)
@@ -2823,7 +2815,7 @@ class ParamPanel(QWidget):
         self.panel_step_height.setSingleStep(layer_height)
         self.panel_step_height.setToolTip(
             self._parameter_tooltip(
-                self.tr("Distance from Shell Height down to the top surface of the top panel step or V-groove."),
+                self.tr("Distance from the shell top down to the top surface of the acrylic face slot or V-groove."),
                 self.tr(
                     "Current range: {minimum:.2f}-{maximum:.2f} mm. "
                     "The value is rounded up to the current layer-height grid before preview, STL export, and G-code export."
@@ -2841,7 +2833,7 @@ class ParamPanel(QWidget):
         self.baseplate_step_height.setSingleStep(layer_height)
         self.baseplate_step_height.setToolTip(
             self._parameter_tooltip(
-                self.tr("Z height where the bottom baseplate step or V-groove is generated."),
+                self.tr("Z height where the back plate slot or V-groove is generated."),
                 self.tr(
                     "Current range: {minimum:.2f}-{maximum:.2f} mm. "
                     "The value is rounded up to the current layer-height grid before preview, STL export, and G-code export."
@@ -2854,14 +2846,14 @@ class ParamPanel(QWidget):
             self.baseplate_step_height.setValue(baseplate_max_mm)
 
     def _toggle_panel_step_controls(self, enabled: bool):
-        """切换面板台阶控件的启用状态"""
+        """切换面板卡槽控件的启用状态"""
         self.panel_step_height.setEnabled(enabled)
         self.panel_step_width.setEnabled(enabled)
         self.panel_step_v_groove.setEnabled(enabled)
         self._sync_step_speed_control_state()
 
     def _toggle_baseplate_step_controls(self, enabled: bool):
-        """切换底板台阶控件的启用状态"""
+        """切换背板卡槽控件的启用状态"""
         self.baseplate_step_height.setEnabled(enabled)
         self.baseplate_step_width.setEnabled(enabled)
         self.baseplate_step_v_groove.setEnabled(enabled)
@@ -2878,12 +2870,12 @@ class ParamPanel(QWidget):
 
     def _create_skirt_group(self) -> QGroupBox:
         """创建防翘裙边参数组"""
-        group = QGroupBox(self.tr("Anti-Warping Skirt"))
+        group = QGroupBox(self.tr("Anti-Warp Brim"))
         layout = QVBoxLayout(group)
         layout.setSpacing(8)
 
         # 启用开关
-        self.skirt_enabled = QCheckBox(self.tr("Enable Anti-Warping Skirt"))
+        self.skirt_enabled = QCheckBox(self.tr("Enable Anti-Warp Brim"))
         self.skirt_enabled.stateChanged.connect(self._on_param_changed)
         layout.addWidget(self.skirt_enabled)
 
@@ -2898,13 +2890,13 @@ class ParamPanel(QWidget):
         self.skirt_height.setEnabled(False)
         self.skirt_height.setToolTip(
             self._z_height_tooltip(
-                self.tr("Printed vertical height of the anti-warping skirt around the shell."),
+                self.tr("Printed vertical height of the anti-warp brim around the shell."),
                 0.2,
                 10.0,
             )
         )
         self.skirt_height.valueChanged.connect(self._on_param_changed)
-        self._add_icon_row(form, "skirt_height", self.tr("Skirt Height:"), self.skirt_height)
+        self._add_icon_row(form, "skirt_height", self.tr("Brim Height:"), self.skirt_height)
 
         self.skirt_speed = self._create_double_spinbox(decimals=1)
         self.skirt_speed.setRange(5.0, 200.0)
@@ -2922,18 +2914,18 @@ class ParamPanel(QWidget):
         self.skirt_offset.setEnabled(False)
         self.skirt_offset.setToolTip(
             self._parameter_tooltip(
-                self.tr("XY breakaway gap between the shell wall and the skirt."),
-                self.tr("0.00-1.00 mm. Use 0 for a touching skirt; larger values make removal easier."),
+                self.tr("XY breakaway gap between the shell wall and the brim."),
+                self.tr("0.00-1.00 mm. Use 0 for a touching brim; larger values make removal easier."),
             )
         )
         self.skirt_offset.valueChanged.connect(self._on_param_changed)
-        self._add_icon_row(form, "gap", self.tr("Wall Gap:"), self.skirt_offset)
+        self._add_icon_row(form, "gap", self.tr("Breakaway Gap:"), self.skirt_offset)
 
         self.skirt_sides_widget, self.skirt_side_buttons = self._create_multi_select_icon_buttons(
             "skirt_side_buttons",
             [
-                (0, self.tr("Outer Skirt"), "skirt-side-outer"),
-                (1, self.tr("Inner Skirt"), "skirt-side-inner"),
+                (0, self.tr("Outer Brim"), "skirt-side-outer"),
+                (1, self.tr("Inner Brim"), "skirt-side-inner"),
             ],
             {0},
         )
@@ -2963,12 +2955,12 @@ class ParamPanel(QWidget):
 
     def _create_connected_group(self) -> QGroupBox:
         """创建连襟字参数组"""
-        group = QGroupBox(self.tr("Connected Letters"))
+        group = QGroupBox(self.tr("Letter Bridges"))
         layout = QVBoxLayout(group)
         layout.setSpacing(8)
 
         # 启用开关
-        self.connected_enabled = QCheckBox(self.tr("Enable Connected Letters"))
+        self.connected_enabled = QCheckBox(self.tr("Enable Letter Bridges"))
         self.connected_enabled.stateChanged.connect(self._on_param_changed)
         layout.addWidget(self.connected_enabled)
 
@@ -2981,10 +2973,10 @@ class ParamPanel(QWidget):
         self.connected_type.addItem(self.tr("Diamond"), "diamond")
         self.connected_type.setEnabled(False)
         self.connected_type.currentIndexChanged.connect(self._on_param_changed)
-        self._add_icon_row(form, "connected", self.tr("Connection Type:"), self.connected_type)
+        self._add_icon_row(form, "connected", self.tr("Bridge Type:"), self.connected_type)
 
         # 自动检测
-        self.connected_auto_detect = QCheckBox(self.tr("Auto Detect Connection Points"))
+        self.connected_auto_detect = QCheckBox(self.tr("Auto-Detect Bridge Points"))
         self.connected_auto_detect.setChecked(True)
         self.connected_auto_detect.setEnabled(False)
         self.connected_auto_detect.stateChanged.connect(self._on_param_changed)
@@ -3003,7 +2995,7 @@ class ParamPanel(QWidget):
             )
         )
         self.connected_width.valueChanged.connect(self._on_param_changed)
-        self._add_icon_row(form, "connected-width", self.tr("Connection Width:"), self.connected_width)
+        self._add_icon_row(form, "connected-width", self.tr("Bridge Width:"), self.connected_width)
 
         # 斜边高度
         self.connected_height = self._create_double_spinbox()
@@ -3013,10 +3005,10 @@ class ParamPanel(QWidget):
             20.0,
             4.5,
             enabled=False,
-            meaning=self.tr("Vertical bevel height used on the connected-letter bridge."),
+            meaning=self.tr("Vertical bevel height used on the letter bridge."),
         )
         self.connected_height.valueChanged.connect(self._on_param_changed)
-        self._add_icon_row(form, "connected-bevel-height", self.tr("Bevel Height:"), self.connected_height)
+        self._add_icon_row(form, "connected-bevel-height", self.tr("Bridge Bevel Height:"), self.connected_height)
 
         # 底座高度
         self.connected_base_height = self._create_double_spinbox()
@@ -3026,25 +3018,19 @@ class ParamPanel(QWidget):
             20.0,
             4.5,
             enabled=False,
-            meaning=self.tr("Vertical base height of the connected-letter bridge before beveling."),
+            meaning=self.tr("Vertical base height of the letter bridge before beveling."),
         )
         self.connected_base_height.valueChanged.connect(self._on_param_changed)
-        self._add_icon_row(form, "connected-base-height", self.tr("Base Height:"), self.connected_base_height)
+        self._add_icon_row(form, "connected-base-height", self.tr("Bridge Base Height:"), self.connected_base_height)
 
-        # 支撑偏移
+        # Hidden compatibility value for legacy/manual DXF bridge frames.
         self.connected_support_offset = self._create_double_spinbox()
         self.connected_support_offset.setRange(0, 10)
         self.connected_support_offset.setValue(2.5)
         self.connected_support_offset.setSuffix(" mm")
         self.connected_support_offset.setEnabled(False)
-        self.connected_support_offset.setToolTip(
-            self._parameter_tooltip(
-                self.tr("XY offset used to place extra bridge support away from the detected connection point."),
-                self.tr("0.00-10.00 mm. Use smaller values for tight letter gaps and larger values for stronger support."),
-            )
-        )
+        self.connected_support_offset.setVisible(False)
         self.connected_support_offset.valueChanged.connect(self._on_param_changed)
-        self._add_icon_row(form, "support_offset", self.tr("Support Offset:"), self.connected_support_offset)
 
         layout.addLayout(form)
 
@@ -3061,7 +3047,7 @@ class ParamPanel(QWidget):
         self.connected_width.setEnabled(enabled)
         self.connected_height.setEnabled(enabled)
         self.connected_base_height.setEnabled(enabled)
-        self.connected_support_offset.setEnabled(enabled)
+        self.connected_support_offset.setEnabled(False)
 
     def _toggle_wrap_controls(self, enabled: bool):
         """Toggle edge wrap controls."""
@@ -3077,6 +3063,11 @@ class ParamPanel(QWidget):
         self.outline_dir_inner.setEnabled(enabled)
         self.outline_dir_outer.setEnabled(enabled)
 
+    def _edge_wrap_group_title(self, bottom_mode: int) -> str:
+        if bottom_mode == self.BOTTOM_MODE_OUTLINE:
+            return self.tr("Bottom Outline")
+        return self.tr("Bottom Edge Wrap")
+
     def _sync_edge_wrap_option_visibility(self, bottom_mode: int | None = None) -> None:
         """Show only the option set for the selected edge-wrap bottom mode."""
         if not hasattr(self, "wrap_options_widget"):
@@ -3086,18 +3077,20 @@ class ParamPanel(QWidget):
 
         show_wrap = bottom_mode == self.BOTTOM_MODE_EDGE_WRAP
         show_outline = bottom_mode == self.BOTTOM_MODE_OUTLINE
+        if hasattr(self, "edge_wrap_group"):
+            self.edge_wrap_group.setTitle(self._edge_wrap_group_title(bottom_mode))
         self.wrap_options_widget.setVisible(show_wrap)
         self.outline_options_widget.setVisible(show_outline)
         self.wrap_outline_separator.setVisible(show_wrap and show_outline)
 
     def _create_edge_wrap_group(self) -> QGroupBox:
         """创建包边/勾边参数组"""
-        group = QGroupBox(self.tr("Edge Wrap/Outline"))
+        group = QGroupBox(self.tr("Bottom Edge Wrap"))
         layout = QVBoxLayout(group)
         layout.setSpacing(8)
 
         # 包边设置
-        self.wrap_enabled = QCheckBox(self.tr("Enable Edge Wrap"))
+        self.wrap_enabled = QCheckBox(self.tr("Enable Bottom Edge Wrap"))
         self.wrap_enabled.setObjectName("wrap_enabled")
         self.wrap_enabled.setVisible(False)
         self.wrap_enabled.stateChanged.connect(self._on_param_changed)
@@ -3107,7 +3100,7 @@ class ParamPanel(QWidget):
         wrap_form = QFormLayout(self.wrap_options_widget)
         wrap_form.setSpacing(8)
 
-        # 包边方向单选按钮
+        # 包边位置单选按钮
         self.wrap_dir_widget, self.wrap_dir_group, self.wrap_dir_buttons = self._create_mode_button_group(
             "wrap_direction_buttons",
             [
@@ -3121,7 +3114,7 @@ class ParamPanel(QWidget):
         self.wrap_dir_inner.setEnabled(False)
         self.wrap_dir_outer.setEnabled(False)
         self.wrap_dir_group.idClicked.connect(self._on_param_changed)
-        self._add_icon_row(wrap_form, "direction", self.tr("Wrap Direction:"), self.wrap_dir_widget)
+        self._add_icon_row(wrap_form, "direction", self.tr("Wrap Position:"), self.wrap_dir_widget)
 
         self.wrap_width = self._create_double_spinbox()
         self.wrap_width.setRange(0.5, 10)
@@ -3152,7 +3145,7 @@ class ParamPanel(QWidget):
         layout.addWidget(self.wrap_outline_separator)
 
         # 勾边设置
-        self.outline_enabled = QCheckBox(self.tr("Enable Outline"))
+        self.outline_enabled = QCheckBox(self.tr("Enable Bottom Outline"))
         self.outline_enabled.setObjectName("outline_enabled")
         self.outline_enabled.setVisible(False)
         self.outline_enabled.stateChanged.connect(self._on_param_changed)
@@ -3162,7 +3155,7 @@ class ParamPanel(QWidget):
         outline_form = QFormLayout(self.outline_options_widget)
         outline_form.setSpacing(8)
 
-        # 勾边方向单选按钮
+        # 勾边位置单选按钮
         self.outline_dir_widget, self.outline_dir_group, self.outline_dir_buttons = self._create_mode_button_group(
             "outline_direction_buttons",
             [
@@ -3176,7 +3169,7 @@ class ParamPanel(QWidget):
         self.outline_dir_inner.setEnabled(False)
         self.outline_dir_outer.setEnabled(False)
         self.outline_dir_group.idClicked.connect(self._on_param_changed)
-        self._add_icon_row(outline_form, "direction", self.tr("Outline Direction:"), self.outline_dir_widget)
+        self._add_icon_row(outline_form, "direction", self.tr("Outline Position:"), self.outline_dir_widget)
 
         self.outline_width = self._create_double_spinbox()
         self.outline_width.setRange(0.3, 5)
@@ -3366,6 +3359,11 @@ class ParamPanel(QWidget):
             return self.TOP_MODE_PANEL_STEP
         return self.TOP_MODE_NONE
 
+    def _panel_step_group_title(self, top_mode: int) -> str:
+        if top_mode == self.TOP_MODE_PANEL_V_GROOVE:
+            return self.tr("Acrylic Face V-Groove")
+        return self.tr("Acrylic Face Slot")
+
     def _on_top_mode_selected(self, mode_id: int) -> None:
         self._apply_top_mode(mode_id, emit_changed=True)
 
@@ -3444,6 +3442,11 @@ class ParamPanel(QWidget):
             return self.BOTTOM_MODE_OUTLINE
         return self.BOTTOM_MODE_NONE
 
+    def _baseplate_step_group_title(self, bottom_mode: int) -> str:
+        if bottom_mode == self.BOTTOM_MODE_BASEPLATE_V_GROOVE:
+            return self.tr("Back Plate V-Groove")
+        return self.tr("Back Plate Slot")
+
     def _on_bottom_mode_selected(self, mode_id: int) -> None:
         self._apply_bottom_mode(mode_id, emit_changed=True)
 
@@ -3494,12 +3497,14 @@ class ParamPanel(QWidget):
         if hasattr(self, "top_face_group"):
             top_mode = self._top_mode_from_controls()
             self.top_face_group.setVisible(top_mode == self.TOP_MODE_FACE)
+            self.panel_step_group.setTitle(self._panel_step_group_title(top_mode))
             self.panel_step_group.setVisible(
                 top_mode in (self.TOP_MODE_PANEL_STEP, self.TOP_MODE_PANEL_V_GROOVE)
             )
         if hasattr(self, "bottom_face_group"):
             bottom_mode = self._bottom_mode_from_controls()
             self.bottom_face_group.setVisible(bottom_mode == self.BOTTOM_MODE_FACE)
+            self.baseplate_step_group.setTitle(self._baseplate_step_group_title(bottom_mode))
             self.baseplate_step_group.setVisible(
                 bottom_mode in (
                     self.BOTTOM_MODE_BASEPLATE_STEP,
@@ -3703,14 +3708,14 @@ class ParamPanel(QWidget):
         self._params.prime_tower.infill_density_percent = self.prime_tower_infill_density.value()
 
         # 台阶参数
-        # 面板台阶（顶部）
+        # 面板卡槽（顶部）
         self._params.step.panel_step_enabled = self.panel_step_enabled.isChecked()
         panel_step_absolute_height = self._top_step_absolute_height_from_distance()
         self._params.step.panel_step_height = panel_step_absolute_height
         self._params.step.panel_step_width = self.panel_step_width.value()
         self._params.step.panel_step_is_v_groove = self.panel_step_v_groove.isChecked()
 
-        # 底板台阶（底部）
+        # 背板卡槽（底部）
         self._params.step.baseplate_step_enabled = self.baseplate_step_enabled.isChecked()
         self._params.step.baseplate_step_height = self.baseplate_step_height.value()
         self._params.step.baseplate_step_width = self.baseplate_step_width.value()
@@ -4052,7 +4057,7 @@ class ParamPanel(QWidget):
         self.prime_tower_center_y.setValue(prime_tower_center_y)
         self.prime_tower_infill_density.setValue(prime_tower_infill_density)
 
-        # 台阶参数 - 面板台阶（顶部）
+        # 台阶参数 - 面板卡槽（顶部）
         self.panel_step_enabled.setChecked(panel_step_enabled)
         self.panel_step_height.setValue(
             self._top_step_distance_from_absolute_height(panel_step_height)
@@ -4060,7 +4065,7 @@ class ParamPanel(QWidget):
         self.panel_step_width.setValue(panel_step_width)
         self.panel_step_v_groove.setChecked(panel_step_is_v_groove)
 
-        # 台阶参数 - 底板台阶（底部）
+        # 台阶参数 - 背板卡槽（底部）
         self.baseplate_step_enabled.setChecked(baseplate_step_enabled)
         self.baseplate_step_height.setValue(baseplate_step_height)
         self.baseplate_step_width.setValue(baseplate_step_width)

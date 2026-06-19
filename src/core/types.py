@@ -972,12 +972,12 @@ class ShellParams:
     edge_type: EdgeType = EdgeType.STRAIGHT
 
     # 斜边参数
-    bevel_width: float = 5.0          # 斜边宽度 (mm) - 水平方向的收缩/扩展量
+    bevel_width: float = 5.0          # 斜边水平宽度 (mm) - 水平方向的收缩/扩展量
     bevel_direction: BevelDirection = BevelDirection.TOP_SMALL  # 斜边方向
 
-    # 底板和面板厚度
-    baseplate_thickness: float = 9.0   # 底板厚度 (mm) - 底部直边区域高度
-    panel_thickness: float = 9.0       # 面板厚度 (mm) - 顶部直边区域高度
+    # 底部和顶部直壁段高度
+    baseplate_thickness: float = 9.0   # 底部直壁高度 (mm)
+    panel_thickness: float = 9.0       # 顶部直壁高度 (mm)
 
     # DXF 导出补偿
     dxf_outer_clearance: float = 1.0   # 外轮廓安装公差：向内缩 (mm)

@@ -175,7 +175,7 @@
     "bevel_direction": "斜边方向:",
     "bevel_direction_top_small": "上小下大",
     "bevel_direction_top_large": "上大下小",
-    "bevel_width": "斜边宽度:",
+    "bevel_width": "斜边水平宽度:",
     "baseplate_height": "底座高度:",
     "custom_edge": "异形边设置",
     "load_profile": "加载轮廓",
@@ -212,25 +212,27 @@
 
   "skirt": {
     "_title": "防翘裙边",
-    "enable": "启用裙边",
+    "enable": "启用防翘裙边",
     "width": "裙边宽度:",
     "height": "裙边高度:",
-    "gap": "间隙:",
+    "gap": "剥离间隙:",
     "layers": "层数:"
   },
 
   "connected": {
     "_title": "连襟字",
     "enable": "启用连襟字",
-    "gap": "连接间隙:",
-    "bridge_width": "连接宽度:",
-    "auto_detect": "自动检测"
+    "gap": "连襟间隙:",
+    "bridge_width": "连襟宽度:",
+    "auto_detect": "自动检测连襟点"
   },
 
   "edge_wrap": {
-    "_title": "包边勾边",
-    "enable": "启用包边",
-    "type": "包边类型:",
+    "_title": "底部包边",
+    "title_outline": "底部勾边",
+    "enable": "启用底部包边",
+    "enable_outline": "启用底部勾边",
+    "type": "包边位置:",
     "wrap": "包边",
     "outline": "勾边",
     "width": "宽度:",

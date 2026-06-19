@@ -122,6 +122,8 @@ TUTORIAL_PLAYLIST_URL = (
 class MainWindow(QMainWindow):
     """MINGDA SignMaker 主窗口"""
 
+    RECENT_FILE_SUFFIXES = {".dxf", ".svg", ".smp"}
+
     # 信号
     project_loaded = Signal(str)  # 项目加载信号
     slice_completed = Signal(object)  # 切片完成信号
@@ -318,6 +320,7 @@ class MainWindow(QMainWindow):
         # 连接标题栏信号
         self.title_bar.nav_changed.connect(self._on_nav_changed)
         self.title_bar.menu_action.connect(self._on_menu_action)
+        self.title_bar.open_recent_menu_requested.connect(self._populate_open_recent_menu)
         self.title_bar.open_clicked.connect(self._on_open_file)
         self.title_bar.save_clicked.connect(self._on_save_project)
         self.title_bar.export_clicked.connect(self._on_show_export_menu)
@@ -1876,19 +1879,16 @@ class MainWindow(QMainWindow):
             return
 
         recent_projects = []
-        invalid_paths = []
 
         for file_path in self.settings_manager.get_recent_files():
             path = Path(file_path)
             resolved_path = str(path.resolve())
             if path.suffix.lower() != ".smp" or not path.exists():
-                invalid_paths.append(resolved_path)
                 continue
 
             try:
                 info = get_project_info(resolved_path)
             except Exception:
-                invalid_paths.append(resolved_path)
                 continue
 
             project_name = info.get("name") or path.stem
@@ -1907,9 +1907,6 @@ class MainWindow(QMainWindow):
                 "path": resolved_path,
             })
 
-        for invalid_path in invalid_paths:
-            self.settings_manager.remove_recent_file(invalid_path)
-
         self.home_page.set_recent_projects(recent_projects)
 
     @staticmethod
@@ -1918,6 +1915,87 @@ class MainWindow(QMainWindow):
         if not project_name:
             return ".smp"
         return project_name if project_name.lower().endswith(".smp") else f"{project_name}.smp"
+
+    def _get_recent_file_menu_entries(self) -> List[str]:
+        """Return supported recent files for the title-bar Open Recent menu."""
+        if not self.settings_manager:
+            return []
+
+        recent_files = []
+        for file_path in self.settings_manager.get_recent_files():
+            if Path(file_path).suffix.lower() in self.RECENT_FILE_SUFFIXES:
+                recent_files.append(file_path)
+            if len(recent_files) >= 10:
+                break
+        return recent_files
+
+    def _populate_open_recent_menu(self, menu: QMenu):
+        """Populate the title-bar Open Recent submenu just before it is shown."""
+        menu.clear()
+        recent_files = self._get_recent_file_menu_entries()
+
+        if not recent_files:
+            empty_action = menu.addAction(self.tr("No Recent Files"))
+            empty_action.setEnabled(False)
+            return
+
+        for index, file_path in enumerate(recent_files[:10], start=1):
+            path = Path(file_path)
+            action = QAction(f"{index}. {path.name}", menu)
+            action.setToolTip(file_path)
+            action.setStatusTip(file_path)
+            action.triggered.connect(
+                lambda checked=False, selected_path=file_path: (
+                    self._open_recent_file(selected_path)
+                )
+            )
+            menu.addAction(action)
+
+    def _open_recent_file(self, file_path: str):
+        """Open a file selected from the title-bar Open Recent menu."""
+        if not file_path:
+            return
+
+        path = Path(file_path)
+        try:
+            resolved_path = str(path.resolve())
+        except OSError:
+            resolved_path = file_path
+
+        suffix = path.suffix.lower()
+        if suffix not in self.RECENT_FILE_SUFFIXES:
+            if self.settings_manager:
+                self.settings_manager.remove_recent_file(resolved_path)
+            self._refresh_home_recent_projects()
+            QMessageBox.warning(
+                self,
+                self.tr("Open Recent"),
+                self.tr("Format not supported: ") + path.suffix,
+            )
+            return
+
+        if not path.exists():
+            if self.settings_manager:
+                self.settings_manager.remove_recent_file(resolved_path)
+            self._refresh_home_recent_projects()
+            QMessageBox.warning(
+                self,
+                self.tr("Open Recent"),
+                self.tr("The selected recent file is no longer available and has been removed from the list."),
+            )
+            return
+
+        self._remember_last_open_path(resolved_path)
+
+        if suffix == ".smp":
+            if not self._handle_unsaved_changes_before_open_project():
+                return
+            if not self._load_project(resolved_path) and self.settings_manager:
+                self.settings_manager.remove_recent_file(resolved_path)
+                self._refresh_home_recent_projects()
+            return
+
+        self._load_file(resolved_path)
 
     def _open_recent_project(self, file_path: str):
         """Open a project from the home-page recent-project list."""
@@ -1985,7 +2063,9 @@ class MainWindow(QMainWindow):
         """Clear all recent projects from the home page list."""
         if not self.settings_manager:
             return
-        self.settings_manager.clear_recent_files()
+        for file_path in list(self.settings_manager.get_recent_files()):
+            if Path(file_path).suffix.lower() == ".smp":
+                self.settings_manager.remove_recent_file(file_path)
         self._refresh_home_recent_projects()
 
     def _on_nav_changed(self, nav: str):
@@ -2475,6 +2555,9 @@ class MainWindow(QMainWindow):
             reset_view=True,
         )
         self._remember_last_open_path(str(path))
+        if self.settings_manager:
+            self.settings_manager.add_recent_file(str(path))
+            self._refresh_home_recent_projects()
 
         if not self.current_file or not self.current_file.lower().endswith(".smp"):
             self.current_file = str(path)
@@ -2838,9 +2921,9 @@ class MainWindow(QMainWindow):
                     QMessageBox.information(
                         self, self.tr("Export Success"),
                         self.tr("Baseplate DXF saved to:") + f"\n{file_path}\n\n" +
-                        self.tr("Outer clearance: ") + f"{params.shell.dxf_outer_clearance}mm\n" +
-                        self.tr("Hole clearance: ") + f"{params.shell.dxf_hole_clearance}mm\n" +
-                        self.tr("Laser kerf: ") + f"{params.shell.dxf_laser_kerf}mm"
+                        self.tr("Outer contour clearance: ") + f"{params.shell.dxf_outer_clearance}mm\n" +
+                        self.tr("Inner hole clearance: ") + f"{params.shell.dxf_hole_clearance}mm\n" +
+                        self.tr("Laser kerf width: ") + f"{params.shell.dxf_laser_kerf}mm"
                     )
                 else:
                     QMessageBox.warning(self, self.tr("Export Failed"), self.tr("Failed to generate baseplate contour"))
@@ -2874,9 +2957,9 @@ class MainWindow(QMainWindow):
                     QMessageBox.information(
                         self, self.tr("Export Success"),
                         self.tr("Panel DXF saved to:") + f"\n{file_path}\n\n" +
-                        self.tr("Outer clearance: ") + f"{params.shell.dxf_outer_clearance}mm\n" +
-                        self.tr("Hole clearance: ") + f"{params.shell.dxf_hole_clearance}mm\n" +
-                        self.tr("Laser kerf: ") + f"{params.shell.dxf_laser_kerf}mm"
+                        self.tr("Outer contour clearance: ") + f"{params.shell.dxf_outer_clearance}mm\n" +
+                        self.tr("Inner hole clearance: ") + f"{params.shell.dxf_hole_clearance}mm\n" +
+                        self.tr("Laser kerf width: ") + f"{params.shell.dxf_laser_kerf}mm"
                     )
                 else:
                     QMessageBox.warning(self, self.tr("Export Failed"), self.tr("Failed to generate panel contour"))
@@ -3046,7 +3129,7 @@ class MainWindow(QMainWindow):
             QMessageBox.information(
                 self,
                 self.tr("Info"),
-                self.tr("Enable Bottom Face before editing screw holes"),
+                self.tr("Enable Bottom Shells before editing screw holes"),
             )
             return
 
@@ -3098,7 +3181,7 @@ class MainWindow(QMainWindow):
         """Create a new manual screw hole at the clicked world position."""
         contour_index = self._pick_screw_hole_target_contour(x, y)
         if contour_index is None:
-            self._update_status(self.tr("Click inside a valid bottom-face region"))
+            self._update_status(self.tr("Click inside a valid bottom-shell region"))
             return
 
         contour = self.contours[contour_index]
@@ -3910,8 +3993,8 @@ class MainWindow(QMainWindow):
             "<li>" + self.tr("Straight/Bevel/Custom edges") + "</li>"
             "<li>" + self.tr("Multi-color printing support") + "</li>"
             "<li>" + self.tr("Step/V-groove") + "</li>"
-            "<li>" + self.tr("Anti-warping skirt") + "</li>"
-            "<li>" + self.tr("Connected letters") + "</li>"
+            "<li>" + self.tr("Anti-warp brim") + "</li>"
+            "<li>" + self.tr("Letter bridges") + "</li>"
             "</ul>"
         )
 

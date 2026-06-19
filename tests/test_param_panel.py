@@ -230,15 +230,15 @@ def test_primary_groups_follow_requested_order(qapp):
 
     assert _visible_group_titles(panel._primary_groups) == [
         "Shell Settings",
-        "Top Face",
-        "Panel Step/V-Groove",
-        "Bottom Face",
-        "Baseplate Step/V-Groove",
-        "Light Slot",
-        "Edge Wrap/Outline",
-        "Anti-Warping Skirt",
-        "Connected Letters",
-        "DXF Export",
+        "Top Shell",
+        "Acrylic Face Slot",
+        "Bottom Shells",
+        "Back Plate Slot",
+        "LED Strip Slot",
+        "Bottom Edge Wrap",
+        "Anti-Warp Brim",
+        "Letter Bridges",
+        "DXF Export Compensation",
         "Speed Settings",
         "Temperature Settings",
         "Cooling Settings",
@@ -360,15 +360,15 @@ def test_primary_sections_separate_shape_machine_and_print_settings(qapp):
             "Shape",
             [
                 "Shell Settings",
-                "Top Face",
-                "Panel Step/V-Groove",
-                "Bottom Face",
-                "Baseplate Step/V-Groove",
-                "Light Slot",
-                "Edge Wrap/Outline",
-                "Anti-Warping Skirt",
-                "Connected Letters",
-                "DXF Export",
+                "Top Shell",
+                "Acrylic Face Slot",
+                "Bottom Shells",
+                "Back Plate Slot",
+                "LED Strip Slot",
+                "Bottom Edge Wrap",
+                "Anti-Warp Brim",
+                "Letter Bridges",
+                "DXF Export Compensation",
             ],
         ),
         (
@@ -462,14 +462,14 @@ def test_shape_feature_tabs_group_controls_by_mode(qapp):
             "bottom",
             "Bottom",
             [
-                "Bottom Face",
-                "Baseplate Step/V-Groove",
-                "Light Slot",
-                "Edge Wrap/Outline",
+                "Bottom Shells",
+                "Back Plate Slot",
+                "LED Strip Slot",
+                "Bottom Edge Wrap",
             ],
         ),
-        ("top", "Top", ["Top Face", "Panel Step/V-Groove"]),
-        ("other", "Other", ["Anti-Warping Skirt", "Connected Letters", "DXF Export"]),
+        ("top", "Top", ["Top Shell", "Acrylic Face Slot"]),
+        ("other", "Other", ["Anti-Warp Brim", "Letter Bridges", "DXF Export Compensation"]),
     ]
 
 
@@ -729,10 +729,10 @@ def test_parameter_icon_labels_preserve_original_text(qapp):
     }
 
     assert "Shell Height:" in visible_text
-    assert "Top Step Distance:" in visible_text
-    assert "Bottom Step Height:" in visible_text
-    assert "Top Step Width:" in visible_text
-    assert "Bottom Step Width:" in visible_text
+    assert "Face Slot Drop:" in visible_text
+    assert "Back Plate Slot Height:" in visible_text
+    assert "Face Slot Width:" in visible_text
+    assert "Back Plate Slot Width:" in visible_text
     assert "Skirt Speed:" in visible_text
 
 
@@ -773,10 +773,16 @@ def test_step_controls_are_split_between_top_and_bottom_groups(qapp):
     panel = ParamPanel()
 
     assert panel.step_group is panel.panel_step_group
-    assert panel.panel_step_group.title() == "Panel Step/V-Groove"
-    assert panel.baseplate_step_group.title() == "Baseplate Step/V-Groove"
+    assert panel.panel_step_group.title() == "Acrylic Face Slot"
+    assert panel.baseplate_step_group.title() == "Back Plate Slot"
     assert _owning_group(panel.panel_step_enabled) is panel.panel_step_group
     assert _owning_group(panel.baseplate_step_enabled) is panel.baseplate_step_group
+
+    panel.top_mode_group.button(panel.TOP_MODE_PANEL_V_GROOVE).click()
+    assert panel.panel_step_group.title() == "Acrylic Face V-Groove"
+
+    panel.bottom_mode_group.button(panel.BOTTOM_MODE_BASEPLATE_V_GROOVE).click()
+    assert panel.baseplate_step_group.title() == "Back Plate V-Groove"
 
 
 def test_set_params_restores_wrap_controls_enabled_state(qapp):
@@ -788,6 +794,7 @@ def test_set_params_restores_wrap_controls_enabled_state(qapp):
     panel.set_params(params)
 
     assert panel.wrap_enabled.isChecked() is True
+    assert panel.edge_wrap_group.title() == "Bottom Edge Wrap"
     assert panel.wrap_width.isEnabled() is True
     assert panel.wrap_height.isEnabled() is True
     assert panel.wrap_dir_inner.isEnabled() is True
@@ -918,6 +925,7 @@ def test_vector_defaults_match_requested_values(qapp):
     assert panel.light_slot_depth.value() == pytest.approx(6.0)
     assert panel.light_slot_floor_layers.value() == pytest.approx(1.5)
     assert panel.light_slot_wall_gap.value() == pytest.approx(0.0)
+    assert panel.light_slot_wall_gap.isHidden() is True
 
     assert params.shell.height == pytest.approx(50.1)
     assert params.shell.wall_count == 2
@@ -1127,6 +1135,7 @@ def test_outline_direction_uses_exclusive_icon_buttons(qapp):
     panel = ParamPanel()
 
     panel.bottom_mode_group.button(panel.BOTTOM_MODE_OUTLINE).click()
+    assert panel.edge_wrap_group.title() == "Bottom Outline"
     assert panel.outline_dir_inner.isEnabled() is True
     assert panel.outline_dir_outer.isEnabled() is True
     assert panel.outline_dir_inner.icon().isNull() is False
@@ -1161,14 +1170,14 @@ def test_wrap_outline_mutual_exclusive_updates_control_enabled_state(qapp):
 
 def test_skirt_group_hides_legacy_fields_and_moves_speed_to_print_settings(qapp):
     panel = ParamPanel()
-    skirt_group = _group_by_title(panel._primary_groups, "Anti-Warping Skirt")
+    skirt_group = _group_by_title(panel._primary_groups, "Anti-Warp Brim")
     speed_group = _group_by_title(panel._primary_groups, "Speed Settings")
 
     skirt_labels = {label.text() for label in skirt_group.findChildren(QLabel)}
     speed_labels = {label.text() for label in speed_group.findChildren(QLabel)}
 
-    assert "Skirt Height:" in skirt_labels
-    assert "Wall Gap:" in skirt_labels
+    assert "Brim Height:" in skirt_labels
+    assert "Breakaway Gap:" in skirt_labels
     assert "Skirt Speed:" not in skirt_labels
     assert "Skirt Width:" not in skirt_labels
     assert "Trapezoid Interval:" not in skirt_labels
@@ -1176,10 +1185,26 @@ def test_skirt_group_hides_legacy_fields_and_moves_speed_to_print_settings(qapp)
     assert _owning_group(panel.skirt_speed) is panel.speed_group
 
 
+def test_connected_group_hides_support_offset_compat_field(qapp):
+    panel = ParamPanel()
+    connected_group = _group_by_title(panel._primary_groups, "Letter Bridges")
+
+    connected_labels = {label.text() for label in connected_group.findChildren(QLabel)}
+
+    assert "Bridge Support Offset:" not in connected_labels
+    assert panel.connected_support_offset.isHidden() is True
+    assert panel.connected_support_offset.isEnabled() is False
+
+    panel.connected_enabled.setChecked(True)
+
+    assert panel.connected_support_offset.isHidden() is True
+    assert panel.connected_support_offset.isEnabled() is False
+
+
 def test_step_group_keeps_geometry_fields_and_moves_speed_to_print_settings(qapp):
     panel = ParamPanel()
-    top_step_group = _group_by_title(panel._primary_groups, "Panel Step/V-Groove")
-    bottom_step_group = _group_by_title(panel._primary_groups, "Baseplate Step/V-Groove")
+    top_step_group = _group_by_title(panel._primary_groups, "Acrylic Face Slot")
+    bottom_step_group = _group_by_title(panel._primary_groups, "Back Plate Slot")
     speed_group = _group_by_title(panel._primary_groups, "Speed Settings")
 
     step_labels = {
@@ -1189,10 +1214,10 @@ def test_step_group_keeps_geometry_fields_and_moves_speed_to_print_settings(qapp
     }
     speed_labels = {label.text() for label in speed_group.findChildren(QLabel)}
 
-    assert "Top Step Distance:" in step_labels
-    assert "Bottom Step Height:" in step_labels
-    assert "Top Step Width:" in step_labels
-    assert "Bottom Step Width:" in step_labels
+    assert "Face Slot Drop:" in step_labels
+    assert "Back Plate Slot Height:" in step_labels
+    assert "Face Slot Width:" in step_labels
+    assert "Back Plate Slot Width:" in step_labels
     assert "Step Speed:" not in step_labels
     assert "Step Speed:" in speed_labels
     assert _owning_group(panel.step_speed) is panel.speed_group
@@ -1275,8 +1300,8 @@ def test_skirt_sides_are_multi_select_icon_buttons(qapp):
     assert panel.skirt_inner_enabled.isCheckable() is True
     assert panel.skirt_outer_enabled.icon().isNull() is False
     assert panel.skirt_inner_enabled.icon().isNull() is False
-    assert panel.skirt_outer_enabled.toolTip() == "Outer Skirt"
-    assert panel.skirt_inner_enabled.toolTip() == "Inner Skirt"
+    assert panel.skirt_outer_enabled.toolTip() == "Outer Brim"
+    assert panel.skirt_inner_enabled.toolTip() == "Inner Brim"
     assert panel.skirt_outer_enabled.isEnabled() is True
     assert panel.skirt_inner_enabled.isEnabled() is True
     assert panel.skirt_outer_enabled.isChecked() is True
@@ -1328,7 +1353,7 @@ def test_step_speed_stays_enabled_while_any_step_toggle_remains_active(qapp):
         ),
         (
             lambda p: setattr(p.connected, "enabled", True),
-            ("connected_type", "connected_auto_detect", "connected_width", "connected_height", "connected_base_height", "connected_support_offset"),
+            ("connected_type", "connected_auto_detect", "connected_width", "connected_height", "connected_base_height"),
         ),
         (
             lambda p: setattr(p.step, "panel_step_enabled", True),
@@ -1348,7 +1373,6 @@ def test_step_speed_stays_enabled_while_any_step_toggle_remains_active(qapp):
                 "light_slot_width",
                 "light_slot_depth",
                 "light_slot_floor_layers",
-                "light_slot_wall_gap",
                 "light_slot_outer_enabled",
                 "light_slot_hole_enabled",
                 "light_slot_auto_skip_small_holes",
