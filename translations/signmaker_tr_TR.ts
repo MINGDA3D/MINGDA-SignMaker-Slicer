@@ -2171,13 +2171,13 @@ Girdi gereksinimleri: {requirements}</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="3243"/>
-        <source>Skirt Speed:</source>
+        <source>Brim Speed:</source>
         <translation>Etek Hizi:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="3244"/>
-        <source>Step Speed:</source>
-        <translation>Kademe Hizi:</translation>
+        <source>Slot/V-Groove Speed:</source>
+        <translation>Yuva/V-Kanal Hızı:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="3250"/>

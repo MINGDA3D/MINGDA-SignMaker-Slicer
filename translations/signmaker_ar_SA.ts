@@ -2171,13 +2171,13 @@ Input requirements: {requirements}</source>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="3243"/>
-        <source>Skirt Speed:</source>
+        <source>Brim Speed:</source>
         <translation>سرعة التنورة:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="3244"/>
-        <source>Step Speed:</source>
-        <translation>سرعة الدرجة:</translation>
+        <source>Slot/V-Groove Speed:</source>
+        <translation>سرعة الفتحة/الأخدود V:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="3250"/>

@@ -2171,13 +2171,13 @@ Exigences de saisie : {requirements}</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="3243"/>
-        <source>Skirt Speed:</source>
+        <source>Brim Speed:</source>
         <translation>Vitesse de la jupe:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="3244"/>
-        <source>Step Speed:</source>
-        <translation>Vitesse de la marche:</translation>
+        <source>Slot/V-Groove Speed:</source>
+        <translation>Vitesse de rainure/rainure en V:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="3250"/>

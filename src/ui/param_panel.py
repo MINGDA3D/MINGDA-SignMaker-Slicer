@@ -3240,8 +3240,8 @@ class ParamPanel(QWidget):
         self.first_layer_speed.valueChanged.connect(self._on_param_changed)
         self._add_icon_row(layout, "speed-", self.tr("First Layer Speed:"), self.first_layer_speed)
 
-        self._add_icon_row(layout, "speed-", self.tr("Skirt Speed:"), self.skirt_speed)
-        self._add_icon_row(layout, "speed-", self.tr("Step Speed:"), self.step_speed)
+        self._add_icon_row(layout, "speed-", self.tr("Brim Speed:"), self.skirt_speed)
+        self._add_icon_row(layout, "speed-", self.tr("Slot/V-Groove Speed:"), self.step_speed)
 
         return group
 

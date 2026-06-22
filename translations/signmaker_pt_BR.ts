@@ -2171,13 +2171,13 @@ Requisitos de entrada: {requirements}</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="3243"/>
-        <source>Skirt Speed:</source>
+        <source>Brim Speed:</source>
         <translation>Velocidade da saia:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="3244"/>
-        <source>Step Speed:</source>
-        <translation>Velocidade do degrau:</translation>
+        <source>Slot/V-Groove Speed:</source>
+        <translation>Velocidade da ranhura/ranhura em V:</translation>
     </message>
     <message>
         <location filename="../src/ui/param_panel.py" line="3250"/>

@@ -67,7 +67,7 @@ class StepPanel(QWidget):
         self.step_speed_spin.setRange(10, 100)
         self.step_speed_spin.setValue(30.0)
         self.step_speed_spin.setSuffix(" mm/s")
-        print_layout.addRow("台阶速度:", self.step_speed_spin)
+        print_layout.addRow("卡槽/V槽速度:", self.step_speed_spin)
 
         self.nozzle_offset_spin = QDoubleSpinBox()
         self.nozzle_offset_spin.setRange(-5, 5)

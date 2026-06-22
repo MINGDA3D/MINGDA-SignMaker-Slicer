@@ -733,7 +733,7 @@ def test_parameter_icon_labels_preserve_original_text(qapp):
     assert "Back Plate Slot Height:" in visible_text
     assert "Face Slot Width:" in visible_text
     assert "Back Plate Slot Width:" in visible_text
-    assert "Skirt Speed:" in visible_text
+    assert "Brim Speed:" in visible_text
 
 
 def test_prime_tower_controls_roundtrip_through_print_settings(qapp):
@@ -1178,10 +1178,10 @@ def test_skirt_group_hides_legacy_fields_and_moves_speed_to_print_settings(qapp)
 
     assert "Brim Height:" in skirt_labels
     assert "Breakaway Gap:" in skirt_labels
-    assert "Skirt Speed:" not in skirt_labels
+    assert "Brim Speed:" not in skirt_labels
     assert "Skirt Width:" not in skirt_labels
     assert "Trapezoid Interval:" not in skirt_labels
-    assert "Skirt Speed:" in speed_labels
+    assert "Brim Speed:" in speed_labels
     assert _owning_group(panel.skirt_speed) is panel.speed_group
 
 
@@ -1218,8 +1218,8 @@ def test_step_group_keeps_geometry_fields_and_moves_speed_to_print_settings(qapp
     assert "Back Plate Slot Height:" in step_labels
     assert "Face Slot Width:" in step_labels
     assert "Back Plate Slot Width:" in step_labels
-    assert "Step Speed:" not in step_labels
-    assert "Step Speed:" in speed_labels
+    assert "Slot/V-Groove Speed:" not in step_labels
+    assert "Slot/V-Groove Speed:" in speed_labels
     assert _owning_group(panel.step_speed) is panel.speed_group
 
 
