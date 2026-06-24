@@ -128,6 +128,57 @@ class _IconTextTabBar(QTabBar):
                 painter.fillRect(underline_rect, QColor(COLORS.editor_canvas_toolbar_accent))
 
 
+class _CenteredTextTabBar(QTabBar):
+    """Draw equal-width text-only tabs with centered labels."""
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setMouseTracking(True)
+
+    def tabSizeHint(self, index):  # noqa: N802 - Qt override
+        size = super().tabSizeHint(index)
+        if self.count() > 0 and self.width() > 0:
+            size.setWidth(max(1, self.width() // self.count()))
+        return size
+
+    def minimumTabSizeHint(self, index):  # noqa: N802 - Qt override
+        return self.tabSizeHint(index)
+
+    def paintEvent(self, event):  # noqa: N802 - Qt override
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing, True)
+
+        hovered_index = self.tabAt(self.mapFromGlobal(QCursor.pos()))
+        for index in range(self.count()):
+            rect = self.tabRect(index)
+            selected = index == self.currentIndex()
+            hovered = index == hovered_index and not selected
+
+            if hovered:
+                painter.fillRect(rect, QColor(COLORS.editor_list_item_bg))
+
+            font = self.font()
+            font.setWeight(QFont.Weight.DemiBold if selected else QFont.Weight.Medium)
+            painter.setFont(font)
+            painter.setPen(QColor(COLORS.text_primary if selected else COLORS.text_muted))
+
+            text_rect = rect.adjusted(8, 0, -8, -2)
+            text = painter.fontMetrics().elidedText(
+                self.tabText(index),
+                Qt.TextElideMode.ElideRight,
+                max(0, text_rect.width()),
+            )
+            painter.drawText(
+                text_rect,
+                Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter,
+                text,
+            )
+
+            if selected:
+                underline_rect = rect.adjusted(0, rect.height() - 2, 0, 0)
+                painter.fillRect(underline_rect, QColor(COLORS.editor_canvas_toolbar_accent))
+
+
 class ParamPanel(QWidget):
     """参数面板"""
 
@@ -553,6 +604,7 @@ class ParamPanel(QWidget):
         content_layout.addWidget(self.shell_group)
 
         self.shape_feature_tabs = QTabWidget()
+        self.shape_feature_tabs.setTabBar(_CenteredTextTabBar(self.shape_feature_tabs))
         self.shape_feature_tabs.setObjectName("shape_feature_tabs")
         self.shape_feature_tabs.setDocumentMode(True)
         self.shape_feature_tabs.setUsesScrollButtons(False)

@@ -741,8 +741,8 @@ class MainWindow(QMainWindow):
 
         # === 左侧参数面板 ===
         self.param_panel = ParamPanel()
-        self.param_panel.setMinimumWidth(280)
-        self.param_panel.setMaximumWidth(400)
+        self.param_panel.setMinimumWidth(360)
+        self.param_panel.setMaximumWidth(480)
         self.param_panel.params_changed.connect(self._on_params_changed)
         self.editor_splitter.addWidget(self.param_panel)
 
@@ -790,6 +790,12 @@ class MainWindow(QMainWindow):
         self.editor_splitter.addWidget(self.project_panel)
 
         # 设置分割比例
+        self.editor_splitter.setChildrenCollapsible(False)
+        self.editor_splitter.setCollapsible(0, False)
+        self.editor_splitter.setCollapsible(2, False)
+        self.editor_splitter.setStretchFactor(0, 0)
+        self.editor_splitter.setStretchFactor(1, 1)
+        self.editor_splitter.setStretchFactor(2, 0)
         self.editor_splitter.setSizes([320, 900, 200])
 
         self.main_stack.addWidget(self.editor_splitter)  # index 1
@@ -3682,6 +3688,13 @@ class MainWindow(QMainWindow):
             self.param_panel.hide()
         else:
             self.param_panel.show()
+            sizes = self.editor_splitter.sizes()
+            if sizes and sizes[0] < self.param_panel.minimumWidth():
+                target = min(self.param_panel.minimumWidth(), self.param_panel.maximumWidth())
+                sizes[0] = target
+                if len(sizes) > 1:
+                    sizes[1] = max(1, sizes[1] - target)
+                self.editor_splitter.setSizes(sizes)
 
     def _on_mirror(self, axis: str):
         """镜像"""
