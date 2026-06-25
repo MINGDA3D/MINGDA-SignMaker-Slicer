@@ -22,6 +22,7 @@ from src.core.types import (
     ManufacturingConstraintError,
     PrinterProfile,
     SliceParams,
+    default_bed_exclude_area_for_bed,
     format_bed_exclude_area_for_editor,
     normalize_slice_params,
 )
@@ -291,6 +292,36 @@ def test_switching_profile_updates_layer_height_and_width_line_when_nozzle_chang
     assert panel.width_line_spin.value() == pytest.approx(0.6)
     assert panel.get_params().shell.layer_height == pytest.approx(0.3)
     assert panel.get_params().shell.line_width == pytest.approx(0.6)
+
+
+def test_set_params_keeps_active_printer_profile_machine_fields(qapp):
+    panel = ParamPanel()
+    mini_spec = DEFAULT_PRINTER_PROFILE_SPECS[0]
+    index = panel.printer_profile_combo.findData(mini_spec["id"])
+    assert index >= 0
+    panel.printer_profile_combo.setCurrentIndex(index)
+
+    params = SliceParams()
+    params.machine.name = "MIGNDA AD-F4 0.8mm Nozzle"
+    params.machine.bed_width = 800.0
+    params.machine.bed_depth = 1200.0
+    params.machine.bed_height = 100.0
+    params.machine.nozzle_diameter = 0.8
+    params.machine.bed_exclude_area = default_bed_exclude_area_for_bed(800.0, 1200.0)
+
+    panel.set_params(params)
+    restored = panel.get_params()
+
+    assert panel.printer_profile_combo.currentData() == mini_spec["id"]
+    assert panel.profile_bed_width.value() == pytest.approx(600.0)
+    assert panel.profile_bed_depth.value() == pytest.approx(800.0)
+    assert panel.profile_nozzle_diameter.value() == pytest.approx(0.4)
+    assert panel.profile_bed_exclude_area.toPlainText() == format_bed_exclude_area_for_editor(
+        default_bed_exclude_area_for_bed(600.0, 800.0)
+    )
+    assert restored.machine.bed_width == pytest.approx(600.0)
+    assert restored.machine.bed_depth == pytest.approx(800.0)
+    assert restored.machine.nozzle_diameter == pytest.approx(0.4)
 
 
 def test_print_summary_labels_and_color_change_preview_column_can_shrink_in_narrow_sidebar(qapp):

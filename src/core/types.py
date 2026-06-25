@@ -22,37 +22,22 @@ MIN_LINE_WIDTH_LAYER_RATIO = 1.20
 MAX_LINE_WIDTH_NOZZLE_RATIO = 1.50
 MAX_WALL_LOOPS = 100
 MINGDA_BED_EXCLUDE_AREA_800X1200 = [
-    "0x1130,70x1130,70x1200,0x1200",
-    "730x1130,800x1130,800x1200,730x1200",
-    "0x0,70x0,70x70,0x70",
-    "630x0,800x0,800x100,630x100",
-    "70x0,630x0,630x20,70x20",
+    "771x0,800x0,800x56,771x56",
+    "771x287,800x287,800x528,771x528",
+]
+MINGDA_BED_EXCLUDE_AREA_600X800 = [
+    "0x0,71x0,71x25,0x25",
+    "536x0,600x0,600x40,536x40",
+    "566x40,600x40,600x80,566x80",
+    "571x182,600x182,600x471,571x471",
+    "541x792,600x792,600x800,541x800",
+    "0x792,67x792,67x800,0x800",
 ]
 
 _BED_POINT_RE = re.compile(
     r"^\s*([+-]?(?:\d+(?:\.\d*)?|\.\d+))\s*x\s*([+-]?(?:\d+(?:\.\d*)?|\.\d+))\s*$",
     re.IGNORECASE,
 )
-
-
-def _format_bed_coord(value: float) -> str:
-    formatted = f"{float(value):.4f}".rstrip("0").rstrip(".")
-    return formatted or "0"
-
-
-def _format_bed_point(x: float, y: float) -> str:
-    return f"{_format_bed_coord(x)}x{_format_bed_coord(y)}"
-
-
-def _format_bed_exclude_rect(min_x: float, min_y: float, max_x: float, max_y: float) -> str:
-    return ",".join(
-        [
-            _format_bed_point(min_x, min_y),
-            _format_bed_point(max_x, min_y),
-            _format_bed_point(max_x, max_y),
-            _format_bed_point(min_x, max_y),
-        ]
-    )
 
 
 def default_bed_exclude_area_for_bed(bed_width: float, bed_depth: float) -> List[str]:
@@ -69,41 +54,7 @@ def default_bed_exclude_area_for_bed(bed_width: float, bed_depth: float) -> List
     if not known_bed:
         return []
 
-    rear_corner = 70.0
-    left_front_width = 70.0
-    left_front_depth = 70.0
-    right_front_width = 170.0
-    right_front_depth = 100.0
-    front_strip_depth = 20.0
-
-    right_front_min_x = max(0.0, width - right_front_width)
-    right_rear_min_x = max(0.0, width - rear_corner)
-    rear_min_y = max(0.0, depth - rear_corner)
-
-    rects = [
-        (0.0, rear_min_y, min(rear_corner, width), depth),
-        (right_rear_min_x, rear_min_y, width, depth),
-        (0.0, 0.0, min(left_front_width, width), min(left_front_depth, depth)),
-        (right_front_min_x, 0.0, width, min(right_front_depth, depth)),
-    ]
-
-    front_strip_min_x = min(left_front_width, width)
-    front_strip_max_x = max(front_strip_min_x, right_front_min_x)
-    if front_strip_max_x > front_strip_min_x:
-        rects.append(
-            (
-                front_strip_min_x,
-                0.0,
-                front_strip_max_x,
-                min(front_strip_depth, depth),
-            )
-        )
-
-    return [
-        _format_bed_exclude_rect(min_x, min_y, max_x, max_y)
-        for min_x, min_y, max_x, max_y in rects
-        if max_x > min_x and max_y > min_y
-    ]
+    return list(MINGDA_BED_EXCLUDE_AREA_600X800)
 
 
 BedExcludeAreaInput = Union[str, Sequence[str], None]

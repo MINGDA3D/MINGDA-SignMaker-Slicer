@@ -4049,16 +4049,15 @@ class ParamPanel(QWidget):
         self.other_layer_fan_percent.setValue(int(params.gcode.other_layer_fan_percent))
 
         current_profile = self._current_printer_profile()
-        profile_snapshot = printer_profile_from_params(
-            params,
-            profile_id=self._active_profile_id or "",
-            name=(
-                current_profile.name
-                if current_profile is not None
-                else (params.machine.name or self.tr("Klipper Profile"))
-            ),
-        )
-        self._apply_profile_to_form(profile_snapshot)
+        if current_profile is not None:
+            self._apply_profile_to_form(current_profile)
+        else:
+            profile_snapshot = printer_profile_from_params(
+                params,
+                profile_id=self._active_profile_id or "",
+                name=params.machine.name or self.tr("Klipper Profile"),
+            )
+            self._apply_profile_to_form(profile_snapshot)
 
         # 裙边参数
         self.skirt_height.setValue(params.skirt.height)

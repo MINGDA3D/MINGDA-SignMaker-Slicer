@@ -12,6 +12,8 @@ from pathlib import Path
 from typing import Dict, List, Optional
 
 from src.core.types import (
+    MINGDA_BED_EXCLUDE_AREA_600X800,
+    MINGDA_BED_EXCLUDE_AREA_800X1200,
     PrinterProfile,
     SliceParams,
     default_bed_exclude_area_for_bed,
@@ -26,6 +28,20 @@ DEFAULT_BUILTIN_START_GCODE = PrinterProfile().start_gcode
 DEFAULT_BUILTIN_END_GCODE = PrinterProfile().end_gcode
 LEGACY_START_GCODE = "G28"
 LEGACY_END_GCODE = ""
+LEGACY_MINGDA_BED_EXCLUDE_AREA_800X1200 = [
+    "0x1130,70x1130,70x1200,0x1200",
+    "730x1130,800x1130,800x1200,730x1200",
+    "0x0,70x0,70x70,0x70",
+    "630x0,800x0,800x100,630x100",
+    "70x0,630x0,630x20,70x20",
+]
+LEGACY_MINGDA_BED_EXCLUDE_AREA_600X800 = [
+    "0x730,70x730,70x800,0x800",
+    "530x730,600x730,600x800,530x800",
+    "0x0,70x0,70x70,0x70",
+    "430x0,600x0,600x100,430x100",
+    "70x0,430x0,430x20,70x20",
+]
 
 
 DEFAULT_PRINTER_PROFILE_SPECS = (
@@ -315,6 +331,34 @@ class PrinterProfileManager:
             ):
                 normalized_profile.start_gcode = profile.start_gcode
                 normalized_profile.end_gcode = profile.end_gcode
+                changed = True
+
+            if (
+                profile.id.startswith("builtin-mignda-ad-f4-mini-")
+                and normalized_profile.bed_exclude_area
+                == LEGACY_MINGDA_BED_EXCLUDE_AREA_600X800
+            ):
+                normalized_profile.bed_exclude_area = list(MINGDA_BED_EXCLUDE_AREA_600X800)
+                changed = True
+
+            is_large_ad_series_profile = (
+                (
+                    profile.id.startswith("builtin-mignda-ad-f4-")
+                    and not profile.id.startswith("builtin-mignda-ad-f4-mini-")
+                )
+                or profile.id.startswith(
+                    (
+                        "builtin-mignda-ad-f6-",
+                        "builtin-mignda-ad-f10-",
+                    )
+                )
+            )
+            if (
+                is_large_ad_series_profile
+                and normalized_profile.bed_exclude_area
+                == LEGACY_MINGDA_BED_EXCLUDE_AREA_800X1200
+            ):
+                normalized_profile.bed_exclude_area = list(MINGDA_BED_EXCLUDE_AREA_800X1200)
                 changed = True
 
             self._profiles[profile.id] = normalized_profile

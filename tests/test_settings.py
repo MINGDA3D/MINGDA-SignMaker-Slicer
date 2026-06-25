@@ -12,6 +12,7 @@ from pathlib import Path
 
 from src.core.types import (
     ColorChangePoint, SliceParams, EdgeType, BevelDirection,
+    MINGDA_BED_EXCLUDE_AREA_600X800,
     default_bed_exclude_area_for_bed,
     serialize_params, deserialize_params
 )
@@ -298,8 +299,9 @@ class TestSerializeParams:
         restored = deserialize_params(data)
 
         assert restored.machine.bed_exclude_area == default_bed_exclude_area_for_bed(600.0, 800.0)
-        assert "430x0,600x0,600x100,430x100" in restored.machine.bed_exclude_area
-        assert "70x0,430x0,430x20,70x20" in restored.machine.bed_exclude_area
+        assert restored.machine.bed_exclude_area == MINGDA_BED_EXCLUDE_AREA_600X800
+        assert "571x182,600x182,600x471,571x471" in restored.machine.bed_exclude_area
+        assert "541x792,600x792,600x800,541x800" in restored.machine.bed_exclude_area
 
     def test_deserialize_empty_dict(self):
         """测试反序列化空字典"""
