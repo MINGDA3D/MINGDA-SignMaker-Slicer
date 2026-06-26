@@ -1,6 +1,5 @@
-MINGDA SignMaker V0.6.0 Official Release
+MINGDA SignMaker V0.6.3 Official Release
 
-- Added Light, Dark, and System theme modes with persisted preferences and theme-aware icons across the main UI.
-- Added an Open Recent menu for recent project and import files, while keeping the home page focused on valid .smp projects.
-- Reworked U-shaped letters as a Custom edge preset, removing the built-in U Shape edge mode and unifying bottom shell behavior.
-- Updated sign-making terminology, Custom preset restore behavior, multilingual resources, tutorials, and regression coverage for the 0.6.0 workflow.
+- Fixed sharp-corner gaps in 3D preview and STL export for multi-wall text such as X.
+- Improved STL export stability for complex DXF/SVG logo outlines and beveled shells.
+- Improved Shape List readability for long imported file names.
