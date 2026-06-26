@@ -854,6 +854,51 @@ def test_project_list_item_label_has_room_for_underscores(qapp):
     item.deleteLater()
 
 
+def test_project_list_item_keeps_action_button_visible_with_long_name(qapp):
+    title = "UGG EXPRESS dxf signmaker_dxf_10"
+    item = _ProjectListItem(1, title)
+    item.resize(300, 44)
+    item.show()
+    qapp.processEvents()
+
+    assert item.minimumSizeHint().width() <= 300
+    assert item.delete_btn.geometry().right() <= item.rect().right()
+    assert len(item.name_label.text()) < len(title)
+    assert item.name_label.toolTip() == title
+
+    item.deleteLater()
+
+
+def test_project_list_asset_row_shows_name_at_project_panel_min_width(qapp):
+    title = "UGG EXPRESS dxf signmaker.dxf"
+    item = _ProjectListItem(
+        "asset",
+        title,
+        secondary_text="(10)",
+        collapsible=True,
+        expanded=False,
+        releasable=True,
+    )
+    item.resize(300, 44)
+    item.show()
+    qapp.processEvents()
+
+    assert item.name_label.text()
+    assert item.name_label.text().startswith("UGG")
+    assert item.delete_btn.geometry().right() <= item.rect().right()
+
+    item.deleteLater()
+
+
+def test_main_window_project_panel_uses_readable_width_range(qapp):
+    window = MainWindow()
+
+    assert window.project_panel.minimumWidth() == 300
+    assert window.project_panel.maximumWidth() == 420
+
+    window.deleteLater()
+
+
 def test_main_window_release_asset_names_contours_from_file_stem_without_duplicates(qapp):
     window = MainWindow()
     window.contours = [

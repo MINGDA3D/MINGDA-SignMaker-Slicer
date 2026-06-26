@@ -777,8 +777,8 @@ class MainWindow(QMainWindow):
 
         # === 右侧图形列表面板 ===
         self.project_panel = ProjectPanel()
-        self.project_panel.setMinimumWidth(180)
-        self.project_panel.setMaximumWidth(300)
+        self.project_panel.setMinimumWidth(300)
+        self.project_panel.setMaximumWidth(420)
         self.project_panel.import_clicked.connect(self._on_open_file)
         self.project_panel.delete_requested.connect(self._on_delete_requested)
         self.project_panel.release_asset_requested.connect(
@@ -796,7 +796,7 @@ class MainWindow(QMainWindow):
         self.editor_splitter.setStretchFactor(0, 0)
         self.editor_splitter.setStretchFactor(1, 1)
         self.editor_splitter.setStretchFactor(2, 0)
-        self.editor_splitter.setSizes([320, 900, 200])
+        self.editor_splitter.setSizes([360, 900, LAYOUT.sidebar_right_width])
 
         self.main_stack.addWidget(self.editor_splitter)  # index 1
 

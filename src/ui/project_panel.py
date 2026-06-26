@@ -16,6 +16,7 @@ from PySide6.QtWidgets import (
     QLabel,
     QPushButton,
     QScrollArea,
+    QSizePolicy,
     QVBoxLayout,
     QWidget,
 )
@@ -34,6 +35,43 @@ class _PanelRow:
     indices: List[int]
     item: "_ProjectListItem"
     asset_id: str = ""
+
+
+class _ElidedLabel(QLabel):
+    """QLabel variant that can shrink inside a fixed-width row."""
+
+    def __init__(self, text: str = "", parent=None):
+        super().__init__(parent)
+        self._full_text = ""
+        self.setMinimumWidth(0)
+        self.setSizePolicy(
+            QSizePolicy.Policy.Ignored,
+            QSizePolicy.Policy.Preferred,
+        )
+        self.setText(text)
+
+    def setText(self, text: str) -> None:  # noqa: N802 - Qt API override
+        self._full_text = text or ""
+        self.setToolTip(self._full_text)
+        self._refresh_elided_text()
+
+    def resizeEvent(self, event):  # noqa: N802 - Qt API override
+        super().resizeEvent(event)
+        self._refresh_elided_text()
+
+    def refresh_elision(self) -> None:
+        self._refresh_elided_text()
+
+    def _refresh_elided_text(self) -> None:
+        # The label stylesheet gives the name 12px horizontal padding.
+        available_width = max(0, self.contentsRect().width() - 24)
+        text = self.fontMetrics().elidedText(
+            self._full_text,
+            Qt.TextElideMode.ElideRight,
+            available_width,
+        )
+        if QLabel.text(self) != text:
+            QLabel.setText(self, text)
 
 
 class _ProjectListItem(QFrame):
@@ -101,7 +139,7 @@ class _ProjectListItem(QFrame):
             layout.addWidget(spacer)
             self.toggle_btn = None
 
-        self.name_label = QLabel(title)
+        self.name_label = _ElidedLabel(title)
         self.name_label.setAlignment(
             Qt.AlignmentFlag.AlignVCenter | Qt.AlignmentFlag.AlignLeft
         )
@@ -112,6 +150,7 @@ class _ProjectListItem(QFrame):
             padding: 0 12px;
         """
         )
+        self.name_label.refresh_elision()
         layout.addWidget(self.name_label, 1)
 
         self.secondary_label = QLabel(secondary_text)
@@ -193,6 +232,7 @@ class _ProjectListItem(QFrame):
             padding: 0 12px;
         """
         )
+        self.name_label.refresh_elision()
         self.secondary_label.setStyleSheet(
             f"""
             color: {COLORS.text_muted};
