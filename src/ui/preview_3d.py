@@ -298,7 +298,11 @@ class Preview3DWidget(QOpenGLWidget):
 
         parts: List[PreviewMeshPart] = []
 
-        shell_mesh = shell_builder.build(result.layers)
+        shell_mesh = shell_builder.build(
+            result.layers,
+            contours=contours,
+            params=params,
+        )
         Preview3DWidget._append_mesh_part(parts, "wall", shell_mesh, WALL_COLOR)
 
         if params.prime_tower.enabled:

@@ -1,8 +1,13 @@
 from copy import deepcopy
 
+from shapely.geometry import Polygon as ShapelyPolygon
+from shapely.ops import unary_union
+
 from src.core.font_manager import FontManager
+from src.core.path_offset import PathOffset
 from src.core.text_generator import TextGenerator
 from src.core.slice_engine import SliceEngine
+from src.core.stl import ShellMeshBuilder
 from src.core.stl_writer import STLWriter
 from src.core.types import (
     BevelDirection,
@@ -13,6 +18,7 @@ from src.core.types import (
     PathType,
     Point,
     SliceParams,
+    normalize_slice_params,
 )
 from src.utils.geometry import is_clockwise
 
@@ -175,3 +181,46 @@ def _repo_tmp_dir(name: str):
     path = FsPath("e:/SignMaker Slicer/.tmp_pytest_text_generator") / name
     path.mkdir(parents=True, exist_ok=True)
     return path
+
+
+def test_text_x_shell_region_mesh_closes_multi_wall_tip_gaps():
+    font_path = _find_test_font()
+    assert font_path, "No suitable system font found for text generator test"
+
+    contours = TextGenerator().generate_text_contours("X", font_path, 200.0, 20.0)
+
+    params = SliceParams()
+    params.shell.height = 0.3
+    params.shell.layer_height = 0.3
+    params.shell.line_width = 0.6
+    params.shell.wall_thickness = 2.4
+    params.shell.wall_count = 4
+    params.shell.baseplate_thickness = 0.0
+    params.shell.panel_thickness = 0.0
+    params.bottom_face.enabled = False
+    params.top_face.enabled = False
+    params.skirt.enabled = False
+    params = normalize_slice_params(params)
+
+    result = SliceEngine().slice(contours, params)
+    builder = ShellMeshBuilder(PathOffset(), params.shell.wall_thickness)
+    polygons = builder._build_layer_shell_region_polygons(
+        contours,
+        result.layers[-1],
+        params,
+    )
+    geometry = unary_union(polygons)
+
+    holes = []
+    parts = [geometry] if geometry.geom_type == "Polygon" else list(geometry.geoms)
+    for part in parts:
+        if part.geom_type == "Polygon":
+            holes.extend(ShapelyPolygon(ring) for ring in part.interiors)
+
+    assert polygons
+    assert [hole for hole in holes if hole.area < 1.0] == []
+
+    mesh = builder.build(result.layers, contours=contours, params=params)
+
+    assert mesh is not None
+    assert mesh.is_watertight

@@ -29,6 +29,7 @@ STL生成算法（空心字壳）：
 """
 
 from __future__ import annotations
+import inspect
 from typing import List, Optional
 
 import trimesh
@@ -99,7 +100,7 @@ class STLWriter:
         meshes = []
 
         # 1. 构建字壳网格
-        shell_mesh = self.shell_builder.build(result.layers)
+        shell_mesh = self._build_shell_mesh(result.layers, contours, params)
         if shell_mesh is not None:
             meshes.append(shell_mesh)
 
@@ -218,6 +219,22 @@ class STLWriter:
             combined_mesh.export(output_path, file_type='stl')
         else:
             combined_mesh.export(output_path, file_type='stl_ascii')
+
+    def _build_shell_mesh(
+        self,
+        layers,
+        contours: Optional[List[Contour]],
+        params: Optional[SliceParams],
+    ) -> Optional[trimesh.Trimesh]:
+        build = self.shell_builder.build
+        try:
+            signature = inspect.signature(build)
+        except (TypeError, ValueError):
+            return build(layers)
+
+        if "contours" in signature.parameters and "params" in signature.parameters:
+            return build(layers, contours=contours, params=params)
+        return build(layers)
 
     @staticmethod
     def _get_transformed_contours_at_z(contours: List[Contour], z: float,
