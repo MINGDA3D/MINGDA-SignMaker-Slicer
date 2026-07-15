@@ -115,7 +115,7 @@ from src.license_guard import DongleGuard, is_code_dog_enabled
 
 TUTORIAL_PLAYLIST_URL = (
     "https://youtube.com/playlist?list=PL1DS2s3xcuH3Nz3ZEUHmyzfmk7BfvvIt1"
-    "&si=pYUuSv80w7LlNJGJ"
+    "&si=8ZuU-UYfJaL78d5D"
 )
 
 

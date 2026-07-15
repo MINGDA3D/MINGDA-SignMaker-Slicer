@@ -190,15 +190,31 @@ def test_manager_upgrades_legacy_builtin_start_and_end_gcode_defaults(temp_profi
     assert profile.end_gcode == "END_PRINT"
 
 
-def test_manager_upgrades_legacy_ad_f4_mini_bed_exclude_area(temp_profile_dir):
+@pytest.mark.parametrize(
+    "legacy_area",
+    [
+        [
+            "0x730,70x730,70x800,0x800",
+            "530x730,600x730,600x800,530x800",
+            "0x0,70x0,70x70,0x70",
+            "430x0,600x0,600x100,430x100",
+            "70x0,430x0,430x20,70x20",
+        ],
+        [
+            "0x0,71x0,71x25,0x25",
+            "536x0,600x0,600x40,536x40",
+            "566x40,600x40,600x80,566x80",
+            "571x182,600x182,600x471,571x471",
+            "541x792,600x792,600x800,541x800",
+            "0x792,67x792,67x800,0x800",
+        ],
+    ],
+)
+def test_manager_upgrades_legacy_ad_f4_mini_bed_exclude_area(
+    temp_profile_dir,
+    legacy_area,
+):
     config_path = temp_profile_dir / PrinterProfileManager.FILE_NAME
-    legacy_area = [
-        "0x730,70x730,70x800,0x800",
-        "530x730,600x730,600x800,530x800",
-        "0x0,70x0,70x70,0x70",
-        "430x0,600x0,600x100,430x100",
-        "70x0,430x0,430x20,70x20",
-    ]
     config_path.write_text(
         json.dumps(
             {

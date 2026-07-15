@@ -56,7 +56,7 @@ def test_canvas_marks_bed_exclude_area_overlap_out_of_bounds(qapp):
     canvas.set_platform_size(800.0, 1200.0)
     canvas.set_unprintable_regions(default_bed_exclude_area_for_bed(800.0, 1200.0))
     safe_contour = _rect_contour(100.0, 100.0, 120.0, 120.0)
-    blocked_contour = _rect_contour(640.0, 10.0, 660.0, 30.0)
+    blocked_contour = _rect_contour(780.0, 10.0, 790.0, 30.0)
 
     canvas.set_contours([safe_contour, blocked_contour], center_on_platform=False)
 

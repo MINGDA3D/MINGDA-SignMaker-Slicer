@@ -42,6 +42,14 @@ LEGACY_MINGDA_BED_EXCLUDE_AREA_600X800 = [
     "430x0,600x0,600x100,430x100",
     "70x0,430x0,430x20,70x20",
 ]
+PREVIOUS_MINGDA_BED_EXCLUDE_AREA_600X800 = [
+    "0x0,71x0,71x25,0x25",
+    "536x0,600x0,600x40,536x40",
+    "566x40,600x40,600x80,566x80",
+    "571x182,600x182,600x471,571x471",
+    "541x792,600x792,600x800,541x800",
+    "0x792,67x792,67x800,0x800",
+]
 
 
 DEFAULT_PRINTER_PROFILE_SPECS = (
@@ -335,8 +343,10 @@ class PrinterProfileManager:
 
             if (
                 profile.id.startswith("builtin-mignda-ad-f4-mini-")
-                and normalized_profile.bed_exclude_area
-                == LEGACY_MINGDA_BED_EXCLUDE_AREA_600X800
+                and normalized_profile.bed_exclude_area in (
+                    LEGACY_MINGDA_BED_EXCLUDE_AREA_600X800,
+                    PREVIOUS_MINGDA_BED_EXCLUDE_AREA_600X800,
+                )
             ):
                 normalized_profile.bed_exclude_area = list(MINGDA_BED_EXCLUDE_AREA_600X800)
                 changed = True

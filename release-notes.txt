@@ -1,5 +1,21 @@
-MINGDA SignMaker V0.6.3 Official Release
+MINGDA SignMaker - Recent Release Notes
 
-- Fixed sharp-corner gaps in 3D preview and STL export for multi-wall text such as X.
-- Improved STL export stability for complex DXF/SVG logo outlines and beveled shells.
-- Improved Shape List readability for long imported file names.
+V0.6.4
+- Updated the MINGDA AD-F4 Mini no-print zone; previous built-in defaults update automatically.
+- Updated the online tutorials, including decorative-panel and solid-letter workflows.
+
+V0.6.3
+- Fixed sharp multi-wall corner gaps in 3D Preview and STL export.
+- Improved STL reliability for complex DXF/SVG artwork and long file names in Shape List.
+
+V0.6.2
+- Updated no-print zones for MINGDA printer profiles.
+- Improved parameter-panel display and printer-profile synchronization on small screens.
+
+V0.6.1
+- Renamed the slot and V-groove speed setting for clearer process control.
+- Updated the new terminology across all supported languages.
+
+V0.6.0
+- Added System, Light, and Dark theme options.
+- Added Open Recent and moved the U-shaped letter profile into Custom wall presets.

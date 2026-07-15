@@ -300,6 +300,9 @@ class TestSerializeParams:
 
         assert restored.machine.bed_exclude_area == default_bed_exclude_area_for_bed(600.0, 800.0)
         assert restored.machine.bed_exclude_area == MINGDA_BED_EXCLUDE_AREA_600X800
+        assert "495x0,600x0,600x182,495x182" in restored.machine.bed_exclude_area
+        assert "536x0,600x0,600x40,536x40" not in restored.machine.bed_exclude_area
+        assert "566x40,600x40,600x80,566x80" not in restored.machine.bed_exclude_area
         assert "571x182,600x182,600x471,571x471" in restored.machine.bed_exclude_area
         assert "541x792,600x792,600x800,541x800" in restored.machine.bed_exclude_area
 
