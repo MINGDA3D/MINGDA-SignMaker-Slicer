@@ -16,6 +16,7 @@ from src.core.types import (
     default_bed_exclude_area_for_bed,
     serialize_params, deserialize_params
 )
+from src.core.complexity import ComplexityLevel
 from src.business.preset_manager import PresetManager
 
 
@@ -739,6 +740,25 @@ class TestSettingsManagerWithQt:
         sm.set_theme_mode("invalid")
 
         assert sm.get_theme_mode() == "system"
+
+    def test_complexity_level_defaults_to_basic(self, qapp, temp_config_dir):
+        from src.business.settings_manager import SettingsManager
+
+        sm = SettingsManager(config_dir=temp_config_dir)
+
+        assert sm.get_complexity_level() == ComplexityLevel.BASIC
+
+    def test_complexity_level_persists_and_normalizes(self, qapp, temp_config_dir):
+        from src.business.settings_manager import SettingsManager
+
+        sm = SettingsManager(config_dir=temp_config_dir)
+        sm.set_complexity_level(ComplexityLevel.EXPERT)
+
+        restored = SettingsManager(config_dir=temp_config_dir)
+        assert restored.get_complexity_level() == ComplexityLevel.EXPERT
+
+        restored._qsettings.setValue("UI/complexity_level", "invalid")
+        assert restored.get_complexity_level() == ComplexityLevel.BASIC
 
     def test_transform_uniform_scale_defaults_to_true(self, qapp):
         from src.business.settings_manager import SettingsManager

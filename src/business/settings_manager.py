@@ -17,6 +17,7 @@ from datetime import datetime
 from PySide6.QtCore import QSettings, QStandardPaths
 from PySide6.QtWidgets import QMainWindow
 
+from src.core.complexity import ComplexityLevel, normalize_complexity_level
 from src.core.types import LayoutParams, SliceParams, serialize_params, deserialize_params
 
 
@@ -236,6 +237,23 @@ class SettingsManager:
         """设置主题模式。非法值回退为 system。"""
         normalized = mode if mode in {"system", "dark", "light"} else "system"
         self._qsettings.setValue("UI/theme_mode", normalized)
+
+    def get_complexity_level(self) -> ComplexityLevel:
+        """Return the saved progressive UI complexity level."""
+        value = self._qsettings.value(
+            "UI/complexity_level",
+            ComplexityLevel.BASIC.storage_value,
+            type=str,
+        )
+        return normalize_complexity_level(value)
+
+    def set_complexity_level(self, level: object) -> None:
+        """Persist the progressive UI complexity level."""
+        normalized = normalize_complexity_level(level)
+        self._qsettings.setValue(
+            "UI/complexity_level",
+            normalized.storage_value,
+        )
 
     # =========================================================================
     # 窗口状态（使用 QSettings）

@@ -195,6 +195,11 @@ SECONDARY_LOCALE_MUST_DIFFER_FROM_SOURCE = {
     },
 }
 
+COMPLEXITY_LEVEL_REQUIRED = {
+    "ComplexitySelector": {"Basic", "Advanced", "Expert"},
+    "TitleBar": {"Interface Level"},
+}
+
 
 def _collect_messages(ts_name: str, required_contexts: dict[str, set[str]]) -> dict[tuple[str, str], ET.Element]:
     root = ET.parse(TRANSLATIONS_DIR / ts_name).getroot()
@@ -275,3 +280,23 @@ def test_secondary_locale_printable_area_translations_are_localized():
                 text = "".join(translation.itertext()).strip()
                 assert text
                 assert text != source
+
+
+def test_complexity_level_translations_are_available_in_every_locale():
+    for ts_file in TRANSLATIONS_DIR.glob("signmaker_*.ts"):
+        _assert_required_translations_finished(
+            ts_file.name,
+            COMPLEXITY_LEVEL_REQUIRED,
+        )
+
+
+def test_complexity_level_labels_are_localized_outside_english():
+    for ts_file in TRANSLATIONS_DIR.glob("signmaker_*.ts"):
+        if ts_file.name == "signmaker_en_US.ts":
+            continue
+        messages = _collect_messages(ts_file.name, COMPLEXITY_LEVEL_REQUIRED)
+        localized = []
+        for key, translation in messages.items():
+            assert translation is not None
+            localized.append("".join(translation.itertext()).strip() != key[1])
+        assert any(localized)

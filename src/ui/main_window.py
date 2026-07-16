@@ -57,6 +57,11 @@ from .update_dialog import UpdateDialog
 from .update_messages import translate_update_error
 
 from src.app_info import APP_NAME, get_app_version
+from src.core.complexity import (
+    ComplexityLevel,
+    normalize_complexity_level,
+    required_complexity_for_project,
+)
 from src.core import (
     DXFParser, SVGParser, SliceEngine, GCodeWriter,
     Contour, Point, SliceParams, SliceResult,
@@ -134,6 +139,7 @@ class MainWindow(QMainWindow):
         # 初始化设置管理器
         self.settings_manager = init_settings_manager()
         self._theme_mode = self.settings_manager.get_theme_mode()
+        self._complexity_level = self.settings_manager.get_complexity_level()
         set_active_theme(self._theme_mode)
 
         # 初始化项目管理器
@@ -320,6 +326,9 @@ class MainWindow(QMainWindow):
         # 连接标题栏信号
         self.title_bar.nav_changed.connect(self._on_nav_changed)
         self.title_bar.menu_action.connect(self._on_menu_action)
+        self.title_bar.complexity_level_changed.connect(
+            self._on_complexity_level_changed
+        )
         self.title_bar.open_recent_menu_requested.connect(self._populate_open_recent_menu)
         self.title_bar.open_clicked.connect(self._on_open_file)
         self.title_bar.save_clicked.connect(self._on_save_project)
@@ -331,6 +340,7 @@ class MainWindow(QMainWindow):
         self.title_bar.export_stl_clicked.connect(self._on_export_stl)
         self.title_bar.export_format_changed.connect(self._on_primary_export_format_changed)
         self.title_bar.set_primary_export_format(self._get_saved_primary_export_format())
+        self.title_bar.set_complexity_level(self._complexity_level)
 
     def _init_menubar(self):
         """初始化菜单栏"""
@@ -744,6 +754,13 @@ class MainWindow(QMainWindow):
         self.param_panel.setMinimumWidth(360)
         self.param_panel.setMaximumWidth(480)
         self.param_panel.params_changed.connect(self._on_params_changed)
+        self.param_panel.complexity_level_changed.connect(
+            self._on_complexity_level_changed
+        )
+        self.param_panel.complexity_upgrade_requested.connect(
+            self._on_complexity_level_changed
+        )
+        self.param_panel.set_complexity_level(self._complexity_level)
         self.editor_splitter.addWidget(self.param_panel)
 
         # === 中央视图区域（工具栏 + 2D/3D视图）===
@@ -755,6 +772,7 @@ class MainWindow(QMainWindow):
 
         # 嵌入式工具栏
         self.canvas_toolbar = CanvasToolbar()
+        self.canvas_toolbar.set_complexity_level(self._complexity_level)
         center_layout.addWidget(self.canvas_toolbar)
 
         # 视图堆栈（2D/3D切换）
@@ -913,6 +931,45 @@ class MainWindow(QMainWindow):
                 self.uniform_scale_cb.isChecked()
             )
 
+    def _on_complexity_level_changed(self, level: object) -> None:
+        """Synchronize the global progressive UI complexity level."""
+        normalized = normalize_complexity_level(level)
+        previous = self._complexity_level
+
+        if normalized < previous and hasattr(self, "canvas"):
+            if normalized < ComplexityLevel.EXPERT and self._is_print_order_mode_active():
+                self._exit_print_order_mode()
+            if normalized < ComplexityLevel.ADVANCED:
+                if self.canvas.current_tool == "start_point":
+                    self._exit_start_point_mode()
+                if self.canvas.current_tool == "screw_hole":
+                    self._exit_screw_hole_mode()
+
+        self._complexity_level = normalized
+        if self.settings_manager:
+            self.settings_manager.set_complexity_level(normalized)
+        if hasattr(self, "title_bar"):
+            self.title_bar.set_complexity_level(normalized)
+        if hasattr(self, "param_panel"):
+            self.param_panel.set_complexity_level(normalized)
+        if hasattr(self, "canvas_toolbar"):
+            self.canvas_toolbar.set_complexity_level(normalized)
+        self._refresh_complexity_warning()
+
+    def _refresh_complexity_warning(
+        self,
+        params: Optional[SliceParams] = None,
+    ) -> None:
+        """Refresh the warning for active features hidden by the current level."""
+        if not hasattr(self, "param_panel"):
+            return
+        target_params = params or self.slice_params
+        requirement = required_complexity_for_project(
+            target_params,
+            self.contours,
+        )
+        self.param_panel.set_hidden_feature_context(requirement)
+
     def _sync_params_from_panel(self) -> SliceParams:
         """Sync the cached slice params from the visible parameter panel without side effects."""
         if hasattr(self, "param_panel") and self.param_panel:
@@ -920,6 +977,7 @@ class MainWindow(QMainWindow):
                 self.param_panel.get_params(),
                 strict_wall=False,
             )
+            self._refresh_complexity_warning(self.slice_params)
         return self.slice_params
 
     def _normalize_params_or_warn(self, params: SliceParams, title: str) -> Optional[SliceParams]:
@@ -3324,6 +3382,7 @@ class MainWindow(QMainWindow):
         self._print_order_session_picked = []
         self._print_order_session_command = None
         self.canvas.set_print_order_highlighted_targets([])
+        self._refresh_complexity_warning()
 
         if not session_active:
             return
@@ -3356,6 +3415,7 @@ class MainWindow(QMainWindow):
         self.canvas.set_print_order_highlighted_targets(picked)
         self.canvas.update()
         self._invalidate_processed_result()
+        self._refresh_complexity_warning()
         self._update_status(self.tr("Print order updated"))
 
     def _on_start_point_change_requested(

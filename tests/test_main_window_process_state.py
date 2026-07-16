@@ -7,6 +7,7 @@ import pytest
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
+from src.core.complexity import ComplexityLevel
 from src.core.types import Contour, EdgeType, Path, Point
 from src.ui.canvas_2d import Canvas2D
 from src.ui.main_window import MainWindow, TUTORIAL_PLAYLIST_URL
@@ -471,6 +472,7 @@ def test_screw_hole_button_follows_restored_bottom_face_checkbox_state(
     first_window = MainWindow()
 
     try:
+        first_window._on_complexity_level_changed(ComplexityLevel.ADVANCED)
         first_window._on_nav_changed("project")
         first_window.param_panel.bottom_face_enabled.setChecked(True)
         qapp.processEvents()
@@ -517,7 +519,8 @@ def test_custom_wall_preset_persists_across_restart(
     target_preset = preset_names[2]
 
     try:
-        first_window.param_panel.wall_mode_group.button(3).click()
+        first_window._on_complexity_level_changed(ComplexityLevel.ADVANCED)
+        first_window.param_panel.wall_mode_group.button(2).click()
         first_window.param_panel.preset_selector._on_thumbnail_clicked(target_preset)
         qapp.processEvents()
 
@@ -565,7 +568,8 @@ def test_custom_wall_preset_persists_in_smp_project(
         first_window.contours = [_rect_contour(0, 0, 40, 30, name="sample")]
         first_window.canvas.set_contours(first_window.contours)
         first_window.project_panel.update_contours(first_window.contours)
-        first_window.param_panel.wall_mode_group.button(3).click()
+        first_window._on_complexity_level_changed(ComplexityLevel.ADVANCED)
+        first_window.param_panel.wall_mode_group.button(2).click()
         first_window.param_panel.preset_selector._on_thumbnail_clicked(target_preset)
         qapp.processEvents()
 
@@ -613,12 +617,12 @@ def test_custom_wall_preset_persists_in_smp_project(
                 "light_slot_hole_enabled": True,
                 "light_slot_auto_skip_small_holes": True,
             },
-            {
-                "light_slot_enabled": True,
-                "light_slot_outer_enabled": False,
-                "light_slot_hole_enabled": False,
-                "light_slot_auto_skip_small_holes": False,
-            },
+                {
+                    "light_slot_enabled": True,
+                    "light_slot_outer_enabled": False,
+                    "light_slot_hole_enabled": True,
+                    "light_slot_auto_skip_small_holes": False,
+                },
         ),
     ],
 )

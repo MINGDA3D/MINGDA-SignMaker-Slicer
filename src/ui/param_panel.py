@@ -28,6 +28,11 @@ from PySide6.QtGui import QIcon, QPainter, QColor, QCursor, QFont
 
 from resources import rc_resources  # noqa: F401
 
+from src.core.complexity import (
+    ComplexityLevel,
+    ComplexityRequirement,
+    normalize_complexity_level,
+)
 from src.core.types import (
     SliceParams, EdgeType, ExtruderType, EdgeDirection, BevelDirection,
     EdgeProfile, EdgeProfileType, PrinterProfile, ColorChangePoint, default_shell_line_width, resolve_shell_line_width,
@@ -58,6 +63,7 @@ from src.ui.widgets import (
     GuardedSpinBox,
 )
 from .icon_utils import build_theme_icon
+from .complexity_selector import ComplexitySelector
 from .theme import COLORS
 
 
@@ -183,6 +189,8 @@ class ParamPanel(QWidget):
     """参数面板"""
 
     params_changed = Signal()  # 参数变化信号
+    complexity_level_changed = Signal(object)
+    complexity_upgrade_requested = Signal(object)
 
     BEVEL_DIRECTION_TOP_SMALL = 0
     BEVEL_DIRECTION_TOP_LARGE = 1
@@ -219,6 +227,12 @@ class ParamPanel(QWidget):
         self._mode_button_containers: list[QWidget] = []
         self._theme_icon_labels: list[tuple[QLabel, str]] = []
         self._theme_icon_buttons: list[tuple[QPushButton, str]] = []
+        self._complexity_level = ComplexityLevel.BASIC
+        self._form_rows: dict[QWidget, QFormLayout] = {}
+        self._complexity_rows: dict[QWidget, ComplexityLevel] = {}
+        self._complexity_widgets: dict[QWidget, ComplexityLevel] = {}
+        self._complexity_groups: dict[QWidget, ComplexityLevel] = {}
+        self._hidden_feature_requirement = ComplexityRequirement()
 
         # 初始化UI
         self._init_ui()
@@ -231,17 +245,51 @@ class ParamPanel(QWidget):
         layout.setSpacing(0)
 
         # 标题
-        self.title_label = QLabel(self.tr("Settings"))
+        self.header = QFrame(self)
+        self.header.setObjectName("paramPanelHeader")
+        header_layout = QHBoxLayout(self.header)
+        header_layout.setContentsMargins(14, 7, 12, 7)
+        header_layout.setSpacing(8)
+
+        self.title_label = QLabel(self.tr("Settings"), self.header)
         self.title_label.setProperty("heading", True)
-        self.title_label.setStyleSheet(f"""
-            padding: 12px 12px 12px 14px;
-            background-color: {COLORS.editor_sidebar_left_header_bg};
-            border-bottom: 1px solid {COLORS.editor_sidebar_left_accent};
-            border-left: 4px solid {COLORS.editor_sidebar_left_accent};
-            font-size: 14px;
-            font-weight: bold;
-        """)
-        layout.addWidget(self.title_label)
+        header_layout.addWidget(self.title_label)
+        header_layout.addStretch(1)
+
+        self.complexity_selector = ComplexitySelector(self.header)
+        self.complexity_selector.level_changed.connect(
+            self.complexity_level_changed.emit
+        )
+        header_layout.addWidget(self.complexity_selector)
+
+        self._apply_header_style()
+        layout.addWidget(self.header)
+
+        self.complexity_banner = QFrame()
+        self.complexity_banner.setObjectName("complexityWarningBanner")
+        banner_layout = QVBoxLayout(self.complexity_banner)
+        banner_layout.setContentsMargins(12, 9, 12, 9)
+        banner_layout.setSpacing(7)
+        self.complexity_banner_label = QLabel()
+        self.complexity_banner_label.setObjectName("complexityWarningText")
+        self.complexity_banner_label.setWordWrap(True)
+        self.complexity_banner_label.setAccessibleName(
+            self.tr("Hidden settings warning")
+        )
+        banner_layout.addWidget(self.complexity_banner_label)
+        self.complexity_banner_button = QPushButton()
+        self.complexity_banner_button.setObjectName("complexityUpgradeButton")
+        self.complexity_banner_button.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.complexity_banner_button.clicked.connect(
+            self._on_complexity_upgrade_clicked
+        )
+        banner_layout.addWidget(
+            self.complexity_banner_button,
+            0,
+            Qt.AlignmentFlag.AlignRight,
+        )
+        self.complexity_banner.hide()
+        layout.addWidget(self.complexity_banner)
 
         # 添加一级参数分组
         self.shell_group = self._create_shell_group()
@@ -372,6 +420,8 @@ class ParamPanel(QWidget):
 
         self.primary_tabs.setCurrentIndex(0)
         layout.addWidget(self.primary_tabs, 1)
+        self._configure_complexity_items()
+        self.set_complexity_level(self._complexity_level)
         self._sync_top_mode_from_controls()
         self._sync_bottom_mode_from_controls()
         self._sync_shape_mode_group_visibility()
@@ -485,14 +535,8 @@ class ParamPanel(QWidget):
 
     def apply_theme(self):
         """Refresh theme-dependent inline styles."""
-        self.title_label.setStyleSheet(f"""
-            padding: 12px 12px 12px 14px;
-            background-color: {COLORS.editor_sidebar_left_header_bg};
-            border-bottom: 1px solid {COLORS.editor_sidebar_left_accent};
-            border-left: 4px solid {COLORS.editor_sidebar_left_accent};
-            font-size: 14px;
-            font-weight: bold;
-        """)
+        self._apply_header_style()
+        self._apply_complexity_banner_style()
         self.primary_tabs.setStyleSheet(self._primary_tabs_stylesheet())
         self.shape_feature_tabs.setStyleSheet(self._feature_tabs_stylesheet())
         for index, section in enumerate(getattr(self, "_primary_sections", [])):
@@ -528,6 +572,218 @@ class ParamPanel(QWidget):
             if child is not self and hasattr(child, "apply_theme"):
                 child.apply_theme()
         self.update()
+
+    def _apply_header_style(self) -> None:
+        self.header.setStyleSheet(f"""
+            QFrame#paramPanelHeader {{
+                background-color: {COLORS.editor_sidebar_left_header_bg};
+                border-bottom: 1px solid {COLORS.editor_sidebar_left_accent};
+                border-left: 4px solid {COLORS.editor_sidebar_left_accent};
+            }}
+            QFrame#paramPanelHeader QLabel {{
+                color: {COLORS.text_primary};
+                background-color: transparent;
+                border: none;
+                font-size: 14px;
+                font-weight: bold;
+            }}
+        """)
+
+    def _apply_complexity_banner_style(self) -> None:
+        self.complexity_banner.setStyleSheet(f"""
+            QFrame#complexityWarningBanner {{
+                background-color: {COLORS.bg_selected};
+                border-bottom: 1px solid {COLORS.accent_warning};
+            }}
+            QLabel#complexityWarningText {{
+                color: {COLORS.text_primary};
+                font-size: 11px;
+            }}
+            QPushButton#complexityUpgradeButton {{
+                background-color: transparent;
+                color: {COLORS.accent_primary};
+                border: 1px solid {COLORS.accent_primary};
+                border-radius: 4px;
+                padding: 4px 10px;
+                font-size: 11px;
+                font-weight: 600;
+            }}
+            QPushButton#complexityUpgradeButton:hover {{
+                background-color: {COLORS.bg_hover};
+            }}
+            QPushButton#complexityUpgradeButton:focus {{
+                border: 2px solid {COLORS.accent_primary};
+            }}
+        """)
+
+    def _configure_complexity_items(self) -> None:
+        """Declare minimum levels without duplicating parameter controls."""
+        advanced_rows = (
+            self.width_line_spin,
+            self.baseplate_spin,
+            self.panel_thickness_spin,
+            self.bottom_face_screw_hole_diameter,
+            self.travel_speed,
+            self.first_layer_speed,
+            self.skirt_speed,
+            self.step_speed,
+            self.profile_bed_width,
+            self.profile_bed_depth,
+            self.profile_bed_height,
+            self.profile_nozzle_diameter,
+            self.profile_filament_diameter,
+        )
+        expert_rows = (
+            self.profile_bed_exclude_area,
+            self.profile_retract_length,
+            self.profile_retract_speed,
+            self.profile_z_hop_short,
+            self.profile_z_hop_long,
+            self.profile_long_travel_threshold,
+            self.profile_color_change_template,
+        )
+        for field in advanced_rows:
+            self._complexity_rows[field] = ComplexityLevel.ADVANCED
+        for field in expert_rows:
+            self._complexity_rows[field] = ComplexityLevel.EXPERT
+
+        self._complexity_widgets.update({
+            self.wall_mode_buttons[2]: ComplexityLevel.ADVANCED,
+            self.top_mode_buttons[self.TOP_MODE_PANEL_V_GROOVE]: ComplexityLevel.ADVANCED,
+            self.bottom_mode_buttons[self.BOTTOM_MODE_BASEPLATE_V_GROOVE]: ComplexityLevel.ADVANCED,
+            self.bottom_mode_buttons[self.BOTTOM_MODE_LIGHT_SLOT]: ComplexityLevel.ADVANCED,
+            self.bottom_mode_buttons[self.BOTTOM_MODE_EDGE_WRAP]: ComplexityLevel.ADVANCED,
+            self.bottom_mode_buttons[self.BOTTOM_MODE_OUTLINE]: ComplexityLevel.ADVANCED,
+            self.import_dxf_btn: ComplexityLevel.EXPERT,
+        })
+        self._complexity_groups.update({
+            self.custom_edge_widget: ComplexityLevel.ADVANCED,
+            self.light_slot_group: ComplexityLevel.ADVANCED,
+            self.edge_wrap_group: ComplexityLevel.ADVANCED,
+            self.skirt_group: ComplexityLevel.ADVANCED,
+            self.connected_group: ComplexityLevel.ADVANCED,
+            self.color_group: ComplexityLevel.ADVANCED,
+            self.dxf_export_group: ComplexityLevel.EXPERT,
+            self.prime_tower_group: ComplexityLevel.EXPERT,
+            self.klipper_commands_group: ComplexityLevel.EXPERT,
+        })
+
+    def complexity_level(self) -> ComplexityLevel:
+        """Return the current parameter visibility level."""
+        return self._complexity_level
+
+    def _complexity_allows(self, widget: QWidget) -> bool:
+        return self._complexity_level >= self._complexity_groups.get(
+            widget,
+            ComplexityLevel.BASIC,
+        )
+
+    def set_complexity_level(self, level: object) -> None:
+        """Apply progressive visibility without changing parameter values."""
+        self._complexity_level = normalize_complexity_level(level)
+        self.complexity_selector.set_level(self._complexity_level)
+
+        for field, minimum in self._complexity_rows.items():
+            form = self._form_rows.get(field)
+            if form is not None:
+                form.setRowVisible(field, self._complexity_level >= minimum)
+
+        for widget, minimum in self._complexity_widgets.items():
+            widget.setVisible(self._complexity_level >= minimum)
+
+        for group, minimum in self._complexity_groups.items():
+            if group in {
+                self.custom_edge_widget,
+                self.light_slot_group,
+                self.edge_wrap_group,
+            }:
+                continue
+            group.setVisible(self._complexity_level >= minimum)
+
+        other_page = self._shape_feature_widgets_by_key["other"]
+        other_index = self.shape_feature_tabs.indexOf(other_page)
+        self.shape_feature_tabs.setTabVisible(
+            other_index,
+            self._complexity_level >= ComplexityLevel.ADVANCED,
+        )
+
+        self._sync_edge_settings_visibility()
+        self._sync_shape_mode_group_visibility()
+        self._refresh_complexity_banner()
+
+    def set_hidden_feature_context(
+        self,
+        requirement: ComplexityRequirement,
+    ) -> None:
+        """Update the non-destructive hidden-feature warning."""
+        self._hidden_feature_requirement = requirement
+        self._refresh_complexity_banner()
+
+    def _translated_complexity_feature(self, source: str) -> str:
+        translations = {
+            "Imported custom edge": self.tr("Imported custom edge"),
+            "Custom edge": self.tr("Custom edge"),
+            "Acrylic face V-groove": self.tr("Acrylic face V-groove"),
+            "Back plate V-groove": self.tr("Back plate V-groove"),
+            "LED strip slot": self.tr("LED strip slot"),
+            "Bottom edge wrap": self.tr("Bottom edge wrap"),
+            "Bottom outline": self.tr("Bottom outline"),
+            "Anti-warp brim": self.tr("Anti-warp brim"),
+            "Letter bridges": self.tr("Letter bridges"),
+            "Color change": self.tr("Color change"),
+            "Prime tower": self.tr("Prime tower"),
+            "Manual screw holes": self.tr("Manual screw holes"),
+            "Custom print order": self.tr("Custom print order"),
+        }
+        return translations.get(source, source)
+
+    def _complexity_level_label(self, level: ComplexityLevel) -> str:
+        return {
+            ComplexityLevel.BASIC: self.tr("Basic"),
+            ComplexityLevel.ADVANCED: self.tr("Advanced"),
+            ComplexityLevel.EXPERT: self.tr("Expert"),
+        }[level]
+
+    def _refresh_complexity_banner(self) -> None:
+        requirement = self._hidden_feature_requirement
+        should_show = (
+            bool(requirement.features)
+            and requirement.level > self._complexity_level
+        )
+        if not should_show:
+            self.complexity_banner.hide()
+            return
+
+        level_text = self._complexity_level_label(requirement.level)
+        visible_features = [
+            self._translated_complexity_feature(feature)
+            for feature in requirement.features[:3]
+        ]
+        feature_text = self.tr(", ").join(visible_features)
+        remaining = len(requirement.features) - len(visible_features)
+        if remaining > 0:
+            feature_text = self.tr("{features} and {count} more").format(
+                features=feature_text,
+                count=remaining,
+            )
+        self.complexity_banner_label.setText(
+            self.tr(
+                "This project uses hidden {level} features: {features}. "
+                "They remain applied."
+            ).format(level=level_text, features=feature_text)
+        )
+        self.complexity_banner_button.setText(
+            self.tr("Switch to {level}").format(level=level_text)
+        )
+        self.complexity_banner_button.setAccessibleName(
+            self.complexity_banner_button.text()
+        )
+        self.complexity_banner.show()
+
+    def _on_complexity_upgrade_clicked(self) -> None:
+        requirement = self._hidden_feature_requirement
+        if requirement.level > self._complexity_level:
+            self.complexity_upgrade_requested.emit(requirement.level)
 
     def _create_settings_tab_page(
         self,
@@ -748,6 +1004,8 @@ class ParamPanel(QWidget):
         """Add a form row with an icon while preserving the visible label text."""
         form.setLabelAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
         form.addRow(self._icon_label(icon_name, text), field)
+        if isinstance(field, QWidget):
+            self._form_rows[field] = form
 
     def _create_mode_button_group(
         self,
@@ -2222,12 +2480,6 @@ class ParamPanel(QWidget):
         self.profile_color_change_template = QLineEdit()
         self.profile_color_change_template.textChanged.connect(self._on_printer_profile_field_changed)
         self._add_icon_row(form, "color-change", self.tr("Color Change Template:"), self.profile_color_change_template)
-        if hasattr(form, "setRowVisible"):
-            form.setRowVisible(self.profile_color_change_template, False)
-        color_template_label = form.labelForField(self.profile_color_change_template)
-        if color_template_label is not None:
-            color_template_label.hide()
-        self.profile_color_change_template.hide()
 
         layout.addLayout(form)
         return group
@@ -3563,19 +3815,34 @@ class ParamPanel(QWidget):
                     self.BOTTOM_MODE_BASEPLATE_V_GROOVE,
                 )
             )
-            self.light_slot_group.setVisible(bottom_mode == self.BOTTOM_MODE_LIGHT_SLOT)
+            self.light_slot_group.setVisible(
+                bottom_mode == self.BOTTOM_MODE_LIGHT_SLOT
+                and self._complexity_allows(self.light_slot_group)
+            )
             self.edge_wrap_group.setVisible(
                 bottom_mode in (self.BOTTOM_MODE_EDGE_WRAP, self.BOTTOM_MODE_OUTLINE)
+                and self._complexity_allows(self.edge_wrap_group)
             )
             self._sync_edge_wrap_option_visibility(bottom_mode)
+
+    def _sync_edge_settings_visibility(self) -> None:
+        """Combine edge-type state with the active complexity level."""
+        edge_type = self.edge_type_combo.currentData()
+        self.bevel_params_widget.setVisible(edge_type == EdgeType.BEVELED)
+        self.custom_edge_widget.setVisible(
+            edge_type == EdgeType.CUSTOM
+            and self._complexity_allows(self.custom_edge_widget)
+        )
+        self.import_dxf_btn.setVisible(
+            self._complexity_level >= ComplexityLevel.EXPERT
+        )
 
     def _on_edge_type_changed(self, index: int):
         """边缘类型变化"""
         edge_type = self.edge_type_combo.currentData()
 
         # 显示/隐藏对应的参数组
-        self.bevel_params_widget.setVisible(edge_type == EdgeType.BEVELED)
-        self.custom_edge_widget.setVisible(edge_type == EdgeType.CUSTOM)
+        self._sync_edge_settings_visibility()
         self._sync_wall_mode_from_controls()
         self._sync_bottom_face_availability()
 
@@ -4154,8 +4421,7 @@ class ParamPanel(QWidget):
         # 手动更新控件的启用/可见状态
         # 边缘类型：展开对应的参数面板
         edge_type = params.shell.edge_type
-        self.bevel_params_widget.setVisible(edge_type == EdgeType.BEVELED)
-        self.custom_edge_widget.setVisible(edge_type == EdgeType.CUSTOM)
+        self._sync_edge_settings_visibility()
         self._sync_wall_mode_from_controls()
 
         # 异形边：恢复 profile 和预设选中状态

@@ -2870,4 +2870,137 @@ Control points: {points}</translation>
         <translation>Explode Asset</translation>
     </message>
 </context>
+<context>
+    <name>ComplexitySelector</name>
+    <message>
+        <source>Basic</source>
+        <translation>Basic</translation>
+    </message>
+    <message>
+        <source>Common production parameters and tools</source>
+        <translation>Common production parameters and tools</translation>
+    </message>
+    <message>
+        <source>Advanced</source>
+        <translation>Advanced</translation>
+    </message>
+    <message>
+        <source>Advanced process and editing controls</source>
+        <translation>Advanced process and editing controls</translation>
+    </message>
+    <message>
+        <source>Expert</source>
+        <translation>Expert</translation>
+    </message>
+    <message>
+        <source>Machine, G-code, and expert geometry controls</source>
+        <translation>Machine, G-code, and expert geometry controls</translation>
+    </message>
+</context>
+<context>
+    <name>TitleBar</name>
+    <message>
+        <source>Interface Level</source>
+        <translation>Interface Level</translation>
+    </message>
+    <message>
+        <source>Basic</source>
+        <translation>Basic</translation>
+    </message>
+    <message>
+        <source>Advanced</source>
+        <translation>Advanced</translation>
+    </message>
+    <message>
+        <source>Expert</source>
+        <translation>Expert</translation>
+    </message>
+</context>
+<context>
+    <name>ParamPanel</name>
+    <message>
+        <source>Hidden settings warning</source>
+        <translation>Hidden settings warning</translation>
+    </message>
+    <message>
+        <source>Imported custom edge</source>
+        <translation>Imported custom edge</translation>
+    </message>
+    <message>
+        <source>Custom edge</source>
+        <translation>Custom edge</translation>
+    </message>
+    <message>
+        <source>Acrylic face V-groove</source>
+        <translation>Acrylic face V-groove</translation>
+    </message>
+    <message>
+        <source>Back plate V-groove</source>
+        <translation>Back plate V-groove</translation>
+    </message>
+    <message>
+        <source>LED strip slot</source>
+        <translation>LED strip slot</translation>
+    </message>
+    <message>
+        <source>Bottom edge wrap</source>
+        <translation>Bottom edge wrap</translation>
+    </message>
+    <message>
+        <source>Bottom outline</source>
+        <translation>Bottom outline</translation>
+    </message>
+    <message>
+        <source>Anti-warp brim</source>
+        <translation>Anti-warp brim</translation>
+    </message>
+    <message>
+        <source>Letter bridges</source>
+        <translation>Letter bridges</translation>
+    </message>
+    <message>
+        <source>Color change</source>
+        <translation>Color change</translation>
+    </message>
+    <message>
+        <source>Prime tower</source>
+        <translation>Prime tower</translation>
+    </message>
+    <message>
+        <source>Manual screw holes</source>
+        <translation>Manual screw holes</translation>
+    </message>
+    <message>
+        <source>Custom print order</source>
+        <translation>Custom print order</translation>
+    </message>
+    <message>
+        <source>Basic</source>
+        <translation>Basic</translation>
+    </message>
+    <message>
+        <source>Advanced</source>
+        <translation>Advanced</translation>
+    </message>
+    <message>
+        <source>Expert</source>
+        <translation>Expert</translation>
+    </message>
+    <message>
+        <source>, </source>
+        <translation>, </translation>
+    </message>
+    <message>
+        <source>{features} and {count} more</source>
+        <translation>{features} and {count} more</translation>
+    </message>
+    <message>
+        <source>This project uses hidden {level} features: {features}. They remain applied.</source>
+        <translation>This project uses hidden {level} features: {features}. They remain applied.</translation>
+    </message>
+    <message>
+        <source>Switch to {level}</source>
+        <translation>Switch to {level}</translation>
+    </message>
+</context>
 </TS>

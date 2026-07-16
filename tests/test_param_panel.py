@@ -14,6 +14,7 @@ from PySide6.QtWidgets import (
 )
 
 from src.business.printer_profile_manager import DEFAULT_PRINTER_PROFILE_SPECS
+from src.core.complexity import ComplexityLevel
 from src.core.types import (
     ColorChangePoint,
     EdgeDirection,
@@ -476,6 +477,7 @@ def test_shape_page_places_shell_settings_before_feature_tabs(qapp):
     widths = [
         tab_bar.tabRect(index).width()
         for index in range(tab_bar.count())
+        if panel.shape_feature_tabs.isTabVisible(index)
     ]
     assert tab_bar.expanding() is True
     assert max(widths) - min(widths) <= 1
@@ -519,6 +521,7 @@ def test_wall_tab_starts_with_edge_type_icons_without_card_title(qapp):
 
 def test_wall_mode_buttons_sync_edge_type_and_parameter_visibility(qapp):
     panel = ParamPanel()
+    panel.set_complexity_level(ComplexityLevel.ADVANCED)
 
     assert panel.edge_type_combo.isHidden() is True
     assert panel.wall_mode_group.checkedId() == 0
@@ -652,6 +655,7 @@ def test_bottom_mode_buttons_are_exclusive_and_write_back_to_params(qapp):
 
 def test_edge_wrap_bottom_mode_only_shows_matching_option_set(qapp):
     panel = ParamPanel()
+    panel.set_complexity_level(ComplexityLevel.ADVANCED)
 
     panel.bottom_mode_group.button(panel.BOTTOM_MODE_EDGE_WRAP).click()
 

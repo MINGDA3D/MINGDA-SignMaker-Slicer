@@ -1,25 +1,26 @@
-"""
-MINGDA SignMaker - 画布工具栏
+"""MINGDA SignMaker canvas toolbar with progressive complexity."""
 
-嵌入在画布区域顶部的工具栏，包含：
-- 左侧：变换工具、镜像、布尔操作、组合操作
-- 右侧：参数设置下拉菜单
-"""
+from __future__ import annotations
 
+from PySide6.QtCore import QSize, Qt, Signal
+from PySide6.QtGui import QAction, QIcon, QImage, QPixmap
 from PySide6.QtWidgets import (
-    QWidget, QHBoxLayout, QPushButton, QFrame, QLabel
+    QHBoxLayout,
+    QSizePolicy,
+    QToolBar,
+    QToolButton,
+    QWidget,
 )
-from PySide6.QtCore import Qt, Signal, QSize
-from PySide6.QtGui import QIcon, QImage, QPixmap
+
+from src.core.complexity import ComplexityLevel, normalize_complexity_level
 
 from .icon_utils import build_theme_icon
 from .theme import COLORS
 
 
 class CanvasToolbar(QWidget):
-    """画布工具栏"""
+    """Centered canvas toolbar backed by actions and Qt overflow handling."""
 
-    # 信号
     move_clicked = Signal()
     rotate_clicked = Signal()
     scale_clicked = Signal()
@@ -38,13 +39,19 @@ class CanvasToolbar(QWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.current_tool = None
-        self._icon_buttons: list[tuple[QPushButton, str]] = []
+        self.setObjectName("canvasToolbar")
+        self.current_tool: str | None = None
+        self._complexity_level = ComplexityLevel.BASIC
+        self._tool_actions: dict[str, QAction] = {}
+        self._tool_levels: dict[str, ComplexityLevel] = {}
+        self._group_actions: dict[str, list[QAction]] = {}
+        self._group_separators: dict[str, QAction] = {}
+        self._icon_actions: list[tuple[QAction, str]] = []
         self._init_ui()
         self._apply_styles()
+        self.set_complexity_level(ComplexityLevel.BASIC)
 
     def _get_icon(self, name: str) -> QIcon:
-        """获取图标"""
         icon = build_theme_icon(
             f":/icons/icons/{name}",
             QSize(36, 36),
@@ -59,7 +66,10 @@ class CanvasToolbar(QWidget):
         return icon
 
     @staticmethod
-    def _build_disabled_icon_pixmap(icon: QIcon, size: QSize = QSize(36, 36)) -> QPixmap:
+    def _build_disabled_icon_pixmap(
+        icon: QIcon,
+        size: QSize = QSize(36, 36),
+    ) -> QPixmap:
         """Create a clearly dimmed disabled icon variant."""
         base = icon.pixmap(size, QIcon.Mode.Normal, QIcon.State.Off)
         if base.isNull():
@@ -71,140 +81,220 @@ class CanvasToolbar(QWidget):
                 color = image.pixelColor(x, y)
                 if color.alpha() == 0:
                     continue
-                gray = int(color.red() * 0.299 + color.green() * 0.587 + color.blue() * 0.114)
-                color.setRgb(gray, gray, gray, max(0, min(255, int(color.alpha() * 0.55))))
+                gray = int(
+                    color.red() * 0.299
+                    + color.green() * 0.587
+                    + color.blue() * 0.114
+                )
+                color.setRgb(
+                    gray,
+                    gray,
+                    gray,
+                    max(0, min(255, int(color.alpha() * 0.55))),
+                )
                 image.setPixelColor(x, y, color)
         return QPixmap.fromImage(image)
 
-    def _init_ui(self):
-        """初始化UI"""
+    def _init_ui(self) -> None:
         layout = QHBoxLayout(self)
-        layout.setContentsMargins(12, 6, 12, 6)
-        layout.setSpacing(8)
-
-        # ========== 左侧弹性空间（居中用）==========
+        layout.setContentsMargins(12, 0, 12, 0)
+        layout.setSpacing(0)
         layout.addStretch(1)
 
-        # ========== 变换工具 ==========
-        self.btn_move = self._create_icon_button("move.png", self.tr("Move"))
-        self.btn_move.setCheckable(True)
-        self.btn_move.clicked.connect(self._on_move_clicked)
-        layout.addWidget(self.btn_move)
-
-        self.btn_rotate = self._create_icon_button("rotate.png", self.tr("Rotate"))
-        self.btn_rotate.setCheckable(True)
-        self.btn_rotate.clicked.connect(self._on_rotate_clicked)
-        layout.addWidget(self.btn_rotate)
-
-        self.btn_scale = self._create_icon_button("scale.png", self.tr("Scale"))
-        self.btn_scale.setCheckable(True)
-        self.btn_scale.clicked.connect(self._on_scale_clicked)
-        layout.addWidget(self.btn_scale)
-
-        layout.addWidget(self._create_separator())
-
-        # ========== 镜像 ==========
-        self.btn_mirror_x = self._create_icon_button("mirror_x.png", self.tr("Mirror Horizontal"))
-        self.btn_mirror_x.clicked.connect(self.mirror_x_clicked.emit)
-        layout.addWidget(self.btn_mirror_x)
-
-        self.btn_mirror_y = self._create_icon_button("mirror_y.png", self.tr("Mirror Vertical"))
-        self.btn_mirror_y.clicked.connect(self.mirror_y_clicked.emit)
-        layout.addWidget(self.btn_mirror_y)
-
-        layout.addWidget(self._create_separator())
-
-        # ========== 布尔操作 ==========
-        self.btn_intersection = self._create_icon_button("intersection.png", self.tr("Intersection"))
-        self.btn_intersection.clicked.connect(self.intersection_clicked.emit)
-        layout.addWidget(self.btn_intersection)
-
-        self.btn_difference = self._create_icon_button("difference.png", self.tr("Difference"))
-        self.btn_difference.clicked.connect(self.difference_clicked.emit)
-        layout.addWidget(self.btn_difference)
-
-        layout.addWidget(self._create_separator())
-
-        # ========== 组合操作 ==========
-        self.btn_group = self._create_icon_button("group.png", self.tr("Group"))
-        self.btn_group.clicked.connect(self.group_clicked.emit)
-        layout.addWidget(self.btn_group)
-
-        self.btn_ungroup = self._create_icon_button("split_objects_dark.png", self.tr("Ungroup"))
-        self.btn_ungroup.clicked.connect(self.ungroup_clicked.emit)
-        layout.addWidget(self.btn_ungroup)
-
-        self.btn_release_asset = self._create_icon_button(
-            "explode_asset.svg",
-            self.tr("Explode Asset"),
+        self._toolbar = QToolBar(self)
+        self._toolbar.setObjectName("canvasActionToolbar")
+        self._toolbar.setMovable(False)
+        self._toolbar.setFloatable(False)
+        self._toolbar.setOrientation(Qt.Orientation.Horizontal)
+        self._toolbar.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonIconOnly)
+        self._toolbar.setIconSize(QSize(36, 36))
+        self._toolbar.setMinimumWidth(0)
+        self._toolbar.setFixedHeight(50)
+        self._toolbar.setSizePolicy(
+            QSizePolicy.Policy.Preferred,
+            QSizePolicy.Policy.Fixed,
         )
-        self.btn_release_asset.clicked.connect(self.release_asset_clicked.emit)
-        layout.addWidget(self.btn_release_asset)
-        self.btn_release_asset.setEnabled(False)
-
-        layout.addWidget(self._create_separator())
-
-        # ========== 文字生成 ==========
-        self.btn_text = self._create_icon_button("text.svg", self.tr("Text"))
-        self.btn_text.clicked.connect(self.text_clicked.emit)
-        layout.addWidget(self.btn_text)
-
-        # ========== 起始点/顺序/视图居中 ==========
-        layout.addWidget(self._create_separator())
-
-        self.btn_start_point = self._create_icon_button("start_point.png", self.tr("Start Point"))
-        self.btn_start_point.setCheckable(True)
-        self.btn_start_point.clicked.connect(self._on_start_point_clicked)
-        layout.addWidget(self.btn_start_point)
-
-        self.btn_order = self._create_icon_button("print_order.png", self.tr("Print Order"))
-        self.btn_order.setCheckable(True)
-        self.btn_order.clicked.connect(self._on_print_order_clicked)
-        layout.addWidget(self.btn_order)
-
-        self.btn_screw_hole = self._create_icon_button("bottom_hole.png", self.tr("Screw Hole"))
-        self.btn_screw_hole.setCheckable(True)
-        self.btn_screw_hole.clicked.connect(self._on_screw_hole_clicked)
-        layout.addWidget(self.btn_screw_hole)
-
-        # ========== 右侧弹性空间（居中用）==========
+        layout.addWidget(self._toolbar, 0, Qt.AlignmentFlag.AlignCenter)
         layout.addStretch(1)
 
+        self._add_group(
+            "transform",
+            [
+                (
+                    "move", "btn_move", "move.png", self.tr("Move"),
+                    ComplexityLevel.BASIC, self._on_move_clicked, True,
+                ),
+                (
+                    "rotate", "btn_rotate", "rotate.png", self.tr("Rotate"),
+                    ComplexityLevel.BASIC, self._on_rotate_clicked, True,
+                ),
+                (
+                    "scale", "btn_scale", "scale.png", self.tr("Scale"),
+                    ComplexityLevel.BASIC, self._on_scale_clicked, True,
+                ),
+            ],
+        )
+        self._add_group(
+            "mirror",
+            [
+                (
+                    "mirror_x", "btn_mirror_x", "mirror_x.png",
+                    self.tr("Mirror Horizontal"), ComplexityLevel.BASIC,
+                    self.mirror_x_clicked.emit, False,
+                ),
+                (
+                    "mirror_y", "btn_mirror_y", "mirror_y.png",
+                    self.tr("Mirror Vertical"), ComplexityLevel.BASIC,
+                    self.mirror_y_clicked.emit, False,
+                ),
+            ],
+        )
+        self._add_group(
+            "boolean",
+            [
+                (
+                    "intersection", "btn_intersection", "intersection.png",
+                    self.tr("Intersection"), ComplexityLevel.EXPERT,
+                    self.intersection_clicked.emit, False,
+                ),
+                (
+                    "difference", "btn_difference", "difference.png",
+                    self.tr("Difference"), ComplexityLevel.EXPERT,
+                    self.difference_clicked.emit, False,
+                ),
+            ],
+        )
+        self._add_group(
+            "grouping",
+            [
+                (
+                    "group", "btn_group", "group.png", self.tr("Group"),
+                    ComplexityLevel.ADVANCED, self.group_clicked.emit, False,
+                ),
+                (
+                    "ungroup", "btn_ungroup", "split_objects_dark.png",
+                    self.tr("Ungroup"), ComplexityLevel.ADVANCED,
+                    self.ungroup_clicked.emit, False,
+                ),
+                (
+                    "release_asset", "btn_release_asset", "explode_asset.svg",
+                    self.tr("Explode Asset"), ComplexityLevel.ADVANCED,
+                    self.release_asset_clicked.emit, False,
+                ),
+            ],
+        )
+        self._add_group(
+            "text",
+            [
+                (
+                    "text", "btn_text", "text.svg", self.tr("Text"),
+                    ComplexityLevel.BASIC, self.text_clicked.emit, False,
+                ),
+            ],
+        )
+        self._add_group(
+            "editing",
+            [
+                (
+                    "start_point", "btn_start_point", "start_point.png",
+                    self.tr("Start Point"), ComplexityLevel.ADVANCED,
+                    self._on_start_point_clicked, True,
+                ),
+                (
+                    "print_order", "btn_order", "print_order.png",
+                    self.tr("Print Order"), ComplexityLevel.EXPERT,
+                    self._on_print_order_clicked, True,
+                ),
+                (
+                    "screw_hole", "btn_screw_hole", "bottom_hole.png",
+                    self.tr("Screw Hole"), ComplexityLevel.ADVANCED,
+                    self._on_screw_hole_clicked, True,
+                ),
+            ],
+        )
+
+        self._tool_actions["release_asset"].setEnabled(False)
         self.setFixedHeight(52)
 
-    def _create_icon_button(self, icon_name: str, tooltip: str) -> QPushButton:
-        """创建图标按钮"""
-        btn = QPushButton()
-        btn.setObjectName("iconButton")
-        btn.setToolTip(tooltip)
-        btn.setCursor(Qt.CursorShape.PointingHandCursor)
-        btn.setIconSize(QSize(36, 36))
-        btn.setIcon(self._get_icon(icon_name))
-        self._icon_buttons.append((btn, icon_name))
-        return btn
+    def _add_group(self, group: str, specs: list[tuple]) -> None:
+        if self._group_actions:
+            self._group_separators[group] = self._toolbar.addSeparator()
+        actions: list[QAction] = []
+        for key, attr_name, icon_name, tooltip, level, callback, checkable in specs:
+            action = QAction(self._get_icon(icon_name), tooltip, self)
+            action.setObjectName(f"canvasToolAction_{key}")
+            action.setToolTip(tooltip)
+            action.setStatusTip(tooltip)
+            action.setCheckable(checkable)
+            action.triggered.connect(
+                lambda checked=False, handler=callback: handler()
+            )
+            self._toolbar.addAction(action)
 
-    def _create_separator(self) -> QFrame:
-        """创建分隔符"""
-        sep = QFrame()
-        sep.setFrameShape(QFrame.Shape.VLine)
-        sep.setObjectName("separator")
-        sep.setFixedWidth(1)
-        return sep
+            button = self._toolbar.widgetForAction(action)
+            if isinstance(button, QToolButton):
+                button.setObjectName("iconButton")
+                button.setCursor(Qt.CursorShape.PointingHandCursor)
+                button.setToolTip(tooltip)
+                button.setAccessibleName(tooltip)
+            setattr(self, attr_name, button)
 
-    def _apply_styles(self):
-        """应用样式"""
+            self._tool_actions[key] = action
+            self._tool_levels[key] = level
+            self._icon_actions.append((action, icon_name))
+            actions.append(action)
+        self._group_actions[group] = actions
+
+    def complexity_level(self) -> ComplexityLevel:
+        return self._complexity_level
+
+    def set_complexity_level(self, level: object) -> None:
+        """Show all tools available at ``level`` and refresh separators."""
+        normalized = normalize_complexity_level(level)
+        self._complexity_level = normalized
+
+        current_level = self._tool_levels.get(self.current_tool or "")
+        if current_level is not None and current_level > normalized:
+            self.clear_tool()
+
+        for key, action in self._tool_actions.items():
+            action.setVisible(self._tool_levels[key] <= normalized)
+
+        previous_visible_group = False
+        for group, actions in self._group_actions.items():
+            group_visible = any(action.isVisible() for action in actions)
+            separator = self._group_separators.get(group)
+            if separator is not None:
+                separator.setVisible(group_visible and previous_visible_group)
+            if group_visible:
+                previous_visible_group = True
+        self._toolbar.updateGeometry()
+        self.updateGeometry()
+
+    def visible_tool_keys(self) -> list[str]:
+        """Return visible tool keys in toolbar order (primarily for tests)."""
+        return [
+            key for key, action in self._tool_actions.items()
+            if action.isVisible()
+        ]
+
+    def _apply_styles(self) -> None:
         self.setStyleSheet(f"""
-            CanvasToolbar {{
+            QWidget#canvasToolbar {{
                 background-color: {COLORS.editor_canvas_toolbar_bg};
                 border-top: 1px solid {COLORS.editor_canvas_toolbar_accent};
                 border-bottom: 1px solid {COLORS.editor_canvas_frame};
                 border-left: 1px solid {COLORS.editor_canvas_frame};
                 border-right: 1px solid {COLORS.editor_canvas_frame};
-                border-radius: 0;
             }}
-
-            /* 图标按钮 */
-            QPushButton#iconButton {{
+            QToolBar#canvasActionToolbar {{
+                background-color: transparent;
+                border: none;
+                spacing: 8px;
+                padding: 5px 0;
+            }}
+            QToolButton#iconButton,
+            QToolButton#qt_toolbar_ext_button {{
                 background-color: transparent;
                 border: 1px solid transparent;
                 border-radius: 4px;
@@ -214,92 +304,74 @@ class CanvasToolbar(QWidget):
                 max-height: 40px;
                 padding: 2px;
             }}
-            QPushButton#iconButton:hover {{
+            QToolButton#iconButton:hover,
+            QToolButton#qt_toolbar_ext_button:hover {{
                 background-color: {COLORS.editor_canvas_bg};
                 border-color: {COLORS.editor_canvas_toolbar_accent};
             }}
-            QPushButton#iconButton:disabled {{
-                background-color: transparent;
-                border-color: transparent;
-            }}
-            QPushButton#iconButton:pressed {{
-                background-color: {COLORS.bg_hover};
-            }}
-            QPushButton#iconButton:checked {{
+            QToolButton#iconButton:pressed,
+            QToolButton#iconButton:checked {{
                 background-color: {COLORS.accent_primary};
                 border-color: {COLORS.editor_canvas_toolbar_accent};
             }}
-
-            /* 分隔符 */
-            QFrame#separator {{
-                background-color: {COLORS.editor_canvas_toolbar_accent};
-                margin: 8px 8px;
+            QToolButton#iconButton:focus,
+            QToolButton#qt_toolbar_ext_button:focus {{
+                border: 2px solid {COLORS.accent_primary};
+            }}
+            QToolBar#canvasActionToolbar::separator {{
+                background-color: {COLORS.border_hover};
+                width: 1px;
+                margin: 10px 10px;
             }}
         """)
 
-    def apply_theme(self):
-        """Refresh toolbar styles after the global theme changes."""
-        for button, icon_name in self._icon_buttons:
-            button.setIcon(self._get_icon(icon_name))
+    def apply_theme(self) -> None:
+        for action, icon_name in self._icon_actions:
+            action.setIcon(self._get_icon(icon_name))
         self._apply_styles()
+        self._toolbar.update()
         self.update()
 
-    def _on_move_clicked(self):
-        """移动工具点击"""
+    def _on_move_clicked(self) -> None:
         self._set_tool_checked("move")
         self.move_clicked.emit()
 
-    def _on_rotate_clicked(self):
-        """旋转工具点击"""
+    def _on_rotate_clicked(self) -> None:
         self._set_tool_checked("rotate")
         self.rotate_clicked.emit()
 
-    def _on_scale_clicked(self):
-        """缩放工具点击"""
+    def _on_scale_clicked(self) -> None:
         self._set_tool_checked("scale")
         self.scale_clicked.emit()
 
-    def _on_start_point_clicked(self):
-        """起始点工具点击"""
+    def _on_start_point_clicked(self) -> None:
         self._set_tool_checked("start_point")
         self.start_point_clicked.emit()
 
-    def _on_print_order_clicked(self):
-        """打印顺序工具点击"""
+    def _on_print_order_clicked(self) -> None:
         self._set_tool_checked("print_order")
         self.print_order_clicked.emit()
 
-    def _on_screw_hole_clicked(self):
-        """Manual screw-hole tool clicked."""
+    def _on_screw_hole_clicked(self) -> None:
         self._set_tool_checked("screw_hole")
         self.screw_hole_clicked.emit()
 
-    def _set_tool_checked(self, tool: str):
-        """设置工具选中状态"""
+    def _set_tool_checked(self, tool: str) -> None:
         self.current_tool = tool
-        self.btn_move.setChecked(tool == "move")
-        self.btn_rotate.setChecked(tool == "rotate")
-        self.btn_scale.setChecked(tool == "scale")
-        self.btn_start_point.setChecked(tool == "start_point")
-        self.btn_order.setChecked(tool == "print_order")
-        self.btn_screw_hole.setChecked(tool == "screw_hole")
+        for key in ("move", "rotate", "scale", "start_point", "print_order", "screw_hole"):
+            self._tool_actions[key].setChecked(key == tool)
 
-    def clear_tool(self):
-        """清除工具选择"""
+    def clear_tool(self) -> None:
         self.current_tool = None
-        self.btn_move.setChecked(False)
-        self.btn_rotate.setChecked(False)
-        self.btn_scale.setChecked(False)
-        self.btn_start_point.setChecked(False)
-        self.btn_order.setChecked(False)
-        self.btn_screw_hole.setChecked(False)
+        for key in ("move", "rotate", "scale", "start_point", "print_order", "screw_hole"):
+            self._tool_actions[key].setChecked(False)
 
-    def set_release_asset_enabled(self, enabled: bool):
-        """Enable explode only when the current selection can use it."""
-        self.btn_release_asset.setEnabled(enabled)
+    def set_release_asset_enabled(self, enabled: bool) -> None:
+        self._tool_actions["release_asset"].setEnabled(enabled)
 
-    def set_screw_hole_enabled(self, enabled: bool):
-        """Enable the manual screw-hole tool only when bottom-face editing is available."""
-        self.btn_screw_hole.setEnabled(enabled)
+    def set_screw_hole_enabled(self, enabled: bool) -> None:
+        self._tool_actions["screw_hole"].setEnabled(enabled)
         if not enabled:
-            self.btn_screw_hole.setChecked(False)
+            self._tool_actions["screw_hole"].setChecked(False)
+            if self.current_tool == "screw_hole":
+                self.current_tool = None

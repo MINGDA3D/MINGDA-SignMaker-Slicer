@@ -13,6 +13,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt, Signal, QSize, QCoreApplication
 from PySide6.QtGui import QIcon, QAction, QActionGroup
 
+from src.core.complexity import ComplexityLevel, normalize_complexity_level
 from src.i18n import SUPPORTED_LANGUAGES, get_translation_manager
 from .theme import COLORS, get_active_theme_mode
 
@@ -24,6 +25,7 @@ class TitleBar(QWidget):
     nav_changed = Signal(str)  # 导航切换信号
     menu_action = Signal(str)  # 菜单动作信号
     open_recent_menu_requested = Signal(object)
+    complexity_level_changed = Signal(object)
 
     # 文件操作信号
     open_clicked = Signal()
@@ -42,6 +44,7 @@ class TitleBar(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.current_nav = "home"
+        self._complexity_level = ComplexityLevel.BASIC
         self._init_ui()
         self._apply_styles()
 
@@ -439,6 +442,22 @@ class TitleBar(QWidget):
         self._apply_menu_style(self._export_menu)
         self.update()
 
+    def get_complexity_level(self) -> ComplexityLevel:
+        """Return the currently selected UI complexity level."""
+        return self._complexity_level
+
+    def set_complexity_level(self, level: object) -> None:
+        """Update menu state without emitting a user-change signal."""
+        self._complexity_level = normalize_complexity_level(level)
+
+    def _request_complexity_level(self, level: object) -> None:
+        """Handle a level choice from the fallback menu."""
+        normalized = normalize_complexity_level(level)
+        if normalized == self.get_complexity_level():
+            return
+        self.set_complexity_level(normalized)
+        self.complexity_level_changed.emit(normalized)
+
     def _translate_export_text(self, export_format: str) -> str:
         """Return the translated label for the primary export button."""
         source = "Export STL" if export_format == self.EXPORT_STL else "Export G-code"
@@ -531,6 +550,25 @@ class TitleBar(QWidget):
         menu.addSeparator()
 
         self._add_language_menu(menu)
+
+        complexity_menu = menu.addMenu(self.tr("Interface Level"))
+        self._apply_menu_style(complexity_menu)
+        complexity_group = QActionGroup(complexity_menu)
+        complexity_group.setExclusive(True)
+        current_complexity = self.get_complexity_level()
+        for level, label in (
+            (ComplexityLevel.BASIC, self.tr("Basic")),
+            (ComplexityLevel.ADVANCED, self.tr("Advanced")),
+            (ComplexityLevel.EXPERT, self.tr("Expert")),
+        ):
+            action = QAction(label, complexity_menu)
+            action.setCheckable(True)
+            action.setChecked(level == current_complexity)
+            action.triggered.connect(
+                lambda checked=False, selected=level: self._request_complexity_level(selected)
+            )
+            complexity_group.addAction(action)
+            complexity_menu.addAction(action)
 
         theme_menu = menu.addMenu(self.tr("Theme"))
         theme_group = QActionGroup(menu)

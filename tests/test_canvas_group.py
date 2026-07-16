@@ -8,6 +8,7 @@ from PySide6.QtTest import QTest
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
+from src.core.complexity import ComplexityLevel
 from src.core.types import (
     Contour,
     Path,
@@ -333,6 +334,7 @@ def test_project_panel_hides_release_button_for_single_contour_asset(qapp):
 
 def test_canvas_toolbar_disables_release_button_for_single_contour_asset(qapp):
     window = MainWindow()
+    window.canvas_toolbar.set_complexity_level(ComplexityLevel.ADVANCED)
     window.contours = [
         _rect_contour(0, 0, 10, 10, "A"),
         _rect_contour(20, 0, 30, 10, "B"),
@@ -349,6 +351,7 @@ def test_canvas_toolbar_disables_release_button_for_single_contour_asset(qapp):
     assert window.canvas_toolbar.btn_release_asset.isEnabled() is True
 
     single_window = MainWindow()
+    single_window.canvas_toolbar.set_complexity_level(ComplexityLevel.ADVANCED)
     single_window.contours = [_rect_contour(0, 0, 10, 10, "A")]
     single_window.contours[0].asset_id = "asset-2"
     single_window.contours[0].asset_name = "logo.svg"
@@ -358,7 +361,7 @@ def test_canvas_toolbar_disables_release_button_for_single_contour_asset(qapp):
     single_window._apply_contour_selection([0])
 
     assert single_window.canvas_toolbar.btn_release_asset.isEnabled() is False
-    assert single_window.canvas_toolbar.btn_release_asset.isHidden() is False
+    assert "release_asset" in single_window.canvas_toolbar.visible_tool_keys()
 
     window.deleteLater()
     single_window.deleteLater()
@@ -525,6 +528,7 @@ def test_print_order_mode_toggles_from_toolbar_and_escape(qapp):
 
 def test_screw_hole_mode_toggles_from_toolbar_and_escape(qapp):
     window = MainWindow()
+    window.canvas_toolbar.set_complexity_level(ComplexityLevel.ADVANCED)
     window.contours = [_rect_contour(0, 0, 40, 40, "A")]
     window.canvas.set_contours(window.contours, center_on_platform=False)
     window.project_panel.update_contours(window.contours)

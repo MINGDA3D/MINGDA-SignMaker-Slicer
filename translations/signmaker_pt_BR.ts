@@ -2870,4 +2870,137 @@ Pontos de controle: {points}</translation>
         <translation>Explodir recurso</translation>
     </message>
 </context>
+<context>
+    <name>ComplexitySelector</name>
+    <message>
+        <source>Basic</source>
+        <translation>Básico</translation>
+    </message>
+    <message>
+        <source>Common production parameters and tools</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Advanced</source>
+        <translation>Avançado</translation>
+    </message>
+    <message>
+        <source>Advanced process and editing controls</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Expert</source>
+        <translation>Especialista</translation>
+    </message>
+    <message>
+        <source>Machine, G-code, and expert geometry controls</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>TitleBar</name>
+    <message>
+        <source>Interface Level</source>
+        <translation>Nível da interface</translation>
+    </message>
+    <message>
+        <source>Basic</source>
+        <translation>Básico</translation>
+    </message>
+    <message>
+        <source>Advanced</source>
+        <translation>Avançado</translation>
+    </message>
+    <message>
+        <source>Expert</source>
+        <translation>Especialista</translation>
+    </message>
+</context>
+<context>
+    <name>ParamPanel</name>
+    <message>
+        <source>Hidden settings warning</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Imported custom edge</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Custom edge</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Acrylic face V-groove</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Back plate V-groove</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>LED strip slot</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bottom edge wrap</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bottom outline</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Anti-warp brim</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Letter bridges</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Color change</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Prime tower</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Manual screw holes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Custom print order</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Basic</source>
+        <translation>Básico</translation>
+    </message>
+    <message>
+        <source>Advanced</source>
+        <translation>Avançado</translation>
+    </message>
+    <message>
+        <source>Expert</source>
+        <translation>Especialista</translation>
+    </message>
+    <message>
+        <source>, </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>{features} and {count} more</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This project uses hidden {level} features: {features}. They remain applied.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Switch to {level}</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
 </TS>

@@ -2870,4 +2870,137 @@ Control points: {points}</source>
         <translation>分解导入对象</translation>
     </message>
 </context>
+<context>
+    <name>ComplexitySelector</name>
+    <message>
+        <source>Basic</source>
+        <translation>基础</translation>
+    </message>
+    <message>
+        <source>Common production parameters and tools</source>
+        <translation>常用生产参数和工具</translation>
+    </message>
+    <message>
+        <source>Advanced</source>
+        <translation>高级</translation>
+    </message>
+    <message>
+        <source>Advanced process and editing controls</source>
+        <translation>高级工艺和编辑控制</translation>
+    </message>
+    <message>
+        <source>Expert</source>
+        <translation>专家</translation>
+    </message>
+    <message>
+        <source>Machine, G-code, and expert geometry controls</source>
+        <translation>机器、G-code 和专家级几何控制</translation>
+    </message>
+</context>
+<context>
+    <name>TitleBar</name>
+    <message>
+        <source>Interface Level</source>
+        <translation>界面级别</translation>
+    </message>
+    <message>
+        <source>Basic</source>
+        <translation>基础</translation>
+    </message>
+    <message>
+        <source>Advanced</source>
+        <translation>高级</translation>
+    </message>
+    <message>
+        <source>Expert</source>
+        <translation>专家</translation>
+    </message>
+</context>
+<context>
+    <name>ParamPanel</name>
+    <message>
+        <source>Hidden settings warning</source>
+        <translation>隐藏设置提醒</translation>
+    </message>
+    <message>
+        <source>Imported custom edge</source>
+        <translation>导入的自定义边型</translation>
+    </message>
+    <message>
+        <source>Custom edge</source>
+        <translation>异形边</translation>
+    </message>
+    <message>
+        <source>Acrylic face V-groove</source>
+        <translation>亚克力面板 V 槽</translation>
+    </message>
+    <message>
+        <source>Back plate V-groove</source>
+        <translation>背板 V 槽</translation>
+    </message>
+    <message>
+        <source>LED strip slot</source>
+        <translation>灯带槽</translation>
+    </message>
+    <message>
+        <source>Bottom edge wrap</source>
+        <translation>底部包边</translation>
+    </message>
+    <message>
+        <source>Bottom outline</source>
+        <translation>底部勾边</translation>
+    </message>
+    <message>
+        <source>Anti-warp brim</source>
+        <translation>防翘裙边</translation>
+    </message>
+    <message>
+        <source>Letter bridges</source>
+        <translation>连襟字</translation>
+    </message>
+    <message>
+        <source>Color change</source>
+        <translation>换色</translation>
+    </message>
+    <message>
+        <source>Prime tower</source>
+        <translation>擦料塔</translation>
+    </message>
+    <message>
+        <source>Manual screw holes</source>
+        <translation>手动螺丝孔</translation>
+    </message>
+    <message>
+        <source>Custom print order</source>
+        <translation>自定义打印顺序</translation>
+    </message>
+    <message>
+        <source>Basic</source>
+        <translation>基础</translation>
+    </message>
+    <message>
+        <source>Advanced</source>
+        <translation>高级</translation>
+    </message>
+    <message>
+        <source>Expert</source>
+        <translation>专家</translation>
+    </message>
+    <message>
+        <source>, </source>
+        <translation>、</translation>
+    </message>
+    <message>
+        <source>{features} and {count} more</source>
+        <translation>{features}，以及其他 {count} 项</translation>
+    </message>
+    <message>
+        <source>This project uses hidden {level} features: {features}. They remain applied.</source>
+        <translation>此项目使用了隐藏的 {level} 功能：{features}。这些设置仍会生效。</translation>
+    </message>
+    <message>
+        <source>Switch to {level}</source>
+        <translation>切换到 {level}</translation>
+    </message>
+</context>
 </TS>
