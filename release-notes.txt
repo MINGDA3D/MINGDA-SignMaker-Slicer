@@ -1,5 +1,9 @@
 MINGDA SignMaker - Recent Release Notes
 
+V0.6.5
+- Added Basic, Advanced, and Expert interface levels for progressively exposing settings and editing tools.
+- Added project complexity detection, one-click level upgrades, persistent level selection, and full multilingual support.
+
 V0.6.4
 - Updated the MINGDA AD-F4 Mini no-print zone; previous built-in defaults update automatically.
 - Updated the online tutorials, including decorative-panel and solid-letter workflows.
