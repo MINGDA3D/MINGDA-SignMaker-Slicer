@@ -26,20 +26,26 @@ from ..types import (
 from ..types import Path as CorePath
 from ..path_offset import PathOffset
 from .mesh_utils import MeshUtils
+from .profile_regions import merge_contours_by_nesting
 
 
 class StepMeshBuilder:
     """台阶网格生成器"""
 
     def __init__(self, path_offset: PathOffset):
-        """
-        初始化台阶网格生成器
-
-        Args:
-            path_offset: 路径偏移工具
-        """
+        """Initialize with a shared path offsetter."""
         self.path_offset = path_offset
         self.mesh_utils = MeshUtils()
+
+    @staticmethod
+    def resolve_panel_step_z(params: SliceParams) -> float:
+        """Return the effective top-step Z used by both transforms and meshes."""
+        return max(params.step.panel_step_height, params.shell.height / 2)
+
+    @staticmethod
+    def resolve_baseplate_step_z(params: SliceParams) -> float:
+        """Return the effective bottom-step Z used by both transforms and meshes."""
+        return min(params.step.baseplate_step_height, params.shell.height / 2)
 
     def build(self, contours: List[Contour], result: SliceResult,
               params: SliceParams,
@@ -77,58 +83,63 @@ class StepMeshBuilder:
         )
         step_thickness = params.shell.layer_height + 0.1
 
-        panel_contours_to_use = panel_contours if panel_contours else contours
-        baseplate_contours_to_use = baseplate_contours if baseplate_contours else contours
-
-        for contour_idx, contour in enumerate(contours):
-            try:
-                if not contour.outer.points:
-                    continue
-
-                if (
-                    params.step.panel_step_enabled
-                    and not params.step.panel_step_is_v_groove
-                    and contour_idx < len(panel_contours_to_use)
-                ):
-                    panel_z = params.step.panel_step_height
-                    min_panel_z = total_height / 2
-                    if panel_z < min_panel_z:
-                        panel_z = min_panel_z
-                    if 0 <= panel_z < total_height:
-                        meshes.extend(
-                            self._build_flat_step_meshes_for_contour(
-                                panel_contours_to_use[contour_idx],
-                                step_width=params.step.panel_step_width,
-                                step_thickness=step_thickness,
-                                z_position=panel_z,
-                                wall_thickness=wall_thickness,
-                            )
-                        )
-
-                if (
-                    params.step.baseplate_step_enabled
-                    and not params.step.baseplate_step_is_v_groove
-                    and contour_idx < len(baseplate_contours_to_use)
-                ):
-                    baseplate_z = params.step.baseplate_step_height
-                    max_baseplate_z = total_height / 2
-                    if baseplate_z > max_baseplate_z:
-                        baseplate_z = max_baseplate_z
-                    if 0 <= baseplate_z < total_height:
-                        meshes.extend(
-                            self._build_flat_step_meshes_for_contour(
-                                baseplate_contours_to_use[contour_idx],
-                                step_width=params.step.baseplate_step_width,
-                                step_thickness=step_thickness,
-                                z_position=baseplate_z,
-                                wall_thickness=wall_thickness,
-                            )
-                        )
-
-            except Exception as e:
-                print(f"警告：处理轮廓台阶失败: {e}")
+        flat_steps = (
+            (
+                params.step.panel_step_enabled
+                and not params.step.panel_step_is_v_groove,
+                panel_contours,
+                params.step.panel_step_width,
+                self.resolve_panel_step_z(params),
+            ),
+            (
+                params.step.baseplate_step_enabled
+                and not params.step.baseplate_step_is_v_groove,
+                baseplate_contours,
+                params.step.baseplate_step_width,
+                self.resolve_baseplate_step_z(params),
+            ),
+        )
+        for enabled, transformed, step_width, z_position in flat_steps:
+            if not enabled or not 0 <= z_position < total_height:
                 continue
+            source = contours if transformed is None else transformed
+            meshes.extend(
+                self._build_flat_step_meshes_for_contours(
+                    merge_contours_by_nesting(source),
+                    step_width=step_width,
+                    step_thickness=step_thickness,
+                    z_position=z_position,
+                    wall_thickness=wall_thickness,
+                )
+            )
 
+        return meshes
+
+    def _build_flat_step_meshes_for_contours(
+        self,
+        contours: List[Contour],
+        step_width: float,
+        step_thickness: float,
+        z_position: float,
+        wall_thickness: float,
+    ) -> List[trimesh.Trimesh]:
+        """Build one flat-step level from its independently merged contours."""
+        meshes = []
+        for contour in contours:
+            if not contour.outer.points:
+                continue
+            try:
+                meshes.extend(
+                    self._build_flat_step_meshes_for_contour(
+                        contour,
+                        step_width=step_width,
+                        step_thickness=step_thickness,
+                        z_position=z_position,
+                        wall_thickness=wall_thickness,
+                    )
+                )
+            except Exception as exc:
+                print(f"警告：处理轮廓台阶失败: {exc}")
         return meshes
 
     def _build_flat_step_meshes_for_contour(
@@ -143,8 +154,8 @@ class StepMeshBuilder:
         meshes = []
 
         inner_wall_results = self.path_offset.offset(contour.outer, -wall_thickness)
-        if inner_wall_results:
-            inner_wall_coords = [(p.x, p.y) for p in inner_wall_results[0].points]
+        for inner_wall_path in inner_wall_results:
+            inner_wall_coords = [(p.x, p.y) for p in inner_wall_path.points]
             if inner_wall_coords and inner_wall_coords[0] != inner_wall_coords[-1]:
                 inner_wall_coords.append(inner_wall_coords[0])
 
@@ -160,20 +171,21 @@ class StepMeshBuilder:
 
         for hole in contour.holes:
             hole_wall_results = self.path_offset.offset(hole, wall_thickness)
-            hole_wall_path = hole_wall_results[0] if hole_wall_results else hole
-            hole_inner_coords = [(p.x, p.y) for p in hole_wall_path.points]
-            if hole_inner_coords and hole_inner_coords[0] != hole_inner_coords[-1]:
-                hole_inner_coords.append(hole_inner_coords[0])
+            hole_wall_paths = hole_wall_results if hole_wall_results else [hole]
+            for hole_wall_path in hole_wall_paths:
+                hole_inner_coords = [(p.x, p.y) for p in hole_wall_path.points]
+                if hole_inner_coords and hole_inner_coords[0] != hole_inner_coords[-1]:
+                    hole_inner_coords.append(hole_inner_coords[0])
 
-            hole_mesh = self._create_thin_step_ring(
-                hole_inner_coords,
-                step_width=step_width,
-                step_thickness=step_thickness,
-                z_position=z_position,
-                is_hole=True,
-            )
-            if hole_mesh is not None:
-                meshes.append(hole_mesh)
+                hole_mesh = self._create_thin_step_ring(
+                    hole_inner_coords,
+                    step_width=step_width,
+                    step_thickness=step_thickness,
+                    z_position=z_position,
+                    is_hole=True,
+                )
+                if hole_mesh is not None:
+                    meshes.append(hole_mesh)
 
         return meshes
 

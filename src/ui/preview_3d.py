@@ -319,26 +319,33 @@ class Preview3DWidget(QOpenGLWidget):
 
         panel_contours: List[Contour] = []
         baseplate_contours: List[Contour] = []
-        if params.step.panel_step_enabled or params.step.baseplate_step_enabled:
-            panel_z = params.step.panel_step_height
-            baseplate_z = params.step.baseplate_step_height
+        if (
+            params.step.panel_step_enabled
+            and not params.step.panel_step_is_v_groove
+        ):
+            panel_z = step_builder.resolve_panel_step_z(params)
             for contour in contours:
-                if params.step.panel_step_enabled:
-                    panel_contour = temp_engine._apply_edge_profile(
-                        contour,
-                        panel_z,
-                        params.shell,
-                    )
-                    if panel_contour is not None:
-                        panel_contours.append(panel_contour)
-                if params.step.baseplate_step_enabled:
-                    baseplate_contour = temp_engine._apply_edge_profile(
-                        contour,
-                        baseplate_z,
-                        params.shell,
-                    )
-                    if baseplate_contour is not None:
-                        baseplate_contours.append(baseplate_contour)
+                panel_contour = temp_engine._apply_edge_profile(
+                    contour,
+                    panel_z,
+                    params.shell,
+                )
+                if panel_contour is not None:
+                    panel_contours.append(panel_contour)
+
+        if (
+            params.step.baseplate_step_enabled
+            and not params.step.baseplate_step_is_v_groove
+        ):
+            baseplate_z = step_builder.resolve_baseplate_step_z(params)
+            for contour in contours:
+                baseplate_contour = temp_engine._apply_edge_profile(
+                    contour,
+                    baseplate_z,
+                    params.shell,
+                )
+                if baseplate_contour is not None:
+                    baseplate_contours.append(baseplate_contour)
 
         if params.step.panel_step_enabled or params.step.baseplate_step_enabled:
             step_mesh = step_builder.build(

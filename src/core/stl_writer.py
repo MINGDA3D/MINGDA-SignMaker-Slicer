@@ -122,27 +122,33 @@ class STLWriter:
             panel_contours = []
             baseplate_contours = []
 
-            if params.step.panel_step_enabled or params.step.baseplate_step_enabled:
-                panel_z = params.step.panel_step_height
-                baseplate_z = params.step.baseplate_step_height
-
+            if (
+                params.step.panel_step_enabled
+                and not params.step.panel_step_is_v_groove
+            ):
+                panel_z = self.step_builder.resolve_panel_step_z(params)
                 for c in contours:
-                    if params.step.panel_step_enabled:
-                        pc = temp_engine._apply_edge_profile(
-                            c,
-                            panel_z,
-                            params.shell,
-                        )
-                        if pc:
-                            panel_contours.append(pc)
-                    if params.step.baseplate_step_enabled:
-                        bc = temp_engine._apply_edge_profile(
-                            c,
-                            baseplate_z,
-                            params.shell,
-                        )
-                        if bc:
-                            baseplate_contours.append(bc)
+                    pc = temp_engine._apply_edge_profile(
+                        c,
+                        panel_z,
+                        params.shell,
+                    )
+                    if pc:
+                        panel_contours.append(pc)
+
+            if (
+                params.step.baseplate_step_enabled
+                and not params.step.baseplate_step_is_v_groove
+            ):
+                baseplate_z = self.step_builder.resolve_baseplate_step_z(params)
+                for c in contours:
+                    bc = temp_engine._apply_edge_profile(
+                        c,
+                        baseplate_z,
+                        params.shell,
+                    )
+                    if bc:
+                        baseplate_contours.append(bc)
 
             step_mesh = self.step_builder.build(
                 contours, result, params,

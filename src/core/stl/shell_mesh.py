@@ -28,6 +28,11 @@ from ..types import (
 )
 from ..types import Path as CorePath
 from .mesh_utils import MeshUtils
+from .profile_regions import (
+    contour_to_geometry,
+    extract_polygons,
+    merge_profile_regions_by_nesting,
+)
 
 
 class ShellMeshBuilder:
@@ -124,25 +129,61 @@ class ShellMeshBuilder:
             )
             if transformed is None:
                 continue
-            profile = self._contour_to_polygon(transformed)
-            if profile is not None:
-                profiles.extend(self._extract_polygons(profile))
+            profile = contour_to_geometry(transformed, self.MIN_POLYGON_AREA)
+            profiles.extend(extract_polygons(profile, self.MIN_POLYGON_AREA))
 
         if not profiles:
             return []
 
-        profile_region = unary_union(profiles) if len(profiles) > 1 else profiles[0]
-        if not profile_region.is_valid:
-            profile_region = make_valid(profile_region)
+        return self._build_profile_shell_regions(profiles, wall_thickness)
 
-        return self._build_profile_shell_region(profile_region, wall_thickness)
+    def _build_profile_shell_regions(
+        self,
+        profiles: List[ShapelyPolygon],
+        wall_thickness: float,
+    ) -> List[ShapelyPolygon]:
+        """Shell profiles without absorbing independently nested contours.
+
+        Partially overlapping profiles at the same nesting depth must be merged
+        before shelling so their overlap does not leave internal walls.  A
+        profile completely covered by a larger profile, however, represents an
+        independent nested loop (for example the counters in an outlined SVG
+        logo).  Shelling the global union would erase that loop while step
+        generation would still create its ledge, leaving the ledge floating.
+        """
+        if not profiles:
+            return []
+
+        shell_parts: List[ShapelyPolygon] = []
+        for profile_region in merge_profile_regions_by_nesting(
+            profiles,
+            self.MIN_POLYGON_AREA,
+        ):
+            shell_parts.extend(
+                self._build_profile_shell_region(profile_region, wall_thickness)
+            )
+
+        if not shell_parts:
+            return []
+
+        shell_region = (
+            unary_union(shell_parts) if len(shell_parts) > 1 else shell_parts[0]
+        )
+        if not shell_region.is_valid:
+            shell_region = make_valid(shell_region)
+        shell_region = self._remove_tiny_holes(
+            shell_region,
+            self._tiny_hole_area_threshold(wall_thickness),
+        )
+        shell_region = self._stabilize_for_triangulation(shell_region)
+        return self._extract_polygons(shell_region)
 
     def _build_contour_shell_region(
         self,
         contour: Contour,
         wall_thickness: float,
     ) -> List[ShapelyPolygon]:
-        profile = self._contour_to_polygon(contour)
+        profile = contour_to_geometry(contour, self.MIN_POLYGON_AREA)
         if profile is None:
             return []
 
@@ -176,24 +217,6 @@ class ShellMeshBuilder:
         shell_region = self._stabilize_for_triangulation(shell_region)
 
         return self._extract_polygons(shell_region)
-
-    def _contour_to_polygon(self, contour: Contour):
-        outer_coords = self._closed_coords(contour.outer.points)
-        if len(outer_coords) < 4:
-            return None
-
-        hole_coords = [
-            coords
-            for coords in (self._closed_coords(hole.points) for hole in contour.holes)
-            if len(coords) >= 4
-        ]
-
-        polygon = ShapelyPolygon(outer_coords, hole_coords)
-        if not polygon.is_valid:
-            polygon = make_valid(polygon)
-        if polygon.is_empty or polygon.area < self.MIN_POLYGON_AREA:
-            return None
-        return polygon
 
     def _build_from_wall_paths(self, layers: List[Layer]) -> Optional[trimesh.Trimesh]:
         meshes: List[trimesh.Trimesh] = []
