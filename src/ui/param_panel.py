@@ -511,7 +511,8 @@ class ParamPanel(QWidget):
             QTabWidget#shape_feature_tabs::pane {{
                 background-color: {COLORS.editor_sidebar_left_bg};
                 border: none;
-                padding-top: 10px;
+                padding: 0;
+                margin: 0;
             }}
             QTabWidget#shape_feature_tabs QTabBar::tab {{
                 background-color: {COLORS.editor_sidebar_left_bg};
@@ -811,6 +812,7 @@ class ParamPanel(QWidget):
         content.setStyleSheet(f"background-color: {COLORS.editor_sidebar_left_bg};")
 
         content_layout = QVBoxLayout(content)
+        content_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinimumSize)
         content_layout.setContentsMargins(
             PARAM_CONTENT_MARGIN,
             PARAM_CONTENT_MARGIN,
@@ -849,14 +851,21 @@ class ParamPanel(QWidget):
         content.setStyleSheet(f"background-color: {COLORS.editor_sidebar_left_bg};")
 
         content_layout = QVBoxLayout(content)
+        content_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinimumSize)
         content_layout.setContentsMargins(
-            0,
             PARAM_CONTENT_MARGIN,
-            0,
+            PARAM_CONTENT_MARGIN,
+            PARAM_CONTENT_RIGHT_MARGIN,
             PARAM_CONTENT_MARGIN,
         )
         content_layout.setSpacing(12)
 
+        # The vertical scrollbar reduces the 360 px minimum viewport width.
+        # Let the shell form absorb that small horizontal difference so both
+        # outer safe margins remain visible without hidden horizontal overflow.
+        shell_size_policy = self.shell_group.sizePolicy()
+        shell_size_policy.setHorizontalPolicy(QSizePolicy.Policy.Ignored)
+        self.shell_group.setSizePolicy(shell_size_policy)
         content_layout.addWidget(self.shell_group)
 
         self.shape_feature_tabs = QTabWidget()
@@ -870,7 +879,7 @@ class ParamPanel(QWidget):
         # sized to the viewport because horizontal scrolling is disabled.
         self.shape_feature_tabs.setSizePolicy(
             QSizePolicy.Policy.Ignored,
-            QSizePolicy.Policy.Preferred,
+            QSizePolicy.Policy.Minimum,
         )
         self.shape_feature_tabs.setMinimumWidth(0)
         self.shape_feature_tabs.setStyleSheet(self._feature_tabs_stylesheet())
@@ -938,7 +947,11 @@ class ParamPanel(QWidget):
         page.setObjectName(f"shape_{key}_tab_content")
         page.setStyleSheet(f"background-color: {COLORS.editor_sidebar_left_bg};")
         layout = QVBoxLayout(page)
-        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSizeConstraint(QLayout.SizeConstraint.SetMinimumSize)
+        # Keep the visual gap above each feature page inside the page layout.
+        # QSS pane padding is not included in QTabWidget size hints and allowed
+        # Qt to compress visible rows after complexity filtering.
+        layout.setContentsMargins(0, 10, 0, 0)
         layout.setSpacing(12)
         if mode_widget is not None:
             layout.addWidget(mode_widget)
@@ -962,6 +975,7 @@ class ParamPanel(QWidget):
         label_widget = QWidget()
         label_widget.setObjectName("paramIconLabel")
         label_widget.setMinimumWidth(0)
+        label_widget.setMinimumHeight(PARAM_ICON_SIZE.height())
         label_widget.setMaximumWidth(136)
         label_widget.setSizePolicy(
             QSizePolicy.Policy.Maximum,
@@ -1016,6 +1030,7 @@ class ParamPanel(QWidget):
         """Create an exclusive icon-button mode selector."""
         container = QWidget()
         container.setObjectName(object_name)
+        container.setMinimumHeight(46)
         container.setStyleSheet(self._mode_button_stylesheet())
         self._mode_button_containers.append(container)
         layout = QHBoxLayout(container)
@@ -1057,6 +1072,7 @@ class ParamPanel(QWidget):
         """Create checkable icon buttons while keeping at least one selected."""
         container = QWidget()
         container.setObjectName(object_name)
+        container.setMinimumHeight(46)
         container.setStyleSheet(self._mode_button_stylesheet())
         self._mode_button_containers.append(container)
         layout = QHBoxLayout(container)
@@ -1169,6 +1185,7 @@ class ParamPanel(QWidget):
     def _create_double_spinbox(self, decimals: int = 2) -> QDoubleSpinBox:
         """Create a standard floating-point input without custom plus/minus buttons."""
         spinbox = GuardedDoubleSpinBox()
+        spinbox.setMinimumHeight(32)
         spinbox.setDecimals(decimals)
         spinbox.setButtonSymbols(QAbstractSpinBox.ButtonSymbols.NoButtons)
         spinbox.setKeyboardTracking(False)
@@ -1178,6 +1195,7 @@ class ParamPanel(QWidget):
     def _create_int_spinbox(self) -> QSpinBox:
         """Create a standard integer input without custom plus/minus buttons."""
         spinbox = GuardedSpinBox()
+        spinbox.setMinimumHeight(32)
         spinbox.setButtonSymbols(QAbstractSpinBox.ButtonSymbols.NoButtons)
         spinbox.setKeyboardTracking(False)
         spinbox.setAlignment(Qt.AlignmentFlag.AlignCenter)

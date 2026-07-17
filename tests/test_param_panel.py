@@ -28,7 +28,7 @@ from src.core.types import (
     normalize_slice_params,
 )
 from src.ui.param_panel import ParamPanel
-from src.ui.theme import set_active_theme
+from src.ui.theme import get_stylesheet, set_active_theme
 from src.ui.widgets import GuardedComboBox, GuardedDoubleSpinBox
 
 
@@ -504,6 +504,132 @@ def test_shape_feature_tabs_group_controls_by_mode(qapp):
         ("top", "Top", ["Top Shell", "Acrylic Face Slot"]),
         ("other", "Other", ["Anti-Warp Brim", "Letter Bridges", "DXF Export Compensation"]),
     ]
+
+
+@pytest.mark.parametrize(
+    ("key", "mode", "field_name", "group_name"),
+    [
+        ("bottom", ParamPanel.BOTTOM_MODE_FACE, "bottom_face_thickness", "bottom_face_group"),
+        ("top", ParamPanel.TOP_MODE_FACE, "top_face_thickness", "top_face_group"),
+    ],
+)
+@pytest.mark.parametrize("theme", ["dark", "light"])
+def test_basic_filter_never_compresses_visible_feature_controls(
+    qapp,
+    key,
+    mode,
+    field_name,
+    group_name,
+    theme,
+):
+    panel = ParamPanel()
+    panel.setStyleSheet(get_stylesheet(theme))
+    panel.resize(360, 500)
+    panel.set_complexity_level(ComplexityLevel.BASIC)
+    panel.show()
+
+    page = panel._shape_feature_widgets_by_key[key]
+    panel.shape_feature_tabs.setCurrentWidget(page)
+    if key == "bottom":
+        panel._apply_bottom_mode(mode, emit_changed=False)
+        mode_widget = panel.bottom_mode_widget
+    else:
+        panel._apply_top_mode(mode, emit_changed=False)
+        mode_widget = panel.top_mode_widget
+    QApplication.processEvents()
+
+    field = getattr(panel, field_name)
+    group = getattr(panel, group_name)
+    form = panel._form_rows[field]
+    label = form.labelForField(field)
+
+    assert mode_widget.height() >= 46
+    assert all(button.height() >= 46 for button in mode_widget.findChildren(QPushButton))
+    assert label.height() >= 32
+    assert field.height() >= 32
+    assert group.height() >= group.minimumSizeHint().height()
+    assert page.height() >= page.minimumHeight()
+    assert page.parentWidget().contentsRect().contains(page.geometry())
+
+    basic_sizes = (mode_widget.height(), label.height(), field.height())
+    panel.set_complexity_level(ComplexityLevel.ADVANCED)
+    QApplication.processEvents()
+    panel.set_complexity_level(ComplexityLevel.BASIC)
+    QApplication.processEvents()
+    assert (mode_widget.height(), label.height(), field.height()) == basic_sizes
+
+    panel.close()
+
+
+def test_short_basic_page_scrolls_instead_of_clipping_mode_buttons(qapp):
+    panel = ParamPanel()
+    panel.setStyleSheet(get_stylesheet("dark"))
+    panel.resize(360, 360)
+    panel.set_complexity_level(ComplexityLevel.BASIC)
+    panel.show()
+
+    bottom_page = panel._shape_feature_widgets_by_key["bottom"]
+    panel.shape_feature_tabs.setCurrentWidget(bottom_page)
+    panel._apply_bottom_mode(panel.BOTTOM_MODE_NONE, emit_changed=False)
+    QApplication.processEvents()
+
+    scroll = panel._section_widgets_by_key["shape"]
+    assert panel.bottom_mode_widget.height() >= 46
+    assert bottom_page.height() >= bottom_page.minimumHeight()
+    assert scroll._content.height() >= scroll._content.minimumHeight()
+    assert scroll.verticalScrollBar().maximum() > 0
+
+    panel.close()
+
+
+@pytest.mark.parametrize("key", ["wall", "bottom", "top"])
+@pytest.mark.parametrize("theme", ["dark", "light"])
+def test_basic_feature_page_is_not_clipped_by_tab_viewport(qapp, key, theme):
+    panel = ParamPanel()
+    panel.setStyleSheet(get_stylesheet(theme))
+    panel.resize(360, 500)
+    panel.set_complexity_level(ComplexityLevel.BASIC)
+    panel.show()
+
+    page = panel._shape_feature_widgets_by_key[key]
+    panel.shape_feature_tabs.setCurrentWidget(page)
+    if key == "bottom":
+        panel._apply_bottom_mode(panel.BOTTOM_MODE_NONE, emit_changed=False)
+    elif key == "top":
+        panel._apply_top_mode(panel.TOP_MODE_NONE, emit_changed=False)
+    QApplication.processEvents()
+
+    viewport = page.parentWidget()
+    assert viewport is not None
+    assert viewport.contentsRect().contains(page.geometry())
+
+    panel.close()
+
+
+@pytest.mark.parametrize("theme", ["dark", "light"])
+def test_shape_settings_content_keeps_horizontal_safe_margins(qapp, theme):
+    panel = ParamPanel()
+    panel.setStyleSheet(get_stylesheet(theme))
+    panel.setFixedSize(360, 500)
+    panel.set_complexity_level(ComplexityLevel.BASIC)
+    panel.show()
+    bevel_index = panel.edge_type_combo.findData(EdgeType.BEVELED)
+    panel.edge_type_combo.setCurrentIndex(bevel_index)
+    QApplication.processEvents()
+
+    scroll = panel._section_widgets_by_key["shape"]
+    content = scroll._content
+    for widget in (panel.shell_group, panel.shape_feature_tabs):
+        assert widget.geometry().left() == 12
+        assert content.width() - widget.geometry().right() - 1 == 16
+
+    assert panel.width() == 360
+    assert scroll.verticalScrollBar().maximum() > 0
+    assert scroll.horizontalScrollBar().maximum() == 0
+    assert panel.height_spin.isVisible()
+    assert panel.height_spin.width() > 0
+
+    panel.close()
 
 
 def test_wall_tab_starts_with_edge_type_icons_without_card_title(qapp):
