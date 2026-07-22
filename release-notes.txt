@@ -1,4 +1,9 @@
-MINGDA SignMaker - Recent Release Notes
+What's Changed
+
+V0.6.6
+- Fixed floating acrylic-face slots caused by independently nested SVG/DXF contours losing their supporting shell walls.
+- Unified shell and flat-slot profile normalization across STL export and 3D Preview, including collective nesting and split offset islands.
+- Added focused geometry regressions and verified 1,361 top-slot components across 277 SVG/DXF files with no fully floating components.
 
 V0.6.5
 - Added Basic, Advanced, and Expert interface levels for progressively exposing settings and editing tools.
