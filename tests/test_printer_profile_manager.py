@@ -8,10 +8,13 @@ import pytest
 from src.business.printer_profile_manager import (
     DEFAULT_PRINTER_PROFILE_SPECS,
     DEFAULT_PRINTER_PROFILE_SPEC,
+    PREVIOUS_MINGDA_AD_F6_PRO_BED_EXCLUDE_AREA_800X1200,
     PrinterProfileManager,
     deserialize_printer_profile,
 )
 from src.core.types import (
+    MINGDA_AD_F4_BED_EXCLUDE_AREA_800X1200,
+    MINGDA_AD_F6_PRO_BED_EXCLUDE_AREA_800X1200,
     MINGDA_BED_EXCLUDE_AREA_600X800,
     MINGDA_BED_EXCLUDE_AREA_800X1200,
     default_bed_exclude_area_for_bed,
@@ -43,7 +46,15 @@ def test_manager_seeds_only_requested_builtin_profiles(temp_profile_dir):
         for spec in DEFAULT_PRINTER_PROFILE_SPECS
     ]
     assert [profile.bed_exclude_area for profile in profiles] == [
-        default_bed_exclude_area_for_bed(spec["bed_width"], spec["bed_depth"])
+        list(
+            spec.get(
+                "bed_exclude_area",
+                default_bed_exclude_area_for_bed(
+                    spec["bed_width"],
+                    spec["bed_depth"],
+                ),
+            )
+        )
         for spec in DEFAULT_PRINTER_PROFILE_SPECS
     ]
     assert all(
@@ -109,6 +120,14 @@ def test_manager_discards_non_builtin_profiles_and_keeps_only_builtin_profiles(t
 def test_large_ad_series_profiles_use_requested_bed_exclude_area(temp_profile_dir):
     manager = PrinterProfileManager(config_dir=str(temp_profile_dir))
 
+    assert MINGDA_AD_F4_BED_EXCLUDE_AREA_800X1200[0] == (
+        "691x0,800x0,800x287,691x287"
+    )
+    assert MINGDA_AD_F6_PRO_BED_EXCLUDE_AREA_800X1200 == [
+        "691x0,800x0,800x282,691x282",
+        "771x282,800x282,800x528,771x528",
+    ]
+
     profiles = [
         profile
         for profile in manager.list_profiles()
@@ -121,7 +140,32 @@ def test_large_ad_series_profiles_use_requested_bed_exclude_area(temp_profile_di
     assert len(profiles) == 12
     assert all(profile.bed_width == 800.0 for profile in profiles)
     assert all(profile.bed_depth == 1200.0 for profile in profiles)
-    assert all(profile.bed_exclude_area == MINGDA_BED_EXCLUDE_AREA_800X1200 for profile in profiles)
+    ad_f4_profiles = [
+        profile for profile in profiles if "AD-F4" in profile.name
+    ]
+    ad_f6_profiles = [profile for profile in profiles if "AD-F6" in profile.name]
+    other_profiles = [
+        profile
+        for profile in profiles
+        if "AD-F4" not in profile.name and "AD-F6" not in profile.name
+    ]
+
+    assert len(ad_f4_profiles) == 6
+    assert len(ad_f6_profiles) == 3
+    assert all(
+        profile.bed_exclude_area
+        == MINGDA_AD_F4_BED_EXCLUDE_AREA_800X1200
+        for profile in ad_f4_profiles
+    )
+    assert all(
+        profile.bed_exclude_area
+        == MINGDA_AD_F6_PRO_BED_EXCLUDE_AREA_800X1200
+        for profile in ad_f6_profiles
+    )
+    assert all(
+        profile.bed_exclude_area == MINGDA_BED_EXCLUDE_AREA_800X1200
+        for profile in other_profiles
+    )
 
 
 def test_ad_f4_mini_profiles_use_requested_bed_exclude_area(temp_profile_dir):
@@ -245,15 +289,24 @@ def test_manager_upgrades_legacy_ad_f4_mini_bed_exclude_area(
     assert profile.bed_exclude_area == MINGDA_BED_EXCLUDE_AREA_600X800
 
 
-def test_manager_upgrades_legacy_large_ad_series_bed_exclude_area(temp_profile_dir):
+@pytest.mark.parametrize(
+    "stored_area",
+    [
+        [
+            "0x1130,70x1130,70x1200,0x1200",
+            "730x1130,800x1130,800x1200,730x1200",
+            "0x0,70x0,70x70,0x70",
+            "630x0,800x0,800x100,630x100",
+            "70x0,630x0,630x20,70x20",
+        ],
+        MINGDA_BED_EXCLUDE_AREA_800X1200,
+    ],
+)
+def test_manager_upgrades_legacy_large_ad_series_bed_exclude_area(
+    temp_profile_dir,
+    stored_area,
+):
     config_path = temp_profile_dir / PrinterProfileManager.FILE_NAME
-    legacy_area = [
-        "0x1130,70x1130,70x1200,0x1200",
-        "730x1130,800x1130,800x1200,730x1200",
-        "0x0,70x0,70x70,0x70",
-        "630x0,800x0,800x100,630x100",
-        "70x0,630x0,630x20,70x20",
-    ]
     profile_specs = DEFAULT_PRINTER_PROFILE_SPECS[3:]
     config_path.write_text(
         json.dumps(
@@ -267,7 +320,7 @@ def test_manager_upgrades_legacy_large_ad_series_bed_exclude_area(temp_profile_d
                         "bed_width": spec["bed_width"],
                         "bed_depth": spec["bed_depth"],
                         "bed_height": 100.0,
-                        "bed_exclude_area": legacy_area,
+                        "bed_exclude_area": stored_area,
                         "nozzle_diameter": spec["nozzle_diameter"],
                     }
                     for spec in profile_specs
@@ -290,7 +343,71 @@ def test_manager_upgrades_legacy_large_ad_series_bed_exclude_area(temp_profile_d
     ]
 
     assert len(profiles) == 12
-    assert all(profile.bed_exclude_area == MINGDA_BED_EXCLUDE_AREA_800X1200 for profile in profiles)
+    ad_f4_profiles = [
+        profile for profile in profiles if "AD-F4" in profile.name
+    ]
+    ad_f6_profiles = [profile for profile in profiles if "AD-F6" in profile.name]
+    other_profiles = [
+        profile
+        for profile in profiles
+        if "AD-F4" not in profile.name and "AD-F6" not in profile.name
+    ]
+
+    assert all(
+        profile.bed_exclude_area
+        == MINGDA_AD_F4_BED_EXCLUDE_AREA_800X1200
+        for profile in ad_f4_profiles
+    )
+    assert all(
+        profile.bed_exclude_area
+        == MINGDA_AD_F6_PRO_BED_EXCLUDE_AREA_800X1200
+        for profile in ad_f6_profiles
+    )
+    assert all(
+        profile.bed_exclude_area == MINGDA_BED_EXCLUDE_AREA_800X1200
+        for profile in other_profiles
+    )
+
+
+def test_manager_upgrades_previous_ad_f6_pro_bed_exclude_area(temp_profile_dir):
+    config_path = temp_profile_dir / PrinterProfileManager.FILE_NAME
+    profile_specs = [
+        spec
+        for spec in DEFAULT_PRINTER_PROFILE_SPECS
+        if spec["id"].startswith("builtin-mignda-ad-f6-")
+    ]
+    config_path.write_text(
+        json.dumps(
+            {
+                "version": PrinterProfileManager.FILE_VERSION,
+                "default_profile_id": profile_specs[0]["id"],
+                "profiles": [
+                    {
+                        **spec,
+                        "bed_exclude_area": (
+                            PREVIOUS_MINGDA_AD_F6_PRO_BED_EXCLUDE_AREA_800X1200
+                        ),
+                    }
+                    for spec in profile_specs
+                ],
+            },
+            ensure_ascii=False,
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+
+    manager = PrinterProfileManager(config_dir=str(temp_profile_dir))
+    profiles = [
+        profile for profile in manager.list_profiles() if "AD-F6" in profile.name
+    ]
+
+    assert len(profiles) == 3
+    assert all(
+        profile.bed_exclude_area
+        == MINGDA_AD_F6_PRO_BED_EXCLUDE_AREA_800X1200
+        for profile in profiles
+    )
 
 
 def test_deserialize_printer_profile_upgrades_legacy_default_gcode_scripts():

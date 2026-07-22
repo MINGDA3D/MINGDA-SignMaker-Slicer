@@ -12,6 +12,8 @@ from pathlib import Path
 from typing import Dict, List, Optional
 
 from src.core.types import (
+    MINGDA_AD_F4_BED_EXCLUDE_AREA_800X1200,
+    MINGDA_AD_F6_PRO_BED_EXCLUDE_AREA_800X1200,
     MINGDA_BED_EXCLUDE_AREA_600X800,
     MINGDA_BED_EXCLUDE_AREA_800X1200,
     PrinterProfile,
@@ -50,6 +52,10 @@ PREVIOUS_MINGDA_BED_EXCLUDE_AREA_600X800 = [
     "541x792,600x792,600x800,541x800",
     "0x792,67x792,67x800,0x800",
 ]
+PREVIOUS_MINGDA_AD_F6_PRO_BED_EXCLUDE_AREA_800X1200 = [
+    "691x0,800x0,800x282,691x282",
+    "771x287,800x287,800x528,771x528",
+]
 
 
 DEFAULT_PRINTER_PROFILE_SPECS = (
@@ -79,6 +85,7 @@ DEFAULT_PRINTER_PROFILE_SPECS = (
         "name": "MIGNDA AD-F4 0.4mm Nozzle",
         "bed_width": 800.0,
         "bed_depth": 1200.0,
+        "bed_exclude_area": MINGDA_AD_F4_BED_EXCLUDE_AREA_800X1200,
         "nozzle_diameter": 0.4,
     },
     {
@@ -86,6 +93,7 @@ DEFAULT_PRINTER_PROFILE_SPECS = (
         "name": "MIGNDA AD-F4 0.6mm Nozzle",
         "bed_width": 800.0,
         "bed_depth": 1200.0,
+        "bed_exclude_area": MINGDA_AD_F4_BED_EXCLUDE_AREA_800X1200,
         "nozzle_diameter": 0.6,
     },
     {
@@ -93,6 +101,7 @@ DEFAULT_PRINTER_PROFILE_SPECS = (
         "name": "MIGNDA AD-F4 0.8mm Nozzle",
         "bed_width": 800.0,
         "bed_depth": 1200.0,
+        "bed_exclude_area": MINGDA_AD_F4_BED_EXCLUDE_AREA_800X1200,
         "nozzle_diameter": 0.8,
     },
     {
@@ -100,6 +109,7 @@ DEFAULT_PRINTER_PROFILE_SPECS = (
         "name": "MIGNDA AD-F4 Pro 0.4mm Nozzle",
         "bed_width": 800.0,
         "bed_depth": 1200.0,
+        "bed_exclude_area": MINGDA_AD_F4_BED_EXCLUDE_AREA_800X1200,
         "nozzle_diameter": 0.4,
     },
     {
@@ -107,6 +117,7 @@ DEFAULT_PRINTER_PROFILE_SPECS = (
         "name": "MIGNDA AD-F4 Pro 0.6mm Nozzle",
         "bed_width": 800.0,
         "bed_depth": 1200.0,
+        "bed_exclude_area": MINGDA_AD_F4_BED_EXCLUDE_AREA_800X1200,
         "nozzle_diameter": 0.6,
     },
     {
@@ -114,6 +125,7 @@ DEFAULT_PRINTER_PROFILE_SPECS = (
         "name": "MIGNDA AD-F4 Pro 0.8mm Nozzle",
         "bed_width": 800.0,
         "bed_depth": 1200.0,
+        "bed_exclude_area": MINGDA_AD_F4_BED_EXCLUDE_AREA_800X1200,
         "nozzle_diameter": 0.8,
     },
     {
@@ -121,6 +133,7 @@ DEFAULT_PRINTER_PROFILE_SPECS = (
         "name": "MINGDA AD-F6 Pro 0.4mm Nozzle",
         "bed_width": 800.0,
         "bed_depth": 1200.0,
+        "bed_exclude_area": MINGDA_AD_F6_PRO_BED_EXCLUDE_AREA_800X1200,
         "nozzle_diameter": 0.4,
     },
     {
@@ -128,6 +141,7 @@ DEFAULT_PRINTER_PROFILE_SPECS = (
         "name": "MINGDA AD-F6 Pro 0.6mm Nozzle",
         "bed_width": 800.0,
         "bed_depth": 1200.0,
+        "bed_exclude_area": MINGDA_AD_F6_PRO_BED_EXCLUDE_AREA_800X1200,
         "nozzle_diameter": 0.6,
     },
     {
@@ -135,6 +149,7 @@ DEFAULT_PRINTER_PROFILE_SPECS = (
         "name": "MINGDA AD-F6 Pro 0.8mm Nozzle",
         "bed_width": 800.0,
         "bed_depth": 1200.0,
+        "bed_exclude_area": MINGDA_AD_F6_PRO_BED_EXCLUDE_AREA_800X1200,
         "nozzle_diameter": 0.8,
     },
     {
@@ -177,9 +192,14 @@ def _build_profile_from_spec(spec: dict) -> PrinterProfile:
         name=spec["name"],
         bed_width=spec["bed_width"],
         bed_depth=spec["bed_depth"],
-        bed_exclude_area=default_bed_exclude_area_for_bed(
-            spec["bed_width"],
-            spec["bed_depth"],
+        bed_exclude_area=list(
+            spec.get(
+                "bed_exclude_area",
+                default_bed_exclude_area_for_bed(
+                    spec["bed_width"],
+                    spec["bed_depth"],
+                ),
+            )
         ),
         nozzle_diameter=spec["nozzle_diameter"],
     )
@@ -351,20 +371,41 @@ class PrinterProfileManager:
                 normalized_profile.bed_exclude_area = list(MINGDA_BED_EXCLUDE_AREA_600X800)
                 changed = True
 
-            is_large_ad_series_profile = (
-                (
-                    profile.id.startswith("builtin-mignda-ad-f4-")
-                    and not profile.id.startswith("builtin-mignda-ad-f4-mini-")
-                )
-                or profile.id.startswith(
-                    (
-                        "builtin-mignda-ad-f6-",
-                        "builtin-mignda-ad-f10-",
-                    )
-                )
+            is_ad_f4_profile = (
+                profile.id.startswith("builtin-mignda-ad-f4-")
+                and not profile.id.startswith("builtin-mignda-ad-f4-mini-")
             )
             if (
-                is_large_ad_series_profile
+                is_ad_f4_profile
+                and normalized_profile.bed_exclude_area in (
+                    LEGACY_MINGDA_BED_EXCLUDE_AREA_800X1200,
+                    MINGDA_BED_EXCLUDE_AREA_800X1200,
+                )
+            ):
+                normalized_profile.bed_exclude_area = list(
+                    MINGDA_AD_F4_BED_EXCLUDE_AREA_800X1200
+                )
+                changed = True
+
+            is_ad_f6_profile = profile.id.startswith("builtin-mignda-ad-f6-")
+            if (
+                is_ad_f6_profile
+                and normalized_profile.bed_exclude_area in (
+                    LEGACY_MINGDA_BED_EXCLUDE_AREA_800X1200,
+                    MINGDA_BED_EXCLUDE_AREA_800X1200,
+                    PREVIOUS_MINGDA_AD_F6_PRO_BED_EXCLUDE_AREA_800X1200,
+                )
+            ):
+                normalized_profile.bed_exclude_area = list(
+                    MINGDA_AD_F6_PRO_BED_EXCLUDE_AREA_800X1200
+                )
+                changed = True
+
+            is_other_large_ad_series_profile = profile.id.startswith(
+                "builtin-mignda-ad-f10-"
+            )
+            if (
+                is_other_large_ad_series_profile
                 and normalized_profile.bed_exclude_area
                 == LEGACY_MINGDA_BED_EXCLUDE_AREA_800X1200
             ):

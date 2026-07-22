@@ -1,30 +1,5 @@
-What's Changed
+MINGDA SignMaker V0.6.7 Official Release
 
-V0.6.6
-- Fixed floating acrylic-face slots caused by independently nested SVG/DXF contours losing their supporting shell walls.
-- Unified shell and flat-slot profile normalization across STL export and 3D Preview, including collective nesting and split offset islands.
-- Added focused geometry regressions and verified 1,361 top-slot components across 277 SVG/DXF files with no fully floating components.
-
-V0.6.5
-- Added Basic, Advanced, and Expert interface levels for progressively exposing settings and editing tools.
-- Added project complexity detection, one-click level upgrades, persistent level selection, and full multilingual support.
-
-V0.6.4
-- Updated the MINGDA AD-F4 Mini no-print zone; previous built-in defaults update automatically.
-- Updated the online tutorials, including decorative-panel and solid-letter workflows.
-
-V0.6.3
-- Fixed sharp multi-wall corner gaps in 3D Preview and STL export.
-- Improved STL reliability for complex DXF/SVG artwork and long file names in Shape List.
-
-V0.6.2
-- Updated no-print zones for MINGDA printer profiles.
-- Improved parameter-panel display and printer-profile synchronization on small screens.
-
-V0.6.1
-- Renamed the slot and V-groove speed setting for clearer process control.
-- Updated the new terminology across all supported languages.
-
-V0.6.0
-- Added System, Light, and Dark theme options.
-- Added Open Recent and moved the U-shaped letter profile into Custom wall presets.
+- Updated the MINGDA AD-F4 and AD-F4 Pro right-side no-print zone to 109 x 287 mm.
+- Updated the MINGDA AD-F6 Pro right-side no-print zones to join continuously at Y=282 mm.
+- Previous built-in printer-profile defaults now update automatically while custom no-print zones remain unchanged.

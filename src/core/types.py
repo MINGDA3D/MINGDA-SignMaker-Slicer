@@ -25,6 +25,14 @@ MINGDA_BED_EXCLUDE_AREA_800X1200 = [
     "771x0,800x0,800x56,771x56",
     "771x287,800x287,800x528,771x528",
 ]
+MINGDA_AD_F4_BED_EXCLUDE_AREA_800X1200 = [
+    "691x0,800x0,800x287,691x287",
+    "771x287,800x287,800x528,771x528",
+]
+MINGDA_AD_F6_PRO_BED_EXCLUDE_AREA_800X1200 = [
+    "691x0,800x0,800x282,691x282",
+    "771x282,800x282,800x528,771x528",
+]
 MINGDA_BED_EXCLUDE_AREA_600X800 = [
     "0x0,71x0,71x25,0x25",
     "495x0,600x0,600x182,495x182",
@@ -112,6 +120,8 @@ def is_default_bed_exclude_area(value: BedExcludeAreaInput) -> bool:
     return normalized in (
         default_bed_exclude_area_for_bed(800.0, 1200.0),
         default_bed_exclude_area_for_bed(600.0, 800.0),
+        MINGDA_AD_F4_BED_EXCLUDE_AREA_800X1200,
+        MINGDA_AD_F6_PRO_BED_EXCLUDE_AREA_800X1200,
     )
 
 
