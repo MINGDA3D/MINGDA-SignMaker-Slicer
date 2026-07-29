@@ -462,12 +462,12 @@ class EdgeWrapMeshBuilder:
         """计算内孔勾边底部/顶部偏移。内孔方向语义与外轮廓相反。"""
         if outline_direction == EdgeDirection.INNER:
             return (
-                outline_offset,
-                outline_offset + outline_width,
+                self.wall_thickness + outline_offset,
+                self.wall_thickness + outline_offset + outline_width,
             )
         return (
-            -(self.wall_thickness + outline_offset),
-            -(self.wall_thickness + outline_offset + outline_width),
+            -outline_offset,
+            -(outline_offset + outline_width),
         )
 
     @staticmethod

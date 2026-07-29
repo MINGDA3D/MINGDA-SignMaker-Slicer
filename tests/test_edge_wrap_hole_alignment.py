@@ -65,24 +65,48 @@ def test_inner_hole_wrap_starts_at_inner_wall_and_keeps_full_width():
     ) == pytest.approx(2.0, abs=1e-6)
 
 
-def test_inner_hole_outline_uses_opposite_direction_to_outer_contour():
+def test_inner_hole_outline_starts_at_inner_wall_and_keeps_full_width():
     contour = _build_contour_with_hole()
     params = _build_params()
     builder = EdgeWrapMeshBuilder(PathOffset(), wall_thickness=params.shell.wall_thickness)
     offset_bottom, offset_top = builder._get_hole_outline_offsets(
         2.0, 0.0, EdgeDirection.INNER
     )
-    assert offset_bottom == pytest.approx(0.0, abs=1e-6)
-    assert offset_top == pytest.approx(2.0, abs=1e-6)
+    assert offset_bottom == pytest.approx(1.2, abs=1e-6)
+    assert offset_top == pytest.approx(3.2, abs=1e-6)
+    assert offset_top - offset_bottom == pytest.approx(2.0, abs=1e-6)
     mesh = builder._build_sloped_ring(
         contour.holes[0], 27.0, 30.0, offset_bottom, offset_top, is_outer=False
     )
 
     assert mesh is not None
-    assert mesh.bounds[0][0] == pytest.approx(28.0, abs=1e-6)
-    assert mesh.bounds[0][1] == pytest.approx(28.0, abs=1e-6)
-    assert mesh.bounds[1][0] == pytest.approx(72.0, abs=1e-6)
-    assert mesh.bounds[1][1] == pytest.approx(72.0, abs=1e-6)
+    assert mesh.bounds[0][0] == pytest.approx(26.8, abs=1e-6)
+    assert mesh.bounds[0][1] == pytest.approx(26.8, abs=1e-6)
+    assert mesh.bounds[1][0] == pytest.approx(73.2, abs=1e-6)
+    assert mesh.bounds[1][1] == pytest.approx(73.2, abs=1e-6)
+
+
+def test_outer_hole_outline_starts_at_outer_wall_without_gap():
+    contour = _build_contour_with_hole()
+    params = _build_params()
+    builder = EdgeWrapMeshBuilder(PathOffset(), wall_thickness=params.shell.wall_thickness)
+    offset_bottom, offset_top = builder._get_hole_outline_offsets(
+        2.0, 0.0, EdgeDirection.OUTER
+    )
+
+    assert offset_bottom == pytest.approx(0.0, abs=1e-6)
+    assert offset_top == pytest.approx(-2.0, abs=1e-6)
+    assert offset_bottom - offset_top == pytest.approx(2.0, abs=1e-6)
+
+    mesh = builder._build_sloped_ring(
+        contour.holes[0], 27.0, 30.0, offset_bottom, offset_top, is_outer=False
+    )
+
+    assert mesh is not None
+    assert mesh.bounds[0][0] == pytest.approx(30.0, abs=1e-6)
+    assert mesh.bounds[0][1] == pytest.approx(30.0, abs=1e-6)
+    assert mesh.bounds[1][0] == pytest.approx(70.0, abs=1e-6)
+    assert mesh.bounds[1][1] == pytest.approx(70.0, abs=1e-6)
 
 
 def test_outer_hole_wrap_starts_at_outer_wall_without_gap():
