@@ -428,20 +428,29 @@ class EdgeWrapMeshBuilder:
                                wrap_direction: EdgeDirection):
         """计算内孔包边的外环/内环坐标。内孔方向语义与外轮廓相反。"""
         if wrap_direction == EdgeDirection.INNER:
-            inner_ring = self._closed_coords(hole)
-            wrap_results = self.path_offset.offset(hole, wrap_width)
+            # 内孔的字壳材料位于孔轮廓外侧。真实内墙面因此是原始
+            # 孔轮廓向材料侧偏移一个墙厚的位置；包边必须从这里继续
+            # 向字壳内部延伸，否则墙厚会吃掉一部分有效包边宽度。
+            hole_inner_wall_results = self.path_offset.offset(
+                hole, self.wall_thickness
+            )
+            if not hole_inner_wall_results:
+                return None
+
+            hole_inner_wall = hole_inner_wall_results[0]
+            inner_ring = self._closed_coords(hole_inner_wall)
+            wrap_results = self.path_offset.offset(
+                hole_inner_wall, wrap_width
+            )
             if not wrap_results:
                 return None
             outer_ring = self._closed_coords(wrap_results[0])
             return outer_ring, inner_ring
 
-        hole_wall_results = self.path_offset.offset(hole, -self.wall_thickness)
-        if not hole_wall_results:
-            return None
-
-        hole_wall = hole_wall_results[0]
-        outer_ring = self._closed_coords(hole_wall)
-        wrap_results = self.path_offset.offset(hole_wall, -wrap_width)
+        # 外部包边从孔的真实外墙面（原始孔轮廓）直接向孔内延伸。
+        # 不应先偏移 wall_thickness；那会在墙与包边之间制造同宽缝隙。
+        outer_ring = self._closed_coords(hole)
+        wrap_results = self.path_offset.offset(hole, -wrap_width)
         if not wrap_results:
             return None
         inner_ring = self._closed_coords(wrap_results[0])

@@ -46,7 +46,7 @@ def _build_params() -> SliceParams:
     return params
 
 
-def test_inner_hole_wrap_uses_opposite_direction_to_outer_contour():
+def test_inner_hole_wrap_starts_at_inner_wall_and_keeps_full_width():
     contour = _build_contour_with_hole()
     params = _build_params()
     builder = EdgeWrapMeshBuilder(PathOffset(), wall_thickness=params.shell.wall_thickness)
@@ -55,10 +55,14 @@ def test_inner_hole_wrap_uses_opposite_direction_to_outer_contour():
         contour.holes[0], 2.0, EdgeDirection.INNER
     )
 
-    assert min(x for x, _ in inner_ring[:-1]) == pytest.approx(30.0, abs=1e-6)
-    assert max(x for x, _ in inner_ring[:-1]) == pytest.approx(70.0, abs=1e-6)
-    assert min(x for x, _ in outer_ring[:-1]) == pytest.approx(28.0, abs=1e-6)
-    assert max(x for x, _ in outer_ring[:-1]) == pytest.approx(72.0, abs=1e-6)
+    assert min(x for x, _ in inner_ring[:-1]) == pytest.approx(28.8, abs=1e-6)
+    assert max(x for x, _ in inner_ring[:-1]) == pytest.approx(71.2, abs=1e-6)
+    assert min(x for x, _ in outer_ring[:-1]) == pytest.approx(26.8, abs=1e-6)
+    assert max(x for x, _ in outer_ring[:-1]) == pytest.approx(73.2, abs=1e-6)
+    assert (
+        min(x for x, _ in inner_ring[:-1])
+        - min(x for x, _ in outer_ring[:-1])
+    ) == pytest.approx(2.0, abs=1e-6)
 
 
 def test_inner_hole_outline_uses_opposite_direction_to_outer_contour():
@@ -81,7 +85,7 @@ def test_inner_hole_outline_uses_opposite_direction_to_outer_contour():
     assert mesh.bounds[1][1] == pytest.approx(72.0, abs=1e-6)
 
 
-def test_outer_hole_wrap_stays_on_hole_inner_side():
+def test_outer_hole_wrap_starts_at_outer_wall_without_gap():
     contour = _build_contour_with_hole()
     params = _build_params()
     builder = EdgeWrapMeshBuilder(PathOffset(), wall_thickness=params.shell.wall_thickness)
@@ -90,10 +94,14 @@ def test_outer_hole_wrap_stays_on_hole_inner_side():
         contour.holes[0], 2.0, EdgeDirection.OUTER
     )
 
-    assert min(x for x, _ in outer_ring[:-1]) == pytest.approx(31.2, abs=1e-6)
-    assert max(x for x, _ in outer_ring[:-1]) == pytest.approx(68.8, abs=1e-6)
-    assert min(x for x, _ in inner_ring[:-1]) == pytest.approx(33.2, abs=1e-6)
-    assert max(x for x, _ in inner_ring[:-1]) == pytest.approx(66.8, abs=1e-6)
+    assert min(x for x, _ in outer_ring[:-1]) == pytest.approx(30.0, abs=1e-6)
+    assert max(x for x, _ in outer_ring[:-1]) == pytest.approx(70.0, abs=1e-6)
+    assert min(x for x, _ in inner_ring[:-1]) == pytest.approx(32.0, abs=1e-6)
+    assert max(x for x, _ in inner_ring[:-1]) == pytest.approx(68.0, abs=1e-6)
+    assert (
+        min(x for x, _ in inner_ring[:-1])
+        - min(x for x, _ in outer_ring[:-1])
+    ) == pytest.approx(2.0, abs=1e-6)
 
 
 def test_wrap_and_outline_are_generated_from_bottom_z_range():
