@@ -6,10 +6,11 @@ MINGDA SignMaker - 台阶网格生成器
 """
 
 from __future__ import annotations
-from typing import List, Optional, Dict
+from typing import List, Optional
 
 import trimesh
 from shapely.geometry import Polygon as ShapelyPolygon
+from shapely.geometry.base import BaseGeometry
 from shapely.ops import unary_union
 from shapely.validation import make_valid
 
@@ -25,8 +26,9 @@ from ..types import (
 )
 from ..types import Path as CorePath
 from ..path_offset import PathOffset
+from .loop_matching import closed_loop_spacing_score
 from .mesh_utils import MeshUtils
-from .profile_regions import merge_contours_by_nesting
+from .profile_regions import extract_polygons, merge_contours_by_nesting
 
 
 class StepMeshBuilder:
@@ -194,62 +196,101 @@ class StepMeshBuilder:
         result: SliceResult,
         params: SliceParams,
     ) -> List[trimesh.Trimesh]:
-        """Build V-groove meshes by matching sliced grooves to same-layer walls."""
+        """Build and union wall-attached V-groove footprints for each layer."""
         meshes = []
 
         for layer in result.layers:
-            wall_paths = [
-                path for path in layer.paths
-                if path.role == PathRole.WALL and path.is_closed and len(path.points) >= 3
-            ]
-            if not wall_paths:
+            geometry = self._build_v_groove_layer_geometry(layer, params)
+            if geometry is None:
                 continue
 
-            for path in layer.paths:
-                if (
-                    path.role != PathRole.V_GROOVE
-                    or not path.is_closed
-                    or len(path.points) < 3
-                    or path.line_width <= 0.0
-                ):
-                    continue
-
-                wall_path = self._match_step_to_wall_path(path, wall_paths)
-                if wall_path is None:
-                    continue
-
-                wall_inner_coords = self._calculate_inner_wall_from_path(
-                    wall_path,
-                    wall_path.line_width if wall_path.line_width > 0.0 else params.shell.line_width,
-                    reference_path=path,
-                )
-                mesh = self._create_thin_step_ring(
-                    wall_inner_coords,
-                    step_width=path.line_width,
-                    step_thickness=layer.layer_height,
-                    z_position=layer.z_height,
-                    is_hole=self._is_hole_step_path(path, wall_path),
+            for polygon in extract_polygons(geometry):
+                mesh = self.mesh_utils.extrude_polygon(
+                    polygon,
+                    layer.layer_height,
+                    layer.z_height,
                 )
                 if mesh is not None:
                     meshes.append(mesh)
 
         return meshes
 
+    def _build_v_groove_layer_geometry(
+        self,
+        layer: Layer,
+        params: SliceParams,
+    ) -> Optional[BaseGeometry]:
+        """Build one layer from its cavity-facing wall edges and union overlaps."""
+        wall_paths = [
+            path for path in layer.paths
+            if path.role == PathRole.WALL and path.is_closed and len(path.points) >= 3
+        ]
+        if not wall_paths:
+            return None
+
+        footprints = []
+        for path in layer.paths:
+            if (
+                path.role != PathRole.V_GROOVE
+                or not path.is_closed
+                or len(path.points) < 3
+                or path.line_width <= 0.0
+            ):
+                continue
+
+            wall_path = self._match_step_to_wall_path(path, wall_paths)
+            if wall_path is None:
+                continue
+
+            wall_inner_coords = self._calculate_inner_wall_from_path(
+                wall_path,
+                wall_path.line_width
+                if wall_path.line_width > 0.0
+                else params.shell.line_width,
+                reference_path=path,
+            )
+            footprint = self._build_step_ring_geometry(
+                wall_inner_coords,
+                step_width=path.line_width,
+                is_hole=self._is_hole_step_path(path, wall_path),
+            )
+            if footprint is None:
+                continue
+            footprints.extend(extract_polygons(footprint))
+
+        if not footprints:
+            return None
+
+        geometry = unary_union(footprints)
+        if not geometry.is_valid:
+            geometry = make_valid(geometry)
+        return geometry
+
     def _match_step_to_wall_path(
         self,
         step_path: LayerPath,
         wall_paths: List[LayerPath],
     ) -> Optional[LayerPath]:
-        """Find the closest wall loop for one step/v-groove ring."""
+        """Match a groove to the wall pass on the cavity-facing side.
+
+        Concentric wall passes have the same centroid, so centroid proximity
+        cannot identify the innermost pass.  The generated groove centerline
+        is separated from its supporting wall centerline by half of both line
+        widths.  Matching that boundary spacing also works for symmetric and
+        sharply pointed loops.
+        """
         if not wall_paths:
             return None
 
-        step_centroid = self._calculate_centroid(step_path.points)
         return min(
             wall_paths,
-            key=lambda wall_path: self._distance_between_points(
-                step_centroid,
-                self._calculate_centroid(wall_path.points),
+            key=lambda wall_path: closed_loop_spacing_score(
+                reference_points=step_path.points,
+                candidate_points=wall_path.points,
+                expected_distance=(
+                    max(step_path.line_width, 0.0)
+                    + max(wall_path.line_width, 0.0)
+                ) / 2.0,
             ),
         )
 
@@ -267,10 +308,6 @@ class StepMeshBuilder:
             next_point = points[(i + 1) % len(points)]
             area += point.x * next_point.y - next_point.x * point.y
         return abs(area) * 0.5
-
-    def _distance_between_points(self, p1: Point, p2: Point) -> float:
-        """Euclidean distance helper for path matching."""
-        return ((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2) ** 0.5
 
     def _create_thin_step_ring(self, wall_inner_coords: list,
                                step_width: float,
@@ -382,78 +419,6 @@ class StepMeshBuilder:
 
         return ring_polygon
 
-    def _extract_wall_positions_at_step_layers(
-        self, result: SliceResult, params: SliceParams, total_height: float, contours: List[Contour]
-    ) -> Dict[int, Dict[str, List[LayerPath]]]:
-        """从切片结果中提取台阶层的壁路径位置"""
-        baseplate_z = params.step.baseplate_step_height
-        panel_z = params.step.panel_step_height
-        layer_height = params.shell.layer_height
-
-        max_baseplate_z = total_height / 2
-        if baseplate_z > max_baseplate_z:
-            baseplate_z = max_baseplate_z
-        min_panel_z = total_height / 2
-        if panel_z < min_panel_z:
-            panel_z = min_panel_z
-
-        contour_positions = {}
-        tolerance = layer_height * 0.6
-
-        for layer in result.layers:
-            z = layer.z_height
-
-            if params.step.baseplate_step_enabled and abs(z - baseplate_z) < tolerance:
-                self._extract_wall_paths_from_layer(layer, contour_positions, 'baseplate', contours)
-
-            if params.step.panel_step_enabled and abs(z - panel_z) < tolerance:
-                self._extract_wall_paths_from_layer(layer, contour_positions, 'panel', contours)
-
-        return contour_positions
-
-    def _extract_wall_paths_from_layer(
-        self, layer: Layer, contour_positions: Dict, step_type: str, contours: List[Contour]
-    ):
-        """从层中提取WALL路径，按轮廓分组"""
-        wall_paths = [p for p in layer.paths if p.role == PathRole.WALL]
-
-        for path in wall_paths:
-            if not path.points:
-                continue
-
-            path_centroid = self._calculate_centroid(path.points)
-            contour_idx = self._find_closest_contour(path_centroid, contours)
-
-            if contour_idx not in contour_positions:
-                contour_positions[contour_idx] = {}
-            if step_type not in contour_positions[contour_idx]:
-                contour_positions[contour_idx][step_type] = []
-
-            contour_positions[contour_idx][step_type].append(path)
-
-    def _calculate_centroid(self, points: List[Point]) -> Point:
-        """计算点集的质心"""
-        if not points:
-            return Point(0, 0)
-        x_sum = sum(p.x for p in points)
-        y_sum = sum(p.y for p in points)
-        n = len(points)
-        return Point(x_sum / n, y_sum / n)
-
-    def _find_closest_contour(self, point: Point, contours: List[Contour]) -> int:
-        """找到距离点最近的轮廓索引"""
-        min_dist = float('inf')
-        closest_idx = 0
-
-        for idx, contour in enumerate(contours):
-            centroid = contour.outer.centroid
-            dist = ((point.x - centroid.x) ** 2 + (point.y - centroid.y) ** 2) ** 0.5
-            if dist < min_dist:
-                min_dist = dist
-                closest_idx = idx
-
-        return closest_idx
-
     def _calculate_inner_wall_from_path(
         self,
         wall_path: LayerPath,
@@ -471,17 +436,21 @@ class StepMeshBuilder:
         if half_wall > 1e-6:
             offset_distance = -half_wall
             if reference_path is not None and reference_path.points:
-                offset_distance = half_wall if self._is_hole_step_path(reference_path, wall_path) else -half_wall
+                offset_distance = (
+                    half_wall
+                    if self._is_hole_step_path(reference_path, wall_path)
+                    else -half_wall
+                )
 
             inner_results = self.path_offset.offset(inner_path, offset_distance)
             if inner_results:
                 if reference_path is not None and reference_path.points:
-                    reference_centroid = self._calculate_centroid(reference_path.points)
                     chosen_path = min(
                         inner_results,
-                        key=lambda candidate: self._distance_between_points(
-                            reference_centroid,
-                            candidate.centroid,
+                        key=lambda candidate: closed_loop_spacing_score(
+                            reference_points=reference_path.points,
+                            candidate_points=candidate.points,
+                            expected_distance=max(reference_path.line_width, 0.0) / 2.0,
                         ),
                     )
                 else:
