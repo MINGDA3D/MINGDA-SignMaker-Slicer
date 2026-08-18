@@ -1,5 +1,4 @@
-MINGDA SignMaker V0.6.7 Official Release
+MINGDA SignMaker V0.6.9 Official Release
 
-- Updated the MINGDA AD-F4 and AD-F4 Pro right-side no-print zone to 109 x 287 mm.
-- Updated the MINGDA AD-F6 Pro right-side no-print zones to join continuously at Y=282 mm.
-- Previous built-in printer-profile defaults now update automatically while custom no-print zones remain unchanged.
+- Fixed V-Groove generation on sharp corners and multi-wall shells so grooves attach to the correct inner wall without being buried in or intersecting the shell.
+- Fixed V-Groove placement around concentric inner holes and overlapping groove areas for cleaner, consistent 3D Preview and STL output.
