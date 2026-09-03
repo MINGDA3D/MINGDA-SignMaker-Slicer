@@ -8,6 +8,23 @@
 INC-S/
 SASM-3D-Installer.exe
 
+# Video files
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.wmv
+*.webm
+*.m4v
+*.mpeg
+*.mpg
+*.flv
+*.3gp
+*.mts
+*.m2ts
+*.ogv
+*.vob
+
 # Documentation and assets
 docs/
 
