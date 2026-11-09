@@ -439,8 +439,8 @@ class TestSTLWriterCustomEdge:
         ])
         self.test_contour = Contour(outer=outer, name="TestRect")
 
-    def test_custom_edge_offset_calculation(self):
-        """测试异形边偏移量计算"""
+    def test_custom_edge_offset_calculation(self) -> None:
+        """STL feature contours must follow the configured outward offset at each Z."""
         profile = EdgeProfile.from_control_points(
             [(0.0, 0.0), (1.0, 1.0)],
             InterpolationType.LINEAR
@@ -452,20 +452,19 @@ class TestSTLWriterCustomEdge:
             edge_profile=profile
         )
 
-        # 底部偏移应为0（nx=0）
-        offset = self.writer._calculate_custom_edge_offset_at_z(0.0, shell)
-        assert offset == pytest.approx(0.0, abs=0.01)
+        params = SliceParams(shell=shell)
+        engine = SliceEngine()
+        for z, offset in ((0.0, 0.0), (15.0, 2.5), (30.0, 5.0)):
+            contours = self.writer._get_transformed_contours_at_z(
+                [self.test_contour], z, engine, params
+            )
+            assert len(contours) == 1
+            assert contours[0].outer.bounds == pytest.approx(
+                (-offset, -offset, 100.0 + offset, 50.0 + offset), abs=0.01
+            )
 
-        # 中间偏移应为+2.5（向外凸出，nx=0.5）
-        offset = self.writer._calculate_custom_edge_offset_at_z(15.0, shell)
-        assert offset == pytest.approx(2.5, abs=0.01)
-
-        # 顶部偏移应为+5.0（nx=1）
-        offset = self.writer._calculate_custom_edge_offset_at_z(30.0, shell)
-        assert offset == pytest.approx(5.0, abs=0.01)
-
-    def test_get_contours_with_custom_edge(self):
-        """测试获取异形边轮廓"""
+    def test_get_contours_with_custom_edge(self) -> None:
+        """STL contour transformation preserves source geometry and contour identity."""
         profile = EdgeProfile.from_control_points(
             [(0.0, 0.0), (1.0, 1.0)],
             InterpolationType.LINEAR
@@ -479,10 +478,16 @@ class TestSTLWriterCustomEdge:
         params = SliceParams(shell=shell)
 
         # 在z=15（中间）获取轮廓
-        result = self.writer._get_contours_at_z([self.test_contour], 15.0, params)
+        result = self.writer._get_transformed_contours_at_z(
+            [self.test_contour], 15.0, SliceEngine(), params
+        )
 
         assert len(result) == 1
-        # 轮廓应该内缩2.5mm
+        assert result[0].outer.bounds == pytest.approx(
+            (-2.5, -2.5, 102.5, 52.5), abs=0.01
+        )
+        assert result[0].name == self.test_contour.name
+        assert self.test_contour.outer.bounds == (0, 0, 100, 50)
 
     def test_stl_export_with_custom_edge(self):
         """测试异形边STL导出"""

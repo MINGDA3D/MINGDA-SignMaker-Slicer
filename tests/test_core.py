@@ -1465,7 +1465,7 @@ class TestStepMeshBuilder:
 
         assert mesh is not None
         assert mesh.bounds[0][2] == pytest.approx(20.0)
-        assert mesh.bounds[1][2] == pytest.approx(21.1)
+        assert mesh.bounds[1][2] == pytest.approx(21.0)
 
 
 class TestSTLExport:

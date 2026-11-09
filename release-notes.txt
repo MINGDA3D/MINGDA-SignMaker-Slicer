@@ -1,4 +1,5 @@
-MINGDA SignMaker V0.6.9 Official Release
+MINGDA SignMaker V0.7.0 Official Release
 
-- Fixed V-Groove generation on sharp corners and multi-wall shells so grooves attach to the correct inner wall without being buried in or intersecting the shell.
-- Fixed V-Groove placement around concentric inner holes and overlapping groove areas for cleaner, consistent 3D Preview and STL output.
+- Fixed slot and V-Groove widths, layer boundaries, and thickness so STL output matches G-code, including narrow regions.
+- Removed wavy shading from 3D Preview while keeping curved walls smooth.
+- Improved Windows startup compatibility.

@@ -23,6 +23,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtGui import QMouseEvent, QWheelEvent, QPainter, QPen, QColor
 from .busy_dialog import SpinnerWidget
 from .theme import COLORS
+from .preview_mesh_normals import build_preview_mesh_arrays
 
 try:
     from PySide6.QtOpenGLWidgets import QOpenGLWidget
@@ -347,7 +348,10 @@ class Preview3DWidget(QOpenGLWidget):
                 if baseplate_contour is not None:
                     baseplate_contours.append(baseplate_contour)
 
-        if params.step.panel_step_enabled or params.step.baseplate_step_enabled:
+        if any(
+            path.role in (PathRole.STEP, PathRole.V_GROOVE)
+            for layer in result.layers for path in layer.paths
+        ):
             step_mesh = step_builder.build(
                 contours,
                 result,
@@ -410,9 +414,7 @@ class Preview3DWidget(QOpenGLWidget):
         if mesh is None or getattr(mesh, "faces", None) is None or len(mesh.faces) == 0:
             return
 
-        vertices = np.ascontiguousarray(np.asarray(mesh.vertices, dtype=np.float32))
-        vertex_normals = np.ascontiguousarray(np.asarray(mesh.vertex_normals, dtype=np.float32))
-        faces = np.ascontiguousarray(np.asarray(mesh.faces, dtype=np.uint32))
+        vertices, vertex_normals, faces = build_preview_mesh_arrays(mesh)
         face_vertices_z = vertices[faces][:, :, 2]
         sort_order = np.argsort(face_vertices_z.min(axis=1), kind="stable")
 

@@ -13,6 +13,7 @@ from src.core.types import (
     PathType,
     Point,
     SliceParams,
+    StepConfig,
 )
 from src.ui.preview_3d import Preview3D, Preview3DWidget
 
@@ -344,3 +345,23 @@ def test_preview_builds_light_slot_mesh_part(qapp):
     assert "light_slot" in part_map
     assert part_map["light_slot"].vertices[:, 2].min() == pytest.approx(0.0, abs=1e-6)
     assert part_map["light_slot"].vertices[:, 2].max() == pytest.approx(3.0, abs=1e-6)
+
+
+def test_preview_includes_custom_steps_from_print_paths(qapp: object) -> None:
+    """Custom slots use the same mesh path even with panel/baseplate toggles off."""
+    contour = Contour(outer=Path(points=[
+        Point(0, 0), Point(20, 0), Point(20, 20), Point(0, 20),
+    ]))
+    params = SliceParams()
+    params.shell.height = 3.0
+    params.shell.layer_height = 0.3
+    params.shell.line_width = 0.6
+    params.shell.wall_thickness = 0.6
+    params.shell.wall_count = 1
+    params.step.enabled = True
+    params.step.steps = [StepConfig(position=1.2, width=1.8, height=0.0)]
+    result = SliceEngine().slice([contour], params)
+    parts = Preview3DWidget.build_mesh_parts_for_result(result, [contour], params)
+    step = next(part for part in parts if part.name == "step")
+    assert step.vertices[:, 2].min() == pytest.approx(1.2)
+    assert step.vertices[:, 2].max() == pytest.approx(1.5)

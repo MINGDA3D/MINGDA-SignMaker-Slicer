@@ -26,6 +26,7 @@ from ..types import (
 )
 from ..types import Path as CorePath
 from ..path_offset import PathOffset
+from ..toolpath_geometry import union_path_footprints
 from .loop_matching import closed_loop_spacing_score
 from .mesh_utils import MeshUtils
 from .profile_regions import extract_polygons, merge_contours_by_nesting
@@ -53,19 +54,33 @@ class StepMeshBuilder:
               params: SliceParams,
               panel_contours: Optional[List[Contour]] = None,
               baseplate_contours: Optional[List[Contour]] = None) -> Optional[trimesh.Trimesh]:
-        """Build flat step meshes from contours and V-groove meshes from sliced layers."""
+        """Build all ordinary and custom steps from their actual sliced paths.
+
+        Contour arguments remain accepted for caller compatibility. Only the
+        slice result defines deposited material, layer position and thickness.
+        """
         meshes = []
-        meshes.extend(
-            self._build_flat_step_meshes(
-                contours,
-                params,
-                panel_contours=panel_contours,
-                baseplate_contours=baseplate_contours,
-            )
-        )
-        meshes.extend(self._build_v_groove_meshes_from_slices(result, params))
+        for layer in result.layers:
+            if layer.layer_height <= 0.0:
+                continue
+            geometry = self._build_step_layer_geometry(layer)
+            if geometry is None:
+                continue
+            for polygon in extract_polygons(geometry):
+                mesh = self.mesh_utils.extrude_polygon(
+                    polygon, layer.layer_height, layer.z_height,
+                )
+                if mesh is not None:
+                    meshes.append(mesh)
 
         return MeshUtils.merge_meshes(meshes)
+
+    def _build_step_layer_geometry(self, layer: Layer) -> Optional[BaseGeometry]:
+        """Return the union of STEP and V_GROOVE footprints in one layer."""
+        return union_path_footprints(
+            (path for path in layer.paths if path.role in (PathRole.STEP, PathRole.V_GROOVE)),
+            miter_limit=self.path_offset.miter_limit,
+        )
 
     def _build_flat_step_meshes(
         self,
@@ -74,7 +89,7 @@ class StepMeshBuilder:
         panel_contours: Optional[List[Contour]] = None,
         baseplate_contours: Optional[List[Contour]] = None,
     ) -> List[trimesh.Trimesh]:
-        """Build ordinary flat step meshes with the original thin-ring behavior."""
+        """Legacy contour helper; production meshes use ``build`` and sliced paths."""
         meshes = []
         total_height = params.shell.height
         wall_thickness = resolve_shell_wall_thickness(
@@ -83,7 +98,7 @@ class StepMeshBuilder:
             params.shell.layer_height,
             wall_thickness=params.shell.wall_thickness,
         )
-        step_thickness = params.shell.layer_height + 0.1
+        step_thickness = params.shell.layer_height
 
         flat_steps = (
             (
@@ -220,51 +235,11 @@ class StepMeshBuilder:
         layer: Layer,
         params: SliceParams,
     ) -> Optional[BaseGeometry]:
-        """Build one layer from its cavity-facing wall edges and union overlaps."""
-        wall_paths = [
-            path for path in layer.paths
-            if path.role == PathRole.WALL and path.is_closed and len(path.points) >= 3
-        ]
-        if not wall_paths:
-            return None
-
-        footprints = []
-        for path in layer.paths:
-            if (
-                path.role != PathRole.V_GROOVE
-                or not path.is_closed
-                or len(path.points) < 3
-                or path.line_width <= 0.0
-            ):
-                continue
-
-            wall_path = self._match_step_to_wall_path(path, wall_paths)
-            if wall_path is None:
-                continue
-
-            wall_inner_coords = self._calculate_inner_wall_from_path(
-                wall_path,
-                wall_path.line_width
-                if wall_path.line_width > 0.0
-                else params.shell.line_width,
-                reference_path=path,
-            )
-            footprint = self._build_step_ring_geometry(
-                wall_inner_coords,
-                step_width=path.line_width,
-                is_hole=self._is_hole_step_path(path, wall_path),
-            )
-            if footprint is None:
-                continue
-            footprints.extend(extract_polygons(footprint))
-
-        if not footprints:
-            return None
-
-        geometry = unary_union(footprints)
-        if not geometry.is_valid:
-            geometry = make_valid(geometry)
-        return geometry
+        """Return V-groove footprints without reconstructing them from walls."""
+        return union_path_footprints(
+            (path for path in layer.paths if path.role == PathRole.V_GROOVE),
+            miter_limit=self.path_offset.miter_limit,
+        )
 
     def _match_step_to_wall_path(
         self,

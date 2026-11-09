@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import pytest
+from shapely.geometry import LineString
+from shapely.ops import unary_union
 
 from src.core.path_offset import PathOffset
 from src.core.slice_engine import SliceEngine
@@ -148,9 +150,24 @@ def test_pointed_v_groove_starts_at_the_true_inner_wall_edge() -> None:
 
     assert actual_bounds == pytest.approx(_bounds(expected_inner), abs=3e-3)
     assert groove_mesh is not None
+    # A miter-limited toolpath cannot deposit the entire sharp wall-inset tip.
+    # Reconstructing a ring from the wall used to invent that missing material.
+    # Independently sweep every actual print path, then compare the mesh bounds.
+    footprints = []
+    for sliced_layer in result.layers:
+        for path in sliced_layer.paths:
+            if path.role != PathRole.V_GROOVE:
+                continue
+            coordinates = [(point.x, point.y) for point in path.points]
+            coordinates.append(coordinates[0])
+            footprints.append(LineString(coordinates).buffer(
+                path.line_width / 2.0, join_style=2, mitre_limit=2.0,
+            ))
+    printed_region = unary_union(footprints)
     assert tuple(groove_mesh.bounds[0][:2]) + tuple(
         groove_mesh.bounds[1][:2]
-    ) == pytest.approx(_bounds(expected_inner), abs=3e-3)
+    ) == pytest.approx(printed_region.bounds, abs=1e-6)
+    assert printed_region.bounds[0] > _bounds(expected_inner)[0] + 0.1
 
 
 def test_overlapping_outer_and_hole_v_grooves_are_unioned_once_per_layer() -> None:

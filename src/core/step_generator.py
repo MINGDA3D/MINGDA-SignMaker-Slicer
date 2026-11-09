@@ -350,6 +350,19 @@ class StepGenerator:
 
         return paths
 
+    def _layer_overlaps_height_range(
+        self,
+        layer_bottom: float,
+        layer_top: float,
+        start: float,
+        end: float,
+    ) -> bool:
+        """Intersect half-open Z ranges without admitting floating-point slivers."""
+        return (
+            layer_top > start + self._STEP_LAYER_EPSILON
+            and layer_bottom < end - self._STEP_LAYER_EPSILON
+        )
+
     def _compute_v_step_width(
         self,
         step_width: float,
@@ -376,13 +389,17 @@ class StepGenerator:
         step_end = step_start + step_height
         if full_width_at_end:
             ramp_start = max(step_start, step_end - ramp_height)
-            if layer_top <= ramp_start or layer_bottom >= step_end:
+            if not self._layer_overlaps_height_range(
+                layer_bottom, layer_top, ramp_start, step_end
+            ):
                 return 0.0
             local_top = min(layer_top, step_end)
             progress = (local_top - ramp_start) / ramp_height
         else:
             ramp_end = min(step_end, step_start + ramp_height)
-            if layer_top <= step_start or layer_bottom >= ramp_end:
+            if not self._layer_overlaps_height_range(
+                layer_bottom, layer_top, step_start, ramp_end
+            ):
                 return 0.0
             local_bottom = max(layer_bottom, step_start)
             progress = (ramp_end - local_bottom) / ramp_height
@@ -419,7 +436,7 @@ class StepGenerator:
                 full_width_at_end=full_width_at_end,
             )
 
-            if current_width < 0.1:
+            if current_width < 0.1 - self._STEP_LAYER_EPSILON:
                 continue
 
             paths.extend(
@@ -514,7 +531,9 @@ class StepGenerator:
             layer_bottom = z_height
             layer_top = z_height + layer_height
 
-            if layer_top <= step_start or layer_bottom >= step_end:
+            if not self._layer_overlaps_height_range(
+                layer_bottom, layer_top, step_start, step_end
+            ):
                 return paths
 
             current_width = self._compute_v_step_width(
@@ -527,7 +546,7 @@ class StepGenerator:
                 full_width_at_end=full_width_at_end,
             )
 
-            if current_width < 0.1:
+            if current_width < 0.1 - self._STEP_LAYER_EPSILON:
                 return paths
 
             return self._create_step_paths_for_width(
@@ -594,7 +613,7 @@ class StepGenerator:
                 z_top = z + layer_height
 
                 # 检查层是否与台阶重叠
-                if z_top > step_start and z < step_end:
+                if self._layer_overlaps_height_range(z, z_top, step_start, step_end):
                     # 对齐到层高
                     aligned_z = round(z / layer_height) * layer_height
                     if aligned_z not in step_layers:
@@ -668,7 +687,7 @@ class StepGenerator:
         groove_depth = params.bottom_groove_depth
 
         # 检查当前层是否在凹槽范围内
-        if z_height >= groove_height:
+        if z_height >= groove_height - self._STEP_LAYER_EPSILON:
             return []
 
         return self._generate_supported_flat_paths(
@@ -738,7 +757,9 @@ class StepGenerator:
             step_start = step.position
             step_end = step.position + max(step.height, layer_height)
 
-            if layer_top > step_start and z_height < step_end:
+            if self._layer_overlaps_height_range(
+                z_height, layer_top, step_start, step_end
+            ):
                 return True, step
 
         return False, None
@@ -802,7 +823,9 @@ class StepGenerator:
         layer_top = z_height + layer_height
 
         # 检查当前层是否与台阶区域重叠
-        if layer_top <= step_start or layer_bottom >= step_end:
+        if not self._layer_overlaps_height_range(
+            layer_bottom, layer_top, step_start, step_end
+        ):
             return []
 
         # 创建临时台阶配置
@@ -877,7 +900,9 @@ class StepGenerator:
         layer_top = z_height + layer_height
 
         # 检查当前层是否与台阶区域重叠
-        if layer_top <= step_start or layer_bottom >= step_end:
+        if not self._layer_overlaps_height_range(
+            layer_bottom, layer_top, step_start, step_end
+        ):
             return []
 
         # 创建临时台阶配置

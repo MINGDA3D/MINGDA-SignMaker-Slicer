@@ -6,6 +6,7 @@ import sys
 sys.path.insert(0, str(Path('.').absolute()))
 
 from tools.build_softkey_bridge import collect_code_dog_artifacts
+from tools.build_runtime import filter_windows_system_runtime_binaries
 
 PROJECT_ROOT = Path('.').absolute()
 CODE_DOG_ARTIFACTS = collect_code_dog_artifacts(PROJECT_ROOT)
@@ -31,6 +32,7 @@ a = Analysis(
     noarchive=False,
     optimize=0,
 )
+a.binaries = filter_windows_system_runtime_binaries(a.binaries)
 pyz = PYZ(a.pure)
 
 exe = EXE(
